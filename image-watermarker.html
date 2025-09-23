@@ -600,6 +600,58 @@
         </div>
     </div>
 
+  <!-- About Section -->
+    <section class="about-section" id="about">
+        <div class="container">
+            <div class="about-content">
+                <div class="about-text">
+                    <h2>About LollyPoPdf</h2>
+                    <p>Your One-Stop Solution</p>
+                    <p>LollyPoPdf is a comprehensive platform offering 65+ professional online tools designed to simplify your daily tasks. Whether you're a content creator, marketer, developer, or business professional, we have the tools you need to boost productivity and achieve your goals.</p>
+                    
+                    <div class="features">
+                        <div class="feature">
+                            <div class="feature-icon">💸</div>
+                            <div class="feature-text">
+                                <h4>Free to Use</h4>
+                                <p>All tools are completely free with no hidden costs.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="feature">
+                            <div class="feature-icon">🚀</div>
+                            <div class="feature-text">
+                                <h4>No Registration</h4>
+                                <p>Start using tools immediately without signing up.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="feature">
+                            <div class="feature-icon">🔒</div>
+                            <div class="feature-text">
+                                <h4>Privacy Focused</h4>
+                                <p>Your data stays on your device, never uploaded to servers.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="why-choose-us">
+                    <h3>Why Choose Us?</h3>
+                    <p>Our platform is built with user experience in mind. We understand that professionals need reliable, fast, and efficient tools to get their work done.</p>
+                    <ul>
+                        <li>65+ specialized tools for all your needs</li>
+                        <li>Fast processing with no wait times</li>
+                        <li>Clean, intuitive interface</li>
+                        <li>Regular updates with new features</li>
+                        <li>Works on all devices and browsers</li>
+                        <li>No watermarks or limitations</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <!-- Footer -->
     <footer id="contact">
         <div class="container">
@@ -717,6 +769,170 @@
             </div>
         </div>
     </div>
+
+    <script>
+        // Mobile menu toggle
+        document.querySelector('.mobile-menu-btn').addEventListener('click', function() {
+            document.querySelector('nav').classList.toggle('active');
+        });
+
+        // Dark mode toggle
+        document.getElementById('themeToggle').addEventListener('click', function() {
+            document.body.classList.toggle('dark-mode');
+            const icon = this.querySelector('i');
+            if (document.body.classList.contains('dark-mode')) {
+                icon.classList.remove('fa-moon');
+                icon.classList.add('fa-sun');
+            } else {
+                icon.classList.remove('fa-sun');
+                icon.classList.add('fa-moon');
+            }
+            
+            // Save preference to localStorage
+            if (document.body.classList.contains('dark-mode')) {
+                localStorage.setItem('theme', 'dark');
+            } else {
+                localStorage.setItem('theme', 'light');
+            }
+        });
+
+        // Check for saved theme preference
+        if (localStorage.getItem('theme') === 'dark') {
+            document.body.classList.add('dark-mode');
+            document.getElementById('themeToggle').querySelector('i').classList.remove('fa-moon');
+            document.getElementById('themeToggle').querySelector('i').classList.add('fa-sun');
+        }
+
+        // Tool category filtering
+        const categoryButtons = document.querySelectorAll('.category-btn');
+        
+        categoryButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                // Remove active class from all buttons
+                categoryButtons.forEach(btn => btn.classList.remove('active'));
+                
+                // Add active class to clicked button
+                this.classList.add('active');
+                
+                // Get the category name
+                const category = this.getAttribute('data-category');
+                
+                // Scroll to the corresponding section
+                const targetSection = document.getElementById(category + '-tools');
+                
+                if (targetSection) {
+                    targetSection.scrollIntoView({ behavior: 'smooth' });
+                }
+            });
+        });
+
+        // Search functionality
+        document.getElementById('searchBtn').addEventListener('click', function() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase().trim();
+            if (searchTerm === '') {
+                alert('Please enter a search term');
+                return;
+            }
+            
+            // Search through all tool cards
+            const toolCards = document.querySelectorAll('.tool-card');
+            let found = false;
+            let firstMatch = null;
+            
+            toolCards.forEach(card => {
+                const toolName = card.querySelector('h3').textContent.toLowerCase();
+                const toolDesc = card.querySelector('p').textContent.toLowerCase();
+                
+                if (toolName.includes(searchTerm) || toolDesc.includes(searchTerm)) {
+                    card.style.border = '2px solid var(--primary)';
+                    card.style.backgroundColor = 'var(--secondary)';
+                    found = true;
+                    
+                    // Store the first match for scrolling
+                    if (!firstMatch) {
+                        firstMatch = card;
+                    }
+                } else {
+                    card.style.border = '';
+                    card.style.backgroundColor = '';
+                }
+            });
+            
+            if (found && firstMatch) {
+                firstMatch.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            } else {
+                alert('No tools found matching your search: ' + searchTerm);
+            }
+        });
+
+        // Allow pressing Enter to search
+        document.getElementById('searchInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                document.getElementById('searchBtn').click();
+            }
+        });
+
+        // Navigation functionality
+        document.querySelectorAll('nav a, .footer-links a').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href').substring(1);
+                
+                if (targetId === 'tools') {
+                    // Scroll to the first tools section
+                    document.getElementById('document-tools').scrollIntoView({ behavior: 'smooth' });
+                } else {
+                    const targetSection = document.getElementById(targetId);
+                    if (targetSection) {
+                        targetSection.scrollIntoView({ behavior: 'smooth' });
+                    }
+                }
+                
+                // Close mobile menu if open
+                document.querySelector('nav').classList.remove('active');
+            });
+        });
+
+        // Modal functionality for footer links
+        document.getElementById('privacy-link').addEventListener('click', function(e) {
+            e.preventDefault();
+            document.getElementById('privacy-modal').style.display = 'flex';
+        });
+
+        document.getElementById('disclaimer-link').addEventListener('click', function(e) {
+            e.preventDefault();
+            document.getElementById('disclaimer-modal').style.display = 'flex';
+        });
+
+        document.getElementById('terms-link').addEventListener('click', function(e) {
+            e.preventDefault();
+            document.getElementById('terms-modal').style.display = 'flex';
+        });
+
+        // Close modals
+        document.querySelectorAll('.close-modal').forEach(button => {
+            button.addEventListener('click', function() {
+                this.closest('.modal').style.display = 'none';
+            });
+        });
+
+        // Close modal when clicking outside
+        document.querySelectorAll('.modal').forEach(modal => {
+            modal.addEventListener('click', function(e) {
+                if (e.target === this) {
+                    this.style.display = 'none';
+                }
+            });
+        });
+
+        // Add "All Tools" functionality
+        document.querySelector('a[href="#tools"]').addEventListener('click', function(e) {
+            e.preventDefault();
+            document.getElementById('document-tools').scrollIntoView({ behavior: 'smooth' });
+        });
+    </script>
+</body>
+</html>
 
     <script>
         // Dark Mode Toggle

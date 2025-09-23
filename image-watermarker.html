@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Watermark Tool | LollyPoPDF</title>
+    <title>Image Watermark Tool | LollyPoPDF</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         /* Reset and Base Styles */
@@ -177,6 +177,7 @@
             margin-right: auto;
         }
         
+        /* Watermark Tool Styles */
         .watermark-tool {
             background-color: var(--header-bg);
             border-radius: 10px;
@@ -349,6 +350,31 @@
             border-color: var(--primary-color);
         }
         
+        .format-options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .format-option {
+            padding: 8px 16px;
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .format-option:hover {
+            border-color: var(--primary-color);
+        }
+        
+        .format-option.active {
+            background-color: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+        
         .action-buttons {
             display: flex;
             gap: 15px;
@@ -397,7 +423,7 @@
             max-width: 1200px;
             margin: 0 auto;
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            grid-template-columns: 1fr 1fr;
             gap: 40px;
         }
         
@@ -473,7 +499,7 @@
             max-width: 1200px;
             margin: 0 auto;
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            grid-template-columns: 1fr 1fr 1fr;
             gap: 40px;
             margin-bottom: 30px;
         }
@@ -530,12 +556,6 @@
             color: var(--hover-color);
         }
         
-        .footer-links-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 10px;
-        }
-        
         .footer-bottom {
             text-align: center;
             padding-top: 20px;
@@ -543,12 +563,6 @@
             font-size: 14px;
             max-width: 1200px;
             margin: 0 auto;
-        }
-        
-        .footer-divider {
-            height: 1px;
-            background-color: var(--border-color);
-            margin: 20px 0;
         }
         
         /* Modal Styles */
@@ -598,6 +612,40 @@
             line-height: 1.6;
         }
         
+        /* Tool Grid Styles */
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .tool-card {
+            background-color: var(--header-bg);
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+        }
+        
+        .tool-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .tool-icon {
+            font-size: 36px;
+            color: var(--primary-color);
+            margin-bottom: 10px;
+        }
+        
+        .tool-name {
+            font-weight: 600;
+            color: var(--text-color);
+        }
+        
         /* Responsive Styles */
         @media (max-width: 768px) {
             header {
@@ -628,12 +676,12 @@
                 grid-template-columns: 1fr;
             }
             
-            .footer-links-grid {
+            .about-content {
                 grid-template-columns: 1fr;
             }
             
-            .about-content {
-                grid-template-columns: 1fr;
+            .tools-grid {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
             }
         }
     </style>
@@ -667,17 +715,17 @@
 
     <!-- Main Content -->
     <div class="main-container">
-        <h1 class="tool-title">Watermark Tool</h1>
+        <h1 class="tool-title">Image Watermark Tool</h1>
         <p class="tool-description">Add custom watermarks to your images. Protect your content with our easy-to-use watermarking tool.</p>
         
         <div class="watermark-tool">
             <div class="upload-section" id="upload-area">
                 <div class="upload-icon">
-                    <i class="fas fa-file-upload"></i>
+                    <i class="fas fa-file-image"></i>
                 </div>
                 <p class="upload-text">Drag & Drop your image here</p>
                 <p>or</p>
-                <button class="browse-btn">Browse Files</button>
+                <button class="browse-btn">Browse Images</button>
                 <input type="file" id="file-input" accept="image/*">
             </div>
             
@@ -732,10 +780,19 @@
                             <div class="position-option" data-position="diagonal">Diagonal</div>
                         </div>
                     </div>
+                    
+                    <div class="control-group">
+                        <label class="control-label">Output Format</label>
+                        <div class="format-options">
+                            <div class="format-option active" data-format="png">PNG</div>
+                            <div class="format-option" data-format="jpg">JPG</div>
+                            <div class="format-option" data-format="webp">WebP</div>
+                        </div>
+                    </div>
                 </div>
                 
                 <div class="action-buttons">
-                    <button class="btn btn-primary" id="convert-btn">Apply Watermark</button>
+                    <button class="btn btn-primary" id="apply-watermark-btn">Apply Watermark</button>
                     <button class="btn btn-secondary" id="download-btn" disabled>Download Image</button>
                 </div>
             </div>
@@ -775,8 +832,10 @@
                         </div>
                     </div>
                 </div>
-                
-                <h3>Why Choose Us?</h3>
+            </div>
+            
+            <div class="about-text">
+                <h2>Why Choose Us?</h2>
                 <p>Our platform is built with user experience in mind. We understand that professionals need reliable, fast, and efficient tools to get their work done.</p>
                 
                 <ul class="feature-list">
@@ -814,24 +873,16 @@
             
             <div class="footer-section">
                 <h4>Popular Categories</h4>
-                <div class="footer-links-grid">
-                    <div>
-                        <ul>
-                            <li><a href="#" class="category-link" data-category="pdf">PDF Tools</a></li>
-                            <li><a href="#" class="category-link" data-category="image">Image Tools</a></li>
-                            <li><a href="#" class="category-link" data-category="text">Text Tools</a></li>
-                            <li><a href="#" class="category-link" data-category="audio">Audio/Video Tools</a></li>
-                        </ul>
-                    </div>
-                    <div>
-                        <ul>
-                            <li><a href="#" class="category-link" data-category="web">Web/Developer Tools</a></li>
-                            <li><a href="#" class="category-link" data-category="calculator">Calculator Tools</a></li>
-                            <li><a href="#" class="category-link" data-category="utility">Utility Tools</a></li>
-                            <li><a href="#" class="category-link" data-category="color">Color Tools</a></li>
-                        </ul>
-                    </div>
-                </div>
+                <ul>
+                    <li><a href="#" class="category-link" data-category="pdf">PDF Tools</a></li>
+                    <li><a href="#" class="category-link" data-category="image">Image Tools</a></li>
+                    <li><a href="#" class="category-link" data-category="text">Text Tools</a></li>
+                    <li><a href="#" class="category-link" data-category="audio">Audio/Video Tools</a></li>
+                    <li><a href="#" class="category-link" data-category="web">Web/Developer Tools</a></li>
+                    <li><a href="#" class="category-link" data-category="calculator">Calculator Tools</a></li>
+                    <li><a href="#" class="category-link" data-category="utility">Utility Tools</a></li>
+                    <li><a href="#" class="category-link" data-category="color">Color Tools</a></li>
+                </ul>
             </div>
             
             <div class="footer-section">
@@ -974,7 +1025,8 @@
         const opacityValue = document.getElementById('opacity-value');
         const colorPicker = document.getElementById('color-picker');
         const positionOptions = document.querySelectorAll('.position-option');
-        const convertBtn = document.getElementById('convert-btn');
+        const formatOptions = document.querySelectorAll('.format-option');
+        const applyWatermarkBtn = document.getElementById('apply-watermark-btn');
         const downloadBtn = document.getElementById('download-btn');
         
         // Update slider values
@@ -998,6 +1050,14 @@
                 positionOptions.forEach(opt => opt.classList.remove('active'));
                 option.classList.add('active');
                 applyWatermark();
+            });
+        });
+        
+        // Format selection
+        formatOptions.forEach(option => {
+            option.addEventListener('click', () => {
+                formatOptions.forEach(opt => opt.classList.remove('active'));
+                option.classList.add('active');
             });
         });
         
@@ -1090,9 +1150,10 @@
         // Download button functionality
         downloadBtn.addEventListener('click', () => {
             const canvas = document.getElementById('watermarked-canvas');
+            const format = document.querySelector('.format-option.active').dataset.format;
             const link = document.createElement('a');
-            link.download = 'watermarked-image.png';
-            link.href = canvas.toDataURL('image/png');
+            link.download = `watermarked-image.${format}`;
+            link.href = canvas.toDataURL(`image/${format}`);
             link.click();
         });
         
@@ -1133,15 +1194,6 @@
                 <p>Whether you're a content creator, marketer, developer, or business professional, we have the tools you need to boost productivity and achieve your goals.</p>
                 <h4>Our Mission</h4>
                 <p>To provide high-quality, easy-to-use online tools that help professionals and individuals accomplish their tasks efficiently.</p>
-                <h4>Why Choose Us?</h4>
-                <ul class="feature-list">
-                    <li>65+ specialized tools for all your needs</li>
-                    <li>Fast processing with no wait times</li>
-                    <li>Clean, intuitive interface</li>
-                    <li>Regular updates with new features</li>
-                    <li>Works on all devices and browsers</li>
-                    <li>No watermarks or limitations</li>
-                </ul>
             `;
             modal.style.display = 'flex';
         });
@@ -1151,20 +1203,51 @@
             modalTitle.textContent = 'Our Tools';
             modalBody.innerHTML = `
                 <p>LollyPoPDF offers a comprehensive suite of 65+ online tools organized into the following categories:</p>
-                <h4>Popular Categories</h4>
-                <ul>
-                    <li><strong>PDF Tools</strong> - Convert, edit, merge, split, and compress PDF files</li>
-                    <li><strong>Image Tools</strong> - Edit, convert, resize, and optimize images</li>
-                    <li><strong>Text Tools</strong> - Manipulate, format, and analyze text content</li>
-                    <li><strong>Audio/Video Tools</strong> - Convert and edit multimedia files</li>
-                    <li><strong>Web/Developer Tools</strong> - Utilities for web development and coding</li>
-                    <li><strong>Calculator Tools</strong> - Various calculators for different purposes</li>
-                    <li><strong>Utility Tools</strong> - Miscellaneous tools for everyday tasks</li>
-                    <li><strong>Color Tools</strong> - Color pickers, converters, and generators</li>
-                </ul>
+                <div class="tools-grid">
+                    <div class="tool-card" data-category="pdf">
+                        <div class="tool-icon"><i class="fas fa-file-pdf"></i></div>
+                        <div class="tool-name">PDF Tools</div>
+                    </div>
+                    <div class="tool-card" data-category="image">
+                        <div class="tool-icon"><i class="fas fa-image"></i></div>
+                        <div class="tool-name">Image Tools</div>
+                    </div>
+                    <div class="tool-card" data-category="text">
+                        <div class="tool-icon"><i class="fas fa-font"></i></div>
+                        <div class="tool-name">Text Tools</div>
+                    </div>
+                    <div class="tool-card" data-category="audio">
+                        <div class="tool-icon"><i class="fas fa-music"></i></div>
+                        <div class="tool-name">Audio/Video Tools</div>
+                    </div>
+                    <div class="tool-card" data-category="web">
+                        <div class="tool-icon"><i class="fas fa-code"></i></div>
+                        <div class="tool-name">Web/Developer Tools</div>
+                    </div>
+                    <div class="tool-card" data-category="calculator">
+                        <div class="tool-icon"><i class="fas fa-calculator"></i></div>
+                        <div class="tool-name">Calculator Tools</div>
+                    </div>
+                    <div class="tool-card" data-category="utility">
+                        <div class="tool-icon"><i class="fas fa-tools"></i></div>
+                        <div class="tool-name">Utility Tools</div>
+                    </div>
+                    <div class="tool-card" data-category="color">
+                        <div class="tool-icon"><i class="fas fa-palette"></i></div>
+                        <div class="tool-name">Color Tools</div>
+                    </div>
+                </div>
                 <p>All tools are completely free to use with no registration required.</p>
             `;
             modal.style.display = 'flex';
+            
+            // Add click events to tool cards
+            document.querySelectorAll('.tool-card').forEach(card => {
+                card.addEventListener('click', () => {
+                    const category = card.getAttribute('data-category');
+                    showCategoryTools(category);
+                });
+            });
         });
         
         document.getElementById('contact-link').addEventListener('click', (e) => {
@@ -1176,10 +1259,6 @@
                 <p><a href="mailto:lollypoppdf@gmail.com">lollypoppdf@gmail.com</a></p>
                 <h4>Feedback</h4>
                 <p>We're constantly improving our tools based on user feedback. If you have suggestions for new tools or improvements to existing ones, please let us know.</p>
-                <h4>Technical Support</h4>
-                <p>If you encounter any issues while using our tools, please contact us with details about the problem you're experiencing.</p>
-                <h4>Partnerships</h4>
-                <p>Interested in partnering with us? Reach out to discuss potential collaborations.</p>
             `;
             modal.style.display = 'flex';
         });
@@ -1189,107 +1268,179 @@
             link.addEventListener('click', (e) => {
                 e.preventDefault();
                 const category = e.target.getAttribute('data-category');
-                modalTitle.textContent = `${category.charAt(0).toUpperCase() + category.slice(1)} Tools`;
-                modalBody.innerHTML = `
-                    <p>Redirecting to our ${category} tools page on the main website...</p>
-                    <p>In a live environment, this would take you to the specific tools category page.</p>
-                    <p><strong>This is a demonstration of the functionality.</strong></p>
-                `;
-                modal.style.display = 'flex';
-                
-                // In a real implementation, this would redirect to the actual page
-                // window.location.href = `https://lollypopdf.com/tools/${category}`;
+                showCategoryTools(category);
             });
         });
         
         // Footer quick links
-        document.getElementById('footer-home').addEventListener('click', (e) => {
-            e.preventDefault();
-            modalTitle.textContent = 'Home';
-            modalBody.innerHTML = `
-                <p>Welcome to LollyPoPDF - your one-stop destination for 65+ online tools to simplify your daily tasks.</p>
-                <p>Our platform offers a wide range of tools for PDF processing, image editing, text manipulation, and much more.</p>
-                <p>All tools are completely free to use with no registration required. Your privacy is important to us - your data stays on your device.</p>
-            `;
-            modal.style.display = 'flex';
+        const footerLinks = [
+            'footer-home', 'footer-all-tools', 'footer-contact', 
+            'footer-privacy', 'footer-disclaimer', 'footer-terms'
+        ];
+        
+        footerLinks.forEach(id => {
+            document.getElementById(id).addEventListener('click', (e) => {
+                e.preventDefault();
+                const pageName = id.replace('footer-', '').replace(/-/g, ' ');
+                modalTitle.textContent = pageName.charAt(0).toUpperCase() + pageName.slice(1);
+                
+                let content = '';
+                switch(id) {
+                    case 'footer-home':
+                        content = `
+                            <p>Welcome to LollyPoPDF - your one-stop destination for 65+ online tools to simplify your daily tasks.</p>
+                            <p>Our platform offers a wide range of tools for PDF processing, image editing, text manipulation, and much more.</p>
+                            <p>All tools are completely free to use with no registration required. Your privacy is important to us - your data stays on your device.</p>
+                        `;
+                        break;
+                    case 'footer-all-tools':
+                        content = `
+                            <p>Browse our complete collection of 65+ online tools:</p>
+                            <div class="tools-grid">
+                                <div class="tool-card" data-category="pdf">
+                                    <div class="tool-icon"><i class="fas fa-file-pdf"></i></div>
+                                    <div class="tool-name">PDF Tools</div>
+                                </div>
+                                <div class="tool-card" data-category="image">
+                                    <div class="tool-icon"><i class="fas fa-image"></i></div>
+                                    <div class="tool-name">Image Tools</div>
+                                </div>
+                                <div class="tool-card" data-category="text">
+                                    <div class="tool-icon"><i class="fas fa-font"></i></div>
+                                    <div class="tool-name">Text Tools</div>
+                                </div>
+                                <div class="tool-card" data-category="audio">
+                                    <div class="tool-icon"><i class="fas fa-music"></i></div>
+                                    <div class="tool-name">Audio/Video Tools</div>
+                                </div>
+                                <div class="tool-card" data-category="web">
+                                    <div class="tool-icon"><i class="fas fa-code"></i></div>
+                                    <div class="tool-name">Web/Developer Tools</div>
+                                </div>
+                                <div class="tool-card" data-category="calculator">
+                                    <div class="tool-icon"><i class="fas fa-calculator"></i></div>
+                                    <div class="tool-name">Calculator Tools</div>
+                                </div>
+                                <div class="tool-card" data-category="utility">
+                                    <div class="tool-icon"><i class="fas fa-tools"></i></div>
+                                    <div class="tool-name">Utility Tools</div>
+                                </div>
+                                <div class="tool-card" data-category="color">
+                                    <div class="tool-icon"><i class="fas fa-palette"></i></div>
+                                    <div class="tool-name">Color Tools</div>
+                                </div>
+                            </div>
+                        `;
+                        break;
+                    case 'footer-contact':
+                        content = `
+                            <p>We'd love to hear from you! Get in touch with us through any of the following methods:</p>
+                            <h4>Email</h4>
+                            <p><a href="mailto:lollypoppdf@gmail.com">lollypoppdf@gmail.com</a></p>
+                            <h4>Feedback</h4>
+                            <p>We're constantly improving our tools based on user feedback. If you have suggestions for new tools or improvements to existing ones, please let us know.</p>
+                        `;
+                        break;
+                    case 'footer-privacy':
+                        content = `
+                            <p>At LollyPoPDF, we take your privacy seriously. Our privacy policy outlines how we handle your data:</p>
+                            <h4>Data Collection</h4>
+                            <p>We do not collect any personal information. All processing happens locally on your device.</p>
+                            <h4>Data Storage</h4>
+                            <p>Your files are never uploaded to our servers. All processing occurs in your browser.</p>
+                            <h4>Cookies</h4>
+                            <p>We use minimal cookies only for essential functionality like theme preferences.</p>
+                            <h4>Third-Party Services</h4>
+                            <p>We do not share any data with third-party services.</p>
+                        `;
+                        break;
+                    case 'footer-disclaimer':
+                        content = `
+                            <p>LollyPoPDF provides its tools on an "as is" basis. Please read the following disclaimer carefully:</p>
+                            <h4>No Warranty</h4>
+                            <p>We make no warranties regarding the accuracy, reliability, or completeness of our tools.</p>
+                            <h4>Limitation of Liability</h4>
+                            <p>We shall not be liable for any damages resulting from the use of our tools.</p>
+                            <h4>Tool Accuracy</h4>
+                            <p>While we strive for accuracy, we cannot guarantee that our tools will always produce perfect results.</p>
+                            <h4>User Responsibility</h4>
+                            <p>Users are responsible for verifying the results of any tool before relying on them.</p>
+                        `;
+                        break;
+                    case 'footer-terms':
+                        content = `
+                            <p>By using LollyPoPDF, you agree to the following terms of service:</p>
+                            <h4>Acceptable Use</h4>
+                            <p>You agree to use our tools for lawful purposes only.</p>
+                            <h4>Intellectual Property</h4>
+                            <p>All tools and content on LollyPoPDF are protected by copyright.</p>
+                            <h4>Prohibited Activities</h4>
+                            <p>You may not attempt to reverse engineer, decompile, or otherwise misuse our tools.</p>
+                            <h4>Termination</h4>
+                            <p>We reserve the right to terminate access to our tools for violations of these terms.</p>
+                            <h4>Changes to Terms</h4>
+                            <p>We may update these terms from time to time. Continued use constitutes acceptance of changes.</p>
+                        `;
+                        break;
+                }
+                
+                modalBody.innerHTML = content;
+                modal.style.display = 'flex';
+                
+                // Add click events to tool cards if they exist
+                document.querySelectorAll('.tool-card').forEach(card => {
+                    card.addEventListener('click', () => {
+                        const category = card.getAttribute('data-category');
+                        showCategoryTools(category);
+                    });
+                });
+            });
         });
         
-        document.getElementById('footer-all-tools').addEventListener('click', (e) => {
-            e.preventDefault();
-            modalTitle.textContent = 'All Tools';
+        // Function to show tools for a specific category
+        function showCategoryTools(category) {
+            const categoryNames = {
+                'pdf': 'PDF Tools',
+                'image': 'Image Tools',
+                'text': 'Text Tools',
+                'audio': 'Audio/Video Tools',
+                'web': 'Web/Developer Tools',
+                'calculator': 'Calculator Tools',
+                'utility': 'Utility Tools',
+                'color': 'Color Tools'
+            };
+            
+            modalTitle.textContent = categoryNames[category];
+            
+            const toolExamples = {
+                'pdf': ['PDF Converter', 'PDF Merger', 'PDF Splitter', 'PDF Compressor', 'PDF Editor'],
+                'image': ['Image Resizer', 'Image Converter', 'Image Compressor', 'Watermark Tool', 'Image Editor'],
+                'text': ['Text Counter', 'Case Converter', 'Text Extractor', 'Lorem Ipsum Generator', 'Password Generator'],
+                'audio': ['Audio Converter', 'Video Converter', 'Audio Cutter', 'Video Trimmer', 'Media Compressor'],
+                'web': ['HTML Formatter', 'CSS Minifier', 'JSON Validator', 'Base64 Encoder', 'URL Encoder'],
+                'calculator': ['Percentage Calculator', 'Currency Converter', 'Unit Converter', 'Age Calculator', 'BMI Calculator'],
+                'utility': ['QR Code Generator', 'Random Number Generator', 'Timer', 'Stopwatch', 'Color Picker'],
+                'color': ['Color Picker', 'Color Converter', 'Gradient Generator', 'Palette Generator', 'Contrast Checker']
+            };
+            
+            let toolsHTML = '<div class="tools-grid">';
+            toolExamples[category].forEach(tool => {
+                toolsHTML += `
+                    <div class="tool-card">
+                        <div class="tool-icon"><i class="fas fa-toolbox"></i></div>
+                        <div class="tool-name">${tool}</div>
+                    </div>
+                `;
+            });
+            toolsHTML += '</div>';
+            
             modalBody.innerHTML = `
-                <p>Redirecting to our complete tools directory...</p>
-                <p>In a live environment, this would show all 65+ tools available on LollyPoPDF.</p>
-                <p><strong>This is a demonstration of the functionality.</strong></p>
+                <p>Explore our ${categoryNames[category].toLowerCase()}:</p>
+                ${toolsHTML}
+                <p style="margin-top: 20px;">All tools are completely free to use with no registration required.</p>
             `;
             modal.style.display = 'flex';
-        });
-        
-        document.getElementById('footer-contact').addEventListener('click', (e) => {
-            e.preventDefault();
-            modalTitle.textContent = 'Contact Us';
-            modalBody.innerHTML = `
-                <p>We'd love to hear from you! Get in touch with us through any of the following methods:</p>
-                <h4>Email</h4>
-                <p><a href="mailto:lollypoppdf@gmail.com">lollypoppdf@gmail.com</a></p>
-                <h4>Feedback</h4>
-                <p>We're constantly improving our tools based on user feedback. If you have suggestions for new tools or improvements to existing ones, please let us know.</p>
-            `;
-            modal.style.display = 'flex';
-        });
-        
-        document.getElementById('footer-privacy').addEventListener('click', (e) => {
-            e.preventDefault();
-            modalTitle.textContent = 'Privacy Policy';
-            modalBody.innerHTML = `
-                <p>At LollyPoPDF, we take your privacy seriously. Our privacy policy outlines how we handle your data:</p>
-                <h4>Data Collection</h4>
-                <p>We do not collect any personal information. All processing happens locally on your device.</p>
-                <h4>Data Storage</h4>
-                <p>Your files are never uploaded to our servers. All processing occurs in your browser.</p>
-                <h4>Cookies</h4>
-                <p>We use minimal cookies only for essential functionality like theme preferences.</p>
-                <h4>Third-Party Services</h4>
-                <p>We do not share any data with third-party services.</p>
-            `;
-            modal.style.display = 'flex';
-        });
-        
-        document.getElementById('footer-disclaimer').addEventListener('click', (e) => {
-            e.preventDefault();
-            modalTitle.textContent = 'Disclaimer';
-            modalBody.innerHTML = `
-                <p>LollyPoPDF provides its tools on an "as is" basis. Please read the following disclaimer carefully:</p>
-                <h4>No Warranty</h4>
-                <p>We make no warranties regarding the accuracy, reliability, or completeness of our tools.</p>
-                <h4>Limitation of Liability</h4>
-                <p>We shall not be liable for any damages resulting from the use of our tools.</p>
-                <h4>Tool Accuracy</h4>
-                <p>While we strive for accuracy, we cannot guarantee that our tools will always produce perfect results.</p>
-                <h4>User Responsibility</h4>
-                <p>Users are responsible for verifying the results of any tool before relying on them.</p>
-            `;
-            modal.style.display = 'flex';
-        });
-        
-        document.getElementById('footer-terms').addEventListener('click', (e) => {
-            e.preventDefault();
-            modalTitle.textContent = 'Terms of Service';
-            modalBody.innerHTML = `
-                <p>By using LollyPoPDF, you agree to the following terms of service:</p>
-                <h4>Acceptable Use</h4>
-                <p>You agree to use our tools for lawful purposes only.</p>
-                <h4>Intellectual Property</h4>
-                <p>All tools and content on LollyPoPDF are protected by copyright.</p>
-                <h4>Prohibited Activities</h4>
-                <p>You may not attempt to reverse engineer, decompile, or otherwise misuse our tools.</p>
-                <h4>Termination</h4>
-                <p>We reserve the right to terminate access to our tools for violations of these terms.</p>
-                <h4>Changes to Terms</h4>
-                <p>We may update these terms from time to time. Continued use constitutes acceptance of changes.</p>
-            `;
-            modal.style.display = 'flex';
-        });
+        }
         
         // Initialize the page
         window.addEventListener('DOMContentLoaded', () => {

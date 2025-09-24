@@ -682,14 +682,14 @@
             <div class="footer-col">
                 <h3>Popular Categories</h3>
                 <ul class="footer-links">
-                    <li><a href="tools.html?category=pdf">PDF Tools</a></li>
-                    <li><a href="tools.html?category=image">Image Tools</a></li>
-                    <li><a href="tools.html?category=text">Text Tools</a></li>
-                    <li><a href="tools.html?category=audio-video">Audio/Video Tools</a></li>
-                    <li><a href="tools.html?category=web">Web/Developer Tools</a></li>
-                    <li><a href="tools.html?category=calculator">Calculator Tools</a></li>
-                    <li><a href="tools.html?category=utility">Utility Tools</a></li>
-                    <li><a href="tools.html?category=color">Color Tools</a></li>
+                    <li><a href="tools.html#pdf-tools">PDF Tools</a></li>
+                    <li><a href="tools.html#image-tools">Image Tools</a></li>
+                    <li><a href="tools.html#text-tools">Text Tools</a></li>
+                    <li><a href="tools.html#audio-video-tools">Audio/Video Tools</a></li>
+                    <li><a href="tools.html#web-tools">Web/Developer Tools</a></li>
+                    <li><a href="tools.html#calculator-tools">Calculator Tools</a></li>
+                    <li><a href="tools.html#utility-tools">Utility Tools</a></li>
+                    <li><a href="tools.html#color-tools">Color Tools</a></li>
                 </ul>
             </div>
             
@@ -871,6 +871,23 @@
             a.click();
             document.body.removeChild(a);
             URL.revokeObjectURL(url);
+        });
+
+        // Handle navigation for all links
+        document.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', function(e) {
+                // If it's an external link, let it open normally
+                if (this.hostname !== window.location.hostname && !this.getAttribute('target')) {
+                    return;
+                }
+                
+                // For internal links, prevent default and show a message
+                e.preventDefault();
+                const href = this.getAttribute('href');
+                if (href && href !== '#') {
+                    alert(`This link would navigate to: ${href}\n\nIn a real website, this would redirect to the appropriate page.`);
+                }
+            });
         });
     </script>
 </body>

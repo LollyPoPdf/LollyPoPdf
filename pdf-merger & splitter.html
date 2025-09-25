@@ -1,0 +1,1410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PDF Merger & Splitter | LollyPoPdf</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #8a2be2;
+            --primary-light: #a855f7;
+            --primary-dark: #6a0dad;
+            --white: #ffffff;
+            --light-bg: #f8f9fa;
+            --dark-bg: #121212;
+            --dark-text: #e0e0e0;
+            --dark-card: #1e1e1e;
+            --gray: #6c757d;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--light-bg);
+            color: #333;
+            transition: var(--transition);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        body.dark-mode {
+            background-color: var(--dark-bg);
+            color: var(--dark-text);
+        }
+
+        /* Header Styles */
+        header {
+            background-color: var(--white);
+            box-shadow: var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            transition: var(--transition);
+        }
+
+        body.dark-mode header {
+            background-color: var(--dark-card);
+        }
+
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 5%;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+        }
+
+        .logo-circle {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 1.2rem;
+            position: relative;
+        }
+
+        .logo-circle::after {
+            content: '';
+            position: absolute;
+            width: 15px;
+            height: 30px;
+            background: var(--primary-color);
+            bottom: -15px;
+            border-radius: 0 0 10px 10px;
+        }
+
+        .logo-text {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            transition: var(--transition);
+        }
+
+        body.dark-mode .logo-text {
+            color: var(--primary-light);
+        }
+
+        .nav-center {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .nav-link {
+            text-decoration: none;
+            color: #333;
+            font-weight: 500;
+            transition: var(--transition);
+            position: relative;
+        }
+
+        body.dark-mode .nav-link {
+            color: var(--dark-text);
+        }
+
+        .nav-link:hover {
+            color: var(--primary-color);
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -5px;
+            left: 0;
+            background-color: var(--primary-color);
+            transition: var(--transition);
+        }
+
+        .nav-link:hover::after {
+            width: 100%;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .email {
+            color: var(--gray);
+            font-size: 0.9rem;
+        }
+
+        body.dark-mode .email {
+            color: #aaa;
+        }
+
+        .dark-mode-toggle {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1.2rem;
+            color: var(--gray);
+            transition: var(--transition);
+        }
+
+        body.dark-mode .dark-mode-toggle {
+            color: var(--dark-text);
+        }
+
+        .dark-mode-toggle:hover {
+            color: var(--primary-color);
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--gray);
+            cursor: pointer;
+        }
+
+        /* Tool Container */
+        .tool-container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+            flex: 1;
+        }
+
+        .tool-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .tool-header h1 {
+            font-size: 2.5rem;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        body.dark-mode .tool-header h1 {
+            color: var(--primary-light);
+        }
+
+        .tool-header p {
+            color: var(--gray);
+            font-size: 1.1rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        body.dark-mode .tool-header p {
+            color: #aaa;
+        }
+
+        /* Tool Selection */
+        .tool-selection {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 2rem;
+            border-radius: 10px;
+            overflow: hidden;
+            background-color: var(--white);
+            box-shadow: var(--shadow);
+            max-width: 400px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        body.dark-mode .tool-selection {
+            background-color: var(--dark-card);
+        }
+
+        .tool-option {
+            flex: 1;
+            padding: 1rem;
+            text-align: center;
+            cursor: pointer;
+            transition: var(--transition);
+            font-weight: 600;
+        }
+
+        .tool-option.active {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .tool-option:not(.active):hover {
+            background-color: rgba(138, 43, 226, 0.1);
+        }
+
+        /* Tool Box */
+        .tool-box {
+            background-color: var(--white);
+            border-radius: 10px;
+            padding: 2rem;
+            box-shadow: var(--shadow);
+            margin-bottom: 2rem;
+            transition: var(--transition);
+        }
+
+        body.dark-mode .tool-box {
+            background-color: var(--dark-card);
+        }
+
+        /* Upload Area */
+        .upload-area {
+            border: 2px dashed #ccc;
+            border-radius: 8px;
+            padding: 3rem 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: var(--transition);
+            margin-bottom: 1.5rem;
+        }
+
+        body.dark-mode .upload-area {
+            border-color: #555;
+        }
+
+        .upload-area:hover {
+            border-color: var(--primary-color);
+        }
+
+        .upload-area i {
+            font-size: 3rem;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+
+        .upload-area h3 {
+            margin-bottom: 0.5rem;
+            color: #333;
+        }
+
+        body.dark-mode .upload-area h3 {
+            color: var(--dark-text);
+        }
+
+        .upload-area p {
+            color: var(--gray);
+            margin-bottom: 1rem;
+        }
+
+        .browse-btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 0.7rem 1.5rem;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: var(--transition);
+        }
+
+        .browse-btn:hover {
+            background-color: var(--primary-dark);
+        }
+
+        #file-input {
+            display: none;
+        }
+
+        /* File List */
+        .file-list {
+            margin: 1.5rem 0;
+            display: none;
+        }
+
+        .file-list h3 {
+            margin-bottom: 1rem;
+            color: #333;
+        }
+
+        body.dark-mode .file-list h3 {
+            color: var(--dark-text);
+        }
+
+        .file-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.8rem;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin-bottom: 0.5rem;
+        }
+
+        body.dark-mode .file-item {
+            border-color: #555;
+        }
+
+        .file-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .file-icon {
+            color: var(--primary-color);
+            font-size: 1.2rem;
+        }
+
+        .file-name {
+            font-weight: 500;
+        }
+
+        .file-size {
+            color: var(--gray);
+            font-size: 0.9rem;
+        }
+
+        .remove-file {
+            background: none;
+            border: none;
+            color: #ff4d4d;
+            cursor: pointer;
+            font-size: 1.2rem;
+        }
+
+        /* Split Options */
+        .split-options {
+            margin: 1.5rem 0;
+            display: none;
+        }
+
+        .split-options h3 {
+            margin-bottom: 1rem;
+            color: #333;
+        }
+
+        body.dark-mode .split-options h3 {
+            color: var(--dark-text);
+        }
+
+        .split-method {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .method-option {
+            flex: 1;
+            padding: 1rem;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            text-align: center;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        body.dark-mode .method-option {
+            border-color: #555;
+        }
+
+        .method-option:hover {
+            border-color: var(--primary-color);
+        }
+
+        .method-option.active {
+            border-color: var(--primary-color);
+            background-color: rgba(138, 43, 226, 0.1);
+        }
+
+        body.dark-mode .method-option.active {
+            background-color: rgba(138, 43, 226, 0.2);
+        }
+
+        .page-range {
+            display: none;
+            margin-top: 1rem;
+        }
+
+        .page-range input {
+            padding: 0.5rem;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            width: 100px;
+            margin: 0 0.5rem;
+        }
+
+        body.dark-mode .page-range input {
+            background-color: var(--dark-card);
+            border-color: #555;
+            color: var(--dark-text);
+        }
+
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .process-btn, .download-btn {
+            flex: 1;
+            padding: 1rem;
+            border: none;
+            border-radius: 5px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .process-btn {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .process-btn:hover {
+            background-color: var(--primary-dark);
+        }
+
+        .download-btn {
+            background-color: #28a745;
+            color: white;
+            display: none;
+        }
+
+        .download-btn:hover {
+            background-color: #218838;
+        }
+
+        /* Progress Container */
+        .progress-container {
+            margin-top: 1rem;
+            display: none;
+        }
+
+        .progress-bar {
+            height: 8px;
+            background-color: #e9ecef;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        body.dark-mode .progress-bar {
+            background-color: #333;
+        }
+
+        .progress {
+            height: 100%;
+            background-color: var(--primary-color);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        /* About Section */
+        .about-section {
+            max-width: 1200px;
+            margin: 3rem auto;
+            padding: 0 1rem;
+        }
+
+        .about-container {
+            display: flex;
+            gap: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .about-column {
+            flex: 1;
+            min-width: 300px;
+        }
+
+        .about-column h2 {
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+            font-size: 1.8rem;
+        }
+
+        body.dark-mode .about-column h2 {
+            color: var(--primary-light);
+        }
+
+        .about-column p {
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+            color: #555;
+        }
+
+        body.dark-mode .about-column p {
+            color: #ccc;
+        }
+
+        .feature-list {
+            list-style: none;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .feature-icon {
+            font-size: 1.5rem;
+            color: var(--primary-color);
+            margin-top: 0.2rem;
+        }
+
+        .feature-text h4 {
+            margin-bottom: 0.3rem;
+            color: #333;
+        }
+
+        body.dark-mode .feature-text h4 {
+            color: var(--dark-text);
+        }
+
+        .feature-text p {
+            margin: 0;
+            font-size: 0.9rem;
+            color: var(--gray);
+        }
+
+        .benefits-list {
+            list-style: none;
+        }
+
+        .benefits-list li {
+            margin-bottom: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #555;
+        }
+
+        body.dark-mode .benefits-list li {
+            color: #ccc;
+        }
+
+        .benefits-list li::before {
+            content: "✓";
+            color: var(--primary-color);
+            font-weight: bold;
+        }
+
+        /* Footer */
+        footer {
+            background-color: var(--white);
+            padding: 3rem 1rem 1rem;
+            margin-top: auto;
+            transition: var(--transition);
+        }
+
+        body.dark-mode footer {
+            background-color: var(--dark-card);
+        }
+
+        .footer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
+            justify-content: space-between;
+        }
+
+        .footer-column {
+            flex: 1;
+            min-width: 250px;
+        }
+
+        .footer-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 1rem;
+        }
+
+        .footer-logo-circle {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 1rem;
+            position: relative;
+        }
+
+        .footer-logo-circle::after {
+            content: '';
+            position: absolute;
+            width: 12px;
+            height: 24px;
+            background: var(--primary-color);
+            bottom: -12px;
+            border-radius: 0 0 8px 8px;
+        }
+
+        .footer-logo-text {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+
+        body.dark-mode .footer-logo-text {
+            color: var(--primary-light);
+        }
+
+        .footer-description {
+            color: var(--gray);
+            margin-bottom: 1.5rem;
+            line-height: 1.5;
+        }
+
+        .social-icons {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .social-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background-color: #f1f1f1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #555;
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        body.dark-mode .social-icon {
+            background-color: #333;
+            color: #ccc;
+        }
+
+        .social-icon:hover {
+            background-color: var(--primary-color);
+            color: white;
+            transform: translateY(-3px);
+        }
+
+        .footer-column h3 {
+            color: #333;
+            margin-bottom: 1.5rem;
+            font-size: 1.2rem;
+        }
+
+        body.dark-mode .footer-column h3 {
+            color: var(--dark-text);
+        }
+
+        .footer-links {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 0.8rem;
+        }
+
+        .footer-links a {
+            text-decoration: none;
+            color: var(--gray);
+            transition: var(--transition);
+        }
+
+        .footer-links a:hover {
+            color: var(--primary-color);
+        }
+
+        .copyright {
+            text-align: center;
+            padding-top: 2rem;
+            margin-top: 2rem;
+            border-top: 1px solid #eee;
+            color: var(--gray);
+            font-size: 0.9rem;
+        }
+
+        body.dark-mode .copyright {
+            border-top-color: #444;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 992px) {
+            .nav-center {
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                width: 100%;
+                background-color: var(--white);
+                flex-direction: column;
+                padding: 1rem;
+                box-shadow: var(--shadow);
+            }
+            
+            body.dark-mode .nav-center {
+                background-color: var(--dark-card);
+            }
+            
+            .nav-center.active {
+                display: flex;
+            }
+            
+            .mobile-menu-btn {
+                display: block;
+            }
+            
+            .header-right .email {
+                display: none;
+            }
+            
+            .tool-header h1 {
+                font-size: 2rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .action-buttons {
+                flex-direction: column;
+            }
+            
+            .about-container {
+                flex-direction: column;
+            }
+            
+            .footer-container {
+                flex-direction: column;
+            }
+            
+            .tool-selection {
+                flex-direction: column;
+            }
+            
+            .split-method {
+                flex-direction: column;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .header-container {
+                padding: 1rem;
+            }
+            
+            .tool-container, .about-section {
+                padding: 0 0.5rem;
+            }
+            
+            .tool-box {
+                padding: 1.5rem;
+            }
+            
+            .upload-area {
+                padding: 2rem 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="header-container">
+            <a href="https://lollypopdf.com" class="logo">
+                <div class="logo-circle">LPdf</div>
+                <span class="logo-text">LollyPoPdf</span>
+            </a>
+            
+            <nav class="nav-center">
+                <a href="https://lollypopdf.com" class="nav-link">Home</a>
+                <a href="https://lollypopdf.com/about" class="nav-link">About Us</a>
+                <a href="https://lollypopdf.com/tools" class="nav-link">Tools</a>
+                <a href="https://lollypopdf.com/contact" class="nav-link">Contact</a>
+            </nav>
+            
+            <div class="header-right">
+                <span class="email">lollypoppdf@gmail.com</span>
+                <button class="dark-mode-toggle" id="darkModeToggle">
+                    <i class="fas fa-moon"></i>
+                </button>
+                <button class="mobile-menu-btn">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- PDF Merger & Splitter Tool -->
+    <section class="tool-container">
+        <div class="tool-header">
+            <h1>PDF Merger & Splitter</h1>
+            <p>Combine multiple PDFs into one or split a PDF into individual pages. Fast, secure, and completely free!</p>
+        </div>
+        
+        <div class="tool-selection">
+            <div class="tool-option active" data-tool="merger">Merge PDFs</div>
+            <div class="tool-option" data-tool="splitter">Split PDF</div>
+        </div>
+        
+        <!-- Merger Tool -->
+        <div class="tool-box" id="mergerTool">
+            <div class="upload-area" id="mergerUploadArea">
+                <i class="fas fa-file-pdf"></i>
+                <h3>Drag & Drop your PDFs here</h3>
+                <p>Select multiple PDF files to merge</p>
+                <button class="browse-btn">Browse Files</button>
+                <input type="file" id="merger-file-input" accept=".pdf" multiple>
+            </div>
+            
+            <div class="file-list" id="mergerFileList">
+                <h3>Files to Merge</h3>
+                <div id="mergerFilesContainer"></div>
+            </div>
+            
+            <div class="action-buttons">
+                <button class="process-btn" id="mergeBtn">
+                    <i class="fas fa-object-group"></i> Merge PDFs
+                </button>
+                <button class="download-btn" id="mergeDownloadBtn" disabled>
+                    <i class="fas fa-download"></i> Download Merged PDF
+                </button>
+            </div>
+            
+            <div class="progress-container" id="mergerProgressContainer">
+                <p>Merging your PDFs...</p>
+                <div class="progress-bar">
+                    <div class="progress" id="mergerProgressBar"></div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Splitter Tool -->
+        <div class="tool-box" id="splitterTool" style="display: none;">
+            <div class="upload-area" id="splitterUploadArea">
+                <i class="fas fa-file-pdf"></i>
+                <h3>Drag & Drop your PDF here</h3>
+                <p>Select a PDF file to split</p>
+                <button class="browse-btn">Browse File</button>
+                <input type="file" id="splitter-file-input" accept=".pdf">
+            </div>
+            
+            <div class="file-list" id="splitterFileList">
+                <h3>File to Split</h3>
+                <div id="splitterFilesContainer"></div>
+            </div>
+            
+            <div class="split-options" id="splitOptions">
+                <h3>Split Method</h3>
+                <div class="split-method">
+                    <div class="method-option active" data-method="all">
+                        <h4>All Pages</h4>
+                        <p>Extract all pages as separate files</p>
+                    </div>
+                    <div class="method-option" data-method="range">
+                        <h4>Page Range</h4>
+                        <p>Extract specific pages or ranges</p>
+                    </div>
+                </div>
+                
+                <div class="page-range" id="pageRange">
+                    <p>Enter page numbers or ranges (e.g., 1,3,5-8)</p>
+                    <input type="text" id="pageRangeInput" placeholder="1-3,5,7-9">
+                </div>
+            </div>
+            
+            <div class="action-buttons">
+                <button class="process-btn" id="splitBtn">
+                    <i class="fas fa-cut"></i> Split PDF
+                </button>
+                <button class="download-btn" id="splitDownloadBtn" disabled>
+                    <i class="fas fa-download"></i> Download Split PDFs
+                </button>
+            </div>
+            
+            <div class="progress-container" id="splitterProgressContainer">
+                <p>Splitting your PDF...</p>
+                <div class="progress-bar">
+                    <div class="progress" id="splitterProgressBar"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section class="about-section">
+        <div class="about-container">
+            <div class="about-column">
+                <h2>About LollyPoPdf</h2>
+                <p><strong>Your One-Stop Solution</strong></p>
+                <p>LollyPoPdf is a comprehensive platform offering 65+ professional online tools designed to simplify your daily tasks. Whether you're a content creator, marketer, developer, or business professional, we have the tools you need to boost productivity and achieve your goals.</p>
+                
+                <ul class="feature-list">
+                    <li class="feature-item">
+                        <div class="feature-icon">💸</div>
+                        <div class="feature-text">
+                            <h4>Free to Use</h4>
+                            <p>All tools are completely free with no hidden costs.</p>
+                        </div>
+                    </li>
+                    <li class="feature-item">
+                        <div class="feature-icon">🚀</div>
+                        <div class="feature-text">
+                            <h4>No Registration</h4>
+                            <p>Start using tools immediately without signing up.</p>
+                        </div>
+                    </li>
+                    <li class="feature-item">
+                        <div class="feature-icon">🔒</div>
+                        <div class="feature-text">
+                            <h4>Privacy Focused</h4>
+                            <p>Your data stays on your device, never uploaded to servers.</p>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+            
+            <div class="about-column">
+                <h2>Why Choose Us?</h2>
+                <p>Our platform is built with user experience in mind. We understand that professionals need reliable, fast, and efficient tools to get their work done.</p>
+                
+                <ul class="benefits-list">
+                    <li>65+ specialized tools for all your needs</li>
+                    <li>Fast processing with no wait times</li>
+                    <li>Clean, intuitive interface</li>
+                    <li>Regular updates with new features</li>
+                    <li>Works on all devices and browsers</li>
+                    <li>No watermarks or limitations</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-container">
+            <div class="footer-column">
+                <div class="footer-logo">
+                    <div class="footer-logo-circle">LPdf</div>
+                    <span class="footer-logo-text">LollyPoPdf</span>
+                </div>
+                <p class="footer-description">Your one-stop destination for 65+ online tools to simplify your daily tasks.</p>
+                
+                <div class="social-icons">
+                    <a href="#" class="social-icon"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" class="social-icon"><i class="fab fa-linkedin-in"></i></a>
+                    <a href="#" class="social-icon"><i class="fab fa-twitter"></i></a>
+                    <a href="#" class="social-icon"><i class="fab fa-instagram"></i></a>
+                    <a href="#" class="social-icon"><i class="fab fa-pinterest"></i></a>
+                    <a href="#" class="social-icon"><i class="fab fa-reddit"></i></a>
+                    <a href="#" class="social-icon"><i class="fab fa-quora"></i></a>
+                </div>
+            </div>
+            
+            <div class="footer-column">
+                <h3>Popular Categories</h3>
+                <ul class="footer-links">
+                    <li><a href="https://lollypopdf.com/category/pdf-tools">PDF Tools</a></li>
+                    <li><a href="https://lollypopdf.com/category/image-tools">Image Tools</a></li>
+                    <li><a href="https://lollypopdf.com/category/text-tools">Text Tools</a></li>
+                    <li><a href="https://lollypopdf.com/category/audio-video-tools">Audio/Video Tools</a></li>
+                    <li><a href="https://lollypopdf.com/category/web-developer-tools">Web/Developer Tools</a></li>
+                    <li><a href="https://lollypopdf.com/category/calculator-tools">Calculator Tools</a></li>
+                    <li><a href="https://lollypopdf.com/category/utility-tools">Utility Tools</a></li>
+                    <li><a href="https://lollypopdf.com/category/color-tools">Color Tools</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-column">
+                <h3>Quick Links</h3>
+                <ul class="footer-links">
+                    <li><a href="https://lollypopdf.com">Home</a></li>
+                    <li><a href="https://lollypopdf.com/tools">All Tools</a></li>
+                    <li><a href="https://lollypopdf.com/contact">Contact</a></li>
+                    <li><a href="https://lollypopdf.com/privacy-policy">Privacy Policy</a></li>
+                    <li><a href="https://lollypopdf.com/disclaimer">Disclaimer</a></li>
+                    <li><a href="https://lollypopdf.com/terms-of-service">Terms of Service</a></li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="copyright">
+            <p>© 2025 LollyPoPDF. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Dark Mode Toggle
+        const darkModeToggle = document.getElementById('darkModeToggle');
+        const body = document.body;
+        
+        // Check for saved theme preference or respect OS preference
+        if (localStorage.getItem('darkMode') === 'enabled' || 
+            (window.matchMedia('(prefers-color-scheme: dark)').matches && !localStorage.getItem('darkMode'))) {
+            body.classList.add('dark-mode');
+            darkModeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+        }
+        
+        darkModeToggle.addEventListener('click', () => {
+            body.classList.toggle('dark-mode');
+            
+            if (body.classList.contains('dark-mode')) {
+                darkModeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+                localStorage.setItem('darkMode', 'enabled');
+            } else {
+                darkModeToggle.innerHTML = '<i class="fas fa-moon"></i>';
+                localStorage.setItem('darkMode', 'disabled');
+            }
+        });
+
+        // Tool Selection
+        const toolOptions = document.querySelectorAll('.tool-option');
+        const mergerTool = document.getElementById('mergerTool');
+        const splitterTool = document.getElementById('splitterTool');
+        
+        toolOptions.forEach(option => {
+            option.addEventListener('click', () => {
+                toolOptions.forEach(opt => opt.classList.remove('active'));
+                option.classList.add('active');
+                
+                const selectedTool = option.getAttribute('data-tool');
+                if (selectedTool === 'merger') {
+                    mergerTool.style.display = 'block';
+                    splitterTool.style.display = 'none';
+                } else {
+                    mergerTool.style.display = 'none';
+                    splitterTool.style.display = 'block';
+                }
+            });
+        });
+
+        // Merger Functionality
+        const mergerUploadArea = document.getElementById('mergerUploadArea');
+        const mergerFileInput = document.getElementById('merger-file-input');
+        const mergerFileList = document.getElementById('mergerFileList');
+        const mergerFilesContainer = document.getElementById('mergerFilesContainer');
+        const mergeBtn = document.getElementById('mergeBtn');
+        const mergeDownloadBtn = document.getElementById('mergeDownloadBtn');
+        const mergerProgressContainer = document.getElementById('mergerProgressContainer');
+        const mergerProgressBar = document.getElementById('mergerProgressBar');
+        
+        let mergerFiles = [];
+        
+        // Merger file upload handling
+        mergerUploadArea.addEventListener('click', () => {
+            mergerFileInput.click();
+        });
+        
+        setupDragAndDrop(mergerUploadArea, (files) => {
+            handleMergerFiles(files);
+        });
+        
+        mergerFileInput.addEventListener('change', (e) => {
+            if (e.target.files.length) {
+                handleMergerFiles(e.target.files);
+            }
+        });
+        
+        function handleMergerFiles(files) {
+            for (let file of files) {
+                if (file.type !== 'application/pdf') {
+                    alert('Please upload only PDF files.');
+                    continue;
+                }
+                
+                mergerFiles.push(file);
+            }
+            
+            updateMergerFileList();
+        }
+        
+        function updateMergerFileList() {
+            if (mergerFiles.length === 0) {
+                mergerFileList.style.display = 'none';
+                return;
+            }
+            
+            mergerFileList.style.display = 'block';
+            mergerFilesContainer.innerHTML = '';
+            
+            mergerFiles.forEach((file, index) => {
+                const fileSize = (file.size / (1024 * 1024)).toFixed(2);
+                const fileItem = document.createElement('div');
+                fileItem.className = 'file-item';
+                fileItem.innerHTML = `
+                    <div class="file-info">
+                        <i class="fas fa-file-pdf file-icon"></i>
+                        <div>
+                            <div class="file-name">${file.name}</div>
+                            <div class="file-size">${fileSize} MB</div>
+                        </div>
+                    </div>
+                    <button class="remove-file" data-index="${index}">
+                        <i class="fas fa-times"></i>
+                    </button>
+                `;
+                mergerFilesContainer.appendChild(fileItem);
+            });
+            
+            // Add event listeners to remove buttons
+            document.querySelectorAll('.remove-file').forEach(button => {
+                button.addEventListener('click', (e) => {
+                    const index = parseInt(e.currentTarget.getAttribute('data-index'));
+                    mergerFiles.splice(index, 1);
+                    updateMergerFileList();
+                });
+            });
+        }
+        
+        // Merge PDFs
+        mergeBtn.addEventListener('click', () => {
+            if (mergerFiles.length < 2) {
+                alert('Please upload at least 2 PDF files to merge.');
+                return;
+            }
+            
+            // Show progress bar
+            mergerProgressContainer.style.display = 'block';
+            mergerProgressBar.style.width = '0%';
+            
+            // Simulate merging process
+            let progress = 0;
+            const interval = setInterval(() => {
+                progress += 5;
+                mergerProgressBar.style.width = `${progress}%`;
+                
+                if (progress >= 100) {
+                    clearInterval(interval);
+                    
+                    // Enable download button
+                    mergeDownloadBtn.disabled = false;
+                    mergeDownloadBtn.style.display = 'flex';
+                    
+                    // Hide progress bar
+                    setTimeout(() => {
+                        mergerProgressContainer.style.display = 'none';
+                    }, 1000);
+                }
+            }, 100);
+        });
+        
+        // Download merged PDF
+        mergeDownloadBtn.addEventListener('click', () => {
+            if (mergerFiles.length === 0) return;
+            
+            // Create a zip file with all PDFs (simulated)
+            const zip = new JSZip();
+            
+            mergerFiles.forEach((file, index) => {
+                zip.file(`document_${index + 1}.pdf`, file);
+            });
+            
+            // Generate and download the zip file
+            zip.generateAsync({type: "blob"}).then(function(content) {
+                const url = URL.createObjectURL(content);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'merged_pdfs.zip';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            });
+        });
+
+        // Splitter Functionality
+        const splitterUploadArea = document.getElementById('splitterUploadArea');
+        const splitterFileInput = document.getElementById('splitter-file-input');
+        const splitterFileList = document.getElementById('splitterFileList');
+        const splitterFilesContainer = document.getElementById('splitterFilesContainer');
+        const splitOptions = document.getElementById('splitOptions');
+        const methodOptions = document.querySelectorAll('.method-option');
+        const pageRange = document.getElementById('pageRange');
+        const pageRangeInput = document.getElementById('pageRangeInput');
+        const splitBtn = document.getElementById('splitBtn');
+        const splitDownloadBtn = document.getElementById('splitDownloadBtn');
+        const splitterProgressContainer = document.getElementById('splitterProgressContainer');
+        const splitterProgressBar = document.getElementById('splitterProgressBar');
+        
+        let splitterFile = null;
+        let splitMethod = 'all';
+        
+        // Split method selection
+        methodOptions.forEach(option => {
+            option.addEventListener('click', () => {
+                methodOptions.forEach(opt => opt.classList.remove('active'));
+                option.classList.add('active');
+                
+                splitMethod = option.getAttribute('data-method');
+                
+                if (splitMethod === 'range') {
+                    pageRange.style.display = 'block';
+                } else {
+                    pageRange.style.display = 'none';
+                }
+            });
+        });
+        
+        // Splitter file upload handling
+        splitterUploadArea.addEventListener('click', () => {
+            splitterFileInput.click();
+        });
+        
+        setupDragAndDrop(splitterUploadArea, (files) => {
+            if (files.length > 0) {
+                handleSplitterFile(files[0]);
+            }
+        });
+        
+        splitterFileInput.addEventListener('change', (e) => {
+            if (e.target.files.length) {
+                handleSplitterFile(e.target.files[0]);
+            }
+        });
+        
+        function handleSplitterFile(file) {
+            if (file.type !== 'application/pdf') {
+                alert('Please upload a PDF file.');
+                return;
+            }
+            
+            splitterFile = file;
+            const fileSize = (file.size / (1024 * 1024)).toFixed(2);
+            
+            splitterFileList.style.display = 'block';
+            splitOptions.style.display = 'block';
+            splitterFilesContainer.innerHTML = `
+                <div class="file-item">
+                    <div class="file-info">
+                        <i class="fas fa-file-pdf file-icon"></i>
+                        <div>
+                            <div class="file-name">${file.name}</div>
+                            <div class="file-size">${fileSize} MB</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+        
+        // Split PDF
+        splitBtn.addEventListener('click', () => {
+            if (!splitterFile) {
+                alert('Please upload a PDF file first.');
+                return;
+            }
+            
+            if (splitMethod === 'range' && !pageRangeInput.value.trim()) {
+                alert('Please enter page numbers or ranges to split.');
+                return;
+            }
+            
+            // Show progress bar
+            splitterProgressContainer.style.display = 'block';
+            splitterProgressBar.style.width = '0%';
+            
+            // Simulate splitting process
+            let progress = 0;
+            const interval = setInterval(() => {
+                progress += 5;
+                splitterProgressBar.style.width = `${progress}%`;
+                
+                if (progress >= 100) {
+                    clearInterval(interval);
+                    
+                    // Enable download button
+                    splitDownloadBtn.disabled = false;
+                    splitDownloadBtn.style.display = 'flex';
+                    
+                    // Hide progress bar
+                    setTimeout(() => {
+                        splitterProgressContainer.style.display = 'none';
+                    }, 1000);
+                }
+            }, 100);
+        });
+        
+        // Download split PDFs
+        splitDownloadBtn.addEventListener('click', () => {
+            if (!splitterFile) return;
+            
+            // Create a zip file with split PDFs (simulated)
+            const zip = new JSZip();
+            
+            // For demonstration, we'll create 3 sample split files
+            for (let i = 1; i <= 3; i++) {
+                zip.file(`page_${i}.pdf`, splitterFile);
+            }
+            
+            // Generate and download the zip file
+            zip.generateAsync({type: "blob"}).then(function(content) {
+                const url = URL.createObjectURL(content);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'split_pages.zip';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            });
+        });
+
+        // Utility function for drag and drop
+        function setupDragAndDrop(element, callback) {
+            element.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                element.style.borderColor = 'var(--primary-color)';
+                element.style.backgroundColor = 'rgba(138, 43, 226, 0.05)';
+            });
+            
+            element.addEventListener('dragleave', () => {
+                element.style.borderColor = '';
+                element.style.backgroundColor = '';
+            });
+            
+            element.addEventListener('drop', (e) => {
+                e.preventDefault();
+                element.style.borderColor = '';
+                element.style.backgroundColor = '';
+                
+                if (e.dataTransfer.files.length) {
+                    callback(e.dataTransfer.files);
+                }
+            });
+        }
+
+        // Mobile menu toggle
+        const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
+        const navCenter = document.querySelector('.nav-center');
+        
+        mobileMenuBtn.addEventListener('click', () => {
+            navCenter.classList.toggle('active');
+        });
+        
+        // Adjust navigation for mobile on resize
+        window.addEventListener('resize', () => {
+            if (window.innerWidth > 992) {
+                navCenter.classList.remove('active');
+            }
+        });
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+</body>
+</html>

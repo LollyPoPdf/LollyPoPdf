@@ -8,15 +8,16 @@
     <style>
         :root {
             --primary-color: #8a2be2;
-            --primary-light: #9d4edd;
-            --primary-dark: #6a1cb0;
+            --primary-light: #a855f7;
+            --primary-dark: #6a0dad;
             --white: #ffffff;
-            --light-bg: #f5f5f5;
+            --light-bg: #f8f9fa;
             --dark-bg: #121212;
             --dark-text: #e0e0e0;
             --dark-card: #1e1e1e;
-            --gray: #888;
+            --gray: #6c757d;
             --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
         }
 
         * {
@@ -29,7 +30,10 @@
         body {
             background-color: var(--light-bg);
             color: #333;
-            transition: background-color 0.3s, color 0.3s;
+            transition: var(--transition);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
         }
 
         body.dark-mode {
@@ -44,7 +48,7 @@
             position: sticky;
             top: 0;
             z-index: 100;
-            transition: background-color 0.3s;
+            transition: var(--transition);
         }
 
         body.dark-mode header {
@@ -68,8 +72,8 @@
         }
 
         .logo-circle {
-            width: 40px;
-            height: 40px;
+            width: 50px;
+            height: 50px;
             background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
             border-radius: 50%;
             display: flex;
@@ -77,19 +81,17 @@
             justify-content: center;
             color: white;
             font-weight: bold;
-            font-size: 18px;
+            font-size: 1.2rem;
             position: relative;
         }
 
         .logo-circle::after {
             content: '';
             position: absolute;
-            bottom: -5px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 20px;
-            height: 10px;
-            background-color: var(--primary-color);
+            width: 15px;
+            height: 30px;
+            background: var(--primary-color);
+            bottom: -15px;
             border-radius: 0 0 10px 10px;
         }
 
@@ -97,31 +99,47 @@
             font-size: 1.5rem;
             font-weight: 700;
             color: var(--primary-color);
+            transition: var(--transition);
         }
 
         body.dark-mode .logo-text {
             color: var(--primary-light);
         }
 
-        nav ul {
+        .nav-center {
             display: flex;
-            list-style: none;
             gap: 2rem;
         }
 
-        nav a {
+        .nav-link {
             text-decoration: none;
             color: #333;
             font-weight: 500;
-            transition: color 0.3s;
+            transition: var(--transition);
+            position: relative;
         }
 
-        body.dark-mode nav a {
+        body.dark-mode .nav-link {
             color: var(--dark-text);
         }
 
-        nav a:hover {
+        .nav-link:hover {
             color: var(--primary-color);
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -5px;
+            left: 0;
+            background-color: var(--primary-color);
+            transition: var(--transition);
+        }
+
+        .nav-link:hover::after {
+            width: 100%;
         }
 
         .header-right {
@@ -131,8 +149,12 @@
         }
 
         .email {
-            font-size: 0.9rem;
             color: var(--gray);
+            font-size: 0.9rem;
+        }
+
+        body.dark-mode .email {
+            color: #aaa;
         }
 
         .dark-mode-toggle {
@@ -140,38 +162,72 @@
             border: none;
             cursor: pointer;
             font-size: 1.2rem;
-            color: #333;
-            transition: color 0.3s;
+            color: var(--gray);
+            transition: var(--transition);
         }
 
         body.dark-mode .dark-mode-toggle {
             color: var(--dark-text);
         }
 
-        /* Main Content */
-        .container {
+        .dark-mode-toggle:hover {
+            color: var(--primary-color);
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--gray);
+            cursor: pointer;
+        }
+
+        /* Tool Container */
+        .tool-container {
             max-width: 1200px;
             margin: 2rem auto;
             padding: 0 1rem;
+            flex: 1;
         }
 
-        .tool-container {
+        .tool-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .tool-header h1 {
+            font-size: 2.5rem;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        body.dark-mode .tool-header h1 {
+            color: var(--primary-light);
+        }
+
+        .tool-header p {
+            color: var(--gray);
+            font-size: 1.1rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        body.dark-mode .tool-header p {
+            color: #aaa;
+        }
+
+        .compressor-box {
             background-color: var(--white);
             border-radius: 10px;
-            box-shadow: var(--shadow);
             padding: 2rem;
+            box-shadow: var(--shadow);
             margin-bottom: 2rem;
-            transition: background-color 0.3s;
+            transition: var(--transition);
         }
 
-        body.dark-mode .tool-container {
+        body.dark-mode .compressor-box {
             background-color: var(--dark-card);
-        }
-
-        .tool-title {
-            text-align: center;
-            margin-bottom: 1.5rem;
-            color: var(--primary-color);
         }
 
         .upload-area {
@@ -180,8 +236,12 @@
             padding: 3rem 2rem;
             text-align: center;
             cursor: pointer;
-            transition: border-color 0.3s;
+            transition: var(--transition);
             margin-bottom: 1.5rem;
+        }
+
+        body.dark-mode .upload-area {
+            border-color: #555;
         }
 
         .upload-area:hover {
@@ -194,44 +254,50 @@
             margin-bottom: 1rem;
         }
 
+        .upload-area h3 {
+            margin-bottom: 0.5rem;
+            color: #333;
+        }
+
+        body.dark-mode .upload-area h3 {
+            color: var(--dark-text);
+        }
+
         .upload-area p {
+            color: var(--gray);
             margin-bottom: 1rem;
         }
 
-        .upload-btn {
+        .browse-btn {
             background-color: var(--primary-color);
             color: white;
             border: none;
-            padding: 0.8rem 1.5rem;
+            padding: 0.7rem 1.5rem;
             border-radius: 5px;
             cursor: pointer;
-            font-weight: 600;
-            transition: background-color 0.3s;
+            font-weight: 500;
+            transition: var(--transition);
         }
 
-        .upload-btn:hover {
+        .browse-btn:hover {
             background-color: var(--primary-dark);
         }
 
-        .file-info {
+        #file-input {
             display: none;
-            margin-top: 1rem;
-            padding: 1rem;
-            background-color: #f0f0f0;
-            border-radius: 5px;
-        }
-
-        body.dark-mode .file-info {
-            background-color: #2a2a2a;
         }
 
         .compression-options {
             margin: 1.5rem 0;
         }
 
-        .option-title {
-            margin-bottom: 0.5rem;
-            font-weight: 600;
+        .compression-options h3 {
+            margin-bottom: 1rem;
+            color: #333;
+        }
+
+        body.dark-mode .compression-options h3 {
+            color: var(--dark-text);
         }
 
         .compression-levels {
@@ -240,41 +306,66 @@
             flex-wrap: wrap;
         }
 
-        .level-btn {
-            padding: 0.5rem 1rem;
-            border: 1px solid #ccc;
+        .level-option {
+            flex: 1;
+            min-width: 150px;
+            padding: 1rem;
+            border: 1px solid #ddd;
             border-radius: 5px;
-            background: white;
+            text-align: center;
             cursor: pointer;
-            transition: all 0.3s;
+            transition: var(--transition);
         }
 
-        body.dark-mode .level-btn {
-            background: #2a2a2a;
-            color: var(--dark-text);
-            border-color: #444;
+        body.dark-mode .level-option {
+            border-color: #555;
         }
 
-        .level-btn.active {
-            background-color: var(--primary-color);
-            color: white;
+        .level-option:hover {
             border-color: var(--primary-color);
+        }
+
+        .level-option.active {
+            border-color: var(--primary-color);
+            background-color: rgba(138, 43, 226, 0.1);
+        }
+
+        body.dark-mode .level-option.active {
+            background-color: rgba(138, 43, 226, 0.2);
+        }
+
+        .level-option h4 {
+            margin-bottom: 0.5rem;
+            color: #333;
+        }
+
+        body.dark-mode .level-option h4 {
+            color: var(--dark-text);
+        }
+
+        .level-option p {
+            font-size: 0.9rem;
+            color: var(--gray);
         }
 
         .action-buttons {
             display: flex;
             gap: 1rem;
-            justify-content: center;
-            margin-top: 2rem;
+            margin-top: 1.5rem;
         }
 
         .compress-btn, .download-btn {
-            padding: 0.8rem 1.5rem;
+            flex: 1;
+            padding: 1rem;
             border: none;
             border-radius: 5px;
             font-weight: 600;
             cursor: pointer;
-            transition: background-color 0.3s;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
         }
 
         .compress-btn {
@@ -296,15 +387,48 @@
             background-color: #218838;
         }
 
-        .progress-container {
+        .file-info {
             margin-top: 1.5rem;
+            padding: 1rem;
+            background-color: #f8f9fa;
+            border-radius: 5px;
+            display: none;
+        }
+
+        body.dark-mode .file-info {
+            background-color: #2a2a2a;
+        }
+
+        .file-info h4 {
+            margin-bottom: 0.5rem;
+            color: #333;
+        }
+
+        body.dark-mode .file-info h4 {
+            color: var(--dark-text);
+        }
+
+        .file-details {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .file-detail {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .progress-container {
+            margin-top: 1rem;
             display: none;
         }
 
         .progress-bar {
-            height: 10px;
-            background-color: #e0e0e0;
-            border-radius: 5px;
+            height: 8px;
+            background-color: #e9ecef;
+            border-radius: 4px;
             overflow: hidden;
         }
 
@@ -316,35 +440,52 @@
             height: 100%;
             background-color: var(--primary-color);
             width: 0%;
-            transition: width 0.3s;
+            transition: width 0.3s ease;
         }
 
         /* About Section */
         .about-section {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 2rem;
-            margin: 3rem 0;
+            max-width: 1200px;
+            margin: 3rem auto;
+            padding: 0 1rem;
         }
 
-        .about-left, .about-right {
+        .about-container {
+            display: flex;
+            gap: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .about-column {
             flex: 1;
             min-width: 300px;
         }
 
-        .about-title {
+        .about-column h2 {
             color: var(--primary-color);
             margin-bottom: 1rem;
+            font-size: 1.8rem;
         }
 
-        .features {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1.5rem;
-            margin-top: 2rem;
+        body.dark-mode .about-column h2 {
+            color: var(--primary-light);
         }
 
-        .feature {
+        .about-column p {
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+            color: #555;
+        }
+
+        body.dark-mode .about-column p {
+            color: #ccc;
+        }
+
+        .feature-list {
+            list-style: none;
+        }
+
+        .feature-item {
             display: flex;
             align-items: flex-start;
             gap: 1rem;
@@ -352,29 +493,43 @@
         }
 
         .feature-icon {
-            font-size: 2rem;
-            width: 50px;
-            text-align: center;
-        }
-
-        .feature-content h4 {
-            margin-bottom: 0.5rem;
+            font-size: 1.5rem;
             color: var(--primary-color);
+            margin-top: 0.2rem;
         }
 
-        .why-choose-list {
+        .feature-text h4 {
+            margin-bottom: 0.3rem;
+            color: #333;
+        }
+
+        body.dark-mode .feature-text h4 {
+            color: var(--dark-text);
+        }
+
+        .feature-text p {
+            margin: 0;
+            font-size: 0.9rem;
+            color: var(--gray);
+        }
+
+        .benefits-list {
             list-style: none;
-            margin-top: 1rem;
         }
 
-        .why-choose-list li {
+        .benefits-list li {
             margin-bottom: 0.8rem;
             display: flex;
             align-items: center;
             gap: 0.5rem;
+            color: #555;
         }
 
-        .why-choose-list li:before {
+        body.dark-mode .benefits-list li {
+            color: #ccc;
+        }
+
+        .benefits-list li::before {
             content: "✓";
             color: var(--primary-color);
             font-weight: bold;
@@ -383,9 +538,9 @@
         /* Footer */
         footer {
             background-color: var(--white);
-            padding: 3rem 5% 1rem;
-            margin-top: 3rem;
-            transition: background-color 0.3s;
+            padding: 3rem 1rem 1rem;
+            margin-top: auto;
+            transition: var(--transition);
         }
 
         body.dark-mode footer {
@@ -393,17 +548,17 @@
         }
 
         .footer-container {
-            max-width: 1400px;
+            max-width: 1200px;
             margin: 0 auto;
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            display: flex;
+            flex-wrap: wrap;
             gap: 2rem;
+            justify-content: space-between;
         }
 
-        .footer-col h3 {
-            color: var(--primary-color);
-            margin-bottom: 1rem;
-            font-size: 1.2rem;
+        .footer-column {
+            flex: 1;
+            min-width: 250px;
         }
 
         .footer-logo {
@@ -411,12 +566,11 @@
             align-items: center;
             gap: 10px;
             margin-bottom: 1rem;
-            text-decoration: none;
         }
 
         .footer-logo-circle {
-            width: 30px;
-            height: 30px;
+            width: 40px;
+            height: 40px;
             background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
             border-radius: 50%;
             display: flex;
@@ -424,20 +578,18 @@
             justify-content: center;
             color: white;
             font-weight: bold;
-            font-size: 14px;
+            font-size: 1rem;
             position: relative;
         }
 
         .footer-logo-circle::after {
             content: '';
             position: absolute;
-            bottom: -4px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 15px;
-            height: 7px;
-            background-color: var(--primary-color);
-            border-radius: 0 0 7px 7px;
+            width: 12px;
+            height: 24px;
+            background: var(--primary-color);
+            bottom: -12px;
+            border-radius: 0 0 8px 8px;
         }
 
         .footer-logo-text {
@@ -450,9 +602,10 @@
             color: var(--primary-light);
         }
 
-        .footer-col p {
+        .footer-description {
+            color: var(--gray);
             margin-bottom: 1.5rem;
-            line-height: 1.6;
+            line-height: 1.5;
         }
 
         .social-icons {
@@ -460,27 +613,38 @@
             gap: 1rem;
         }
 
-        .social-icons a {
+        .social-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background-color: #f1f1f1;
             display: flex;
             align-items: center;
             justify-content: center;
-            width: 36px;
-            height: 36px;
-            background-color: #f0f0f0;
-            border-radius: 50%;
-            color: #333;
-            transition: all 0.3s;
+            color: #555;
             text-decoration: none;
+            transition: var(--transition);
         }
 
-        body.dark-mode .social-icons a {
-            background-color: #2a2a2a;
-            color: var(--dark-text);
+        body.dark-mode .social-icon {
+            background-color: #333;
+            color: #ccc;
         }
 
-        .social-icons a:hover {
+        .social-icon:hover {
             background-color: var(--primary-color);
             color: white;
+            transform: translateY(-3px);
+        }
+
+        .footer-column h3 {
+            color: #333;
+            margin-bottom: 1.5rem;
+            font-size: 1.2rem;
+        }
+
+        body.dark-mode .footer-column h3 {
+            color: var(--dark-text);
         }
 
         .footer-links {
@@ -493,12 +657,8 @@
 
         .footer-links a {
             text-decoration: none;
-            color: #333;
-            transition: color 0.3s;
-        }
-
-        body.dark-mode .footer-links a {
-            color: var(--dark-text);
+            color: var(--gray);
+            transition: var(--transition);
         }
 
         .footer-links a:hover {
@@ -507,43 +667,85 @@
 
         .copyright {
             text-align: center;
-            margin-top: 3rem;
-            padding-top: 1rem;
+            padding-top: 2rem;
+            margin-top: 2rem;
             border-top: 1px solid #eee;
             color: var(--gray);
+            font-size: 0.9rem;
         }
 
         body.dark-mode .copyright {
-            border-top-color: #333;
+            border-top-color: #444;
         }
 
-        /* Mobile Responsiveness */
-        @media (max-width: 768px) {
-            .header-container {
+        /* Responsive Design */
+        @media (max-width: 992px) {
+            .nav-center {
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                width: 100%;
+                background-color: var(--white);
                 flex-direction: column;
-                gap: 1rem;
                 padding: 1rem;
+                box-shadow: var(--shadow);
             }
-
-            nav ul {
-                gap: 1rem;
+            
+            body.dark-mode .nav-center {
+                background-color: var(--dark-card);
             }
-
-            .header-right {
-                flex-direction: column;
-                gap: 0.5rem;
+            
+            .nav-center.active {
+                display: flex;
             }
-
-            .action-buttons {
-                flex-direction: column;
+            
+            .mobile-menu-btn {
+                display: block;
             }
+            
+            .header-right .email {
+                display: none;
+            }
+            
+            .tool-header h1 {
+                font-size: 2rem;
+            }
+        }
 
+        @media (max-width: 768px) {
             .compression-levels {
                 flex-direction: column;
             }
-
-            .about-section {
+            
+            .action-buttons {
                 flex-direction: column;
+            }
+            
+            .about-container {
+                flex-direction: column;
+            }
+            
+            .footer-container {
+                flex-direction: column;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .header-container {
+                padding: 1rem;
+            }
+            
+            .tool-container, .about-section {
+                padding: 0 0.5rem;
+            }
+            
+            .compressor-box {
+                padding: 1.5rem;
+            }
+            
+            .upload-area {
+                padding: 2rem 1rem;
             }
         }
     </style>
@@ -552,102 +754,135 @@
     <!-- Header -->
     <header>
         <div class="header-container">
-            <a href="index.html" class="logo">
+            <a href="https://lollypopdf.com" class="logo">
                 <div class="logo-circle">LPdf</div>
-                <div class="logo-text">LollyPoPdf</div>
+                <span class="logo-text">LollyPoPdf</span>
             </a>
-            <nav>
-                <ul>
-                    <li><a href="index.html">Home</a></li>
-                    <li><a href="about.html">About Us</a></li>
-                    <li><a href="tools.html">Tools</a></li>
-                    <li><a href="contact.html">Contact</a></li>
-                </ul>
+            
+            <nav class="nav-center">
+                <a href="https://lollypopdf.com" class="nav-link">Home</a>
+                <a href="https://lollypopdf.com/about" class="nav-link">About Us</a>
+                <a href="https://lollypopdf.com/tools" class="nav-link">Tools</a>
+                <a href="https://lollypopdf.com/contact" class="nav-link">Contact</a>
             </nav>
+            
             <div class="header-right">
-                <div class="email">lollypoppdf@gmail.com</div>
+                <span class="email">lollypoppdf@gmail.com</span>
                 <button class="dark-mode-toggle" id="darkModeToggle">
                     <i class="fas fa-moon"></i>
+                </button>
+                <button class="mobile-menu-btn">
+                    <i class="fas fa-bars"></i>
                 </button>
             </div>
         </div>
     </header>
 
-    <!-- Main Content -->
-    <div class="container">
-        <div class="tool-container">
-            <h1 class="tool-title">PDF Compressor</h1>
+    <!-- PDF Compressor Tool -->
+    <section class="tool-container">
+        <div class="tool-header">
+            <h1>PDF Compressor</h1>
+            <p>Reduce your PDF file size without compromising quality. Fast, secure, and completely free!</p>
+        </div>
+        
+        <div class="compressor-box">
             <div class="upload-area" id="uploadArea">
                 <i class="fas fa-file-pdf"></i>
-                <p>Drag & Drop your PDF file here</p>
+                <h3>Drag & Drop your PDF here</h3>
                 <p>or</p>
-                <button class="upload-btn">Choose File</button>
-                <input type="file" id="fileInput" accept=".pdf" style="display: none;">
-            </div>
-            <div class="file-info" id="fileInfo">
-                <p><strong>File Name:</strong> <span id="fileName"></span></p>
-                <p><strong>File Size:</strong> <span id="fileSize"></span></p>
+                <button class="browse-btn">Browse Files</button>
+                <input type="file" id="file-input" accept=".pdf">
             </div>
             
             <div class="compression-options">
-                <h3 class="option-title">Compression Level</h3>
+                <h3>Compression Level</h3>
                 <div class="compression-levels">
-                    <button class="level-btn active" data-level="low">Low (Faster)</button>
-                    <button class="level-btn" data-level="medium">Medium (Balanced)</button>
-                    <button class="level-btn" data-level="high">High (Smaller File)</button>
-                </div>
-            </div>
-            
-            <div class="progress-container" id="progressContainer">
-                <p>Compressing PDF...</p>
-                <div class="progress-bar">
-                    <div class="progress" id="progressBar"></div>
+                    <div class="level-option active" data-level="low">
+                        <h4>Low Compression</h4>
+                        <p>Best quality, smaller size reduction</p>
+                    </div>
+                    <div class="level-option" data-level="medium">
+                        <h4>Medium Compression</h4>
+                        <p>Good balance of quality and size</p>
+                    </div>
+                    <div class="level-option" data-level="high">
+                        <h4>High Compression</h4>
+                        <p>Maximum size reduction</p>
+                    </div>
                 </div>
             </div>
             
             <div class="action-buttons">
-                <button class="compress-btn" id="compressBtn">Compress PDF</button>
-                <button class="download-btn" id="downloadBtn">Download Compressed PDF</button>
+                <button class="compress-btn" id="compressBtn">
+                    <i class="fas fa-compress"></i> Compress PDF
+                </button>
+                <button class="download-btn" id="downloadBtn" disabled>
+                    <i class="fas fa-download"></i> Download Compressed PDF
+                </button>
             </div>
-        </div>
-
-        <!-- About Section -->
-        <div class="about-section">
-            <div class="about-left">
-                <h2 class="about-title">About LollyPoPdf</h2>
-                <h3>Your One-Stop Solution</h3>
-                <p>LollyPoPdf is a comprehensive platform offering 65+ professional online tools designed to simplify your daily tasks. Whether you're a content creator, marketer, developer, or business professional, we have the tools you need to boost productivity and achieve your goals.</p>
-                
-                <div class="features">
-                    <div class="feature">
-                        <div class="feature-icon">💸</div>
-                        <div class="feature-content">
-                            <h4>Free to Use</h4>
-                            <p>All tools are completely free with no hidden costs.</p>
-                        </div>
+            
+            <div class="file-info" id="fileInfo">
+                <h4>File Information</h4>
+                <div class="file-details">
+                    <div class="file-detail">
+                        <p><strong>Original Size:</strong> <span id="originalSize">-</span></p>
                     </div>
-                    <div class="feature">
-                        <div class="feature-icon">🚀</div>
-                        <div class="feature-content">
-                            <h4>No Registration</h4>
-                            <p>Start using tools immediately without signing up.</p>
-                        </div>
+                    <div class="file-detail">
+                        <p><strong>Compressed Size:</strong> <span id="compressedSize">-</span></p>
                     </div>
-                    <div class="feature">
-                        <div class="feature-icon">🔒</div>
-                        <div class="feature-content">
-                            <h4>Privacy Focused</h4>
-                            <p>Your data stays on your device, never uploaded to servers.</p>
-                        </div>
+                    <div class="file-detail">
+                        <p><strong>Reduction:</strong> <span id="reduction">-</span></p>
                     </div>
                 </div>
             </div>
             
-            <div class="about-right">
-                <h2 class="about-title">Why Choose Us?</h2>
+            <div class="progress-container" id="progressContainer">
+                <p>Compressing your PDF...</p>
+                <div class="progress-bar">
+                    <div class="progress" id="progressBar"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section class="about-section">
+        <div class="about-container">
+            <div class="about-column">
+                <h2>About LollyPoPdf</h2>
+                <p><strong>Your One-Stop Solution</strong></p>
+                <p>LollyPoPdf is a comprehensive platform offering 65+ professional online tools designed to simplify your daily tasks. Whether you're a content creator, marketer, developer, or business professional, we have the tools you need to boost productivity and achieve your goals.</p>
+                
+                <ul class="feature-list">
+                    <li class="feature-item">
+                        <div class="feature-icon">💸</div>
+                        <div class="feature-text">
+                            <h4>Free to Use</h4>
+                            <p>All tools are completely free with no hidden costs.</p>
+                        </div>
+                    </li>
+                    <li class="feature-item">
+                        <div class="feature-icon">🚀</div>
+                        <div class="feature-text">
+                            <h4>No Registration</h4>
+                            <p>Start using tools immediately without signing up.</p>
+                        </div>
+                    </li>
+                    <li class="feature-item">
+                        <div class="feature-icon">🔒</div>
+                        <div class="feature-text">
+                            <h4>Privacy Focused</h4>
+                            <p>Your data stays on your device, never uploaded to servers.</p>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+            
+            <div class="about-column">
+                <h2>Why Choose Us?</h2>
                 <p>Our platform is built with user experience in mind. We understand that professionals need reliable, fast, and efficient tools to get their work done.</p>
                 
-                <ul class="why-choose-list">
+                <ul class="benefits-list">
                     <li>65+ specialized tools for all your needs</li>
                     <li>Fast processing with no wait times</li>
                     <li>Clean, intuitive interface</li>
@@ -657,51 +892,52 @@
                 </ul>
             </div>
         </div>
-    </div>
+    </section>
 
     <!-- Footer -->
     <footer>
         <div class="footer-container">
-            <div class="footer-col">
-                <a href="index.html" class="footer-logo">
+            <div class="footer-column">
+                <div class="footer-logo">
                     <div class="footer-logo-circle">LPdf</div>
-                    <div class="footer-logo-text">LollyPoPdf</div>
-                </a>
-                <p>Your one-stop destination for 65+ online tools to simplify your daily tasks.</p>
+                    <span class="footer-logo-text">LollyPoPdf</span>
+                </div>
+                <p class="footer-description">Your one-stop destination for 65+ online tools to simplify your daily tasks.</p>
+                
                 <div class="social-icons">
-                    <a href="https://facebook.com" target="_blank"><i class="fab fa-facebook-f"></i></a>
-                    <a href="https://linkedin.com" target="_blank"><i class="fab fa-linkedin-in"></i></a>
-                    <a href="https://twitter.com" target="_blank"><i class="fab fa-twitter"></i></a>
-                    <a href="https://instagram.com" target="_blank"><i class="fab fa-instagram"></i></a>
-                    <a href="https://pinterest.com" target="_blank"><i class="fab fa-pinterest"></i></a>
-                    <a href="https://reddit.com" target="_blank"><i class="fab fa-reddit"></i></a>
-                    <a href="https://quora.com" target="_blank"><i class="fab fa-quora"></i></a>
+                    <a href="#" class="social-icon"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" class="social-icon"><i class="fab fa-linkedin-in"></i></a>
+                    <a href="#" class="social-icon"><i class="fab fa-twitter"></i></a>
+                    <a href="#" class="social-icon"><i class="fab fa-instagram"></i></a>
+                    <a href="#" class="social-icon"><i class="fab fa-pinterest"></i></a>
+                    <a href="#" class="social-icon"><i class="fab fa-reddit"></i></a>
+                    <a href="#" class="social-icon"><i class="fab fa-quora"></i></a>
                 </div>
             </div>
             
-            <div class="footer-col">
+            <div class="footer-column">
                 <h3>Popular Categories</h3>
-                <ul class="footer-tools.html">
-                    <li><a href="tools.html#pdf-tools">PDF Tools</a></li>
-                    <li><a href="tools.html#image-tools">Image Tools</a></li>
-                    <li><a href="tools.html#text-tools">Text Tools</a></li>
-                    <li><a href="tools.html#audio-video-tools">Audio/Video Tools</a></li>
-                    <li><a href="tools.html#web-tools">Web/Developer Tools</a></li>
-                    <li><a href="tools.html#calculator-tools">Calculator Tools</a></li>
-                    <li><a href="tools.html#utility-tools">Utility Tools</a></li>
-                    <li><a href="tools.html#color-tools">Color Tools</a></li>
+                <ul class="footer-links">
+                    <li><a href="https://lollypopdf.com/category/pdf-tools">PDF Tools</a></li>
+                    <li><a href="https://lollypopdf.com/category/image-tools">Image Tools</a></li>
+                    <li><a href="https://lollypopdf.com/category/text-tools">Text Tools</a></li>
+                    <li><a href="https://lollypopdf.com/category/audio-video-tools">Audio/Video Tools</a></li>
+                    <li><a href="https://lollypopdf.com/category/web-developer-tools">Web/Developer Tools</a></li>
+                    <li><a href="https://lollypopdf.com/category/calculator-tools">Calculator Tools</a></li>
+                    <li><a href="https://lollypopdf.com/category/utility-tools">Utility Tools</a></li>
+                    <li><a href="https://lollypopdf.com/category/color-tools">Color Tools</a></li>
                 </ul>
             </div>
             
-            <div class="footer-col">
+            <div class="footer-column">
                 <h3>Quick Links</h3>
                 <ul class="footer-links">
-                    <li><a href="index.html">Home</a></li>
-                    <li><a href="tools.html">All Tools</a></li>
-                    <li><a href="contact.html">Contact</a></li>
-                    <li><a href="privacy.html">Privacy Policy</a></li>
-                    <li><a href="disclaimer.html">Disclaimer</a></li>
-                    <li><a href="terms.html">Terms of Service</a></li>
+                    <li><a href="https://lollypopdf.com">Home</a></li>
+                    <li><a href="https://lollypopdf.com/tools">All Tools</a></li>
+                    <li><a href="https://lollypopdf.com/contact">Contact</a></li>
+                    <li><a href="https://lollypopdf.com/privacy-policy">Privacy Policy</a></li>
+                    <li><a href="https://lollypopdf.com/disclaimer">Disclaimer</a></li>
+                    <li><a href="https://lollypopdf.com/terms-of-service">Terms of Service</a></li>
                 </ul>
             </div>
         </div>
@@ -716,8 +952,9 @@
         const darkModeToggle = document.getElementById('darkModeToggle');
         const body = document.body;
         
-        // Check for saved dark mode preference
-        if (localStorage.getItem('darkMode') === 'enabled') {
+        // Check for saved theme preference or respect OS preference
+        if (localStorage.getItem('darkMode') === 'enabled' || 
+            (window.matchMedia('(prefers-color-scheme: dark)').matches && !localStorage.getItem('darkMode'))) {
             body.classList.add('dark-mode');
             darkModeToggle.innerHTML = '<i class="fas fa-sun"></i>';
         }
@@ -726,43 +963,44 @@
             body.classList.toggle('dark-mode');
             
             if (body.classList.contains('dark-mode')) {
-                localStorage.setItem('darkMode', 'enabled');
                 darkModeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+                localStorage.setItem('darkMode', 'enabled');
             } else {
-                localStorage.setItem('darkMode', 'disabled');
                 darkModeToggle.innerHTML = '<i class="fas fa-moon"></i>';
+                localStorage.setItem('darkMode', 'disabled');
             }
         });
-        
+
         // PDF Compression Functionality
         const uploadArea = document.getElementById('uploadArea');
-        const fileInput = document.getElementById('fileInput');
-        const fileInfo = document.getElementById('fileInfo');
-        const fileName = document.getElementById('fileName');
-        const fileSize = document.getElementById('fileSize');
-        const levelBtns = document.querySelectorAll('.level-btn');
+        const fileInput = document.getElementById('file-input');
         const compressBtn = document.getElementById('compressBtn');
         const downloadBtn = document.getElementById('downloadBtn');
+        const fileInfo = document.getElementById('fileInfo');
         const progressContainer = document.getElementById('progressContainer');
         const progressBar = document.getElementById('progressBar');
+        const originalSize = document.getElementById('originalSize');
+        const compressedSize = document.getElementById('compressedSize');
+        const reduction = document.getElementById('reduction');
         
-        let selectedFile = null;
-        let compressionLevel = 'low';
+        const levelOptions = document.querySelectorAll('.level-option');
+        let selectedLevel = 'low';
+        let uploadedFile = null;
         
-        // Upload area click event
+        // Set compression level
+        levelOptions.forEach(option => {
+            option.addEventListener('click', () => {
+                levelOptions.forEach(opt => opt.classList.remove('active'));
+                option.classList.add('active');
+                selectedLevel = option.getAttribute('data-level');
+            });
+        });
+        
+        // File upload handling
         uploadArea.addEventListener('click', () => {
             fileInput.click();
         });
         
-        // File input change event
-        fileInput.addEventListener('change', (e) => {
-            if (e.target.files.length > 0) {
-                selectedFile = e.target.files[0];
-                displayFileInfo(selectedFile);
-            }
-        });
-        
-        // Drag and drop functionality
         uploadArea.addEventListener('dragover', (e) => {
             e.preventDefault();
             uploadArea.style.borderColor = 'var(--primary-color)';
@@ -770,54 +1008,54 @@
         });
         
         uploadArea.addEventListener('dragleave', () => {
-            uploadArea.style.borderColor = '#ccc';
-            uploadArea.style.backgroundColor = 'transparent';
+            uploadArea.style.borderColor = '';
+            uploadArea.style.backgroundColor = '';
         });
         
         uploadArea.addEventListener('drop', (e) => {
             e.preventDefault();
-            uploadArea.style.borderColor = '#ccc';
-            uploadArea.style.backgroundColor = 'transparent';
+            uploadArea.style.borderColor = '';
+            uploadArea.style.backgroundColor = '';
             
-            if (e.dataTransfer.files.length > 0) {
-                selectedFile = e.dataTransfer.files[0];
-                if (selectedFile.type === 'application/pdf') {
-                    displayFileInfo(selectedFile);
-                } else {
-                    alert('Please upload a PDF file.');
-                }
+            if (e.dataTransfer.files.length) {
+                handleFile(e.dataTransfer.files[0]);
             }
         });
         
-        // Display file information
-        function displayFileInfo(file) {
-            fileName.textContent = file.name;
-            fileSize.textContent = formatFileSize(file.size);
-            fileInfo.style.display = 'block';
-        }
-        
-        // Format file size
-        function formatFileSize(bytes) {
-            if (bytes === 0) return '0 Bytes';
-            const k = 1024;
-            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-            const i = Math.floor(Math.log(bytes) / Math.log(k));
-            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
-        }
-        
-        // Compression level selection
-        levelBtns.forEach(btn => {
-            btn.addEventListener('click', () => {
-                levelBtns.forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-                compressionLevel = btn.getAttribute('data-level');
-            });
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length) {
+                handleFile(e.target.files[0]);
+            }
         });
+        
+        function handleFile(file) {
+            if (file.type !== 'application/pdf') {
+                alert('Please upload a PDF file.');
+                return;
+            }
+            
+            uploadedFile = file;
+            const fileSize = (file.size / (1024 * 1024)).toFixed(2);
+            originalSize.textContent = `${fileSize} MB`;
+            
+            fileInfo.style.display = 'block';
+            compressedSize.textContent = '-';
+            reduction.textContent = '-';
+            downloadBtn.style.display = 'none';
+            
+            // Update upload area text
+            uploadArea.innerHTML = `
+                <i class="fas fa-file-pdf"></i>
+                <h3>${file.name}</h3>
+                <p>Size: ${fileSize} MB</p>
+                <button class="browse-btn">Change File</button>
+            `;
+        }
         
         // Compress PDF
         compressBtn.addEventListener('click', () => {
-            if (!selectedFile) {
-                alert('Please select a PDF file first.');
+            if (!uploadedFile) {
+                alert('Please upload a PDF file first.');
                 return;
             }
             
@@ -829,65 +1067,75 @@
             let progress = 0;
             const interval = setInterval(() => {
                 progress += 5;
-                progressBar.style.width = progress + '%';
+                progressBar.style.width = `${progress}%`;
                 
                 if (progress >= 100) {
                     clearInterval(interval);
-                    // Show download button
-                    downloadBtn.style.display = 'block';
                     
-                    // Update file size with compressed size
-                    const originalSize = selectedFile.size;
-                    let compressedSize;
+                    // Simulate compression result
+                    const originalSizeMB = parseFloat(originalSize.textContent);
+                    let compressedSizeMB;
                     
-                    switch(compressionLevel) {
+                    switch(selectedLevel) {
                         case 'low':
-                            compressedSize = originalSize * 0.8; // 20% reduction
+                            compressedSizeMB = originalSizeMB * 0.8; // 20% reduction
                             break;
                         case 'medium':
-                            compressedSize = originalSize * 0.6; // 40% reduction
+                            compressedSizeMB = originalSizeMB * 0.6; // 40% reduction
                             break;
                         case 'high':
-                            compressedSize = originalSize * 0.4; // 60% reduction
+                            compressedSizeMB = originalSizeMB * 0.4; // 60% reduction
                             break;
                     }
                     
-                    fileSize.textContent = formatFileSize(compressedSize) + ' (compressed)';
+                    const reductionPercent = ((originalSizeMB - compressedSizeMB) / originalSizeMB * 100).toFixed(1);
+                    
+                    compressedSize.textContent = `${compressedSizeMB.toFixed(2)} MB`;
+                    reduction.textContent = `${reductionPercent}%`;
+                    
+                    // Enable download button
+                    downloadBtn.disabled = false;
+                    downloadBtn.style.display = 'flex';
+                    
+                    // Hide progress bar
+                    setTimeout(() => {
+                        progressContainer.style.display = 'none';
+                    }, 1000);
                 }
             }, 100);
         });
         
         // Download compressed PDF
         downloadBtn.addEventListener('click', () => {
-            if (!selectedFile) return;
+            if (!uploadedFile) return;
             
-            // In a real implementation, this would download the actual compressed file
-            // For this demo, we'll create a download link for the original file
-            const url = URL.createObjectURL(selectedFile);
+            // Create a blob URL for download (simulated)
+            const blob = new Blob([uploadedFile], { type: 'application/pdf' });
+            const url = URL.createObjectURL(blob);
+            
+            // Create download link
             const a = document.createElement('a');
             a.href = url;
-            a.download = 'compressed_' + selectedFile.name;
+            a.download = `compressed_${uploadedFile.name}`;
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
             URL.revokeObjectURL(url);
         });
-
-        // Handle navigation for all links
-        document.querySelectorAll('a').forEach(link => {
-            link.addEventListener('click', function(e) {
-                // If it's an external link, let it open normally
-                if (this.hostname !== window.location.hostname && !this.getAttribute('target')) {
-                    return;
-                }
-                
-                // For internal links, prevent default and show a message
-                e.preventDefault();
-                const href = this.getAttribute('href');
-                if (href && href !== '#') {
-                    alert(`This link would navigate to: ${href}\n\nIn a real website, this would redirect to the appropriate page.`);
-                }
-            });
+        
+        // Mobile menu toggle
+        const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
+        const navCenter = document.querySelector('.nav-center');
+        
+        mobileMenuBtn.addEventListener('click', () => {
+            navCenter.classList.toggle('active');
+        });
+        
+        // Adjust navigation for mobile on resize
+        window.addEventListener('resize', () => {
+            if (window.innerWidth > 992) {
+                navCenter.classList.remove('active');
+            }
         });
     </script>
 </body>

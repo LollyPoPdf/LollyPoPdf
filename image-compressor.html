@@ -1,0 +1,1067 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Compressor | LollyPoPdf</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #8a2be2;
+            --primary-light: #a855f7;
+            --primary-dark: #6a0dad;
+            --text-color: #333;
+            --bg-color: #fff;
+            --card-bg: #f9f9f9;
+            --border-color: #e0e0e0;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+
+        .dark-mode {
+            --text-color: #f0f0f0;
+            --bg-color: #1a1a1a;
+            --card-bg: #2d2d2d;
+            --border-color: #444;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            transition: var(--transition);
+            line-height: 1.6;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header Styles */
+        header {
+            background-color: var(--bg-color);
+            box-shadow: var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            padding: 10px 0;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo-circle {
+            width: 45px;
+            height: 45px;
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 18px;
+            position: relative;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        .logo-circle::after {
+            content: "";
+            position: absolute;
+            top: 45px;
+            left: 20px;
+            width: 5px;
+            height: 15px;
+            background: var(--primary-dark);
+            border-radius: 0 0 3px 3px;
+        }
+
+        .logo-text {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 30px;
+        }
+
+        nav li {
+            position: relative;
+        }
+
+        nav a {
+            font-weight: 500;
+            transition: var(--transition);
+            padding: 5px 0;
+            position: relative;
+        }
+
+        /* Hover line animation */
+        nav a::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: 0;
+            left: 0;
+            background-color: var(--primary-color);
+            transition: width 0.3s ease;
+        }
+
+        nav a:hover::after {
+            width: 100%;
+        }
+
+        nav a:hover {
+            color: var(--primary-color);
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .email {
+            font-size: 14px;
+        }
+
+        .theme-toggle {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 20px;
+            color: var(--text-color);
+            transition: var(--transition);
+        }
+
+        .theme-toggle:hover {
+            color: var(--primary-color);
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 24px;
+            color: var(--text-color);
+            cursor: pointer;
+        }
+
+        /* Hero Section */
+        .hero {
+            padding: 60px 0;
+            text-align: center;
+            background: linear-gradient(135deg, #f5f0ff, #e6d9ff);
+        }
+
+        .dark-mode .hero {
+            background: linear-gradient(135deg, #2a1a4a, #3d2a6d);
+        }
+
+        .hero h1 {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            color: #000;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            max-width: 700px;
+            margin: 0 auto 30px;
+            color: var(--text-color);
+        }
+
+        /* How to Use Section */
+        .how-to-use {
+            padding: 60px 0;
+            background-color: var(--bg-color);
+        }
+
+        .how-to-use h2 {
+            text-align: center;
+            margin-bottom: 40px;
+            color: var(--primary-color);
+            font-size: 2rem;
+        }
+
+        .steps-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+        }
+
+        .step {
+            background-color: var(--card-bg);
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+        }
+
+        .step-number {
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            background-color: var(--primary-color);
+            color: white;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 40px;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        .step h3 {
+            margin-bottom: 15px;
+            color: var(--primary-color);
+        }
+
+        /* Converter Tool */
+        .converter-section {
+            padding: 60px 0;
+            background: linear-gradient(135deg, #f5f0ff, #e6d9ff);
+        }
+
+        .dark-mode .converter-section {
+            background: linear-gradient(135deg, #2a1a4a, #3d2a6d);
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 40px;
+            color: var(--primary-color);
+            font-size: 2rem;
+        }
+
+        .converter-card {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            padding: 30px;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .upload-area {
+            border: 2px dashed var(--border-color);
+            border-radius: 8px;
+            padding: 40px 20px;
+            text-align: center;
+            margin-bottom: 30px;
+            transition: var(--transition);
+            cursor: pointer;
+        }
+
+        .upload-area:hover {
+            border-color: var(--primary-color);
+        }
+
+        .upload-area i {
+            font-size: 48px;
+            color: var(--primary-color);
+            margin-bottom: 15px;
+        }
+
+        .upload-area p {
+            margin-bottom: 15px;
+        }
+
+        .btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: var(--transition);
+        }
+
+        .btn:hover {
+            background-color: var(--primary-dark);
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            border: 1px solid var(--primary-color);
+            color: var(--primary-color);
+        }
+
+        .btn-outline:hover {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .preview-section {
+            display: none;
+            margin-top: 30px;
+        }
+
+        .preview-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .preview-box {
+            flex: 1;
+            min-width: 300px;
+        }
+
+        .preview-box h3 {
+            margin-bottom: 15px;
+            color: var(--primary-color);
+        }
+
+        .image-preview {
+            width: 100%;
+            max-height: 300px;
+            object-fit: contain;
+            border-radius: 8px;
+            background-color: var(--bg-color);
+            border: 1px solid var(--border-color);
+        }
+
+        .file-info {
+            margin-top: 10px;
+            font-size: 14px;
+            color: var(--text-color);
+        }
+
+        .compression-level {
+            margin-bottom: 20px;
+        }
+
+        .compression-level label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 500;
+        }
+
+        .compression-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .compression-btn {
+            flex: 1;
+            padding: 10px;
+            text-align: center;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .compression-btn.active {
+            background-color: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .action-buttons .btn {
+            flex: 1;
+        }
+
+        .progress-container {
+            margin-top: 20px;
+            display: none;
+        }
+
+        .progress-bar {
+            height: 8px;
+            background-color: var(--border-color);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress {
+            height: 100%;
+            background-color: var(--primary-color);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .progress-text {
+            text-align: center;
+            margin-top: 5px;
+            font-size: 14px;
+        }
+
+        /* About Sections */
+        .about-sections {
+            padding: 60px 0;
+            background: linear-gradient(135deg, #f5f0ff, #e6d9ff);
+        }
+
+        .dark-mode .about-sections {
+            background: linear-gradient(135deg, #2a1a4a, #3d2a6d);
+        }
+
+        .about-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+        }
+
+        .about-section {
+            padding: 30px;
+            border-radius: 12px;
+            background: transparent;
+            color: #000;
+        }
+
+        .about-section h2 {
+            margin-bottom: 20px;
+            color: #000;
+        }
+
+        .feature-list {
+            list-style: none;
+        }
+
+        .feature-list li {
+            margin-bottom: 15px;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+
+        .feature-list .emoji-icon {
+            font-size: 20px;
+            margin-top: 2px;
+        }
+
+        .feature-list .check-icon {
+            color: #000;
+            font-size: 20px;
+            margin-top: 2px;
+        }
+
+        /* Footer */
+        footer {
+            background-color: #1a1a1a;
+            color: #f0f0f0;
+            padding: 60px 0 0;
+        }
+
+        .footer-content {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+
+        .footer-column {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .footer-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .footer-logo-circle {
+            width: 45px;
+            height: 45px;
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 18px;
+            position: relative;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        .footer-logo-circle::after {
+            content: "";
+            position: absolute;
+            top: 45px;
+            left: 20px;
+            width: 5px;
+            height: 15px;
+            background: var(--primary-dark);
+            border-radius: 0 0 3px 3px;
+        }
+
+        .footer-logo-text {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+
+        .social-icons {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .social-icons a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            background-color: var(--primary-color);
+            color: white;
+            border-radius: 50%;
+            transition: var(--transition);
+        }
+
+        .social-icons a:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-3px);
+        }
+
+        .footer-column h3 {
+            margin-bottom: 20px;
+            color: var(--primary-light);
+        }
+
+        .footer-links {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 10px;
+        }
+
+        .footer-links a {
+            transition: var(--transition);
+        }
+
+        .footer-links a:hover {
+            color: var(--primary-light);
+        }
+
+        .copyright {
+            text-align: center;
+            padding: 20px 0;
+            border-top: 1px solid #444;
+            font-size: 14px;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            nav {
+                display: none;
+                position: absolute;
+                top: 70px;
+                left: 0;
+                width: 100%;
+                background-color: var(--bg-color);
+                box-shadow: var(--shadow);
+                padding: 20px;
+            }
+
+            nav.active {
+                display: block;
+            }
+
+            nav ul {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .mobile-menu-btn {
+                display: block;
+            }
+
+            .header-right .email {
+                display: none;
+            }
+
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .steps-container {
+                grid-template-columns: 1fr;
+            }
+
+            .preview-container {
+                flex-direction: column;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+            }
+
+            .about-container {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <a href="https://lollypopdf.com#home" class="logo">
+                    <div class="logo-circle">LPdf</div>
+                    <div class="logo-text">LollyPoPdf</div>
+                </a>
+                
+                <button class="mobile-menu-btn">
+                    <i class="fas fa-bars"></i>
+                </button>
+                
+                <nav>
+                    <ul>
+                        <li><a href="https://lollypopdf.com#home">Home</a></li>
+                        <li><a href="https://lollypopdf.com#about">About Us</a></li>
+                        <li><a href="https://lollypopdf.com#tools">Tools</a></li>
+                        <li><a href="https://lollypopdf.com#contact">Contact</a></li>
+                    </ul>
+                </nav>
+                
+                <div class="header-right">
+                    <div class="email">lollypoppdf@gmail.com</div>
+                    <button class="theme-toggle">
+                        <i class="fas fa-moon"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <h1>Free Image Compressor Tool</h1>
+            <p>Reduce image file sizes without losing quality with our easy-to-use tool. No registration required, 100% free!</p>
+        </div>
+    </section>
+
+    <!-- How to Use Section -->
+    <section class="how-to-use">
+        <div class="container">
+            <h2>How to Compress Your Images</h2>
+            <div class="steps-container">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <h3>Upload Your Image</h3>
+                    <p>Drag and drop your image file or click to browse. We support JPG, PNG, GIF, and WEBP formats.</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <h3>Choose Compression Level</h3>
+                    <p>Select from Low, Medium, or High compression based on your needs. Preview the results before downloading.</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <h3>Preview & Download</h3>
+                    <p>Compare the original and compressed images. Download the optimized version with reduced file size.</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">4</div>
+                    <h3>Use Anywhere</h3>
+                    <p>Use your compressed images on websites, social media, or email without worrying about large file sizes.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Compressor Tool -->
+    <section class="converter-section">
+        <div class="container">
+            <h2 class="section-title">Image Compression Tool</h2>
+            <div class="converter-card">
+                <div class="upload-area" id="uploadArea">
+                    <i class="fas fa-cloud-upload-alt"></i>
+                    <h3>Drag & Drop your image here</h3>
+                    <p>or</p>
+                    <button class="btn" id="browseBtn">Browse Files</button>
+                    <input type="file" id="fileInput" accept="image/*" style="display: none;">
+                </div>
+                
+                <div class="preview-section" id="previewSection">
+                    <div class="preview-container">
+                        <div class="preview-box">
+                            <h3>Original Image</h3>
+                            <img id="originalPreview" class="image-preview" alt="Original Image">
+                            <div class="file-info" id="originalInfo"></div>
+                        </div>
+                        <div class="preview-box">
+                            <h3>Compressed Image</h3>
+                            <img id="compressedPreview" class="image-preview" alt="Compressed Image">
+                            <div class="file-info" id="compressedInfo"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="compression-level">
+                        <label>Compression Level:</label>
+                        <div class="compression-buttons">
+                            <div class="compression-btn active" data-level="low">Low (Best Quality)</div>
+                            <div class="compression-btn" data-level="medium">Medium (Balanced)</div>
+                            <div class="compression-btn" data-level="high">High (Smallest Size)</div>
+                        </div>
+                    </div>
+                    
+                    <div class="progress-container" id="progressContainer">
+                        <div class="progress-bar">
+                            <div class="progress" id="progressBar"></div>
+                        </div>
+                        <div class="progress-text" id="progressText">Compressing...</div>
+                    </div>
+                    
+                    <div class="action-buttons">
+                        <button class="btn" id="compressBtn">Compress Image</button>
+                        <button class="btn btn-outline" id="downloadBtn" disabled>Download</button>
+                        <button class="btn btn-outline" id="resetBtn">Reset</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Sections -->
+    <section class="about-sections">
+        <div class="container">
+            <div class="about-container">
+                <div class="about-section">
+                    <h2>About LollyPoPdf</h2>
+                    <p><strong>Your One-Stop Solution</strong></p>
+                    <p>LollyPoPdf is a comprehensive platform offering 65+ professional online tools designed to simplify your daily tasks. Whether you're a content creator, marketer, developer, or business professional, we have the tools you need to boost productivity and achieve your goals.</p>
+                    
+                    <ul class="feature-list">
+                        <li>
+                            <span class="emoji-icon">💸</span>
+                            <div>
+                                <strong>Free to Use</strong>
+                                <p>All tools are completely free with no hidden costs.</p>
+                            </div>
+                        </li>
+                        <li>
+                            <span class="emoji-icon">🚀</span>
+                            <div>
+                                <strong>No Registration</strong>
+                                <p>Start using tools immediately without signing up.</p>
+                            </div>
+                        </li>
+                        <li>
+                            <span class="emoji-icon">🔒</span>
+                            <div>
+                                <strong>Privacy Focused</strong>
+                                <p>Your data stays on your device, never uploaded to servers.</p>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+                
+                <div class="about-section">
+                    <h2>Why Choose Us?</h2>
+                    <p>Our platform is built with user experience in mind. We understand that professionals need reliable, fast, and efficient tools to get their work done.</p>
+                    
+                    <ul class="feature-list">
+                        <li><span class="check-icon">✓</span> 65+ specialized tools for all your needs</li>
+                        <li><span class="check-icon">✓</span> Fast processing with no wait times</li>
+                        <li><span class="check-icon">✓</span> Clean, intuitive interface</li>
+                        <li><span class="check-icon">✓</span> Regular updates with new features</li>
+                        <li><span class="check-icon">✓</span> Works on all devices and browsers</li>
+                        <li><span class="check-icon">✓</span> No watermarks or limitations</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-column">
+                    <a href="https://lollypopdf.com" class="footer-logo">
+                        <div class="footer-logo-circle">LPdf</div>
+                        <div class="footer-logo-text">LollyPoPdf</div>
+                    </a>
+                    <p>Your one-stop destination for 65+ online tools to simplify your daily tasks.</p>
+                    <div class="social-icons">
+                        <a href="https://facebook.com/lollypopdf" target="_blank"><i class="fab fa-facebook-f"></i></a>
+                        <a href="https://linkedin.com/company/lollypopdf" target="_blank"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="https://twitter.com/lollypopdf" target="_blank"><i class="fab fa-twitter"></i></a>
+                        <a href="https://instagram.com/lollypopdf" target="_blank"><i class="fab fa-instagram"></i></a>
+                        <a href="https://pinterest.com/lollypopdf" target="_blank"><i class="fab fa-pinterest"></i></a>
+                        <a href="https://reddit.com/user/lollypopdf" target="_blank"><i class="fab fa-reddit"></i></a>
+                        <a href="https://quora.com/profile/lollypopdf" target="_blank"><i class="fab fa-quora"></i></a>
+                    </div>
+                </div>
+                
+                <div class="footer-column">
+                    <h3>Popular Categories</h3>
+                    <ul class="footer-links">
+                        <li><a href="https://lollypopdf.com#pdf-tools">PDF Tools</a></li>
+                        <li><a href="https://lollypopdf.com#image-tools">Image Tools</a></li>
+                        <li><a href="https://lollypopdf.com#text-tools">Text Tools</a></li>
+                        <li><a href="https://lollypopdf.com#audio-video-tools">Audio/Video Tools</a></li>
+                        <li><a href="https://lollypopdf.com#web-developer-tools">Web/Developer Tools</a></li>
+                        <li><a href="https://lollypopdf.com#calculator-tools">Calculator Tools</a></li>
+                        <li><a href="https://lollypopdf.com#utility-tools">Utility Tools</a></li>
+                        <li><a href="https://lollypopdf.com#color-tools">Color Tools</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-column">
+                    <h3>Quick Links</h3>
+                    <ul class="footer-links">
+                        <li><a href="https://lollypopdf.com#home">Home</a></li>
+                        <li><a href="https://lollypopdf.com#all-tools">All Tools</a></li>
+                        <li><a href="https://lollypopdf.com#contact">Contact</a></li>
+                        <li><a href="https://lollypopdf.com#privacy-policy">Privacy Policy</a></li>
+                        <li><a href="https://lollypopdf.com#disclaimer">Disclaimer</a></li>
+                        <li><a href="https://lollypopdf.com#terms-of-service">Terms of Service</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="copyright">
+                <p>&copy; 2025 LollyPoPDF. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // DOM Elements
+        const uploadArea = document.getElementById('uploadArea');
+        const fileInput = document.getElementById('fileInput');
+        const browseBtn = document.getElementById('browseBtn');
+        const previewSection = document.getElementById('previewSection');
+        const originalPreview = document.getElementById('originalPreview');
+        const compressedPreview = document.getElementById('compressedPreview');
+        const originalInfo = document.getElementById('originalInfo');
+        const compressedInfo = document.getElementById('compressedInfo');
+        const compressionButtons = document.querySelectorAll('.compression-btn');
+        const compressBtn = document.getElementById('compressBtn');
+        const downloadBtn = document.getElementById('downloadBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        const progressContainer = document.getElementById('progressContainer');
+        const progressBar = document.getElementById('progressBar');
+        const progressText = document.getElementById('progressText');
+        const themeToggle = document.querySelector('.theme-toggle');
+        const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
+        const nav = document.querySelector('nav');
+
+        // Variables
+        let originalFile = null;
+        let compressedFile = null;
+        let currentCompressionLevel = 'low';
+
+        // Event Listeners
+        browseBtn.addEventListener('click', () => fileInput.click());
+        fileInput.addEventListener('change', handleFileSelect);
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.style.borderColor = 'var(--primary-color)';
+            uploadArea.style.backgroundColor = 'rgba(138, 43, 226, 0.05)';
+        });
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.style.borderColor = 'var(--border-color)';
+            uploadArea.style.backgroundColor = 'transparent';
+        });
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.style.borderColor = 'var(--border-color)';
+            uploadArea.style.backgroundColor = 'transparent';
+            
+            if (e.dataTransfer.files.length) {
+                handleFile(e.dataTransfer.files[0]);
+            }
+        });
+        
+        compressionButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                compressionButtons.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                currentCompressionLevel = btn.dataset.level;
+            });
+        });
+        
+        compressBtn.addEventListener('click', compressImage);
+        downloadBtn.addEventListener('click', downloadImage);
+        resetBtn.addEventListener('click', resetCompressor);
+        themeToggle.addEventListener('click', toggleTheme);
+        mobileMenuBtn.addEventListener('click', toggleMobileMenu);
+
+        // Functions
+        function handleFileSelect(e) {
+            if (e.target.files.length) {
+                handleFile(e.target.files[0]);
+            }
+        }
+
+        function handleFile(file) {
+            if (!file.type.match('image.*')) {
+                alert('Please select an image file (JPG, PNG, GIF, or WEBP).');
+                return;
+            }
+            
+            originalFile = file;
+            const reader = new FileReader();
+            
+            reader.onload = function(e) {
+                originalPreview.src = e.target.result;
+                originalInfo.textContent = `Name: ${file.name} | Size: ${formatFileSize(file.size)}`;
+                previewSection.style.display = 'block';
+                downloadBtn.disabled = true;
+            };
+            
+            reader.readAsDataURL(file);
+        }
+
+        function compressImage() {
+            if (!originalFile) return;
+            
+            // Show progress
+            progressContainer.style.display = 'block';
+            progressBar.style.width = '0%';
+            progressText.textContent = 'Compressing...';
+            compressBtn.disabled = true;
+            
+            // Simulate compression process
+            let progress = 0;
+            const interval = setInterval(() => {
+                progress += 5;
+                progressBar.style.width = `${progress}%`;
+                
+                if (progress >= 100) {
+                    clearInterval(interval);
+                    progressText.textContent = 'Compression Complete!';
+                    
+                    // Create compressed image
+                    const canvas = document.createElement('canvas');
+                    const ctx = canvas.getContext('2d');
+                    const img = new Image();
+                    
+                    img.onload = function() {
+                        canvas.width = img.width;
+                        canvas.height = img.height;
+                        ctx.drawImage(img, 0, 0);
+                        
+                        // Apply compression based on level
+                        let quality = 0.9; // High quality for low compression
+                        if (currentCompressionLevel === 'medium') quality = 0.7;
+                        if (currentCompressionLevel === 'high') quality = 0.5;
+                        
+                        const dataURL = canvas.toDataURL('image/jpeg', quality);
+                        compressedPreview.src = dataURL;
+                        
+                        // Calculate file size (approximation)
+                        const base64 = dataURL.split(',')[1];
+                        const binary = atob(base64);
+                        const size = binary.length;
+                        
+                        const originalSize = originalFile.size;
+                        const savings = ((originalSize - size) / originalSize * 100).toFixed(1);
+                        
+                        compressedInfo.textContent = `Size: ${formatFileSize(size)} | Savings: ${savings}%`;
+                        downloadBtn.disabled = false;
+                        compressBtn.disabled = false;
+                        
+                        // Store compressed data for download
+                        compressedFile = {
+                            dataURL: dataURL,
+                            name: originalFile.name.replace(/\.[^/.]+$/, "") + '-compressed.jpg'
+                        };
+                    };
+                    
+                    img.src = originalPreview.src;
+                }
+            }, 100);
+        }
+
+        function downloadImage() {
+            if (!compressedFile) return;
+            
+            const link = document.createElement('a');
+            link.href = compressedFile.dataURL;
+            link.download = compressedFile.name;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        function resetCompressor() {
+            fileInput.value = '';
+            originalFile = null;
+            compressedFile = null;
+            previewSection.style.display = 'none';
+            progressContainer.style.display = 'none';
+            downloadBtn.disabled = true;
+            compressBtn.disabled = false;
+        }
+
+        function formatFileSize(bytes) {
+            if (bytes < 1024) return bytes + ' bytes';
+            else if (bytes < 1048576) return (bytes / 1024).toFixed(2) + ' KB';
+            else return (bytes / 1048576).toFixed(2) + ' MB';
+        }
+
+        function toggleTheme() {
+            document.body.classList.toggle('dark-mode');
+            const icon = themeToggle.querySelector('i');
+            if (document.body.classList.contains('dark-mode')) {
+                icon.classList.remove('fa-moon');
+                icon.classList.add('fa-sun');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                icon.classList.remove('fa-sun');
+                icon.classList.add('fa-moon');
+                localStorage.setItem('theme', 'light');
+            }
+        }
+
+        function toggleMobileMenu() {
+            nav.classList.toggle('active');
+        }
+
+        // Initialize theme from localStorage
+        if (localStorage.getItem('theme') === 'dark') {
+            document.body.classList.add('dark-mode');
+            const icon = themeToggle.querySelector('i');
+            icon.classList.remove('fa-moon');
+            icon.classList.add('fa-sun');
+        }
+    </script>
+</body>
+</html>

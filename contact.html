@@ -1,0 +1,1695 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Us - LollyPoPdf</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #8a2be2;
+            --primary-light: #9d4edd;
+            --primary-dark: #6a1cb0;
+            --text-color: #333;
+            --bg-color: #fff;
+            --card-bg: #f8f9fa;
+            --border-color: #e0e0e0;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+
+        .dark-mode {
+            --text-color: #f0f0f0;
+            --bg-color: #121212;
+            --card-bg: #1e1e1e;
+            --border-color: #333;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            transition: var(--transition);
+            line-height: 1.6;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header Styles */
+        header {
+            background-color: var(--bg-color);
+            box-shadow: var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo-circle {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 14px;
+            position: relative;
+        }
+
+        .logo-circle::after {
+            content: '';
+            position: absolute;
+            bottom: -18px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 6px;
+            height: 18px;
+            background-color: var(--primary-color);
+            border-radius: 0 0 3px 3px;
+        }
+
+        .logo-text {
+            font-weight: bold;
+            font-size: 20px;
+            color: var(--primary-color);
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 30px;
+        }
+
+        .nav-links a {
+            position: relative;
+            padding: 5px 0;
+            transition: var(--transition);
+        }
+
+        .nav-links a:hover {
+            color: var(--primary-color);
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: var(--primary-color);
+            transition: var(--transition);
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .email-link {
+            font-size: 14px;
+            transition: var(--transition);
+        }
+
+        .email-link:hover {
+            color: var(--primary-color);
+        }
+
+        .theme-toggle {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 18px;
+            color: var(--text-color);
+            transition: var(--transition);
+        }
+
+        .theme-toggle:hover {
+            color: var(--primary-color);
+            transform: rotate(15deg);
+        }
+
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+            gap: 4px;
+        }
+
+        .hamburger span {
+            width: 25px;
+            height: 3px;
+            background-color: var(--text-color);
+            transition: var(--transition);
+        }
+
+        /* Contact Section */
+        .contact-section {
+            padding: 80px 0;
+            background-color: var(--bg-color);
+        }
+
+        .contact-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 50px;
+            align-items: start;
+        }
+
+        .contact-info {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+            color: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .contact-info h2 {
+            font-size: 28px;
+            margin-bottom: 20px;
+            color: white;
+        }
+
+        .contact-info p {
+            margin-bottom: 30px;
+            font-size: 16px;
+            line-height: 1.7;
+        }
+
+        .support-badge {
+            display: inline-block;
+            background-color: rgba(255, 255, 255, 0.2);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+
+        .contact-form {
+            background-color: var(--card-bg);
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .form-title {
+            font-size: 28px;
+            margin-bottom: 30px;
+            color: var(--primary-color);
+            font-weight: 700;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--text-color);
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-size: 16px;
+            transition: var(--transition);
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(138, 43, 226, 0.2);
+        }
+
+        textarea {
+            min-height: 150px;
+            resize: vertical;
+        }
+
+        .submit-btn {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+            color: white;
+            border: none;
+            padding: 14px 20px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            width: 100%;
+        }
+
+        .submit-btn:hover {
+            background: linear-gradient(135deg, var(--primary-dark), var(--primary-color));
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(138, 43, 226, 0.3);
+        }
+
+        /* Footer Styles */
+        footer {
+            background-color: #121212;
+            color: #f0f0f0;
+            padding: 60px 0 20px;
+        }
+
+        .footer-container {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr;
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+
+        .footer-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .footer-logo-circle {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 14px;
+            position: relative;
+        }
+
+        .footer-logo-circle::after {
+            content: '';
+            position: absolute;
+            bottom: -18px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 6px;
+            height: 18px;
+            background-color: var(--primary-color);
+            border-radius: 0 0 3px 3px;
+        }
+
+        .footer-logo-text {
+            font-weight: bold;
+            font-size: 20px;
+            color: var(--primary-color);
+        }
+
+        .footer-about p {
+            margin-bottom: 20px;
+            line-height: 1.7;
+            color: #ccc;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 15px;
+        }
+
+        .social-links a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background-color: var(--primary-color);
+            color: white;
+            transition: var(--transition);
+        }
+
+        .social-links a:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-3px);
+        }
+
+        .footer-heading {
+            font-size: 18px;
+            margin-bottom: 20px;
+            color: var(--primary-color);
+        }
+
+        .footer-links {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 12px;
+        }
+
+        .footer-links a {
+            color: #ccc;
+            transition: var(--transition);
+        }
+
+        .footer-links a:hover {
+            color: var(--primary-color);
+            padding-left: 5px;
+        }
+
+        .footer-bottom {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 20px;
+            border-top: 1px solid #333;
+            font-size: 14px;
+            color: #999;
+        }
+
+        .language-switcher {
+            position: relative;
+        }
+
+        .language-btn {
+            background-color: #333;
+            color: #f0f0f0;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: var(--transition);
+        }
+
+        .language-btn:hover {
+            background-color: #444;
+        }
+
+        .language-dropdown {
+            position: absolute;
+            bottom: 100%;
+            right: 0;
+            width: 200px;
+            background-color: #222;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            padding: 10px;
+            display: none;
+            grid-template-columns: 1fr 1fr;
+            gap: 5px;
+            margin-bottom: 10px;
+            z-index: 100;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .language-dropdown.show {
+            display: grid;
+        }
+
+        .language-option {
+            background: none;
+            border: none;
+            color: #f0f0f0;
+            padding: 8px;
+            border-radius: 4px;
+            cursor: pointer;
+            text-align: left;
+            font-size: 12px;
+            transition: var(--transition);
+        }
+
+        .language-option:hover {
+            background-color: #333;
+            color: var(--primary-color);
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 992px) {
+            .contact-container {
+                grid-template-columns: 1fr;
+                gap: 30px;
+            }
+            
+            .footer-container {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header-container {
+                flex-wrap: wrap;
+            }
+            
+            .nav-links {
+                display: none;
+                width: 100%;
+                flex-direction: column;
+                gap: 15px;
+                margin-top: 20px;
+            }
+            
+            .nav-links.active {
+                display: flex;
+            }
+            
+            .hamburger {
+                display: flex;
+            }
+            
+            .header-right {
+                margin-left: auto;
+            }
+            
+            .email-link {
+                display: none;
+            }
+            
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            
+            .footer-container {
+                grid-template-columns: 1fr;
+                gap: 30px;
+            }
+            
+            .footer-bottom {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+            
+            .language-dropdown {
+                width: 150px;
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .contact-info, .contact-form {
+                padding: 25px;
+            }
+            
+            .form-title {
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container header-container">
+            <a href="https://lollypopdf.com" class="logo" target="_blank">
+                <div class="logo-circle">LPdf</div>
+                <div class="logo-text">LollyPoPdf</div>
+            </a>
+            
+            <ul class="nav-links">
+                <li><a href="https://lollypopdf.com#home" target="_blank">Home</a></li>
+                <li><a href="https://lollypopdf.com#about" target="_blank">About Us</a></li>
+                <li><a href="https://lollypopdf.com#tools" target="_blank">Tools</a></li>
+                <li><a href="https://lollypopdf.com#contact" target="_blank">Contact</a></li>
+            </ul>
+            
+            <div class="header-right">
+                <a href="mailto:lollypoppdf@gmail.com" class="email-link">lollypoppdf@gmail.com</a>
+                <button class="theme-toggle" id="themeToggle">
+                    <i class="fas fa-moon"></i>
+                </button>
+                <div class="hamburger" id="hamburger">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Contact Section -->
+    <section class="contact-section">
+        <div class="container contact-container">
+            <div class="contact-info">
+                <h2 style="color: white;">We'd love to hear from you</h2>
+                <p>Get in touch with us for support, feedback, or any questions. Our team is always ready to assist you with any inquiries you may have.</p>
+                <div class="support-badge">24/7 Support</div>
+            </div>
+            
+            <div class="contact-form">
+                <h2 class="form-title" style="color: var(--primary-color);">Send us a Message</h2>
+                <form id="contactForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="firstName">First Name *</label>
+                            <input type="text" id="firstName" name="firstName" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="lastName">Last Name *</label>
+                            <input type="text" id="lastName" name="lastName" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="email">Email Address *</label>
+                        <input type="email" id="email" name="email" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="subject">Subject *</label>
+                        <select id="subject" name="subject" required>
+                            <option value="" disabled selected>Select a subject</option>
+                            <option value="support">Technical Support</option>
+                            <option value="feedback">Feedback</option>
+                            <option value="partnership">Partnership</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="message">Message *</label>
+                        <textarea id="message" name="message" placeholder="Tell us how we can help you..." required></textarea>
+                    </div>
+                    
+                    <button type="submit" class="submit-btn">
+                        <span>Send Message</span>
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-container">
+                <div class="footer-about">
+                    <a href="https://lollypopdf.com" class="footer-logo" target="_blank">
+                        <div class="footer-logo-circle">LPdf</div>
+                        <div class="footer-logo-text">LollyPoPdf</div>
+                    </a>
+                    <p>Your one-stop destination for 65+ online tools to simplify your daily tasks.</p>
+                    <div class="social-links">
+                        <a href="https://facebook.com/lollypopdf" target="_blank"><i class="fab fa-facebook-f"></i></a>
+                        <a href="https://linkedin.com/company/lollypopdf" target="_blank"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="https://twitter.com/lollypopdf" target="_blank"><i class="fab fa-twitter"></i></a>
+                        <a href="https://instagram.com/lollypopdf" target="_blank"><i class="fab fa-instagram"></i></a>
+                        <a href="https://pinterest.com/lollypopdf" target="_blank"><i class="fab fa-pinterest"></i></a>
+                        <a href="https://reddit.com/user/lollypopdf" target="_blank"><i class="fab fa-reddit"></i></a>
+                        <a href="https://quora.com/profile/lollypopdf" target="_blank"><i class="fab fa-quora"></i></a>
+                    </div>
+                </div>
+                
+                <div class="footer-categories">
+                    <h3 class="footer-heading" style="color: var(--primary-color);">Popular Categories</h3>
+                    <ul class="footer-links">
+                        <li><a href="https://lollypopdf.com#pdf-tools" target="_blank">PDF Tools</a></li>
+                        <li><a href="https://lollypopdf.com#image-tools" target="_blank">Image Tools</a></li>
+                        <li><a href="https://lollypopdf.com#text-tools" target="_blank">Text Tools</a></li>
+                        <li><a href="https://lollypopdf.com#audio-video-tools" target="_blank">Audio/Video Tools</a></li>
+                        <li><a href="https://lollypopdf.com#web-developer-tools" target="_blank">Web/Developer Tools</a></li>
+                        <li><a href="https://lollypopdf.com#calculator-tools" target="_blank">Calculator Tools</a></li>
+                        <li><a href="https://lollypopdf.com#utility-tools" target="_blank">Utility Tools</a></li>
+                        <li><a href="https://lollypopdf.com#color-tools" target="_blank">Color Tools</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-links-section">
+                    <h3 class="footer-heading" style="color: var(--primary-color);">Quick Links</h3>
+                    <ul class="footer-links">
+                        <li><a href="https://lollypopdf.com#home" target="_blank">Home</a></li>
+                        <li><a href="https://lollypopdf.com#all-tools" target="_blank">All Tools</a></li>
+                        <li><a href="https://lollypopdf.com#contact" target="_blank">Contact</a></li>
+                        <li><a href="https://lollypopdf.com" target="_blank">Privacy Policy</a></li>
+                        <li><a href="https://lollypopdf.com" target="_blank">Disclaimer</a></li>
+                        <li><a href="https://lollypopdf.com" target="_blank">Terms of Service</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <div class="copyright">
+                    © 2025 LollyPoPDF. All rights reserved.
+                </div>
+                <div class="language-switcher">
+                    <button class="language-btn" id="languageBtn">
+                        <i class="fas fa-globe"></i>
+                        <span>English</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                    <div class="language-dropdown" id="languageDropdown">
+                        <button class="language-option" data-lang="en">English</button>
+                        <button class="language-option" data-lang="ms">Bahasa Melayu</button>
+                        <button class="language-option" data-lang="es">Español</button>
+                        <button class="language-option" data-lang="it">Italiano</button>
+                        <button class="language-option" data-lang="uz">O‘zbek</button>
+                        <button class="language-option" data-lang="pt">Português (Brasil)</button>
+                        <button class="language-option" data-lang="be">Беларуская</button>
+                        <button class="language-option" data-lang="uk">Українська</button>
+                        <button class="language-option" data-lang="fa">فارسی</button>
+                        <button class="language-option" data-lang="id">Bahasa Indonesia</button>
+                        <button class="language-option" data-lang="ja">日本語</button>
+                        <button class="language-option" data-lang="ko">한국어</button>
+                        <button class="language-option" data-lang="zh-cn">简体中文</button>
+                        <button class="language-option" data-lang="zh-tw">繁體中文</button>
+                        <button class="language-option" data-lang="de">Deutsch</button>
+                        <button class="language-option" data-lang="fr">Français</button>
+                        <button class="language-option" data-lang="nl">Nederlands</button>
+                        <button class="language-option" data-lang="pl">Polski</button>
+                        <button class="language-option" data-lang="tr">Türkçe</button>
+                        <button class="language-option" data-lang="ru">Русский</button>
+                        <button class="language-option" data-lang="ar">العربية</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Theme Toggle
+        const themeToggle = document.getElementById('themeToggle');
+        const body = document.body;
+        
+        // Check for saved theme preference or default to light mode
+        const savedTheme = localStorage.getItem('theme') || 'light';
+        if (savedTheme === 'dark') {
+            body.classList.add('dark-mode');
+            themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+        }
+        
+        themeToggle.addEventListener('click', () => {
+            body.classList.toggle('dark-mode');
+            
+            if (body.classList.contains('dark-mode')) {
+                localStorage.setItem('theme', 'dark');
+                themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+            } else {
+                localStorage.setItem('theme', 'light');
+                themeToggle.innerHTML = '<i class="fas fa-moon"></i>';
+            }
+        });
+        
+        // Mobile Navigation
+        const hamburger = document.getElementById('hamburger');
+        const navLinks = document.querySelector('.nav-links');
+        
+        hamburger.addEventListener('click', () => {
+            navLinks.classList.toggle('active');
+            hamburger.classList.toggle('active');
+        });
+        
+        // Language Switcher
+        const languageBtn = document.getElementById('languageBtn');
+        const languageDropdown = document.getElementById('languageDropdown');
+        const languageOptions = document.querySelectorAll('.language-option');
+        
+        languageBtn.addEventListener('click', () => {
+            languageDropdown.classList.toggle('show');
+        });
+        
+        // Complete language translation dictionary
+        const translations = {
+            en: {
+                home: "Home",
+                about: "About Us",
+                tools: "Tools",
+                contact: "Contact",
+                firstName: "First Name *",
+                lastName: "Last Name *",
+                email: "Email Address *",
+                subject: "Subject *",
+                message: "Message *",
+                sendMessage: "Send Message",
+                loveToHear: "We'd love to hear from you",
+                getInTouch: "Get in touch with us for support, feedback, or any questions. Our team is always ready to assist you with any inquiries you may have.",
+                support: "24/7 Support",
+                sendUsMessage: "Send us a Message",
+                placeholder: "Tell us how we can help you...",
+                selectSubject: "Select a subject",
+                techSupport: "Technical Support",
+                feedback: "Feedback",
+                partnership: "Partnership",
+                other: "Other",
+                popularCategories: "Popular Categories",
+                quickLinks: "Quick Links",
+                allTools: "All Tools",
+                privacyPolicy: "Privacy Policy",
+                disclaimer: "Disclaimer",
+                terms: "Terms of Service",
+                copyright: "© 2025 LollyPoPDF. All rights reserved.",
+                pdfTools: "PDF Tools",
+                imageTools: "Image Tools",
+                textTools: "Text Tools",
+                audioVideoTools: "Audio/Video Tools",
+                webDevTools: "Web/Developer Tools",
+                calculatorTools: "Calculator Tools",
+                utilityTools: "Utility Tools",
+                colorTools: "Color Tools"
+            },
+            es: {
+                home: "Inicio",
+                about: "Sobre Nosotros",
+                tools: "Herramientas",
+                contact: "Contacto",
+                firstName: "Nombre *",
+                lastName: "Apellido *",
+                email: "Correo Electrónico *",
+                subject: "Asunto *",
+                message: "Mensaje *",
+                sendMessage: "Enviar Mensaje",
+                loveToHear: "Nos encantaría saber de ti",
+                getInTouch: "Ponte en contacto con nosotros para soporte, comentarios o cualquier pregunta. Nuestro equipo siempre está listo para ayudarte con cualquier consulta que puedas tener.",
+                support: "Soporte 24/7",
+                sendUsMessage: "Envíanos un Mensaje",
+                placeholder: "Cuéntanos cómo podemos ayudarte...",
+                selectSubject: "Selecciona un asunto",
+                techSupport: "Soporte Técnico",
+                feedback: "Comentarios",
+                partnership: "Asociación",
+                other: "Otro",
+                popularCategories: "Categorías Populares",
+                quickLinks: "Enlaces Rápidos",
+                allTools: "Todas las Herramientas",
+                privacyPolicy: "Política de Privacidad",
+                disclaimer: "Aviso Legal",
+                terms: "Términos de Servicio",
+                copyright: "© 2025 LollyPoPDF. Todos los derechos reservados.",
+                pdfTools: "Herramientas PDF",
+                imageTools: "Herramientas de Imagen",
+                textTools: "Herramientas de Texto",
+                audioVideoTools: "Herramientas de Audio/Video",
+                webDevTools: "Herramientas Web/Desarrollador",
+                calculatorTools: "Herramientas de Calculadora",
+                utilityTools: "Herramientas de Utilidad",
+                colorTools: "Herramientas de Color"
+            },
+            ms: {
+                home: "Laman Utama",
+                about: "Tentang Kami",
+                tools: "Alat",
+                contact: "Hubungi",
+                firstName: "Nama Pertama *",
+                lastName: "Nama Akhir *",
+                email: "Alamat Emel *",
+                subject: "Subjek *",
+                message: "Mesej *",
+                sendMessage: "Hantar Mesej",
+                loveToHear: "Kami ingin mendengar daripada anda",
+                getInTouch: "Hubungi kami untuk sokongan, maklum balas, atau sebarang soalan. Pasukan kami sentiasa bersedia untuk membantu anda dengan sebarang pertanyaan yang anda ada.",
+                support: "Sokongan 24/7",
+                sendUsMessage: "Hantar Mesej kepada Kami",
+                placeholder: "Beritahu kami bagaimana kami boleh membantu anda...",
+                selectSubject: "Pilih subjek",
+                techSupport: "Sokongan Teknikal",
+                feedback: "Maklum Balas",
+                partnership: "Perkongsian",
+                other: "Lain-lain",
+                popularCategories: "Kategori Popular",
+                quickLinks: "Pautan Pantas",
+                allTools: "Semua Alat",
+                privacyPolicy: "Dasar Privasi",
+                disclaimer: "Penafian",
+                terms: "Terma Perkhidmatan",
+                copyright: "© 2025 LollyPoPDF. Hak cipta terpelihara.",
+                pdfTools: "Alat PDF",
+                imageTools: "Alat Imej",
+                textTools: "Alat Teks",
+                audioVideoTools: "Alat Audio/Video",
+                webDevTools: "Alat Web/Pembangun",
+                calculatorTools: "Alat Kalkulator",
+                utilityTools: "Alat Utiliti",
+                colorTools: "Alat Warna"
+            },
+            it: {
+                home: "Home",
+                about: "Chi Siamo",
+                tools: "Strumenti",
+                contact: "Contatto",
+                firstName: "Nome *",
+                lastName: "Cognome *",
+                email: "Indirizzo Email *",
+                subject: "Oggetto *",
+                message: "Messaggio *",
+                sendMessage: "Invia Messaggio",
+                loveToHear: "Ci piacerebbe sentirti",
+                getInTouch: "Mettiti in contatto con noi per supporto, feedback o qualsiasi domanda. Il nostro team è sempre pronto ad assisterti con qualsiasi richiesta tu possa avere.",
+                support: "Supporto 24/7",
+                sendUsMessage: "Inviaci un Messaggio",
+                placeholder: "Dicci come possiamo aiutarti...",
+                selectSubject: "Seleziona un oggetto",
+                techSupport: "Supporto Tecnico",
+                feedback: "Feedback",
+                partnership: "Partnership",
+                other: "Altro",
+                popularCategories: "Categorie Popolari",
+                quickLinks: "Link Rapidi",
+                allTools: "Tutti gli Strumenti",
+                privacyPolicy: "Privacy Policy",
+                disclaimer: "Disclaimer",
+                terms: "Termini di Servizio",
+                copyright: "© 2025 LollyPoPDF. Tutti i diritti riservati.",
+                pdfTools: "Strumenti PDF",
+                imageTools: "Strumenti Immagine",
+                textTools: "Strumenti Testo",
+                audioVideoTools: "Strumenti Audio/Video",
+                webDevTools: "Strumenti Web/Sviluppatore",
+                calculatorTools: "Strumenti Calcolatrice",
+                utilityTools: "Strumenti Utilità",
+                colorTools: "Strumenti Colore"
+            },
+            uz: {
+                home: "Bosh Sahifa",
+                about: "Biz Haqimizda",
+                tools: "Vositalar",
+                contact: "Aloqa",
+                firstName: "Ism *",
+                lastName: "Familiya *",
+                email: "Elektron Pochta Manzili *",
+                subject: "Mavzu *",
+                message: "Xabar *",
+                sendMessage: "Xabarni Yuborish",
+                loveToHear: "Sizdan eshitishni xohlaymiz",
+                getInTouch: "Qo'llab-quvvatlash, fikr-mulohaza yoki har qanday savollar uchun biz bilan bog'laning. Bizning jamoamiz sizning har qanday so'rovingizga yordam berishga har doim tayyor.",
+                support: "24/7 Qo'llab-quvvatlash",
+                sendUsMessage: "Bizga Xabar Yuboring",
+                placeholder: "Bizga qanday yordam bera olishimizni aytib bering...",
+                selectSubject: "Mavzuni tanlang",
+                techSupport: "Texnik Yordam",
+                feedback: "Fikr-mulohaza",
+                partnership: "Hamkorlik",
+                other: "Boshqa",
+                popularCategories: "Mashhur Kategoriyalar",
+                quickLinks: "Tezkor Havolalar",
+                allTools: "Barcha Vositalar",
+                privacyPolicy: "Maxfiylik Siyosati",
+                disclaimer: "Ogohlantirish",
+                terms: "Xizmat Ko'rsatish Shartlari",
+                copyright: "© 2025 LollyPoPDF. Barcha huquqlar himoyalangan.",
+                pdfTools: "PDF Vositalari",
+                imageTools: "Rasm Vositalari",
+                textTools: "Matn Vositalari",
+                audioVideoTools: "Audio/Video Vositalari",
+                webDevTools: "Veb/Dasturchi Vositalari",
+                calculatorTools: "Kalkulyator Vositalari",
+                utilityTools: "Yordamchi Vositalar",
+                colorTools: "Rang Vositalari"
+            },
+            pt: {
+                home: "Início",
+                about: "Sobre Nós",
+                tools: "Ferramentas",
+                contact: "Contato",
+                firstName: "Primeiro Nome *",
+                lastName: "Sobrenome *",
+                email: "Endereço de Email *",
+                subject: "Assunto *",
+                message: "Mensagem *",
+                sendMessage: "Enviar Mensagem",
+                loveToHear: "Adoraríamos ouvir de você",
+                getInTouch: "Entre em contato conosco para suporte, feedback ou qualquer dúvida. Nossa equipe está sempre pronta para ajudá-lo com qualquer consulta que você possa ter.",
+                support: "Suporte 24/7",
+                sendUsMessage: "Envie-nos uma Mensagem",
+                placeholder: "Conte-nos como podemos ajudá-lo...",
+                selectSubject: "Selecione um assunto",
+                techSupport: "Suporte Técnico",
+                feedback: "Feedback",
+                partnership: "Parceria",
+                other: "Outro",
+                popularCategories: "Categorias Populares",
+                quickLinks: "Links Rápidos",
+                allTools: "Todas as Ferramentas",
+                privacyPolicy: "Política de Privacidade",
+                disclaimer: "Aviso Legal",
+                terms: "Termos de Serviço",
+                copyright: "© 2025 LollyPoPDF. Todos os direitos reservados.",
+                pdfTools: "Ferramentas PDF",
+                imageTools: "Ferramentas de Imagem",
+                textTools: "Ferramentas de Texto",
+                audioVideoTools: "Ferramentas de Áudio/Video",
+                webDevTools: "Ferramentas Web/Desenvolvedor",
+                calculatorTools: "Ferramentas de Calculadora",
+                utilityTools: "Ferramentas de Utilidade",
+                colorTools: "Ferramentas de Cor"
+            },
+            be: {
+                home: "Галоўная",
+                about: "Пра нас",
+                tools: "Інструменты",
+                contact: "Кантакты",
+                firstName: "Імя *",
+                lastName: "Прозвішча *",
+                email: "Адрас электроннай пошты *",
+                subject: "Тэма *",
+                message: "Паведамленне *",
+                sendMessage: "Адправіць паведамленне",
+                loveToHear: "Мы б хацелі пачуць ад вас",
+                getInTouch: "Звяжыцеся з намі для падтрымкі, водгукаў або любых пытанняў. Наша каманда заўсёды гатова дапамагчы вам з любымі запытамі.",
+                support: "Падтрымка 24/7",
+                sendUsMessage: "Адпраўце нам паведамленне",
+                placeholder: "Раскажыце нам, як мы можам вам дапамагчы...",
+                selectSubject: "Выберыце тэму",
+                techSupport: "Тэхнічная падтрымка",
+                feedback: "Водгук",
+                partnership: "Партнёрства",
+                other: "Іншае",
+                popularCategories: "Папулярныя катэгорыі",
+                quickLinks: "Хуткія спасылкі",
+                allTools: "Усе інструменты",
+                privacyPolicy: "Палітыка прыватнасці",
+                disclaimer: "Адмова ад адказнасці",
+                terms: "Умовы абслугоўвання",
+                copyright: "© 2025 LollyPoPDF. Усе правы абаронены.",
+                pdfTools: "PDF Інструменты",
+                imageTools: "Інструменты для выяў",
+                textTools: "Тэкставыя інструменты",
+                audioVideoTools: "Аўдыё/Відэа інструменты",
+                webDevTools: "Вэб/Распрацоўшчык інструменты",
+                calculatorTools: "Калькулятарныя інструменты",
+                utilityTools: "Карысныя інструменты",
+                colorTools: "Колерныя інструменты"
+            },
+            uk: {
+                home: "Головна",
+                about: "Про нас",
+                tools: "Інструменти",
+                contact: "Контакти",
+                firstName: "Ім'я *",
+                lastName: "Прізвище *",
+                email: "Адреса електронної пошти *",
+                subject: "Тема *",
+                message: "Повідомлення *",
+                sendMessage: "Надіслати повідомлення",
+                loveToHear: "Ми хотіли б почути від вас",
+                getInTouch: "Зв'яжіться з нами для підтримки, відгуків або будь-яких питань. Наша команда завжди готова допомогти вам з будь-якими запитаннями.",
+                support: "Підтримка 24/7",
+                sendUsMessage: "Надішліть нам повідомлення",
+                placeholder: "Розкажіть нам, як ми можемо вам допомогти...",
+                selectSubject: "Виберіть тему",
+                techSupport: "Технічна підтримка",
+                feedback: "Відгук",
+                partnership: "Партнерство",
+                other: "Інше",
+                popularCategories: "Популярні категорії",
+                quickLinks: "Швидкі посилання",
+                allTools: "Всі інструменти",
+                privacyPolicy: "Політика конфіденційності",
+                disclaimer: "Відмова від відповідальності",
+                terms: "Умови використання",
+                copyright: "© 2025 LollyPoPDF. Всі права захищені.",
+                pdfTools: "PDF Інструменти",
+                imageTools: "Інструменти для зображень",
+                textTools: "Текстові інструменти",
+                audioVideoTools: "Аудіо/Відео інструменти",
+                webDevTools: "Веб/Розробник інструменти",
+                calculatorTools: "Калькуляторні інструменти",
+                utilityTools: "Корисні інструменти",
+                colorTools: "Кольорові інструменти"
+            },
+            fa: {
+                home: "صفحه اصلی",
+                about: "درباره ما",
+                tools: "ابزارها",
+                contact: "تماس",
+                firstName: "نام *",
+                lastName: "نام خانوادگی *",
+                email: "آدرس ایمیل *",
+                subject: "موضوع *",
+                message: "پیام *",
+                sendMessage: "ارسال پیام",
+                loveToHear: "ما دوست داریم از شما بشنویم",
+                getInTouch: "برای پشتیبانی، بازخورد یا هر سوالی با ما در تماس باشید. تیم ما همیشه آماده کمک به شما در هرگونه سوالی است.",
+                support: "پشتیبانی 24/7",
+                sendUsMessage: "پیامی برای ما بفرستید",
+                placeholder: "به ما بگویید چگونه می‌توانیم به شما کمک کنیم...",
+                selectSubject: "یک موضوع انتخاب کنید",
+                techSupport: "پشتیبانی فنی",
+                feedback: "بازخورد",
+                partnership: "همکاری",
+                other: "سایر",
+                popularCategories: "دسته‌بندی‌های محبوب",
+                quickLinks: "لینک‌های سریع",
+                allTools: "همه ابزارها",
+                privacyPolicy: "سیاست حفظ حریم خصوصی",
+                disclaimer: "سلب مسئولیت",
+                terms: "شرایط استفاده",
+                copyright: "© 2025 LollyPoPDF. تمامی حقوق محفوظ است.",
+                pdfTools: "ابزارهای PDF",
+                imageTools: "ابزارهای تصویر",
+                textTools: "ابزارهای متن",
+                audioVideoTools: "ابزارهای صوتی/تصویری",
+                webDevTools: "ابزارهای وب/توسعه‌دهنده",
+                calculatorTools: "ابزارهای ماشین حساب",
+                utilityTools: "ابزارهای کاربردی",
+                colorTools: "ابزارهای رنگ"
+            },
+            id: {
+                home: "Beranda",
+                about: "Tentang Kami",
+                tools: "Alat",
+                contact: "Kontak",
+                firstName: "Nama Depan *",
+                lastName: "Nama Belakang *",
+                email: "Alamat Email *",
+                subject: "Subjek *",
+                message: "Pesan *",
+                sendMessage: "Kirim Pesan",
+                loveToHear: "Kami ingin mendengar dari Anda",
+                getInTouch: "Hubungi kami untuk dukungan, umpan balik, atau pertanyaan apa pun. Tim kami selalu siap membantu Anda dengan pertanyaan apa pun yang mungkin Anda miliki.",
+                support: "Dukungan 24/7",
+                sendUsMessage: "Kirimkan Pesan kepada Kami",
+                placeholder: "Beri tahu kami bagaimana kami dapat membantu Anda...",
+                selectSubject: "Pilih subjek",
+                techSupport: "Dukungan Teknis",
+                feedback: "Umpan Balik",
+                partnership: "Kemitraan",
+                other: "Lainnya",
+                popularCategories: "Kategori Populer",
+                quickLinks: "Tautan Cepat",
+                allTools: "Semua Alat",
+                privacyPolicy: "Kebijakan Privasi",
+                disclaimer: "Penafian",
+                terms: "Syarat Layanan",
+                copyright: "© 2025 LollyPoPDF. Hak cipta dilindungi.",
+                pdfTools: "Alat PDF",
+                imageTools: "Alat Gambar",
+                textTools: "Alat Teks",
+                audioVideoTools: "Alat Audio/Video",
+                webDevTools: "Alat Web/Pengembang",
+                calculatorTools: "Alat Kalkulator",
+                utilityTools: "Alat Utilitas",
+                colorTools: "Alat Warna"
+            },
+            ja: {
+                home: "ホーム",
+                about: "会社概要",
+                tools: "ツール",
+                contact: "お問い合わせ",
+                firstName: "名 *",
+                lastName: "姓 *",
+                email: "メールアドレス *",
+                subject: "件名 *",
+                message: "メッセージ *",
+                sendMessage: "メッセージを送信",
+                loveToHear: "お客様からのご連絡をお待ちしております",
+                getInTouch: "サポート、フィードバック、またはご質問がある場合は、お気軽にお問い合わせください。当社のチームは、お客様のあらゆるお問い合わせに対応する準備が常に整っています。",
+                support: "24時間サポート",
+                sendUsMessage: "メッセージをお送りください",
+                placeholder: "どのようにお手伝いできるかお聞かせください...",
+                selectSubject: "件名を選択",
+                techSupport: "テクニカルサポート",
+                feedback: "フィードバック",
+                partnership: "パートナーシップ",
+                other: "その他",
+                popularCategories: "人気カテゴリ",
+                quickLinks: "クイックリンク",
+                allTools: "すべてのツール",
+                privacyPolicy: "プライバシーポリシー",
+                disclaimer: "免責事項",
+                terms: "利用規約",
+                copyright: "© 2025 LollyPoPDF. 無断複写・転載を禁じます。",
+                pdfTools: "PDFツール",
+                imageTools: "画像ツール",
+                textTools: "テキストツール",
+                audioVideoTools: "オーディオ/ビデオツール",
+                webDevTools: "Web/開発者ツール",
+                calculatorTools: "電卓ツール",
+                utilityTools: "ユーティリティツール",
+                colorTools: "カラーツール"
+            },
+            ko: {
+                home: "홈",
+                about: "회사 소개",
+                tools: "도구",
+                contact: "문의하기",
+                firstName: "이름 *",
+                lastName: "성 *",
+                email: "이메일 주소 *",
+                subject: "제목 *",
+                message: "메시지 *",
+                sendMessage: "메시지 보내기",
+                loveToHear: "여러분의 소식을 듣고 싶습니다",
+                getInTouch: "지원, 피드백 또는 질문이 있으시면 연락주세요. 저희 팀은 여러분의 모든 문의에 도움을 드릴 준비가 되어 있습니다.",
+                support: "24/7 지원",
+                sendUsMessage: "메시지 보내기",
+                placeholder: "도움이 필요한 내용을 알려주세요...",
+                selectSubject: "주제 선택",
+                techSupport: "기술 지원",
+                feedback: "피드백",
+                partnership: "파트너십",
+                other: "기타",
+                popularCategories: "인기 카테고리",
+                quickLinks: "빠른 링크",
+                allTools: "모든 도구",
+                privacyPolicy: "개인정보 보호정책",
+                disclaimer: "면책 조항",
+                terms: "이용 약관",
+                copyright: "© 2025 LollyPoPDF. 모든 권리 보유.",
+                pdfTools: "PDF 도구",
+                imageTools: "이미지 도구",
+                textTools: "텍스트 도구",
+                audioVideoTools: "오디오/비디오 도구",
+                webDevTools: "웹/개발자 도구",
+                calculatorTools: "계산기 도구",
+                utilityTools: "유틸리티 도구",
+                colorTools: "색상 도구"
+            },
+            "zh-cn": {
+                home: "首页",
+                about: "关于我们",
+                tools: "工具",
+                contact: "联系我们",
+                firstName: "名字 *",
+                lastName: "姓氏 *",
+                email: "电子邮件地址 *",
+                subject: "主题 *",
+                message: "消息 *",
+                sendMessage: "发送消息",
+                loveToHear: "我们很乐意收到您的来信",
+                getInTouch: "如需支持、反馈或任何问题，请与我们联系。我们的团队随时准备为您提供任何咨询帮助。",
+                support: "24/7 支持",
+                sendUsMessage: "给我们发送消息",
+                placeholder: "告诉我们我们可以如何帮助您...",
+                selectSubject: "选择一个主题",
+                techSupport: "技术支持",
+                feedback: "反馈",
+                partnership: "合作伙伴关系",
+                other: "其他",
+                popularCategories: "热门类别",
+                quickLinks: "快速链接",
+                allTools: "所有工具",
+                privacyPolicy: "隐私政策",
+                disclaimer: "免责声明",
+                terms: "服务条款",
+                copyright: "© 2025 LollyPoPDF. 保留所有权利。",
+                pdfTools: "PDF 工具",
+                imageTools: "图像工具",
+                textTools: "文本工具",
+                audioVideoTools: "音频/视频工具",
+                webDevTools: "网页/开发者工具",
+                calculatorTools: "计算器工具",
+                utilityTools: "实用工具",
+                colorTools: "颜色工具"
+            },
+            "zh-tw": {
+                home: "首頁",
+                about: "關於我們",
+                tools: "工具",
+                contact: "聯絡我們",
+                firstName: "名字 *",
+                lastName: "姓氏 *",
+                email: "電子郵件地址 *",
+                subject: "主題 *",
+                message: "訊息 *",
+                sendMessage: "發送訊息",
+                loveToHear: "我們很樂意收到您的來信",
+                getInTouch: "如需支援、回饋或任何問題，請與我們聯繫。我們的團隊隨時準備為您提供任何諮詢幫助。",
+                support: "24/7 支援",
+                sendUsMessage: "給我們發送訊息",
+                placeholder: "告訴我們我們可以如何幫助您...",
+                selectSubject: "選擇一個主題",
+                techSupport: "技術支援",
+                feedback: "回饋",
+                partnership: "合作夥伴關係",
+                other: "其他",
+                popularCategories: "熱門類別",
+                quickLinks: "快速連結",
+                allTools: "所有工具",
+                privacyPolicy: "隱私政策",
+                disclaimer: "免責聲明",
+                terms: "服務條款",
+                copyright: "© 2025 LollyPoPDF. 保留所有權利。",
+                pdfTools: "PDF 工具",
+                imageTools: "圖片工具",
+                textTools: "文字工具",
+                audioVideoTools: "音訊/影片工具",
+                webDevTools: "網頁/開發者工具",
+                calculatorTools: "計算機工具",
+                utilityTools: "實用工具",
+                colorTools: "顏色工具"
+            },
+            de: {
+                home: "Startseite",
+                about: "Über Uns",
+                tools: "Werkzeuge",
+                contact: "Kontakt",
+                firstName: "Vorname *",
+                lastName: "Nachname *",
+                email: "E-Mail-Adresse *",
+                subject: "Betreff *",
+                message: "Nachricht *",
+                sendMessage: "Nachricht Senden",
+                loveToHear: "Wir würden gerne von Ihnen hören",
+                getInTouch: "Kontaktieren Sie uns für Support, Feedback oder Fragen. Unser Team ist immer bereit, Ihnen bei allen Anfragen zu helfen.",
+                support: "24/7 Support",
+                sendUsMessage: "Senden Sie uns eine Nachricht",
+                placeholder: "Teilen Sie uns mit, wie wir Ihnen helfen können...",
+                selectSubject: "Wählen Sie ein Thema",
+                techSupport: "Technischer Support",
+                feedback: "Feedback",
+                partnership: "Partnerschaft",
+                other: "Andere",
+                popularCategories: "Beliebte Kategorien",
+                quickLinks: "Schnelllinks",
+                allTools: "Alle Werkzeuge",
+                privacyPolicy: "Datenschutzrichtlinie",
+                disclaimer: "Haftungsausschluss",
+                terms: "Nutzungsbedingungen",
+                copyright: "© 2025 LollyPoPDF. Alle Rechte vorbehalten.",
+                pdfTools: "PDF-Werkzeuge",
+                imageTools: "Bildwerkzeuge",
+                textTools: "Textwerkzeuge",
+                audioVideoTools: "Audio/Video-Werkzeuge",
+                webDevTools: "Web/Entwickler-Werkzeuge",
+                calculatorTools: "Rechnerwerkzeuge",
+                utilityTools: "Hilfsprogramme",
+                colorTools: "Farbwerkzeuge"
+            },
+            fr: {
+                home: "Accueil",
+                about: "À Propos",
+                tools: "Outils",
+                contact: "Contact",
+                firstName: "Prénom *",
+                lastName: "Nom *",
+                email: "Adresse Email *",
+                subject: "Sujet *",
+                message: "Message *",
+                sendMessage: "Envoyer le Message",
+                loveToHear: "Nous aimerions avoir de vos nouvelles",
+                getInTouch: "Contactez-nous pour du support, des commentaires ou toute question. Notre équipe est toujours prête à vous aider avec toutes vos demandes.",
+                support: "Support 24/7",
+                sendUsMessage: "Envoyez-nous un Message",
+                placeholder: "Dites-nous comment nous pouvons vous aider...",
+                selectSubject: "Sélectionnez un sujet",
+                techSupport: "Support Technique",
+                feedback: "Commentaires",
+                partnership: "Partenariat",
+                other: "Autre",
+                popularCategories: "Catégories Populaires",
+                quickLinks: "Liens Rapides",
+                allTools: "Tous les Outils",
+                privacyPolicy: "Politique de Confidentialité",
+                disclaimer: "Avertissement",
+                terms: "Conditions d'Utilisation",
+                copyright: "© 2025 LollyPoPDF. Tous droits réservés.",
+                pdfTools: "Outils PDF",
+                imageTools: "Outils d'Image",
+                textTools: "Outils de Texte",
+                audioVideoTools: "Outils Audio/Video",
+                webDevTools: "Outils Web/Développeur",
+                calculatorTools: "Outils de Calculatrice",
+                utilityTools: "Outils Utilitaires",
+                colorTools: "Outils de Couleur"
+            },
+            nl: {
+                home: "Home",
+                about: "Over Ons",
+                tools: "Tools",
+                contact: "Contact",
+                firstName: "Voornaam *",
+                lastName: "Achternaam *",
+                email: "E-mailadres *",
+                subject: "Onderwerp *",
+                message: "Bericht *",
+                sendMessage: "Bericht Verzenden",
+                loveToHear: "We horen graag van u",
+                getInTouch: "Neem contact met ons op voor ondersteuning, feedback of vragen. Ons team staat altijd klaar om u te helpen met eventuele vragen.",
+                support: "24/7 Ondersteuning",
+                sendUsMessage: "Stuur ons een Bericht",
+                placeholder: "Vertel ons hoe we u kunnen helpen...",
+                selectSubject: "Selecteer een onderwerp",
+                techSupport: "Technische Ondersteuning",
+                feedback: "Feedback",
+                partnership: "Partnerschap",
+                other: "Anders",
+                popularCategories: "Populaire Categorieën",
+                quickLinks: "Snelle Links",
+                allTools: "Alle Tools",
+                privacyPolicy: "Privacybeleid",
+                disclaimer: "Disclaimer",
+                terms: "Servicevoorwaarden",
+                copyright: "© 2025 LollyPoPDF. Alle rechten voorbehouden.",
+                pdfTools: "PDF Tools",
+                imageTools: "Afbeelding Tools",
+                textTools: "Tekst Tools",
+                audioVideoTools: "Audio/Video Tools",
+                webDevTools: "Web/Ontwikkelaar Tools",
+                calculatorTools: "Rekenmachine Tools",
+                utilityTools: "Hulpprogramma's",
+                colorTools: "Kleur Tools"
+            },
+            pl: {
+                home: "Strona Główna",
+                about: "O Nas",
+                tools: "Narzędzia",
+                contact: "Kontakt",
+                firstName: "Imię *",
+                lastName: "Nazwisko *",
+                email: "Adres Email *",
+                subject: "Temat *",
+                message: "Wiadomość *",
+                sendMessage: "Wyślij Wiadomość",
+                loveToHear: "Chcielibyśmy usłyszeć od Ciebie",
+                getInTouch: "Skontaktuj się z nami w sprawie wsparcia, opinii lub pytań. Nasz zespół jest zawsze gotowy, aby pomóc Ci w każdym zapytaniu.",
+                support: "Wsparcie 24/7",
+                sendUsMessage: "Wyślij nam Wiadomość",
+                placeholder: "Powiedz nam, jak możemy Ci pomóc...",
+                selectSubject: "Wybierz temat",
+                techSupport: "Wsparcie Techniczne",
+                feedback: "Opinia",
+                partnership: "Partnerstwo",
+                other: "Inne",
+                popularCategories: "Popularne Kategorie",
+                quickLinks: "Szybkie Linki",
+                allTools: "Wszystkie Narzędzia",
+                privacyPolicy: "Polityka Prywatności",
+                disclaimer: "Zastrzeżenie",
+                terms: "Warunki Usługi",
+                copyright: "© 2025 LollyPoPDF. Wszelkie prawa zastrzeżone.",
+                pdfTools: "Narzędzia PDF",
+                imageTools: "Narzędzia Obrazów",
+                textTools: "Narzędzia Tekstu",
+                audioVideoTools: "Narzędzia Audio/Wideo",
+                webDevTools: "Narzędzia Web/Programisty",
+                calculatorTools: "Narzędzia Kalkulatora",
+                utilityTools: "Narzędzia Użytkowe",
+                colorTools: "Narzędzia Kolorów"
+            },
+            tr: {
+                home: "Ana Sayfa",
+                about: "Hakkımızda",
+                tools: "Araçlar",
+                contact: "İletişim",
+                firstName: "Ad *",
+                lastName: "Soyad *",
+                email: "E-posta Adresi *",
+                subject: "Konu *",
+                message: "Mesaj *",
+                sendMessage: "Mesaj Gönder",
+                loveToHear: "Sizden haber almak istiyoruz",
+                getInTouch: "Destek, geri bildirim veya herhangi bir soru için bizimle iletişime geçin. Ekibimiz, sahip olabileceğiniz her türlü soruya yardımcı olmak için her zaman hazırdır.",
+                support: "7/24 Destek",
+                sendUsMessage: "Bize Mesaj Gönderin",
+                placeholder: "Size nasıl yardımcı olabileceğimizi bize söyleyin...",
+                selectSubject: "Bir konu seçin",
+                techSupport: "Teknik Destek",
+                feedback: "Geri Bildirim",
+                partnership: "Ortaklık",
+                other: "Diğer",
+                popularCategories: "Popüler Kategoriler",
+                quickLinks: "Hızlı Bağlantılar",
+                allTools: "Tüm Araçlar",
+                privacyPolicy: "Gizlilik Politikası",
+                disclaimer: "Feragatname",
+                terms: "Hizmet Şartları",
+                copyright: "© 2025 LollyPoPDF. Tüm hakları saklıdır.",
+                pdfTools: "PDF Araçları",
+                imageTools: "Görsel Araçları",
+                textTools: "Metin Araçları",
+                audioVideoTools: "Ses/Video Araçları",
+                webDevTools: "Web/Geliştirici Araçları",
+                calculatorTools: "Hesap Makinesi Araçları",
+                utilityTools: "Yardımcı Araçlar",
+                colorTools: "Renk Araçları"
+            },
+            ru: {
+                home: "Главная",
+                about: "О нас",
+                tools: "Инструменты",
+                contact: "Контакты",
+                firstName: "Имя *",
+                lastName: "Фамилия *",
+                email: "Адрес электронной почты *",
+                subject: "Тема *",
+                message: "Сообщение *",
+                sendMessage: "Отправить сообщение",
+                loveToHear: "Мы будем рады услышать от вас",
+                getInTouch: "Свяжитесь с нами для поддержки, отзывов или любых вопросов. Наша команда всегда готова помочь вам с любыми запросами.",
+                support: "Поддержка 24/7",
+                sendUsMessage: "Отправьте нам сообщение",
+                placeholder: "Расскажите нам, как мы можем вам помочь...",
+                selectSubject: "Выберите тему",
+                techSupport: "Техническая поддержка",
+                feedback: "Обратная связь",
+                partnership: "Партнерство",
+                other: "Другое",
+                popularCategories: "Популярные категории",
+                quickLinks: "Быстрые ссылки",
+                allTools: "Все инструменты",
+                privacyPolicy: "Политика конфиденциальности",
+                disclaimer: "Отказ от ответственности",
+                terms: "Условия обслуживания",
+                copyright: "© 2025 LollyPoPDF. Все права защищены.",
+                pdfTools: "PDF Инструменты",
+                imageTools: "Инструменты для изображений",
+                textTools: "Текстовые инструменты",
+                audioVideoTools: "Аудио/Видео инструменты",
+                webDevTools: "Веб/Разработчик инструменты",
+                calculatorTools: "Калькуляторные инструменты",
+                utilityTools: "Полезные инструменты",
+                colorTools: "Цветовые инструменты"
+            },
+            ar: {
+                home: "الصفحة الرئيسية",
+                about: "من نحن",
+                tools: "الأدوات",
+                contact: "اتصل بنا",
+                firstName: "الاسم الأول *",
+                lastName: "اسم العائلة *",
+                email: "عنوان البريد الإلكتروني *",
+                subject: "الموضوع *",
+                message: "الرسالة *",
+                sendMessage: "إرسال الرسالة",
+                loveToHear: "نود أن نسمع منك",
+                getInTouch: "تواصل معنا للحصول على الدعم أو الملاحظات أو أي أسئلة. فريقنا دائمًا مستعد لمساعدتك في أي استفسارات قد تكون لديك.",
+                support: "الدعم على مدار 24/7",
+                sendUsMessage: "أرسل لنا رسالة",
+                placeholder: "أخبرنا كيف يمكننا مساعدتك...",
+                selectSubject: "اختر موضوعًا",
+                techSupport: "الدعم الفني",
+                feedback: "ملاحظات",
+                partnership: "شراكة",
+                other: "أخرى",
+                popularCategories: "الفئات الشائعة",
+                quickLinks: "روابط سريعة",
+                allTools: "جميع الأدوات",
+                privacyPolicy: "سياسة الخصوصية",
+                disclaimer: "إخلاء المسؤولية",
+                terms: "شروط الخدمة",
+                copyright: "© 2025 LollyPoPDF. جميع الحقوق محفوظة.",
+                pdfTools: "أدوات PDF",
+                imageTools: "أدوات الصور",
+                textTools: "أدوات النص",
+                audioVideoTools: "أدوات الصوت/الفيديو",
+                webDevTools: "أدوات الويب/المطور",
+                calculatorTools: "أدوات الآلة الحاسبة",
+                utilityTools: "أدوات المساعدة",
+                colorTools: "أدوات الألوان"
+            }
+        };
+        
+        languageOptions.forEach(option => {
+            option.addEventListener('click', () => {
+                const selectedLang = option.getAttribute('data-lang');
+                const selectedText = option.textContent;
+                
+                // Update button text
+                languageBtn.querySelector('span').textContent = selectedText;
+                
+                // Close dropdown
+                languageDropdown.classList.remove('show');
+                
+                // Save language preference
+                localStorage.setItem('language', selectedLang);
+                
+                // Translate the page
+                translatePage(selectedLang);
+            });
+        });
+        
+        // Function to translate the page
+        function translatePage(lang) {
+            const translation = translations[lang] || translations.en;
+            
+            // Update navigation
+            const navLinks = document.querySelectorAll('.nav-links a');
+            if (navLinks[0]) navLinks[0].textContent = translation.home;
+            if (navLinks[1]) navLinks[1].textContent = translation.about;
+            if (navLinks[2]) navLinks[2].textContent = translation.tools;
+            if (navLinks[3]) navLinks[3].textContent = translation.contact;
+            
+            // Update contact form
+            const firstNameLabel = document.querySelector('label[for="firstName"]');
+            const lastNameLabel = document.querySelector('label[for="lastName"]');
+            const emailLabel = document.querySelector('label[for="email"]');
+            const subjectLabel = document.querySelector('label[for="subject"]');
+            const messageLabel = document.querySelector('label[for="message"]');
+            
+            if (firstNameLabel) firstNameLabel.textContent = translation.firstName;
+            if (lastNameLabel) lastNameLabel.textContent = translation.lastName;
+            if (emailLabel) emailLabel.textContent = translation.email;
+            if (subjectLabel) subjectLabel.textContent = translation.subject;
+            if (messageLabel) messageLabel.textContent = translation.message;
+            
+            const submitBtn = document.querySelector('.submit-btn span');
+            if (submitBtn) submitBtn.textContent = translation.sendMessage;
+            
+            const contactInfoH2 = document.querySelector('.contact-info h2');
+            if (contactInfoH2) contactInfoH2.textContent = translation.loveToHear;
+            
+            const contactInfoP = document.querySelector('.contact-info p');
+            if (contactInfoP) contactInfoP.textContent = translation.getInTouch;
+            
+            const supportBadge = document.querySelector('.support-badge');
+            if (supportBadge) supportBadge.textContent = translation.support;
+            
+            const formTitle = document.querySelector('.form-title');
+            if (formTitle) formTitle.textContent = translation.sendUsMessage;
+            
+            const messageTextarea = document.querySelector('#message');
+            if (messageTextarea) messageTextarea.placeholder = translation.placeholder;
+            
+            const subjectSelect = document.querySelector('#subject');
+            if (subjectSelect) {
+                const firstOption = subjectSelect.querySelector('option:first-child');
+                if (firstOption) firstOption.textContent = translation.selectSubject;
+                
+                const supportOption = subjectSelect.querySelector('option[value="support"]');
+                if (supportOption) supportOption.textContent = translation.techSupport;
+                
+                const feedbackOption = subjectSelect.querySelector('option[value="feedback"]');
+                if (feedbackOption) feedbackOption.textContent = translation.feedback;
+                
+                const partnershipOption = subjectSelect.querySelector('option[value="partnership"]');
+                if (partnershipOption) partnershipOption.textContent = translation.partnership;
+                
+                const otherOption = subjectSelect.querySelector('option[value="other"]');
+                if (otherOption) otherOption.textContent = translation.other;
+            }
+            
+            // Update footer
+            const popularCategories = document.querySelector('.footer-categories .footer-heading');
+            if (popularCategories) popularCategories.textContent = translation.popularCategories;
+            
+            const quickLinks = document.querySelector('.footer-links-section .footer-heading');
+            if (quickLinks) quickLinks.textContent = translation.quickLinks;
+            
+            const footerLinks = document.querySelectorAll('.footer-links-section .footer-links a');
+            if (footerLinks[1]) footerLinks[1].textContent = translation.allTools;
+            if (footerLinks[3]) footerLinks[3].textContent = translation.privacyPolicy;
+            if (footerLinks[4]) footerLinks[4].textContent = translation.disclaimer;
+            if (footerLinks[5]) footerLinks[5].textContent = translation.terms;
+            
+            const copyright = document.querySelector('.copyright');
+            if (copyright) copyright.textContent = translation.copyright;
+            
+            // Update category links
+            const categoryLinks = document.querySelectorAll('.footer-categories .footer-links a');
+            if (categoryLinks[0]) categoryLinks[0].textContent = translation.pdfTools;
+            if (categoryLinks[1]) categoryLinks[1].textContent = translation.imageTools;
+            if (categoryLinks[2]) categoryLinks[2].textContent = translation.textTools;
+            if (categoryLinks[3]) categoryLinks[3].textContent = translation.audioVideoTools;
+            if (categoryLinks[4]) categoryLinks[4].textContent = translation.webDevTools;
+            if (categoryLinks[5]) categoryLinks[5].textContent = translation.calculatorTools;
+            if (categoryLinks[6]) categoryLinks[6].textContent = translation.utilityTools;
+            if (categoryLinks[7]) categoryLinks[7].textContent = translation.colorTools;
+        }
+        
+        // Close language dropdown when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!languageBtn.contains(e.target) && !languageDropdown.contains(e.target)) {
+                languageDropdown.classList.remove('show');
+            }
+        });
+        
+        // Contact Form Submission
+        const contactForm = document.getElementById('contactForm');
+        
+        contactForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            // Get form values
+            const firstName = document.getElementById('firstName').value;
+            const lastName = document.getElementById('lastName').value;
+            const email = document.getElementById('email').value;
+            const subject = document.getElementById('subject').value;
+            const message = document.getElementById('message').value;
+            
+            // In a real implementation, you would send this data to a server
+            // For this demo, we'll just show a success message
+            alert(`Thank you ${firstName} ${lastName}! Your message has been sent. We'll get back to you at ${email} soon.`);
+            
+            // Reset form
+            contactForm.reset();
+        });
+        
+        // Load saved language preference
+        const savedLanguage = localStorage.getItem('language') || 'en';
+        if (savedLanguage) {
+            const selectedOption = document.querySelector(`.language-option[data-lang="${savedLanguage}"]`);
+            if (selectedOption) {
+                languageBtn.querySelector('span').textContent = selectedOption.textContent;
+                translatePage(savedLanguage);
+            }
+        }
+    </script>
+</body>
+</html>

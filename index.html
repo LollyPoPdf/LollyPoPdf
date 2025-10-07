@@ -7,48 +7,48 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
-            --primary: #8B5FBF;
-            --primary-dark: #6A4A9C;
-            --primary-light: #A78BC9;
-            --secondary: #F5F3FF;
-            --text: #333333;
-            --text-light: #666666;
-            --background: #FFFFFF;
-            --card-bg: #F9F9F9;
-            --shadow: rgba(139, 95, 191, 0.15);
-            --shadow-dark: rgba(139, 95, 191, 0.3);
+            --primary-color: #8B5CF6;
+            --primary-dark: #7C3AED;
+            --primary-light: #A78BFA;
+            --text-color: #333333;
+            --bg-color: #FFFFFF;
+            --bg-secondary: #f9f7ff;
+            --light-purple: #f5f1ff;
+            --border-color: #E5E7EB;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --transition: all 0.3s ease;
         }
 
         .dark-mode {
-            --primary: #9D6FCF;
-            --primary-dark: #7A4FB3;
-            --primary-light: #B28FDF;
-            --secondary: #1A1A2E;
-            --text: #E2E2E2;
-            --text-light: #B0B0B0;
-            --background: #121212;
-            --card-bg: #1E1E2E;
-            --shadow: rgba(157, 111, 207, 0.15);
-            --shadow-dark: rgba(157, 111, 207, 0.3);
+            --text-color: #F9FAFB;
+            --bg-color: #111827;
+            --bg-secondary: #1F2937;
+            --light-purple: #2d1b69;
+            --border-color: #374151;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
         }
 
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            transition: background-color 0.3s, color 0.3s;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            transition: var(--transition);
             line-height: 1.6;
-            color: var(--text);
-            background-color: var(--background);
         }
 
         a {
             text-decoration: none;
             color: inherit;
+        }
+
+        ul {
+            list-style: none;
         }
 
         .container {
@@ -60,14 +60,14 @@
 
         /* Header Styles */
         header {
-            background-color: var(--background);
-            box-shadow: 0 2px 10px var(--shadow);
+            background-color: var(--bg-color);
+            box-shadow: var(--shadow);
             position: sticky;
             top: 0;
             z-index: 100;
         }
 
-        .header-content {
+        .header-container {
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -78,38 +78,58 @@
             display: flex;
             align-items: center;
             gap: 10px;
-            font-size: 28px;
-            font-weight: 700;
-            color: var(--primary);
+            cursor: pointer;
         }
 
         .logo-circle {
-            width: 40px;
-            height: 40px;
-            background-color: var(--primary);
+            width: 50px;
+            height: 50px;
             border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
             display: flex;
             align-items: center;
             justify-content: center;
             color: white;
             font-weight: bold;
             font-size: 18px;
+            position: relative;
+        }
+
+        .logo-stem {
+            position: absolute;
+            bottom: -17px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 4px;
+            height: 17px;
+            background-color: var(--primary-dark);
+            border-radius: 0 0 2px 2px;
+        }
+
+        .logo-text {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--primary-color);
         }
 
         nav ul {
             display: flex;
-            list-style: none;
-            gap: 25px;
+            gap: 30px;
+        }
+
+        nav li {
+            position: relative;
         }
 
         nav a {
             font-weight: 500;
+            padding: 10px 0;
             position: relative;
-            padding: 5px 0;
+            transition: var(--transition);
         }
 
         nav a:hover {
-            color: var(--primary);
+            color: var(--primary-color);
         }
 
         nav a::after {
@@ -119,15 +139,15 @@
             left: 0;
             width: 0;
             height: 2px;
-            background-color: var(--primary);
-            transition: width 0.3s;
+            background-color: var(--primary-color);
+            transition: var(--transition);
         }
 
         nav a:hover::after {
             width: 100%;
         }
 
-        .header-actions {
+        .header-right {
             display: flex;
             align-items: center;
             gap: 20px;
@@ -135,7 +155,7 @@
 
         .email {
             font-size: 14px;
-            color: var(--text-light);
+            color: var(--text-color);
         }
 
         .theme-toggle {
@@ -143,19 +163,12 @@
             border: none;
             cursor: pointer;
             font-size: 20px;
-            color: var(--text);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background-color: var(--secondary);
+            color: var(--text-color);
+            transition: var(--transition);
         }
 
         .theme-toggle:hover {
-            background-color: var(--primary-light);
-            color: white;
+            color: var(--primary-color);
         }
 
         .mobile-menu-btn {
@@ -163,72 +176,83 @@
             background: none;
             border: none;
             font-size: 24px;
-            color: var(--text);
+            color: var(--text-color);
             cursor: pointer;
         }
 
         /* Hero Section */
         .hero {
             padding: 80px 0;
-            background: linear-gradient(135deg, var(--secondary) 0%, var(--background) 100%);
             text-align: center;
+            background: linear-gradient(135deg, var(--light-purple), var(--bg-secondary));
+        }
+
+        .dark-mode .hero {
+            background: linear-gradient(135deg, #1F2937, #111827);
         }
 
         .hero h1 {
-            font-size: 42px;
+            font-size: 48px;
             margin-bottom: 20px;
-            color: var(--text);
+            color: var(--text-color);
             line-height: 1.2;
         }
 
         .hero p {
-            font-size: 18px;
-            color: var(--text-light);
-            max-width: 700px;
+            font-size: 20px;
+            max-width: 800px;
             margin: 0 auto 40px;
+            color: var(--text-color);
+            opacity: 0.9;
         }
 
-        .search-bar {
+        .search-container {
             max-width: 600px;
             margin: 0 auto 40px;
             position: relative;
         }
 
-        .search-bar input {
+        .search-bar {
             width: 100%;
             padding: 15px 20px;
             border-radius: 50px;
-            border: 1px solid var(--primary-light);
+            border: 2px solid var(--border-color);
             font-size: 16px;
-            background-color: var(--background);
-            color: var(--text);
-            box-shadow: 0 4px 10px var(--shadow);
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            padding-right: 60px;
         }
 
-        .search-bar input:focus {
+        .search-bar:focus {
             outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 4px 15px var(--shadow-dark);
+            border-color: var(--primary-color);
         }
 
-        .search-bar button {
+        .search-btn {
             position: absolute;
             right: 5px;
-            top: 5px;
-            background-color: var(--primary);
+            top: 50%;
+            transform: translateY(-50%);
+            background-color: var(--primary-color);
             color: white;
             border: none;
-            border-radius: 50px;
-            padding: 10px 20px;
+            border-radius: 50%;
+            width: 45px;
+            height: 45px;
             cursor: pointer;
-            font-weight: 500;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
-        .search-bar button:hover {
+        .search-btn:hover {
             background-color: var(--primary-dark);
         }
 
-        .tool-categories {
+        .cta-buttons {
             display: flex;
             flex-wrap: wrap;
             justify-content: center;
@@ -236,45 +260,56 @@
             margin-top: 30px;
         }
 
-        .category-btn {
-            background-color: var(--background);
-            border: 1px solid var(--primary-light);
+        .cta-btn {
+            padding: 12px 24px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
             border-radius: 50px;
-            padding: 10px 20px;
-            font-weight: 500;
-            color: var(--text);
+            font-weight: 600;
             cursor: pointer;
-            transition: all 0.3s;
-            box-shadow: 0 2px 5px var(--shadow);
+            transition: var(--transition);
+            box-shadow: var(--shadow);
         }
 
-        .category-btn:hover, .category-btn.active {
-            background-color: var(--primary);
-            color: white;
+        .cta-btn:hover {
+            background-color: var(--primary-dark);
             transform: translateY(-2px);
-            box-shadow: 0 4px 10px var(--shadow-dark);
         }
 
         /* Tool Sections */
-        .tools-section {
+        .section {
             padding: 80px 0;
+            background-color: var(--bg-color);
         }
 
-        .section-header {
+        .section:nth-child(even) {
+            background-color: var(--bg-color);
+        }
+
+        .section-title {
             text-align: center;
             margin-bottom: 50px;
+            font-size: 2.2rem;
+            color: var(--text-color);
         }
 
-        .section-header h2 {
-            font-size: 32px;
-            margin-bottom: 10px;
-            color: var(--text);
+        .section-subtitle {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 1.8rem;
+            color: var(--text-color);
         }
 
-        .section-header p {
-            color: var(--text-light);
-            max-width: 600px;
-            margin: 0 auto;
+        .section-description {
+            text-align: center;
+            margin-bottom: 40px;
+            font-size: 1.2rem;
+            color: var(--text-color);
+            opacity: 0.8;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
         }
 
         .tools-grid {
@@ -284,49 +319,52 @@
         }
 
         .tool-card {
-            background-color: var(--card-bg);
+            background-color: var(--bg-color);
             border-radius: 12px;
             padding: 25px;
-            box-shadow: 0 4px 10px var(--shadow);
-            transition: transform 0.3s, box-shadow 0.3s;
-            display: flex;
-            flex-direction: column;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            border: 1px solid var(--border-color);
+            text-align: center;
         }
 
         .tool-card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 8px 20px var(--shadow-dark);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
         }
 
         .tool-icon {
-            font-size: 32px;
+            font-size: 40px;
             margin-bottom: 15px;
-            color: var(--primary);
+            display: inline-block;
+            transition: var(--transition);
         }
 
-        .tool-card h3 {
-            font-size: 18px;
+        .tool-card:hover .tool-icon {
+            transform: scale(1.1);
+        }
+
+        .tool-title {
+            font-size: 20px;
             margin-bottom: 10px;
-            color: var(--text);
+            color: var(--text-color);
         }
 
-        .tool-card p {
+        .tool-desc {
             font-size: 14px;
-            color: var(--text-light);
             margin-bottom: 20px;
-            flex-grow: 1;
+            color: var(--text-color);
+            opacity: 0.8;
         }
 
         .use-tool-btn {
-            background-color: var(--primary);
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: var(--primary-color);
             color: white;
-            border: none;
             border-radius: 6px;
-            padding: 10px 15px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: background-color 0.3s;
-            align-self: flex-start;
+            font-weight: 600;
+            transition: var(--transition);
         }
 
         .use-tool-btn:hover {
@@ -335,35 +373,36 @@
 
         /* About Section */
         .about-section {
+            background: linear-gradient(135deg, var(--light-purple), var(--bg-secondary));
             padding: 80px 0;
-            background-color: var(--secondary);
         }
 
-        .about-content {
+        .about-container {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 50px;
-            align-items: center;
+            align-items: start;
         }
 
-        .about-text h2 {
-            font-size: 32px;
+        .about-content h2 {
+            font-size: 36px;
             margin-bottom: 20px;
-            color: var(--text);
+            color: var(--text-color);
         }
 
-        .about-text p {
-            margin-bottom: 20px;
-            color: var(--text-light);
+        .about-content p {
+            margin-bottom: 30px;
+            font-size: 18px;
+            color: var(--text-color);
         }
 
-        .features {
+        .features-grid {
             display: grid;
             grid-template-columns: 1fr;
             gap: 20px;
         }
 
-        .feature {
+        .feature-item {
             display: flex;
             align-items: flex-start;
             gap: 15px;
@@ -371,55 +410,65 @@
 
         .feature-icon {
             font-size: 24px;
-            color: var(--primary);
             margin-top: 5px;
         }
 
         .feature-text h4 {
+            font-size: 18px;
             margin-bottom: 5px;
-            color: var(--text);
+            color: var(--text-color);
         }
 
         .feature-text p {
-            margin: 0;
-            color: var(--text-light);
+            color: var(--text-color);
+            opacity: 0.9;
         }
 
         .why-choose-us {
-            background-color: var(--primary-light);
+            background-color: var(--bg-color);
             padding: 30px;
             border-radius: 12px;
-            color: white;
+            box-shadow: var(--shadow);
+            height: 100%;
         }
 
         .why-choose-us h3 {
             font-size: 24px;
-            margin-bottom: 15px;
+            margin-bottom: 20px;
+            color: var(--text-color);
         }
 
-        .why-choose-us ul {
-            list-style-type: none;
+        .why-choose-us p {
+            margin-bottom: 20px;
+            color: var(--text-color);
         }
 
-        .why-choose-us li {
+        .benefits-list {
+            list-style: none;
+        }
+
+        .benefits-list li {
             margin-bottom: 10px;
             display: flex;
-            align-items: center;
+            align-items: flex-start;
             gap: 10px;
+            color: var(--text-color);
         }
 
-        .why-choose-us li:before {
+        .benefits-list li::before {
             content: "✓";
+            color: var(--primary-color);
             font-weight: bold;
         }
 
         /* Footer */
         footer {
-            background-color: var(--card-bg);
+            background-color: #000;
+            color: #fff;
             padding: 60px 0 20px;
         }
 
-        .footer-content {
+        .footer-container {
             display: grid;
             grid-template-columns: 2fr 1fr 1fr;
             gap: 40px;
@@ -430,61 +479,40 @@
             display: flex;
             align-items: center;
             gap: 10px;
-            margin-bottom: 15px;
-            font-size: 24px;
-            font-weight: 700;
-            color: var(--primary);
-        }
-
-        .footer-logo-circle {
-            width: 40px;
-            height: 40px;
-            background-color: var(--primary);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: bold;
-            font-size: 16px;
-        }
-
-        .footer-about p {
-            color: var(--text-light);
             margin-bottom: 20px;
+            cursor: pointer;
         }
 
-        .social-links {
+        .footer-tagline {
+            margin-bottom: 20px;
+            opacity: 0.8;
+        }
+
+        .social-icons {
             display: flex;
             gap: 15px;
         }
 
-        .social-link {
+        .social-icons a {
             display: flex;
             align-items: center;
             justify-content: center;
             width: 40px;
             height: 40px;
+            background-color: var(--primary-color);
             border-radius: 50%;
-            background-color: var(--secondary);
-            color: var(--text);
-            transition: all 0.3s;
+            transition: var(--transition);
         }
 
-        .social-link:hover {
-            background-color: var(--primary);
-            color: white;
+        .social-icons a:hover {
+            background-color: var(--primary-dark);
             transform: translateY(-3px);
         }
 
         .footer-heading {
             font-size: 18px;
             margin-bottom: 20px;
-            color: var(--text);
-        }
-
-        .footer-links {
-            list-style: none;
+            color: var(--primary-light);
         }
 
         .footer-links li {
@@ -492,88 +520,141 @@
         }
 
         .footer-links a {
-            color: var(--text-light);
-            transition: color 0.3s;
+            opacity: 0.8;
+            transition: var(--transition);
         }
 
         .footer-links a:hover {
-            color: var(--primary);
+            opacity: 1;
+            color: var(--primary-light);
+        }
+
+        .newsletter-form {
+            display: flex;
+            margin-top: 15px;
+        }
+
+        .newsletter-input {
+            flex: 1;
+            padding: 12px 15px;
+            border: none;
+            border-radius: 4px 0 0 4px;
+            background-color: #1F2937;
+            color: white;
+        }
+
+        .newsletter-input:focus {
+            outline: none;
+        }
+
+        .newsletter-btn {
+            padding: 0 20px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 0 4px 4px 0;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .newsletter-btn:hover {
+            background-color: var(--primary-dark);
         }
 
         .footer-bottom {
-            text-align: center;
-            padding-top: 20px;
-            border-top: 1px solid var(--secondary);
-            color: var(--text-light);
-            font-size: 14px;
-        }
-
-        /* Modal Styles */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            z-index: 1000;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .modal-content {
-            background-color: var(--background);
-            padding: 30px;
-            border-radius: 12px;
-            max-width: 500px;
-            width: 90%;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-        }
-
-        .modal-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #333;
         }
 
-        .modal-header h2 {
-            color: var(--primary);
-            margin: 0;
+        .copyright {
+            opacity: 0.8;
         }
 
-        .close-modal {
-            background: none;
+        /* Language Switcher */
+        .language-switcher {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 100;
+        }
+
+        .language-btn {
+            background-color: var(--primary-color);
+            color: white;
             border: none;
-            font-size: 24px;
+            border-radius: 50px;
+            padding: 12px 20px;
             cursor: pointer;
-            color: var(--text);
+            box-shadow: var(--shadow);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+            transition: var(--transition);
         }
 
-        .modal-body {
-            color: var(--text);
+        .language-btn:hover {
+            background-color: var(--primary-dark);
         }
 
-        /* Responsive Design */
+        .language-dropdown {
+            position: absolute;
+            bottom: 100%;
+            right: 0;
+            width: 300px;
+            background-color: var(--bg-secondary);
+            border-radius: 8px;
+            box-shadow: var(--shadow);
+            padding: 15px;
+            margin-bottom: 10px;
+            display: none;
+            max-height: 400px;
+            overflow-y: auto;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .language-switcher:hover .language-dropdown {
+            display: grid;
+        }
+
+        .language-option {
+            padding: 8px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: var(--transition);
+            text-align: center;
+            font-size: 14px;
+            color: var(--text-color);
+        }
+
+        .language-option:hover {
+            background-color: var(--bg-color);
+            color: var(--primary-color);
+        }
+
+        /* Responsive Styles */
         @media (max-width: 992px) {
-            .footer-content {
-                grid-template-columns: 1fr 1fr;
-                gap: 30px;
-            }
-            
-            .about-content {
+            .about-container {
                 grid-template-columns: 1fr;
-                gap: 30px;
             }
             
-            .why-choose-us {
-                order: -1;
+            .footer-container {
+                grid-template-columns: 1fr 1fr;
+            }
+            
+            .language-dropdown {
+                grid-template-columns: repeat(2, 1fr);
+                width: 250px;
             }
         }
 
         @media (max-width: 768px) {
-            .header-content {
+            .header-container {
                 flex-wrap: wrap;
             }
             
@@ -584,7 +665,7 @@
                 display: none;
             }
             
-            nav.active {
+            nav.show {
                 display: block;
             }
             
@@ -593,39 +674,56 @@
                 gap: 10px;
             }
             
+            .header-right {
+                margin-left: auto;
+            }
+            
             .mobile-menu-btn {
                 display: block;
             }
             
             .hero h1 {
-                font-size: 32px;
+                font-size: 36px;
             }
             
-            .tool-categories {
-                gap: 10px;
+            .hero p {
+                font-size: 18px;
             }
             
-            .category-btn {
-                padding: 8px 15px;
-                font-size: 14px;
+            .cta-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .footer-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .language-dropdown {
+                grid-template-columns: 1fr;
+                width: 200px;
             }
         }
 
         @media (max-width: 576px) {
-            .footer-content {
-                grid-template-columns: 1fr;
+            .section {
+                padding: 60px 0;
+            }
+            
+            .section-title {
+                font-size: 28px;
             }
             
             .tools-grid {
                 grid-template-columns: 1fr;
             }
             
-            .hero {
-                padding: 50px 0;
+            .hero h1 {
+                font-size: 28px;
             }
             
-            .tools-section, .about-section {
-                padding: 50px 0;
+            .hero p {
+                font-size: 16px;
             }
         }
     </style>
@@ -633,32 +731,32 @@
 <body>
     <!-- Header -->
     <header>
-        <div class="container">
-            <div class="header-content">
-                <a href="#home" class="logo">
-                    <div class="logo-circle">Lpdf</div>
-                    LollyPoPdf
-                </a>
-                
-                <button class="mobile-menu-btn">
+        <div class="container header-container">
+            <div class="logo" onclick="window.location.href='https://lollypopdf.com'">
+                <div class="logo-circle">
+                    LPdf
+                    <div class="logo-stem"></div>
+                </div>
+                <div class="logo-text">LollyPoPdf</div>
+            </div>
+            
+            <nav id="main-nav">
+                <ul>
+                    <li><a href="#home">Home</a></li>
+                    <li><a href="#about">About Us</a></li>
+                    <li><a href="#tools">Tools</a></li>
+                    <li><a href="contact.html">Contact</a></li>
+                </ul>
+            </nav>
+            
+            <div class="header-right">
+                <div class="email">lollypoppdf@gmail.com</div>
+                <button class="theme-toggle" id="theme-toggle">
+                    <i class="fas fa-moon"></i>
+                </button>
+                <button class="mobile-menu-btn" id="mobile-menu-btn">
                     <i class="fas fa-bars"></i>
                 </button>
-                
-                <nav>
-                    <ul>
-                        <li><a href="#home">Home</a></li>
-                        <li><a href="#about">About Us</a></li>
-                        <li><a href="#tools">Tools</a></li>
-                        <li><a href="contact.html">Contact</a></li>
-                    </ul>
-                </nav>
-                
-                <div class="header-actions">
-                    <div class="contact.html">lollypoppdf@gmail.com</div>
-                    <button class="theme-toggle" id="themeToggle">
-                        <i class="fas fa-moon"></i>
-                    </button>
-                </div>
             </div>
         </div>
     </header>
@@ -669,464 +767,453 @@
             <h1>Get Things Done Faster with All Your Daily Tools, All in One Place</h1>
             <p>Fast & Free, secure - Edit, Convert, calculate, compress, and Organize PDF, Excel, Powerpoint & Word Files Convert, Do It All in One Hub.</p>
             
-            <div class="search-bar">
-                <input type="text" placeholder="Search a tool..." id="searchInput">
-                <button id="searchBtn">Search</button>
+            <div class="search-container">
+                <input type="text" class="search-bar" id="search-input" placeholder="Search a tool...">
+                <button class="search-btn" id="search-btn">
+                    <i class="fas fa-search"></i>
+                </button>
             </div>
             
-            <div class="tool-categories">
-                <button class="category-btn active" data-category="pdf">PDF Tools</button>
-                <button class="category-btn" data-category="image">Image Tools</button>
-                <button class="category-btn" data-category="text">Text Tools</button>
-                <button class="category-btn" data-category="audio">Audio/Video Tools</button>
-                <button class="category-btn" data-category="web">Web/Developer Tools</button>
-                <button class="category-btn" data-category="calculator">Calculator Tools</button>
-                <button class="category-btn" data-category="utility">Utility Tools</button>
-                <button class="category-btn" data-category="color">Color Tools</button>
+            <div class="cta-buttons">
+                <button class="cta-btn" data-target="pdf-tools">PDF Tools</button>
+                <button class="cta-btn" data-target="image-tools">Image Tools</button>
+                <button class="cta-btn" data-target="text-tools">Text Tools</button>
+                <button class="cta-btn" data-target="audio-tools">Audio/Video Tools</button>
+                <button class="cta-btn" data-target="web-tools">WebDeveloper Tools</button>
+                <button class="cta-btn" data-target="calculator-tools">Calculator Tools</button>
+                <button class="cta-btn" data-target="utility-tools">Utility Tools</button>
+                <button class="cta-btn" data-target="color-tools">Color Tools</button>
             </div>
         </div>
     </section>
 
-    <!-- PDF Tools Section -->
-    <section class="tools-section" id="document-tools">
+    <!-- Tools Sections -->
+    <section class="section" id="tools">
         <div class="container">
-            <div class="section-header">
-                <h2>📄 PDF Tools</h2>
-                <p>Powerful tools to manage, convert, and optimize your documents</p>
-            </div>
+            <h2 class="section-title">Our Tools</h2>
             
+            <!-- PDF Tools -->
+            <div class="tool-section" id="pdf-tools">
+                <h3 class="section-subtitle">📄 PDF Tools</h3>
+                <p class="section-description">Powerful tools to manage, convert, and optimize your documents</p>
+                <div class="tools-grid">
+                    <div class="tool-card">
+                        <div class="tool-icon">📄</div>
+                        <h4 class="tool-title">PDF Compressor</h4>
+                        <p class="tool-desc">Reduce PDF file size while maintaining quality</p>
+                        <a href="#" class="use-tool-btn">Use Tool</a>
+                    </div>
+                    <div class="tool-card">
+                        <div class="tool-icon">🔗</div>
+                        <h4 class="tool-title">PDF Merger & Splitter</h4>
+                        <p class="tool-desc">Combine or split PDF files easily</p>
+                        <a href="#" class="use-tool-btn">Use Tool</a>
+                    </div>
+                    <div class="tool-card">
+                        <div class="tool-icon">🔄</div>
+                        <h4 class="tool-title">Document Converter</h4>
+                        <p class="tool-desc">Convert between various document formats</p>
+                        <a href="#" class="use-tool-btn">Use Tool</a>
+                    </div>
+                    <div class="tool-card">
+                        <div class="tool-icon">🔒</div>
+                        <h4 class="tool-title">PDF Lock/Unlock</h4>
+                        <p class="tool-desc">Secure your PDF files with passwords</p>
+                        <a href="#" class="use-tool-btn">Use Tool</a>
+                    </div>
+                    <div class="tool-card">
+                        <div class="tool-icon">✍️</div>
+                        <h4 class="tool-title">eSign PDF</h4>
+                        <p class="tool-desc">Add electronic signatures to your documents</p>
+                        <a href="#" class="use-tool-btn">Use Tool</a>
+                    </div>
+                    <div class="tool-card">
+                        <div class="tool-icon">📝</div>
+                        <h4 class="tool-title">PDF to Word</h4>
+                        <p class="tool-desc">Convert PDF files to editable Word documents</p>
+                        <a href="#" class="use-tool-btn">Use Tool</a>
+                    </div>
+                    <div class="tool-card">
+                        <div class="tool-icon">📄</div>
+                        <h4 class="tool-title">Word to PDF</h4>
+                        <p class="tool-desc">Convert Word documents to PDF format</p>
+                        <a href="#" class="use-tool-btn">Use Tool</a>
+                    </div>
+                    <div class="tool-card">
+                        <div class="tool-icon">📊</div>
+                        <h4 class="tool-title">PDF to Excel</h4>
+                        <p class="tool-desc">Extract data from PDF to Excel spreadsheets</p>
+                        <a href="#" class="use-tool-btn">Use Tool</a>
+                    </div>
+                    <div class="tool-card">
+                        <div class="tool-icon">📈</div>
+                        <h4 class="tool-title">Excel to PDF</h4>
+                        <p class="tool-desc">Convert Excel spreadsheets to PDF</p>
+                        <a href="#" class="use-tool-btn">Use Tool</a>
+                    </div>
+                    <div class="tool-card">
+                        <div class="tool-icon">📽️</div>
+                        <h4 class="tool-title">PDF to Powerpoint</h4>
+                        <p class="tool-desc">Convert PDF to editable Powerpoint presentations</p>
+                        <a href="#" class="use-tool-btn">Use Tool</a>
+                    </div>
+                    <div class="tool-card">
+                        <div class="tool-icon">📑</div>
+                        <h4 class="tool-title">Powerpoint to PDF</h4>
+                        <p class="tool-desc">Convert Powerpoint presentations to PDF</p>
+                        <a href="#" class="use-tool-btn">Use Tool</a>
+                    </div>
+                    <div class="tool-card">
+                        <div class="tool-icon">🖼️</div>
+                        <h4 class="tool-title">PDF to JPG</h4>
+                        <p class="tool-desc">Convert PDF pages to JPG images</p>
+                        <a href="#" class="use-tool-btn">Use Tool</a>
+                    </div>
+                    <div class="tool-card">
+                        <div class="tool-icon">📄</div>
+                        <h4 class="tool-title">JPG to PDF</h4>
+                        <p class="tool-desc">Convert JPG images to PDF documents</p>
+                        <a href="#" class="use-tool-btn">Use Tool</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Image Tools -->
+    <section class="section" id="image-tools">
+        <div class="container">
+            <h3 class="section-subtitle">🖼 Image Tools</h3>
+            <p class="section-description">Edit, convert, and optimize your images with ease</p>
             <div class="tools-grid">
-                <div class="tool-card">
-                    <div class="tool-icon">📄</div>
-                    <h3>PDF Compressor</h3>
-                    <p>Reduce PDF file size while maintaining quality</p>
-                    <a href="pdf-compressor.html" class="use-tool-btn">Use Tool</a>
-                </div>
-                
-                <div class="tool-card">
-                    <div class="tool-icon">🔗</div>
-                    <h3>PDF Merger & Splitter</h3>
-                    <p>Combine multiple PDFs or split a PDF into separate files</p>
-                    <a href="pdf-merger & splitter" class="use-tool-btn">Use Tool</a>
-                </div>
-                
                 <div class="tool-card">
                     <div class="tool-icon">🔄</div>
-                    <h3>Document Converter</h3>
-                    <p>Convert between PDF, Word, Excel, PowerPoint formats</p>
+                    <h4 class="tool-title">Image Converter</h4>
+                    <p class="tool-desc">Convert images between different formats</p>
                     <a href="#" class="use-tool-btn">Use Tool</a>
                 </div>
-                
                 <div class="tool-card">
-                    <div class="tool-icon">🔒</div>
-                    <h3>PDF Lock/Unlock</h3>
-                    <p>Add or remove password protection from PDF files</p>
+                    <div class="tool-icon">🗜️</div>
+                    <h4 class="tool-title">Image Compressor</h4>
+                    <p class="tool-desc">Reduce image file size without losing quality</p>
                     <a href="#" class="use-tool-btn">Use Tool</a>
                 </div>
-                
-                <div class="tool-card">
-                    <div class="tool-icon">✍️</div>
-                    <h3>eSign PDF</h3>
-                    <p>Add electronic signatures to your PDF documents</p>
-                    <a href="#" class="use-tool-btn">Use Tool</a>
-                </div>
-                
-                <div class="tool-card">
-                    <div class="tool-icon">📝</div>
-                    <h3>PDF to Word / Word to PDF</h3>
-                    <p>Convert PDF files to editable Word documents and vice versa</p>
-                    <a href="#" class="use-tool-btn">Use Tool</a>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Image Tools Section -->
-    <section class="tools-section" id="image-tools">
-        <div class="container">
-            <div class="section-header">
-                <h2>🖼 Image Tools</h2>
-                <p>Edit, convert, and optimize your images with ease</p>
-            </div>
-            
-            <div class="tools-grid">
-                <div class="tool-card">
-                    <div class="tool-icon">🖼️</div>
-                    <h3>Image Converter</h3>
-                    <p>Convert between JPG, PNG, GIF, WEBP and more formats</p>
-                    <a href="image-converter.html" class="use-tool-btn">Use Tool</a>
-                </div>
-                
                 <div class="tool-card">
                     <div class="tool-icon">📏</div>
-                    <h3>Image Compressor</h3>
-                    <p>Reduce image file size without losing quality</p>
-                    <a href="image-compressor.html" class="use-tool-btn">Use Tool</a>
+                    <h4 class="tool-title">Image Resizer</h4>
+                    <p class="tool-desc">Resize images to specific dimensions</p>
+                    <a href="#" class="use-tool-btn">Use Tool</a>
                 </div>
-                
                 <div class="tool-card">
                     <div class="tool-icon">✂️</div>
-                    <h3>Image Resizer</h3>
-                    <p>Resize images to specific dimensions or percentages</p>
+                    <h4 class="tool-title">Image Cropper</h4>
+                    <p class="tool-desc">Crop images to remove unwanted areas</p>
                     <a href="#" class="use-tool-btn">Use Tool</a>
                 </div>
-                
                 <div class="tool-card">
-                    <div class="tool-icon">🔍</div>
-                    <h3>Image Cropper</h3>
-                    <p>Crop images to remove unwanted areas or focus on specific parts</p>
+                    <div class="tool-icon">🔤</div>
+                    <h4 class="tool-title">Image to Text (OCR)</h4>
+                    <p class="tool-desc">Extract text from images using OCR technology</p>
                     <a href="#" class="use-tool-btn">Use Tool</a>
                 </div>
-                
-                <div class="tool-card">
-                    <div class="tool-icon">📖</div>
-                    <h3>Image to Text (OCR)</h3>
-                    <p>Extract text from images using optical character recognition</p>
-                    <a href="#" class="use-tool-btn">Use Tool</a>
-                </div>
-                
                 <div class="tool-card">
                     <div class="tool-icon">🔄</div>
-                    <h3>Image Rotator/Flipper</h3>
-                    <p>Rotate or flip images horizontally or vertically</p>
+                    <h4 class="tool-title">Image Rotator/Flipper</h4>
+                    <p class="tool-desc">Rotate or flip images in any direction</p>
                     <a href="#" class="use-tool-btn">Use Tool</a>
                 </div>
-                
                 <div class="tool-card">
                     <div class="tool-icon">💧</div>
-                    <h3>Image Watermarker</h3>
-                    <p>Add text or image watermarks to protect your photos</p>
-                    <a href="image-watermarker.html" class="use-tool-btn">Use Tool</a>
-                </div>
-                
-                <div class="tool-card">
-                    <div class="tool-icon">🌀</div>
-                    <h3>Image Blur Tool</h3>
-                    <p>Apply blur effects to images for privacy or artistic purposes</p>
+                    <h4 class="tool-title">Image Watermarker</h4>
+                    <p class="tool-desc">Add watermarks to protect your images</p>
                     <a href="#" class="use-tool-btn">Use Tool</a>
                 </div>
-                
                 <div class="tool-card">
-                    <div class="tool-icon">🤖</div>
-                    <h3>AI Image Generator</h3>
-                    <p>Create unique images using artificial intelligence</p>
+                    <div class="tool-icon">👁️</div>
+                    <h4 class="tool-title">Image Blur Tool</h4>
+                    <p class="tool-desc">Blur specific areas of your images</p>
                     <a href="#" class="use-tool-btn">Use Tool</a>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Text Tools Section -->
-    <section class="tools-section" id="text-tools">
+    <!-- Text Tools -->
+    <section class="section" id="text-tools">
         <div class="container">
-            <div class="section-header">
-                <h2>🔤 Text Tools</h2>
-                <p>Manipulate and transform text with these powerful utilities</p>
-            </div>
-            
+            <h3 class="section-subtitle">🔤 Text Tools</h3>
+            <p class="section-description">Manipulate and transform text with these powerful utilities</p>
             <div class="tools-grid">
                 <div class="tool-card">
                     <div class="tool-icon">🔠</div>
-                    <h3>Text Case Converter</h3>
-                    <p>Convert text between uppercase, lowercase, title case and more</p>
+                    <h4 class="tool-title">Text Case Converter</h4>
+                    <p class="tool-desc">Convert text between different cases</p>
                     <a href="#" class="use-tool-btn">Use Tool</a>
                 </div>
-                
                 <div class="tool-card">
-                    <div class="tool-icon">📊</div>
-                    <h3>Word & Character Counter</h3>
-                    <p>Count words, characters, sentences, and paragraphs in text</p>
+                    <div class="tool-icon">🔢</div>
+                    <h4 class="tool-title">Word & Character Counter</h4>
+                    <p class="tool-desc">Count words and characters in your text</p>
                     <a href="#" class="use-tool-btn">Use Tool</a>
                 </div>
-                
                 <div class="tool-card">
-                    <div class="tool-icon">🧹</div>
-                    <h3>Remove Duplicate Lines</h3>
-                    <p>Remove duplicate lines from text while preserving order</p>
+                    <div class="tool-icon">❌</div>
+                    <h4 class="tool-title">Remove Duplicate Lines</h4>
+                    <p class="tool-desc">Remove duplicate lines from your text</p>
                     <a href="#" class="use-tool-btn">Use Tool</a>
                 </div>
-                
                 <div class="tool-card">
-                    <div class="tool-icon">🔀</div>
-                    <h3>Text Sorter</h3>
-                    <p>Sort lines of text alphabetically or numerically</p>
+                    <div class="tool-icon">🔤</div>
+                    <h4 class="tool-title">Text Sorter</h4>
+                    <p class="tool-desc">Sort text lines alphabetically</p>
                     <a href="#" class="use-tool-btn">Use Tool</a>
                 </div>
-                
                 <div class="tool-card">
-                    <div class="tool-icon">↩️</div>
-                    <h3>Text Reverser</h3>
-                    <p>Reverse the order of characters, words, or lines in text</p>
+                    <div class="tool-icon">🔄</div>
+                    <h4 class="tool-title">Text Reverser</h4>
+                    <p class="tool-desc">Reverse the order of text characters</p>
                     <a href="#" class="use-tool-btn">Use Tool</a>
                 </div>
-                
                 <div class="tool-card">
                     <div class="tool-icon">🔐</div>
-                    <h3>Text Encryptor/Decryptor</h3>
-                    <p>Encrypt and decrypt text with various algorithms</p>
+                    <h4 class="tool-title">Text Encryptor/Decryptor</h4>
+                    <p class="tool-desc">Encrypt and decrypt text with secure algorithms</p>
                     <a href="#" class="use-tool-btn">Use Tool</a>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Audio/Video Tools Section -->
-    <section class="tools-section" id="audio-tools">
+    <!-- Audio/Video Tools -->
+    <section class="section" id="audio-tools">
         <div class="container">
-            <div class="section-header">
-                <h2>🎬 Audio/Video Tools</h2>
-                <p>Convert, edit, and manage your media files</p>
-            </div>
-            
+            <h3 class="section-subtitle">🎬 Audio/Video Tools</h3>
+            <p class="section-description">Convert, edit, and manage your media files</p>
             <div class="tools-grid">
                 <div class="tool-card">
                     <div class="tool-icon">🎥</div>
-                    <h3>Video Converter</h3>
-                    <p>Convert videos between different formats (Browser-Limited)</p>
+                    <h4 class="tool-title">Video Converter</h4>
+                    <p class="tool-desc">Convert videos between different formats</p>
                     <a href="#" class="use-tool-btn">Use Tool</a>
                 </div>
-                
                 <div class="tool-card">
                     <div class="tool-icon">🎵</div>
-                    <h3>Audio Converter</h3>
-                    <p>Convert audio files to WAV and other formats</p>
+                    <h4 class="tool-title">Audio Converter</h4>
+                    <p class="tool-desc">Convert audio files to WAV and other formats</p>
                     <a href="#" class="use-tool-btn">Use Tool</a>
                 </div>
-                
                 <div class="tool-card">
                     <div class="tool-icon">✂️</div>
-                    <h3>Audio Trimmer</h3>
-                    <p>Trim and edit audio files directly in your browser</p>
+                    <h4 class="tool-title">Audio Trimmer</h4>
+                    <p class="tool-desc">Trim audio files to desired length</p>
                     <a href="#" class="use-tool-btn">Use Tool</a>
                 </div>
-                
                 <div class="tool-card">
                     <div class="tool-icon">🗣️</div>
-                    <h3>Text to Speech</h3>
-                    <p>Convert written text to natural sounding speech</p>
+                    <h4 class="tool-title">Text to Speech</h4>
+                    <p class="tool-desc">Convert text to natural sounding speech</p>
                     <a href="#" class="use-tool-btn">Use Tool</a>
                 </div>
-                
+                <div class="tool-card">
+                    <div class="tool-icon">🎤</div>
+                    <h4 class="tool-title">Speech to Text</h4>
+                    <p class="tool-desc">Convert speech to text with high accuracy</p>
+                    <a href="#" class="use-tool-btn">Use Tool</a>
+                </div>
                 <div class="tool-card">
                     <div class="tool-icon">⏱️</div>
-                    <h3>Timer / Stopwatch</h3>
-                    <p>Countdown timer and stopwatch for time management</p>
+                    <h4 class="tool-title">Timer/Stopwatch</h4>
+                    <p class="tool-desc">Use timer and stopwatch for time management</p>
                     <a href="#" class="use-tool-btn">Use Tool</a>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Web/Developer Tools Section -->
-    <section class="tools-section" id="web-tools">
+    <!-- Web Developer Tools -->
+    <section class="section" id="web-tools">
         <div class="container">
-            <div class="section-header">
-                <h2>🌐 Web/Developer Tools</h2>
-                <p>Essential tools for web developers and designers</p>
-            </div>
-            
+            <h3 class="section-subtitle">🌐 WebDeveloper Tools</h3>
+            <p class="section-description">Essential tools for web developers and designers</p>
             <div class="tools-grid">
                 <div class="tool-card">
                     <div class="tool-icon">⚡</div>
-                    <h3>HTML/CSS/JS Minifier</h3>
-                    <p>Minify and optimize your code for faster loading</p>
+                    <h4 class="tool-title">HTML/CSS/JS Minifier</h4>
+                    <p class="tool-desc">Minify your code for better performance</p>
                     <a href="#" class="use-tool-btn">Use Tool</a>
                 </div>
-                
                 <div class="tool-card">
                     <div class="tool-icon">📋</div>
-                    <h3>JSON Formatter & Validator</h3>
-                    <p>Format, validate, and beautify JSON data</p>
+                    <h4 class="tool-title">JSON Formatter & Validator</h4>
+                    <p class="tool-desc">Format and validate JSON data</p>
                     <a href="#" class="use-tool-btn">Use Tool</a>
                 </div>
-                
                 <div class="tool-card">
-                    <div class="tool-icon">🔢</div>
-                    <h3>Base64 Encoder/Decoder</h3>
-                    <p>Encode and decode Base64 strings</p>
+                    <div class="tool-icon">🔒</div>
+                    <h4 class="tool-title">Base64 Encoder/Decoder</h4>
+                    <p class="tool-desc">Encode and decode Base64 data</p>
                     <a href="#" class="use-tool-btn">Use Tool</a>
                 </div>
-                
                 <div class="tool-card">
                     <div class="tool-icon">🔗</div>
-                    <h3>URL Encoder/Decoder</h3>
-                    <p>Encode and decode URLs for safe transmission</p>
+                    <h4 class="tool-title">URL Encoder/Decoder</h4>
+                    <p class="tool-desc">Encode and decode URL strings</p>
                     <a href="#" class="use-tool-btn">Use Tool</a>
                 </div>
-                
                 <div class="tool-card">
                     <div class="tool-icon">🎨</div>
-                    <h3>Color Picker & Converter</h3>
-                    <p>Pick colors and convert between different formats</p>
+                    <h4 class="tool-title">Color Picker & Converter</h4>
+                    <p class="tool-desc">Pick colors and convert between formats</p>
                     <a href="#" class="use-tool-btn">Use Tool</a>
                 </div>
-                
                 <div class="tool-card">
                     <div class="tool-icon">🔍</div>
-                    <h3>Regex Tester</h3>
-                    <p>Test and debug regular expressions</p>
+                    <h4 class="tool-title">Regex Tester</h4>
+                    <p class="tool-desc">Test and debug regular expressions</p>
                     <a href="#" class="use-tool-btn">Use Tool</a>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Calculator Tools Section -->
-    <section class="tools-section" id="calculator-tools">
+    <!-- Calculator Tools -->
+    <section class="section" id="calculator-tools">
         <div class="container">
-            <div class="section-header">
-                <h2>🧮 Calculator Tools</h2>
-                <p>Various calculators for everyday and specialized needs</p>
-            </div>
-            
+            <h3 class="section-subtitle">🧮 Calculator Tools</h3>
+            <p class="section-description">Various calculators for everyday and specialized needs</p>
             <div class="tools-grid">
                 <div class="tool-card">
-                    <div class="tool-icon">🔢</div>
-                    <h3>Scientific Calculator</h3>
-                    <p>Advanced calculator with scientific functions</p>
+                    <div class="tool-icon">🧮</div>
+                    <h4 class="tool-title">Scientific Calculator</h4>
+                    <p class="tool-desc">Advanced calculator for complex calculations</p>
                     <a href="#" class="use-tool-btn">Use Tool</a>
                 </div>
-                
                 <div class="tool-card">
                     <div class="tool-icon">🎂</div>
-                    <h3>Age Calculator</h3>
-                    <p>Calculate age in years, months, and days</p>
+                    <h4 class="tool-title">Age Calculator</h4>
+                    <p class="tool-desc">Calculate age from birth date</p>
                     <a href="#" class="use-tool-btn">Use Tool</a>
                 </div>
-                
                 <div class="tool-card">
                     <div class="tool-icon">⚖️</div>
-                    <h3>BMI Calculator</h3>
-                    <p>Calculate your Body Mass Index</p>
+                    <h4 class="tool-title">BMI Calculator</h4>
+                    <p class="tool-desc">Calculate Body Mass Index</p>
                     <a href="#" class="use-tool-btn">Use Tool</a>
                 </div>
-                
                 <div class="tool-card">
                     <div class="tool-icon">💰</div>
-                    <h3>Loan EMI Calculator</h3>
-                    <p>Calculate Equated Monthly Installments for loans</p>
+                    <h4 class="tool-title">Loan EMI Calculator</h4>
+                    <p class="tool-desc">Calculate Equated Monthly Installments</p>
                     <a href="#" class="use-tool-btn">Use Tool</a>
                 </div>
-                
                 <div class="tool-card">
-                    <div class="tool-icon">🏪</div>
-                    <h3>GST Calculator</h3>
-                    <p>Calculate Goods and Services Tax amounts</p>
+                    <div class="tool-icon">📊</div>
+                    <h4 class="tool-title">GST Calculator</h4>
+                    <p class="tool-desc">Calculate Goods and Services Tax</p>
                     <a href="#" class="use-tool-btn">Use Tool</a>
                 </div>
-                
                 <div class="tool-card">
                     <div class="tool-icon">💱</div>
-                    <h3>Currency Converter</h3>
-                    <p>Convert between different world currencies</p>
+                    <h4 class="tool-title">Currency Converter</h4>
+                    <p class="tool-desc">Convert between different currencies</p>
                     <a href="#" class="use-tool-btn">Use Tool</a>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Utility Tools Section -->
-    <section class="tools-section" id="utility-tools">
+    <!-- Utility Tools -->
+    <section class="section" id="utility-tools">
         <div class="container">
-            <div class="section-header">
-                <h2>🛠️ Utility Tools</h2>
-                <p>Handy utilities for various everyday tasks</p>
-            </div>
-            
+            <h3 class="section-subtitle">🛠️ Utility Tools</h3>
+            <p class="section-description">Handy utilities for various everyday tasks</p>
             <div class="tools-grid">
                 <div class="tool-card">
                     <div class="tool-icon">📱</div>
-                    <h3>QR Code Generator & Scanner</h3>
-                    <p>Create and scan QR codes for various purposes</p>
+                    <h4 class="tool-title">QR Code Generator & Scanner</h4>
+                    <p class="tool-desc">Create and scan QR codes</p>
                     <a href="#" class="use-tool-btn">Use Tool</a>
                 </div>
-                
                 <div class="tool-card">
                     <div class="tool-icon">📊</div>
-                    <h3>Barcode Generator</h3>
-                    <p>Generate barcodes in different formats</p>
+                    <h4 class="tool-title">Barcode Generator</h4>
+                    <p class="tool-desc">Generate barcodes for products</p>
                     <a href="#" class="use-tool-btn">Use Tool</a>
                 </div>
-                
                 <div class="tool-card">
-                    <div class="tool-icon">🔑</div>
-                    <h3>UUID Generator</h3>
-                    <p>Generate unique identifiers for various applications</p>
+                    <div class="tool-icon">🆔</div>
+                    <h4 class="tool-title">UUID Generator</h4>
+                    <p class="tool-desc">Generate unique identifiers</p>
                     <a href="#" class="use-tool-btn">Use Tool</a>
                 </div>
-                
                 <div class="tool-card">
                     <div class="tool-icon">📏</div>
-                    <h3>Unit Converter</h3>
-                    <p>Convert between different units of measurement</p>
+                    <h4 class="tool-title">Unit Converter</h4>
+                    <p class="tool-desc">Convert between different units of measurement</p>
                     <a href="#" class="use-tool-btn">Use Tool</a>
                 </div>
-                
                 <div class="tool-card">
-                    <div class="tool-icon">🌍</div>
-                    <h3>Time Zone Converter</h3>
-                    <p>Convert time between different time zones</p>
+                    <div class="tool-icon">🌐</div>
+                    <h4 class="tool-title">Time Zone Converter</h4>
+                    <p class="tool-desc">Convert time between different time zones</p>
                     <a href="#" class="use-tool-btn">Use Tool</a>
                 </div>
-                
                 <div class="tool-card">
-                    <div class="tool-icon">🎲</div>
-                    <h3>Random Number/Password Generator</h3>
-                    <p>Generate random numbers and secure passwords</p>
+                    <div class="tool-icon">📧</div>
+                    <h4 class="tool-title">Email Generator</h4>
+                    <p class="tool-desc">Generate temporary email addresses</p>
+                    <a href="#" class="use-tool-btn">Use Tool</a>
+                </div>
+                <div class="tool-card">
+                    <div class="tool-icon">🔑</div>
+                    <h4 class="tool-title">Random Number/Password Generator</h4>
+                    <p class="tool-desc">Generate secure random numbers and passwords</p>
                     <a href="#" class="use-tool-btn">Use Tool</a>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Color Tools Section -->
-    <section class="tools-section" id="color-tools">
+    <!-- Color Tools -->
+    <section class="section" id="color-tools">
         <div class="container">
-            <div class="section-header">
-                <h2>🎨 Color Tools</h2>
-                <p>Tools for working with colors and palettes</p>
-            </div>
-            
+            <h3 class="section-subtitle">🎨 Color Tools</h3>
+            <p class="section-description">Tools for working with colors and palettes</p>
             <div class="tools-grid">
                 <div class="tool-card">
-                    <div class="tool-icon">🖼️</div>
-                    <h3>Color Picker from Image</h3>
-                    <p>Extract colors from any image</p>
+                    <div class="tool-icon">🎯</div>
+                    <h4 class="tool-title">Color Picker from Image</h4>
+                    <p class="tool-desc">Extract colors from any image</p>
                     <a href="#" class="use-tool-btn">Use Tool</a>
                 </div>
-                
                 <div class="tool-card">
                     <div class="tool-icon">🔄</div>
-                    <h3>HEX to RGB Converter</h3>
-                    <p>Convert HEX color codes to RGB values</p>
+                    <h4 class="tool-title">HEX to RGB Converter</h4>
+                    <p class="tool-desc">Convert HEX color codes to RGB values</p>
                     <a href="#" class="use-tool-btn">Use Tool</a>
                 </div>
-                
                 <div class="tool-card">
                     <div class="tool-icon">🌈</div>
-                    <h3>Gradient Generator</h3>
-                    <p>Create beautiful CSS gradients</p>
+                    <h4 class="tool-title">Gradient Generator</h4>
+                    <p class="tool-desc">Create beautiful color gradients</p>
                     <a href="#" class="use-tool-btn">Use Tool</a>
                 </div>
-                
                 <div class="tool-card">
-                    <div class="tool-icon">👁️</div>
-                    <h3>Contrast Checker</h3>
-                    <p>Check color contrast for accessibility</p>
+                    <div class="tool-icon">⚫⚪</div>
+                    <h4 class="tool-title">Contrast Checker</h4>
+                    <p class="tool-desc">Check color contrast for accessibility</p>
                     <a href="#" class="use-tool-btn">Use Tool</a>
                 </div>
-                
                 <div class="tool-card">
                     <div class="tool-icon">🎨</div>
-                    <h3>Palette Generator</h3>
-                    <p>Generate harmonious color palettes</p>
+                    <h4 class="tool-title">Palette Generator</h4>
+                    <p class="tool-desc">Generate harmonious color palettes</p>
                     <a href="#" class="use-tool-btn">Use Tool</a>
                 </div>
-                
                 <div class="tool-card">
-                    <div class="tool-icon">👓</div>
-                    <h3>Color Blindness Simulator</h3>
-                    <p>See how colors appear to people with color vision deficiencies</p>
+                    <div class="tool-icon">👁️</div>
+                    <h4 class="tool-title">Color Blindness Simulator</h4>
+                    <p class="tool-desc">Simulate how colors appear to colorblind users</p>
                     <a href="#" class="use-tool-btn">Use Tool</a>
                 </div>
             </div>
@@ -1135,333 +1222,529 @@
 
     <!-- About Section -->
     <section class="about-section" id="about">
-        <div class="container">
+        <div class="container about-container">
             <div class="about-content">
-                <div class="about-text">
-                    <h2>About LollyPoPdf</h2>
-                    <p>Your One-Stop Solution</p>
-                    <p>LollyPoPdf is a comprehensive platform offering 65+ professional online tools designed to simplify your daily tasks. Whether you're a content creator, marketer, developer, or business professional, we have the tools you need to boost productivity and achieve your goals.</p>
-                    
-                    <div class="features">
-                        <div class="feature">
-                            <div class="feature-icon">💸</div>
-                            <div class="feature-text">
-                                <h4>Free to Use</h4>
-                                <p>All tools are completely free with no hidden costs.</p>
-                            </div>
+                <h2>About LollyPoPdf</h2>
+                <p>Your One-Stop Solution</p>
+                <p>LollyPoPdf is a comprehensive platform offering 65+ professional online tools designed to simplify your daily tasks. Whether you're a content creator, marketer, developer, or business professional, we have the tools you need to boost productivity and achieve your goals.</p>
+                
+                <div class="features-grid">
+                    <div class="feature-item">
+                        <div class="feature-icon">💸</div>
+                        <div class="feature-text">
+                            <h4>Free to Use</h4>
+                            <p>All tools are completely free with no hidden costs.</p>
                         </div>
-                        
-                        <div class="feature">
-                            <div class="feature-icon">🚀</div>
-                            <div class="feature-text">
-                                <h4>No Registration</h4>
-                                <p>Start using tools immediately without signing up.</p>
-                            </div>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon">🚀</div>
+                        <div class="feature-text">
+                            <h4>No Registration</h4>
+                            <p>Start using tools immediately without signing up.</p>
                         </div>
-                        
-                        <div class="feature">
-                            <div class="feature-icon">🔒</div>
-                            <div class="feature-text">
-                                <h4>Privacy Focused</h4>
-                                <p>Your data stays on your device, never uploaded to servers.</p>
-                            </div>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon">🔒</div>
+                        <div class="feature-text">
+                            <h4>Privacy Focused</h4>
+                            <p>Your data stays on your device, never uploaded to servers.</p>
                         </div>
                     </div>
                 </div>
-                
-                <div class="why-choose-us">
-                    <h3>Why Choose Us?</h3>
-                    <p>Our platform is built with user experience in mind. We understand that professionals need reliable, fast, and efficient tools to get their work done.</p>
-                    <ul>
-                        <li>65+ specialized tools for all your needs</li>
-                        <li>Fast processing with no wait times</li>
-                        <li>Clean, intuitive interface</li>
-                        <li>Regular updates with new features</li>
-                        <li>Works on all devices and browsers</li>
-                        <li>No watermarks or limitations</li>
-                    </ul>
-                </div>
+            </div>
+            
+            <div class="why-choose-us">
+                <h3>Why Choose Us?</h3>
+                <p>Our platform is built with user experience in mind. We understand that professionals need reliable, fast, and efficient tools to get their work done.</p>
+                <ul class="benefits-list">
+                    <li>65+ specialized tools for all your needs</li>
+                    <li>Fast processing with no wait times</li>
+                    <li>Clean, intuitive interface</li>
+                    <li>Regular updates with new features</li>
+                    <li>Works on all devices and browsers</li>
+                    <li>No watermarks or limitations</li>
+                </ul>
             </div>
         </div>
     </section>
 
     <!-- Footer -->
-    <footer id="contact">
+    <footer>
         <div class="container">
-            <div class="footer-content">
+            <div class="footer-container">
                 <div class="footer-about">
-                    <div class="footer-logo">
-                        <div class="footer-logo-circle">Lpdf</div>
-                        LollyPoPdf
+                    <div class="footer-logo" onclick="window.location.href='https://lollypopdf.com'">
+                        <div class="logo-circle">
+                            LPdf
+                            <div class="logo-stem"></div>
+                        </div>
+                        <div class="logo-text" style="color: var(--primary-color);">LollyPoPdf</div>
                     </div>
-                    <p>Your one-stop destination for 65+ online tools to simplify your daily tasks.</p>
-                    
-                    <div class="social-links">
-                        <a href="#" class="social-link"><i class="fab fa-facebook-f"></i></a>
-                        <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
-                        <a href="#" class="social-link"><i class="fab fa-instagram"></i></a>
-                        <a href="#" class="social-link"><i class="fab fa-pinterest"></i></a>
-                        <a href="#" class="social-link"><i class="fab fa-reddit"></i></a>
-                        <a href="#" class="social-link"><i class="fab fa-github"></i></a>
+                    <p class="footer-tagline">Your one-stop destination for 65+ online tools to simplify your daily tasks.</p>
+                    <div class="social-icons">
+                        <a href="https://facebook.com/lollypopdf" target="_blank"><i class="fab fa-facebook-f"></i></a>
+                        <a href="https://linkedin.com/company/lollypopdf" target="_blank"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="https://twitter.com/lollypopdf" target="_blank"><i class="fab fa-twitter"></i></a>
+                        <a href="https://instagram.com/lollypopdf" target="_blank"><i class="fab fa-instagram"></i></a>
+                        <a href="https://pinterest.com/lollypopdf" target="_blank"><i class="fab fa-pinterest"></i></a>
                     </div>
                 </div>
                 
-                <div>
+                <div class="footer-categories">
                     <h3 class="footer-heading">Popular Categories</h3>
                     <ul class="footer-links">
-                        <li><a href="#document-tools">PDF Tools</a></li>
+                        <li><a href="#pdf-tools">PDF Tools</a></li>
                         <li><a href="#image-tools">Image Tools</a></li>
                         <li><a href="#text-tools">Text Tools</a></li>
                         <li><a href="#audio-tools">Audio/Video Tools</a></li>
-                        <li><a href="#web-tools">Web/Developer Tools</a></li>
+                        <li><a href="#web-tools">WebDeveloper Tools</a></li>
                         <li><a href="#calculator-tools">Calculator Tools</a></li>
                         <li><a href="#utility-tools">Utility Tools</a></li>
                         <li><a href="#color-tools">Color Tools</a></li>
                     </ul>
                 </div>
                 
-                <div>
+                <div class="footer-links-section">
                     <h3 class="footer-heading">Quick Links</h3>
                     <ul class="footer-links">
                         <li><a href="#home">Home</a></li>
                         <li><a href="#tools">All Tools</a></li>
+                        <li><a href="faq.html">FAQ</a></li>
                         <li><a href="contact.html">Contact</a></li>
-                        <li><a href="#" id="privacy-link">Privacy Policy</a></li>
-                        <li><a href="#" id="disclaimer-link">Disclaimer</a></li>
-                        <li><a href="#" id="terms-link">Terms of Service</a></li>
+                        <li><a href="privacy-policy.html">Privacy Policy</a></li>
+                        <li><a href="disclaimer.html">Disclaimer</a></li>
+                        <li><a href="terms.html">Terms of Service</a></li>
                     </ul>
+                    
+                    <div class="newsletter">
+                        <h3 class="footer-heading">Stay Updated</h3>
+                        <p>Subscribe to get updates about new tools and features.</p>
+                        <form class="newsletter-form">
+                            <input type="email" class="newsletter-input" placeholder="Your email">
+                            <button type="submit" class="newsletter-btn">Subscribe</button>
+                        </form>
+                    </div>
                 </div>
             </div>
             
             <div class="footer-bottom">
-                <p>© 2025 LollyPoPDF. All rights reserved.</p>
+                <div class="copyright">© 2025 LollyPoPDF. All rights reserved.</div>
             </div>
         </div>
     </footer>
 
-    <!-- Modal for Privacy Policy -->
-    <div class="modal" id="privacy-modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>Privacy Policy</h2>
-                <button class="close-modal">&times;</button>
-            </div>
-            <div class="modal-body">
-                <p>At LollyPoPdf, we take your privacy seriously. Our privacy-focused approach means:</p>
-                <ul>
-                    <li>Your files are processed locally in your browser</li>
-                    <li>We never upload your data to our servers</li>
-                    <li>No personal information is collected without your consent</li>
-                    <li>We don't use tracking cookies or analytics</li>
-                    <li>Your data remains completely private and secure</li>
-                </ul>
-                <p>For more details, please contact at lollypoppdf@gmail.com</p>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal for Disclaimer -->
-    <div class="modal" id="disclaimer-modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>Disclaimer</h2>
-                <button class="close-modal">&times;</button>
-            </div>
-            <div class="modal-body">
-                <p>LollyPoPdf provides these tools for informational and educational purposes only. While we strive for accuracy, we make no guarantees regarding the results obtained from using our tools.</p>
-                <p>Important disclaimers:</p>
-                <ul>
-                    <li>Tools are provided "as is" without warranty of any kind</li>
-                    <li>We are not responsible for any data loss or corruption</li>
-                    <li>Always backup your important files before processing</li>
-                    <li>Some tools have limitations based on browser capabilities</li>
-                    <li>Results may vary depending on file size and complexity</li>
-                </ul>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal for Terms of Service -->
-    <div class="modal" id="terms-modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>Terms of Service</h2>
-                <button class="close-modal">&times;</button>
-            </div>
-            <div class="modal-body">
-                <p>By using LollyPoPdf, you agree to the following terms:</p>
-                <ul>
-                    <li>You will not use our tools for illegal purposes</li>
-                    <li>You are responsible for complying with copyright laws</li>
-                    <li>We reserve the right to modify or discontinue services</li>
-                    <li>Tools are provided free of charge for personal use</li>
-                    <li>Commercial use may require appropriate licensing</li>
-                    <li>We are not liable for any damages resulting from tool usage</li>
-                </ul>
-                <p>These terms may be updated periodically. Continued use constitutes acceptance of any changes.</p>
-            </div>
+    <!-- Language Switcher -->
+    <div class="language-switcher">
+        <button class="language-btn" id="language-btn">
+            <i class="fas fa-globe"></i> <span id="current-lang">English</span>
+        </button>
+        <div class="language-dropdown" id="language-dropdown">
+            <div class="language-option" data-lang="en">English</div>
+            <div class="language-option" data-lang="es">Español</div>
+            <div class="language-option" data-lang="fr">Français</div>
+            <div class="language-option" data-lang="de">Deutsch</div>
+            <div class="language-option" data-lang="it">Italiano</div>
+            <div class="language-option" data-lang="pt">Português</div>
+            <div class="language-option" data-lang="ja">日本語</div>
+            <div class="language-option" data-lang="ru">Pусский</div>
+            <div class="language-option" data-lang="ko">한국어</div>
+            <div class="language-option" data-lang="zh-CN">中文 (简体)</div>
+            <div class="language-option" data-lang="zh-TW">中文 (繁體)</div>
+            <div class="language-option" data-lang="ar">العربية</div>
+            <div class="language-option" data-lang="fa">فارسی</div>
+            <div class="language-option" data-lang="bg">Български</div>
+            <div class="language-option" data-lang="ca">Català</div>
+            <div class="language-option" data-lang="nl">Nederlands</div>
+            <div class="language-option" data-lang="el">Ελληνικά</div>
+            <div class="language-option" data-lang="hi">हिन्दी</div>
+            <div class="language-option" data-lang="id">Bahasa Indonesia</div>
+            <div class="language-option" data-lang="ms">Bahasa Melayu</div>
+            <div class="language-option" data-lang="pl">Polski</div>
+            <div class="language-option" data-lang="sv">Svenska</div>
+            <div class="language-option" data-lang="th">ภาษาไทย</div>
+            <div class="language-option" data-lang="tr">Türkçe</div>
+            <div class="language-option" data-lang="uk">Українська</div>
+            <div class="language-option" data-lang="vi">Tiếng Việt</div>
         </div>
     </div>
 
     <script>
-        // Mobile menu toggle
-        document.querySelector('.mobile-menu-btn').addEventListener('click', function() {
-            document.querySelector('nav').classList.toggle('active');
-        });
-
-        // Dark mode toggle
-        document.getElementById('themeToggle').addEventListener('click', function() {
-            document.body.classList.toggle('dark-mode');
-            const icon = this.querySelector('i');
-            if (document.body.classList.contains('dark-mode')) {
-                icon.classList.remove('fa-moon');
-                icon.classList.add('fa-sun');
-            } else {
-                icon.classList.remove('fa-sun');
-                icon.classList.add('fa-moon');
+        // Language translations
+        const translations = {
+            en: {
+                home: "Home",
+                about: "About Us",
+                tools: "Tools",
+                contact: "Contact",
+                heroTitle: "Get Things Done Faster with All Your Daily Tools, All in One Place",
+                heroSubtitle: "Fast & Free, secure - Edit, Convert, calculate, compress, and Organize PDF, Excel, Powerpoint & Word Files Convert, Do It All in One Hub.",
+                searchPlaceholder: "Search a tool...",
+                pdfTools: "PDF Tools",
+                imageTools: "Image Tools",
+                textTools: "Text Tools",
+                audioTools: "Audio/Video Tools",
+                webTools: "WebDeveloper Tools",
+                calculatorTools: "Calculator Tools",
+                utilityTools: "Utility Tools",
+                colorTools: "Color Tools",
+                ourTools: "Our Tools",
+                aboutTitle: "About LollyPoPdf",
+                aboutSubtitle: "Your One-Stop Solution",
+                aboutText: "LollyPoPdf is a comprehensive platform offering 65+ professional online tools designed to simplify your daily tasks. Whether you're a content creator, marketer, developer, or business professional, we have the tools you need to boost productivity and achieve your goals.",
+                freeToUse: "Free to Use",
+                freeToUseText: "All tools are completely free with no hidden costs.",
+                noRegistration: "No Registration",
+                noRegistrationText: "Start using tools immediately without signing up.",
+                privacyFocused: "Privacy Focused",
+                privacyFocusedText: "Your data stays on your device, never uploaded to servers.",
+                whyChooseUs: "Why Choose Us?",
+                whyChooseUsText: "Our platform is built with user experience in mind. We understand that professionals need reliable, fast, and efficient tools to get their work done.",
+                benefit1: "65+ specialized tools for all your needs",
+                benefit2: "Fast processing with no wait times",
+                benefit3: "Clean, intuitive interface",
+                benefit4: "Regular updates with new features",
+                benefit5: "Works on all devices and browsers",
+                benefit6: "No watermarks or limitations",
+                popularCategories: "Popular Categories",
+                quickLinks: "Quick Links",
+                allTools: "All Tools",
+                faq: "FAQ",
+                privacyPolicy: "Privacy Policy",
+                disclaimer: "Disclaimer",
+                terms: "Terms of Service",
+                stayUpdated: "Stay Updated",
+                newsletterText: "Subscribe to get updates about new tools and features.",
+                copyright: "© 2025 LollyPoPDF. All rights reserved.",
+                useTool: "Use Tool",
+                pdfDescription: "Powerful tools to manage, convert, and optimize your documents",
+                imageDescription: "Edit, convert, and optimize your images with ease",
+                textDescription: "Manipulate and transform text with these powerful utilities",
+                audioDescription: "Convert, edit, and manage your media files",
+                webDescription: "Essential tools for web developers and designers",
+                calculatorDescription: "Various calculators for everyday and specialized needs",
+                utilityDescription: "Handy utilities for various everyday tasks",
+                colorDescription: "Tools for working with colors and palettes"
+            },
+            es: {
+                home: "Inicio",
+                about: "Acerca de",
+                tools: "Herramientas",
+                contact: "Contacto",
+                heroTitle: "Haz las cosas más rápido con todas tus herramientas diarias, todo en un solo lugar",
+                heroSubtitle: "Rápido y gratuito, seguro - Edita, convierte, calcula, comprime y organiza archivos PDF, Excel, Powerpoint y Word. Hazlo todo en un solo centro.",
+                searchPlaceholder: "Buscar una herramienta...",
+                pdfTools: "Herramientas PDF",
+                imageTools: "Herramientas de imagen",
+                textTools: "Herramientas de texto",
+                audioTools: "Herramientas de audio/video",
+                webTools: "Herramientas para desarrolladores",
+                calculatorTools: "Herramientas de calculadora",
+                utilityTools: "Herramientas de utilidad",
+                colorTools: "Herramientas de color",
+                ourTools: "Nuestras herramientas",
+                aboutTitle: "Acerca de LollyPoPdf",
+                aboutSubtitle: "Tu solución integral",
+                aboutText: "LollyPoPdf es una plataforma integral que ofrece más de 65 herramientas profesionales en línea diseñadas para simplificar tus tareas diarias. Ya seas creador de contenido, marketer, desarrollador o profesional de negocios, tenemos las herramientas que necesitas para aumentar la productividad y alcanzar tus objetivos.",
+                freeToUse: "Gratuito",
+                freeToUseText: "Todas las herramientas son completamente gratuitas sin costos ocultos.",
+                noRegistration: "Sin registro",
+                noRegistrationText: "Comienza a usar las herramientas inmediatamente sin registrarte.",
+                privacyFocused: "Enfocado en la privacidad",
+                privacyFocusedText: "Tus datos permanecen en tu dispositivo, nunca se suben a servidores.",
+                whyChooseUs: "¿Por qué elegirnos?",
+                whyChooseUsText: "Nuestra plataforma está construida con la experiencia del usuario en mente. Entendemos que los profesionales necesitan herramientas confiables, rápidas y eficientes para hacer su trabajo.",
+                benefit1: "Más de 65 herramientas especializadas para todas tus necesidades",
+                benefit2: "Procesamiento rápido sin tiempos de espera",
+                benefit3: "Interfaz limpia e intuitiva",
+                benefit4: "Actualizaciones regulares con nuevas funciones",
+                benefit5: "Funciona en todos los dispositivos y navegadores",
+                benefit6: "Sin marcas de agua o limitaciones",
+                popularCategories: "Categorías populares",
+                quickLinks: "Enlaces rápidos",
+                allTools: "Todas las herramientas",
+                faq: "Preguntas frecuentes",
+                privacyPolicy: "Política de privacidad",
+                disclaimer: "Descargo de responsabilidad",
+                terms: "Términos de servicio",
+                stayUpdated: "Mantente actualizado",
+                newsletterText: "Suscríbete para recibir actualizaciones sobre nuevas herramientas y funciones.",
+                copyright: "© 2025 LollyPoPDF. Todos los derechos reservados.",
+                useTool: "Usar herramienta",
+                pdfDescription: "Herramientas poderosas para gestionar, convertir y optimizar tus documentos",
+                imageDescription: "Edita, convierte y optimiza tus imágenes con facilidad",
+                textDescription: "Manipula y transforma texto con estas poderosas utilidades",
+                audioDescription: "Convierte, edita y gestiona tus archivos multimedia",
+                webDescription: "Herramientas esenciales para desarrolladores web y diseñadores",
+                calculatorDescription: "Varias calculadoras para necesidades cotidianas y especializadas",
+                utilityDescription: "Utilidades prácticas para diversas tareas cotidianas",
+                colorDescription: "Herramientas para trabajar con colores y paletas"
+            },
+            fr: {
+                home: "Accueil",
+                about: "À propos",
+                tools: "Outils",
+                contact: "Contact",
+                heroTitle: "Accomplissez plus rapidement vos tâches avec tous vos outils quotidiens, tous en un seul endroit",
+                heroSubtitle: "Rapide et gratuit, sécurisé - Modifiez, convertissez, calculez, compressez et organisez les fichiers PDF, Excel, Powerpoint et Word. Faites tout cela dans un seul hub.",
+                searchPlaceholder: "Rechercher un outil...",
+                pdfTools: "Outils PDF",
+                imageTools: "Outils d'image",
+                textTools: "Outils de texte",
+                audioTools: "Outils audio/vidéo",
+                webTools: "Outils pour développeurs",
+                calculatorTools: "Outils de calculatrice",
+                utilityTools: "Outils utilitaires",
+                colorTools: "Outils de couleur",
+                ourTools: "Nos outils",
+                aboutTitle: "À propos de LollyPoPdf",
+                aboutSubtitle: "Votre solution tout-en-un",
+                aboutText: "LollyPoPdf est une plateforme complète offrant plus de 65 outils professionnels en ligne conçus pour simplifier vos tâches quotidiennes. Que vous soyez créateur de contenu, marketeur, développeur ou professionnel des affaires, nous avons les outils dont vous avez besoin pour augmenter la productivité et atteindre vos objectifs.",
+                freeToUse: "Gratuit",
+                freeToUseText: "Tous les outils sont complètement gratuits sans coûts cachés.",
+                noRegistration: "Aucune inscription",
+                noRegistrationText: "Commencez à utiliser les outils immédiatement sans vous inscrire.",
+                privacyFocused: "Respect de la vie privée",
+                privacyFocusedText: "Vos données restent sur votre appareil, jamais téléchargées sur des serveurs.",
+                whyChooseUs: "Pourquoi nous choisir?",
+                whyChooseUsText: "Notre plateforme est construite avec l'expérience utilisateur à l'esprit. Nous comprenons que les professionnels ont besoin d'outils fiables, rapides et efficients pour faire leur travail.",
+                benefit1: "Plus de 65 outils spécialisés pour tous vos besoins",
+                benefit2: "Traitement rapide sans temps d'attente",
+                benefit3: "Interface propre et intuitive",
+                benefit4: "Mises à jour régulières avec de nouvelles fonctionnalités",
+                benefit5: "Fonctionne sur tous les appareils et navigateurs",
+                benefit6: "Aucun filigrane ou limitation",
+                popularCategories: "Catégories populaires",
+                quickLinks: "Liens rapides",
+                allTools: "Tous les outils",
+                faq: "FAQ",
+                privacyPolicy: "Politique de confidentialité",
+                disclaimer: "Avertissement",
+                terms: "Conditions d'utilisation",
+                stayUpdated: "Restez informé",
+                newsletterText: "Abonnez-vous pour recevoir des mises à jour sur les nouveaux outils et fonctionnalités.",
+                copyright: "© 2025 LollyPoPDF. Tous droits réservés.",
+                useTool: "Utiliser l'outil",
+                pdfDescription: "Outils puissants pour gérer, convertir et optimiser vos documents",
+                imageDescription: "Éditez, convertissez et optimisez vos images facilement",
+                textDescription: "Manipulez et transformez le texte avec ces puissants utilitaires",
+                audioDescription: "Convertissez, éditez et gérez vos fichiers multimédias",
+                webDescription: "Outils essentiels pour les développeurs web et designers",
+                calculatorDescription: "Diverses calculatrices pour les besoins quotidiens et spécialisés",
+                utilityDescription: "Utilitaires pratiques pour diverses tâches quotidiennes",
+                colorDescription: "Outils pour travailler avec les couleurs et les palettes"
             }
-            
-            // Save preference to localStorage
+        };
+
+        // Theme Toggle
+        const themeToggle = document.getElementById('theme-toggle');
+        const themeIcon = themeToggle.querySelector('i');
+        
+        // Check for saved theme preference or respect OS preference
+        if (localStorage.getItem('theme') === 'dark' || 
+            (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.body.classList.add('dark-mode');
+            themeIcon.classList.remove('fa-moon');
+            themeIcon.classList.add('fa-sun');
+        }
+        
+        themeToggle.addEventListener('click', () => {
+            document.body.classList.toggle('dark-mode');
             if (document.body.classList.contains('dark-mode')) {
+                themeIcon.classList.remove('fa-moon');
+                themeIcon.classList.add('fa-sun');
                 localStorage.setItem('theme', 'dark');
             } else {
+                themeIcon.classList.remove('fa-sun');
+                themeIcon.classList.add('fa-moon');
                 localStorage.setItem('theme', 'light');
             }
         });
 
-        // Check for saved theme preference
-        if (localStorage.getItem('theme') === 'dark') {
-            document.body.classList.add('dark-mode');
-            document.getElementById('themeToggle').querySelector('i').classList.remove('fa-moon');
-            document.getElementById('themeToggle').querySelector('i').classList.add('fa-sun');
+        // Mobile Menu Toggle
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const mainNav = document.getElementById('main-nav');
+        
+        mobileMenuBtn.addEventListener('click', () => {
+            mainNav.classList.toggle('show');
+            const icon = mobileMenuBtn.querySelector('i');
+            if (mainNav.classList.contains('show')) {
+                icon.classList.remove('fa-bars');
+                icon.classList.add('fa-times');
+            } else {
+                icon.classList.remove('fa-times');
+                icon.classList.add('fa-bars');
+            }
+        });
+
+        // Language Switcher
+        const languageBtn = document.getElementById('language-btn');
+        const languageDropdown = document.getElementById('language-dropdown');
+        const currentLangElement = document.getElementById('current-lang');
+        
+        // Set initial language
+        let currentLang = localStorage.getItem('language') || 'en';
+        currentLangElement.textContent = translations[currentLang] ? currentLang : 'English';
+        
+        // Language selection
+        const languageOptions = document.querySelectorAll('.language-option');
+        languageOptions.forEach(option => {
+            option.addEventListener('click', () => {
+                const lang = option.getAttribute('data-lang');
+                currentLang = lang;
+                currentLangElement.textContent = option.textContent;
+                localStorage.setItem('language', lang);
+                
+                // Update page content with selected language
+                updatePageLanguage(lang);
+            });
+        });
+
+        // Function to update page content based on selected language
+        function updatePageLanguage(lang) {
+            const t = translations[lang] || translations['en'];
+            
+            // Update navigation
+            document.querySelector('nav a[href="#home"]').textContent = t.home;
+            document.querySelector('nav a[href="#about"]').textContent = t.about;
+            document.querySelector('nav a[href="#tools"]').textContent = t.tools;
+            document.querySelector('nav a[href="contact.html"]').textContent = t.contact;
+            
+            // Update hero section
+            document.querySelector('.hero h1').textContent = t.heroTitle;
+            document.querySelector('.hero p').textContent = t.heroSubtitle;
+            document.getElementById('search-input').placeholder = t.searchPlaceholder;
+            
+            // Update CTA buttons
+            document.querySelector('.cta-btn[data-target="pdf-tools"]').textContent = t.pdfTools;
+            document.querySelector('.cta-btn[data-target="image-tools"]').textContent = t.imageTools;
+            document.querySelector('.cta-btn[data-target="text-tools"]').textContent = t.textTools;
+            document.querySelector('.cta-btn[data-target="audio-tools"]').textContent = t.audioTools;
+            document.querySelector('.cta-btn[data-target="web-tools"]').textContent = t.webTools;
+            document.querySelector('.cta-btn[data-target="calculator-tools"]').textContent = t.calculatorTools;
+            document.querySelector('.cta-btn[data-target="utility-tools"]').textContent = t.utilityTools;
+            document.querySelector('.cta-btn[data-target="color-tools"]').textContent = t.colorTools;
+            
+            // Update section titles
+            document.querySelector('.section-title').textContent = t.ourTools;
+            
+            // Update section descriptions
+            document.querySelectorAll('.section-description').forEach((el, index) => {
+                if (index === 0) el.textContent = t.pdfDescription;
+                else if (index === 1) el.textContent = t.imageDescription;
+                else if (index === 2) el.textContent = t.textDescription;
+                else if (index === 3) el.textContent = t.audioDescription;
+                else if (index === 4) el.textContent = t.webDescription;
+                else if (index === 5) el.textContent = t.calculatorDescription;
+                else if (index === 6) el.textContent = t.utilityDescription;
+                else if (index === 7) el.textContent = t.colorDescription;
+            });
+            
+            // Update about section
+            document.querySelector('.about-content h2').textContent = t.aboutTitle;
+            document.querySelector('.about-content p:nth-of-type(1)').textContent = t.aboutSubtitle;
+            document.querySelector('.about-content p:nth-of-type(2)').textContent = t.aboutText;
+            
+            document.querySelector('.feature-item:nth-child(1) h4').textContent = t.freeToUse;
+            document.querySelector('.feature-item:nth-child(1) p').textContent = t.freeToUseText;
+            document.querySelector('.feature-item:nth-child(2) h4').textContent = t.noRegistration;
+            document.querySelector('.feature-item:nth-child(2) p').textContent = t.noRegistrationText;
+            document.querySelector('.feature-item:nth-child(3) h4').textContent = t.privacyFocused;
+            document.querySelector('.feature-item:nth-child(3) p').textContent = t.privacyFocusedText;
+            
+            document.querySelector('.why-choose-us h3').textContent = t.whyChooseUs;
+            document.querySelector('.why-choose-us p').textContent = t.whyChooseUsText;
+            document.querySelectorAll('.benefits-list li').forEach((el, index) => {
+                if (index === 0) el.textContent = t.benefit1;
+                else if (index === 1) el.textContent = t.benefit2;
+                else if (index === 2) el.textContent = t.benefit3;
+                else if (index === 3) el.textContent = t.benefit4;
+                else if (index === 4) el.textContent = t.benefit5;
+                else if (index === 5) el.textContent = t.benefit6;
+            });
+            
+            // Update footer
+            document.querySelector('.footer-categories h3').textContent = t.popularCategories;
+            document.querySelector('.footer-links-section h3').textContent = t.quickLinks;
+            document.querySelector('.footer-links a[href="#tools"]').textContent = t.allTools;
+            document.querySelector('.footer-links a[href="faq.html"]').textContent = t.faq;
+            document.querySelector('.footer-links a[href="contact.html"]').textContent = t.contact;
+            document.querySelector('.footer-links a[href="privacy-policy.html"]').textContent = t.privacyPolicy;
+            document.querySelector('.footer-links a[href="disclaimer.html"]').textContent = t.disclaimer;
+            document.querySelector('.footer-links a[href="terms.html"]').textContent = t.terms;
+            
+            document.querySelector('.newsletter h3').textContent = t.stayUpdated;
+            document.querySelector('.newsletter p').textContent = t.newsletterText;
+            document.querySelector('.copyright').textContent = t.copyright;
+            
+            // Update tool buttons
+            document.querySelectorAll('.use-tool-btn').forEach(btn => {
+                btn.textContent = t.useTool;
+            });
         }
 
-        // Tool category filtering
-        const categoryButtons = document.querySelectorAll('.category-btn');
-        
-        categoryButtons.forEach(button => {
-            button.addEventListener('click', function() {
-                // Remove active class from all buttons
-                categoryButtons.forEach(btn => btn.classList.remove('active'));
-                
-                // Add active class to clicked button
-                this.classList.add('active');
-                
-                // Get the category name
-                const category = this.getAttribute('data-category');
-                
-                // Scroll to the corresponding section
-                const targetSection = document.getElementById(category + '-tools');
-                
-                if (targetSection) {
-                    targetSection.scrollIntoView({ behavior: 'smooth' });
-                }
-            });
-        });
-
         // Search functionality
-        document.getElementById('searchBtn').addEventListener('click', function() {
-            const searchTerm = document.getElementById('searchInput').value.toLowerCase().trim();
-            if (searchTerm === '') {
-                alert('Please enter a search term');
-                return;
-            }
-            
-            // Search through all tool cards
-            const toolCards = document.querySelectorAll('.tool-card');
-            let found = false;
-            let firstMatch = null;
+        const searchInput = document.getElementById('search-input');
+        const searchBtn = document.getElementById('search-btn');
+        const toolCards = document.querySelectorAll('.tool-card');
+        
+        function performSearch() {
+            const searchTerm = searchInput.value.toLowerCase();
             
             toolCards.forEach(card => {
-                const toolName = card.querySelector('h3').textContent.toLowerCase();
-                const toolDesc = card.querySelector('p').textContent.toLowerCase();
+                const title = card.querySelector('.tool-title').textContent.toLowerCase();
+                const desc = card.querySelector('.tool-desc').textContent.toLowerCase();
                 
-                if (toolName.includes(searchTerm) || toolDesc.includes(searchTerm)) {
-                    card.style.border = '2px solid var(--primary)';
-                    card.style.backgroundColor = 'var(--secondary)';
-                    found = true;
-                    
-                    // Store the first match for scrolling
-                    if (!firstMatch) {
-                        firstMatch = card;
-                    }
+                if (title.includes(searchTerm) || desc.includes(searchTerm)) {
+                    card.style.display = 'block';
                 } else {
-                    card.style.border = '';
-                    card.style.backgroundColor = '';
+                    card.style.display = 'none';
                 }
             });
-            
-            if (found && firstMatch) {
-                firstMatch.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            } else {
-                alert('No tools found matching your search: ' + searchTerm);
-            }
+        }
+        
+        searchInput.addEventListener('input', performSearch);
+        searchBtn.addEventListener('click', performSearch);
+
+        // CTA button scrolling
+        const ctaButtons = document.querySelectorAll('.cta-btn');
+        
+        ctaButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const targetId = button.getAttribute('data-target');
+                const targetElement = document.getElementById(targetId);
+                
+                if (targetElement) {
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 80,
+                        behavior: 'smooth'
+                    });
+                }
+            });
         });
 
-        // Allow pressing Enter to search
-        document.getElementById('searchInput').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                document.getElementById('searchBtn').click();
-            }
-        });
-
-        // Navigation functionality
-        document.querySelectorAll('nav a, .footer-links a').forEach(link => {
-            link.addEventListener('click', function(e) {
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
                 e.preventDefault();
-                const targetId = this.getAttribute('href').substring(1);
                 
-                if (targetId === 'tools') {
-                    // Scroll to the first tools section
-                    document.getElementById('document-tools').scrollIntoView({ behavior: 'smooth' });
-                } else {
-                    const targetSection = document.getElementById(targetId);
-                    if (targetSection) {
-                        targetSection.scrollIntoView({ behavior: 'smooth' });
+                const targetId = this.getAttribute('href');
+                if (targetId === '#') return;
+                
+                const targetElement = document.querySelector(targetId);
+                if (targetElement) {
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 80,
+                        behavior: 'smooth'
+                    });
+                    
+                    // Close mobile menu if open
+                    if (mainNav.classList.contains('show')) {
+                        mainNav.classList.remove('show');
+                        mobileMenuBtn.querySelector('i').classList.remove('fa-times');
+                        mobileMenuBtn.querySelector('i').classList.add('fa-bars');
                     }
                 }
-                
-                // Close mobile menu if open
-                document.querySelector('nav').classList.remove('active');
             });
-        });
-
-        // Modal functionality for footer links
-        document.getElementById('privacy-link').addEventListener('click', function(e) {
-            e.preventDefault();
-            document.getElementById('privacy-modal').style.display = 'flex';
-        });
-
-        document.getElementById('disclaimer-link').addEventListener('click', function(e) {
-            e.preventDefault();
-            document.getElementById('disclaimer-modal').style.display = 'flex';
-        });
-
-        document.getElementById('terms-link').addEventListener('click', function(e) {
-            e.preventDefault();
-            document.getElementById('terms-modal').style.display = 'flex';
-        });
-
-        // Close modals
-        document.querySelectorAll('.close-modal').forEach(button => {
-            button.addEventListener('click', function() {
-                this.closest('.modal').style.display = 'none';
-            });
-        });
-
-        // Close modal when clicking outside
-        document.querySelectorAll('.modal').forEach(modal => {
-            modal.addEventListener('click', function(e) {
-                if (e.target === this) {
-                    this.style.display = 'none';
-                }
-            });
-        });
-
-        // Add "All Tools" functionality
-        document.querySelector('a[href="#tools"]').addEventListener('click', function(e) {
-            e.preventDefault();
-            document.getElementById('document-tools').scrollIntoView({ behavior: 'smooth' });
         });
     </script>
 </body>

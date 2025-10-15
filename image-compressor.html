@@ -3,27 +3,37 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Image Compressor | LollyPoPdf</title>
+    <title>Free Image Compressor Tool | LollyPoPDF</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
-            --primary-color: #8a2be2;
-            --primary-light: #a855f7;
-            --primary-dark: #6a0dad;
-            --text-color: #333;
-            --bg-color: #fff;
-            --card-bg: #f9f9f9;
+            --primary-color: #9370db;
+            --secondary-color: #8a2be2;
+            --bg-color: #ffffff;
+            --card-bg: #ffffff;
+            --text-color: #333333;
             --border-color: #e0e0e0;
-            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            --light-lavender: #f5f0ff;
+            --dark-lavender: #e6d9ff;
+            --white: #ffffff;
+            --header-text: #6b7280;
+            --accent-color: #9370db;
             --transition: all 0.3s ease;
         }
 
         .dark-mode {
-            --text-color: #f0f0f0;
+            --primary-color: #9370db;
+            --secondary-color: #8a2be2;
             --bg-color: #1a1a1a;
             --card-bg: #2d2d2d;
-            --border-color: #444;
-            --shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+            --text-color: #f0f0f0;
+            --border-color: #444444;
+            --shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+            --light-lavender: #2a1a4a;
+            --dark-lavender: #3d2a6d;
+            --white: #1a1a1a;
+            --header-text: #d1d5db;
         }
 
         * {
@@ -37,16 +47,9 @@
             background-color: var(--bg-color);
             color: var(--text-color);
             transition: var(--transition);
-            line-height: 1.6;
-        }
-
-        a {
-            text-decoration: none;
-            color: inherit;
         }
 
         .container {
-            width: 100%;
             max-width: 1200px;
             margin: 0 auto;
             padding: 0 20px;
@@ -54,93 +57,97 @@
 
         /* Header Styles */
         header {
-            background-color: var(--bg-color);
-            box-shadow: var(--shadow);
+            background-color: var(--white);
+            color: var(--header-text);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
             position: sticky;
             top: 0;
-            z-index: 100;
-            padding: 10px 0;
+            z-index: 1000;
         }
 
-        .header-content {
+        .header-container {
             display: flex;
             justify-content: space-between;
             align-items: center;
+            padding: 15px 0;
         }
 
         .logo {
             display: flex;
             align-items: center;
             gap: 10px;
+            text-decoration: none;
+        }
+
+        .logo-icon {
+            position: relative;
+            width: 40px;
+            height: 40px;
         }
 
         .logo-circle {
-            width: 45px;
-            height: 45px;
-            background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+            width: 40px;
+            height: 40px;
             border-radius: 50%;
+            background: linear-gradient(to bottom right, #9370db, #8a2be2);
             display: flex;
             align-items: center;
             justify-content: center;
             color: white;
             font-weight: bold;
-            font-size: 18px;
-            position: relative;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            font-size: 14px;
         }
 
-        .logo-circle::after {
-            content: "";
+        .logo-stem {
             position: absolute;
-            top: 45px;
-            left: 20px;
-            width: 5px;
-            height: 15px;
-            background: var(--primary-dark);
+            bottom: -17px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 6px;
+            height: 17px;
+            background-color: #8a2be2;
             border-radius: 0 0 3px 3px;
         }
 
         .logo-text {
             font-size: 24px;
-            font-weight: 700;
-            color: var(--primary-color);
+            font-weight: bold;
+            color: #9370db;
         }
 
         nav ul {
             display: flex;
-            list-style: none;
             gap: 30px;
-        }
-
-        nav li {
-            position: relative;
+            list-style: none;
         }
 
         nav a {
             font-weight: 500;
-            transition: var(--transition);
-            padding: 5px 0;
             position: relative;
+            color: var(--header-text);
+            padding: 8px 0;
+            border-radius: 0;
+            transition: var(--transition);
+            text-decoration: none;
         }
 
-        /* Hover line animation */
+        nav a:hover {
+            color: var(--accent-color);
+        }
+
         nav a::after {
             content: '';
             position: absolute;
+            bottom: -5px;
+            left: 0;
             width: 0;
             height: 2px;
-            bottom: 0;
-            left: 0;
-            background-color: var(--primary-color);
+            background-color: var(--accent-color);
             transition: width 0.3s ease;
         }
 
         nav a:hover::after {
             width: 100%;
-        }
-
-        nav a:hover {
-            color: var(--primary-color);
         }
 
         .header-right {
@@ -151,6 +158,7 @@
 
         .email {
             font-size: 14px;
+            color: var(--header-text);
         }
 
         .theme-toggle {
@@ -158,12 +166,20 @@
             border: none;
             cursor: pointer;
             font-size: 20px;
-            color: var(--text-color);
+            color: var(--header-text);
+            padding: 8px;
+            border-radius: 50%;
             transition: var(--transition);
         }
 
         .theme-toggle:hover {
-            color: var(--primary-color);
+            background-color: #f0ebff;
+            color: var(--accent-color);
+        }
+
+        .dark-mode .theme-toggle:hover {
+            background-color: #2d3748;
+            color: var(--accent-color);
         }
 
         .mobile-menu-btn {
@@ -171,97 +187,118 @@
             background: none;
             border: none;
             font-size: 24px;
-            color: var(--text-color);
             cursor: pointer;
+            color: var(--header-text);
         }
 
         /* Hero Section */
         .hero {
-            padding: 60px 0;
+            background: var(--light-lavender);
+            padding: 60px 20px;
             text-align: center;
-            background: linear-gradient(135deg, #f5f0ff, #e6d9ff);
-        }
-
-        .dark-mode .hero {
-            background: linear-gradient(135deg, #2a1a4a, #3d2a6d);
         }
 
         .hero h1 {
             font-size: 2.5rem;
-            margin-bottom: 15px;
             color: #000;
+            margin-bottom: 15px;
+        }
+
+        .dark-mode .hero h1 {
+            color: #fff;
         }
 
         .hero p {
             font-size: 1.2rem;
+            color: var(--text-color);
             max-width: 700px;
             margin: 0 auto 30px;
-            color: var(--text-color);
+            line-height: 1.6;
         }
 
-        /* How to Use Section */
-        .how-to-use {
-            padding: 60px 0;
-            background-color: var(--bg-color);
+        /* How to Compress Section */
+        .how-to {
+            background-color: #ffffff;
+            padding: 80px 20px;
         }
 
-        .how-to-use h2 {
+        .dark-mode .how-to {
+            background-color: #1a1a1a;
+        }
+
+        .how-to h2 {
+            font-size: 2rem;
+            color: var(--primary-color);
             text-align: center;
             margin-bottom: 40px;
-            color: var(--primary-color);
-            font-size: 2rem;
         }
 
         .steps-container {
             display: grid;
-            grid-template-columns: 1fr 1fr;
+            grid-template-columns: repeat(2, 1fr);
             gap: 40px;
+            max-width: 1200px;
+            margin: 0 auto;
         }
 
-        .step {
-            background-color: var(--card-bg);
-            padding: 30px;
+        .step-box {
+            background-color: #f9f9f9;
             border-radius: 12px;
-            box-shadow: var(--shadow);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            min-height: 200px;
+            position: relative;
+        }
+
+        .dark-mode .step-box {
+            background-color: #2d2d2d;
         }
 
         .step-number {
-            display: inline-block;
             width: 40px;
             height: 40px;
             background-color: var(--primary-color);
             color: white;
             border-radius: 50%;
-            text-align: center;
-            line-height: 40px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 16px;
             font-weight: bold;
             margin-bottom: 15px;
         }
 
-        .step h3 {
-            margin-bottom: 15px;
+        .step-box h3 {
+            font-size: 18px;
             color: var(--primary-color);
+            margin-bottom: 15px;
         }
 
-        /* Converter Tool */
-        .converter-section {
-            padding: 60px 0;
-            background: linear-gradient(135deg, #f5f0ff, #e6d9ff);
+        .step-box p {
+            font-size: 14px;
+            color: #333333;
+            line-height: 1.6;
         }
 
-        .dark-mode .converter-section {
-            background: linear-gradient(135deg, #2a1a4a, #3d2a6d);
+        .dark-mode .step-box p {
+            color: #f0f0f0;
         }
 
-        .section-title {
+        /* Compressor Tool */
+        .compressor {
+            background: var(--light-lavender);
+            padding: 60px 20px;
+        }
+
+        .compressor h2 {
+            font-size: 2rem;
+            color: var(--primary-color);
             text-align: center;
             margin-bottom: 40px;
-            color: var(--primary-color);
-            font-size: 2rem;
         }
 
         .converter-card {
-            background-color: var(--card-bg);
+            background: var(--card-bg);
             border-radius: 12px;
             box-shadow: var(--shadow);
             padding: 30px;
@@ -274,61 +311,52 @@
             border-radius: 8px;
             padding: 40px 20px;
             text-align: center;
-            margin-bottom: 30px;
-            transition: var(--transition);
             cursor: pointer;
+            transition: border-color 0.3s;
         }
 
         .upload-area:hover {
             border-color: var(--primary-color);
         }
 
-        .upload-area i {
+        .upload-icon {
             font-size: 48px;
             color: var(--primary-color);
             margin-bottom: 15px;
         }
 
-        .upload-area p {
+        .upload-text {
             margin-bottom: 15px;
         }
 
-        .btn {
+        .file-input {
+            display: none;
+        }
+
+        .upload-btn {
             background-color: var(--primary-color);
             color: white;
             border: none;
             padding: 10px 20px;
-            border-radius: 6px;
+            border-radius: 5px;
             cursor: pointer;
-            font-weight: 500;
-            transition: var(--transition);
+            font-size: 16px;
+            transition: background-color 0.3s;
         }
 
-        .btn:hover {
-            background-color: var(--primary-dark);
-        }
-
-        .btn-outline {
-            background-color: transparent;
-            border: 1px solid var(--primary-color);
-            color: var(--primary-color);
-        }
-
-        .btn-outline:hover {
-            background-color: var(--primary-color);
-            color: white;
+        .upload-btn:hover {
+            background-color: var(--secondary-color);
         }
 
         .preview-section {
-            display: none;
             margin-top: 30px;
+            display: none;
         }
 
         .preview-container {
             display: flex;
-            flex-wrap: wrap;
             gap: 30px;
-            margin-bottom: 30px;
+            flex-wrap: wrap;
         }
 
         .preview-box {
@@ -336,12 +364,7 @@
             min-width: 300px;
         }
 
-        .preview-box h3 {
-            margin-bottom: 15px;
-            color: var(--primary-color);
-        }
-
-        .image-preview {
+        .preview-image {
             width: 100%;
             max-height: 300px;
             object-fit: contain;
@@ -351,50 +374,114 @@
         }
 
         .file-info {
-            margin-top: 10px;
             font-size: 14px;
             color: var(--text-color);
+            margin-top: 10px;
         }
 
-        .compression-level {
-            margin-bottom: 20px;
+        .compression-options {
+            margin: 20px 0;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
         }
 
-        .compression-level label {
-            display: block;
-            margin-bottom: 10px;
+        .format-selection, .quality-selection {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .format-selection label, .quality-selection label {
             font-weight: 500;
         }
 
-        .compression-buttons {
+        .format-dropdown {
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid var(--border-color);
+            background-color: var(--bg-color);
+            color: var(--text-color);
+        }
+
+        .quality-buttons {
             display: flex;
             gap: 10px;
         }
 
-        .compression-btn {
+        .quality-btn {
             flex: 1;
-            padding: 10px;
-            text-align: center;
+            padding: 12px;
+            background: none;
             border: 1px solid var(--border-color);
-            border-radius: 6px;
+            border-radius: 5px;
             cursor: pointer;
-            transition: var(--transition);
+            transition: all 0.3s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
         }
 
-        .compression-btn.active {
+        .quality-btn.active {
             background-color: var(--primary-color);
             color: white;
             border-color: var(--primary-color);
         }
 
+        .quality-title {
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .quality-desc {
+            font-size: 12px;
+            opacity: 0.8;
+        }
+
         .action-buttons {
             display: flex;
             gap: 15px;
-            margin-top: 30px;
+            margin-top: 20px;
         }
 
-        .action-buttons .btn {
+        .btn {
+            padding: 12px 24px;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
             flex: 1;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--secondary-color);
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            color: var(--primary-color);
+            border: 2px solid var(--primary-color);
+        }
+
+        .btn-outline:hover {
+            background-color: rgba(147, 112, 219, 0.1);
+        }
+
+        .btn-secondary {
+            background-color: #6b7280;
+            color: white;
+            border: none;
+        }
+
+        .btn-secondary:hover {
+            background-color: #4b5563;
         }
 
         .progress-container {
@@ -409,125 +496,85 @@
             overflow: hidden;
         }
 
-        .progress {
+        .progress-fill {
             height: 100%;
             background-color: var(--primary-color);
             width: 0%;
-            transition: width 0.3s ease;
+            transition: width 0.3s;
         }
 
-        .progress-text {
-            text-align: center;
-            margin-top: 5px;
-            font-size: 14px;
-        }
-
-        /* About Sections */
-        .about-sections {
-            padding: 60px 0;
-            background: linear-gradient(135deg, #f5f0ff, #e6d9ff);
-        }
-
-        .dark-mode .about-sections {
-            background: linear-gradient(135deg, #2a1a4a, #3d2a6d);
-        }
-
-        .about-container {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 40px;
-        }
-
-        .about-section {
-            padding: 30px;
-            border-radius: 12px;
-            background: transparent;
-            color: #000;
-        }
-
-        .about-section h2 {
-            margin-bottom: 20px;
-            color: #000;
-        }
-
-        .feature-list {
-            list-style: none;
-        }
-
-        .feature-list li {
-            margin-bottom: 15px;
-            display: flex;
-            align-items: flex-start;
-            gap: 10px;
-        }
-
-        .feature-list .emoji-icon {
-            font-size: 20px;
-            margin-top: 2px;
-        }
-
-        .feature-list .check-icon {
-            color: #000;
-            font-size: 20px;
-            margin-top: 2px;
-        }
-
-        /* Footer */
+        /* Footer Styles */
         footer {
-            background-color: #1a1a1a;
-            color: #f0f0f0;
-            padding: 60px 0 0;
+            width: 100%;
+            background-color: #000000;
+            color: white;
+            padding: 60px 5% 80px;
+            position: relative;
         }
 
         .footer-content {
             display: flex;
             flex-wrap: wrap;
             gap: 40px;
-            margin-bottom: 40px;
-        }
-
-        .footer-column {
-            flex: 1;
-            min-width: 200px;
+            justify-content: space-between;
+            max-width: 1200px;
+            margin: 0 auto;
         }
 
         .footer-logo {
             display: flex;
             align-items: center;
-            gap: 10px;
-            margin-bottom: 15px;
+            text-decoration: none;
+            margin-bottom: 20px;
+        }
+
+        .footer-logo-icon {
+            position: relative;
+            width: 40px;
+            height: 40px;
+            margin-right: 10px;
         }
 
         .footer-logo-circle {
-            width: 45px;
-            height: 45px;
-            background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+            width: 40px;
+            height: 40px;
             border-radius: 50%;
+            background: linear-gradient(to bottom right, #9370db, #8a2be2);
             display: flex;
             align-items: center;
             justify-content: center;
             color: white;
             font-weight: bold;
-            font-size: 18px;
-            position: relative;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            font-size: 14px;
         }
 
-        .footer-logo-circle::after {
-            content: "";
+        .footer-logo-stem {
             position: absolute;
-            top: 45px;
-            left: 20px;
-            width: 5px;
-            height: 15px;
-            background: var(--primary-dark);
+            bottom: -17px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 6px;
+            height: 17px;
+            background-color: #8a2be2;
             border-radius: 0 0 3px 3px;
         }
 
         .footer-logo-text {
+            color: #9370db;
             font-size: 24px;
             font-weight: 700;
-            color: var(--primary-color);
+        }
+
+        .footer-section {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .footer-section h3 {
+            color: #9370db;
+            font-size: 18px;
+            margin-bottom: 20px;
+            font-weight: 600;
         }
 
         .social-icons {
@@ -536,26 +583,22 @@
             margin-top: 20px;
         }
 
-        .social-icons a {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 36px;
-            height: 36px;
-            background-color: var(--primary-color);
-            color: white;
+        .social-icon {
+            width: 40px;
+            height: 40px;
+            background-color: #9370db;
             border-radius: 50%;
-            transition: var(--transition);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            text-decoration: none;
+            transition: all 0.3s;
         }
 
-        .social-icons a:hover {
-            background-color: var(--primary-dark);
+        .social-icon:hover {
+            background-color: #8a2be2;
             transform: translateY(-3px);
-        }
-
-        .footer-column h3 {
-            margin-bottom: 20px;
-            color: var(--primary-light);
         }
 
         .footer-links {
@@ -567,24 +610,101 @@
         }
 
         .footer-links a {
-            transition: var(--transition);
+            color: white;
+            text-decoration: none;
+            transition: color 0.3s;
         }
 
         .footer-links a:hover {
-            color: var(--primary-light);
+            color: #9370db;
+        }
+
+        .footer-line {
+            position: absolute;
+            bottom: 50px;
+            left: 0;
+            width: 100%;
+            height: 1px;
+            background-color: rgba(255, 255, 255, 0.2);
         }
 
         .copyright {
-            text-align: center;
-            padding: 20px 0;
-            border-top: 1px solid #444;
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            color: #f9f7ff;
             font-size: 14px;
         }
 
-        /* Responsive Design */
+        /* Language Switcher */
+        .language-switcher {
+            position: fixed;
+            bottom: 10px;
+            right: 20px;
+            z-index: 1000;
+        }
+
+        .language-btn {
+            background-color: #9370db;
+            color: white;
+            border: none;
+            border-radius: 20px;
+            padding: 10px 15px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            transition: background-color 0.3s;
+        }
+
+        .language-btn:hover {
+            background-color: #8a2be2;
+        }
+
+        .language-dropdown {
+            position: absolute;
+            bottom: 50px;
+            right: 0;
+            width: 300px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            display: none;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .language-switcher:hover .language-dropdown {
+            display: grid;
+        }
+
+        .language-option {
+            padding: 8px 5px;
+            text-align: center;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+            font-size: 12px;
+        }
+
+        .language-option:hover {
+            background-color: #f5f0ff;
+            color: #333;
+        }
+
+        /* Responsive Styles */
         @media (max-width: 768px) {
-            nav {
+            .steps-container {
+                grid-template-columns: 1fr;
+            }
+            
+            nav ul {
                 display: none;
+                flex-direction: column;
                 position: absolute;
                 top: 70px;
                 left: 0;
@@ -592,42 +712,54 @@
                 background-color: var(--bg-color);
                 box-shadow: var(--shadow);
                 padding: 20px;
-            }
-
-            nav.active {
-                display: block;
-            }
-
-            nav ul {
-                flex-direction: column;
                 gap: 15px;
             }
-
+            
+            nav ul.active {
+                display: flex;
+            }
+            
             .mobile-menu-btn {
                 display: block;
             }
-
+            
+            .preview-container {
+                flex-direction: column;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+            
+            .footer-content {
+                flex-direction: column;
+            }
+            
+            .language-dropdown {
+                width: 250px;
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
             .header-right .email {
                 display: none;
             }
 
+            .quality-buttons {
+                flex-direction: column;
+            }
+        }
+
+        @media (max-width: 480px) {
             .hero h1 {
                 font-size: 2rem;
             }
-
-            .steps-container {
-                grid-template-columns: 1fr;
+            
+            .hero p {
+                font-size: 1rem;
             }
-
-            .preview-container {
-                flex-direction: column;
-            }
-
-            .action-buttons {
-                flex-direction: column;
-            }
-
-            .about-container {
+            
+            .language-dropdown {
+                width: 200px;
                 grid-template-columns: 1fr;
             }
         }
@@ -637,28 +769,31 @@
     <!-- Header -->
     <header>
         <div class="container">
-            <div class="header-content">
-                <a href="https://lollypopdf.com#home" class="logo">
-                    <div class="logo-circle">LPdf</div>
+            <div class="header-container">
+                <a href="https://lollypopdf.com" class="logo">
+                    <div class="logo-icon">
+                        <div class="logo-circle">LPdf</div>
+                        <div class="logo-stem"></div>
+                    </div>
                     <div class="logo-text">LollyPoPdf</div>
                 </a>
                 
-                <button class="mobile-menu-btn">
+                <button class="mobile-menu-btn" id="mobileMenuBtn">
                     <i class="fas fa-bars"></i>
                 </button>
                 
                 <nav>
-                    <ul>
-                        <li><a href="https://lollypopdf.github.io/LollyPoPdf#home">Home</a></li>
-                        <li><a href="https://lollypopdf.github.io/LollyPoPdf#about">About Us</a></li>
-                        <li><a href="https://lollypopdf.github.io/LollyPoPdf#tools">Tools</a></li>
-                        <li><a href="contact.html">Contact</a></li>
+                    <ul id="navMenu">
+                        <li><a href="https://lollypopdf.com#home" class="nav-link" data-key="home">Home</a></li>
+                        <li><a href="https://lollypopdf.github.io/LollyPoPdf#about" class="nav-link" data-key="about">About Us</a></li>
+                        <li><a href="https://lollypopdf.com#tools" class="nav-link" data-key="tools">Tools</a></li>
+                        <li><a href="contact.html" class="nav-link" data-key="contact">Contact</a></li>
                     </ul>
                 </nav>
                 
                 <div class="header-right">
-                    <div class="email">lollypoppdf@gmail.com</div>
-                    <button class="theme-toggle">
+                    <span class="email">lollypoppdf@gmail.com</span>
+                    <button class="theme-toggle" id="themeToggle">
                         <i class="fas fa-moon"></i>
                     </button>
                 </div>
@@ -669,139 +804,109 @@
     <!-- Hero Section -->
     <section class="hero">
         <div class="container">
-            <h1>Free Image Compressor Tool</h1>
-            <p>Reduce image file sizes without losing quality with our easy-to-use tool. No registration required, 100% free!</p>
+            <h1 class="hero-title" data-key="heroTitle">Free Image Compressor Tool</h1>
+            <p class="hero-description" data-key="heroDescription">Reduce image file sizes without losing quality with our easy-to-use tool. No registration required, 100% free!</p>
         </div>
     </section>
 
-    <!-- How to Use Section -->
-    <section class="how-to-use">
+    <!-- How to Compress Section -->
+    <section class="how-to">
         <div class="container">
-            <h2>How to Compress Your Images</h2>
+            <h2 class="section-title" data-key="howToTitle">How to Compress Your Images</h2>
             <div class="steps-container">
-                <div class="step">
+                <div class="step-box">
                     <div class="step-number">1</div>
-                    <h3>Upload Your Image</h3>
-                    <p>Drag and drop your image file or click to browse. We support JPG, PNG, GIF, and WEBP formats.</p>
+                    <h3 class="step-title" data-key="step1Title">Upload Your Image</h3>
+                    <p class="step-description" data-key="step1Desc">Click the upload area or drag and drop your image file. We support JPG, PNG, WebP, BMP, GIF, and TIFF formats.</p>
                 </div>
-                <div class="step">
+                <div class="step-box">
                     <div class="step-number">2</div>
-                    <h3>Choose Compression Level</h3>
-                    <p>Select from Low, Medium, or High compression based on your needs. Preview the results before downloading.</p>
+                    <h3 class="step-title" data-key="step2Title">Choose Format & Quality</h3>
+                    <p class="step-description" data-key="step2Desc">Select your preferred output format and compression quality. Lower quality means smaller file size.</p>
                 </div>
-                <div class="step">
+                <div class="step-box">
                     <div class="step-number">3</div>
-                    <h3>Preview & Download</h3>
-                    <p>Compare the original and compressed images. Download the optimized version with reduced file size.</p>
+                    <h3 class="step-title" data-key="step3Title">Preview & Compare</h3>
+                    <p class="step-description" data-key="step3Desc">See the original and compressed versions side by side with file size information.</p>
                 </div>
-                <div class="step">
+                <div class="step-box">
                     <div class="step-number">4</div>
-                    <h3>Use Anywhere</h3>
-                    <p>Use your compressed images on websites, social media, or email without worrying about large file sizes.</p>
+                    <h3 class="step-title" data-key="step4Title">Download Result</h3>
+                    <p class="step-description" data-key="step4Desc">Download your compressed image with reduced file size while maintaining visual quality.</p>
                 </div>
             </div>
         </div>
     </section>
 
     <!-- Compressor Tool -->
-    <section class="converter-section">
+    <section class="compressor">
         <div class="container">
-            <h2 class="section-title">Image Compression Tool</h2>
+            <h2 class="section-title" data-key="toolTitle">Image Compression Tool</h2>
             <div class="converter-card">
                 <div class="upload-area" id="uploadArea">
-                    <i class="fas fa-cloud-upload-alt"></i>
-                    <h3>Drag & Drop your image here</h3>
-                    <p>or</p>
-                    <button class="btn" id="browseBtn">Browse Files</button>
-                    <input type="file" id="fileInput" accept="image/*" style="display: none;">
+                    <i class="fas fa-cloud-upload-alt upload-icon"></i>
+                    <p class="upload-text" data-key="uploadText">Drag & drop your image here or click to browse</p>
+                    <input type="file" id="fileInput" class="file-input" accept="image/*">
+                    <button class="upload-btn" id="browseBtn" data-key="browseBtn">Browse Files</button>
                 </div>
                 
                 <div class="preview-section" id="previewSection">
                     <div class="preview-container">
                         <div class="preview-box">
-                            <h3>Original Image</h3>
-                            <img id="originalPreview" class="image-preview" alt="Original Image">
+                            <h3 data-key="originalLabel">Original Image</h3>
+                            <img id="originalPreview" class="preview-image" src="" alt="Original Image">
                             <div class="file-info" id="originalInfo"></div>
                         </div>
                         <div class="preview-box">
-                            <h3>Compressed Image</h3>
-                            <img id="compressedPreview" class="image-preview" alt="Compressed Image">
+                            <h3 data-key="compressedLabel">Compressed Image</h3>
+                            <img id="compressedPreview" class="preview-image" src="" alt="Compressed Image">
                             <div class="file-info" id="compressedInfo"></div>
                         </div>
                     </div>
                     
-                    <div class="compression-level">
-                        <label>Compression Level:</label>
-                        <div class="compression-buttons">
-                            <div class="compression-btn active" data-level="low">Low (Best Quality)</div>
-                            <div class="compression-btn" data-level="medium">Medium (Balanced)</div>
-                            <div class="compression-btn" data-level="high">High (Smallest Size)</div>
+                    <div class="compression-options">
+                        <div class="format-selection">
+                            <label data-key="formatLabel">Output Format:</label>
+                            <select class="format-dropdown" id="formatSelect">
+                                <option value="jpg">JPG</option>
+                                <option value="png">PNG</option>
+                                <option value="webp">WebP</option>
+                                <option value="bmp">BMP</option>
+                                <option value="gif">GIF</option>
+                                <option value="tiff">TIFF</option>
+                            </select>
                         </div>
+                        
+                        <div class="quality-selection">
+                            <label data-key="compressionLabel">Compression Level:</label>
+                            <div class="quality-buttons">
+                                <button class="quality-btn active" data-quality="low">
+                                    <span class="quality-title" data-key="lowQuality">Low</span>
+                                    <span class="quality-desc" data-key="lowQualityDesc">(Best Quality)</span>
+                                </button>
+                                <button class="quality-btn" data-quality="medium">
+                                    <span class="quality-title" data-key="mediumQuality">Medium</span>
+                                    <span class="quality-desc" data-key="mediumQualityDesc">(Balanced)</span>
+                                </button>
+                                <button class="quality-btn" data-quality="high">
+                                    <span class="quality-title" data-key="highQuality">High</span>
+                                    <span class="quality-desc" data-key="highQualityDesc">(Smallest Size)</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="action-buttons">
+                        <button class="btn btn-primary" id="compressBtn" data-key="compressBtn">Compress Image</button>
+                        <button class="btn btn-outline" id="downloadBtn" data-key="downloadBtn">Download</button>
+                        <button class="btn btn-secondary" id="resetBtn" data-key="resetBtn">Reset</button>
                     </div>
                     
                     <div class="progress-container" id="progressContainer">
                         <div class="progress-bar">
-                            <div class="progress" id="progressBar"></div>
+                            <div class="progress-fill" id="progressFill"></div>
                         </div>
-                        <div class="progress-text" id="progressText">Compressing...</div>
                     </div>
-                    
-                    <div class="action-buttons">
-                        <button class="btn" id="compressBtn">Compress Image</button>
-                        <button class="btn btn-outline" id="downloadBtn" disabled>Download</button>
-                        <button class="btn btn-outline" id="resetBtn">Reset</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- About Sections -->
-    <section class="about-sections">
-        <div class="container">
-            <div class="about-container">
-                <div class="about-section">
-                    <h2>About LollyPoPdf</h2>
-                    <p><strong>Your One-Stop Solution</strong></p>
-                    <p>LollyPoPdf is a comprehensive platform offering 65+ professional online tools designed to simplify your daily tasks. Whether you're a content creator, marketer, developer, or business professional, we have the tools you need to boost productivity and achieve your goals.</p>
-                    
-                    <ul class="feature-list">
-                        <li>
-                            <span class="emoji-icon">💸</span>
-                            <div>
-                                <strong>Free to Use</strong>
-                                <p>All tools are completely free with no hidden costs.</p>
-                            </div>
-                        </li>
-                        <li>
-                            <span class="emoji-icon">🚀</span>
-                            <div>
-                                <strong>No Registration</strong>
-                                <p>Start using tools immediately without signing up.</p>
-                            </div>
-                        </li>
-                        <li>
-                            <span class="emoji-icon">🔒</span>
-                            <div>
-                                <strong>Privacy Focused</strong>
-                                <p>Your data stays on your device, never uploaded to servers.</p>
-                            </div>
-                        </li>
-                    </ul>
-                </div>
-                
-                <div class="about-section">
-                    <h2>Why Choose Us?</h2>
-                    <p>Our platform is built with user experience in mind. We understand that professionals need reliable, fast, and efficient tools to get their work done.</p>
-                    
-                    <ul class="feature-list">
-                        <li><span class="check-icon">✓</span> 65+ specialized tools for all your needs</li>
-                        <li><span class="check-icon">✓</span> Fast processing with no wait times</li>
-                        <li><span class="check-icon">✓</span> Clean, intuitive interface</li>
-                        <li><span class="check-icon">✓</span> Regular updates with new features</li>
-                        <li><span class="check-icon">✓</span> Works on all devices and browsers</li>
-                        <li><span class="check-icon">✓</span> No watermarks or limitations</li>
-                    </ul>
                 </div>
             </div>
         </div>
@@ -811,58 +916,2019 @@
     <footer>
         <div class="container">
             <div class="footer-content">
-                <div class="footer-column">
+                <div class="footer-section">
                     <a href="https://lollypopdf.com" class="footer-logo">
-                        <div class="footer-logo-circle">LPdf</div>
+                        <div class="footer-logo-icon">
+                            <div class="footer-logo-circle">LPdf</div>
+                            <div class="footer-logo-stem"></div>
+                        </div>
                         <div class="footer-logo-text">LollyPoPdf</div>
-                    </a>
-                    <p>Your one-stop destination for 65+ online tools to simplify your daily tasks.</p>
+                    </a>                  
+                    
+                    <h3 data-key="followUs">FOLLOW US</h3>
                     <div class="social-icons">
-                        <a href="https://facebook.com/lollypopdf" target="_blank"><i class="fab fa-facebook-f"></i></a>
-                        <a href="https://linkedin.com/company/lollypopdf" target="_blank"><i class="fab fa-linkedin-in"></i></a>
-                        <a href="https://twitter.com/lollypopdf" target="_blank"><i class="fab fa-twitter"></i></a>
-                        <a href="https://instagram.com/lollypopdf" target="_blank"><i class="fab fa-instagram"></i></a>
-                        <a href="https://pinterest.com/lollypopdf" target="_blank"><i class="fab fa-pinterest"></i></a>
-                        <a href="https://reddit.com/user/lollypopdf" target="_blank"><i class="fab fa-reddit"></i></a>
-                        <a href="https://quora.com/profile/lollypopdf" target="_blank"><i class="fab fa-quora"></i></a>
+                        <a href="https://facebook.com/lollypopdf" class="social-icon"><i class="fab fa-facebook-f"></i></a>
+                        <a href="https://linkedin.com/company/lollypopdf" class="social-icon"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="https://twitter.com/lollypopdf" class="social-icon"><i class="fab fa-twitter"></i></a>
+                        <a href="https://instagram.com/lollypopdf" class="social-icon"><i class="fab fa-instagram"></i></a>
+                        <a href="https://pinterest.com/lollypopdf" class="social-icon"><i class="fab fa-pinterest-p"></i></a>
                     </div>
                 </div>
                 
-                <div class="footer-column">
-                    <h3>Popular Categories</h3>
+                <div class="footer-section">
+                    <h3 data-key="popularCategories">Popular Categories</h3>
                     <ul class="footer-links">
-                        <li><a href="https://lollypopdf.github.io/LollyPoPdf#pdf-tools">PDF Tools</a></li>
-                        <li><a href="https://lollypopdf.github.io/LollyPoPdf#image-tools">Image Tools</a></li>
-                        <li><a href="https://lollypopdf.github.io/LollyPoPdf#text-tools">Text Tools</a></li>
-                        <li><a href="https://lollypopdf.github.io/LollyPoPdf#audio-video-tools">Audio/Video Tools</a></li>
-                        <li><a href="https://lollypopdf.github.io/LollyPoPdf#web-developer-tools">Web/Developer Tools</a></li>
-                        <li><a href="https://lollypopdf.github.io/LollyPoPdf#calculator-tools">Calculator Tools</a></li>
-                        <li><a href="https://lollypopdf.github.io/LollyPoPdf#utility-tools">Utility Tools</a></li>
-                        <li><a href="https://lollypopdf.github.io/LollyPoPdf#color-tools">Color Tools</a></li>
+                        <li><a href="https://lollypopdf.com#pdf-tools" data-key="pdfTools">PDF Tools</a></li>
+                        <li><a href="https://lollypopdf.com#image-tools" data-key="imageTools">Image Tools</a></li>
+                        <li><a href="https://lollypopdf.com#text-tools" data-key="textTools">Text Tools</a></li>
+                        <li><a href="https://lollypopdf.com#audio-video-tools" data-key="audioVideoTools">Audio/Video Tools</a></li>
+                        <li><a href="https://lollypopdf.com#web-developer-tools" data-key="webDeveloperTools">Web/Developer Tools</a></li>
+                        <li><a href="https://lollypopdf.com#calculator-tools" data-key="calculatorTools">Calculator Tools</a></li>
+                        <li><a href="https://lollypopdf.com#utility-tools" data-key="utilityTools">Utility Tools</a></li>
+                        <li><a href="https://lollypopdf.com#color-tools" data-key="colorTools">Color Tools</a></li>
                     </ul>
                 </div>
                 
-                <div class="footer-column">
-                    <h3>Quick Links</h3>
+                <div class="footer-section">
+                    <h3 data-key="quickLinks">Quick Links</h3>
                     <ul class="footer-links">
-                        <li><a href="https://lollypopdf.github.io/LollyPoPd#home">Home</a></li>
-                        <li><a href="https://lollypopdf.github.io/LollyPoPdf#all-tools">All Tools</a></li>
-                        <li><a href="https://lollypopdf.github.io/LollyPoPdf#contact">Contact</a></li>
-                        <li><a href="https://lollypopdf.com#privacy-policy">Privacy Policy</a></li>
-                        <li><a href="https://lollypopdf.com#disclaimer">Disclaimer</a></li>
-                        <li><a href="https://lollypopdf.com#terms-of-service">Terms of Service</a></li>
+                        <li><a href="https://lollypopdf.com#home" data-key="homeLink">Home</a></li>
+                        <li><a href="tools.html" data-key="allTools">All Tools</a></li>
+                        <li><a href="faq.html" data-key="faq">FAQ</a></li>
+                        <li><a href="contact.html" data-key="contactLink">Contact</a></li>
+                        <li><a href="privacy-policy.html" data-key="privacyPolicy">Privacy Policy</a></li>
+                        <li><a href="disclaimer.html" data-key="disclaimer">Disclaimer</a></li>
+                        <li><a href="terms.html" data-key="terms">Terms of Service</a></li>
                     </ul>
                 </div>
             </div>
             
-            <div class="copyright">
-                <p>&copy; 2025 LollyPoPDF. All rights reserved.</p>
-            </div>
+            <div class="footer-line"></div>
+            <div class="copyright" data-key="copyright">© 2025 LollyPoPDF. All rights reserved.</div>
         </div>
     </footer>
 
+    <!-- Language Switcher -->
+    <div class="language-switcher">
+        <button class="language-btn">
+            <i class="fas fa-globe"></i>
+            <span id="currentLanguage">English</span>
+        </button>
+        <div class="language-dropdown">
+            <div class="language-option" data-lang="en">English</div>
+            <div class="language-option" data-lang="es">Español</div>
+            <div class="language-option" data-lang="fr">Français</div>
+            <div class="language-option" data-lang="de">Deutsch</div>
+            <div class="language-option" data-lang="it">Italiano</div>
+            <div class="language-option" data-lang="pt">Português</div>
+            <div class="language-option" data-lang="ja">日本語</div>
+            <div class="language-option" data-lang="ru">Pусский</div>
+            <div class="language-option" data-lang="ko">한국어</div>
+            <div class="language-option" data-lang="zh-CN">中文 (简体)</div>
+            <div class="language-option" data-lang="zh-TW">中文 (繁體)</div>
+            <div class="language-option" data-lang="ar">العربية</div>
+            <div class="language-option" data-lang="fa">فارسی</div>
+            <div class="language-option" data-lang="bg">Български</div>
+            <div class="language-option" data-lang="ca">Català</div>
+            <div class="language-option" data-lang="nl">Nederlands</div>
+            <div class="language-option" data-lang="el">Ελληνικά</div>
+            <div class="language-option" data-lang="hi">हिन्दी</div>
+            <div class="language-option" data-lang="te">తెలుగు</div>
+            <div class="language-option" data-lang="kn">ಕನ್ನಡ</div>
+            <div class="language-option" data-lang="ta">தமிழ்</div>
+            <div class="language-option" data-lang="ml">മലയാളം</div>
+            <div class="language-option" data-lang="id">Bahasa Indonesia</div>
+            <div class="language-option" data-lang="ms">Bahasa Melayu</div>
+            <div class="language-option" data-lang="pl">Polski</div>
+            <div class="language-option" data-lang="th">ภาษาไทย</div>
+            <div class="language-option" data-lang="tr">Türkçe</div>
+            <div class="language-option" data-lang="uk">Українська</div>
+            <div class="language-option" data-lang="vi">Tiếng Việt</div>
+            <div class="language-option" data-lang="is">Íslenska</div>
+            <div class="language-option" data-lang="no">Norsk</div>
+            <div class="language-option" data-lang="sv">Svenska</div>
+            <div class="language-option" data-lang="fi">Suomi</div>
+            <div class="language-option" data-lang="cs">Čeština</div>
+        </div>
+    </div>
+
     <script>
-        // DOM Elements
+        // Language translations
+        const translations = {
+            en: {
+                home: "Home",
+                about: "About Us",
+                tools: "Tools",
+                contact: "Contact",
+                heroTitle: "Free Image Compressor Tool",
+                heroDescription: "Reduce image file sizes without losing quality with our easy-to-use tool. No registration required, 100% free!",
+                howToTitle: "How to Compress Your Images",
+                step1Title: "Upload Your Image",
+                step1Desc: "Click the upload area or drag and drop your image file. We support JPG, PNG, WebP, BMP, GIF, and TIFF formats.",
+                step2Title: "Choose Format & Quality",
+                step2Desc: "Select your preferred output format and compression quality. Lower quality means smaller file size.",
+                step3Title: "Preview & Compare",
+                step3Desc: "See the original and compressed versions side by side with file size information.",
+                step4Title: "Download Result",
+                step4Desc: "Download your compressed image with reduced file size while maintaining visual quality.",
+                toolTitle: "Image Compression Tool",
+                uploadText: "Drag & drop your image here or click to browse",
+                browseBtn: "Browse Files",
+                originalLabel: "Original Image",
+                compressedLabel: "Compressed Image",
+                formatLabel: "Output Format:",
+                compressionLabel: "Compression Level:",
+                lowQuality: "Low",
+                lowQualityDesc: "(Best Quality)",
+                mediumQuality: "Medium",
+                mediumQualityDesc: "(Balanced)",
+                highQuality: "High",
+                highQualityDesc: "(Smallest Size)",
+                compressBtn: "Compress Image",
+                downloadBtn: "Download",
+                resetBtn: "Reset",
+                followUs: "FOLLOW US",
+                popularCategories: "Popular Categories",
+                pdfTools: "PDF Tools",
+                imageTools: "Image Tools",
+                textTools: "Text Tools",
+                audioVideoTools: "Audio/Video Tools",
+                webDeveloperTools: "Web/Developer Tools",
+                calculatorTools: "Calculator Tools",
+                utilityTools: "Utility Tools",
+                colorTools: "Color Tools",
+                quickLinks: "Quick Links",
+                homeLink: "Home",
+                allTools: "All Tools",
+                faq: "FAQ",
+                contactLink: "Contact",
+                privacyPolicy: "Privacy Policy",
+                disclaimer: "Disclaimer",
+                terms: "Terms of Service",
+                footerDescription: "Free online tools for PDF, images, text, and more. Simplify your digital tasks with our easy-to-use utilities.",
+                copyright: "© 2025 LollyPoPDF. All rights reserved."
+            },
+            es: {
+                home: "Inicio",
+                about: "Nosotros",
+                tools: "Herramientas",
+                contact: "Contacto",
+                heroTitle: "Herramienta Gratuita de Compresión de Imágenes",
+                heroDescription: "Reduce el tamaño de los archivos de imagen sin perder calidad con nuestra herramienta fácil de usar. Sin registro requerido, ¡100% gratis!",
+                howToTitle: "Cómo Comprimir Tus Imágenes",
+                step1Title: "Sube Tu Imagen",
+                step1Desc: "Haz clic en el área de carga o arrastra y suelta tu archivo de imagen. Admitimos formatos JPG, PNG, WebP, BMP, GIF y TIFF.",
+                step2Title: "Elige Formato y Calidad",
+                step2Desc: "Selecciona tu formato de salida preferido y calidad de compresión. Menor calidad significa menor tamaño de archivo.",
+                step3Title: "Vista Previa y Comparación",
+                step3Desc: "Ve las versiones original y comprimida una al lado de la otra con información del tamaño del archivo.",
+                step4Title: "Descarga el Resultado",
+                step4Desc: "Descarga tu imagen comprimida con tamaño de archivo reducido manteniendo la calidad visual.",
+                toolTitle: "Herramienta de Compresión de Imágenes",
+                uploadText: "Arrastra y suelta tu imagen aquí o haz clic para buscar",
+                browseBtn: "Buscar Archivos",
+                originalLabel: "Imagen Original",
+                compressedLabel: "Imagen Comprimida",
+                formatLabel: "Formato de Salida:",
+                compressionLabel: "Nivel de Compresión:",
+                lowQuality: "Bajo",
+                lowQualityDesc: "(Mejor Calidad)",
+                mediumQuality: "Medio",
+                mediumQualityDesc: "(Equilibrado)",
+                highQuality: "Alto",
+                highQualityDesc: "(Tamaño Más Pequeño)",
+                compressBtn: "Comprimir Imagen",
+                downloadBtn: "Descargar",
+                resetBtn: "Restablecer",
+                followUs: "SÍGUENOS",
+                popularCategories: "Categorías Populares",
+                pdfTools: "Herramientas PDF",
+                imageTools: "Herramientas de Imagen",
+                textTools: "Herramientas de Texto",
+                audioVideoTools: "Herramientas de Audio/Video",
+                webDeveloperTools: "Herramientas Web/Desarrollador",
+                calculatorTools: "Herramientas de Calculadora",
+                utilityTools: "Herramientas de Utilidad",
+                colorTools: "Herramientas de Color",
+                quickLinks: "Enlaces Rápidos",
+                homeLink: "Inicio",
+                allTools: "Todas las Herramientas",
+                faq: "Preguntas Frecuentes",
+                contactLink: "Contacto",
+                privacyPolicy: "Política de Privacidad",
+                disclaimer: "Descargo de Responsabilidad",
+                terms: "Términos de Servicio",
+                footerDescription: "Herramientas en línea gratuitas para PDF, imágenes, texto y más. Simplifica tus tareas digitales con nuestras utilidades fáciles de usar.",
+                copyright: "© 2025 LollyPoPDF. Todos los derechos reservados."
+            },
+            fr: {
+                home: "Accueil",
+                about: "À Propos",
+                tools: "Outils",
+                contact: "Contact",
+                heroTitle: "Outil de Compression d'Images Gratuit",
+                heroDescription: "Réduisez la taille des fichiers image sans perte de qualité avec notre outil facile à utiliser. Aucune inscription requise, 100% gratuit !",
+                howToTitle: "Comment Compresser Vos Images",
+                step1Title: "Téléchargez Votre Image",
+                step1Desc: "Cliquez sur la zone de téléchargement ou faites glisser et déposez votre fichier image. Nous prenons en charge les formats JPG, PNG, WebP, BMP, GIF et TIFF.",
+                step2Title: "Choisissez le Format et la Qualité",
+                step2Desc: "Sélectionnez votre format de sortie préféré et la qualité de compression. Une qualité inférieure signifie une taille de fichier plus petite.",
+                step3Title: "Aperçu et Comparaison",
+                step3Desc: "Voyez les versions originale et compressée côte à côte avec les informations de taille de fichier.",
+                step4Title: "Téléchargez le Résultat",
+                step4Desc: "Téléchargez votre image compressée avec une taille de fichier réduite tout en conservant la qualité visuelle.",
+                toolTitle: "Outil de Compression d'Images",
+                uploadText: "Glissez et déposez votre image ici ou cliquez pour parcourir",
+                browseBtn: "Parcourir les Fichiers",
+                originalLabel: "Image Originale",
+                compressedLabel: "Image Compressée",
+                formatLabel: "Format de Sortie :",
+                compressionLabel: "Niveau de Compression :",
+                lowQuality: "Faible",
+                lowQualityDesc: "(Meilleure Qualité)",
+                mediumQuality: "Moyen",
+                mediumQualityDesc: "(Équilibré)",
+                highQuality: "Élevé",
+                highQualityDesc: "(Taille Plus Petite)",
+                compressBtn: "Compresser l'Image",
+                downloadBtn: "Télécharger",
+                resetBtn: "Réinitialiser",
+                followUs: "SUIVEZ-NOUS",
+                popularCategories: "Catégories Populaires",
+                pdfTools: "Outils PDF",
+                imageTools: "Outils d'Image",
+                textTools: "Outils de Texte",
+                audioVideoTools: "Outils Audio/Video",
+                webDeveloperTools: "Outils Web/Développeur",
+                calculatorTools: "Outils de Calculatrice",
+                utilityTools: "Outils d'Utilité",
+                colorTools: "Outils de Couleur",
+                quickLinks: "Liens Rapides",
+                homeLink: "Accueil",
+                allTools: "Tous les Outils",
+                faq: "FAQ",
+                contactLink: "Contact",
+                privacyPolicy: "Politique de Confidentialité",
+                disclaimer: "Avertissement",
+                terms: "Conditions d'Utilisation",
+                footerDescription: "Outils en ligne gratuits pour PDF, imágenes, texte et plus. Simplifiez vos tâches numériques avec nos utilitaires faciles à utiliser.",
+                copyright: "© 2025 LollyPoPDF. Tous droits réservés."
+            },
+            de: {
+                home: "Startseite",
+                about: "Über Uns",
+                tools: "Werkzeuge",
+                contact: "Kontakt",
+                heroTitle: "Kostenloses Bildkomprimierungswerkzeug",
+                heroDescription: "Reduzieren Sie die Größe von Bilddateien ohne Qualitätsverlust mit unserem benutzerfreundlichen Werkzeug. Keine Registrierung erforderlich, 100% kostenlos!",
+                howToTitle: "So komprimieren Sie Ihre Bilder",
+                step1Title: "Laden Sie Ihr Bild hoch",
+                step1Desc: "Klicken Sie auf den Upload-Bereich oder ziehen Sie Ihre Bilddatei per Drag & Drop. Wir unterstützen JPG, PNG, WebP, BMP, GIF und TIFF-Formate.",
+                step2Title: "Wählen Sie Format und Qualität",
+                step2Desc: "Wählen Sie Ihr bevorzugtes Ausgabeformat und die Komprimierungsqualität. Niedrigere Qualität bedeutet kleinere Dateigröße.",
+                step3Title: "Vorschau & Vergleich",
+                step3Desc: "Sehen Sie die Original- und komprimierten Versionen nebeneinander mit Dateigrößeninformationen.",
+                step4Title: "Ergebnis herunterladen",
+                step4Desc: "Laden Sie Ihr komprimiertes Bild mit reduzierter Dateigröße bei Beibehaltung der visuellen Qualität herunter.",
+                toolTitle: "Bildkomprimierungswerkzeug",
+                uploadText: "Ziehen Sie Ihr Bild hierher oder klicken Sie, um zu durchsuchen",
+                browseBtn: "Dateien durchsuchen",
+                originalLabel: "Originalbild",
+                compressedLabel: "Komprimiertes Bild",
+                formatLabel: "Ausgabeformat:",
+                compressionLabel: "Komprimierungsstufe:",
+                lowQuality: "Niedrig",
+                lowQualityDesc: "(Beste Qualität)",
+                mediumQuality: "Mittel",
+                mediumQualityDesc: "(Ausgewogen)",
+                highQuality: "Hoch",
+                highQualityDesc: "(Kleinste Größe)",
+                compressBtn: "Bild komprimieren",
+                downloadBtn: "Herunterladen",
+                resetBtn: "Zurücksetzen",
+                followUs: "FOLGEN SIE UNS",
+                popularCategories: "Beliebte Kategorien",
+                pdfTools: "PDF-Werkzeuge",
+                imageTools: "Bildwerkzeuge",
+                textTools: "Textwerkzeuge",
+                audioVideoTools: "Audio/Video-Werkzeuge",
+                webDeveloperTools: "Web/Entwickler-Werkzeuge",
+                calculatorTools: "Rechnerwerkzeuge",
+                utilityTools: "Hilfsprogramme",
+                colorTools: "Farbwerkzeuge",
+                quickLinks: "Schnelllinks",
+                homeLink: "Startseite",
+                allTools: "Alle Werkzeuge",
+                faq: "FAQ",
+                contactLink: "Kontakt",
+                privacyPolicy: "Datenschutzrichtlinie",
+                disclaimer: "Haftungsausschluss",
+                terms: "Nutzungsbedingungen",
+                footerDescription: "Kostenlose Online-Werkzeuge für PDF, Bilder, Text und mehr. Vereinfachen Sie Ihre digitalen Aufgaben mit unseren benutzerfreundlichen Utilities.",
+                copyright: "© 2025 LollyPoPDF. Alle Rechte vorbehalten."
+            },
+            it: {
+                home: "Home",
+                about: "Chi Siamo",
+                tools: "Strumenti",
+                contact: "Contatto",
+                heroTitle: "Strumento di Compressione Immagini Gratuito",
+                heroDescription: "Riduci le dimensioni dei file immagine senza perdere qualità con il nostro strumento facile da usare. Nessuna registrazione richiesta, 100% gratuito!",
+                howToTitle: "Come Comprimere le Tue Immagini",
+                step1Title: "Carica la Tua Immagine",
+                step1Desc: "Clicca sull'area di caricamento o trascina e rilascia il tuo file immagine. Supportiamo formati JPG, PNG, WebP, BMP, GIF e TIFF.",
+                step2Title: "Scegli Formato e Qualità",
+                step2Desc: "Seleziona il formato di output preferito e la qualità di compressione. Qualità inferiore significa dimensioni file più piccole.",
+                step3Title: "Anteprima e Confronto",
+                step3Desc: "Guarda le versioni originale e compressa affiancate con informazioni sulle dimensioni del file.",
+                step4Title: "Scarica il Risultato",
+                step4Desc: "Scarica la tua immagine compressa con dimensioni file ridotte mantenendo la qualità visiva.",
+                toolTitle: "Strumento di Compressione Immagini",
+                uploadText: "Trascina e rilascia la tua immagine qui o clicca per sfogliare",
+                browseBtn: "Sfoglia File",
+                originalLabel: "Immagine Originale",
+                compressedLabel: "Immagine Compressa",
+                formatLabel: "Formato di Output:",
+                compressionLabel: "Livello di Compressione:",
+                lowQuality: "Basso",
+                lowQualityDesc: "(Migliore Qualità)",
+                mediumQuality: "Medio",
+                mediumQualityDesc: "(Bilanciato)",
+                highQuality: "Alto",
+                highQualityDesc: "(Dimensione Minore)",
+                compressBtn: "Comprimi Immagine",
+                downloadBtn: "Scarica",
+                resetBtn: "Ripristina",
+                followUs: "SEGUICI",
+                popularCategories: "Categorie Popolari",
+                pdfTools: "Strumenti PDF",
+                imageTools: "Strumenti Immagine",
+                textTools: "Strumenti Testo",
+                audioVideoTools: "Strumenti Audio/Video",
+                webDeveloperTools: "Strumenti Web/Sviluppatore",
+                calculatorTools: "Strumenti Calcolatrice",
+                utilityTools: "Strumenti Utilità",
+                colorTools: "Strumenti Colore",
+                quickLinks: "Link Rapidi",
+                homeLink: "Home",
+                allTools: "Tutti gli Strumenti",
+                faq: "FAQ",
+                contactLink: "Contatto",
+                privacyPolicy: "Informativa sulla Privacy",
+                disclaimer: "Disclaimer",
+                terms: "Termini di Servizio",
+                footerDescription: "Strumenti online gratuiti per PDF, immagini, testo e altro. Semplifica le tue attività digitali con le nostre utility facili da usare.",
+                copyright: "© 2025 LollyPoPDF. Tutti i diritti riservati."
+            },
+            pt: {
+                home: "Início",
+                about: "Sobre Nós",
+                tools: "Ferramentas",
+                contact: "Contato",
+                heroTitle: "Ferramenta Gratuita de Compressão de Imagens",
+                heroDescription: "Reduza o tamanho dos arquivos de imagem sem perder qualidade com nossa ferramenta fácil de usar. Sem registro necessário, 100% gratuito!",
+                howToTitle: "Como Comprimir Suas Imagens",
+                step1Title: "Carregue Sua Imagem",
+                step1Desc: "Clique na área de upload ou arraste e solte seu arquivo de imagem. Suportamos formatos JPG, PNG, WebP, BMP, GIF e TIFF.",
+                step2Title: "Escolha Formato e Qualidade",
+                step2Desc: "Selecione seu formato de saída preferido e qualidade de compressão. Qualidade inferior significa tamanho de arquivo menor.",
+                step3Title: "Visualizar e Comparar",
+                step3Desc: "Veja as versões original e comprimida lado a lado com informações de tamanho de arquivo.",
+                step4Title: "Baixar Resultado",
+                step4Desc: "Baixe sua imagem comprimida com tamanho de arquivo reduzido mantendo a qualidade visual.",
+                toolTitle: "Ferramenta de Compressão de Imagens",
+                uploadText: "Arraste e solte sua imagem aqui ou clique para procurar",
+                browseBtn: "Procurar Arquivos",
+                originalLabel: "Imagem Original",
+                compressedLabel: "Imagem Comprimida",
+                formatLabel: "Formato de Saída:",
+                compressionLabel: "Nível de Compressão:",
+                lowQuality: "Baixo",
+                lowQualityDesc: "(Melhor Qualidade)",
+                mediumQuality: "Médio",
+                mediumQualityDesc: "(Equilibrado)",
+                highQuality: "Alto",
+                highQualityDesc: "(Tamanho Menor)",
+                compressBtn: "Comprimir Imagem",
+                downloadBtn: "Baixar",
+                resetBtn: "Redefinir",
+                followUs: "SIGA-NOS",
+                popularCategories: "Categorias Populares",
+                pdfTools: "Ferramentas PDF",
+                imageTools: "Ferramentas de Imagem",
+                textTools: "Ferramentas de Texto",
+                audioVideoTools: "Ferramentas de Áudio/Vídeo",
+                webDeveloperTools: "Ferramentas Web/Desenvolvedor",
+                calculatorTools: "Ferramentas de Calculadora",
+                utilityTools: "Ferramentas de Utilidade",
+                colorTools: "Ferramentas de Cor",
+                quickLinks: "Links Rápidos",
+                homeLink: "Início",
+                allTools: "Todas as Ferramentas",
+                faq: "FAQ",
+                contactLink: "Contato",
+                privacyPolicy: "Política de Privacidade",
+                disclaimer: "Aviso Legal",
+                terms: "Termos de Serviço",
+                footerDescription: "Ferramentas online gratuitas para PDF, imagens, texto e mais. Simplifique suas tarefas digitais com nossas utilitários fáceis de usar.",
+                copyright: "© 2025 LollyPoPDF. Todos os direitos reservados."
+            },
+            ja: {
+                home: "ホーム",
+                about: "会社概要",
+                tools: "ツール",
+                contact: "お問い合わせ",
+                heroTitle: "無料画像圧縮ツール",
+                heroDescription: "使いやすいツールで画質を損なうことなく画像ファイルのサイズを縮小します。登録不要、100%無料！",
+                howToTitle: "画像の圧縮方法",
+                step1Title: "画像をアップロード",
+                step1Desc: "アップロードエリアをクリックするか、画像ファイルをドラッグ＆ドロップしてください。JPG、PNG、WebP、BMP、GIF、TIFF形式をサポートしています。",
+                step2Title: "フォーマットと品質を選択",
+                step2Desc: "希望の出力フォーマットと圧縮品質を選択してください。品質が低いほどファイルサイズは小さくなります。",
+                step3Title: "プレビューと比較",
+                step3Desc: "元の画像と圧縮された画像を並べて表示し、ファイルサイズ情報を確認できます。",
+                step4Title: "結果をダウンロード",
+                step4Desc: "画質を維持しながらファイルサイズを縮小した圧縮画像をダウンロードできます。",
+                toolTitle: "画像圧縮ツール",
+                uploadText: "画像をここにドラッグ＆ドロップするか、クリックして参照してください",
+                browseBtn: "ファイルを参照",
+                originalLabel: "元の画像",
+                compressedLabel: "圧縮された画像",
+                formatLabel: "出力フォーマット：",
+                compressionLabel: "圧縮レベル：",
+                lowQuality: "低",
+                lowQualityDesc: "(最高品質)",
+                mediumQuality: "中",
+                mediumQualityDesc: "(バランス)",
+                highQuality: "高",
+                highQualityDesc: "(最小サイズ)",
+                compressBtn: "画像を圧縮",
+                downloadBtn: "ダウンロード",
+                resetBtn: "リセット",
+                followUs: "フォローする",
+                popularCategories: "人気カテゴリ",
+                pdfTools: "PDFツール",
+                imageTools: "画像ツール",
+                textTools: "テキストツール",
+                audioVideoTools: "オーディオ/ビデオツール",
+                webDeveloperTools: "Web/開発者ツール",
+                calculatorTools: "計算機ツール",
+                utilityTools: "ユーティリティツール",
+                colorTools: "カラーツール",
+                quickLinks: "クイックリンク",
+                homeLink: "ホーム",
+                allTools: "すべてのツール",
+                faq: "よくある質問",
+                contactLink: "お問い合わせ",
+                privacyPolicy: "プライバシーポリシー",
+                disclaimer: "免責事項",
+                terms: "利用規約",
+                footerDescription: "PDF、画像、テキストなどの無料オンラインツール。使いやすいユーティリティでデジタルタスクを簡素化します。",
+                copyright: "© 2025 LollyPoPDF. All rights reserved."
+            },
+            ru: {
+                home: "Главная",
+                about: "О нас",
+                tools: "Инструменты",
+                contact: "Контакты",
+                heroTitle: "Бесплатный инструмент сжатия изображений",
+                heroDescription: "Уменьшите размер файлов изображений без потери качества с помощью нашего простого в использовании инструмента. Без регистрации, 100% бесплатно!",
+                howToTitle: "Как сжать ваши изображения",
+                step1Title: "Загрузите ваше изображение",
+                step1Desc: "Нажмите на область загрузки или перетащите файл изображения. Мы поддерживаем форматы JPG, PNG, WebP, BMP, GIF и TIFF.",
+                step2Title: "Выберите формат и качество",
+                step2Desc: "Выберите предпочтительный формат вывода и качество сжатия. Более низкое качество означает меньший размер файла.",
+                step3Title: "Предпросмотр и сравнение",
+                step3Desc: "Смотрите оригинальную и сжатую версии рядом с информацией о размере файла.",
+                step4Title: "Скачать результат",
+                step4Desc: "Скачайте ваше сжатое изображение с уменьшенным размером файла при сохранении визуального качества.",
+                toolTitle: "Инструмент сжатия изображений",
+                uploadText: "Перетащите ваше изображение сюда или нажмите для просмотра",
+                browseBtn: "Обзор файлов",
+                originalLabel: "Оригинальное изображение",
+                compressedLabel: "Сжатое изображение",
+                formatLabel: "Формат вывода:",
+                compressionLabel: "Уровень сжатия:",
+                lowQuality: "Низкий",
+                lowQualityDesc: "(Лучшее качество)",
+                mediumQuality: "Средний",
+                mediumQualityDesc: "(Сбалансированный)",
+                highQuality: "Высокий",
+                highQualityDesc: "(Наименьший размер)",
+                compressBtn: "Сжать изображение",
+                downloadBtn: "Скачать",
+                resetBtn: "Сбросить",
+                followUs: "СЛЕДУЙТЕ ЗА НАМИ",
+                popularCategories: "Популярные категории",
+                pdfTools: "PDF инструменты",
+                imageTools: "Инструменты изображений",
+                textTools: "Текстовые инструменты",
+                audioVideoTools: "Аудио/Видео инструменты",
+                webDeveloperTools: "Веб/Разработчик инструменты",
+                calculatorTools: "Калькуляторные инструменты",
+                utilityTools: "Утилиты",
+                colorTools: "Цветовые инструменты",
+                quickLinks: "Быстрые ссылки",
+                homeLink: "Главная",
+                allTools: "Все инструменты",
+                faq: "ЧаВо",
+                contactLink: "Контакты",
+                privacyPolicy: "Политика конфиденциальности",
+                disclaimer: "Отказ от ответственности",
+                terms: "Условия обслуживания",
+                footerDescription: "Бесплатные онлайн-инструменты для PDF, изображений, текста и многого другого. Упростите свои цифровые задачи с нашими удобными утилитами.",
+                copyright: "© 2025 LollyPoPDF. Все права защищены."
+            },
+            ko: {
+                home: "홈",
+                about: "회사 소개",
+                tools: "도구",
+                contact: "연락처",
+                heroTitle: "무료 이미지 압축 도구",
+                heroDescription: "사용하기 쉬운 도구로 화질 저하 없이 이미지 파일 크기를 줄이세요. 등록 불필요, 100% 무료!",
+                howToTitle: "이미지 압축 방법",
+                step1Title: "이미지 업로드",
+                step1Desc: "업로드 영역을 클릭하거나 이미지 파일을 드래그 앤 드롭하세요. JPG, PNG, WebP, BMP, GIF, TIFF 형식을 지원합니다.",
+                step2Title: "형식 및 품질 선택",
+                step2Desc: "선호하는 출력 형식과 압축 품질을 선택하세요. 낮은 품질은 더 작은 파일 크기를 의미합니다.",
+                step3Title: "미리보기 및 비교",
+                step3Desc: "원본과 압축된 버전을 나란히 보고 파일 크기 정보를 확인하세요.",
+                step4Title: "결과 다운로드",
+                step4Desc: "시각적 품질을 유지하면서 파일 크기가 줄어든 압축 이미지를 다운로드하세요.",
+                toolTitle: "이미지 압축 도구",
+                uploadText: "이미지를 여기로 드래그 앤 드롭하거나 클릭하여 찾아보세요",
+                browseBtn: "파일 찾아보기",
+                originalLabel: "원본 이미지",
+                compressedLabel: "압축된 이미지",
+                formatLabel: "출력 형식:",
+                compressionLabel: "압축 수준:",
+                lowQuality: "낮음",
+                lowQualityDesc: "(최고 품질)",
+                mediumQuality: "중간",
+                mediumQualityDesc: "(균형)",
+                highQuality: "높음",
+                highQualityDesc: "(가장 작은 크기)",
+                compressBtn: "이미지 압축",
+                downloadBtn: "다운로드",
+                resetBtn: "재설정",
+                followUs: "팔로우하기",
+                popularCategories: "인기 카테고리",
+                pdfTools: "PDF 도구",
+                imageTools: "이미지 도구",
+                textTools: "텍스트 도구",
+                audioVideoTools: "오디오/비디오 도구",
+                webDeveloperTools: "웹/개발자 도구",
+                calculatorTools: "계산기 도구",
+                utilityTools: "유틸리티 도구",
+                colorTools: "색상 도구",
+                quickLinks: "빠른 링크",
+                homeLink: "홈",
+                allTools: "모든 도구",
+                faq: "자주 묻는 질문",
+                contactLink: "연락처",
+                privacyPolicy: "개인정보 보호정책",
+                disclaimer: "면책 조항",
+                terms: "이용 약관",
+                footerDescription: "PDF, 이미지, 텍스트 등을 위한 무료 온라인 도구. 사용하기 쉬운 유틸리티로 디지털 작업을 간소화하세요.",
+                copyright: "© 2025 LollyPoPDF. All rights reserved."
+            },
+            'zh-CN': {
+                home: "首页",
+                about: "关于我们",
+                tools: "工具",
+                contact: "联系我们",
+                heroTitle: "免费图片压缩工具",
+                heroDescription: "使用我们易于使用的工具减小图片文件大小而不损失质量。无需注册，100%免费！",
+                howToTitle: "如何压缩您的图片",
+                step1Title: "上传您的图片",
+                step1Desc: "点击上传区域或拖放您的图片文件。我们支持JPG、PNG、WebP、BMP、GIF和TIFF格式。",
+                step2Title: "选择格式和质量",
+                step2Desc: "选择您偏好的输出格式和压缩质量。较低的质量意味着较小的文件大小。",
+                step3Title: "预览和比较",
+                step3Desc: "并排查看原始和压缩版本以及文件大小信息。",
+                step4Title: "下载结果",
+                step4Desc: "下载压缩后的图片，文件大小减小同时保持视觉质量。",
+                toolTitle: "图片压缩工具",
+                uploadText: "将您的图片拖放到此处或点击浏览",
+                browseBtn: "浏览文件",
+                originalLabel: "原始图片",
+                compressedLabel: "压缩图片",
+                formatLabel: "输出格式：",
+                compressionLabel: "压缩级别：",
+                lowQuality: "低",
+                lowQualityDesc: "(最佳质量)",
+                mediumQuality: "中",
+                mediumQualityDesc: "(平衡)",
+                highQuality: "高",
+                highQualityDesc: "(最小尺寸)",
+                compressBtn: "压缩图片",
+                downloadBtn: "下载",
+                resetBtn: "重置",
+                followUs: "关注我们",
+                popularCategories: "热门分类",
+                pdfTools: "PDF工具",
+                imageTools: "图片工具",
+                textTools: "文本工具",
+                audioVideoTools: "音频/视频工具",
+                webDeveloperTools: "网页/开发者工具",
+                calculatorTools: "计算器工具",
+                utilityTools: "实用工具",
+                colorTools: "颜色工具",
+                quickLinks: "快速链接",
+                homeLink: "首页",
+                allTools: "所有工具",
+                faq: "常见问题",
+                contactLink: "联系我们",
+                privacyPolicy: "隐私政策",
+                disclaimer: "免责声明",
+                terms: "服务条款",
+                footerDescription: "用于PDF、图片、文本等的免费在线工具。使用我们易于使用的实用程序简化您的数字任务。",
+                copyright: "© 2025 LollyPoPDF. 版权所有。"
+            },
+            'zh-TW': {
+                home: "首頁",
+                about: "關於我們",
+                tools: "工具",
+                contact: "聯絡我們",
+                heroTitle: "免費圖片壓縮工具",
+                heroDescription: "使用我們易於使用的工具減小圖片檔案大小而不損失品質。無需註冊，100%免費！",
+                howToTitle: "如何壓縮您的圖片",
+                step1Title: "上傳您的圖片",
+                step1Desc: "點擊上傳區域或拖放您的圖片檔案。我們支援JPG、PNG、WebP、BMP、GIF和TIFF格式。",
+                step2Title: "選擇格式和品質",
+                step2Desc: "選擇您偏好的輸出格式和壓縮品質。較低的品質意味著較小的檔案大小。",
+                step3Title: "預覽和比較",
+                step3Desc: "並排查看原始和壓縮版本以及檔案大小資訊。",
+                step4Title: "下載結果",
+                step4Desc: "下載壓縮後的圖片，檔案大小減小同時保持視覺品質。",
+                toolTitle: "圖片壓縮工具",
+                uploadText: "將您的圖片拖放到此處或點擊瀏覽",
+                browseBtn: "瀏覽檔案",
+                originalLabel: "原始圖片",
+                compressedLabel: "壓縮圖片",
+                formatLabel: "輸出格式：",
+                compressionLabel: "壓縮級別：",
+                lowQuality: "低",
+                lowQualityDesc: "(最佳品質)",
+                mediumQuality: "中",
+                mediumQualityDesc: "(平衡)",
+                highQuality: "高",
+                highQualityDesc: "(最小尺寸)",
+                compressBtn: "壓縮圖片",
+                downloadBtn: "下載",
+                resetBtn: "重置",
+                followUs: "關注我們",
+                popularCategories: "熱門分類",
+                pdfTools: "PDF工具",
+                imageTools: "圖片工具",
+                textTools: "文字工具",
+                audioVideoTools: "音訊/視訊工具",
+                webDeveloperTools: "網頁/開發者工具",
+                calculatorTools: "計算機工具",
+                utilityTools: "實用工具",
+                colorTools: "顏色工具",
+                quickLinks: "快速連結",
+                homeLink: "首頁",
+                allTools: "所有工具",
+                faq: "常見問題",
+                contactLink: "聯絡我們",
+                privacyPolicy: "隱私政策",
+                disclaimer: "免責聲明",
+                terms: "服務條款",
+                footerDescription: "用於PDF、圖片、文字等的免費線上工具。使用我們易於使用的實用程式簡化您的數位任務。",
+                copyright: "© 2025 LollyPoPDF. 版權所有。"
+            },
+            ar: {
+                home: "الرئيسية",
+                about: "من نحن",
+                tools: "الأدوات",
+                contact: "اتصل بنا",
+                heroTitle: "أداة ضغط الصور المجانية",
+                heroDescription: "قلل حجم ملفات الصور دون فقدان الجودة باستخدام أداة سهلة الاستخدام. لا حاجة للتسجيل، 100% مجانية!",
+                howToTitle: "كيفية ضغط صورك",
+                step1Title: "قم بتحميل صورتك",
+                step1Desc: "انقر على منطقة التحميل أو اسحب وأفلت ملف الصورة. ندعم تنسيقات JPG وPNG وWebP وBMP وGIF وTIFF.",
+                step2Title: "اختر التنسيق والجودة",
+                step2Desc: "حدد تنسيق الإخراج المفضل وجودة الضغط. الجودة الأقل تعني حجم ملف أصغر.",
+                step3Title: "معاينة ومقارنة",
+                step3Desc: "شاهد النسخة الأصلية والمضغوطة جنبًا إلى جنب مع معلومات حجم الملف.",
+                step4Title: "تحميل النتيجة",
+                step4Desc: "قم بتحميل صورتك المضغوطة بحجم ملف مخفض مع الحفاظ على الجودة البصرية.",
+                toolTitle: "أداة ضغط الصور",
+                uploadText: "اسحب وأفلت صورتك هنا أو انقر للتصفح",
+                browseBtn: "تصفح الملفات",
+                originalLabel: "الصورة الأصلية",
+                compressedLabel: "الصورة المضغوطة",
+                formatLabel: "تنسيق الإخراج:",
+                compressionLabel: "مستوى الضغط:",
+                lowQuality: "منخفض",
+                lowQualityDesc: "(أفضل جودة)",
+                mediumQuality: "متوسط",
+                mediumQualityDesc: "(متوازن)",
+                highQuality: "مرتفع",
+                highQualityDesc: "(أصغر حجم)",
+                compressBtn: "ضغط الصورة",
+                downloadBtn: "تحميل",
+                resetBtn: "إعادة تعيين",
+                followUs: "تابعنا",
+                popularCategories: "الفئات الشائعة",
+                pdfTools: "أدوات PDF",
+                imageTools: "أدوات الصور",
+                textTools: "أدوات النص",
+                audioVideoTools: "أدوات الصوت/الفيديو",
+                webDeveloperTools: "أدوات الويب/المطور",
+                calculatorTools: "أدوات الآلة الحاسبة",
+                utilityTools: "أدوات المساعدة",
+                colorTools: "أدوات الألوان",
+                quickLinks: "روابط سريعة",
+                homeLink: "الرئيسية",
+                allTools: "جميع الأدوات",
+                faq: "الأسئلة الشائعة",
+                contactLink: "اتصل بنا",
+                privacyPolicy: "سياسة الخصوصية",
+                disclaimer: "إخلاء المسؤولية",
+                terms: "شروط الخدمة",
+                footerDescription: "أدوات مجانية على الإنترنت لملفات PDF والصور والنص والمزيد. بسّط مهامك الرقمية باستخدام أدواتنا المساعدة سهلة الاستخدام.",
+                copyright: "© 2025 LollyPoPDF. جميع الحقوق محفوظة."
+            },
+            fa: {
+                home: "خانه",
+                about: "درباره ما",
+                tools: "ابزارها",
+                contact: "تماس با ما",
+                heroTitle: "ابزار فشرده سازی تصاویر رایگان",
+                heroDescription: "با ابزار آسان استفاده ما اندازه فایل های تصویری را بدون از دست دادن کیفیت کاهش دهید. بدون نیاز به ثبت نام، 100% رایگان!",
+                howToTitle: "نحوه فشرده سازی تصاویر شما",
+                step1Title: "تصویر خود را آپلود کنید",
+                step1Desc: "روی ناحیه آپلود کلیک کنید یا فایل تصویر را بکشید و رها کنید. ما از فرمت های JPG, PNG, WebP, BMP, GIF و TIFF پشتیبانی می کنیم.",
+                step2Title: "فرمت و کیفیت را انتخاب کنید",
+                step2Desc: "فرمت خروجی ترجیحی و کیفیت فشرده سازی را انتخاب کنید. کیفیت پایین تر به معنای اندازه فایل کوچکتر است.",
+                step3Title: "پیش نمایش و مقایسه",
+                step3Desc: "نسخه های اصلی و فشرده را در کنار هم با اطلاعات اندازه فایل مشاهده کنید.",
+                step4Title: "دانلود نتیجه",
+                step4Desc: "تصویر فشرده شده خود را با اندازه فایل کاهش یافته در حالی که کیفیت بصری را حفظ می کنید دانلود کنید.",
+                toolTitle: "ابزار فشرده سازی تصاویر",
+                uploadText: "تصویر خود را به اینجا بکشید و رها کنید یا برای مرور کلیک کنید",
+                browseBtn: "مرور فایل ها",
+                originalLabel: "تصویر اصلی",
+                compressedLabel: "تصویر فشرده شده",
+                formatLabel: "فرمت خروجی:",
+                compressionLabel: "سطح فشرده سازی:",
+                lowQuality: "کم",
+                lowQualityDesc: "(بهترین کیفیت)",
+                mediumQuality: "متوسط",
+                mediumQualityDesc: "(متوازن)",
+                highQuality: "زیاد",
+                highQualityDesc: "(کوچکترین اندازه)",
+                compressBtn: "فشرده سازی تصویر",
+                downloadBtn: "دانلود",
+                resetBtn: "بازنشانی",
+                followUs: "ما را دنبال کنید",
+                popularCategories: "دسته بندی های محبوب",
+                pdfTools: "ابزارهای PDF",
+                imageTools: "ابزارهای تصویر",
+                textTools: "ابزارهای متن",
+                audioVideoTools: "ابزارهای صوتی/تصویری",
+                webDeveloperTools: "ابزارهای وب/توسعه دهنده",
+                calculatorTools: "ابزارهای ماشین حساب",
+                utilityTools: "ابزارهای کمکی",
+                colorTools: "ابزارهای رنگ",
+                quickLinks: "لینک های سریع",
+                homeLink: "خانه",
+                allTools: "همه ابزارها",
+                faq: "سوالات متداول",
+                contactLink: "تماس با ما",
+                privacyPolicy: "سیاست حفظ حریم خصوصی",
+                disclaimer: "سلب مسئولیت",
+                terms: "شرایط خدمات",
+                footerDescription: "ابزارهای آنلاین رایگان برای PDF، تصاویر، متن و موارد دیگر. وظایف دیجیتال خود را با ابزارهای کمکی آسان استفاده ما ساده کنید.",
+                copyright: "© 2025 LollyPoPDF. تمامی حقوق محفوظ است."
+            },
+            bg: {
+                home: "Начало",
+                about: "За нас",
+                tools: "Инструменти",
+                contact: "Контакт",
+                heroTitle: "Безплатен инструмент за компресиране на изображения",
+                heroDescription: "Намалете размера на файловете с изображения без загуба на качество с нашия лесен за използване инструмент. Без регистрация, 100% безплатно!",
+                howToTitle: "Как да компресирате вашите изображения",
+                step1Title: "Качете вашето изображение",
+                step1Desc: "Кликнете върху зоната за качване или плъзнете и пуснете файла с изображение. Поддържаме формати JPG, PNG, WebP, BMP, GIF и TIFF.",
+                step2Title: "Изберете формат и качество",
+                step2Desc: "Изберете предпочитания изходен формат и качество на компресиране. По-ниско качество означава по-малък размер на файла.",
+                step3Title: "Преглед и сравнение",
+                step3Desc: "Вижте оригиналните и компресираните версии една до друга с информация за размера на файла.",
+                step4Title: "Изтеглете резултата",
+                step4Desc: "Изтеглете компресираното си изображение с намален размер на файла, като запазите визуалното качество.",
+                toolTitle: "Инструмент за компресиране на изображения",
+                uploadText: "Плъзнете и пуснете вашето изображение тук или кликнете за преглед",
+                browseBtn: "Преглед на файлове",
+                originalLabel: "Оригинално изображение",
+                compressedLabel: "Компресирано изображение",
+                formatLabel: "Изходен формат:",
+                compressionLabel: "Ниво на компресия:",
+                lowQuality: "Ниско",
+                lowQualityDesc: "(Най-добро качество)",
+                mediumQuality: "Средно",
+                mediumQualityDesc: "(Балансирано)",
+                highQuality: "Високо",
+                highQualityDesc: "(Най-малък размер)",
+                compressBtn: "Компресирай изображение",
+                downloadBtn: "Изтегли",
+                resetBtn: "Нулирай",
+                followUs: "СЛЕДВАЙТЕ НИ",
+                popularCategories: "Популярни категории",
+                pdfTools: "PDF инструменти",
+                imageTools: "Инструменти за изображения",
+                textTools: "Текстови инструменти",
+                audioVideoTools: "Аудио/Видео инструменти",
+                webDeveloperTools: "Уеб/Разработчик инструменти",
+                calculatorTools: "Калкулаторни инструменти",
+                utilityTools: "Помощни инструменти",
+                colorTools: "Цветови инструменти",
+                quickLinks: "Бързи връзки",
+                homeLink: "Начало",
+                allTools: "Всички инструменти",
+                faq: "ЧЗВ",
+                contactLink: "Контакт",
+                privacyPolicy: "Политика за поверителност",
+                disclaimer: "Отказ от отговорност",
+                terms: "Условия за ползване",
+                footerDescription: "Безплатни онлайн инструменти за PDF, изображения, текст и още. Опростете вашите цифрови задачи с нашите лесни за използване помощни програми.",
+                copyright: "© 2025 LollyPoPDF. Всички права запазени."
+            },
+            ca: {
+                home: "Inici",
+                about: "Sobre nosaltres",
+                tools: "Eines",
+                contact: "Contacte",
+                heroTitle: "Eina de compressió d'imatges gratuïta",
+                heroDescription: "Reduïu la mida dels fitxers d'imatge sense perdre qualitat amb la nostra eina fàcil d'utilitzar. Sense registre, 100% gratuït!",
+                howToTitle: "Com comprimir les vostres imatges",
+                step1Title: "Pugeu la vostra imatge",
+                step1Desc: "Feu clic a l'àrea de pujada o arrossegueu i deixeu anar el fitxer d'imatge. Admetem formats JPG, PNG, WebP, BMP, GIF i TIFF.",
+                step2Title: "Trieu format i qualitat",
+                step2Desc: "Seleccioneu el format de sortida preferit i la qualitat de compressió. Qualitat inferior significa mida de fitxer més petita.",
+                step3Title: "Vista prèvia i comparació",
+                step3Desc: "Vegeu les versions original i comprimida una al costat de l'altra amb informació de mida de fitxer.",
+                step4Title: "Baixeu el resultat",
+                step4Desc: "Baixeu la vostra imatge comprimida amb mida de fitxer reduïda mantenint la qualitat visual.",
+                toolTitle: "Eina de compressió d'imatges",
+                uploadText: "Arrossegueu i deixeu anar la vostra imatge aquí o feu clic per navegar",
+                browseBtn: "Navegar pels fitxers",
+                originalLabel: "Imatge original",
+                compressedLabel: "Imatge comprimida",
+                formatLabel: "Format de sortida:",
+                compressionLabel: "Nivell de compressió:",
+                lowQuality: "Baix",
+                lowQualityDesc: "(Millor qualitat)",
+                mediumQuality: "Mig",
+                mediumQualityDesc: "(Equilibrat)",
+                highQuality: "Alt",
+                highQualityDesc: "(Mida més petita)",
+                compressBtn: "Comprimir imatge",
+                downloadBtn: "Baixar",
+                resetBtn: "Restablir",
+                followUs: "SEGUEIX-NOS",
+                popularCategories: "Categories populars",
+                pdfTools: "Eines PDF",
+                imageTools: "Eines d'imatge",
+                textTools: "Eines de text",
+                audioVideoTools: "Eines d'àudio/vídeo",
+                webDeveloperTools: "Eines web/desenvolupador",
+                calculatorTools: "Eines de calculadora",
+                utilityTools: "Eines d'utilitat",
+                colorTools: "Eines de color",
+                quickLinks: "Enllaços ràpids",
+                homeLink: "Inici",
+                allTools: "Totes les eines",
+                faq: "PMF",
+                contactLink: "Contacte",
+                privacyPolicy: "Política de privadesa",
+                disclaimer: "Descàrrec de responsabilitat",
+                terms: "Termes del servei",
+                footerDescription: "Eines en línia gratuïtes per a PDF, imatges, text i més. Simplifiqueu les vostres tasques digitals amb les nostres utilitats fàcils d'utilitzar.",
+                copyright: "© 2025 LollyPoPDF. Tots els drets reservats."
+            },
+            nl: {
+                home: "Home",
+                about: "Over Ons",
+                tools: "Tools",
+                contact: "Contact",
+                heroTitle: "Gratis Afbeeldingscompressie Tool",
+                heroDescription: "Verklein de bestandsgrootte van afbeeldingen zonder kwaliteitsverlies met onze gebruiksvriendelijke tool. Geen registratie vereist, 100% gratis!",
+                howToTitle: "Hoe uw afbeeldingen te comprimeren",
+                step1Title: "Upload uw afbeelding",
+                step1Desc: "Klik op het uploadgebied of sleep en zet uw afbeeldingsbestand neer. We ondersteunen JPG, PNG, WebP, BMP, GIF en TIFF formaten.",
+                step2Title: "Kies Formaat & Kwaliteit",
+                step2Desc: "Selecteer uw voorkeursuitvoerformaat en compressiekwaliteit. Lagere kwaliteit betekent kleinere bestandsgrootte.",
+                step3Title: "Voorbeeld & Vergelijken",
+                step3Desc: "Zie de originele en gecomprimeerde versies naast elkaar met bestandsgrootte-informatie.",
+                step4Title: "Download Resultaat",
+                step4Desc: "Download uw gecomprimeerde afbeelding met verkleinde bestandsgrootte terwijl u de visuele kwaliteit behoudt.",
+                toolTitle: "Afbeeldingscompressie Tool",
+                uploadText: "Sleep en zet uw afbeelding hier neer of klik om te bladeren",
+                browseBtn: "Bladeren door bestanden",
+                originalLabel: "Originele Afbeelding",
+                compressedLabel: "Gecomprimeerde Afbeelding",
+                formatLabel: "Uitvoerformaat:",
+                compressionLabel: "Compressieniveau:",
+                lowQuality: "Laag",
+                lowQualityDesc: "(Beste Kwaliteit)",
+                mediumQuality: "Gemiddeld",
+                mediumQualityDesc: "(Gebalanceerd)",
+                highQuality: "Hoog",
+                highQualityDesc: "(Kleinste Grootte)",
+                compressBtn: "Comprimeer Afbeelding",
+                downloadBtn: "Downloaden",
+                resetBtn: "Resetten",
+                followUs: "VOLG ONS",
+                popularCategories: "Populaire Categorieën",
+                pdfTools: "PDF Tools",
+                imageTools: "Afbeeldingstools",
+                textTools: "Teksttools",
+                audioVideoTools: "Audio/Video Tools",
+                webDeveloperTools: "Web/Developer Tools",
+                calculatorTools: "Rekenmachinetools",
+                utilityTools: "Hulpprogramma's",
+                colorTools: "Kleurtools",
+                quickLinks: "Snelle Links",
+                homeLink: "Home",
+                allTools: "Alle Tools",
+                faq: "FAQ",
+                contactLink: "Contact",
+                privacyPolicy: "Privacybeleid",
+                disclaimer: "Disclaimer",
+                terms: "Servicevoorwaarden",
+                footerDescription: "Gratis online tools voor PDF, afbeeldingen, tekst en meer. Vereenvoudig uw digitale taken met onze gebruiksvriendelijke utilities.",
+                copyright: "© 2025 LollyPoPDF. Alle rechten voorbehouden."
+            },
+            el: {
+                home: "Αρχική",
+                about: "Σχετικά με εμάς",
+                tools: "Εργαλεία",
+                contact: "Επικοινωνία",
+                heroTitle: "Δωρεάν Εργαλείο Συμπίεσης Εικόνων",
+                heroDescription: "Μειώστε το μέγεθος των αρχείων εικόνας χωρίς απώλεια ποιότητας με το εύχρηστο εργαλείο μας. Χωρίς απαίτηση εγγραφής, 100% δωρεάν!",
+                howToTitle: "Πώς να Συμπιέσετε τις Εικόνες σας",
+                step1Title: "Ανεβάστε την Εικόνα σας",
+                step1Desc: "Κάντε κλικ στην περιοχή μεταφόρτωσης ή σύρετε και αποθέστε το αρχείο εικόνας σας. Υποστηρίζουμε μορφές JPG, PNG, WebP, BMP, GIF και TIFF.",
+                step2Title: "Επιλέξτε Μορφή & Ποιότητα",
+                step2Desc: "Επιλέξτε την προτιμώμενη μορφή εξόδου και την ποιότητα συμπίεσης. Χαμηλότερη ποιότητα σημαίνει μικρότερο μέγεθος αρχείου.",
+                step3Title: "Προεπισκόπηση & Σύγκριση",
+                step3Desc: "Δείτε τις πρωτότυπες και συμπιεσμένες εκδόσεις δίπλα-δίπλα με πληροφορίες μεγέθους αρχείου.",
+                step4Title: "Λήψη Αποτελέσματος",
+                step4Desc: "Κατεβάστε τη συμπιεσμένη εικόνα σας με μειωμένο μέγεθος αρχείου διατηρώντας την οπτική ποιότητα.",
+                toolTitle: "Εργαλείο Συμπίεσης Εικόνων",
+                uploadText: "Σύρετε και αποθέστε την εικόνα σας εδώ ή κάντε κλικ για περιήγηση",
+                browseBtn: "Περιήγηση Αρχείων",
+                originalLabel: "Πρωτότυπη Εικόνα",
+                compressedLabel: "Συμπιεσμένη Εικόνα",
+                formatLabel: "Μορφή Εξόδου:",
+                compressionLabel: "Επίπεδο Συμπίεσης:",
+                lowQuality: "Χαμηλό",
+                lowQualityDesc: "(Καλύτερη Ποιότητα)",
+                mediumQuality: "Μεσαίο",
+                mediumQualityDesc: "(Ισορροπημένο)",
+                highQuality: "Υψηλό",
+                highQualityDesc: "(Μικρότερο Μέγεθος)",
+                compressBtn: "Συμπίεση Εικόνας",
+                downloadBtn: "Λήψη",
+                resetBtn: "Επαναφορά",
+                followUs: "ΑΚΟΛΟΥΘΗΣΤΕ ΜΑΣ",
+                popularCategories: "Δημοφιλείς Κατηγορίες",
+                pdfTools: "Εργαλεία PDF",
+                imageTools: "Εργαλεία Εικόνας",
+                textTools: "Εργαλεία Κειμένου",
+                audioVideoTools: "Εργαλεία Ήχου/Βίντεο",
+                webDeveloperTools: "Εργαλεία Web/Προγραμματιστή",
+                calculatorTools: "Εργαλεία Αριθμομηχανής",
+                utilityTools: "Βοηθητικά Εργαλεία",
+                colorTools: "Εργαλεία Χρώματος",
+                quickLinks: "Γρήγοροι Σύνδεσμοι",
+                homeLink: "Αρχική",
+                allTools: "Όλα τα Εργαλεία",
+                faq: "Συχνές Ερωτήσεις",
+                contactLink: "Επικοινωνία",
+                privacyPolicy: "Πολιτική Απορρήτου",
+                disclaimer: "Αποποίηση Ευθυνών",
+                terms: "Όροι Υπηρεσίας",
+                footerDescription: "Δωρεάν διαδικτυακά εργαλεία για PDF, εικόνες, κείμενο και περισσότερα. Απλοποιήστε τις ψηφιακές σας εργασίες με τα εύχρηστα βοηθητικά προγράμματά μας.",
+                copyright: "© 2025 LollyPoPDF. Με επιφύλαξη παντός δικαιώματος."
+            },
+            hi: {
+                home: "होम",
+                about: "हमारे बारे में",
+                tools: "टूल्स",
+                contact: "संपर्क करें",
+                heroTitle: "मुफ्त इमेज कंप्रेशन टूल",
+                heroDescription: "हमारे आसान-से-उपयोग टूल से बिना गुणवत्ता खोए इमेज फ़ाइल आकार कम करें। कोई पंजीकरण आवश्यक नहीं, 100% मुफ्त!",
+                howToTitle: "अपनी इमेज को कैसे कंप्रेस करें",
+                step1Title: "अपनी इमेज अपलोड करें",
+                step1Desc: "अपलोड एरिया पर क्लिक करें या अपनी इमेज फ़ाइल को ड्रैग और ड्रॉप करें। हम JPG, PNG, WebP, BMP, GIF और TIFF फॉर्मेट सपोर्ट करते हैं।",
+                step2Title: "फॉर्मेट और क्वालिटी चुनें",
+                step2Desc: "अपना पसंदीदा आउटपुट फॉर्मेट और कंप्रेशन क्वालिटी चुनें। कम क्वालिटी का मतलब छोटा फ़ाइल आकार।",
+                step3Title: "प्रीव्यू और तुलना",
+                step3Desc: "फ़ाइल आकार जानकारी के साथ ओरिजिनल और कंप्रेस्ड वर्जन साइड-बाय-साइड देखें।",
+                step4Title: "रिजल्ट डाउनलोड करें",
+                step4Desc: "विजुअल क्वालिटी बनाए रखते हुए कम फ़ाइल आकार वाली अपनी कंप्रेस्ड इमेज डाउनलोड करें।",
+                toolTitle: "इमेज कंप्रेशन टूल",
+                uploadText: "अपनी इमेज यहां ड्रैग और ड्रॉप करें या ब्राउज़ करने के लिए क्लिक करें",
+                browseBtn: "फ़ाइलें ब्राउज़ करें",
+                originalLabel: "ओरिजिनल इमेज",
+                compressedLabel: "कंप्रेस्ड इमेज",
+                formatLabel: "आउटपुट फॉर्मेट:",
+                compressionLabel: "कंप्रेशन लेवल:",
+                lowQuality: "कम",
+                lowQualityDesc: "(बेस्ट क्वालिटी)",
+                mediumQuality: "मध्यम",
+                mediumQualityDesc: "(संतुलित)",
+                highQuality: "उच्च",
+                highQualityDesc: "(सबसे छोटा आकार)",
+                compressBtn: "इमेज कंप्रेस करें",
+                downloadBtn: "डाउनलोड",
+                resetBtn: "रीसेट",
+                followUs: "हमें फॉलो करें",
+                popularCategories: "लोकप्रिय श्रेणियां",
+                pdfTools: "PDF टूल्स",
+                imageTools: "इमेज टूल्स",
+                textTools: "टेक्स्ट टूल्स",
+                audioVideoTools: "ऑडियो/वीडियो टूल्स",
+                webDeveloperTools: "वेब/डेवलपर टूल्स",
+                calculatorTools: "कैलकुलेटर टूल्स",
+                utilityTools: "यूटिलिटी टूल्स",
+                colorTools: "कलर टूल्स",
+                quickLinks: "क्विक लिंक्स",
+                homeLink: "होम",
+                allTools: "सभी टूल्स",
+                faq: "सामान्य प्रश्न",
+                contactLink: "संपर्क करें",
+                privacyPolicy: "गोपनीयता नीति",
+                disclaimer: "अस्वीकरण",
+                terms: "सेवा की शर्तें",
+                footerDescription: "PDF, इमेज, टेक्स्ट और अधिक के लिए मुफ्त ऑनलाइन टूल्स। हमारे आसान-से-उपयोग यूटिलिटीज के साथ अपने डिजिटल कार्यों को सरल बनाएं।",
+                copyright: "© 2025 LollyPoPDF. सर्वाधिकार सुरक्षित।"
+            },
+            te: {
+                home: "హోమ్",
+                about: "మా గురించి",
+                tools: "టూల్స్",
+                contact: "సంప్రదించండి",
+                heroTitle: "ఉచిత ఇమేజ్ కంప్రెషన్ టూల్",
+                heroDescription: "మా సులభంగా ఉపయోగించే టూల్తో నాణ్యత కోల్పోకుండా ఇమేజ్ ఫైల్ పరిమాణాలను తగ్గించండి. రిజిస్ట్రేషన్ అవసరం లేదు, 100% ఉచితం!",
+                howToTitle: "మీ ఇమేజీలను ఎలా కంప్రెస్ చేయాలి",
+                step1Title: "మీ ఇమేజ్ను అప్లోడ్ చేయండి",
+                step1Desc: "అప్లోడ్ ప్రాంతంపై క్లిక్ చేయండి లేదా మీ ఇమేజ్ ఫైల్ను డ్రాగ్ మరియు డ్రాప్ చేయండి. మేము JPG, PNG, WebP, BMP, GIF మరియు TIFF ఫార్మాట్లను మద్దతు ఇస్తాము.",
+                step2Title: "ఫార్మాట్ & క్వాలిటీని ఎంచుకోండి",
+                step2Desc: "మీ ప్రాధాన్యత ఔట్పుట్ ఫార్మాట్ మరియు కంప్రెషన్ క్వాలిటీని ఎంచుకోండి. తక్కువ క్వాలిటీ అంటే చిన్న ఫైల్ పరిమాణం.",
+                step3Title: "ప్రివ్యూ & పోలిక",
+                step3Desc: "ఫైల్ పరిమాణ సమాచారంతో అసలు మరియు కంప్రెస్ చేసిన వెర్షన్లను పక్కపక్కనే చూడండి.",
+                step4Title: "ఫలితాన్ని డౌన్లోడ్ చేయండి",
+                step4Desc: "విజువల్ క్వాలిటీని నిర్వహించేటప్పుడు తగ్గిన ఫైల్ పరిమాణంతో మీ కంప్రెస్ చేసిన ఇమేజ్ను డౌన్లోడ్ చేయండి.",
+                toolTitle: "ఇమేజ్ కంప్రెషన్ టూల్",
+                uploadText: "మీ ఇమేజ్ను ఇక్కడ డ్రాగ్ మరియు డ్రాప్ చేయండి లేదా బ్రౌజ్ చేయడానికి క్లిక్ చేయండి",
+                browseBtn: "ఫైల్స్ బ్రౌజ్ చేయండి",
+                originalLabel: "అసలు ఇమేజ్",
+                compressedLabel: "కంప్రెస్ చేసిన ఇమేజ్",
+                formatLabel: "ఔట్పుట్ ఫార్మాట్:",
+                compressionLabel: "కంప్రెషన్ స్థాయి:",
+                lowQuality: "తక్కువ",
+                lowQualityDesc: "(ఉత్తమ నాణ్యత)",
+                mediumQuality: "మధ్యస్థ",
+                mediumQualityDesc: "(సమతుల్య)",
+                highQuality: "ఎక్కువ",
+                highQualityDesc: "(చిన్న పరిమాణం)",
+                compressBtn: "ఇమేజ్ కంప్రెస్ చేయండి",
+                downloadBtn: "డౌన్లోడ్",
+                resetBtn: "రీసెట్",
+                followUs: "మమ్మల్ని అనుసరించండి",
+                popularCategories: "జనాదరణ పొందిన వర్గాలు",
+                pdfTools: "PDF టూల్స్",
+                imageTools: "ఇమేజ్ టూల్స్",
+                textTools: "టెక్స్ట్ టూల్స్",
+                audioVideoTools: "ఆడియో/వీడియో టూల్స్",
+                webDeveloperTools: "వెబ్/డెవలపర్ టూల్స్",
+                calculatorTools: "కాలిక్యులేటర్ టూల్స్",
+                utilityTools: "యుటిలిటీ టూల్స్",
+                colorTools: "కలర్ టూల్స్",
+                quickLinks: "త్వరిత లింకులు",
+                homeLink: "హోమ్",
+                allTools: "అన్ని టూల్స్",
+                faq: "సాధారణ ప్రశ్నలు",
+                contactLink: "సంప్రదించండి",
+                privacyPolicy: "గోప్యతా విధానం",
+                disclaimer: "డిస్క్లైమర్",
+                terms: "సేవా నిబంధనలు",
+                footerDescription: "PDF, ఇమేజీలు, టెక్స్ట్ మరియు మరిన్నింటికి ఉచిత ఆన్లైన్ టూల్స్. మా సులభంగా ఉపయోగించే యుటిలిటీలతో మీ డిజిటల్ పనులను సరళీకృతం చేయండి.",
+                copyright: "© 2025 LollyPoPDF. అన్ని హక్కులు ప్రత్యేకించబడినవి."
+            },
+            kn: {
+                home: "ಹೋಮ್",
+                about: "ನಮ್ಮ ಬಗ್ಗೆ",
+                tools: "ಟೂಲ್ಸ್",
+                contact: "ಸಂಪರ್ಕಿಸಿ",
+                heroTitle: "ಉಚಿತ ಇಮೇಜ್ ಕಂಪ್ರೆಷನ್ ಟೂಲ್",
+                heroDescription: "ನಮ್ಮ ಸುಲಭವಾಗಿ ಬಳಸಬಹುದಾದ ಟೂಲ್ನೊಂದಿಗೆ ಗುಣಮಟ್ಟ ಕಳೆದುಕೊಳ್ಳದೆ ಇಮೇಜ್ ಫೈಲ್ ಗಾತ್ರಗಳನ್ನು ಕಡಿಮೆ ಮಾಡಿ. ನೋಂದಣಿ ಅಗತ್ಯವಿಲ್ಲ, 100% ಉಚಿತ!",
+                howToTitle: "ನಿಮ್ಮ ಇಮೇಜ್ಗಳನ್ನು ಹೇಗೆ ಕಂಪ್ರೆಸ್ ಮಾಡಬೇಕು",
+                step1Title: "ನಿಮ್ಮ ಇಮೇಜ್ ಅಪ್ಲೋಡ್ ಮಾಡಿ",
+                step1Desc: "ಅಪ್ಲೋಡ್ ಪ್ರದೇಶದ ಮೇಲೆ ಕ್ಲಿಕ್ ಮಾಡಿ ಅಥವಾ ನಿಮ್ಮ ಇಮೇಜ್ ಫೈಲ್ ಅನ್ನು ಡ್ರ್ಯಾಗ್ ಮತ್ತು ಡ್ರಾಪ್ ಮಾಡಿ. ನಾವು JPG, PNG, WebP, BMP, GIF ಮತ್ತು TIFF ಫಾರ್ಮ್ಯಾಟ್ಗಳನ್ನು ಬೆಂಬಲಿಸುತ್ತೇವೆ.",
+                step2Title: "ಫಾರ್ಮ್ಯಾಟ್ & ಗುಣಮಟ್ಟವನ್ನು ಆಯ್ಕೆಮಾಡಿ",
+                step2Desc: "ನಿಮ್ಮ ಆದ್ಯತೆಯ ಔಟ್ಪುಟ್ ಫಾರ್ಮ್ಯಾಟ್ ಮತ್ತು ಕಂಪ್ರೆಷನ್ ಗುಣಮಟ್ಟವನ್ನು ಆಯ್ಕೆಮಾಡಿ. ಕಡಿಮೆ ಗುಣಮಟ್ಟ ಎಂದರೆ ಸಣ್ಣ ಫೈಲ್ ಗಾತ್ರ.",
+                step3Title: "ಪೂರ್ವವೀಕ್ಷಣೆ & ಹೋಲಿಕೆ",
+                step3Desc: "ಫೈಲ್ ಗಾತ್ರ ಮಾಹಿತಿಯೊಂದಿಗೆ ಮೂಲ ಮತ್ತು ಕಂಪ್ರೆಸ್ ಮಾಡಿದ ಆವೃತ್ತಿಗಳನ್ನು ಪಕ್ಕಪಕ್ಕದಲ್ಲಿ ನೋಡಿ.",
+                step4Title: "ಫಲಿತಾಂಶ ಡೌನ್ಲೋಡ್ ಮಾಡಿ",
+                step4Desc: "ವಿಷುವಲ್ ಗುಣಮಟ್ಟವನ್ನು ನಿರ್ವಹಿಸುವಾಗ ಕಡಿಮೆಯಾದ ಫೈಲ್ ಗಾತ್ರದೊಂದಿಗೆ ನಿಮ್ಮ ಕಂಪ್ರೆಸ್ ಮಾಡಿದ ಇಮೇಜ್ ಅನ್ನು ಡೌನ್ಲೋಡ್ ಮಾಡಿ.",
+                toolTitle: "ಇಮೇಜ್ ಕಂಪ್ರೆಷನ್ ಟೂಲ್",
+                uploadText: "ನಿಮ್ಮ ಇಮೇಜ್ ಅನ್ನು ಇಲ್ಲಿ ಡ್ರ್ಯಾಗ್ ಮತ್ತು ಡ್ರಾಪ್ ಮಾಡಿ ಅಥವಾ ಬ್ರೌಸ್ ಮಾಡಲು ಕ್ಲಿಕ್ ಮಾಡಿ",
+                browseBtn: "ಫೈಲ್ಗಳನ್ನು ಬ್ರೌಸ್ ಮಾಡಿ",
+                originalLabel: "ಮೂಲ ಇಮೇಜ್",
+                compressedLabel: "ಕಂಪ್ರೆಸ್ ಮಾಡಿದ ಇಮೇಜ್",
+                formatLabel: "ಔಟ್ಪುಟ್ ಫಾರ್ಮ್ಯಾಟ್:",
+                compressionLabel: "ಕಂಪ್ರೆಷನ್ ಮಟ್ಟ:",
+                lowQuality: "ಕಡಿಮೆ",
+                lowQualityDesc: "(ಉತ್ತಮ ಗುಣಮಟ್ಟ)",
+                mediumQuality: "ಮಧ್ಯಮ",
+                mediumQualityDesc: "(ಸಮತೋಲಿತ)",
+                highQuality: "ಹೆಚ್ಚು",
+                highQualityDesc: "(ಚಿಕ್ಕ ಗಾತ್ರ)",
+                compressBtn: "ಇಮೇಜ್ ಕಂಪ್ರೆಸ್ ಮಾಡಿ",
+                downloadBtn: "ಡೌನ್ಲೋಡ್",
+                resetBtn: "ರೀಸೆಟ್",
+                followUs: "ನಮ್ಮನ್ನು ಅನುಸರಿಸಿ",
+                popularCategories: "ಜನಪ್ರಿಯ ವರ್ಗಗಳು",
+                pdfTools: "PDF ಟೂಲ್ಸ್",
+                imageTools: "ಇಮೇಜ್ ಟೂಲ್ಸ್",
+                textTools: "ಟೆಕ್ಸ್ಟ್ ಟೂಲ್ಸ್",
+                audioVideoTools: "ಆಡಿಯೋ/ವೀಡಿಯೋ ಟೂಲ್ಸ್",
+                webDeveloperTools: "ವೆಬ್/ಡೆವಲಪರ್ ಟೂಲ್ಸ್",
+                calculatorTools: "ಕ್ಯಾಲ್ಕುಲೇಟರ್ ಟೂಲ್ಸ್",
+                utilityTools: "ಯುಟಿಲಿಟಿ ಟೂಲ್ಸ್",
+                colorTools: "ಕಲರ್ ಟೂಲ್ಸ್",
+                quickLinks: "ತ್ವರಿತ ಲಿಂಕ್ಗಳು",
+                homeLink: "ಹೋಮ್",
+                allTools: "ಎಲ್ಲಾ ಟೂಲ್ಸ್",
+                faq: "ಸಾಮಾನ್ಯ ಪ್ರಶ್ನೆಗಳು",
+                contactLink: "ಸಂಪರ್ಕಿಸಿ",
+                privacyPolicy: "ಗೌಪ್ಯತಾ ನೀತಿ",
+                disclaimer: "ಡಿಸ್ಕ್ಲೈಮರ್",
+                terms: "ಸೇವಾ ನಿಯಮಗಳು",
+                footerDescription: "PDF, ಇಮೇಜ್ಗಳು, ಟೆಕ್ಸ್ಟ್ ಮತ್ತು ಹೆಚ್ಚಿನದಕ್ಕಾಗಿ ಉಚಿತ ಆನ್ಲೈನ್ ಟೂಲ್ಸ್. ನಮ್ಮ ಸುಲಭವಾಗಿ ಬಳಸಬಹುದಾದ ಯುಟಿಲಿಟಿಗಳೊಂದಿಗೆ ನಿಮ್ಮ ಡಿಜಿಟಲ್ ಕಾರ್ಯಗಳನ್ನು ಸರಳಗೊಳಿಸಿ.",
+                copyright: "© 2025 LollyPoPDF. ಎಲ್ಲಾ ಹಕ್ಕುಗಳು ಕಾಯ್ದಿರಿಸಿವೆ."
+            },
+            ta: {
+                home: "முகப்பு",
+                about: "எங்களைப் பற்றி",
+                tools: "கருவிகள்",
+                contact: "தொடர்பு கொள்ள",
+                heroTitle: "இலவச பட சுருக்க கருவி",
+                heroDescription: "தரத்தை இழக்காமல் பட கோப்பு அளவுகளை எங்கள் எளிதாகப் பயன்படுத்தக்கூடிய கருவியுடன் குறைக்கவும். பதிவு தேவையில்லை, 100% இலவசம்!",
+                howToTitle: "உங்கள் படங்களை எவ்வாறு சுருக்குவது",
+                step1Title: "உங்கள் படத்தை பதிவேற்றவும்",
+                step1Desc: "பதிவேற்ற பகுதியை கிளிக் செய்யவும் அல்லது உங்கள் பட கோப்பை இழுத்து விடவும். நாங்கள் JPG, PNG, WebP, BMP, GIF மற்றும் TIFF வடிவங்களை ஆதரிக்கிறோம்.",
+                step2Title: "வடிவம் & தரத்தை தேர்வு செய்யவும்",
+                step2Desc: "உங்கள் விருப்ப வெளியீட்டு வடிவம் மற்றும் சுருக்க தரத்தை தேர்வு செய்யவும். குறைந்த தரம் என்பது சிறிய கோப்பு அளவு.",
+                step3Title: "முன்னோட்டம் & ஒப்பீடு",
+                step3Desc: "கோப்பு அளவு தகவலுடன் அசல் மற்றும் சுருக்கப்பட்ட பதிப்புகளை பக்கத்தில் பக்கமாக பார்க்கவும்.",
+                step4Title: "முடிவை பதிவிறக்கவும்",
+                step4Desc: "காட்சி தரத்தை பராமரிக்கும் போது குறைக்கப்பட்ட கோப்பு அளவுடன் உங்கள் சுருக்கப்பட்ட படத்தை பதிவிறக்கவும்.",
+                toolTitle: "பட சுருக்க கருவி",
+                uploadText: "உங்கள் படத்தை இங்கே இழுத்து விடவும் அல்லது உலாவ கிளிக் செய்யவும்",
+                browseBtn: "கோப்புகளை உலாவு",
+                originalLabel: "அசல் படம்",
+                compressedLabel: "சுருக்கப்பட்ட படம்",
+                formatLabel: "வெளியீட்டு வடிவம்:",
+                compressionLabel: "சுருக்க நிலை:",
+                lowQuality: "குறைந்த",
+                lowQualityDesc: "(சிறந்த தரம்)",
+                mediumQuality: "நடுத்தர",
+                mediumQualityDesc: "(சமநிலை)",
+                highQuality: "உயர்",
+                highQualityDesc: "(சிறிய அளவு)",
+                compressBtn: "படத்தை சுருக்கு",
+                downloadBtn: "பதிவிறக்க",
+                resetBtn: "மீட்டமை",
+                followUs: "எங்களைப் பின்தொடருங்கள்",
+                popularCategories: "பிரபலமான வகைகள்",
+                pdfTools: "PDF கருவிகள்",
+                imageTools: "பட கருவிகள்",
+                textTools: "உரை கருவிகள்",
+                audioVideoTools: "ஆடியோ/வீடியோ கருவிகள்",
+                webDeveloperTools: "வலை/டெவலப்பர் கருவிகள்",
+                calculatorTools: "கால்குலேட்டர் கருவிகள்",
+                utilityTools: "பயன்பாட்டு கருவிகள்",
+                colorTools: "நிற கருவிகள்",
+                quickLinks: "விரைவு இணைப்புகள்",
+                homeLink: "முகப்பு",
+                allTools: "அனைத்து கருவிகள்",
+                faq: "அடிக்கடி கேட்கப்படும் கேள்விகள்",
+                contactLink: "தொடர்பு கொள்ள",
+                privacyPolicy: "தனியுரிமைக் கொள்கை",
+                disclaimer: "மறுப்பு",
+                terms: "சேவை விதிமுறைகள்",
+                footerDescription: "PDF, படங்கள், உரை மற்றும் பலவற்றிற்கான இலவச ஆன்லைன் கருவிகள். எங்கள் எளிதாகப் பயன்படுத்தக்கூடிய பயன்பாடுகளுடன் உங்கள் டிஜிட்டல் பணிகளை எளிதாக்குங்கள்.",
+                copyright: "© 2025 LollyPoPDF. அனைத்து உரிமைகளும் பாதுகாக்கப்பட்டவை."
+            },
+            ml: {
+                home: "ഹോം",
+                about: "ഞങ്ങളെക്കുറിച്ച്",
+                tools: "ടൂളുകൾ",
+                contact: "ബന്ധപ്പെടുക",
+                heroTitle: "സൗജന്യ ഇമേജ് കംപ്രഷൻ ടൂൾ",
+                heroDescription: "ഗുണനിലവാരം നഷ്ടപ്പെടുത്താതെ ഇമേജ് ഫയൽ വലുപ്പങ്ങൾ ഞങ്ങളുടെ എളുപ്പത്തിൽ ഉപയോഗിക്കാവുന്ന ടൂൾ ഉപയോഗിച്ച് കുറയ്ക്കുക. രജിസ്ട്രേഷൻ ആവശ്യമില്ല, 100% സൗജന്യം!",
+                howToTitle: "നിങ്ങളുടെ ഇമേജുകൾ എങ്ങനെ കംപ്രസ് ചെയ്യാം",
+                step1Title: "നിങ്ങളുടെ ഇമേജ് അപ്ലോഡ് ചെയ്യുക",
+                step1Desc: "അപ്ലോഡ് ഏരിയയിൽ ക്ലിക്ക് ചെയ്യുക അല്ലെങ്കിൽ നിങ്ങളുടെ ഇമേജ് ഫയൽ ഡ്രാഗ് ചെയ്ത് ഡ്രോപ്പ് ചെയ്യുക. ഞങ്ങൾ JPG, PNG, WebP, BMP, GIF, TIFF ഫോർമാറ്റുകൾ പിന്തുണയ്ക്കുന്നു.",
+                step2Title: "ഫോർമാറ്റും ഗുണനിലവാരവും തിരഞ്ഞെടുക്കുക",
+                step2Desc: "നിങ്ങളുടെ പ്രിയപ്പെട്ട ഔട്ട്പുട്ട് ഫോർമാറ്റും കംപ്രഷൻ ഗുണനിലവാരവും തിരഞ്ഞെടുക്കുക. കുറഞ്ഞ ഗുണനിലവാരം എന്നാൽ ചെറിയ ഫയൽ വലുപ്പം.",
+                step3Title: "പ്രിവ്യൂ & താരതമ്യം",
+                step3Desc: "ഫയൽ വലുപ്പ വിവരങ്ങളുള്ള ഒറിജിനൽ, കംപ്രസ്ഡ് വേർഷനുകൾ സൈഡ്-ബൈ-സൈഡ് കാണുക.",
+                step4Title: "ഫലം ഡൗൺലോഡ് ചെയ്യുക",
+                step4Desc: "വിഷ്വൽ ഗുണനിലവാരം നിലനിർത്തിക്കൊണ്ട് കുറച്ച ഫയൽ വലുപ്പമുള്ള നിങ്ങളുടെ കംപ്രസ്ഡ് ഇമേജ് ഡൗൺലോഡ് ചെയ്യുക.",
+                toolTitle: "ഇമേജ് കംപ്രഷൻ ടൂൾ",
+                uploadText: "നിങ്ങളുടെ ഇമേജ് ഇവിടെ ഡ്രാഗ് ചെയ്ത് ഡ്രോപ്പ് ചെയ്യുക അല്ലെങ്കിൽ ബ്രൗസ് ചെയ്യാൻ ക്ലിക്ക് ചെയ്യുക",
+                browseBtn: "ഫയലുകൾ ബ്രൗസ് ചെയ്യുക",
+                originalLabel: "ഒറിജിനൽ ഇമേജ്",
+                compressedLabel: "കംപ്രസ്ഡ് ഇമേജ്",
+                formatLabel: "ഔട്ട്പുട്ട് ഫോർമാറ്റ്:",
+                compressionLabel: "കംപ്രഷൻ ലെവൽ:",
+                lowQuality: "കുറഞ്ഞ",
+                lowQualityDesc: "(മികച്ച ഗുണനിലവാരം)",
+                mediumQuality: "മധ്യമ",
+                mediumQualityDesc: "(സമതുലിതം)",
+                highQuality: "ഉയർന്ന",
+                highQualityDesc: "(ചെറിയ വലുപ്പം)",
+                compressBtn: "ഇമേജ് കംപ്രസ് ചെയ്യുക",
+                downloadBtn: "ഡൗൺലോഡ്",
+                resetBtn: "റീസെറ്റ്",
+                followUs: "ഞങ്ങളെ പിന്തുടരുക",
+                popularCategories: "ജനപ്രിയ വിഭാഗങ്ങൾ",
+                pdfTools: "PDF ടൂളുകൾ",
+                imageTools: "ഇമേജ് ടൂളുകൾ",
+                textTools: "ടെക്സ്റ്റ് ടൂളുകൾ",
+                audioVideoTools: "ഓഡിയോ/വീഡിയോ ടൂളുകൾ",
+                webDeveloperTools: "വെബ്/ഡെവലപ്പർ ടൂളുകൾ",
+                calculatorTools: "കാൽക്കുലേറ്റർ ടൂളുകൾ",
+                utilityTools: "യൂട്ടിലിറ്റി ടൂളുകൾ",
+                colorTools: "കളർ ടൂളുകൾ",
+                quickLinks: "ദ്രുത ലിങ്കുകൾ",
+                homeLink: "ഹോം",
+                allTools: "എല്ലാ ടൂളുകളും",
+                faq: "പതിവ് ചോദ്യങ്ങൾ",
+                contactLink: "ബന്ധപ്പെടുക",
+                privacyPolicy: "സ്വകാര്യതാ നയം",
+                disclaimer: "ഡിസ്ക്ലെയിമർ",
+                terms: "സേവന നിബന്ധനകൾ",
+                footerDescription: "PDF, ഇമേജുകൾ, ടെക്സ്റ്റ് എന്നിവയ്ക്കുള്ള സൗജന്യ ഓൺലൈൻ ടൂളുകൾ. ഞങ്ങളുടെ എളുപ്പത്തിൽ ഉപയോഗിക്കാവുന്ന യൂട്ടിലിറ്റികൾ ഉപയോഗിച്ച് നിങ്ങളുടെ ഡിജിറ്റൽ ജോലികൾ ലളിതമാക്കുക.",
+                copyright: "© 2025 LollyPoPDF. എല്ലാ അവകാശങ്ങളും നിക്ഷിപ്തം."
+            },
+            id: {
+                home: "Beranda",
+                about: "Tentang Kami",
+                tools: "Alat",
+                contact: "Kontak",
+                heroTitle: "Alat Kompresi Gambar Gratis",
+                heroDescription: "Perkecil ukuran file gambar tanpa kehilangan kualitas dengan alat kami yang mudah digunakan. Tidak perlu pendaftaran, 100% gratis!",
+                howToTitle: "Cara Mengompresi Gambar Anda",
+                step1Title: "Unggah Gambar Anda",
+                step1Desc: "Klik area unggah atau seret dan lepas file gambar Anda. Kami mendukung format JPG, PNG, WebP, BMP, GIF, dan TIFF.",
+                step2Title: "Pilih Format & Kualitas",
+                step2Desc: "Pilih format output dan kualitas kompresi pilihan Anda. Kualitas lebih rendah berarti ukuran file lebih kecil.",
+                step3Title: "Pratinjau & Bandingkan",
+                step3Desc: "Lihat versi asli dan terkompresi berdampingan dengan informasi ukuran file.",
+                step4Title: "Unduh Hasil",
+                step4Desc: "Unduh gambar terkompresi Anda dengan ukuran file berkurang sambil mempertahankan kualitas visual.",
+                toolTitle: "Alat Kompresi Gambar",
+                uploadText: "Seret dan lepas gambar Anda di sini atau klik untuk menjelajah",
+                browseBtn: "Jelajahi File",
+                originalLabel: "Gambar Asli",
+                compressedLabel: "Gambar Terkompresi",
+                formatLabel: "Format Output:",
+                compressionLabel: "Tingkat Kompresi:",
+                lowQuality: "Rendah",
+                lowQualityDesc: "(Kualitas Terbaik)",
+                mediumQuality: "Sedang",
+                mediumQualityDesc: "(Seimbang)",
+                highQuality: "Tinggi",
+                highQualityDesc: "(Ukuran Terkecil)",
+                compressBtn: "Kompresi Gambar",
+                downloadBtn: "Unduh",
+                resetBtn: "Atur Ulang",
+                followUs: "IKUTI KAMI",
+                popularCategories: "Kategori Populer",
+                pdfTools: "Alat PDF",
+                imageTools: "Alat Gambar",
+                textTools: "Alat Teks",
+                audioVideoTools: "Alat Audio/Video",
+                webDeveloperTools: "Alat Web/Pengembang",
+                calculatorTools: "Alat Kalkulator",
+                utilityTools: "Alat Utilitas",
+                colorTools: "Alat Warna",
+                quickLinks: "Tautan Cepat",
+                homeLink: "Beranda",
+                allTools: "Semua Alat",
+                faq: "FAQ",
+                contactLink: "Kontak",
+                privacyPolicy: "Kebijakan Privasi",
+                disclaimer: "Penafian",
+                terms: "Syarat Layanan",
+                footerDescription: "Alat online gratis untuk PDF, gambar, teks, dan lainnya. Sederhanakan tugas digital Anda dengan utilitas kami yang mudah digunakan.",
+                copyright: "© 2025 LollyPoPDF. Hak Cipta Dilindungi."
+            },
+            ms: {
+                home: "Laman Utama",
+                about: "Tentang Kami",
+                tools: "Alat",
+                contact: "Hubungi",
+                heroTitle: "Alat Mampat Imej Percuma",
+                heroDescription: "Kurangkan saiz fail imej tanpa kehilangan kualiti dengan alat kami yang mudah digunakan. Tiada pendaftaran diperlukan, 100% percuma!",
+                howToTitle: "Cara Mampat Imej Anda",
+                step1Title: "Muat Naik Imej Anda",
+                step1Desc: "Klik kawasan muat naik atau seret dan lepaskan fail imej anda. Kami menyokong format JPG, PNG, WebP, BMP, GIF dan TIFF.",
+                step2Title: "Pilih Format & Kualiti",
+                step2Desc: "Pilih format output dan kualiti mampat pilihan anda. Kualiti lebih rendah bermakna saiz fail lebih kecil.",
+                step3Title: "Pratonton & Bandingkan",
+                step3Desc: "Lihat versi asal dan termampat bersebelahan dengan maklumat saiz fail.",
+                step4Title: "Muat Turun Hasil",
+                step4Desc: "Muat turun imej termampat anda dengan saiz fail berkurangan sambil mengekalkan kualiti visual.",
+                toolTitle: "Alat Mampat Imej",
+                uploadText: "Seret dan lepaskan imej anda di sini atau klik untuk melayari",
+                browseBtn: "Layari Fail",
+                originalLabel: "Imej Asal",
+                compressedLabel: "Imej Termampat",
+                formatLabel: "Format Output:",
+                compressionLabel: "Tahap Mampatan:",
+                lowQuality: "Rendah",
+                lowQualityDesc: "(Kualiti Terbaik)",
+                mediumQuality: "Sederhana",
+                mediumQualityDesc: "(Seimbang)",
+                highQuality: "Tinggi",
+                highQualityDesc: "(Saiz Terkecil)",
+                compressBtn: "Mampat Imej",
+                downloadBtn: "Muat Turun",
+                resetBtn: "Tetapkan Semula",
+                followUs: "IKUTI KAMI",
+                popularCategories: "Kategori Popular",
+                pdfTools: "Alat PDF",
+                imageTools: "Alat Imej",
+                textTools: "Alat Teks",
+                audioVideoTools: "Alat Audio/Video",
+                webDeveloperTools: "Alat Web/Pembangun",
+                calculatorTools: "Alat Kalkulator",
+                utilityTools: "Alat Utiliti",
+                colorTools: "Alat Warna",
+                quickLinks: "Pautan Pantas",
+                homeLink: "Laman Utama",
+                allTools: "Semua Alat",
+                faq: "Soalan Lazim",
+                contactLink: "Hubungi",
+                privacyPolicy: "Dasar Privasi",
+                disclaimer: "Penafian",
+                terms: "Syarat Perkhidmatan",
+                footerDescription: "Alat dalam talian percuma untuk PDF, imej, teks dan banyak lagi. Permudahkan tugas digital anda dengan utiliti kami yang mudah digunakan.",
+                copyright: "© 2025 LollyPoPDF. Hak Cipta Terpelihara."
+            },
+            pl: {
+                home: "Strona Główna",
+                about: "O Nas",
+                tools: "Narzędzia",
+                contact: "Kontakt",
+                heroTitle: "Darmowe Narzędzie Kompresji Obrazów",
+                heroDescription: "Zmniejsz rozmiar plików obrazów bez utraty jakości za pomocą naszego łatwego w użyciu narzędzia. Bez rejestracji, 100% darmowe!",
+                howToTitle: "Jak Skompresować Twoje Obrazy",
+                step1Title: "Prześlij Swój Obraz",
+                step1Desc: "Kliknij obszar przesyłania lub przeciągnij i upuść plik obrazu. Obsługujemy formaty JPG, PNG, WebP, BMP, GIF i TIFF.",
+                step2Title: "Wybierz Format i Jakość",
+                step2Desc: "Wybierz preferowany format wyjściowy i jakość kompresji. Niższa jakość oznacza mniejszy rozmiar pliku.",
+                step3Title: "Podgląd i Porównanie",
+                step3Desc: "Zobacz oryginalne i skompresowane wersje obok siebie z informacjami o rozmiarze pliku.",
+                step4Title: "Pobierz Wynik",
+                step4Desc: "Pobierz skompresowany obraz ze zmniejszonym rozmiarem pliku, zachowując jakość wizualną.",
+                toolTitle: "Narzędzie Kompresji Obrazów",
+                uploadText: "Przeciągnij i upuść swój obraz tutaj lub kliknij, aby przeglądać",
+                browseBtn: "Przeglądaj Pliki",
+                originalLabel: "Oryginalny Obraz",
+                compressedLabel: "Skompresowany Obraz",
+                formatLabel: "Format Wyjściowy:",
+                compressionLabel: "Poziom Kompresji:",
+                lowQuality: "Niski",
+                lowQualityDesc: "(Najlepsza Jakość)",
+                mediumQuality: "Średni",
+                mediumQualityDesc: "(Zrównoważony)",
+                highQuality: "Wysoki",
+                highQualityDesc: "(Najmniejszy Rozmiar)",
+                compressBtn: "Skompresuj Obraz",
+                downloadBtn: "Pobierz",
+                resetBtn: "Resetuj",
+                followUs: "OBSERWUJ NAS",
+                popularCategories: "Popularne Kategorie",
+                pdfTools: "Narzędzia PDF",
+                imageTools: "Narzędzia Obrazów",
+                textTools: "Narzędzia Tekstu",
+                audioVideoTools: "Narzędzia Audio/Wideo",
+                webDeveloperTools: "Narzędzia Web/Programisty",
+                calculatorTools: "Narzędzia Kalkulatora",
+                utilityTools: "Narzędzia Użytkowe",
+                colorTools: "Narzędzia Kolorów",
+                quickLinks: "Szybkie Linki",
+                homeLink: "Strona Główna",
+                allTools: "Wszystkie Narzędzia",
+                faq: "FAQ",
+                contactLink: "Kontakt",
+                privacyPolicy: "Polityka Prywatności",
+                disclaimer: "Zastrzeżenie",
+                terms: "Warunki Usługi",
+                footerDescription: "Darmowe narzędzia online dla PDF, obrazów, tekstu i więcej. Uprość swoje zadania cyfrowe za pomocą naszych łatwych w użyciu narzędzi.",
+                copyright: "© 2025 LollyPoPDF. Wszelkie prawa zastrzeżone."
+            },
+            th: {
+                home: "หน้าแรก",
+                about: "เกี่ยวกับเรา",
+                tools: "เครื่องมือ",
+                contact: "ติดต่อ",
+                heroTitle: "เครื่องมือบีบอัดภาพฟรี",
+                heroDescription: "ลดขนาดไฟล์ภาพโดยไม่สูญเสียคุณภาพด้วยเครื่องมือที่ใช้ง่ายของเรา ไม่ต้องลงทะเบียน, ฟรี 100%!",
+                howToTitle: "วิธีการบีบอัดภาพของคุณ",
+                step1Title: "อัปโหลดภาพของคุณ",
+                step1Desc: "คลิกพื้นที่อัปโหลดหรือลากและวางไฟล์ภาพของคุณ เรารองรับรูปแบบ JPG, PNG, WebP, BMP, GIF และ TIFF",
+                step2Title: "เลือกรูปแบบและคุณภาพ",
+                step2Desc: "เลือกรูปแบบผลลัพธ์และคุณภาพการบีบอัดที่คุณต้องการ คุณภาพที่ต่ำกว่าหมายถึงขนาดไฟล์ที่เล็กกว่า",
+                step3Title: "ดูตัวอย่างและเปรียบเทียบ",
+                step3Desc: "ดูเวอร์ชันต้นฉบับและบีบอัดเคียงข้างกันพร้อมข้อมูลขนาดไฟล์",
+                step4Title: "ดาวน์โหลดผลลัพธ์",
+                step4Desc: "ดาวน์โหลดภาพบีบอัดของคุณด้วยขนาดไฟล์ที่ลดลงในขณะที่รักษาคุณภาพภาพ",
+                toolTitle: "เครื่องมือบีบอัดภาพ",
+                uploadText: "ลากและวางภาพของคุณที่นี่หรือคลิกเพื่อเรียกดู",
+                browseBtn: "เรียกดูไฟล์",
+                originalLabel: "ภาพต้นฉบับ",
+                compressedLabel: "ภาพบีบอัด",
+                formatLabel: "รูปแบบผลลัพธ์:",
+                compressionLabel: "ระดับการบีบอัด:",
+                lowQuality: "ต่ำ",
+                lowQualityDesc: "(คุณภาพดีที่สุด)",
+                mediumQuality: "ปานกลาง",
+                mediumQualityDesc: "(สมดุล)",
+                highQuality: "สูง",
+                highQualityDesc: "(ขนาดเล็กที่สุด)",
+                compressBtn: "บีบอัดภาพ",
+                downloadBtn: "ดาวน์โหลด",
+                resetBtn: "รีเซ็ต",
+                followUs: "ติดตามเรา",
+                popularCategories: "หมวดหมู่ยอดนิยม",
+                pdfTools: "เครื่องมือ PDF",
+                imageTools: "เครื่องมือภาพ",
+                textTools: "เครื่องมือข้อความ",
+                audioVideoTools: "เครื่องมือเสียง/วิดีโอ",
+                webDeveloperTools: "เครื่องมือเว็บ/นักพัฒนา",
+                calculatorTools: "เครื่องมือเครื่องคิดเลข",
+                utilityTools: "เครื่องมืออรรถประโยชน์",
+                colorTools: "เครื่องมือสี",
+                quickLinks: "ลิงก์ด่วน",
+                homeLink: "หน้าแรก",
+                allTools: "เครื่องมือทั้งหมด",
+                faq: "คำถามที่พบบ่อย",
+                contactLink: "ติดต่อ",
+                privacyPolicy: "นโยบายความเป็นส่วนตัว",
+                disclaimer: "ข้อจำกัดความรับผิดชอบ",
+                terms: "ข้อกำหนดการให้บริการ",
+                footerDescription: "เครื่องมือออนไลน์ฟรีสำหรับ PDF, ภาพ, ข้อความและอื่นๆ  ทำให้งานดิจิทัลของคุณง่ายขึ้นด้วยยูทิลิตี้ที่ใช้ง่ายของเรา",
+                copyright: "© 2025 LollyPoPDF. สงวนลิขสิทธิ์."
+            },
+            tr: {
+                home: "Ana Sayfa",
+                about: "Hakkımızda",
+                tools: "Araçlar",
+                contact: "İletişim",
+                heroTitle: "Ücretsiz Görüntü Sıkıştırma Aracı",
+                heroDescription: "Kullanımı kolay aracımızla kalite kaybı olmadan görüntü dosya boyutlarını küçültün. Kayıt gerekmez, %100 ücretsiz!",
+                howToTitle: "Görüntülerinizi Nasıl Sıkıştırırsınız",
+                step1Title: "Görüntünüzü Yükleyin",
+                step1Desc: "Yükleme alanına tıklayın veya görüntü dosyanızı sürükleyip bırakın. JPG, PNG, WebP, BMP, GIF ve TIFF formatlarını destekliyoruz.",
+                step2Title: "Format ve Kalite Seçin",
+                step2Desc: "Tercih ettiğiniz çıktı formatını ve sıkıştırma kalitesini seçin. Düşük kalite daha küçük dosya boyutu anlamına gelir.",
+                step3Title: "Önizleme ve Karşılaştırma",
+                step3Desc: "Orijinal ve sıkıştırılmış sürümleri dosya boyutu bilgileriyle yan yana görün.",
+                step4Title: "Sonucu İndirin",
+                step4Desc: "Görsel kaliteyi korurken dosya boyutu küçültülmüş sıkıştırılmış görüntünüzü indirin.",
+                toolTitle: "Görüntü Sıkıştırma Aracı",
+                uploadText: "Görüntünüzü buraya sürükleyip bırakın veya göz atmak için tıklayın",
+                browseBtn: "Dosyalara Gözat",
+                originalLabel: "Orijinal Görüntü",
+                compressedLabel: "Sıkıştırılmış Görüntü",
+                formatLabel: "Çıktı Formatı:",
+                compressionLabel: "Sıkıştırma Seviyesi:",
+                lowQuality: "Düşük",
+                lowQualityDesc: "(En İyi Kalite)",
+                mediumQuality: "Orta",
+                mediumQualityDesc: "(Dengeli)",
+                highQuality: "Yüksek",
+                highQualityDesc: "(En Küçük Boyut)",
+                compressBtn: "Görüntüyü Sıkıştır",
+                downloadBtn: "İndir",
+                resetBtn: "Sıfırla",
+                followUs: "BİZİ TAKİP EDİN",
+                popularCategories: "Popüler Kategoriler",
+                pdfTools: "PDF Araçları",
+                imageTools: "Görüntü Araçları",
+                textTools: "Metin Araçları",
+                audioVideoTools: "Ses/Video Araçları",
+                webDeveloperTools: "Web/Geliştirici Araçları",
+                calculatorTools: "Hesap Makinesi Araçları",
+                utilityTools: "Yardımcı Araçlar",
+                colorTools: "Renk Araçları",
+                quickLinks: "Hızlı Bağlantılar",
+                homeLink: "Ana Sayfa",
+                allTools: "Tüm Araçlar",
+                faq: "SSS",
+                contactLink: "İletişim",
+                privacyPolicy: "Gizlilik Politikası",
+                disclaimer: "Feragatname",
+                terms: "Hizmet Şartları",
+                footerDescription: "PDF, görüntüler, metin ve daha fazlası için ücretsiz çevrimiçi araçlar. Kullanımı kolay yardımcı programlarımızla dijital görevlerinizi basitleştirin.",
+                copyright: "© 2025 LollyPoPDF. Tüm hakları saklıdır."
+            },
+            uk: {
+                home: "Головна",
+                about: "Про нас",
+                tools: "Інструменти",
+                contact: "Контакти",
+                heroTitle: "Безкоштовний інструмент стиснення зображень",
+                heroDescription: "Зменшуйте розмір файлів зображень без втрати якості за допомогою нашого простого у використанні інструменту. Без реєстрації, 100% безкоштовно!",
+                howToTitle: "Як стискати ваші зображення",
+                step1Title: "Завантажте ваше зображення",
+                step1Desc: "Натисніть на область завантаження або перетягніть файл зображення. Ми підтримуємо формати JPG, PNG, WebP, BMP, GIF та TIFF.",
+                step2Title: "Виберіть формат та якість",
+                step2Desc: "Виберіть бажаний формат виводу та якість стиснення. Нижча якість означає менший розмір файлу.",
+                step3Title: "Попередній перегляд та порівняння",
+                step3Desc: "Переглядайте оригінальну та стиснену версії поруч із інформацією про розмір файлу.",
+                step4Title: "Завантажити результат",
+                step4Desc: "Завантажте ваше стиснене зображення зі зменшеним розміром файлу, зберігаючи візуальну якість.",
+                toolTitle: "Інструмент стиснення зображень",
+                uploadText: "Перетягніть ваше зображення сюди або натисніть для перегляду",
+                browseBtn: "Переглянути файли",
+                originalLabel: "Оригінальне зображення",
+                compressedLabel: "Стиснене зображення",
+                formatLabel: "Вихідний формат:",
+                compressionLabel: "Рівень стиснення:",
+                lowQuality: "Низький",
+                lowQualityDesc: "(Найкраща якість)",
+                mediumQuality: "Середній",
+                mediumQualityDesc: "(Збалансований)",
+                highQuality: "Високий",
+                highQualityDesc: "(Найменший розмір)",
+                compressBtn: "Стиснути зображення",
+                downloadBtn: "Завантажити",
+                resetBtn: "Скинути",
+                followUs: "СЛІДКУЙТЕ ЗА НАМИ",
+                popularCategories: "Популярні категорії",
+                pdfTools: "PDF інструменти",
+                imageTools: "Інструменти зображень",
+                textTools: "Текстові інструменти",
+                audioVideoTools: "Аудіо/Відео інструменти",
+                webDeveloperTools: "Веб/Розробник інструменти",
+                calculatorTools: "Калькуляторні інструменти",
+                utilityTools: "Утиліти",
+                colorTools: "Кольорові інструменти",
+                quickLinks: "Швидкі посилання",
+                homeLink: "Головна",
+                allTools: "Всі інструменти",
+                faq: "Часті питання",
+                contactLink: "Контакти",
+                privacyPolicy: "Політика конфіденційності",
+                disclaimer: "Відмова від відповідальності",
+                terms: "Умови обслуговування",
+                footerDescription: "Безкоштовні онлайн-інструменти для PDF, зображень, тексту та багато іншого. Спрощуйте свої цифрові завдання за допомогою наших простих у використанні утиліт.",
+                copyright: "© 2025 LollyPoPDF. Всі права захищені."
+            },
+            vi: {
+                home: "Trang chủ",
+                about: "Về chúng tôi",
+                tools: "Công cụ",
+                contact: "Liên hệ",
+                heroTitle: "Công cụ nén ảnh miễn phí",
+                heroDescription: "Giảm kích thước file ảnh mà không mất chất lượng với công cụ dễ sử dụng của chúng tôi. Không cần đăng ký, 100% miễn phí!",
+                howToTitle: "Cách nén ảnh của bạn",
+                step1Title: "Tải lên ảnh của bạn",
+                step1Desc: "Nhấp vào khu vực tải lên hoặc kéo và thả file ảnh của bạn. Chúng tôi hỗ trợ định dạng JPG, PNG, WebP, BMP, GIF và TIFF.",
+                step2Title: "Chọn định dạng & chất lượng",
+                step2Desc: "Chọn định dạng đầu ra và chất lượng nén ưa thích của bạn. Chất lượng thấp hơn có nghĩa là kích thước file nhỏ hơn.",
+                step3Title: "Xem trước & So sánh",
+                step3Desc: "Xem các phiên bản gốc và nén cạnh nhau với thông tin kích thước file.",
+                step4Title: "Tải xuống kết quả",
+                step4Desc: "Tải xuống ảnh nén của bạn với kích thước file giảm trong khi vẫn duy trì chất lượng hình ảnh.",
+                toolTitle: "Công cụ nén ảnh",
+                uploadText: "Kéo và thả ảnh của bạn vào đây hoặc nhấp để duyệt",
+                browseBtn: "Duyệt tệp",
+                originalLabel: "Ảnh gốc",
+                compressedLabel: "Ảnh nén",
+                formatLabel: "Định dạng đầu ra:",
+                compressionLabel: "Mức độ nén:",
+                lowQuality: "Thấp",
+                lowQualityDesc: "(Chất lượng tốt nhất)",
+                mediumQuality: "Trung bình",
+                mediumQualityDesc: "(Cân bằng)",
+                highQuality: "Cao",
+                highQualityDesc: "(Kích thước nhỏ nhất)",
+                compressBtn: "Nén ảnh",
+                downloadBtn: "Tải xuống",
+                resetBtn: "Đặt lại",
+                followUs: "THEO DÕI CHÚNG TÔI",
+                popularCategories: "Danh mục phổ biến",
+                pdfTools: "Công cụ PDF",
+                imageTools: "Công cụ ảnh",
+                textTools: "Công cụ văn bản",
+                audioVideoTools: "Công cụ Âm thanh/Video",
+                webDeveloperTools: "Công cụ Web/Nhà phát triển",
+                calculatorTools: "Công cụ máy tính",
+                utilityTools: "Công cụ tiện ích",
+                colorTools: "Công cụ màu sắc",
+                quickLinks: "Liên kết nhanh",
+                homeLink: "Trang chủ",
+                allTools: "Tất cả công cụ",
+                faq: "Câu hỏi thường gặp",
+                contactLink: "Liên hệ",
+                privacyPolicy: "Chính sách bảo mật",
+                disclaimer: "Tuyên bố miễn trừ trách nhiệm",
+                terms: "Điều khoản dịch vụ",
+                footerDescription: "Công cụ trực tuyến miễn phí cho PDF, ảnh, văn bản và hơn thế nữa. Đơn giản hóa các tác vụ kỹ thuật số của bạn với các tiện ích dễ sử dụng của chúng tôi.",
+                copyright: "© 2025 LollyPoPDF. Tất cả các quyền được bảo lưu."
+            },
+            is: {
+                home: "Heim",
+                about: "Um okkur",
+                tools: "Verkfæri",
+                contact: "Hafa samband",
+                heroTitle: "Ókeypis myndþjöppunarverkfæri",
+                heroDescription: "Minnkaðu stærð myndaskráa án þess að tapa gæðum með auðveldnota verkfærinu okkar. Engin skráning krafist, 100% ókeypis!",
+                howToTitle: "Hvernig á að þjappa myndum þínum",
+                step1Title: "Hladdu upp myndinni þinni",
+                step1Desc: "Smelltu á upphleðslusvæðið eða dragðu og slepptu myndaskránni þinni. Við styðjum JPG, PNG, WebP, BMP, GIF og TIFF snið.",
+                step2Title: "Veldu snið & gæði",
+                step2Desc: "Veldu æskilegt úttakssnið og þjöppunargæði. Lægri gæði þýðir minni skráarstærð.",
+                step3Title: "Forskoðun & samanburður",
+                step3Desc: "Sjáðu upprunalegu og þjöppuðu útgáfurnar hlið við hlið með upplýsingum um skráarstærð.",
+                step4Title: "Sækja niðurstöðu",
+                step4Desc: "Sæktu þjöppuðu myndina þína með minnkaðri skráarstærð á meðan þú viðheldur sjóngæðum.",
+                toolTitle: "Myndþjöppunarverkfæri",
+                uploadText: "Dragðu og slepptu myndinni þinni hingað eða smelltu til að skoða",
+                browseBtn: "Skoða skrár",
+                originalLabel: "Upprunaleg mynd",
+                compressedLabel: "Þjöppuð mynd",
+                formatLabel: "Úttakssnið:",
+                compressionLabel: "Þjöppunarstig:",
+                lowQuality: "Lágt",
+                lowQualityDesc: "(Besta gæði)",
+                mediumQuality: "Miðlungs",
+                mediumQualityDesc: "(Jafnvægi)",
+                highQuality: "Hátt",
+                highQualityDesc: "(Minnsta stærð)",
+                compressBtn: "Þjappa mynd",
+                downloadBtn: "Sækja",
+                resetBtn: "Endurstilla",
+                followUs: "FYLGDU OKKUR",
+                popularCategories: "Vinsælar flokkar",
+                pdfTools: "PDF verkfæri",
+                imageTools: "Myndverkfæri",
+                textTools: "Textaverkfæri",
+                audioVideoTools: "Hljóð/Myndband verkfæri",
+                webDeveloperTools: "Vefur/Þróunaraðili verkfæri",
+                calculatorTools: "Reiknivélarverkfæri",
+                utilityTools: "Gagnleg verkfæri",
+                colorTools: "Litverkfæri",
+                quickLinks: "Flýtilankar",
+                homeLink: "Heim",
+                allTools: "Öll verkfæri",
+                faq: "Algengar spurningar",
+                contactLink: "Hafa samband",
+                privacyPolicy: "Meðferð persónuupplýsinga",
+                disclaimer: "Fyrirvari",
+                terms: "Þjónustuskilmálar",
+                footerDescription: "Ókeypis verkfæri á netinu fyrir PDF, myndir, texta og fleira. Einfaldaðu stafræn verkefni þín með auðveldnota gagnlegum forritum okkar.",
+                copyright: "© 2025 LollyPoPDF. Öll réttindi áskilin."
+            },
+            no: {
+                home: "Hjem",
+                about: "Om oss",
+                tools: "Verktøy",
+                contact: "Kontakt",
+                heroTitle: "Gratis bildekomprimeringsverktøy",
+                heroDescription: "Reduser bildestørrelser uten å miste kvalitet med vårt brukervennlige verktøy. Ingen registrering kreves, 100% gratis!",
+                howToTitle: "Hvordan komprimere bildene dine",
+                step1Title: "Last opp bildet ditt",
+                step1Desc: "Klikk på opplastingsområdet eller dra og slipp bildefilen din. Vi støtter JPG, PNG, WebP, BMP, GIF og TIFF formater.",
+                step2Title: "Velg format og kvalitet",
+                step2Desc: "Velg foretrukket utdataformat og komprimeringskvalitet. Lavere kvalitet betyr mindre filstørrelse.",
+                step3Title: "Forhåndsvisning og sammenligning",
+                step3Desc: "Se original- og komprimerte versjoner side om side med filstørrelsesinformasjon.",
+                step4Title: "Last ned resultat",
+                step4Desc: "Last ned det komprimerte bildet ditt med redusert filstørrelse mens du opprettholder visuell kvalitet.",
+                toolTitle: "Bildekomprimeringsverktøy",
+                uploadText: "Dra og slipp bildet ditt her eller klikk for å bla",
+                browseBtn: "Bla gjennom filer",
+                originalLabel: "Originalt bilde",
+                compressedLabel: "Komprimert bilde",
+                formatLabel: "Utdataformat:",
+                compressionLabel: "Komprimeringsnivå:",
+                lowQuality: "Lav",
+                lowQualityDesc: "(Beste kvalitet)",
+                mediumQuality: "Middels",
+                mediumQualityDesc: "(Balansert)",
+                highQuality: "Høy",
+                highQualityDesc: "(Minste størrelse)",
+                compressBtn: "Komprimer bilde",
+                downloadBtn: "Last ned",
+                resetBtn: "Tilbakestill",
+                followUs: "FØLG OSS",
+                popularCategories: "Populære kategorier",
+                pdfTools: "PDF-verktøy",
+                imageTools: "Bildeverktøy",
+                textTools: "Tekstverktøy",
+                audioVideoTools: "Lyd/Video verktøy",
+                webDeveloperTools: "Web/Utvikler verktøy",
+                calculatorTools: "Kalkulatorverktøy",
+                utilityTools: "Nytteverktøy",
+                colorTools: "Fargeverktøy",
+                quickLinks: "Hurtiglenker",
+                homeLink: "Hjem",
+                allTools: "Alle verktøy",
+                faq: "FAQ",
+                contactLink: "Kontakt",
+                privacyPolicy: "Personvernregler",
+                disclaimer: "Ansvarsfraskrivelse",
+                terms: "Tjenestevilkår",
+                footerDescription: "Gratis online verktøy for PDF, bilder, tekst og mer. Forenkle dine digitale oppgaver med våre brukervennlige verktøy.",
+                copyright: "© 2025 LollyPoPDF. Alle rettigheter forbeholdt."
+            },
+            sv: {
+                home: "Hem",
+                about: "Om oss",
+                tools: "Verktyg",
+                contact: "Kontakt",
+                heroTitle: "Gratis bildkomprimeringsverktyg",
+                heroDescription: "Minska bildfilers storlek utan att förlora kvalitet med vårt lättanvända verktyg. Ingen registrering krävs, 100% gratis!",
+                howToTitle: "Hur man komprimerar dina bilder",
+                step1Title: "Ladda upp din bild",
+                step1Desc: "Klicka på uppladdningsområdet eller dra och släpp din bildfil. Vi stöder JPG, PNG, WebP, BMP, GIF och TIFF format.",
+                step2Title: "Välj format och kvalitet",
+                step2Desc: "Välj önskat utdataformat och komprimeringskvalitet. Lägre kvalitet betyder mindre filstorlek.",
+                step3Title: "Förhandsvisning och jämförelse",
+                step3Desc: "Se original- och komprimerade versioner sida vid sida med filstorleksinformation.",
+                step4Title: "Ladda ner resultat",
+                step4Desc: "Ladda ner din komprimerade bild med reducerad filstorlek samtidigt som du behåller visuell kvalitet.",
+                toolTitle: "Bildkomprimeringsverktyg",
+                uploadText: "Dra och släpp din bild här eller klicka för att bläddra",
+                browseBtn: "Bläddra filer",
+                originalLabel: "Originalbild",
+                compressedLabel: "Komprimerad bild",
+                formatLabel: "Utdataformat:",
+                compressionLabel: "Komprimeringsnivå:",
+                lowQuality: "Låg",
+                lowQualityDesc: "(Bästa kvalitet)",
+                mediumQuality: "Medium",
+                mediumQualityDesc: "(Balanserad)",
+                highQuality: "Hög",
+                highQualityDesc: "(Minsta storlek)",
+                compressBtn: "Komprimera bild",
+                downloadBtn: "Ladda ner",
+                resetBtn: "Återställ",
+                followUs: "FÖLJ OSS",
+                popularCategories: "Populära kategorier",
+                pdfTools: "PDF-verktyg",
+                imageTools: "Bildverktyg",
+                textTools: "Textverktyg",
+                audioVideoTools: "Ljud/Video verktyg",
+                webDeveloperTools: "Webb/Utvecklare verktyg",
+                calculatorTools: "Kalkylatorverktyg",
+                utilityTools: "Verktyg",
+                colorTools: "Färgverktyg",
+                quickLinks: "Snabblänkar",
+                homeLink: "Hem",
+                allTools: "Alla verktyg",
+                faq: "FAQ",
+                contactLink: "Kontakt",
+                privacyPolicy: "Integritetspolicy",
+                disclaimer: "Ansvarsfriskrivning",
+                terms: "Användarvillkor",
+                footerDescription: "Gratis onlineverktyg för PDF, bilder, text och mer. Förenkla dina digitala uppgifter med våra lättanvända verktyg.",
+                copyright: "© 2025 LollyPoPDF. Alla rättigheter förbehållna."
+            },
+            fi: {
+                home: "Koti",
+                about: "Meistä",
+                tools: "Työkalut",
+                contact: "Yhteystiedot",
+                heroTitle: "Ilmainen kuvapakkausväline",
+                heroDescription: "Pienennä kuvatiedostojen kokoa menettämättä laatua helposti käytettävällä työkalullamme. Ei rekisteröitymistä, 100% ilmaista!",
+                howToTitle: "Kuinka pakata kuvasi",
+                step1Title: "Lataa kuvasi",
+                step1Desc: "Napsauta latausalueella tai vedä ja pudota kuvatiedostosi. Tuemme JPG, PNG, WebP, BMP, GIF ja TIFF muotoja.",
+                step2Title: "Valitse muoto ja laatu",
+                step2Desc: "Valitse haluamasi tulostusmuoto ja pakkauslaatu. Alempi laatu tarkoittaa pienempää tiedostokokoa.",
+                step3Title: "Esikatselu ja vertailu",
+                step3Desc: "Katso alkuperäiset ja pakatut versiot rinnakkain tiedostokootietojen kanssa.",
+                step4Title: "Lataa tulos",
+                step4Desc: "Lataa pakattu kuvasi pienennetyllä tiedostokoolla säilyttäen visuaalisen laadun.",
+                toolTitle: "Kuvapakkausväline",
+                uploadText: "Vedä ja pudota kuvasi tähän tai napsauta selataksesi",
+                browseBtn: "Selaa tiedostoja",
+                originalLabel: "Alkuperäinen kuva",
+                compressedLabel: "Pakattu kuva",
+                formatLabel: "Tulostusmuoto:",
+                compressionLabel: "Pakkauksen taso:",
+                lowQuality: "Matala",
+                lowQualityDesc: "(Paras laatu)",
+                mediumQuality: "Keskitaso",
+                mediumQualityDesc: "(Tasapainoinen)",
+                highQuality: "Korkea",
+                highQualityDesc: "(Pienin koko)",
+                compressBtn: "Pakkaus kuva",
+                downloadBtn: "Lataa",
+                resetBtn: "Nollaa",
+                followUs: "SEURA MEITÄ",
+                popularCategories: "Suositut luokat",
+                pdfTools: "PDF-työkalut",
+                imageTools: "Kuvatyökalut",
+                textTools: "Tekstityökalut",
+                audioVideoTools: "Ääni/Video työkalut",
+                webDeveloperTools: "Web/Kehittäjä työkalut",
+                calculatorTools: "Laskurityökalut",
+                utilityTools: "Apuvälineet",
+                colorTools: "Väri työkalut",
+                quickLinks: "Pikalinkit",
+                homeLink: "Koti",
+                allTools: "Kaikki työkalut",
+                faq: "UKK",
+                contactLink: "Yhteystiedot",
+                privacyPolicy: "Tietosuojakäytäntö",
+                disclaimer: "Vastuuvapauslauseke",
+                terms: "Käyttöehdot",
+                footerDescription: "Ilmaisia online-työkaluja PDF:lle, kuville, tekstille ja muille. Yksinkertaista digitaalisia tehtäviäsi helposti käytettävillä apuvälineillämme.",
+                copyright: "© 2025 LollyPoPDF. Kaikki oikeudet pidätetään."
+            },
+            cs: {
+                home: "Domů",
+                about: "O nás",
+                tools: "Nástroje",
+                contact: "Kontakt",
+                heroTitle: "Bezplatný nástroj pro kompresi obrázků",
+                heroDescription: "Snižte velikost souborů obrázků bez ztráty kvality pomocí našeho snadno použitelného nástroje. Bez registrace, 100% zdarma!",
+                howToTitle: "Jak komprimovat vaše obrázky",
+                step1Title: "Nahrajte svůj obrázek",
+                step1Desc: "Klikněte na oblast pro nahrávání nebo přetáhněte soubor obrázku. Podporujeme formáty JPG, PNG, WebP, BMP, GIF a TIFF.",
+                step2Title: "Zvolte formát a kvalitu",
+                step2Desc: "Vyberte preferovaný výstupní formát a kvalitu komprese. Nižší kvalita znamená menší velikost souboru.",
+                step3Title: "Náhled a porovnání",
+                step3Desc: "Podívejte se na původní a komprimované verze vedle sebe s informacemi o velikosti souboru.",
+                step4Title: "Stáhnout výsledek",
+                step4Desc: "Stáhněte si komprimovaný obrázek se zmenšenou velikostí souboru při zachování vizuální kvality.",
+                toolTitle: "Nástroj pro kompresi obrázků",
+                uploadText: "Přetáhněte svůj obrázek sem nebo klikněte pro procházení",
+                browseBtn: "Procházet soubory",
+                originalLabel: "Původní obrázek",
+                compressedLabel: "Komprimovaný obrázek",
+                formatLabel: "Výstupní formát:",
+                compressionLabel: "Úroveň komprese:",
+                lowQuality: "Nízká",
+                lowQualityDesc: "(Nejlepší kvalita)",
+                mediumQuality: "Střední",
+                mediumQualityDesc: "(Vyvážená)",
+                highQuality: "Vysoká",
+                highQualityDesc: "(Nejmenší velikost)",
+                compressBtn: "Komprimovat obrázek",
+                downloadBtn: "Stáhnout",
+                resetBtn: "Resetovat",
+                followUs: "SLEDUJTE NÁS",
+                popularCategories: "Populární kategorie",
+                pdfTools: "PDF nástroje",
+                imageTools: "Obrázkové nástroje",
+                textTools: "Textové nástroje",
+                audioVideoTools: "Audio/Video nástroje",
+                webDeveloperTools: "Web/Vývojářské nástroje",
+                calculatorTools: "Kalkulačkové nástroje",
+                utilityTools: "Pomocné nástroje",
+                colorTools: "Barevné nástroje",
+                quickLinks: "Rychlé odkazy",
+                homeLink: "Domů",
+                allTools: "Všechny nástroje",
+                faq: "Často kladené otázky",
+                contactLink: "Kontakt",
+                privacyPolicy: "Zásady ochrany osobních údajů",
+                disclaimer: "Odmítnutí odpovědnosti",
+                terms: "Podmínky služby",
+                footerDescription: "Bezplatné online nástroje pro PDF, obrázky, text a další. Zjednodušte své digitální úkoly pomocí našich snadno použitelných nástrojů.",
+                copyright: "© 2025 LollyPoPDF. Všechna práva vyhrazena."
+            }
+
+        };
+
+        // Theme toggle functionality
+        const themeToggle = document.getElementById('themeToggle');
+        const body = document.body;
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const navMenu = document.getElementById('navMenu');
+
+        // Check for saved theme preference or respect OS preference
+        if (localStorage.getItem('theme') === 'dark' || 
+            (window.matchMedia('(prefers-color-scheme: dark)').matches && !localStorage.getItem('theme'))) {
+            body.classList.add('dark-mode');
+            themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+        }
+
+        themeToggle.addEventListener('click', () => {
+            body.classList.toggle('dark-mode');
+            
+            if (body.classList.contains('dark-mode')) {
+                localStorage.setItem('theme', 'dark');
+                themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+            } else {
+                localStorage.setItem('theme', 'light');
+                themeToggle.innerHTML = '<i class="fas fa-moon"></i>';
+            }
+        });
+
+        // Mobile menu functionality
+        mobileMenuBtn.addEventListener('click', () => {
+            navMenu.classList.toggle('active');
+        });
+
+        // Close menu when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!mobileMenuBtn.contains(e.target) && !navMenu.contains(e.target)) {
+                navMenu.classList.remove('active');
+            }
+        });
+
+        // Language switcher functionality
+        const currentLanguageElement = document.getElementById('currentLanguage');
+        const languageOptions = document.querySelectorAll('.language-option');
+        
+        // Set initial language from localStorage or default to English
+        let currentLanguage = localStorage.getItem('language') || 'en';
+        currentLanguageElement.textContent = getLanguageName(currentLanguage);
+        updatePageContent(currentLanguage);
+        
+        languageOptions.forEach(option => {
+            option.addEventListener('click', () => {
+                const lang = option.getAttribute('data-lang');
+                currentLanguage = lang;
+                localStorage.setItem('language', lang);
+                currentLanguageElement.textContent = getLanguageName(lang);
+                updatePageContent(lang);
+            });
+        });
+        
+        function getLanguageName(code) {
+            const languageNames = {
+                 'en': 'English',
+                'es': 'Español',
+                'fr': 'Français',
+                'de': 'Deutsch',
+                'it': 'Italiano',
+                'pt': 'Português',
+                'ja': '日本語',
+                'ru': 'Pусский',
+                'ko': '한국어',
+                'zh-CN': '中文 (简体)',
+                'zh-TW': '中文 (繁體)',
+                'ar': 'العربية',
+                'fa': 'فارسی',
+                'bg': 'Български',
+                'ca': 'Català',
+                'nl': 'Nederlands',
+                'el': 'Ελληνικά',
+                'hi': 'हिन्दी',
+                'te': 'తెలుగు',
+                'kn': 'ಕನ್ನಡ',
+                'ta': 'தமிழ்',
+                'ml': 'മലയാളം',
+                'id': 'Bahasa Indonesia',
+                'ms': 'Bahasa Melayu',
+                'pl': 'Polski',
+                'th': 'ภาษาไทย',
+                'tr': 'Türkçe',
+                'uk': 'Українська',
+                'vi': 'Tiếng Việt',
+                'is': 'Íslenska',
+                'no': 'Norsk',
+                'sv': 'Svenska',
+                'fi': 'Suomi',
+                'cs': 'Čeština'
+            };
+            return languageNames[code] || 'English';
+        }
+        
+        function updatePageContent(lang) {
+            const translation = translations[lang] || translations['en'];
+            
+            // Update all elements with data-key attribute
+            document.querySelectorAll('[data-key]').forEach(element => {
+                const key = element.getAttribute('data-key');
+                if (translation[key]) {
+                    element.textContent = translation[key];
+                }
+            });
+        }
+
+        // Image compression functionality
         const uploadArea = document.getElementById('uploadArea');
         const fileInput = document.getElementById('fileInput');
         const browseBtn = document.getElementById('browseBtn');
@@ -871,196 +2937,208 @@
         const compressedPreview = document.getElementById('compressedPreview');
         const originalInfo = document.getElementById('originalInfo');
         const compressedInfo = document.getElementById('compressedInfo');
-        const compressionButtons = document.querySelectorAll('.compression-btn');
+        const formatSelect = document.getElementById('formatSelect');
+        const qualityButtons = document.querySelectorAll('.quality-btn');
         const compressBtn = document.getElementById('compressBtn');
         const downloadBtn = document.getElementById('downloadBtn');
         const resetBtn = document.getElementById('resetBtn');
         const progressContainer = document.getElementById('progressContainer');
-        const progressBar = document.getElementById('progressBar');
-        const progressText = document.getElementById('progressText');
-        const themeToggle = document.querySelector('.theme-toggle');
-        const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
-        const nav = document.querySelector('nav');
-
-        // Variables
-        let originalFile = null;
-        let compressedFile = null;
-        let currentCompressionLevel = 'low';
-
-        // Event Listeners
-        browseBtn.addEventListener('click', () => fileInput.click());
-        fileInput.addEventListener('change', handleFileSelect);
+        const progressFill = document.getElementById('progressFill');
+        
+        let currentFile = null;
+        let compressedDataURL = null;
+        let quality = 'low';
+        
+        // Quality selection
+        qualityButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                qualityButtons.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                quality = btn.getAttribute('data-quality');
+            });
+        });
+        
+        // Event listeners for file upload - FIXED VERSION
+        uploadArea.addEventListener('click', () => {
+            fileInput.click();
+        });
+        
+        browseBtn.addEventListener('click', (e) => {
+            e.stopPropagation(); // Prevent triggering the uploadArea click
+            fileInput.click();
+        });
+        
+        // Fixed file input change listener
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length) {
+                handleFile(e.target.files[0]);
+            }
+        });
+        
         uploadArea.addEventListener('dragover', (e) => {
             e.preventDefault();
-            uploadArea.style.borderColor = 'var(--primary-color)';
-            uploadArea.style.backgroundColor = 'rgba(138, 43, 226, 0.05)';
+            uploadArea.style.borderColor = '#9370db';
         });
+        
         uploadArea.addEventListener('dragleave', () => {
             uploadArea.style.borderColor = 'var(--border-color)';
-            uploadArea.style.backgroundColor = 'transparent';
         });
+        
         uploadArea.addEventListener('drop', (e) => {
             e.preventDefault();
             uploadArea.style.borderColor = 'var(--border-color)';
-            uploadArea.style.backgroundColor = 'transparent';
             
             if (e.dataTransfer.files.length) {
                 handleFile(e.dataTransfer.files[0]);
             }
         });
         
-        compressionButtons.forEach(btn => {
-            btn.addEventListener('click', () => {
-                compressionButtons.forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-                currentCompressionLevel = btn.dataset.level;
-            });
-        });
-        
+        // Compress button
         compressBtn.addEventListener('click', compressImage);
+        
+        // Download button
         downloadBtn.addEventListener('click', downloadImage);
-        resetBtn.addEventListener('click', resetCompressor);
-        themeToggle.addEventListener('click', toggleTheme);
-        mobileMenuBtn.addEventListener('click', toggleMobileMenu);
-
-        // Functions
-        function handleFileSelect(e) {
-            if (e.target.files.length) {
-                handleFile(e.target.files[0]);
-            }
-        }
-
+        
+        // Reset button
+        resetBtn.addEventListener('click', resetTool);
+        
         function handleFile(file) {
             if (!file.type.match('image.*')) {
-                alert('Please select an image file (JPG, PNG, GIF, or WEBP).');
+                alert('Please select an image file (JPG, PNG, WebP, BMP, GIF, TIFF)');
                 return;
             }
             
-            originalFile = file;
+            currentFile = file;
+            
+            // Show preview section
+            previewSection.style.display = 'block';
+            
+            // Display original image
             const reader = new FileReader();
-            
-            reader.onload = function(e) {
+            reader.onload = (e) => {
                 originalPreview.src = e.target.result;
-                originalInfo.textContent = `Name: ${file.name} | Size: ${formatFileSize(file.size)}`;
-                previewSection.style.display = 'block';
-                downloadBtn.disabled = true;
+                originalInfo.textContent = `Size: ${formatFileSize(file.size)} | Type: ${file.type}`;
             };
-            
             reader.readAsDataURL(file);
-        }
-
-        function compressImage() {
-            if (!originalFile) return;
             
-            // Show progress
+            // Reset compressed preview
+            compressedPreview.src = '';
+            compressedInfo.textContent = '';
+            downloadBtn.disabled = true;
+        }
+        
+        function compressImage() {
+            if (!currentFile) {
+                alert('Please select an image first');
+                return;
+            }
+            
+            // Show progress bar
             progressContainer.style.display = 'block';
-            progressBar.style.width = '0%';
-            progressText.textContent = 'Compressing...';
-            compressBtn.disabled = true;
+            progressFill.style.width = '0%';
             
             // Simulate compression process
             let progress = 0;
             const interval = setInterval(() => {
                 progress += 5;
-                progressBar.style.width = `${progress}%`;
+                progressFill.style.width = `${progress}%`;
                 
                 if (progress >= 100) {
                     clearInterval(interval);
-                    progressText.textContent = 'Compression Complete!';
                     
-                    // Create compressed image
+                    // Create a compressed version
                     const canvas = document.createElement('canvas');
                     const ctx = canvas.getContext('2d');
                     const img = new Image();
                     
-                    img.onload = function() {
+                    img.onload = () => {
+                        // Set canvas dimensions
                         canvas.width = img.width;
                         canvas.height = img.height;
+                        
+                        // Draw image on canvas
                         ctx.drawImage(img, 0, 0);
                         
-                        // Apply compression based on level
-                        let quality = 0.9; // High quality for low compression
-                        if (currentCompressionLevel === 'medium') quality = 0.7;
-                        if (currentCompressionLevel === 'high') quality = 0.5;
+                        // Determine quality based on selection
+                        let qualityValue = 0.9;
+                        if (quality === 'medium') qualityValue = 0.7;
+                        if (quality === 'high') qualityValue = 0.5;
                         
-                        const dataURL = canvas.toDataURL('image/jpeg', quality);
-                        compressedPreview.src = dataURL;
+                        // Get selected format
+                        const format = formatSelect.value;
                         
-                        // Calculate file size (approximation)
-                        const base64 = dataURL.split(',')[1];
-                        const binary = atob(base64);
-                        const size = binary.length;
+                        // Convert to data URL with compression
+                        let mimeType = 'image/jpeg';
+                        if (format === 'png') mimeType = 'image/png';
+                        if (format === 'webp') mimeType = 'image/webp';
+                        if (format === 'bmp') mimeType = 'image/bmp';
+                        if (format === 'gif') mimeType = 'image/gif';
+                        if (format === 'tiff') mimeType = 'image/tiff';
                         
-                        const originalSize = originalFile.size;
-                        const savings = ((originalSize - size) / originalSize * 100).toFixed(1);
+                        compressedDataURL = canvas.toDataURL(mimeType, qualityValue);
+                        compressedPreview.src = compressedDataURL;
                         
-                        compressedInfo.textContent = `Size: ${formatFileSize(size)} | Savings: ${savings}%`;
+                        // Calculate compressed size (approximate)
+                        const compressedSize = Math.round((compressedDataURL.length * 3) / 4);
+                        const compressionRatio = Math.round((1 - compressedSize / currentFile.size) * 100);
+                        
+                        compressedInfo.textContent = `Size: ${formatFileSize(compressedSize)} | Compression: ${compressionRatio}%`;
+                        
+                        // Enable download button
                         downloadBtn.disabled = false;
-                        compressBtn.disabled = false;
-                        
-                        // Store compressed data for download
-                        compressedFile = {
-                            dataURL: dataURL,
-                            name: originalFile.name.replace(/\.[^/.]+$/, "") + '-compressed.jpg'
-                        };
                     };
                     
-                    img.src = originalPreview.src;
+                    img.src = URL.createObjectURL(currentFile);
                 }
             }, 100);
         }
-
+        
         function downloadImage() {
-            if (!compressedFile) return;
+            if (!compressedDataURL) {
+                alert('Please compress the image first');
+                return;
+            }
+            
+            const format = formatSelect.value;
+            const extension = format === 'jpg' ? 'jpg' : format;
             
             const link = document.createElement('a');
-            link.href = compressedFile.dataURL;
-            link.download = compressedFile.name;
-            document.body.appendChild(link);
+            link.download = `compressed_${currentFile.name.split('.')[0]}.${extension}`;
+            link.href = compressedDataURL;
             link.click();
-            document.body.removeChild(link);
         }
-
-        function resetCompressor() {
+        
+        function resetTool() {
+            // Reset file input
             fileInput.value = '';
-            originalFile = null;
-            compressedFile = null;
+            
+            // Reset preview section
             previewSection.style.display = 'none';
+            
+            // Reset images
+            originalPreview.src = '';
+            compressedPreview.src = '';
+            
+            // Reset file info
+            originalInfo.textContent = '';
+            compressedInfo.textContent = '';
+            
+            // Reset progress
             progressContainer.style.display = 'none';
+            progressFill.style.width = '0%';
+            
+            // Reset download button
             downloadBtn.disabled = true;
-            compressBtn.disabled = false;
+            
+            // Reset current file
+            currentFile = null;
+            compressedDataURL = null;
         }
-
+        
         function formatFileSize(bytes) {
             if (bytes < 1024) return bytes + ' bytes';
             else if (bytes < 1048576) return (bytes / 1024).toFixed(2) + ' KB';
             else return (bytes / 1048576).toFixed(2) + ' MB';
-        }
-
-        function toggleTheme() {
-            document.body.classList.toggle('dark-mode');
-            const icon = themeToggle.querySelector('i');
-            if (document.body.classList.contains('dark-mode')) {
-                icon.classList.remove('fa-moon');
-                icon.classList.add('fa-sun');
-                localStorage.setItem('theme', 'dark');
-            } else {
-                icon.classList.remove('fa-sun');
-                icon.classList.add('fa-moon');
-                localStorage.setItem('theme', 'light');
-            }
-        }
-
-        function toggleMobileMenu() {
-            nav.classList.toggle('active');
-        }
-
-        // Initialize theme from localStorage
-        if (localStorage.getItem('theme') === 'dark') {
-            document.body.classList.add('dark-mode');
-            const icon = themeToggle.querySelector('i');
-            icon.classList.remove('fa-moon');
-            icon.classList.add('fa-sun');
         }
     </script>
 </body>

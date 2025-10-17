@@ -1,0 +1,3705 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Cropper | LollyPoPdf</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #9370db;
+            --primary-dark: #8a2be2;
+            --secondary-color: #f0ebff;
+            --text-color: #333333;
+            --text-light: #6b7280;
+            --bg-color: #ffffff;
+            --bg-secondary: #f9f9f9;
+            --border-radius: 12px;
+            --transition: all 0.3s ease;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --header-height: 80px;
+            --white: #ffffff;
+            --header-text: #6b7280;
+            --accent-color: #9370db;
+        }
+
+        .dark-mode {
+            --primary-color: #a391f2;
+            --primary-dark: #8a2be2;
+            --secondary-color: #2d2d2d;
+            --text-color: #f0f0f0;
+            --text-light: #a0a0a0;
+            --bg-color: #1a1a1a;
+            --bg-secondary: #2d2d2d;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+            --white: #1a1a1a;
+            --header-text: #a0a0a0;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            transition: var(--transition);
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        ul {
+            list-style: none;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header Styles */
+        header {
+            background-color: var(--white);
+            color: var(--header-text);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+        }
+
+        .logo-icon {
+            position: relative;
+            width: 40px;
+            height: 40px;
+        }
+
+        .logo-circle {
+            width: 40px;
+            height: 40px;
+            border-radius: 40%;
+            background: linear-gradient(to bottom right, #9370db, #8a2be2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .logo-stem {
+            position: absolute;
+            bottom: -17px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 6px;
+            height: 17px;
+            background-color: #8a2be2;
+            border-radius: 0 0 3px 3px;
+        }
+
+        .logo-text {
+            font-size: 24px;
+            font-weight: bold;
+            color: #9370db;
+        }
+
+        nav ul {
+            display: flex;
+            gap: 30px;
+            list-style: none;
+        }
+
+        nav a {
+            font-weight: 500;
+            position: relative;
+            color: var(--header-text);
+            padding: 8px 0;
+            border-radius: 0;
+            transition: var(--transition);
+            text-decoration: none;
+        }
+
+        nav a:hover {
+            color: var(--accent-color);
+        }
+
+        nav a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: var(--accent-color);
+            transition: width 0.3s ease;
+        }
+
+        nav a:hover::after {
+            width: 100%;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .email {
+            font-size: 14px;
+            color: var(--header-text);
+        }
+
+        .theme-toggle {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 20px;
+            color: var(--header-text);
+            padding: 8px;
+            border-radius: 50%;
+            transition: var(--transition);
+        }
+
+        .theme-toggle:hover {
+            background-color: #f0ebff;
+            color: var(--accent-color);
+        }
+
+        .dark-mode .theme-toggle:hover {
+            background-color: #2d3748;
+            color: var(--accent-color);
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--header-text);
+        }
+
+        /* Mobile Menu */
+        .mobile-menu {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            width: 100%;
+            background-color: var(--white);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            z-index: 999;
+        }
+
+        .dark-mode .mobile-menu {
+            background-color: var(--bg-secondary);
+        }
+
+        .mobile-menu.active {
+            display: block;
+        }
+
+        .mobile-menu ul {
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .mobile-menu a {
+            display: block;
+            padding: 10px 0;
+            font-weight: 500;
+            color: var(--header-text);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .dark-mode .mobile-menu a {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .mobile-menu a:hover {
+            color: var(--accent-color);
+        }
+
+        /* Hero Section */
+        .hero {
+            background-color: var(--secondary-color);
+            padding: 60px 0;
+            text-align: center;
+        }
+
+        .dark-mode .hero {
+            background: linear-gradient(135deg, #2a1a4a, #3d2a6d);
+        }
+
+        .hero h1 {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            color: #000;
+        }
+
+        .dark-mode .hero h1 {
+            color: var(--text-color);
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            color: var(--text-color);
+            max-width: 700px;
+            margin: 0 auto 30px;
+        }
+
+        /* How to Crop Section */
+        .how-to-section {
+            padding: 80px 0;
+            background-color: var(--bg-color);
+        }
+
+        .dark-mode .how-to-section {
+            background-color: var(--bg-secondary);
+        }
+
+        .section-title {
+            font-size: 2rem;
+            text-align: center;
+            margin-bottom: 40px;
+            color: #000000;
+        }
+
+        .dark-mode .section-title {
+            color: var(--text-color);
+        }
+
+        .steps-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 40px;
+        }
+
+        .step-box {
+            background-color: var(--bg-secondary);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            padding: 30px;
+            min-height: 200px;
+            position: relative;
+        }
+
+        .step-number {
+            width: 40px;
+            height: 40px;
+            background-color: var(--primary-color);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 16px;
+            margin-bottom: 15px;
+        }
+
+        .step-title {
+            font-size: 18px;
+            color: #000000;
+            margin-bottom: 10px;
+        }
+
+        .dark-mode .step-title {
+            color: var(--text-color);
+        }
+
+        .step-description {
+            font-size: 14px;
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        /* Cropper Tool */
+        .cropper-section {
+            padding: 80px 0;
+            background-color: var(--secondary-color);
+        }
+
+        .dark-mode .cropper-section {
+            background: linear-gradient(135deg, #2a1a4a, #3d2a6d);
+        }
+
+        .cropper-title {
+            font-size: 2.5rem;
+            text-align: center;
+            margin-bottom: 40px;
+            color: #a391f2;
+        }
+
+        .dark-mode .cropper-title {
+            color: #a391f2;
+        }
+
+        .cropper-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background-color: var(--bg-color);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            padding: 40px;
+        }
+
+        .upload-area {
+            border: 2px dashed var(--primary-color);
+            border-radius: var(--border-radius);
+            padding: 40px 20px;
+            text-align: center;
+            margin-bottom: 30px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .upload-area:hover {
+            background-color: var(--secondary-color);
+        }
+
+        .upload-icon {
+            font-size: 48px;
+            color: var(--primary-color);
+            margin-bottom: 15px;
+        }
+
+        .upload-text {
+            margin-bottom: 15px;
+        }
+
+        .upload-btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: var(--transition);
+        }
+
+        .upload-btn:hover {
+            background-color: var(--primary-dark);
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        .cropper-options {
+            margin-bottom: 30px;
+            display: none;
+        }
+
+        .cropper-title {
+            margin-bottom: 15px;
+            color: var(--primary-color);
+        }
+
+        .aspect-ratio-selection {
+            margin-bottom: 20px;
+        }
+
+        .aspect-ratio-title {
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        .aspect-ratio-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .aspect-ratio-btn {
+            padding: 8px 15px;
+            background-color: var(--bg-secondary);
+            border: 1px solid var(--primary-color);
+            border-radius: 20px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .aspect-ratio-btn.active {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .aspect-ratio-btn:hover {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .custom-dimensions {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .dimension-group {
+            flex: 1;
+            min-width: 150px;
+        }
+
+        .dimension-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: var(--text-color);
+        }
+
+        .dimension-input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid var(--primary-color);
+            border-radius: var(--border-radius);
+            background-color: var(--bg-secondary);
+            color: var(--text-color);
+            font-size: 16px;
+        }
+
+        .dimension-input:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(147, 112, 219, 0.3);
+        }
+
+        .output-format {
+            margin-top: 20px;
+        }
+
+        .format-title {
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        .format-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .format-btn {
+            padding: 8px 15px;
+            background-color: var(--bg-secondary);
+            border: 1px solid var(--primary-color);
+            border-radius: 20px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .format-btn.active {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .format-btn:hover {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .cropper-preview-container {
+            display: none;
+            margin-bottom: 30px;
+        }
+
+        .cropper-preview-title {
+            margin-bottom: 15px;
+            color: var(--primary-color);
+        }
+
+        .cropper-preview-images {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .cropper-preview-box {
+            flex: 1;
+            min-width: 250px;
+            text-align: center;
+        }
+
+        .cropper-preview-label {
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        .cropper-preview-img {
+            max-width: 100%;
+            max-height: 300px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+        }
+
+        .file-info {
+            margin-top: 10px;
+            font-size: 14px;
+            color: var(--text-light);
+        }
+
+        .cropper-canvas-container {
+            display: none;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .cropper-canvas {
+            max-width: 100%;
+            max-height: 400px;
+            border: 2px solid var(--primary-color);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+        }
+
+        .cropper-controls {
+            display: none;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .cropper-control-btn {
+            padding: 8px 15px;
+            background-color: var(--bg-secondary);
+            border: 1px solid var(--primary-color);
+            border-radius: 20px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .cropper-control-btn:hover {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .processing {
+            display: none;
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .spinner {
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            border-left-color: var(--primary-color);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background-color: var(--bg-secondary);
+            border-radius: 4px;
+            margin: 15px 0;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background-color: var(--primary-color);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .progress-text {
+            font-size: 14px;
+            color: var(--text-light);
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .action-buttons {
+            display: none;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .action-btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: var(--transition);
+            flex: 1;
+            min-width: 150px;
+        }
+
+        .crop-btn {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .crop-btn:hover {
+            background-color: var(--primary-dark);
+        }
+
+        .download-btn {
+            background-color: white;
+            color: var(--primary-color);
+            border: 2px solid var(--primary-color);
+        }
+
+        .download-btn:hover {
+            background-color: var(--secondary-color);
+        }
+
+        .reset-btn {
+            background-color: var(--text-light);
+            color: white;
+        }
+
+        .reset-btn:hover {
+            background-color: #5a6268;
+        }
+
+        /* Footer */
+        footer {
+            background-color: #000000;
+            color: white;
+            padding: 60px 0 80px;
+            position: relative;
+        }
+
+        .footer-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 60px;
+        }
+
+        .footer-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            text-decoration: none;
+        }
+
+        .footer-logo .logo-icon {
+            width: 40px;
+            height: 40px;
+        }
+
+        .footer-logo .logo-text {
+            color: #9370db;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .footer-section h3 {
+            color: white;
+            font-weight: 600;
+            font-size: 20px;
+            margin-bottom: 20px;
+        }
+
+        .footer-section h4 {
+            color: #9370db;
+            font-size: 18px;
+            margin-bottom: 15px;
+        }
+
+        .footer-links li {
+            margin-bottom: 10px;
+        }
+
+        .footer-links a {
+            color: white;
+        }
+
+        .footer-links a:hover {
+            color: #9370db;
+        }
+
+        .social-icons {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .social-icon {
+            width: 40px;
+            height: 40px;
+            background-color: #9370db;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+        }
+
+        .social-icon:hover {
+            background-color: #8a2be2;
+            transform: translateY(-3px);
+        }
+
+        .copyright {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            color: #f9f7ff;
+            font-size: 12px;
+        }
+
+        .footer-line {
+            position: absolute;
+            bottom: 50px;
+            left: 0;
+            width: 100%;
+            height: 1px;
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        /* Language Switcher */
+        .language-switcher {
+            position: fixed;
+            bottom: 10px;
+            right: 10px;
+            z-index: 1000;
+        }
+
+        .language-btn {
+            background-color: #9370db;
+            color: white;
+            border: none;
+            border-radius: 30px;
+            padding: 5px 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .language-dropdown {
+            position: absolute;
+            bottom: 100%;
+            right: 0;
+            width: 300px;
+            background-color: white;
+            border-radius: var(--border-radius);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            display: none;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .dark-mode .language-dropdown {
+            background-color: var(--bg-secondary);
+        }
+
+        .language-switcher:hover .language-dropdown {
+            display: grid;
+        }
+
+        .language-option {
+            padding: 8px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            text-align: center;
+            font-size: 14px;
+        }
+
+        .language-option:hover {
+            background-color: white;
+            color: #9370db;
+        }
+
+        .dark-mode .language-option:hover {
+            background-color: var(--bg-color);
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 992px) {
+            .steps-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .footer-container {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            nav ul, .email {
+                display: none;
+            }
+            
+            .mobile-menu-btn {
+                display: block;
+            }
+            
+            .hero h1, .cropper-title {
+                font-size: 2rem;
+            }
+            
+            .hero p {
+                font-size: 1rem;
+            }
+            
+            .custom-dimensions {
+                flex-direction: column;
+            }
+            
+            .cropper-preview-images {
+                flex-direction: column;
+            }
+            
+            .language-dropdown {
+                width: 250px;
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .footer-container {
+                grid-template-columns: 1fr;
+                gap: 40px;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .cropper-container {
+                padding: 20px;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+            
+            .action-btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container header-container">
+            <a href="https://lollypopdf.com" class="logo">
+                <div class="logo-icon">
+                    <div class="logo-circle">LPdf</div>
+                    <div class="logo-stem"></div>
+                </div>
+                <span class="logo-text">LollyPoPdf</span>
+            </a>
+            
+            <nav>
+                <ul>
+                    <li><a href="https://lollypopdf.com#home" class="nav-link" data-i18n="nav.home">Home</a></li>
+                    <li><a href="https://lollypopdf.github.io/LollyPoPdf#about" class="nav-link" data-i18n="nav.about">About Us</a></li>
+                    <li><a href="https://lollypopdf.github.io/LollyPoPdf#tools" class="nav-link" data-i18n="nav.tools">Tools</a></li>
+                    <li><a href="contact.html" class="nav-link" data-i18n="nav.contact">Contact</a></li>
+                </ul>
+            </nav>
+            
+            <div class="header-right">
+                <span class="email">lollypoppdf@gmail.com</span>
+                <button class="theme-toggle" id="themeToggle">
+                    <i class="fas fa-moon"></i>
+                </button>
+                <button class="mobile-menu-btn" id="mobileMenuBtn">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </div>
+        
+        <!-- Mobile Menu -->
+        <div class="mobile-menu" id="mobileMenu">
+            <ul>
+                <li><a href="https://lollypopdf.com#home" class="nav-link" data-i18n="nav.home">Home</a></li>
+                <li><a href="https://lollypopdf.com#about" class="nav-link" data-i18n="nav.about">About Us</a></li>
+                <li><a href="https://lollypopdf.com#tools" class="nav-link" data-i18n="nav.tools">Tools</a></li>
+                <li><a href="https://lollypopdf.com#contact" class="nav-link" data-i18n="nav.contact">Contact</a></li>
+            </ul>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <h1 data-i18n="hero.title">Free Crop Images Instantly</h1>
+            <p data-i18n="hero.description">Free online tool to crop your images to specific dimensions. Choose from preset aspect ratios or set custom dimensions. No registration required.</p>
+        </div>
+    </section>
+
+    <!-- How to Crop Section -->
+    <section class="how-to-section">
+        <div class="container">
+            <h2 class="section-title" data-i18n="howto.title">How to Crop your Images</h2>
+            <div class="steps-container">
+                <div class="step-box">
+                    <div class="step-number">1</div>
+                    <h3 class="step-title" data-i18n="howto.step1.title">Upload Your Image</h3>
+                    <p class="step-description" data-i18n="howto.step1.description">Click the upload area or drag and drop your image file. We support JPG, PNG, GIF, WEBP and more.</p>
+                </div>
+                <div class="step-box">
+                    <div class="step-number">2</div>
+                    <h3 class="step-title" data-i18n="howto.step2.title">Select Aspect Ratio</h3>
+                    <p class="step-description" data-i18n="howto.step2.description">Choose from preset aspect ratios like 16:9, 4:3, 1:1 or set custom dimensions for freeform cropping.</p>
+                </div>
+                <div class="step-box">
+                    <div class="step-number">3</div>
+                    <h3 class="step-title" data-i18n="howto.step3.title">Adjust & Crop</h3>
+                    <p class="step-description" data-i18n="howto.step3.description">Adjust the cropping area on your image, then click the crop button to process your image.</p>
+                </div>
+                <div class="step-box">
+                    <div class="step-number">4</div>
+                    <h3 class="step-title" data-i18n="howto.step4.title">Download Result</h3>
+                    <p class="step-description" data-i18n="howto.step4.description">Download your cropped image with the click of a button. No watermarks, no registration required.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Cropper Tool -->
+    <section class="cropper-section">
+        <div class="container">
+            <h2 class="cropper-title" data-i18n="cropper.title">Image Cropper Tool</h2>
+            <div class="cropper-container">
+                <div class="upload-area" id="uploadArea">
+                    <i class="fas fa-cloud-upload-alt upload-icon"></i>
+                    <p class="upload-text" data-i18n="cropper.upload.text">Drag & drop your image here or click to browse</p>
+                    <button class="upload-btn" data-i18n="cropper.upload.button">Select Image</button>
+                    <input type="file" id="fileInput" class="file-input" accept="image/*">
+                </div>
+                
+                <div class="cropper-options" id="cropperOptions">
+                    <h3 class="cropper-title" data-i18n="cropper.options.title">Crop Options</h3>
+                    
+                    <div class="aspect-ratio-selection">
+                        <div class="aspect-ratio-title" data-i18n="cropper.aspectRatio.title">Aspect Ratio</div>
+                        <div class="aspect-ratio-buttons">
+                            <button class="aspect-ratio-btn" data-ratio="free" data-i18n="cropper.aspectRatio.free">Freeform</button>
+                            <button class="aspect-ratio-btn" data-ratio="1:1">1:1 (Square)</button>
+                            <button class="aspect-ratio-btn" data-ratio="4:3">4:3</button>
+                            <button class="aspect-ratio-btn" data-ratio="16:9">16:9</button>
+                            <button class="aspect-ratio-btn" data-ratio="16:10">16:10</button>
+                            <button class="aspect-ratio-btn" data-ratio="3:2">3:2</button>
+                        </div>
+                    </div>
+                    
+                    <div class="custom-dimensions">
+                        <div class="dimension-group">
+                            <label class="dimension-label" for="widthInput">Width (px)</label>
+                            <input type="number" id="widthInput" class="dimension-input" min="1" max="10000" placeholder="Width">
+                        </div>
+                        <div class="dimension-group">
+                            <label class="dimension-label" for="heightInput">Height (px)</label>
+                            <input type="number" id="heightInput" class="dimension-input" min="1" max="10000" placeholder="Height">
+                        </div>
+                    </div>
+                    
+                    <div class="output-format">
+                        <div class="format-title" data-i18n="cropper.format.title">Output Format</div>
+                        <div class="format-buttons">
+                            <button class="format-btn active" data-format="png">PNG</button>
+                            <button class="format-btn" data-format="jpg">JPG</button>
+                            <button class="format-btn" data-format="jpeg">JPEG</button>
+                            <button class="format-btn" data-format="bmp">BMP</button>
+                            <button class="format-btn" data-format="gif">GIF</button>
+                            <button class="format-btn" data-format="tiff">TIFF</button>
+                            <button class="format-btn" data-format="webp">WEBP</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="cropper-canvas-container" id="canvasContainer">
+                    <canvas id="cropperCanvas" class="cropper-canvas"></canvas>
+                </div>
+                
+                <div class="cropper-controls" id="cropperControls">
+                    <button class="cropper-control-btn" id="moveBtn" data-i18n="cropper.controls.move">Move</button>
+                    <button class="cropper-control-btn" id="cropBtn" data-i18n="cropper.controls.crop">Crop Area</button>
+                    <button class="cropper-control-btn" id="zoomInBtn" data-i18n="cropper.controls.zoomIn">Zoom In</button>
+                    <button class="cropper-control-btn" id="zoomOutBtn" data-i18n="cropper.controls.zoomOut">Zoom Out</button>
+                    <button class="cropper-control-btn" id="rotateLeftBtn" data-i18n="cropper.controls.rotateLeft">Rotate Left</button>
+                    <button class="cropper-control-btn" id="rotateRightBtn" data-i18n="cropper.controls.rotateRight">Rotate Right</button>
+                    <button class="cropper-control-btn" id="resetViewBtn" data-i18n="cropper.controls.reset">Reset View</button>
+                </div>
+                
+                <div class="cropper-preview-container" id="previewContainer">
+                    <h3 class="cropper-preview-title" data-i18n="cropper.preview.title">Preview</h3>
+                    <div class="cropper-preview-images">
+                        <div class="cropper-preview-box">
+                            <div class="cropper-preview-label" data-i18n="cropper.preview.original">Original</div>
+                            <img id="originalPreview" class="cropper-preview-img" src="" alt="Original Image">
+                            <div class="file-info" id="originalInfo"></div>
+                        </div>
+                        <div class="cropper-preview-box">
+                            <div class="cropper-preview-label" data-i18n="cropper.preview.cropped">Cropped</div>
+                            <img id="croppedPreview" class="cropper-preview-img" src="" alt="Cropped Image">
+                            <div class="file-info" id="croppedInfo"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="processing" id="processing">
+                    <div class="spinner"></div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progressFill"></div>
+                    </div>
+                    <p class="progress-text" id="progressText" data-i18n="cropper.processing">Processing: 0%</p>
+                </div>
+                
+                <div class="action-buttons" id="actionButtons">
+                    <button class="action-btn crop-btn" id="cropActionBtn" data-i18n="cropper.crop">Crop Image</button>
+                    <button class="action-btn download-btn" id="downloadBtn" data-i18n="cropper.download">Download</button>
+                    <button class="action-btn reset-btn" id="resetBtn" data-i18n="cropper.reset">Reset</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container footer-container">
+            <!-- Left Section -->
+            <div class="footer-section">
+                <a href="https://lollypopdf.com" class="footer-logo">
+                    <div class="logo-icon">
+                        <div class="logo-circle">LPdf</div>
+                        <div class="logo-stem"></div>
+                    </div>
+                    <span class="logo-text">LollyPoPdf</span>
+                </a>
+                <h3 data-i18n="footer.follow">FOLLOW US</h3>
+                <div class="social-icons">
+                    <a href="https://facebook.com/lollypopdf" class="social-icon"><i class="fab fa-facebook-f"></i></a>
+                    <a href="https://linkedin.com/company/lollypopdf" class="social-icon"><i class="fab fa-linkedin-in"></i></a>
+                    <a href="https://twitter.com/lollypopdf" class="social-icon"><i class="fab fa-twitter"></i></a>
+                    <a href="https://instagram.com/lollypopdf" class="social-icon"><i class="fab fa-instagram"></i></a>
+                    <a href="https://pinterest.com/lollypopdf" class="social-icon"><i class="fab fa-pinterest-p"></i></a>
+                </div>
+            </div>
+            
+            <!-- Middle Section - Popular Categories -->
+            <div class="footer-section">
+                <h4 data-i18n="footer.categories">Popular Categories</h4>
+                <ul class="footer-links">
+                    <li><a href="https://lollypopdf.com#pdf-tools" data-i18n="footer.categories.pdf">PDF Tools</a></li>
+                    <li><a href="https://lollypopdf.com#image-tools" data-i18n="footer.categories.image">Image Tools</a></li>
+                    <li><a href="https://lollypopdf.com#text-tools" data-i18n="footer.categories.text">Text Tools</a></li>
+                    <li><a href="https://lollypopdf.com#audio-video-tools" data-i18n="footer.categories.av">Audio/Video Tools</a></li>
+                    <li><a href="https://lollypopdf.com#web-developer-tools" data-i18n="footer.categories.web">Web/Developer Tools</a></li>
+                    <li><a href="https://lollypopdf.com#calculator-tools" data-i18n="footer.categories.calc">Calculator Tools</a></li>
+                    <li><a href="https://lollypopdf.com#utility-tools" data-i18n="footer.categories.util">Utility Tools</a></li>
+                    <li><a href="https://lollypopdf.com#color-tools" data-i18n="footer.categories.color">Color Tools</a></li>
+                </ul>
+            </div>
+            
+            <!-- Right Section - Quick Links -->
+            <div class="footer-section">
+                <h4 data-i18n="footer.quicklinks">Quick Links</h4>
+                <ul class="footer-links">
+                    <li><a href="https://lollypopdf.com#home" data-i18n="nav.home">Home</a></li>
+                    <li><a href="tools.html" data-i18n="footer.links.tools">All Tools</a></li>
+                    <li><a href="faq.html" data-i18n="footer.links.faq">FAQ</a></li>
+                    <li><a href="contact.html" data-i18n="footer.links.contact">Contact</a></li>
+                    <li><a href="privacy-policy.html" data-i18n="footer.links.privacy">Privacy Policy</a></li>
+                    <li><a href="disclaimer.html" data-i18n="footer.links.disclaimer">Disclaimer</a></li>
+                    <li><a href="terms.html" data-i18n="footer.links.terms">Terms of Service</a></li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="footer-line"></div>
+        <div class="copyright" data-i18n="footer.copyright">© 2025 LollyPoPDF. All rights reserved.</div>
+    </footer>
+
+    <!-- Language Switcher -->
+    <div class="language-switcher">
+        <button class="language-btn">
+            <i class="fas fa-globe"></i>
+            <span id="currentLanguage">English</span>
+        </button>
+        <div class="language-dropdown">
+            <div class="language-option" data-lang="en">English</div>
+            <div class="language-option" data-lang="es">Español</div>
+            <div class="language-option" data-lang="fr">Français</div>
+            <div class="language-option" data-lang="de">Deutsch</div>
+            <div class="language-option" data-lang="it">Italiano</div>
+            <div class="language-option" data-lang="pt">Português</div>
+            <div class="language-option" data-lang="ja">日本語</div>
+            <div class="language-option" data-lang="ru">Pусский</div>
+            <div class="language-option" data-lang="ko">한국어</div>
+            <div class="language-option" data-lang="zh-CN">中文 (简体)</div>
+            <div class="language-option" data-lang="zh-TW">中文 (繁體)</div>
+            <div class="language-option" data-lang="ar">العربية</div>
+            <div class="language-option" data-lang="fa">فارسی</div>
+            <div class="language-option" data-lang="bg">Български</div>
+            <div class="language-option" data-lang="ca">Català</div>
+            <div class="language-option" data-lang="nl">Nederlands</div>
+            <div class="language-option" data-lang="el">Ελληνικά</div>
+            <div class="language-option" data-lang="hi">हिन्दी</div>
+            <div class="language-option" data-lang="te">తెలుగు</div>
+            <div class="language-option" data-lang="kn">ಕನ್ನಡ</div>
+            <div class="language-option" data-lang="ta">தமிழ்</div>
+            <div class="language-option" data-lang="ml">മലയാളം</div>
+            <div class="language-option" data-lang="id">Bahasa Indonesia</div>
+            <div class="language-option" data-lang="ms">Bahasa Melayu</div>
+            <div class="language-option" data-lang="pl">Polski</div>
+            <div class="language-option" data-lang="th">ภาษาไทย</div>
+            <div class="language-option" data-lang="tr">Türkçe</div>
+            <div class="language-option" data-lang="uk">Українська</div>
+            <div class="language-option" data-lang="vi">Tiếng Việt</div>
+            <div class="language-option" data-lang="is">Íslenska</div>
+            <div class="language-option" data-lang="no">Norsk</div>
+            <div class="language-option" data-lang="sv">Svenska</div>
+            <div class="language-option" data-lang="fi">Suomi</div>
+            <div class="language-option" data-lang="cs">Čeština</div>
+        </div>
+    </div>
+
+    <script>
+        // Theme Toggle
+        const themeToggle = document.getElementById('themeToggle');
+        const body = document.body;
+        
+        // Check for saved theme preference or respect OS preference
+        const savedTheme = localStorage.getItem('theme') || 
+            (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        
+        if (savedTheme === 'dark') {
+            body.classList.add('dark-mode');
+            themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+        }
+        
+        themeToggle.addEventListener('click', () => {
+            body.classList.toggle('dark-mode');
+            const isDarkMode = body.classList.contains('dark-mode');
+            
+            if (isDarkMode) {
+                themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+                localStorage.setItem('theme', 'dark');
+            } else {
+                themeToggle.innerHTML = '<i class="fas fa-moon"></i>';
+                localStorage.setItem('theme', 'light');
+            }
+        });
+
+        // Mobile Menu Toggle
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const mobileMenu = document.getElementById('mobileMenu');
+        
+        mobileMenuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('active');
+            
+            // Change icon based on menu state
+            if (mobileMenu.classList.contains('active')) {
+                mobileMenuBtn.innerHTML = '<i class="fas fa-times"></i>';
+            } else {
+                mobileMenuBtn.innerHTML = '<i class="fas fa-bars"></i>';
+            }
+        });
+
+        // Close mobile menu when clicking on a link
+        const mobileMenuLinks = mobileMenu.querySelectorAll('a');
+        mobileMenuLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                mobileMenu.classList.remove('active');
+                mobileMenuBtn.innerHTML = '<i class="fas fa-bars"></i>';
+            });
+        });
+
+        // Image Cropper Functionality
+        const uploadArea = document.getElementById('uploadArea');
+        const fileInput = document.getElementById('fileInput');
+        const originalPreview = document.getElementById('originalPreview');
+        const croppedPreview = document.getElementById('croppedPreview');
+        const originalInfo = document.getElementById('originalInfo');
+        const croppedInfo = document.getElementById('croppedInfo');
+        const previewContainer = document.getElementById('previewContainer');
+        const cropActionBtn = document.getElementById('cropActionBtn');
+        const downloadBtn = document.getElementById('downloadBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        const processing = document.getElementById('processing');
+        const progressFill = document.getElementById('progressFill');
+        const progressText = document.getElementById('progressText');
+        const cropperOptions = document.getElementById('cropperOptions');
+        const actionButtons = document.getElementById('actionButtons');
+        const widthInput = document.getElementById('widthInput');
+        const heightInput = document.getElementById('heightInput');
+        const canvasContainer = document.getElementById('canvasContainer');
+        const cropperCanvas = document.getElementById('cropperCanvas');
+        const cropperControls = document.getElementById('cropperControls');
+        
+        // Aspect ratio buttons
+        const aspectRatioButtons = document.querySelectorAll('.aspect-ratio-btn');
+        const formatButtons = document.querySelectorAll('.format-btn');
+        
+        // Cropper control buttons
+        const moveBtn = document.getElementById('moveBtn');
+        const cropBtn = document.getElementById('cropBtn');
+        const zoomInBtn = document.getElementById('zoomInBtn');
+        const zoomOutBtn = document.getElementById('zoomOutBtn');
+        const rotateLeftBtn = document.getElementById('rotateLeftBtn');
+        const rotateRightBtn = document.getElementById('rotateRightBtn');
+        const resetViewBtn = document.getElementById('resetViewBtn');
+        
+        let currentFile = null;
+        let croppedBlob = null;
+        let originalWidth = 0;
+        let originalHeight = 0;
+        let currentAspectRatio = 'free';
+        let currentFormat = 'png';
+        let ctx = cropperCanvas.getContext('2d');
+        
+        // Canvas state
+        let image = null;
+        let scale = 1;
+        let offsetX = 0;
+        let offsetY = 0;
+        let isDragging = false;
+        let lastX = 0;
+        let lastY = 0;
+        let cropStartX = 0;
+        let cropStartY = 0;
+        let cropEndX = 0;
+        let cropEndY = 0;
+        let isCropping = false;
+        let rotation = 0;
+        
+        // Upload area click handler
+        uploadArea.addEventListener('click', () => {
+            fileInput.click();
+        });
+        
+        // File input change handler
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                handleFile(e.target.files[0]);
+            }
+        });
+        
+        // Drag and drop functionality
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.style.backgroundColor = 'var(--secondary-color)';
+        });
+        
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.style.backgroundColor = '';
+        });
+        
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.style.backgroundColor = '';
+            
+            if (e.dataTransfer.files.length > 0) {
+                handleFile(e.dataTransfer.files[0]);
+            }
+        });
+        
+        // Handle the selected file - NO FILE SIZE LIMITS
+        function handleFile(file) {
+            // Check if file is an image
+            if (!file.type.match('image.*')) {
+                alert('Please select an image file (JPG, PNG, GIF, etc.)');
+                return;
+            }
+            
+            // NO FILE SIZE LIMITS - UNLIMITED USE
+            currentFile = file;
+            
+            // Display original image preview
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                originalPreview.src = e.target.result;
+                originalInfo.textContent = `${file.name} (${formatFileSize(file.size)})`;
+                previewContainer.style.display = 'block';
+                
+                // Load image for canvas
+                image = new Image();
+                image.onload = function() {
+                    originalWidth = this.width;
+                    originalHeight = this.height;
+                    
+                    // Set up canvas
+                    setupCanvas();
+                    
+                    // Show the cropper options after image is uploaded
+                    cropperOptions.style.display = 'block';
+                    canvasContainer.style.display = 'block';
+                    cropperControls.style.display = 'flex';
+                    actionButtons.style.display = 'flex';
+                };
+                image.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+        
+        // Set up canvas with image
+        function setupCanvas() {
+            // Set canvas size
+            const maxWidth = 800;
+            const maxHeight = 500;
+            
+            let canvasWidth = image.width;
+            let canvasHeight = image.height;
+            
+            // Scale down if image is too large
+            if (canvasWidth > maxWidth || canvasHeight > maxHeight) {
+                const ratio = Math.min(maxWidth / canvasWidth, maxHeight / canvasHeight);
+                canvasWidth *= ratio;
+                canvasHeight *= ratio;
+            }
+            
+            cropperCanvas.width = canvasWidth;
+            cropperCanvas.height = canvasHeight;
+            
+            // Calculate initial scale and offset to center image
+            scale = Math.min(canvasWidth / image.width, canvasHeight / image.height);
+            offsetX = (canvasWidth - image.width * scale) / 2;
+            offsetY = (canvasHeight - image.height * scale) / 2;
+            
+            // Draw image on canvas
+            drawImage();
+        }
+        
+        // Draw image on canvas with current transformations
+        function drawImage() {
+            ctx.clearRect(0, 0, cropperCanvas.width, cropperCanvas.height);
+            
+            // Save context state
+            ctx.save();
+            
+            // Translate to center
+            ctx.translate(cropperCanvas.width / 2, cropperCanvas.height / 2);
+            
+            // Apply rotation
+            ctx.rotate(rotation * Math.PI / 180);
+            
+            // Apply scale and offset
+            ctx.scale(scale, scale);
+            ctx.translate(-image.width / 2, -image.height / 2);
+            
+            // Draw image
+            ctx.drawImage(image, 0, 0);
+            
+            // Restore context state
+            ctx.restore();
+            
+            // Draw crop area if cropping
+            if (isCropping) {
+                ctx.strokeStyle = '#9370db';
+                ctx.lineWidth = 2;
+                ctx.setLineDash([5, 5]);
+                ctx.strokeRect(cropStartX, cropStartY, cropEndX - cropStartX, cropEndY - cropStartY);
+                ctx.setLineDash([]);
+            }
+        }
+        
+        // Aspect ratio selection
+        aspectRatioButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                // Remove active class from all buttons
+                aspectRatioButtons.forEach(btn => btn.classList.remove('active'));
+                
+                // Add active class to clicked button
+                button.classList.add('active');
+                
+                // Set current aspect ratio
+                currentAspectRatio = button.getAttribute('data-ratio');
+                
+                // If not freeform, set width and height inputs
+                if (currentAspectRatio !== 'free') {
+                    const [ratioWidth, ratioHeight] = currentAspectRatio.split(':').map(Number);
+                    
+                    // Calculate dimensions based on original image size
+                    if (originalWidth / originalHeight > ratioWidth / ratioHeight) {
+                        // Image is wider than the aspect ratio
+                        widthInput.value = Math.round(originalHeight * ratioWidth / ratioHeight);
+                        heightInput.value = originalHeight;
+                    } else {
+                        // Image is taller than the aspect ratio
+                        widthInput.value = originalWidth;
+                        heightInput.value = Math.round(originalWidth * ratioHeight / ratioWidth);
+                    }
+                }
+            });
+        });
+        
+        // Format selection
+        formatButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                // Remove active class from all buttons
+                formatButtons.forEach(btn => btn.classList.remove('active'));
+                
+                // Add active class to clicked button
+                button.classList.add('active');
+                
+                // Set current format
+                currentFormat = button.getAttribute('data-format');
+            });
+        });
+        
+        // Canvas mouse events for dragging and cropping
+        cropperCanvas.addEventListener('mousedown', (e) => {
+            const rect = cropperCanvas.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            
+            if (isCropping) {
+                cropStartX = x;
+                cropStartY = y;
+                cropEndX = x;
+                cropEndY = y;
+            } else {
+                isDragging = true;
+                lastX = x;
+                lastY = y;
+            }
+        });
+        
+        cropperCanvas.addEventListener('mousemove', (e) => {
+            const rect = cropperCanvas.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            
+            if (isDragging) {
+                offsetX += x - lastX;
+                offsetY += y - lastY;
+                lastX = x;
+                lastY = y;
+                drawImage();
+            } else if (isCropping) {
+                cropEndX = x;
+                cropEndY = y;
+                drawImage();
+            }
+        });
+        
+        cropperCanvas.addEventListener('mouseup', () => {
+            isDragging = false;
+        });
+        
+        cropperCanvas.addEventListener('mouseleave', () => {
+            isDragging = false;
+        });
+        
+        // Control buttons
+        moveBtn.addEventListener('click', () => {
+            isCropping = false;
+            moveBtn.classList.add('active');
+            cropBtn.classList.remove('active');
+        });
+        
+        cropBtn.addEventListener('click', () => {
+            isCropping = true;
+            cropBtn.classList.add('active');
+            moveBtn.classList.remove('active');
+        });
+        
+        zoomInBtn.addEventListener('click', () => {
+            scale *= 1.1;
+            drawImage();
+        });
+        
+        zoomOutBtn.addEventListener('click', () => {
+            scale /= 1.1;
+            drawImage();
+        });
+        
+        rotateLeftBtn.addEventListener('click', () => {
+            rotation -= 90;
+            drawImage();
+        });
+        
+        rotateRightBtn.addEventListener('click', () => {
+            rotation += 90;
+            drawImage();
+        });
+        
+        resetViewBtn.addEventListener('click', () => {
+            scale = 1;
+            offsetX = 0;
+            offsetY = 0;
+            rotation = 0;
+            drawImage();
+        });
+        
+        // Crop the image
+        function cropImage() {
+            if (!currentFile) {
+                alert('Please select an image first');
+                return;
+            }
+            
+            const cropWidth = parseInt(widthInput.value);
+            const cropHeight = parseInt(heightInput.value);
+            
+            if (!cropWidth || !cropHeight || cropWidth <= 0 || cropHeight <= 0) {
+                alert('Please enter valid width and height values');
+                return;
+            }
+            
+            if (cropWidth > 10000 || cropHeight > 10000) {
+                alert('Maximum dimension size is 10000px');
+                return;
+            }
+            
+            processing.style.display = 'block';
+            cropActionBtn.disabled = true;
+            
+            // Reset progress
+            updateProgress(0);
+            
+            // Simulate progress steps
+            let progress = 0;
+            const progressInterval = setInterval(() => {
+                progress += 5;
+                updateProgress(progress);
+                
+                if (progress >= 100) {
+                    clearInterval(progressInterval);
+                    performCrop(cropWidth, cropHeight);
+                }
+            }, 50);
+        }
+        
+        // Update progress bar and text
+        function updateProgress(percent) {
+            progressFill.style.width = `${percent}%`;
+            progressText.textContent = `Processing: ${percent}%`;
+        }
+        
+        // Perform the actual crop
+        function performCrop(cropWidth, cropHeight) {
+            // Create a temporary canvas for cropping
+            const tempCanvas = document.createElement('canvas');
+            const tempCtx = tempCanvas.getContext('2d');
+            
+            // Set canvas dimensions to crop size
+            tempCanvas.width = cropWidth;
+            tempCanvas.height = cropHeight;
+            
+            // Calculate source coordinates (simplified for this example)
+            // In a real implementation, you would use the actual crop coordinates from the canvas
+            const sourceX = Math.max(0, (image.width - cropWidth) / 2);
+            const sourceY = Math.max(0, (image.height - cropHeight) / 2);
+            
+            // Draw the cropped portion
+            tempCtx.drawImage(
+                image,
+                sourceX, sourceY, cropWidth, cropHeight, // Source rectangle
+                0, 0, cropWidth, cropHeight // Destination rectangle
+            );
+            
+            // Convert to blob
+            tempCanvas.toBlob((blob) => {
+                croppedBlob = blob;
+                const croppedUrl = URL.createObjectURL(blob);
+                
+                croppedPreview.src = croppedUrl;
+                croppedInfo.textContent = `cropped_${cropWidth}x${cropHeight}.${currentFormat} (${formatFileSize(blob.size)})`;
+                
+                processing.style.display = 'none';
+                cropActionBtn.disabled = false;
+            }, `image/${currentFormat}`);
+        }
+        
+        // Format file size
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+        
+        // Get file extension
+        function getFileExtension(filename) {
+            return filename.split('.').pop();
+        }
+        
+        // Crop button handler
+        cropActionBtn.addEventListener('click', cropImage);
+        
+        // Download button handler
+        downloadBtn.addEventListener('click', () => {
+            if (!croppedBlob) {
+                alert('Please crop an image first');
+                return;
+            }
+            
+            const cropWidth = parseInt(widthInput.value);
+            const cropHeight = parseInt(heightInput.value);
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(croppedBlob);
+            a.download = `cropped_${cropWidth}x${cropHeight}.${currentFormat}`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        });
+        
+        // Reset button handler
+        resetBtn.addEventListener('click', () => {
+            currentFile = null;
+            croppedBlob = null;
+            fileInput.value = '';
+            originalPreview.src = '';
+            croppedPreview.src = '';
+            originalInfo.textContent = '';
+            croppedInfo.textContent = '';
+            previewContainer.style.display = 'none';
+            processing.style.display = 'none';
+            cropActionBtn.disabled = false;
+            
+            // Hide cropper options
+            cropperOptions.style.display = 'none';
+            canvasContainer.style.display = 'none';
+            cropperControls.style.display = 'none';
+            actionButtons.style.display = 'none';
+            
+            // Reset progress
+            updateProgress(0);
+            
+            // Reset dimensions
+            widthInput.value = '';
+            heightInput.value = '';
+            
+            // Reset aspect ratio
+            aspectRatioButtons.forEach(btn => btn.classList.remove('active'));
+            document.querySelector('.aspect-ratio-btn[data-ratio="free"]').classList.add('active');
+            currentAspectRatio = 'free';
+            
+            // Reset format
+            formatButtons.forEach(btn => btn.classList.remove('active'));
+            document.querySelector('.format-btn[data-format="png"]').classList.add('active');
+            currentFormat = 'png';
+            
+            // Reset canvas state
+            image = null;
+            scale = 1;
+            offsetX = 0;
+            offsetY = 0;
+            isDragging = false;
+            isCropping = false;
+            rotation = 0;
+            ctx.clearRect(0, 0, cropperCanvas.width, cropperCanvas.height);
+        });
+
+        // Language Switcher
+        const languageBtn = document.querySelector('.language-btn');
+        const currentLanguageElement = document.getElementById('currentLanguage');
+        const languageDropdown = document.querySelector('.language-dropdown');
+        
+        const languages = [
+            { code: 'en', name: 'English' },
+            { code: 'es', name: 'Español' },
+            { code: 'fr', name: 'Français' },
+            { code: 'de', name: 'Deutsch' },
+            { code: 'it', name: 'Italiano' },
+            { code: 'pt', name: 'Português' },
+            { code: 'ja', name: '日本語' },
+            { code: 'ru', name: 'Pусский' },
+            { code: 'ko', name: '한국어' },
+            { code: 'zh-CN', name: '中文 (简体)' },
+            { code: 'zh-TW', name: '中文 (繁體)' },
+            { code: 'ar', name: 'العربية' },
+            { code: 'fa', name: 'فارسی' },
+            { code: 'bg', name: 'Български' },
+            { code: 'ca', name: 'Català' },
+            { code: 'nl', name: 'Nederlands' },
+            { code: 'el', name: 'Ελληνικά' },
+            { code: 'hi', name: 'हिन्दी' },
+            { code: 'te', name: 'తెలుగు' },
+            { code: 'kn', name: 'ಕನ್ನಡ' },
+            { code: 'ta', name: 'தமிழ்' },
+            { code: 'ml', name: 'മലയാളം' },
+            { code: 'id', name: 'Bahasa Indonesia' },
+            { code: 'ms', name: 'Bahasa Melayu' },
+            { code: 'pl', name: 'Polski' },
+            { code: 'th', name: 'ภาษาไทย' },
+            { code: 'tr', name: 'Türkçe' },
+            { code: 'uk', name: 'Українська' },
+            { code: 'vi', name: 'Tiếng Việt' },
+            { code: 'is', name: 'Íslenska' },
+            { code: 'no', name: 'Norsk' },
+            { code: 'sv', name: 'Svenska' },
+            { code: 'fi', name: 'Suomi' },
+            { code: 'cs', name: 'Čeština' }
+        ];
+        
+        // Translation data
+        const translations = {
+            en: {
+                "nav.home": "Home",
+                "nav.about": "About Us",
+                "nav.tools": "Tools",
+                "nav.contact": "Contact",
+                "hero.title": "Free Crop Images Instantly",
+                "hero.description": "Free online tool to crop your images to specific dimensions. Choose from preset aspect ratios or set custom dimensions. No registration required.",
+                "howto.title": "How to Crop your Images",
+                "howto.step1.title": "Upload Your Image",
+                "howto.step1.description": "Click the upload area or drag and drop your image file. We support JPG, PNG, GIF, WEBP and more.",
+                "howto.step2.title": "Select Aspect Ratio",
+                "howto.step2.description": "Choose from preset aspect ratios like 16:9, 4:3, 1:1 or set custom dimensions for freeform cropping.",
+                "howto.step3.title": "Adjust & Crop",
+                "howto.step3.description": "Adjust the cropping area on your image, then click the crop button to process your image.",
+                "howto.step4.title": "Download Result",
+                "howto.step4.description": "Download your cropped image with the click of a button. No watermarks, no registration required.",
+                "cropper.title": "Image Cropper Tool",
+                "cropper.upload.text": "Drag & drop your image here or click to browse",
+                "cropper.upload.button": "Select Image",
+                "cropper.options.title": "Crop Options",
+                "cropper.aspectRatio.title": "Aspect Ratio",
+                "cropper.aspectRatio.free": "Freeform",
+                "cropper.format.title": "Output Format",
+                "cropper.preview.title": "Preview",
+                "cropper.preview.original": "Original",
+                "cropper.preview.cropped": "Cropped",
+                "cropper.processing": "Processing: 0%",
+                "cropper.crop": "Crop Image",
+                "cropper.download": "Download",
+                "cropper.reset": "Reset",
+                "cropper.controls.move": "Move",
+                "cropper.controls.crop": "Crop Area",
+                "cropper.controls.zoomIn": "Zoom In",
+                "cropper.controls.zoomOut": "Zoom Out",
+                "cropper.controls.rotateLeft": "Rotate Left",
+                "cropper.controls.rotateRight": "Rotate Right",
+                "cropper.controls.reset": "Reset View",
+                "footer.follow": "FOLLOW US",
+                "footer.categories": "Popular Categories",
+                "footer.categories.pdf": "PDF Tools",
+                "footer.categories.image": "Image Tools",
+                "footer.categories.text": "Text Tools",
+                "footer.categories.av": "Audio/Video Tools",
+                "footer.categories.web": "Web/Developer Tools",
+                "footer.categories.calc": "Calculator Tools",
+                "footer.categories.util": "Utility Tools",
+                "footer.categories.color": "Color Tools",
+                "footer.quicklinks": "Quick Links",
+                "footer.links.tools": "All Tools",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Contact",
+                "footer.links.privacy": "Privacy Policy",
+                "footer.links.disclaimer": "Disclaimer",
+                "footer.links.terms": "Terms of Service",
+                "footer.copyright": "© 2025 LollyPoPDF. All rights reserved."
+            },
+            es: {
+                "nav.home": "Inicio",
+                "nav.about": "Sobre Nosotros",
+                "nav.tools": "Herramientas",
+                "nav.contact": "Contacto",
+                "hero.title": "Recortar Imágenes Gratis Instantáneamente",
+                "hero.description": "Herramienta online gratuita para recortar tus imágenes a dimensiones específicas. Elige entre relaciones de aspecto preestablecidas o establece dimensiones personalizadas. No se requiere registro.",
+                "howto.title": "Cómo Recortar tus Imágenes",
+                "howto.step1.title": "Sube Tu Imagen",
+                "howto.step1.description": "Haz clic en el área de carga o arrastra y suelta tu archivo de imagen. Admitimos JPG, PNG, GIF, WEBP y más.",
+                "howto.step2.title": "Selecciona Relación de Aspecto",
+                "howto.step2.description": "Elige entre relaciones de aspecto preestablecidas como 16:9, 4:3, 1:1 o establece dimensiones personalizadas para recorte libre.",
+                "howto.step3.title": "Ajustar y Recortar",
+                "howto.step3.description": "Ajusta el área de recorte en tu imagen, luego haz clic en el botón recortar para procesar tu imagen.",
+                "howto.step4.title": "Descargar Resultado",
+                "howto.step4.description": "Descarga tu imagen recortada con un clic. Sin marcas de agua, sin registro requerido.",
+                "cropper.title": "Herramienta de Recorte de Imágenes",
+                "cropper.upload.text": "Arrastra y suelta tu imagen aquí o haz clic para buscar",
+                "cropper.upload.button": "Seleccionar Imagen",
+                "cropper.options.title": "Opciones de Recorte",
+                "cropper.aspectRatio.title": "Relación de Aspecto",
+                "cropper.aspectRatio.free": "Forma Libre",
+                "cropper.format.title": "Formato de Salida",
+                "cropper.preview.title": "Vista Previa",
+                "cropper.preview.original": "Original",
+                "cropper.preview.cropped": "Recortado",
+                "cropper.processing": "Procesando: 0%",
+                "cropper.crop": "Recortar Imagen",
+                "cropper.download": "Descargar",
+                "cropper.reset": "Restablecer",
+                "cropper.controls.move": "Mover",
+                "cropper.controls.crop": "Área de Recorte",
+                "cropper.controls.zoomIn": "Acercar",
+                "cropper.controls.zoomOut": "Alejar",
+                "cropper.controls.rotateLeft": "Rotar Izquierda",
+                "cropper.controls.rotateRight": "Rotar Derecha",
+                "cropper.controls.reset": "Restablecer Vista",
+                "footer.follow": "SÍGUENOS",
+                "footer.categories": "Categorías Populares",
+                "footer.categories.pdf": "Herramientas PDF",
+                "footer.categories.image": "Herramientas de Imagen",
+                "footer.categories.text": "Herramientas de Texto",
+                "footer.categories.av": "Herramientas de Audio/Video",
+                "footer.categories.web": "Herramientas Web/Desarrollador",
+                "footer.categories.calc": "Herramientas de Calculadora",
+                "footer.categories.util": "Herramientas de Utilidad",
+                "footer.categories.color": "Herramientas de Color",
+                "footer.quicklinks": "Enlaces Rápidos",
+                "footer.links.tools": "Todas las Herramientas",
+                "footer.links.faq": "Preguntas Frecuentes",
+                "footer.links.contact": "Contacto",
+                "footer.links.privacy": "Política de Privacidad",
+                "footer.links.disclaimer": "Descargo de Responsabilidad",
+                "footer.links.terms": "Términos de Servicio",
+                "footer.copyright": "© 2025 LollyPoPDF. Todos los derechos reservados."
+            },
+            fr: {
+                "nav.home": "Accueil",
+                "nav.about": "À Propos de Nous",
+                "nav.tools": "Outils",
+                "nav.contact": "Contact",
+                "hero.title": "Recadrer des Images Gratuitement Instantanément",
+                "hero.description": "Outil en ligne gratuit pour recadrer vos images à des dimensions spécifiques. Choisissez parmi des ratios d'aspect prédéfinis ou définissez des dimensions personnalisées. Aucune inscription requise.",
+                "howto.title": "Comment Recadrer vos Images",
+                "howto.step1.title": "Téléchargez Votre Image",
+                "howto.step1.description": "Cliquez sur la zone de téléchargement ou faites glisser et déposez votre fichier image. Nous prenons en charge JPG, PNG, GIF, WEBP et plus encore.",
+                "howto.step2.title": "Sélectionnez le Ratio d'Aspect",
+                "howto.step2.description": "Choisissez parmi des ratios d'aspect prédéfinis comme 16:9, 4:3, 1:1 ou définissez des dimensions personnalisées pour un recadrage libre.",
+                "howto.step3.title": "Ajuster et Recadrer",
+                "howto.step3.description": "Ajustez la zone de recadrage sur votre image, puis cliquez sur le bouton recadrer pour traiter votre image.",
+                "howto.step4.title": "Télécharger le Résultat",
+                "howto.step4.description": "Téléchargez votre image recadrée en un clic. Sans filigrane, sans inscription requise.",
+                "cropper.title": "Outil de Recadrage d'Image",
+                "cropper.upload.text": "Faites glisser et déposez votre image ici ou cliquez pour parcourir",
+                "cropper.upload.button": "Sélectionner une Image",
+                "cropper.options.title": "Options de Recadrage",
+                "cropper.aspectRatio.title": "Ratio d'Aspect",
+                "cropper.aspectRatio.free": "Forme Libre",
+                "cropper.format.title": "Format de Sortie",
+                "cropper.preview.title": "Aperçu",
+                "cropper.preview.original": "Original",
+                "cropper.preview.cropped": "Recadré",
+                "cropper.processing": "Traitement: 0%",
+                "cropper.crop": "Recadrer l'Image",
+                "cropper.download": "Télécharger",
+                "cropper.reset": "Réinitialiser",
+                "cropper.controls.move": "Déplacer",
+                "cropper.controls.crop": "Zone de Recadrage",
+                "cropper.controls.zoomIn": "Zoom Avant",
+                "cropper.controls.zoomOut": "Zoom Arrière",
+                "cropper.controls.rotateLeft": "Rotation Gauche",
+                "cropper.controls.rotateRight": "Rotation Droite",
+                "cropper.controls.reset": "Réinitialiser la Vue",
+                "footer.follow": "SUIVEZ-NOUS",
+                "footer.categories": "Catégories Populaires",
+                "footer.categories.pdf": "Outils PDF",
+                "footer.categories.image": "Outils d'Image",
+                "footer.categories.text": "Outils de Texte",
+                "footer.categories.av": "Outils Audio/Vidéo",
+                "footer.categories.web": "Outils Web/Développeur",
+                "footer.categories.calc": "Outils de Calculatrice",
+                "footer.categories.util": "Outils Utilitaires",
+                "footer.categories.color": "Outils de Couleur",
+                "footer.quicklinks": "Liens Rapides",
+                "footer.links.tools": "Tous les Outils",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Contact",
+                "footer.links.privacy": "Politique de Confidentialité",
+                "footer.links.disclaimer": "Avertissement",
+                "footer.links.terms": "Conditions d'Utilisation",
+                "footer.copyright": "© 2025 LollyPoPDF. Tous droits réservés."
+            },
+            de: {
+                "nav.home": "Startseite",
+                "nav.about": "Über Uns",
+                "nav.tools": "Werkzeuge",
+                "nav.contact": "Kontakt",
+                "hero.title": "Kostenlos Bilder Sofort Zuschneiden",
+                "hero.description": "Kostenloses Online-Tool zum Zuschneiden Ihrer Bilder auf bestimmte Abmessungen. Wählen Sie aus voreingestellten Seitenverhältnissen oder legen Sie benutzerdefinierte Abmessungen fest. Keine Registrierung erforderlich.",
+                "howto.title": "So Schneiden Sie Ihre Bilder Zu",
+                "howto.step1.title": "Laden Sie Ihr Bild Hoch",
+                "howto.step1.description": "Klicken Sie auf den Upload-Bereich oder ziehen Sie Ihre Bilddatei per Drag & Drop. Wir unterstützen JPG, PNG, GIF, WEBP und mehr.",
+                "howto.step2.title": "Wählen Sie das Seitenverhältnis",
+                "howto.step2.description": "Wählen Sie aus voreingestellten Seitenverhältnissen wie 16:9, 4:3, 1:1 oder legen Sie benutzerdefinierte Abmessungen für freies Zuschneiden fest.",
+                "howto.step3.title": "Anpassen und Zuschneiden",
+                "howto.step3.description": "Passen Sie den Zuschneidebereich auf Ihrem Bild an und klicken Sie dann auf die Schaltfläche Zuschneiden, um Ihr Bild zu verarbeiten.",
+                "howto.step4.title": "Ergebnis Herunterladen",
+                "howto.step4.description": "Laden Sie Ihr zugeschnittenes Bild mit einem Klick herunter. Keine Wasserzeichen, keine Registrierung erforderlich.",
+                "cropper.title": "Bild-Zuschneide-Werkzeug",
+                "cropper.upload.text": "Ziehen Sie Ihr Bild hierher oder klicken Sie zum Durchsuchen",
+                "cropper.upload.button": "Bild Auswählen",
+                "cropper.options.title": "Zuschneide-Optionen",
+                "cropper.aspectRatio.title": "Seitenverhältnis",
+                "cropper.aspectRatio.free": "Freie Form",
+                "cropper.format.title": "Ausgabeformat",
+                "cropper.preview.title": "Vorschau",
+                "cropper.preview.original": "Original",
+                "cropper.preview.cropped": "Zugeschnitten",
+                "cropper.processing": "Verarbeitung: 0%",
+                "cropper.crop": "Bild Zuschneiden",
+                "cropper.download": "Herunterladen",
+                "cropper.reset": "Zurücksetzen",
+                "cropper.controls.move": "Verschieben",
+                "cropper.controls.crop": "Zuschneidebereich",
+                "cropper.controls.zoomIn": "Vergrößern",
+                "cropper.controls.zoomOut": "Verkleinern",
+                "cropper.controls.rotateLeft": "Nach Links Drehen",
+                "cropper.controls.rotateRight": "Nach Rechts Drehen",
+                "cropper.controls.reset": "Ansicht Zurücksetzen",
+                "footer.follow": "FOLGE UNS",
+                "footer.categories": "Beliebte Kategorien",
+                "footer.categories.pdf": "PDF-Werkzeuge",
+                "footer.categories.image": "Bild-Werkzeuge",
+                "footer.categories.text": "Text-Werkzeuge",
+                "footer.categories.av": "Audio/Video-Werkzeuge",
+                "footer.categories.web": "Web/Entwickler-Werkzeuge",
+                "footer.categories.calc": "Rechner-Werkzeuge",
+                "footer.categories.util": "Hilfsprogramme",
+                "footer.categories.color": "Farb-Werkzeuge",
+                "footer.quicklinks": "Schnelllinks",
+                "footer.links.tools": "Alle Werkzeuge",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Kontakt",
+                "footer.links.privacy": "Datenschutzrichtlinie",
+                "footer.links.disclaimer": "Haftungsausschluss",
+                "footer.links.terms": "Nutzungsbedingungen",
+                "footer.copyright": "© 2025 LollyPoPDF. Alle Rechte vorbehalten."
+            },
+            it: {
+                "nav.home": "Home",
+                "nav.about": "Chi Siamo",
+                "nav.tools": "Strumenti",
+                "nav.contact": "Contatto",
+                "hero.title": "Ritaglia Immagini Gratis Istantaneamente",
+                "hero.description": "Strumento online gratuito per ritagliare le tue immagini a dimensioni specifiche. Scegli tra proporzioni predefinite o imposta dimensioni personalizzate. Nessuna registrazione richiesta.",
+                "howto.title": "Come Ritagliare le Tue Immagini",
+                "howto.step1.title": "Carica la Tua Immagine",
+                "howto.step1.description": "Clicca sull'area di caricamento o trascina e rilascia il tuo file immagine. Supportiamo JPG, PNG, GIF, WEBP e altro.",
+                "howto.step2.title": "Seleziona le Proporzioni",
+                "howto.step2.description": "Scegli tra proporzioni predefinite come 16:9, 4:3, 1:1 o imposta dimensioni personalizzate per il ritaglio libero.",
+                "howto.step3.title": "Regola e Ritaglia",
+                "howto.step3.description": "Regola l'area di ritaglio sulla tua immagine, quindi clicca sul pulsante ritaglia per elaborare la tua immagine.",
+                "howto.step4.title": "Scarica il Risultato",
+                "howto.step4.description": "Scarica la tua immagine ritagliata con un clic. Nessuna filigrana, nessuna registrazione richiesta.",
+                "cropper.title": "Strumento di Ritaglio Immagine",
+                "cropper.upload.text": "Trascina e rilascia la tua immagine qui o clicca per sfogliare",
+                "cropper.upload.button": "Seleziona Immagine",
+                "cropper.options.title": "Opzioni di Ritaglio",
+                "cropper.aspectRatio.title": "Proporzioni",
+                "cropper.aspectRatio.free": "Forma Libera",
+                "cropper.format.title": "Formato di Output",
+                "cropper.preview.title": "Anteprima",
+                "cropper.preview.original": "Originale",
+                "cropper.preview.cropped": "Ritagliato",
+                "cropper.processing": "Elaborazione: 0%",
+                "cropper.crop": "Ritaglia Immagine",
+                "cropper.download": "Scarica",
+                "cropper.reset": "Ripristina",
+                "cropper.controls.move": "Sposta",
+                "cropper.controls.crop": "Area di Ritaglio",
+                "cropper.controls.zoomIn": "Ingrandisci",
+                "cropper.controls.zoomOut": "Riduci",
+                "cropper.controls.rotateLeft": "Ruota a Sinistra",
+                "cropper.controls.rotateRight": "Ruota a Destra",
+                "cropper.controls.reset": "Ripristina Vista",
+                "footer.follow": "SEGUICI",
+                "footer.categories": "Categorie Popolari",
+                "footer.categories.pdf": "Strumenti PDF",
+                "footer.categories.image": "Strumenti Immagine",
+                "footer.categories.text": "Strumenti Testo",
+                "footer.categories.av": "Strumenti Audio/Video",
+                "footer.categories.web": "Strumenti Web/Sviluppatore",
+                "footer.categories.calc": "Strumenti Calcolatrice",
+                "footer.categories.util": "Strumenti Utilità",
+                "footer.categories.color": "Strumenti Colore",
+                "footer.quicklinks": "Link Rapidi",
+                "footer.links.tools": "Tutti gli Strumenti",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Contatto",
+                "footer.links.privacy": "Informativa sulla Privacy",
+                "footer.links.disclaimer": "Disclaimer",
+                "footer.links.terms": "Termini di Servizio",
+                "footer.copyright": "© 2025 LollyPoPDF. Tutti i diritti riservati."
+            },
+            pt: {
+                "nav.home": "Início",
+                "nav.about": "Sobre Nós",
+                "nav.tools": "Ferramentas",
+                "nav.contact": "Contato",
+                "hero.title": "Cortar Imagens Gratuitamente Instantaneamente",
+                "hero.description": "Ferramenta online gratuita para cortar suas imagens para dimensões específicas. Escolha entre proporções de aspecto predefinidas ou defina dimensões personalizadas. Nenhum registro necessário.",
+                "howto.title": "Como Cortar suas Imagens",
+                "howto.step1.title": "Faça Upload da Sua Imagem",
+                "howto.step1.description": "Clique na área de upload ou arraste e solte seu arquivo de imagem. Suportamos JPG, PNG, GIF, WEBP e mais.",
+                "howto.step2.title": "Selecione a Proporção de Aspecto",
+                "howto.step2.description": "Escolha entre proporções de aspecto predefinidas como 16:9, 4:3, 1:1 ou defina dimensões personalizadas para corte livre.",
+                "howto.step3.title": "Ajustar e Cortar",
+                "howto.step3.description": "Ajuste a área de corte na sua imagem, então clique no botão cortar para processar sua imagem.",
+                "howto.step4.title": "Baixar Resultado",
+                "howto.step4.description": "Baixe sua imagem cortada com um clique. Sem marcas d'água, sem registro necessário.",
+                "cropper.title": "Ferramenta de Corte de Imagem",
+                "cropper.upload.text": "Arraste e solte sua imagem aqui ou clique para procurar",
+                "cropper.upload.button": "Selecionar Imagem",
+                "cropper.options.title": "Opções de Corte",
+                "cropper.aspectRatio.title": "Proporção de Aspecto",
+                "cropper.aspectRatio.free": "Forma Livre",
+                "cropper.format.title": "Formato de Saída",
+                "cropper.preview.title": "Pré-visualização",
+                "cropper.preview.original": "Original",
+                "cropper.preview.cropped": "Cortado",
+                "cropper.processing": "Processando: 0%",
+                "cropper.crop": "Cortar Imagem",
+                "cropper.download": "Baixar",
+                "cropper.reset": "Redefinir",
+                "cropper.controls.move": "Mover",
+                "cropper.controls.crop": "Área de Corte",
+                "cropper.controls.zoomIn": "Aumentar Zoom",
+                "cropper.controls.zoomOut": "Diminuir Zoom",
+                "cropper.controls.rotateLeft": "Girar à Esquerda",
+                "cropper.controls.rotateRight": "Girar à Direita",
+                "cropper.controls.reset": "Redefinir Visualização",
+                "footer.follow": "SIGA-NOS",
+                "footer.categories": "Categorias Populares",
+                "footer.categories.pdf": "Ferramentas PDF",
+                "footer.categories.image": "Ferramentas de Imagem",
+                "footer.categories.text": "Ferramentas de Texto",
+                "footer.categories.av": "Ferramentas de Áudio/Vídeo",
+                "footer.categories.web": "Ferramentas Web/Desenvolvedor",
+                "footer.categories.calc": "Ferramentas de Calculadora",
+                "footer.categories.util": "Ferramentas de Utilidade",
+                "footer.categories.color": "Ferramentas de Cor",
+                "footer.quicklinks": "Links Rápidos",
+                "footer.links.tools": "Todas as Ferramentas",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Contato",
+                "footer.links.privacy": "Política de Privacidade",
+                "footer.links.disclaimer": "Aviso Legal",
+                "footer.links.terms": "Termos de Serviço",
+                "footer.copyright": "© 2025 LollyPoPDF. Todos os direitos reservados."
+            },
+            ja: {
+                "nav.home": "ホーム",
+                "nav.about": "会社概要",
+                "nav.tools": "ツール",
+                "nav.contact": "お問い合わせ",
+                "hero.title": "無料で画像を瞬時に切り抜き",
+                "hero.description": "画像を特定のサイズに切り抜く無料オンラインツール。事前設定されたアスペクト比から選択するか、カスタムサイズを設定できます。登録不要。",
+                "howto.title": "画像の切り抜き方法",
+                "howto.step1.title": "画像をアップロード",
+                "howto.step1.description": "アップロードエリアをクリックするか、画像ファイルをドラッグ＆ドロップしてください。JPG、PNG、GIF、WEBPなどをサポートしています。",
+                "howto.step2.title": "アスペクト比を選択",
+                "howto.step2.description": "16:9、4:3、1:1などの事前設定されたアスペクト比から選択するか、自由形式の切り抜きのためにカスタムサイズを設定します。",
+                "howto.step3.title": "調整して切り抜き",
+                "howto.step3.description": "画像上の切り抜きエリアを調整し、切り抜きボタンをクリックして画像を処理します。",
+                "howto.step4.title": "結果をダウンロード",
+                "howto.step4.description": "ワンクリックで切り抜いた画像をダウンロード。透かしなし、登録不要。",
+                "cropper.title": "画像切り抜きツール",
+                "cropper.upload.text": "ここに画像をドラッグ＆ドロップするか、クリックして参照",
+                "cropper.upload.button": "画像を選択",
+                "cropper.options.title": "切り抜きオプション",
+                "cropper.aspectRatio.title": "アスペクト比",
+                "cropper.aspectRatio.free": "自由形式",
+                "cropper.format.title": "出力形式",
+                "cropper.preview.title": "プレビュー",
+                "cropper.preview.original": "元の画像",
+                "cropper.preview.cropped": "切り抜き済み",
+                "cropper.processing": "処理中: 0%",
+                "cropper.crop": "画像を切り抜き",
+                "cropper.download": "ダウンロード",
+                "cropper.reset": "リセット",
+                "cropper.controls.move": "移動",
+                "cropper.controls.crop": "切り抜きエリア",
+                "cropper.controls.zoomIn": "ズームイン",
+                "cropper.controls.zoomOut": "ズームアウト",
+                "cropper.controls.rotateLeft": "左回転",
+                "cropper.controls.rotateRight": "右回転",
+                "cropper.controls.reset": "ビューをリセット",
+                "footer.follow": "フォローする",
+                "footer.categories": "人気カテゴリ",
+                "footer.categories.pdf": "PDFツール",
+                "footer.categories.image": "画像ツール",
+                "footer.categories.text": "テキストツール",
+                "footer.categories.av": "オーディオ/ビデオツール",
+                "footer.categories.web": "Web/開発者ツール",
+                "footer.categories.calc": "電卓ツール",
+                "footer.categories.util": "ユーティリティツール",
+                "footer.categories.color": "カラーツール",
+                "footer.quicklinks": "クイックリンク",
+                "footer.links.tools": "すべてのツール",
+                "footer.links.faq": "よくある質問",
+                "footer.links.contact": "お問い合わせ",
+                "footer.links.privacy": "プライバシーポリシー",
+                "footer.links.disclaimer": "免責事項",
+                "footer.links.terms": "利用規約",
+                "footer.copyright": "© 2025 LollyPoPDF. 無断複写・転載を禁じます。"
+            },
+            ru: {
+                "nav.home": "Главная",
+                "nav.about": "О нас",
+                "nav.tools": "Инструменты",
+                "nav.contact": "Контакты",
+                "hero.title": "Бесплатное Обрезка Изображений Мгновенно",
+                "hero.description": "Бесплатный онлайн-инструмент для обрезки ваших изображений до определенных размеров. Выберите из предустановленных соотношений сторон или установите пользовательские размеры. Регистрация не требуется.",
+                "howto.title": "Как Обрезать Ваши Изображения",
+                "howto.step1.title": "Загрузите Ваше Изображение",
+                "howto.step1.description": "Нажмите на область загрузки или перетащите файл изображения. Мы поддерживаем JPG, PNG, GIF, WEBP и другие.",
+                "howto.step2.title": "Выберите Соотношение Сторон",
+                "howto.step2.description": "Выберите из предустановленных соотношений сторон, таких как 16:9, 4:3, 1:1, или установите пользовательские размеры для свободной обрезки.",
+                "howto.step3.title": "Настройте и Обрежьте",
+                "howto.step3.description": "Настройте область обрезки на вашем изображении, затем нажмите кнопку обрезать для обработки изображения.",
+                "howto.step4.title": "Скачать Результат",
+                "howto.step4.description": "Скачайте ваше обрезанное изображение одним щелчком. Без водяных знаков, без регистрации.",
+                "cropper.title": "Инструмент Обрезки Изображений",
+                "cropper.upload.text": "Перетащите ваше изображение сюда или нажмите для просмотра",
+                "cropper.upload.button": "Выбрать Изображение",
+                "cropper.options.title": "Параметры Обрезки",
+                "cropper.aspectRatio.title": "Соотношение Сторон",
+                "cropper.aspectRatio.free": "Свободная Форма",
+                "cropper.format.title": "Выходной Формат",
+                "cropper.preview.title": "Предпросмотр",
+                "cropper.preview.original": "Оригинал",
+                "cropper.preview.cropped": "Обрезано",
+                "cropper.processing": "Обработка: 0%",
+                "cropper.crop": "Обрезать Изображение",
+                "cropper.download": "Скачать",
+                "cropper.reset": "Сбросить",
+                "cropper.controls.move": "Переместить",
+                "cropper.controls.crop": "Область Обрезки",
+                "cropper.controls.zoomIn": "Увеличить",
+                "cropper.controls.zoomOut": "Уменьшить",
+                "cropper.controls.rotateLeft": "Повернуть Влево",
+                "cropper.controls.rotateRight": "Повернуть Вправо",
+                "cropper.controls.reset": "Сбросить Вид",
+                "footer.follow": "СЛЕДУЙТЕ ЗА НАМИ",
+                "footer.categories": "Популярные Категории",
+                "footer.categories.pdf": "PDF Инструменты",
+                "footer.categories.image": "Инструменты Изображений",
+                "footer.categories.text": "Текстовые Инструменты",
+                "footer.categories.av": "Аудио/Видео Инструменты",
+                "footer.categories.web": "Веб/Разработчик Инструменты",
+                "footer.categories.calc": "Калькуляторные Инструменты",
+                "footer.categories.util": "Утилитарные Инструменты",
+                "footer.categories.color": "Цветовые Инструменты",
+                "footer.quicklinks": "Быстрые Ссылки",
+                "footer.links.tools": "Все Инструменты",
+                "footer.links.faq": "ЧаВО",
+                "footer.links.contact": "Контакты",
+                "footer.links.privacy": "Политика Конфиденциальности",
+                "footer.links.disclaimer": "Отказ от Ответственности",
+                "footer.links.terms": "Условия Использования",
+                "footer.copyright": "© 2025 LollyPoPDF. Все права защищены."
+            },
+            ko: {
+                "nav.home": "홈",
+                "nav.about": "회사 소개",
+                "nav.tools": "도구",
+                "nav.contact": "연락처",
+                "hero.title": "무료로 이미지 즉시 자르기",
+                "hero.description": "이미지를 특정 크기로 자르는 무료 온라인 도구. 사전 설정된 종횡비에서 선택하거나 사용자 정의 크기를 설정하세요. 등록 불필요.",
+                "howto.title": "이미지 자르는 방법",
+                "howto.step1.title": "이미지 업로드",
+                "howto.step1.description": "업로드 영역을 클릭하거나 이미지 파일을 드래그 앤 드롭하세요. JPG, PNG, GIF, WEBP 등을 지원합니다.",
+                "howto.step2.title": "종횡비 선택",
+                "howto.step2.description": "16:9, 4:3, 1:1 등 사전 설정된 종횡비에서 선택하거나 자유 형식 자르기를 위해 사용자 정의 크기를 설정합니다.",
+                "howto.step3.title": "조정 및 자르기",
+                "howto.step3.description": "이미지에서 자르기 영역을 조정한 다음 자르기 버튼을 클릭하여 이미지를 처리합니다.",
+                "howto.step4.title": "결과 다운로드",
+                "howto.step4.description": "원클릭으로 자른 이미지를 다운로드하세요. 워터마크 없음, 등록 불필요.",
+                "cropper.title": "이미지 자르기 도구",
+                "cropper.upload.text": "여기에 이미지를 드래그 앤 드롭하거나 클릭하여 찾아보기",
+                "cropper.upload.button": "이미지 선택",
+                "cropper.options.title": "자르기 옵션",
+                "cropper.aspectRatio.title": "종횡비",
+                "cropper.aspectRatio.free": "자유 형식",
+                "cropper.format.title": "출력 형식",
+                "cropper.preview.title": "미리보기",
+                "cropper.preview.original": "원본",
+                "cropper.preview.cropped": "자른 이미지",
+                "cropper.processing": "처리 중: 0%",
+                "cropper.crop": "이미지 자르기",
+                "cropper.download": "다운로드",
+                "cropper.reset": "재설정",
+                "cropper.controls.move": "이동",
+                "cropper.controls.crop": "자르기 영역",
+                "cropper.controls.zoomIn": "확대",
+                "cropper.controls.zoomOut": "축소",
+                "cropper.controls.rotateLeft": "왼쪽으로 회전",
+                "cropper.controls.rotateRight": "오른쪽으로 회전",
+                "cropper.controls.reset": "보기 재설정",
+                "footer.follow": "팔로우하기",
+                "footer.categories": "인기 카테고리",
+                "footer.categories.pdf": "PDF 도구",
+                "footer.categories.image": "이미지 도구",
+                "footer.categories.text": "텍스트 도구",
+                "footer.categories.av": "오디오/비디오 도구",
+                "footer.categories.web": "웹/개발자 도구",
+                "footer.categories.calc": "계산기 도구",
+                "footer.categories.util": "유틸리티 도구",
+                "footer.categories.color": "색상 도구",
+                "footer.quicklinks": "빠른 링크",
+                "footer.links.tools": "모든 도구",
+                "footer.links.faq": "자주 묻는 질문",
+                "footer.links.contact": "연락처",
+                "footer.links.privacy": "개인정보 보호정책",
+                "footer.links.disclaimer": "면책 조항",
+                "footer.links.terms": "이용 약관",
+                "footer.copyright": "© 2025 LollyPoPDF. 모든 권리 보유."
+            },
+            "zh-CN": {
+                "nav.home": "首页",
+                "nav.about": "关于我们",
+                "nav.tools": "工具",
+                "nav.contact": "联系我们",
+                "hero.title": "免费即时裁剪图片",
+                "hero.description": "免费在线工具，可将图片裁剪为特定尺寸。选择预设宽高比或设置自定义尺寸。无需注册。",
+                "howto.title": "如何裁剪图片",
+                "howto.step1.title": "上传图片",
+                "howto.step1.description": "点击上传区域或拖放图片文件。我们支持JPG、PNG、GIF、WEBP等格式。",
+                "howto.step2.title": "选择宽高比",
+                "howto.step2.description": "从16:9、4:3、1:1等预设宽高比中选择，或设置自定义尺寸进行自由裁剪。",
+                "howto.step3.title": "调整和裁剪",
+                "howto.step3.description": "调整图片上的裁剪区域，然后点击裁剪按钮处理图片。",
+                "howto.step4.title": "下载结果",
+                "howto.step4.description": "一键下载裁剪后的图片。无水印，无需注册。",
+                "cropper.title": "图片裁剪工具",
+                "cropper.upload.text": "将图片拖放到此处或点击浏览",
+                "cropper.upload.button": "选择图片",
+                "cropper.options.title": "裁剪选项",
+                "cropper.aspectRatio.title": "宽高比",
+                "cropper.aspectRatio.free": "自由形式",
+                "cropper.format.title": "输出格式",
+                "cropper.preview.title": "预览",
+                "cropper.preview.original": "原始",
+                "cropper.preview.cropped": "已裁剪",
+                "cropper.processing": "处理中: 0%",
+                "cropper.crop": "裁剪图片",
+                "cropper.download": "下载",
+                "cropper.reset": "重置",
+                "cropper.controls.move": "移动",
+                "cropper.controls.crop": "裁剪区域",
+                "cropper.controls.zoomIn": "放大",
+                "cropper.controls.zoomOut": "缩小",
+                "cropper.controls.rotateLeft": "向左旋转",
+                "cropper.controls.rotateRight": "向右旋转",
+                "cropper.controls.reset": "重置视图",
+                "footer.follow": "关注我们",
+                "footer.categories": "热门分类",
+                "footer.categories.pdf": "PDF工具",
+                "footer.categories.image": "图片工具",
+                "footer.categories.text": "文本工具",
+                "footer.categories.av": "音频/视频工具",
+                "footer.categories.web": "Web/开发者工具",
+                "footer.categories.calc": "计算器工具",
+                "footer.categories.util": "实用工具",
+                "footer.categories.color": "颜色工具",
+                "footer.quicklinks": "快速链接",
+                "footer.links.tools": "所有工具",
+                "footer.links.faq": "常见问题",
+                "footer.links.contact": "联系我们",
+                "footer.links.privacy": "隐私政策",
+                "footer.links.disclaimer": "免责声明",
+                "footer.links.terms": "服务条款",
+                "footer.copyright": "© 2025 LollyPoPDF. 保留所有权利。"
+            },
+            "zh-TW": {
+                "nav.home": "首頁",
+                "nav.about": "關於我們",
+                "nav.tools": "工具",
+                "nav.contact": "聯絡我們",
+                "hero.title": "免費即時裁剪圖片",
+                "hero.description": "免費線上工具，可將圖片裁剪為特定尺寸。選擇預設寬高比或設定自訂尺寸。無需註冊。",
+                "howto.title": "如何裁剪圖片",
+                "howto.step1.title": "上傳圖片",
+                "howto.step1.description": "點擊上傳區域或拖放圖片檔案。我們支援JPG、PNG、GIF、WEBP等格式。",
+                "howto.step2.title": "選擇寬高比",
+                "howto.step2.description": "從16:9、4:3、1:1等預設寬高比中選擇，或設定自訂尺寸進行自由裁剪。",
+                "howto.step3.title": "調整和裁剪",
+                "howto.step3.description": "調整圖片上的裁剪區域，然後點擊裁剪按鈕處理圖片。",
+                "howto.step4.title": "下載結果",
+                "howto.step4.description": "一鍵下載裁剪後的圖片。無浮水印，無需註冊。",
+                "cropper.title": "圖片裁剪工具",
+                "cropper.upload.text": "將圖片拖放到此處或點擊瀏覽",
+                "cropper.upload.button": "選擇圖片",
+                "cropper.options.title": "裁剪選項",
+                "cropper.aspectRatio.title": "寬高比",
+                "cropper.aspectRatio.free": "自由形式",
+                "cropper.format.title": "輸出格式",
+                "cropper.preview.title": "預覽",
+                "cropper.preview.original": "原始",
+                "cropper.preview.cropped": "已裁剪",
+                "cropper.processing": "處理中: 0%",
+                "cropper.crop": "裁剪圖片",
+                "cropper.download": "下載",
+                "cropper.reset": "重設",
+                "cropper.controls.move": "移動",
+                "cropper.controls.crop": "裁剪區域",
+                "cropper.controls.zoomIn": "放大",
+                "cropper.controls.zoomOut": "縮小",
+                "cropper.controls.rotateLeft": "向左旋轉",
+                "cropper.controls.rotateRight": "向右旋轉",
+                "cropper.controls.reset": "重設檢視",
+                "footer.follow": "追蹤我們",
+                "footer.categories": "熱門分類",
+                "footer.categories.pdf": "PDF工具",
+                "footer.categories.image": "圖片工具",
+                "footer.categories.text": "文字工具",
+                "footer.categories.av": "音訊/視訊工具",
+                "footer.categories.web": "Web/開發者工具",
+                "footer.categories.calc": "計算機工具",
+                "footer.categories.util": "實用工具",
+                "footer.categories.color": "顏色工具",
+                "footer.quicklinks": "快速連結",
+                "footer.links.tools": "所有工具",
+                "footer.links.faq": "常見問題",
+                "footer.links.contact": "聯絡我們",
+                "footer.links.privacy": "隱私權政策",
+                "footer.links.disclaimer": "免責聲明",
+                "footer.links.terms": "服務條款",
+                "footer.copyright": "© 2025 LollyPoPDF. 版權所有。"
+            },
+            ar: {
+                "nav.home": "الصفحة الرئيسية",
+                "nav.about": "من نحن",
+                "nav.tools": "الأدوات",
+                "nav.contact": "اتصل بنا",
+                "hero.title": "قص الصور مجانًا فورًا",
+                "hero.description": "أداة مجانية على الإنترنت لقص صورك إلى أبعاد محددة. اختر من نسب العرض إلى الارتفاع المحددة مسبقًا أو حدد أبعادًا مخصصة. لا يلزم التسجيل.",
+                "howto.title": "كيفية قص صورك",
+                "howto.step1.title": "قم بتحميل صورتك",
+                "howto.step1.description": "انقر على منطقة التحميل أو اسحب وأفلت ملف الصورة الخاص بك. نحن ندعم JPG وPNG وGIF وWEBP والمزيد.",
+                "howto.step2.title": "حدد نسبة العرض إلى الارتفاع",
+                "howto.step2.description": "اختر من نسب العرض إلى الارتفاع المحددة مسبقًا مثل 16:9 و4:3 و1:1 أو حدد أبعادًا مخصصة للقص الحر.",
+                "howto.step3.title": "اضبط واقطع",
+                "howto.step3.description": "اضبط منطقة القص على صورتك، ثم انقر على زر القص لمعالجة صورتك.",
+                "howto.step4.title": "تحميل النتيجة",
+                "howto.step4.description": "قم بتنزيل صورتك المقطوعة بنقرة واحدة. لا توجد علامات مائية، ولا يلزم التسجيل.",
+                "cropper.title": "أداة قص الصور",
+                "cropper.upload.text": "اسحب وأفلت صورتك هنا أو انقر للتصفح",
+                "cropper.upload.button": "اختر صورة",
+                "cropper.options.title": "خيارات القص",
+                "cropper.aspectRatio.title": "نسبة العرض إلى الارتفاع",
+                "cropper.aspectRatio.free": "شكل حر",
+                "cropper.format.title": "تنسيق الإخراج",
+                "cropper.preview.title": "معاينة",
+                "cropper.preview.original": "الأصل",
+                "cropper.preview.cropped": "مقطوع",
+                "cropper.processing": "جاري المعالجة: 0%",
+                "cropper.crop": "قص الصورة",
+                "cropper.download": "تحميل",
+                "cropper.reset": "إعادة تعيين",
+                "cropper.controls.move": "تحريك",
+                "cropper.controls.crop": "منطقة القص",
+                "cropper.controls.zoomIn": "تكبير",
+                "cropper.controls.zoomOut": "تصغير",
+                "cropper.controls.rotateLeft": "تدوير لليسار",
+                "cropper.controls.rotateRight": "تدوير لليمين",
+                "cropper.controls.reset": "إعادة تعيين العرض",
+                "footer.follow": "تابعنا",
+                "footer.categories": "الفئات الشائعة",
+                "footer.categories.pdf": "أدوات PDF",
+                "footer.categories.image": "أدوات الصور",
+                "footer.categories.text": "أدوات النص",
+                "footer.categories.av": "أدوات الصوت/الفيديو",
+                "footer.categories.web": "أدوات الويب/المطور",
+                "footer.categories.calc": "أدوات الآلة الحاسبة",
+                "footer.categories.util": "أدوات المساعدة",
+                "footer.categories.color": "أدوات الألوان",
+                "footer.quicklinks": "روابط سريعة",
+                "footer.links.tools": "جميع الأدوات",
+                "footer.links.faq": "الأسئلة الشائعة",
+                "footer.links.contact": "اتصل بنا",
+                "footer.links.privacy": "سياسة الخصوصية",
+                "footer.links.disclaimer": "إخلاء المسؤولية",
+                "footer.links.terms": "شروط الخدمة",
+                "footer.copyright": "© 2025 LollyPoPDF. جميع الحقوق محفوظة."
+            },
+            fa: {
+                "nav.home": "خانه",
+                "nav.about": "درباره ما",
+                "nav.tools": "ابزارها",
+                "nav.contact": "تماس با ما",
+                "hero.title": "برش رایگان تصاویر به صورت فوری",
+                "hero.description": "ابزار آنلاین رایگان برای برش تصاویر شما به ابعاد خاص. از نسبت‌های ابعادی از پیش تعیین شده انتخاب کنید یا ابعاد سفارشی تنظیم کنید. نیازی به ثبت نام نیست.",
+                "howto.title": "نحوه برش تصاویر شما",
+                "howto.step1.title": "تصویر خود را آپلود کنید",
+                "howto.step1.description": "روی ناحیه آپلود کلیک کنید یا فایل تصویر خود را بکشید و رها کنید. ما از JPG، PNG، GIF، WEBP و موارد دیگر پشتیبانی می‌کنیم.",
+                "howto.step2.title": "نسبت ابعاد را انتخاب کنید",
+                "howto.step2.description": "از بین نسبت‌های ابعادی از پیش تعیین شده مانند 16:9، 4:3، 1:1 انتخاب کنید یا ابعاد سفارشی برای برش آزاد تنظیم کنید.",
+                "howto.step3.title": "تنظیم و برش",
+                "howto.step3.description": "ناحیه برش را روی تصویر خود تنظیم کنید، سپس برای پردازش تصویر خود روی دکمه برش کلیک کنید.",
+                "howto.step4.title": "دانلود نتیجه",
+                "howto.step4.description": "تصویر برش داده شده خود را با یک کلیک دانلود کنید. بدون واترمارک، بدون نیاز به ثبت نام.",
+                "cropper.title": "ابزار برش تصویر",
+                "cropper.upload.text": "تصویر خود را به اینجا بکشید و رها کنید یا برای مرور کلیک کنید",
+                "cropper.upload.button": "انتخاب تصویر",
+                "cropper.options.title": "گزینه‌های برش",
+                "cropper.aspectRatio.title": "نسبت ابعاد",
+                "cropper.aspectRatio.free": "شکل آزاد",
+                "cropper.format.title": "فرمت خروجی",
+                "cropper.preview.title": "پیش‌نمایش",
+                "cropper.preview.original": "اصلی",
+                "cropper.preview.cropped": "برش داده شده",
+                "cropper.processing": "در حال پردازش: 0%",
+                "cropper.crop": "برش تصویر",
+                "cropper.download": "دانلود",
+                "cropper.reset": "بازنشانی",
+                "cropper.controls.move": "جابجایی",
+                "cropper.controls.crop": "ناحیه برش",
+                "cropper.controls.zoomIn": "بزرگنمایی",
+                "cropper.controls.zoomOut": "کوچکنمایی",
+                "cropper.controls.rotateLeft": "چرخش به چپ",
+                "cropper.controls.rotateRight": "چرخش به راست",
+                "cropper.controls.reset": "بازنشانی نمای",
+                "footer.follow": "ما را دنبال کنید",
+                "footer.categories": "دسته‌بندی‌های محبوب",
+                "footer.categories.pdf": "ابزارهای PDF",
+                "footer.categories.image": "ابزارهای تصویر",
+                "footer.categories.text": "ابزارهای متن",
+                "footer.categories.av": "ابزارهای صدا/ویدیو",
+                "footer.categories.web": "ابزارهای وب/توسعه‌دهنده",
+                "footer.categories.calc": "ابزارهای ماشین حساب",
+                "footer.categories.util": "ابزارهای کمکی",
+                "footer.categories.color": "ابزارهای رنگ",
+                "footer.quicklinks": "لینک‌های سریع",
+                "footer.links.tools": "همه ابزارها",
+                "footer.links.faq": "سوالات متداول",
+                "footer.links.contact": "تماس با ما",
+                "footer.links.privacy": "سیاست حفظ حریم خصوصی",
+                "footer.links.disclaimer": "سلب مسئولیت",
+                "footer.links.terms": "شرایط خدمات",
+                "footer.copyright": "© 2025 LollyPoPDF. تمامی حقوق محفوظ است."
+            },
+            bg: {
+                "nav.home": "Начало",
+                "nav.about": "За нас",
+                "nav.tools": "Инструменти",
+                "nav.contact": "Контакт",
+                "hero.title": "Безплатно Изрязване на Изображения Моментално",
+                "hero.description": "Безплатен онлайн инструмент за изрязване на вашите изображения до конкретни размери. Изберете от предварително зададени съотношения или задайте персонализирани размери. Не се изисква регистрация.",
+                "howto.title": "Как да Изрежете Вашите Изображения",
+                "howto.step1.title": "Качете Вашето Изображение",
+                "howto.step1.description": "Кликнете върху зоната за качване или плъзнете и пуснете файла с изображение. Поддържаме JPG, PNG, GIF, WEBP и други.",
+                "howto.step2.title": "Изберете Съотношение на Страните",
+                "howto.step2.description": "Изберете от предварително зададени съотношения като 16:9, 4:3, 1:1 или задайте персонализирани размери за свободно изрязване.",
+                "howto.step3.title": "Настройте и Изрежете",
+                "howto.step3.description": "Настройте зоната за изрязване върху вашето изображение, след това кликнете върху бутона за изрязване, за да обработите вашето изображение.",
+                "howto.step4.title": "Изтеглете Резултата",
+                "howto.step4.description": "Изтеглете вашето изрязано изображение с едно кликване. Без водни знаци, без нужда от регистрация.",
+                "cropper.title": "Инструмент за Изрязване на Изображения",
+                "cropper.upload.text": "Плъзнете и пуснете вашето изображение тук или кликнете за разглеждане",
+                "cropper.upload.button": "Изберете Изображение",
+                "cropper.options.title": "Опции за Изрязване",
+                "cropper.aspectRatio.title": "Съотношение на Страните",
+                "cropper.aspectRatio.free": "Свободна Форма",
+                "cropper.format.title": "Изходен Формат",
+                "cropper.preview.title": "Преглед",
+                "cropper.preview.original": "Оригинал",
+                "cropper.preview.cropped": "Изрязано",
+                "cropper.processing": "Обработване: 0%",
+                "cropper.crop": "Изрежете Изображение",
+                "cropper.download": "Изтегли",
+                "cropper.reset": "Нулиране",
+                "cropper.controls.move": "Преместване",
+                "cropper.controls.crop": "Зона за Изрязване",
+                "cropper.controls.zoomIn": "Увеличаване",
+                "cropper.controls.zoomOut": "Намаляване",
+                "cropper.controls.rotateLeft": "Завъртане Наляво",
+                "cropper.controls.rotateRight": "Завъртане Надясно",
+                "cropper.controls.reset": "Нулиране на Изгледа",
+                "footer.follow": "СЛЕДВАЙТЕ НИ",
+                "footer.categories": "Популярни Категории",
+                "footer.categories.pdf": "PDF Инструменти",
+                "footer.categories.image": "Инструменти за Изображения",
+                "footer.categories.text": "Текстови Инструменти",
+                "footer.categories.av": "Аудио/Видео Инструменти",
+                "footer.categories.web": "Уеб/Разработчик Инструменти",
+                "footer.categories.calc": "Калкулаторни Инструменти",
+                "footer.categories.util": "Помощни Инструменти",
+                "footer.categories.color": "Цветови Инструменти",
+                "footer.quicklinks": "Бързи Връзки",
+                "footer.links.tools": "Всички Инструменти",
+                "footer.links.faq": "ЧЗВ",
+                "footer.links.contact": "Контакт",
+                "footer.links.privacy": "Политика за Поверителност",
+                "footer.links.disclaimer": "Отказ от Отговорност",
+                "footer.links.terms": "Условия за Ползване",
+                "footer.copyright": "© 2025 LollyPoPDF. Всички права запазени."
+            },
+            ca: {
+                "nav.home": "Inici",
+                "nav.about": "Sobre Nosaltres",
+                "nav.tools": "Eines",
+                "nav.contact": "Contacte",
+                "hero.title": "Retalla Imatges Gratuïtament Instantàniament",
+                "hero.description": "Eina en línia gratuïta per retallar les teves imatges a dimensions específiques. Tria entre relacions d'aspecte predefinides o estableix dimensions personalitzades. No es requereix registre.",
+                "howto.title": "Com Retallar les Teves Imatges",
+                "howto.step1.title": "Puja la Teva Imatge",
+                "howto.step1.description": "Fes clic a l'àrea de pujada o arrossega i deixa anar el teu fitxer d'imatge. Admetem JPG, PNG, GIF, WEBP i més.",
+                "howto.step2.title": "Selecciona la Relació d'Aspecte",
+                "howto.step2.description": "Tria entre relacions d'aspecte predefinides com 16:9, 4:3, 1:1 o estableix dimensions personalitzades per a retallat lliure.",
+                "howto.step3.title": "Ajusta i Retalla",
+                "howto.step3.description": "Ajusta l'àrea de retall a la teva imatge, després fes clic al botó retallar per processar la teva imatge.",
+                "howto.step4.title": "Descarrega el Resultat",
+                "howto.step4.description": "Descarrega la teva imatge retallada amb un clic. Sense marques d'aigua, sense necessitat de registre.",
+                "cropper.title": "Eina de Retall d'Imatges",
+                "cropper.upload.text": "Arrossega i deixa anar la teva imatge aquí o fes clic per navegar",
+                "cropper.upload.button": "Selecciona Imatge",
+                "cropper.options.title": "Opcions de Retall",
+                "cropper.aspectRatio.title": "Relació d'Aspecte",
+                "cropper.aspectRatio.free": "Forma Lliure",
+                "cropper.format.title": "Format de Sortida",
+                "cropper.preview.title": "Previsualització",
+                "cropper.preview.original": "Original",
+                "cropper.preview.cropped": "Retallat",
+                "cropper.processing": "Processant: 0%",
+                "cropper.crop": "Retalla Imatge",
+                "cropper.download": "Descarrega",
+                "cropper.reset": "Reinicia",
+                "cropper.controls.move": "Mou",
+                "cropper.controls.crop": "Àrea de Retall",
+                "cropper.controls.zoomIn": "Amplia",
+                "cropper.controls.zoomOut": "Redueix",
+                "cropper.controls.rotateLeft": "Gira a l'Esquerra",
+                "cropper.controls.rotateRight": "Gira a la Dreta",
+                "cropper.controls.reset": "Reinicia la Vista",
+                "footer.follow": "SEGUEIX-NOS",
+                "footer.categories": "Categories Populars",
+                "footer.categories.pdf": "Eines PDF",
+                "footer.categories.image": "Eines d'Imatge",
+                "footer.categories.text": "Eines de Text",
+                "footer.categories.av": "Eines d'Àudio/Video",
+                "footer.categories.web": "Eines Web/Desenvolupador",
+                "footer.categories.calc": "Eines de Calculadora",
+                "footer.categories.util": "Eines d'Utilitat",
+                "footer.categories.color": "Eines de Color",
+                "footer.quicklinks": "Enllaços Ràpids",
+                "footer.links.tools": "Totes les Eines",
+                "footer.links.faq": "PMF",
+                "footer.links.contact": "Contacte",
+                "footer.links.privacy": "Política de Privadesa",
+                "footer.links.disclaimer": "Descàrrec de Responsabilitat",
+                "footer.links.terms": "Termes del Servei",
+                "footer.copyright": "© 2025 LollyPoPDF. Tots els drets reservats."
+            },
+            nl: {
+                "nav.home": "Home",
+                "nav.about": "Over Ons",
+                "nav.tools": "Tools",
+                "nav.contact": "Contact",
+                "hero.title": "Gratis Afbeeldingen Direct Bijsnijden",
+                "hero.description": "Gratis online tool om uw afbeeldingen bij te snijden naar specifieke afmetingen. Kies uit vooraf ingestelde beeldverhoudingen of stel aangepaste afmetingen in. Geen registratie vereist.",
+                "howto.title": "Hoe u uw afbeeldingen kunt bijsnijden",
+                "howto.step1.title": "Upload uw afbeelding",
+                "howto.step1.description": "Klik op het uploadgebied of sleep uw afbeeldingsbestand. We ondersteunen JPG, PNG, GIF, WEBP en meer.",
+                "howto.step2.title": "Selecteer Beeldverhouding",
+                "howto.step2.description": "Kies uit vooraf ingestelde beeldverhoudingen zoals 16:9, 4:3, 1:1 of stel aangepaste afmetingen in voor vrij bijsnijden.",
+                "howto.step3.title": "Aanpassen en Bijsnijden",
+                "howto.step3.description": "Pas het bijsnijgebied op uw afbeelding aan, klik vervolgens op de knop bijsnijden om uw afbeelding te verwerken.",
+                "howto.step4.title": "Download Resultaat",
+                "howto.step4.description": "Download uw bijgesneden afbeelding met één klik. Geen watermerken, geen registratie vereist.",
+                "cropper.title": "Afbeelding Bijsnijden Tool",
+                "cropper.upload.text": "Sleep uw afbeelding hierheen of klik om te bladeren",
+                "cropper.upload.button": "Selecteer Afbeelding",
+                "cropper.options.title": "Bijsnijopties",
+                "cropper.aspectRatio.title": "Beeldverhouding",
+                "cropper.aspectRatio.free": "Vrije Vorm",
+                "cropper.format.title": "Uitvoerformaat",
+                "cropper.preview.title": "Voorbeeld",
+                "cropper.preview.original": "Origineel",
+                "cropper.preview.cropped": "Bijgesneden",
+                "cropper.processing": "Verwerken: 0%",
+                "cropper.crop": "Afbeelding Bijsnijden",
+                "cropper.download": "Downloaden",
+                "cropper.reset": "Resetten",
+                "cropper.controls.move": "Verplaatsen",
+                "cropper.controls.crop": "Bijsnijgebied",
+                "cropper.controls.zoomIn": "Inzoomen",
+                "cropper.controls.zoomOut": "Uitzoomen",
+                "cropper.controls.rotateLeft": "Linksom Draaien",
+                "cropper.controls.rotateRight": "Rechtsom Draaien",
+                "cropper.controls.reset": "Weergave Resetten",
+                "footer.follow": "VOLG ONS",
+                "footer.categories": "Populaire Categorieën",
+                "footer.categories.pdf": "PDF Tools",
+                "footer.categories.image": "Afbeelding Tools",
+                "footer.categories.text": "Tekst Tools",
+                "footer.categories.av": "Audio/Video Tools",
+                "footer.categories.web": "Web/Developer Tools",
+                "footer.categories.calc": "Rekenmachine Tools",
+                "footer.categories.util": "Utility Tools",
+                "footer.categories.color": "Kleur Tools",
+                "footer.quicklinks": "Snelle Links",
+                "footer.links.tools": "Alle Tools",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Contact",
+                "footer.links.privacy": "Privacybeleid",
+                "footer.links.disclaimer": "Disclaimer",
+                "footer.links.terms": "Servicevoorwaarden",
+                "footer.copyright": "© 2025 LollyPoPDF. Alle rechten voorbehouden."
+            },
+            el: {
+                "nav.home": "Αρχική",
+                "nav.about": "Σχετικά με εμάς",
+                "nav.tools": "Εργαλεία",
+                "nav.contact": "Επικοινωνία",
+                "hero.title": "Δωρεάν Περικοπή Εικόνων Άμεσα",
+                "hero.description": "Δωρεάν διαδικτυακό εργαλείο για περικοπή των εικόνων σας σε συγκεκριμένες διαστάσεις. Επιλέξτε από προκαθορισμένες αναλογίες διαστάσεων ή ορίστε προσαρμοσμένες διαστάσεις. Δεν απαιτείται εγγραφή.",
+                "howto.title": "Πώς να Περικόψετε τις Εικόνες σας",
+                "howto.step1.title": "Ανεβάστε την Εικόνα σας",
+                "howto.step1.description": "Κάντε κλικ στην περιοχή μεταφόρτωσης ή σύρετε και αποθέστε το αρχείο εικόνας σας. Υποστηρίζουμε JPG, PNG, GIF, WEBP και άλλα.",
+                "howto.step2.title": "Επιλέξτε Αναλογία Διαστάσεων",
+                "howto.step2.description": "Επιλέξτε από προκαθορισμένες αναλογίες διαστάσεων όπως 16:9, 4:3, 1:1 ή ορίστε προσαρμοσμένες διαστάσεις για ελεύθερη περικοπή.",
+                "howto.step3.title": "Προσαρμόστε και Περικόψτε",
+                "howto.step3.description": "Προσαρμόστε την περιοχή περικοπής στην εικόνα σας, στη συνέχεια κάντε κλικ στο κουμπί περικοπής για επεξεργασία της εικόνας σας.",
+                "howto.step4.title": "Λήψη Αποτελέσματος",
+                "howto.step4.description": "Κατεβάστε την περικομμένη εικόνα σας με ένα κλικ. Χωρίς υδατογραφήματα, χωρίς απαίτηση εγγραφής.",
+                "cropper.title": "Εργαλείο Περικοπής Εικόνας",
+                "cropper.upload.text": "Σύρετε και αποθέστε την εικόνα σας εδώ ή κάντε κλικ για περιήγηση",
+                "cropper.upload.button": "Επιλογή Εικόνας",
+                "cropper.options.title": "Επιλογές Περικοπής",
+                "cropper.aspectRatio.title": "Αναλογία Διαστάσεων",
+                "cropper.aspectRatio.free": "Ελεύθερη Μορφή",
+                "cropper.format.title": "Μορφή Εξόδου",
+                "cropper.preview.title": "Προεπισκόπηση",
+                "cropper.preview.original": "Πρωτότυπο",
+                "cropper.preview.cropped": "Περικομμένο",
+                "cropper.processing": "Επεξεργασία: 0%",
+                "cropper.crop": "Περικοπή Εικόνας",
+                "cropper.download": "Λήψη",
+                "cropper.reset": "Επαναφορά",
+                "cropper.controls.move": "Μετακίνηση",
+                "cropper.controls.crop": "Περιοχή Περικοπής",
+                "cropper.controls.zoomIn": "Μεγέθυνση",
+                "cropper.controls.zoomOut": "Σμίκρυνση",
+                "cropper.controls.rotateLeft": "Περιστροφή Αριστερά",
+                "cropper.controls.rotateRight": "Περιστροφή Δεξιά",
+                "cropper.controls.reset": "Επαναφορά Προβολής",
+                "footer.follow": "ΑΚΟΛΟΥΘΗΣΤΕ ΜΑΣ",
+                "footer.categories": "Δημοφιλείς Κατηγορίες",
+                "footer.categories.pdf": "Εργαλεία PDF",
+                "footer.categories.image": "Εργαλεία Εικόνας",
+                "footer.categories.text": "Εργαλεία Κειμένου",
+                "footer.categories.av": "Εργαλεία Ήχου/Βίντεο",
+                "footer.categories.web": "Εργαλεία Web/Προγραμματιστή",
+                "footer.categories.calc": "Εργαλεία Αριθμομηχανής",
+                "footer.categories.util": "Εργαλεία Χρησιμότητας",
+                "footer.categories.color": "Εργαλεία Χρώματος",
+                "footer.quicklinks": "Γρήγοροι Σύνδεσμοι",
+                "footer.links.tools": "Όλα τα Εργαλεία",
+                "footer.links.faq": "Συχνές Ερωτήσεις",
+                "footer.links.contact": "Επικοινωνία",
+                "footer.links.privacy": "Πολιτική Απορρήτου",
+                "footer.links.disclaimer": "Αποποίηση Ευθυνών",
+                "footer.links.terms": "Όροι Υπηρεσίας",
+                "footer.copyright": "© 2025 LollyPoPDF. Με επιφύλαξη παντός δικαιώματος."
+            },
+            hi: {
+                "nav.home": "होम",
+                "nav.about": "हमारे बारे में",
+                "nav.tools": "टूल्स",
+                "nav.contact": "संपर्क करें",
+                "hero.title": "मुफ्त में तुरंत छवियों को क्रॉप करें",
+                "hero.description": "विशिष्ट आयामों के लिए अपनी छवियों को क्रॉप करने के लिए मुफ्त ऑनलाइन टूल। पूर्वनिर्धारित पहलू अनुपात से चुनें या कस्टम आयाम सेट करें। कोई पंजीकरण आवश्यक नहीं।",
+                "howto.title": "अपनी छवियों को कैसे क्रॉप करें",
+                "howto.step1.title": "अपनी छवि अपलोड करें",
+                "howto.step1.description": "अपलोड क्षेत्र पर क्लिक करें या अपनी छवि फ़ाइल खींचें और छोड़ें। हम JPG, PNG, GIF, WEBP और अधिक का समर्थन करते हैं।",
+                "howto.step2.title": "पहलू अनुपात चुनें",
+                "howto.step2.description": "16:9, 4:3, 1:1 जैसे पूर्वनिर्धारित पहलू अनुपात से चुनें या फ्रीफॉर्म क्रॉपिंग के लिए कस्टम आयाम सेट करें।",
+                "howto.step3.title": "समायोजित करें और क्रॉप करें",
+                "howto.step3.description": "अपनी छवि पर क्रॉपिंग क्षेत्र को समायोजित करें, फिर अपनी छवि को संसाधित करने के लिए क्रॉप बटन पर क्लिक करें।",
+                "howto.step4.title": "परिणाम डाउनलोड करें",
+                "howto.step4.description": "एक क्लिक के साथ अपनी क्रॉप की गई छवि डाउनलोड करें। कोई वॉटरमार्क नहीं, कोई पंजीकरण आवश्यक नहीं।",
+                "cropper.title": "छवि क्रॉपर टूल",
+                "cropper.upload.text": "अपनी छवि को यहां खींचें और छोड़ें या ब्राउज़ करने के लिए क्लिक करें",
+                "cropper.upload.button": "छवि चुनें",
+                "cropper.options.title": "क्रॉप विकल्प",
+                "cropper.aspectRatio.title": "पहलू अनुपात",
+                "cropper.aspectRatio.free": "फ्रीफॉर्म",
+                "cropper.format.title": "आउटपुट फॉर्मेट",
+                "cropper.preview.title": "पूर्वावलोकन",
+                "cropper.preview.original": "मूल",
+                "cropper.preview.cropped": "क्रॉप किया गया",
+                "cropper.processing": "प्रसंस्करण: 0%",
+                "cropper.crop": "छवि क्रॉप करें",
+                "cropper.download": "डाउनलोड",
+                "cropper.reset": "रीसेट",
+                "cropper.controls.move": "ले जाएँ",
+                "cropper.controls.crop": "क्रॉप क्षेत्र",
+                "cropper.controls.zoomIn": "ज़ूम इन",
+                "cropper.controls.zoomOut": "ज़ूम आउट",
+                "cropper.controls.rotateLeft": "बाएं घुमाएं",
+                "cropper.controls.rotateRight": "दाएं घुमाएं",
+                "cropper.controls.reset": "दृश्य रीसेट करें",
+                "footer.follow": "हमें फॉलो करें",
+                "footer.categories": "लोकप्रिय श्रेणियां",
+                "footer.categories.pdf": "PDF टूल्स",
+                "footer.categories.image": "छवि टूल्स",
+                "footer.categories.text": "टेक्स्ट टूल्स",
+                "footer.categories.av": "ऑडियो/वीडियो टूल्स",
+                "footer.categories.web": "वेब/डेवलपर टूल्स",
+                "footer.categories.calc": "कैलकुलेटर टूल्स",
+                "footer.categories.util": "यूटिलिटी टूल्स",
+                "footer.categories.color": "रंग टूल्स",
+                "footer.quicklinks": "त्वरित लिंक",
+                "footer.links.tools": "सभी टूल्स",
+                "footer.links.faq": "सामान्य प्रश्न",
+                "footer.links.contact": "संपर्क करें",
+                "footer.links.privacy": "गोपनीयता नीति",
+                "footer.links.disclaimer": "अस्वीकरण",
+                "footer.links.terms": "सेवा की शर्तें",
+                "footer.copyright": "© 2025 LollyPoPDF. सर्वाधिकार सुरक्षित।"
+            },
+            te: {
+                "nav.home": "హోమ్",
+                "nav.about": "మా గురించి",
+                "nav.tools": "టూల్స్",
+                "nav.contact": "సంప్రదించండి",
+                "hero.title": "ఉచితంగా తక్షణంగా ఇమేజ్‌లను క్రాప్ చేయండి",
+                "hero.description": "మీ ఇమేజ్‌లను నిర్దిష్ట కొలతలకు క్రాప్ చేయడానికి ఉచిత ఆన్‌లైన్ టూల్. ముందే నిర్ణయించబడిన ఆస్పెక్ట్ రేషియోల నుండి ఎంచుకోండి లేదా కస్టమ్ కొలతలను సెట్ చేయండి. నమోదు అవసరం లేదు.",
+                "howto.title": "మీ ఇమేజ్‌లను ఎలా క్రాప్ చేయాలి",
+                "howto.step1.title": "మీ ఇమేజ్‌ను అప్‌లోడ్ చేయండి",
+                "howto.step1.description": "అప్‌లోడ్ ప్రాంతంపై క్లిక్ చేయండి లేదా మీ ఇమేజ్ ఫైల్‌ను డ్రాగ్ మరియు డ్రాప్ చేయండి. మేము JPG, PNG, GIF, WEBP మరియు మరిన్నింటిని మద్దతు చేస్తాము.",
+                "howto.step2.title": "ఆస్పెక్ట్ రేషియో ఎంచుకోండి",
+                "howto.step2.description": "16:9, 4:3, 1:1 వంటి ముందే నిర్ణయించబడిన ఆస్పెక్ట్ రేషియోల నుండి ఎంచుకోండి లేదా ఫ్రీఫార్మ్ క్రాపింగ్ కోసం కస్టమ్ కొలతలను సెట్ చేయండి.",
+                "howto.step3.title": "సర్దుబాటు మరియు క్రాప్ చేయండి",
+                "howto.step3.description": "మీ ఇమేజ్‌లో క్రాపింగ్ ప్రాంతాన్ని సర్దుబాటు చేయండి, తరువాత మీ ఇమేజ్‌ను ప్రాసెస్ చేయడానికి క్రాప్ బటన్‌పై క్లిక్ చేయండి.",
+                "howto.step4.title": "ఫలితాన్ని డౌన్‌లోడ్ చేయండి",
+                "howto.step4.description": "క్లిక్ చేయడంతో మీ క్రాప్ చేసిన ఇమేజ్‌ను డౌన్‌లోడ్ చేయండి. వాటర్‌మార్క్‌లు లేవు, నమోదు అవసరం లేదు.",
+                "cropper.title": "ఇమేజ్ క్రాపర్ టూల్",
+                "cropper.upload.text": "మీ ఇమేజ్‌ను ఇక్కడ డ్రాగ్ మరియు డ్రాప్ చేయండి లేదా బ్రౌజ్ చేయడానికి క్లిక్ చేయండి",
+                "cropper.upload.button": "ఇమేజ్‌ను ఎంచుకోండి",
+                "cropper.options.title": "క్రాప్ ఎంపికలు",
+                "cropper.aspectRatio.title": "ఆస్పెక్ట్ రేషియో",
+                "cropper.aspectRatio.free": "ఫ్రీఫార్మ్",
+                "cropper.format.title": "అవుట్పుట్ ఫార్మాట్",
+                "cropper.preview.title": "ప్రివ్యూ",
+                "cropper.preview.original": "అసలు",
+                "cropper.preview.cropped": "క్రాప్ చేయబడింది",
+                "cropper.processing": "ప్రాసెసింగ్: 0%",
+                "cropper.crop": "ఇమేజ్‌ను క్రాప్ చేయండి",
+                "cropper.download": "డౌన్‌లోడ్",
+                "cropper.reset": "రీసెట్",
+                "cropper.controls.move": "తరలించు",
+                "cropper.controls.crop": "క్రాప్ ప్రాంతం",
+                "cropper.controls.zoomIn": "జూమ్ ఇన్",
+                "cropper.controls.zoomOut": "జూమ్ అవుట్",
+                "cropper.controls.rotateLeft": "ఎడమవైపు తిప్పండి",
+                "cropper.controls.rotateRight": "కుడివైపు తిప్పండి",
+                "cropper.controls.reset": "వ్యూ రీసెట్ చేయండి",
+                "footer.follow": "మమ్మల్ని ఫాలో అవ్వండి",
+                "footer.categories": "జనాదరణ పొందిన వర్గాలు",
+                "footer.categories.pdf": "PDF టూల్స్",
+                "footer.categories.image": "ఇమేజ్ టూల్స్",
+                "footer.categories.text": "టెక్స్ట్ టూల్స్",
+                "footer.categories.av": "ఆడియో/వీడియో టూల్స్",
+                "footer.categories.web": "వెబ్/డెవలపర్ టూల్స్",
+                "footer.categories.calc": "కాలిక్యులేటర్ టూల్స్",
+                "footer.categories.util": "యుటిలిటీ టూల్స్",
+                "footer.categories.color": "కలర్ టూల్స్",
+                "footer.quicklinks": "త్వరిత లింకులు",
+                "footer.links.tools": "అన్ని టూల్స్",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "సంప్రదించండి",
+                "footer.links.privacy": "గోప్యతా విధానం",
+                "footer.links.disclaimer": "డిస్క్లైమర్",
+                "footer.links.terms": "సేవా నిబంధనలు",
+                "footer.copyright": "© 2025 LollyPoPDF. అన్ని హక్కులు రిజర్వు."
+            },
+            kn: {
+                "nav.home": "ಮುಖಪುಟ",
+                "nav.about": "ನಮ್ಮ ಬಗ್ಗೆ",
+                "nav.tools": "ಉಪಕರಣಗಳು",
+                "nav.contact": "ಸಂಪರ್ಕಿಸಿ",
+                "hero.title": "ಚಿತ್ರಗಳನ್ನು ಉಚಿತವಾಗಿ ತಕ್ಷಣ ಕ್ರಾಪ್ ಮಾಡಿ",
+                "hero.description": "ನಿಮ್ಮ ಚಿತ್ರಗಳನ್ನು ನಿರ್ದಿಷ್ಟ ಆಯಾಮಗಳಿಗೆ ಕ್ರಾಪ್ ಮಾಡಲು ಉಚಿತ ಆನ್ಲೈನ್ ಉಪಕರಣ. ಪೂರ್ವನಿರ್ಧಾರಿತ ಆಕಾರ ಅನುಪಾತಗಳಿಂದ ಆಯ್ಕೆ ಮಾಡಿ ಅಥವಾ ಕಸ್ಟಮ್ ಆಯಾಮಗಳನ್ನು ಹೊಂದಿಸಿ. ನೋಂದಣಿ ಅಗತ್ಯವಿಲ್ಲ.",
+                "howto.title": "ನಿಮ್ಮ ಚಿತ್ರಗಳನ್ನು ಹೇಗೆ ಕ್ರಾಪ್ ಮಾಡುವುದು",
+                "howto.step1.title": "ನಿಮ್ಮ ಚಿತ್ರವನ್ನು ಅಪ್ಲೋಡ್ ಮಾಡಿ",
+                "howto.step1.description": "ಅಪ್ಲೋಡ್ ಪ್ರದೇಶದ ಮೇಲೆ ಕ್ಲಿಕ್ ಮಾಡಿ ಅಥವಾ ನಿಮ್ಮ ಚಿತ್ರ ಫೈಲ್ ಅನ್ನು ಎಳೆದು ಬಿಡಿ. ನಾವು JPG, PNG, GIF, WEBP ಮತ್ತು ಹೆಚ್ಚಿನವುಗಳನ್ನು ಬೆಂಬಲಿಸುತ್ತೇವೆ.",
+                "howto.step2.title": "ಆಕಾರ ಅನುಪಾತವನ್ನು ಆಯ್ಕೆಮಾಡಿ",
+                "howto.step2.description": "16:9, 4:3, 1:1 ನಂತಹ ಪೂರ್ವನಿರ್ಧಾರಿತ ಆಕಾರ ಅನುಪಾತಗಳಿಂದ ಆಯ್ಕೆ ಮಾಡಿ ಅಥವಾ ಉಚಿತ ರೂಪ ಕ್ರಾಪಿಂಗ್ ಗಾಗಿ ಕಸ್ಟಮ್ ಆಯಾಮಗಳನ್ನು ಹೊಂದಿಸಿ.",
+                "howto.step3.title": "ಸರಿಹೊಂದಿಸಿ ಮತ್ತು ಕ್ರಾಪ್ ಮಾಡಿ",
+                "howto.step3.description": "ನಿಮ್ಮ ಚಿತ್ರದಲ್ಲಿ ಕ್ರಾಪಿಂಗ್ ಪ್ರದೇಶವನ್ನು ಸರಿಹೊಂದಿಸಿ, ನಂತರ ನಿಮ್ಮ ಚಿತ್ರವನ್ನು ಪ್ರಕ್ರಿಯೆಗೊಳಿಸಲು ಕ್ರಾಪ್ ಬಟನ್ ಅನ್ನು ಕ್ಲಿಕ್ ಮಾಡಿ.",
+                "howto.step4.title": "ಫಲಿತಾಂಶವನ್ನು ಡೌನ್ಲೋಡ್ ಮಾಡಿ",
+                "howto.step4.description": "ಕ್ಲಿಕ್ ಮಾಡುವುದರೊಂದಿಗೆ ನಿಮ್ಮ ಕ್ರಾಪ್ ಮಾಡಿದ ಚಿತ್ರವನ್ನು ಡೌನ್ಲೋಡ್ ಮಾಡಿ. ವಾಟರ್ಮಾರ್ಕ್‌ಗಳಿಲ್ಲ, ನೋಂದಣಿ ಅಗತ್ಯವಿಲ್ಲ.",
+                "cropper.title": "ಚಿತ್ರ ಕ್ರಾಪರ್ ಉಪಕರಣ",
+                "cropper.upload.text": "ನಿಮ್ಮ ಚಿತ್ರವನ್ನು ಇಲ್ಲಿ ಎಳೆದು ಬಿಡಿ ಅಥವಾ ಬ್ರೌಸ್ ಮಾಡಲು ಕ್ಲಿಕ್ ಮಾಡಿ",
+                "cropper.upload.button": "ಚಿತ್ರವನ್ನು ಆಯ್ಕೆಮಾಡಿ",
+                "cropper.options.title": "ಕ್ರಾಪ್ ಆಯ್ಕೆಗಳು",
+                "cropper.aspectRatio.title": "ಆಕಾರ ಅನುಪಾತ",
+                "cropper.aspectRatio.free": "ಉಚಿತ ರೂಪ",
+                "cropper.format.title": "ಔಟ್ಪುಟ್ ಫಾರ್ಮ್ಯಾಟ್",
+                "cropper.preview.title": "ಪೂರ್ವವೀಕ್ಷಣೆ",
+                "cropper.preview.original": "ಮೂಲ",
+                "cropper.preview.cropped": "ಕ್ರಾಪ್ ಮಾಡಲಾಗಿದೆ",
+                "cropper.processing": "ಸಂಸ್ಕರಣೆ: 0%",
+                "cropper.crop": "ಚಿತ್ರವನ್ನು ಕ್ರಾಪ್ ಮಾಡಿ",
+                "cropper.download": "ಡೌನ್ಲೋಡ್",
+                "cropper.reset": "ರೀಸೆಟ್",
+                "cropper.controls.move": "ಸರಿಸು",
+                "cropper.controls.crop": "ಕ್ರಾಪ್ ಪ್ರದೇಶ",
+                "cropper.controls.zoomIn": "ಜೂಮ್ ಇನ್",
+                "cropper.controls.zoomOut": "ಜೂಮ್ ಔಟ್",
+                "cropper.controls.rotateLeft": "ಎಡಕ್ಕೆ ತಿರುಗಿಸಿ",
+                "cropper.controls.rotateRight": "ಬಲಕ್ಕೆ ತಿರುಗಿಸಿ",
+                "cropper.controls.reset": "ನೋಟವನ್ನು ರೀಸೆಟ್ ಮಾಡಿ",
+                "footer.follow": "ನಮ್ಮನ್ನು ಅನುಸರಿಸಿ",
+                "footer.categories": "ಜನಪ್ರಿಯ ವರ್ಗಗಳು",
+                "footer.categories.pdf": "PDF ಉಪಕರಣಗಳು",
+                "footer.categories.image": "ಚಿತ್ರ ಉಪಕರಣಗಳು",
+                "footer.categories.text": "ಪಠ್ಯ ಉಪಕರಣಗಳು",
+                "footer.categories.av": "ಆಡಿಯೋ/ವೀಡಿಯೋ ಉಪಕರಣಗಳು",
+                "footer.categories.web": "ವೆಬ್/ಡೆವಲಪರ್ ಉಪಕರಣಗಳು",
+                "footer.categories.calc": "ಕ್ಯಾಲ್ಕುಲೇಟರ್ ಉಪಕರಣಗಳು",
+                "footer.categories.util": "ಯುಟಿಲಿಟಿ ಉಪಕರಣಗಳು",
+                "footer.categories.color": "ಬಣ್ಣ ಉಪಕರಣಗಳು",
+                "footer.quicklinks": "ತ್ವರಿತ ಲಿಂಕ್‌ಗಳು",
+                "footer.links.tools": "ಎಲ್ಲಾ ಉಪಕರಣಗಳು",
+                "footer.links.faq": "ಸಾಮಾನ್ಯ ಪ್ರಶ್ನೆಗಳು",
+                "footer.links.contact": "ಸಂಪರ್ಕಿಸಿ",
+                "footer.links.privacy": "ಗೌಪ್ಯತಾ ನೀತಿ",
+                "footer.links.disclaimer": "ಡಿಸ್ಕ್ಲೈಮರ್",
+                "footer.links.terms": "ಸೇವಾ ನಿಯಮಗಳು",
+                "footer.copyright": "© 2025 LollyPoPDF. ಎಲ್ಲಾ ಹಕ್ಕುಗಳು ಕಾಯ್ದಿರಿಸಲಾಗಿದೆ."
+            },
+            ta: {
+                "nav.home": "முகப்பு",
+                "nav.about": "எங்களைப் பற்றி",
+                "nav.tools": "கருவிகள்",
+                "nav.contact": "தொடர்பு கொள்ள",
+                "hero.title": "படங்களை உடனடியாக இலவசமாக கிராப் செய்யவும்",
+                "hero.description": "உங்கள் படங்களை குறிப்பிட்ட பரிமாணங்களுக்கு கிராப் செய்ய இலவச ஆன்லைன் கருவி. முன்னரே தீர்மானிக்கப்பட்ட விகிதங்களிலிருந்து தேர்வு செய்யவும் அல்லது தனிப்பயன் பரிமாணங்களை அமைக்கவும். பதிவு தேவையில்லை.",
+                "howto.title": "உங்கள் படங்களை எவ்வாறு கிராப் செய்வது",
+                "howto.step1.title": "உங்கள் படத்தை பதிவேற்றவும்",
+                "howto.step1.description": "பதிவேற்ற பகுதியை கிளிக் செய்யவும் அல்லது உங்கள் பட கோப்பை இழுத்து விடவும். நாங்கள் JPG, PNG, GIF, WEBP மற்றும் பலவற்றை ஆதரிக்கிறோம்.",
+                "howto.step2.title": "விகிதத்தைத் தேர்ந்தெடுக்கவும்",
+                "howto.step2.description": "16:9, 4:3, 1:1 போன்ற முன்னரே தீர்மானிக்கப்பட்ட விகிதங்களிலிருந்து தேர்வு செய்யவும் அல்லது இலவச வடிவ கிராப்பிங்கிற்கு தனிப்பயன் பரிமாணங்களை அமைக்கவும்.",
+                "howto.step3.title": "சரிசெய்து கிராப் செய்யவும்",
+                "howto.step3.description": "உங்கள் படத்தில் கிராப்பிங் பகுதியை சரிசெய்யவும், பின்னர் உங்கள் படத்தை செயலாக்க கிராப் பொத்தானை கிளிக் செய்யவும்.",
+                "howto.step4.title": "முடிவை பதிவிறக்கவும்",
+                "howto.step4.description": "கிளிக் செய்வதன் மூலம் உங்கள் கிராப் செய்யப்பட்ட படத்தை பதிவிறக்கவும். நீர்முத்திரைகள் இல்லை, பதிவு தேவையில்லை.",
+                "cropper.title": "பட கிராப்பர் கருவி",
+                "cropper.upload.text": "உங்கள் படத்தை இங்கே இழுத்து விடவும் அல்லது உலாவ கிளிக் செய்யவும்",
+                "cropper.upload.button": "படத்தை தேர்ந்தெடுக்கவும்",
+                "cropper.options.title": "கிராப் விருப்பங்கள்",
+                "cropper.aspectRatio.title": "விகிதம்",
+                "cropper.aspectRatio.free": "இலவச வடிவம்",
+                "cropper.format.title": "வெளியீட்டு வடிவம்",
+                "cropper.preview.title": "முன்னோட்டம்",
+                "cropper.preview.original": "அசல்",
+                "cropper.preview.cropped": "கிராப் செய்யப்பட்டது",
+                "cropper.processing": "செயலாக்கம்: 0%",
+                "cropper.crop": "படத்தை கிராப் செய்யவும்",
+                "cropper.download": "பதிவிறக்க",
+                "cropper.reset": "மீட்டமை",
+                "cropper.controls.move": "நகர்த்து",
+                "cropper.controls.crop": "கிராப் பகுதி",
+                "cropper.controls.zoomIn": "ஜூம் இன்",
+                "cropper.controls.zoomOut": "ஜூம் அவுட்",
+                "cropper.controls.rotateLeft": "இடதுபுறம் சுழற்று",
+                "cropper.controls.rotateRight": "வலதுபுறம் சுழற்று",
+                "cropper.controls.reset": "காட்சியை மீட்டமை",
+                "footer.follow": "எங்களை பின்தொடரவும்",
+                "footer.categories": "பிரபலமான வகைகள்",
+                "footer.categories.pdf": "PDF கருவிகள்",
+                "footer.categories.image": "பட கருவிகள்",
+                "footer.categories.text": "உரை கருவிகள்",
+                "footer.categories.av": "ஆடியோ/வீடியோ கருவிகள்",
+                "footer.categories.web": "வலை/டெவலப்பர் கருவிகள்",
+                "footer.categories.calc": "கால்குலேட்டர் கருவிகள்",
+                "footer.categories.util": "பயன்பாட்டு கருவிகள்",
+                "footer.categories.color": "நிற கருவிகள்",
+                "footer.quicklinks": "விரைவு இணைப்புகள்",
+                "footer.links.tools": "அனைத்து கருவிகள்",
+                "footer.links.faq": "அடிக்கடி கேட்கப்படும் கேள்விகள்",
+                "footer.links.contact": "தொடர்பு கொள்ள",
+                "footer.links.privacy": "தனியுரிமைக் கொள்கை",
+                "footer.links.disclaimer": "மறுப்பு",
+                "footer.links.terms": "சேவை விதிமுறைகள்",
+                "footer.copyright": "© 2025 LollyPoPDF. அனைத்து உரிமைகளும் பாதுகாக்கப்பட்டவை."
+            },
+            ml: {
+                "nav.home": "ഹോം",
+                "nav.about": "നമ്മളെക്കുറിച്ച്",
+                "nav.tools": "ടൂളുകൾ",
+                "nav.contact": "ബന്ധപ്പെടുക",
+                "hero.title": "ഇമേജുകൾ സൗജന്യമായി തൽക്ഷണം ക്രോപ്പ് ചെയ്യുക",
+                "hero.description": "നിങ്ങളുടെ ഇമേജുകൾ നിർദ്ദിഷ്ട അളവുകളിലേക്ക് ക്രോപ്പ് ചെയ്യാനുള്ള സൗജന്യ ഓൺലൈൻ ടൂൾ. മുൻകൂട്ടി നിശ്ചയിച്ച അനുപാതങ്ങളിൽ നിന്ന് തിരഞ്ഞെടുക്കുക അല്ലെങ്കിൽ ഇഷ്ടാനുസൃത അളവുകൾ സജ്ജമാക്കുക. രജിസ്ട്രേഷൻ ആവശ്യമില്ല.",
+                "howto.title": "നിങ്ങളുടെ ഇമേജുകൾ ക്രോപ്പ് ചെയ്യുന്നത് എങ്ങനെ",
+                "howto.step1.title": "നിങ്ങളുടെ ഇമേജ് അപ്‌ലോഡ് ചെയ്യുക",
+                "howto.step1.description": "അപ്‌ലോഡ് ഏരിയയിൽ ക്ലിക്ക് ചെയ്യുക അല്ലെങ്കിൽ നിങ്ങളുടെ ഇമേജ് ഫയൽ വലിച്ചിടുക. ഞങ്ങൾ JPG, PNG, GIF, WEBP എന്നിവയെ പിന്തുണയ്ക്കുന്നു.",
+                "howto.step2.title": "അനുപാതം തിരഞ്ഞെടുക്കുക",
+                "howto.step2.description": "16:9, 4:3, 1:1 തുടങ്ങിയ മുൻകൂട്ടി നിശ്ചയിച്ച അനുപാതങ്ങളിൽ നിന്ന് തിരഞ്ഞെടുക്കുക അല്ലെങ്കിൽ സ്വതന്ത്ര രൂപ ക്രോപ്പിംഗിനായി ഇഷ്ടാനുസൃത അളവുകൾ സജ്ജമാക്കുക.",
+                "howto.step3.title": "ക്രമീകരിക്കുകയും ക്രോപ്പ് ചെയ്യുകയും ചെയ്യുക",
+                "howto.step3.description": "നിങ്ങളുടെ ഇമേജിലെ ക്രോപ്പിംഗ് ഏരിയ ക്രമീകരിക്കുക, തുടർന്ന് നിങ്ങളുടെ ഇമേജ് പ്രോസസ്സ് ചെയ്യാൻ ക്രോപ്പ് ബട്ടൺ ക്ലിക്ക് ചെയ്യുക.",
+                "howto.step4.title": "ഫലം ഡൗൺലോഡ് ചെയ്യുക",
+                "howto.step4.description": "ക്ലിക്ക് ചെയ്തുകൊണ്ട് നിങ്ങളുടെ ക്രോപ്പ് ചെയ്ത ഇമേജ് ഡൗൺലോഡ് ചെയ്യുക. വാട്ടർമാർക്കുകളില്ല, രജിസ്ട്രേഷൻ ആവശ്യമില്ല.",
+                "cropper.title": "ഇമേജ് ക്രോപ്പർ ടൂൾ",
+                "cropper.upload.text": "നിങ്ങളുടെ ഇമേജ് ഇവിടെ വലിച്ചിടുക അല്ലെങ്കിൽ ബ്രൗസ് ചെയ്യാൻ ക്ലിക്ക് ചെയ്യുക",
+                "cropper.upload.button": "ഇമേജ് തിരഞ്ഞെടുക്കുക",
+                "cropper.options.title": "ക്രോപ്പ് ഓപ്ഷനുകൾ",
+                "cropper.aspectRatio.title": "അനുപാതം",
+                "cropper.aspectRatio.free": "സ്വതന്ത്ര രൂപം",
+                "cropper.format.title": "ഔട്ട്പുട്ട് ഫോർമാറ്റ്",
+                "cropper.preview.title": "പ്രിവ്യൂ",
+                "cropper.preview.original": "ഒറിജിനൽ",
+                "cropper.preview.cropped": "ക്രോപ്പ് ചെയ്തത്",
+                "cropper.processing": "പ്രോസസ്സിംഗ്: 0%",
+                "cropper.crop": "ഇമേജ് ക്രോപ്പ് ചെയ്യുക",
+                "cropper.download": "ഡൗൺലോഡ്",
+                "cropper.reset": "റീസെറ്റ്",
+                "cropper.controls.move": "നീക്കുക",
+                "cropper.controls.crop": "ക്രോപ്പ് ഏരിയ",
+                "cropper.controls.zoomIn": "സൂം ഇൻ",
+                "cropper.controls.zoomOut": "സൂം ഔട്ട്",
+                "cropper.controls.rotateLeft": "ഇടതുവശത്ത് തിരിക്കുക",
+                "cropper.controls.rotateRight": "വലതുവശത്ത് തിരിക്കുക",
+                "cropper.controls.reset": "വ്യൂ റീസെറ്റ് ചെയ്യുക",
+                "footer.follow": "ഞങ്ങളെ പിന്തുടരുക",
+                "footer.categories": "ജനപ്രിയ വിഭാഗങ്ങൾ",
+                "footer.categories.pdf": "PDF ടൂളുകൾ",
+                "footer.categories.image": "ഇമേജ് ടൂളുകൾ",
+                "footer.categories.text": "ടെക്‌സ്റ്റ് ടൂളുകൾ",
+                "footer.categories.av": "ഓഡിയോ/വീഡിയോ ടൂളുകൾ",
+                "footer.categories.web": "വെബ്/ഡെവലപ്പർ ടൂളുകൾ",
+                "footer.categories.calc": "കാൽക്കുലേറ്റർ ടൂളുകൾ",
+                "footer.categories.util": "യൂട്ടിലിറ്റി ടൂളുകൾ",
+                "footer.categories.color": "കളർ ടൂളുകൾ",
+                "footer.quicklinks": "ദ്രുത ലിങ്കുകൾ",
+                "footer.links.tools": "എല്ലാ ടൂളുകളും",
+                "footer.links.faq": "പതിവുചോദ്യങ്ങൾ",
+                "footer.links.contact": "ബന്ധപ്പെടുക",
+                "footer.links.privacy": "സ്വകാര്യതാ നയം",
+                "footer.links.disclaimer": "അസ്വീകാര്യത",
+                "footer.links.terms": "സേവന നിബന്ധനകൾ",
+                "footer.copyright": "© 2025 LollyPoPDF. എല്ലാ അവകാശങ്ങളും നിക്ഷിപ്തം."
+            },
+            id: {
+                "nav.home": "Beranda",
+                "nav.about": "Tentang Kami",
+                "nav.tools": "Alat",
+                "nav.contact": "Kontak",
+                "hero.title": "Potong Gambar Gratis Secara Instan",
+                "hero.description": "Alat online gratis untuk memotong gambar Anda ke dimensi spesifik. Pilih dari rasio aspek yang telah ditentukan atau atur dimensi kustom. Tidak perlu registrasi.",
+                "howto.title": "Cara Memotong Gambar Anda",
+                "howto.step1.title": "Unggah Gambar Anda",
+                "howto.step1.description": "Klik area unggah atau seret dan lepas file gambar Anda. Kami mendukung JPG, PNG, GIF, WEBP dan lainnya.",
+                "howto.step2.title": "Pilih Rasio Aspek",
+                "howto.step2.description": "Pilih dari rasio aspek yang telah ditentukan seperti 16:9, 4:3, 1:1 atau atur dimensi kustom untuk pemotongan bebas.",
+                "howto.step3.title": "Sesuaikan dan Potong",
+                "howto.step3.description": "Sesuaikan area pemotongan pada gambar Anda, lalu klik tombol potong untuk memproses gambar Anda.",
+                "howto.step4.title": "Unduh Hasil",
+                "howto.step4.description": "Unduh gambar yang telah dipotong dengan satu klik. Tanpa watermark, tanpa registrasi.",
+                "cropper.title": "Alat Pemotong Gambar",
+                "cropper.upload.text": "Seret dan lepas gambar Anda di sini atau klik untuk menjelajahi",
+                "cropper.upload.button": "Pilih Gambar",
+                "cropper.options.title": "Opsi Pemotongan",
+                "cropper.aspectRatio.title": "Rasio Aspek",
+                "cropper.aspectRatio.free": "Bentuk Bebas",
+                "cropper.format.title": "Format Keluaran",
+                "cropper.preview.title": "Pratinjau",
+                "cropper.preview.original": "Asli",
+                "cropper.preview.cropped": "Dipangkas",
+                "cropper.processing": "Memproses: 0%",
+                "cropper.crop": "Potong Gambar",
+                "cropper.download": "Unduh",
+                "cropper.reset": "Atur Ulang",
+                "cropper.controls.move": "Pindahkan",
+                "cropper.controls.crop": "Area Potong",
+                "cropper.controls.zoomIn": "Perbesar",
+                "cropper.controls.zoomOut": "Perkecil",
+                "cropper.controls.rotateLeft": "Putar Kiri",
+                "cropper.controls.rotateRight": "Putar Kanan",
+                "cropper.controls.reset": "Atur Ulang Tampilan",
+                "footer.follow": "IKUTI KAMI",
+                "footer.categories": "Kategori Populer",
+                "footer.categories.pdf": "Alat PDF",
+                "footer.categories.image": "Alat Gambar",
+                "footer.categories.text": "Alat Teks",
+                "footer.categories.av": "Alat Audio/Video",
+                "footer.categories.web": "Alat Web/Pengembang",
+                "footer.categories.calc": "Alat Kalkulator",
+                "footer.categories.util": "Alat Utilitas",
+                "footer.categories.color": "Alat Warna",
+                "footer.quicklinks": "Tautan Cepat",
+                "footer.links.tools": "Semua Alat",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Kontak",
+                "footer.links.privacy": "Kebijakan Privasi",
+                "footer.links.disclaimer": "Penafian",
+                "footer.links.terms": "Syarat Layanan",
+                "footer.copyright": "© 2025 LollyPoPDF. Hak cipta dilindungi."
+            },
+            ms: {
+                "nav.home": "Laman Utama",
+                "nav.about": "Tentang Kami",
+                "nav.tools": "Alat",
+                "nav.contact": "Hubungi",
+                "hero.title": "Potong Imej Percuma Serta-merta",
+                "hero.description": "Alat dalam talian percuma untuk memotong imej anda kepada dimensi tertentu. Pilih daripada nisbah aspek yang telah ditetapkan atau tetapkan dimensi tersuai. Tiada pendaftaran diperlukan.",
+                "howto.title": "Cara Memotong Imej Anda",
+                "howto.step1.title": "Muat Naik Imej Anda",
+                "howto.step1.description": "Klik kawasan muat naik atau seret dan lepaskan fail imej anda. Kami menyokong JPG, PNG, GIF, WEBP dan banyak lagi.",
+                "howto.step2.title": "Pilih Nisbah Aspek",
+                "howto.step2.description": "Pilih daripada nisbah aspek yang telah ditetapkan seperti 16:9, 4:3, 1:1 atau tetapkan dimensi tersuai untuk pemotongan bebas.",
+                "howto.step3.title": "Laraskan dan Potong",
+                "howto.step3.description": "Laraskan kawasan pemotongan pada imej anda, kemudian klik butang potong untuk memproses imej anda.",
+                "howto.step4.title": "Muat Turun Hasil",
+                "howto.step4.description": "Muat turun imej yang telah dipotong dengan satu klik. Tiada tanda air, tiada pendaftaran diperlukan.",
+                "cropper.title": "Alat Pemotong Imej",
+                "cropper.upload.text": "Seret dan lepaskan imej anda di sini atau klik untuk melayari",
+                "cropper.upload.button": "Pilih Imej",
+                "cropper.options.title": "Pilihan Pemotongan",
+                "cropper.aspectRatio.title": "Nisbah Aspek",
+                "cropper.aspectRatio.free": "Bentuk Bebas",
+                "cropper.format.title": "Format Output",
+                "cropper.preview.title": "Pratonton",
+                "cropper.preview.original": "Asal",
+                "cropper.preview.cropped": "Dipangkas",
+                "cropper.processing": "Memproses: 0%",
+                "cropper.crop": "Potong Imej",
+                "cropper.download": "Muat Turun",
+                "cropper.reset": "Tetapkan Semula",
+                "cropper.controls.move": "Pindahkan",
+                "cropper.controls.crop": "Kawasan Potong",
+                "cropper.controls.zoomIn": "Zum Masuk",
+                "cropper.controls.zoomOut": "Zum Keluar",
+                "cropper.controls.rotateLeft": "Putar Kiri",
+                "cropper.controls.rotateRight": "Putar Kanan",
+                "cropper.controls.reset": "Tetapkan Semula Paparan",
+                "footer.follow": "IKUTI KAMI",
+                "footer.categories": "Kategori Popular",
+                "footer.categories.pdf": "Alat PDF",
+                "footer.categories.image": "Alat Imej",
+                "footer.categories.text": "Alat Teks",
+                "footer.categories.av": "Alat Audio/Video",
+                "footer.categories.web": "Alat Web/Pembangun",
+                "footer.categories.calc": "Alat Kalkulator",
+                "footer.categories.util": "Alat Utiliti",
+                "footer.categories.color": "Alat Warna",
+                "footer.quicklinks": "Pautan Pantas",
+                "footer.links.tools": "Semua Alat",
+                "footer.links.faq": "Soalan Lazim",
+                "footer.links.contact": "Hubungi",
+                "footer.links.privacy": "Dasar Privasi",
+                "footer.links.disclaimer": "Penafian",
+                "footer.links.terms": "Syarat Perkhidmatan",
+                "footer.copyright": "© 2025 LollyPoPDF. Hak cipta terpelihara."
+            },
+            pl: {
+                "nav.home": "Strona Główna",
+                "nav.about": "O Nas",
+                "nav.tools": "Narzędzia",
+                "nav.contact": "Kontakt",
+                "hero.title": "Darmowe Przycinanie Obrazów Natychmiast",
+                "hero.description": "Darmowe narzędzie online do przycinania obrazów do określonych wymiarów. Wybierz z predefiniowanych proporcji lub ustaw niestandardowe wymiary. Bez rejestracji.",
+                "howto.title": "Jak Przycinać Obrazy",
+                "howto.step1.title": "Prześlij Swój Obraz",
+                "howto.step1.description": "Kliknij obszar przesyłania lub przeciągnij i upuść plik obrazu. Obsługujemy JPG, PNG, GIF, WEBP i inne.",
+                "howto.step2.title": "Wybierz Proporcje",
+                "howto.step2.description": "Wybierz z predefiniowanych proporcji jak 16:9, 4:3, 1:1 lub ustaw niestandardowe wymiary dla dowolnego przycinania.",
+                "howto.step3.title": "Dostosuj i Przytnij",
+                "howto.step3.description": "Dostosuj obszar przycinania na obrazie, następnie kliknij przycisk przytnij, aby przetworzyć obraz.",
+                "howto.step4.title": "Pobierz Wynik",
+                "howto.step4.description": "Pobierz przycięty obraz jednym kliknięciem. Bez znaków wodnych, bez rejestracji.",
+                "cropper.title": "Narzędzie do Przycinania Obrazów",
+                "cropper.upload.text": "Przeciągnij i upuść obraz tutaj lub kliknij, aby przeglądać",
+                "cropper.upload.button": "Wybierz Obraz",
+                "cropper.options.title": "Opcje Przycinania",
+                "cropper.aspectRatio.title": "Proporcje",
+                "cropper.aspectRatio.free": "Dowolne",
+                "cropper.format.title": "Format Wyjściowy",
+                "cropper.preview.title": "Podgląd",
+                "cropper.preview.original": "Oryginał",
+                "cropper.preview.cropped": "Przycięty",
+                "cropper.processing": "Przetwarzanie: 0%",
+                "cropper.crop": "Przytnij Obraz",
+                "cropper.download": "Pobierz",
+                "cropper.reset": "Resetuj",
+                "cropper.controls.move": "Przesuń",
+                "cropper.controls.crop": "Obszar Przycinania",
+                "cropper.controls.zoomIn": "Powiększ",
+                "cropper.controls.zoomOut": "Pomniejsz",
+                "cropper.controls.rotateLeft": "Obróć w Lewo",
+                "cropper.controls.rotateRight": "Obróć w Prawo",
+                "cropper.controls.reset": "Resetuj Widok",
+                "footer.follow": "OBSERWUJ NAS",
+                "footer.categories": "Popularne Kategorie",
+                "footer.categories.pdf": "Narzędzia PDF",
+                "footer.categories.image": "Narzędzia Obrazów",
+                "footer.categories.text": "Narzędzia Tekstowe",
+                "footer.categories.av": "Narzędzia Audio/Wideo",
+                "footer.categories.web": "Narzędzia Web/Deweloperskie",
+                "footer.categories.calc": "Narzędzia Kalkulatora",
+                "footer.categories.util": "Narzędzia Użytkowe",
+                "footer.categories.color": "Narzędzia Kolorów",
+                "footer.quicklinks": "Szybkie Linki",
+                "footer.links.tools": "Wszystkie Narzędzia",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Kontakt",
+                "footer.links.privacy": "Polityka Prywatności",
+                "footer.links.disclaimer": "Zastrzeżenie",
+                "footer.links.terms": "Warunki Usługi",
+                "footer.copyright": "© 2025 LollyPoPDF. Wszelkie prawa zastrzeżone."
+            },
+            th: {
+                "nav.home": "หน้าหลัก",
+                "nav.about": "เกี่ยวกับเรา",
+                "nav.tools": "เครื่องมือ",
+                "nav.contact": "ติดต่อ",
+                "hero.title": "ตัดรูปภาพฟรีทันที",
+                "hero.description": "เครื่องมือออนไลน์ฟรีสำหรับการตัดรูปภาพของคุณให้ได้ขนาดที่ต้องการ เลือกจากอัตราส่วนที่กำหนดไว้ล่วงหน้าหรือตั้งค่าขนาดที่กำหนดเอง ไม่ต้องลงทะเบียน",
+                "howto.title": "วิธีการตัดรูปภาพของคุณ",
+                "howto.step1.title": "อัปโหลดรูปภาพของคุณ",
+                "howto.step1.description": "คลิกพื้นที่อัปโหลดหรือลากและวางไฟล์รูปภาพของคุณ เรารองรับ JPG, PNG, GIF, WEBP และอื่นๆ",
+                "howto.step2.title": "เลือกอัตราส่วน",
+                "howto.step2.description": "เลือกจากอัตราส่วนที่กำหนดไว้ล่วงหน้าเช่น 16:9, 4:3, 1:1 หรือตั้งค่าขนาดที่กำหนดเองสำหรับการตัดแบบอิสระ",
+                "howto.step3.title": "ปรับแต่งและตัด",
+                "howto.step3.description": "ปรับพื้นที่การตัดบนรูปภาพของคุณ จากนั้นคลิกปุ่มตัดเพื่อประมวลผลรูปภาพของคุณ",
+                "howto.step4.title": "ดาวน์โหลดผลลัพธ์",
+                "howto.step4.description": "ดาวน์โหลดรูปภาพที่ตัดแล้วด้วยการคลิกเพียงครั้งเดียว ไม่มีลายน้ำ ไม่ต้องลงทะเบียน",
+                "cropper.title": "เครื่องมือตัดรูปภาพ",
+                "cropper.upload.text": "ลากและวางรูปภาพของคุณที่นี่หรือคลิกเพื่อเรียกดู",
+                "cropper.upload.button": "เลือกรูปภาพ",
+                "cropper.options.title": "ตัวเลือกการตัด",
+                "cropper.aspectRatio.title": "อัตราส่วน",
+                "cropper.aspectRatio.free": "แบบอิสระ",
+                "cropper.format.title": "รูปแบบผลลัพธ์",
+                "cropper.preview.title": "ตัวอย่าง",
+                "cropper.preview.original": "ต้นฉบับ",
+                "cropper.preview.cropped": "ตัดแล้ว",
+                "cropper.processing": "กำลังประมวลผล: 0%",
+                "cropper.crop": "ตัดรูปภาพ",
+                "cropper.download": "ดาวน์โหลด",
+                "cropper.reset": "รีเซ็ต",
+                "cropper.controls.move": "ย้าย",
+                "cropper.controls.crop": "พื้นที่ตัด",
+                "cropper.controls.zoomIn": "ซูมเข้า",
+                "cropper.controls.zoomOut": "ซูมออก",
+                "cropper.controls.rotateLeft": "หมุนซ้าย",
+                "cropper.controls.rotateRight": "หมุนขวา",
+                "cropper.controls.reset": "รีเซ็ตมุมมอง",
+                "footer.follow": "ติดตามเรา",
+                "footer.categories": "หมวดหมู่ยอดนิยม",
+                "footer.categories.pdf": "เครื่องมือ PDF",
+                "footer.categories.image": "เครื่องมือรูปภาพ",
+                "footer.categories.text": "เครื่องมือข้อความ",
+                "footer.categories.av": "เครื่องมือเสียง/วิดีโอ",
+                "footer.categories.web": "เครื่องมือเว็บ/นักพัฒนา",
+                "footer.categories.calc": "เครื่องมือเครื่องคิดเลข",
+                "footer.categories.util": "เครื่องมืออรรถประโยชน์",
+                "footer.categories.color": "เครื่องมือสี",
+                "footer.quicklinks": "ลิงก์ด่วน",
+                "footer.links.tools": "เครื่องมือทั้งหมด",
+                "footer.links.faq": "คำถามที่พบบ่อย",
+                "footer.links.contact": "ติดต่อ",
+                "footer.links.privacy": "นโยบายความเป็นส่วนตัว",
+                "footer.links.disclaimer": "ข้อจำกัดความรับผิดชอบ",
+                "footer.links.terms": "เงื่อนไขการให้บริการ",
+                "footer.copyright": "© 2025 LollyPoPDF. สงวนลิขสิทธิ์"
+            },
+            tr: {
+                "nav.home": "Ana Sayfa",
+                "nav.about": "Hakkımızda",
+                "nav.tools": "Araçlar",
+                "nav.contact": "İletişim",
+                "hero.title": "Ücretsiz Anında Görüntü Kırpma",
+                "hero.description": "Görüntülerinizi belirli boyutlara kırpmak için ücretsiz çevrimiçi araç. Önceden ayarlanmış en boy oranlarından seçin veya özel boyutlar belirleyin. Kayıt gerekmez.",
+                "howto.title": "Görüntülerinizi Nasıl Kırparsınız",
+                "howto.step1.title": "Görüntünüzü Yükleyin",
+                "howto.step1.description": "Yükleme alanına tıklayın veya görüntü dosyanızı sürükleyip bırakın. JPG, PNG, GIF, WEBP ve daha fazlasını destekliyoruz.",
+                "howto.step2.title": "En Boy Oranını Seçin",
+                "howto.step2.description": "16:9, 4:3, 1:1 gibi önceden ayarlanmış en boy oranlarından seçin veya serbest kırpma için özel boyutlar belirleyin.",
+                "howto.step3.title": "Ayarla ve Kırp",
+                "howto.step3.description": "Görüntünüzdeki kırpma alanını ayarlayın, ardından görüntünüzü işlemek için kırp düğmesine tıklayın.",
+                "howto.step4.title": "Sonucu İndir",
+                "howto.step4.description": "Kırpılmış görüntünüzü tek tıklamayla indirin. Filigran yok, kayıt gerekmez.",
+                "cropper.title": "Görüntü Kırpma Aracı",
+                "cropper.upload.text": "Görüntünüzü buraya sürükleyip bırakın veya gözatmak için tıklayın",
+                "cropper.upload.button": "Görüntü Seç",
+                "cropper.options.title": "Kırpma Seçenekleri",
+                "cropper.aspectRatio.title": "En Boy Oranı",
+                "cropper.aspectRatio.free": "Serbest",
+                "cropper.format.title": "Çıkış Formatı",
+                "cropper.preview.title": "Önizleme",
+                "cropper.preview.original": "Orijinal",
+                "cropper.preview.cropped": "Kırpılmış",
+                "cropper.processing": "İşleniyor: 0%",
+                "cropper.crop": "Görüntüyü Kırp",
+                "cropper.download": "İndir",
+                "cropper.reset": "Sıfırla",
+                "cropper.controls.move": "Taşı",
+                "cropper.controls.crop": "Kırpma Alanı",
+                "cropper.controls.zoomIn": "Yakınlaştır",
+                "cropper.controls.zoomOut": "Uzaklaştır",
+                "cropper.controls.rotateLeft": "Sola Döndür",
+                "cropper.controls.rotateRight": "Sağa Döndür",
+                "cropper.controls.reset": "Görünümü Sıfırla",
+                "footer.follow": "BİZİ TAKİP EDİN",
+                "footer.categories": "Popüler Kategoriler",
+                "footer.categories.pdf": "PDF Araçları",
+                "footer.categories.image": "Görüntü Araçları",
+                "footer.categories.text": "Metin Araçları",
+                "footer.categories.av": "Ses/Video Araçları",
+                "footer.categories.web": "Web/Geliştirici Araçları",
+                "footer.categories.calc": "Hesap Makinesi Araçları",
+                "footer.categories.util": "Yardımcı Araçlar",
+                "footer.categories.color": "Renk Araçları",
+                "footer.quicklinks": "Hızlı Bağlantılar",
+                "footer.links.tools": "Tüm Araçlar",
+                "footer.links.faq": "SSS",
+                "footer.links.contact": "İletişim",
+                "footer.links.privacy": "Gizlilik Politikası",
+                "footer.links.disclaimer": "Feragatname",
+                "footer.links.terms": "Hizmet Şartları",
+                "footer.copyright": "© 2025 LollyPoPDF. Tüm hakları saklıdır."
+            },
+            uk: {
+                "nav.home": "Головна",
+                "nav.about": "Про нас",
+                "nav.tools": "Інструменти",
+                "nav.contact": "Контакт",
+                "hero.title": "Безкоштовне Обрізання Зображень Миттєво",
+                "hero.description": "Безкоштовний онлайн-інструмент для обрізання ваших зображень до певних розмірів. Виберіть із попередньо встановлених співвідношень сторін або встановіть власні розміри. Без реєстрації.",
+                "howto.title": "Як Обрізати Ваші Зображення",
+                "howto.step1.title": "Завантажте Ваше Зображення",
+                "howto.step1.description": "Натисніть на область завантаження або перетягніть файл зображення. Ми підтримуємо JPG, PNG, GIF, WEBP та інші.",
+                "howto.step2.title": "Виберіть Співвідношення Сторін",
+                "howto.step2.description": "Виберіть із попередньо встановлених співвідношень сторін, таких як 16:9, 4:3, 1:1, або встановіть власні розміри для вільного обрізання.",
+                "howto.step3.title": "Налаштуйте та Обріжте",
+                "howto.step3.description": "Налаштуйте область обрізання на вашому зображенні, потім натисніть кнопку обрізати, щоб обробити ваше зображення.",
+                "howto.step4.title": "Завантажте Результат",
+                "howto.step4.description": "Завантажте ваше обрізане зображення одним натисканням кнопки. Без водяних знаків, без реєстрації.",
+                "cropper.title": "Інструмент для Обрізання Зображень",
+                "cropper.upload.text": "Перетягніть ваше зображення сюди або натисніть, щоб переглянути",
+                "cropper.upload.button": "Вибрати Зображення",
+                "cropper.options.title": "Параметри Обрізання",
+                "cropper.aspectRatio.title": "Співвідношення Сторін",
+                "cropper.aspectRatio.free": "Вільне",
+                "cropper.format.title": "Вихідний Формат",
+                "cropper.preview.title": "Попередній Перегляд",
+                "cropper.preview.original": "Оригінал",
+                "cropper.preview.cropped": "Обрізане",
+                "cropper.processing": "Обробка: 0%",
+                "cropper.crop": "Обрізати Зображення",
+                "cropper.download": "Завантажити",
+                "cropper.reset": "Скинути",
+                "cropper.controls.move": "Перемістити",
+                "cropper.controls.crop": "Область Обрізання",
+                "cropper.controls.zoomIn": "Збільшити",
+                "cropper.controls.zoomOut": "Зменшити",
+                "cropper.controls.rotateLeft": "Повернути Ліворуч",
+                "cropper.controls.rotateRight": "Повернути Праворуч",
+                "cropper.controls.reset": "Скинути Вигляд",
+                "footer.follow": "СЛІДКУЙТЕ ЗА НАМИ",
+                "footer.categories": "Популярні Категорії",
+                "footer.categories.pdf": "Інструменти PDF",
+                "footer.categories.image": "Інструменти Зображень",
+                "footer.categories.text": "Текстові Інструменти",
+                "footer.categories.av": "Аудіо/Відео Інструменти",
+                "footer.categories.web": "Веб/Розробницькі Інструменти",
+                "footer.categories.calc": "Інструменти Калькулятора",
+                "footer.categories.util": "Утилітарні Інструменти",
+                "footer.categories.color": "Інструменти Кольору",
+                "footer.quicklinks": "Швидкі Посилання",
+                "footer.links.tools": "Всі Інструменти",
+                "footer.links.faq": "ЧаПи",
+                "footer.links.contact": "Контакт",
+                "footer.links.privacy": "Політика Конфіденційності",
+                "footer.links.disclaimer": "Відмова від Відповідальності",
+                "footer.links.terms": "Умови Використання",
+                "footer.copyright": "© 2025 LollyPoPDF. Всі права захищені."
+            },
+            vi: {
+                "nav.home": "Trang Chủ",
+                "nav.about": "Về Chúng Tôi",
+                "nav.tools": "Công Cụ",
+                "nav.contact": "Liên Hệ",
+                "hero.title": "Cắt Ảnh Miễn Phí Ngay Lập Tức",
+                "hero.description": "Công cụ trực tuyến miễn phí để cắt ảnh của bạn theo kích thước cụ thể. Chọn từ tỷ lệ khung hình được đặt trước hoặc đặt kích thước tùy chỉnh. Không cần đăng ký.",
+                "howto.title": "Cách Cắt Ảnh Của Bạn",
+                "howto.step1.title": "Tải Ảnh Lên",
+                "howto.step1.description": "Nhấp vào khu vực tải lên hoặc kéo và thả tệp ảnh của bạn. Chúng tôi hỗ trợ JPG, PNG, GIF, WEBP và nhiều hơn nữa.",
+                "howto.step2.title": "Chọn Tỷ Lệ Khung Hình",
+                "howto.step2.description": "Chọn từ các tỷ lệ khung hình được đặt trước như 16:9, 4:3, 1:1 hoặc đặt kích thước tùy chỉnh để cắt tự do.",
+                "howto.step3.title": "Điều Chỉnh & Cắt",
+                "howto.step3.description": "Điều chỉnh vùng cắt trên ảnh của bạn, sau đó nhấp vào nút cắt để xử lý ảnh của bạn.",
+                "howto.step4.title": "Tải Kết Quả",
+                "howto.step4.description": "Tải ảnh đã cắt của bạn bằng một cú nhấp chuột. Không có hình mờ, không cần đăng ký.",
+                "cropper.title": "Công Cụ Cắt Ảnh",
+                "cropper.upload.text": "Kéo và thả ảnh của bạn vào đây hoặc nhấp để duyệt",
+                "cropper.upload.button": "Chọn Ảnh",
+                "cropper.options.title": "Tùy Chọn Cắt",
+                "cropper.aspectRatio.title": "Tỷ Lệ Khung Hình",
+                "cropper.aspectRatio.free": "Tự Do",
+                "cropper.format.title": "Định Dạng Đầu Ra",
+                "cropper.preview.title": "Xem Trước",
+                "cropper.preview.original": "Gốc",
+                "cropper.preview.cropped": "Đã Cắt",
+                "cropper.processing": "Đang xử lý: 0%",
+                "cropper.crop": "Cắt Ảnh",
+                "cropper.download": "Tải Xuống",
+                "cropper.reset": "Đặt Lại",
+                "cropper.controls.move": "Di Chuyển",
+                "cropper.controls.crop": "Vùng Cắt",
+                "cropper.controls.zoomIn": "Phóng To",
+                "cropper.controls.zoomOut": "Thu Nhỏ",
+                "cropper.controls.rotateLeft": "Xoay Trái",
+                "cropper.controls.rotateRight": "Xoay Phải",
+                "cropper.controls.reset": "Đặt Lại Giao Diện",
+                "footer.follow": "THEO DÕI CHÚNG TÔI",
+                "footer.categories": "Danh Mục Phổ Biến",
+                "footer.categories.pdf": "Công Cụ PDF",
+                "footer.categories.image": "Công Cụ Hình Ảnh",
+                "footer.categories.text": "Công Cụ Văn Bản",
+                "footer.categories.av": "Công Cụ Âm Thanh/Video",
+                "footer.categories.web": "Công Cụ Web/Nhà Phát Triển",
+                "footer.categories.calc": "Công Cụ Máy Tính",
+                "footer.categories.util": "Công Cụ Tiện Ích",
+                "footer.categories.color": "Công Cụ Màu Sắc",
+                "footer.quicklinks": "Liên Kết Nhanh",
+                "footer.links.tools": "Tất Cả Công Cụ",
+                "footer.links.faq": "Câu Hỏi Thường Gặp",
+                "footer.links.contact": "Liên Hệ",
+                "footer.links.privacy": "Chính Sách Bảo Mật",
+                "footer.links.disclaimer": "Tuyên Bố Miễn Trừ Trách Nhiệm",
+                "footer.links.terms": "Điều Khoản Dịch Vụ",
+                "footer.copyright": "© 2025 LollyPoPDF. Tất cả các quyền được bảo lưu."
+            },
+            is: {
+                "nav.home": "Heim",
+                "nav.about": "Um Okkur",
+                "nav.tools": "Verkfæri",
+                "nav.contact": "Hafa Samband",
+                "hero.title": "Ókeypis Skurður Mynda Augnabliks",
+                "hero.description": "Ókeypis netverkfæri til að skera myndirnar þínar í ákveðnar stærðir. Veldu úr fyrirfram stilltum hlutföllum eða stilltu sérsniðnar stærðir. Engin skráning krafist.",
+                "howto.title": "Hvernig á að Skera Myndir Þínar",
+                "howto.step1.title": "Hladdu Upp Myndinni Þinni",
+                "howto.step1.description": "Smelltu á upphleðslusvæðið eða dragðu og slepptu myndaskránni þinni. Við styðjum JPG, PNG, GIF, WEBP og fleira.",
+                "howto.step2.title": "Veldu Hlutfall",
+                "howto.step2.description": "Veldu úr fyrirfram stilltum hlutföllum eins og 16:9, 4:3, 1:1 eða stilltu sérsniðnar stærðir fyrir frjálsan skurð.",
+                "howto.step3.title": "Stilltu og Skerðu",
+                "howto.step3.description": "Stilltu skurðarsvæðið á myndinni þinni, smelltu síðan á skera hnappinn til að vinna úr myndinni þinni.",
+                "howto.step4.title": "Halaðu Niður Niðurstöðu",
+                "howto.step4.description": "Halaðu niður skornu myndinni þinni með einum smelli. Engin vatnsmerki, engin skráning krafist.",
+                "cropper.title": "Myndaskerðingarverkfæri",
+                "cropper.upload.text": "Dragðu og slepptu myndinni þinni hér eða smelltu til að skoða",
+                "cropper.upload.button": "Veldu Mynd",
+                "cropper.options.title": "Skurðarvalkostir",
+                "cropper.aspectRatio.title": "Hlutfall",
+                "cropper.aspectRatio.free": "Frjálst",
+                "cropper.format.title": "Úttaksform",
+                "cropper.preview.title": "Forskoðun",
+                "cropper.preview.original": "Upprunaleg",
+                "cropper.preview.cropped": "Skorið",
+                "cropper.processing": "Vinnsla: 0%",
+                "cropper.crop": "Skera Mynd",
+                "cropper.download": "Hala Niður",
+                "cropper.reset": "Endurstilla",
+                "cropper.controls.move": "Færa",
+                "cropper.controls.crop": "Skurðarsvæði",
+                "cropper.controls.zoomIn": "Þysja Inn",
+                "cropper.controls.zoomOut": "Þysja Út",
+                "cropper.controls.rotateLeft": "Snúa Til Vinstri",
+                "cropper.controls.rotateRight": "Snúa Til Hægri",
+                "cropper.controls.reset": "Endurstilla Sýn",
+                "footer.follow": "FYLGDU OKKUR",
+                "footer.categories": "Vinsælar Flokkar",
+                "footer.categories.pdf": "PDF Verkfæri",
+                "footer.categories.image": "Myndaverkfæri",
+                "footer.categories.text": "Textaverkfæri",
+                "footer.categories.av": "Hljóð/Myndband Verkfæri",
+                "footer.categories.web": "Vefur/Þróun Verkfæri",
+                "footer.categories.calc": "Reiknivélarverkfæri",
+                "footer.categories.util": "Gagnleg Verkfæri",
+                "footer.categories.color": "Litverkfæri",
+                "footer.quicklinks": "Flýtilankar",
+                "footer.links.tools": "Öll Verkfæri",
+                "footer.links.faq": "Algengar Spurningar",
+                "footer.links.contact": "Hafa Samband",
+                "footer.links.privacy": "Meðferðarstefna",
+                "footer.links.disclaimer": "Fyrirvari",
+                "footer.links.terms": "Þjónustuskilmálar",
+                "footer.copyright": "© 2025 LollyPoPDF. Öll réttindi áskilin."
+            },
+            no: {
+                "nav.home": "Hjem",
+                "nav.about": "Om Oss",
+                "nav.tools": "Verktøy",
+                "nav.contact": "Kontakt",
+                "hero.title": "Gratis Beskjæring av Bilder Øyeblikkelig",
+                "hero.description": "Gratis online verktøy for å beskjære bildene dine til spesifikke dimensjoner. Velg fra forhåndsinnstilte sideforhold eller angi egendefinerte dimensjoner. Ingen registrering kreves.",
+                "howto.title": "Hvordan Beskjære Bildene Dine",
+                "howto.step1.title": "Last Opp Bildet Ditt",
+                "howto.step1.description": "Klikk på opplastingsområdet eller dra og slipp bildefilen din. Vi støtter JPG, PNG, GIF, WEBP og mer.",
+                "howto.step2.title": "Velg Sideforhold",
+                "howto.step2.description": "Velg fra forhåndsinnstilte sideforhold som 16:9, 4:3, 1:1 eller angi egendefinerte dimensjoner for frihåndsbeskjæring.",
+                "howto.step3.title": "Juster og Beskjær",
+                "howto.step3.description": "Juster beskjæringsområdet på bildet ditt, klikk deretter på beskjær-knappen for å behandle bildet ditt.",
+                "howto.step4.title": "Last Ned Resultat",
+                "howto.step4.description": "Last ned det beskårne bildet ditt med ett klikk. Ingen vannmerker, ingen registrering kreves.",
+                "cropper.title": "Bildebeskjæringsverktøy",
+                "cropper.upload.text": "Dra og slipp bildet ditt her eller klikk for å bla",
+                "cropper.upload.button": "Velg Bilde",
+                "cropper.options.title": "Beskjæringsalternativer",
+                "cropper.aspectRatio.title": "Sideforhold",
+                "cropper.aspectRatio.free": "Frihånd",
+                "cropper.format.title": "Utdataformat",
+                "cropper.preview.title": "Forhåndsvisning",
+                "cropper.preview.original": "Original",
+                "cropper.preview.cropped": "Beskåret",
+                "cropper.processing": "Behandler: 0%",
+                "cropper.crop": "Beskjær Bilde",
+                "cropper.download": "Last Ned",
+                "cropper.reset": "Tilbakestill",
+                "cropper.controls.move": "Flytt",
+                "cropper.controls.crop": "Beskjæringsområde",
+                "cropper.controls.zoomIn": "Zoom Inn",
+                "cropper.controls.zoomOut": "Zoom Ut",
+                "cropper.controls.rotateLeft": "Roter Venstre",
+                "cropper.controls.rotateRight": "Roter Høyre",
+                "cropper.controls.reset": "Tilbakestill Visning",
+                "footer.follow": "FØLG OSS",
+                "footer.categories": "Populære Kategorier",
+                "footer.categories.pdf": "PDF-verktøy",
+                "footer.categories.image": "Bildeverktøy",
+                "footer.categories.text": "Tekstverktøy",
+                "footer.categories.av": "Lyd/Video Verktøy",
+                "footer.categories.web": "Web/Utvikler Verktøy",
+                "footer.categories.calc": "Kalkulatorverktøy",
+                "footer.categories.util": "Nytteverktøy",
+                "footer.categories.color": "Fargeverktøy",
+                "footer.quicklinks": "Hurtiglenker",
+                "footer.links.tools": "Alle Verktøy",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Kontakt",
+                "footer.links.privacy": "Personvernregler",
+                "footer.links.disclaimer": "Ansvarsfraskrivelse",
+                "footer.links.terms": "Tjenestevilkår",
+                "footer.copyright": "© 2025 LollyPoPDF. Alle rettigheter reservert."
+            },
+            sv: {
+                "nav.home": "Hem",
+                "nav.about": "Om Oss",
+                "nav.tools": "Verktyg",
+                "nav.contact": "Kontakt",
+                "hero.title": "Gratis Beskärning av Bilder Omedelbart",
+                "hero.description": "Gratis onlineverktyg för att beskära dina bilder till specifika dimensioner. Välj från förinställda bildförhållanden eller ställ in anpassade dimensioner. Ingen registrering krävs.",
+                "howto.title": "Hur man Beskär Dina Bilder",
+                "howto.step1.title": "Ladda Upp Din Bild",
+                "howto.step1.description": "Klicka på uppladdningsområdet eller dra och släpp din bildfil. Vi stöder JPG, PNG, GIF, WEBP och mer.",
+                "howto.step2.title": "Välj Bildförhållande",
+                "howto.step2.description": "Välj från förinställda bildförhållanden som 16:9, 4:3, 1:1 eller ställ in anpassade dimensioner för frihandsbeskärning.",
+                "howto.step3.title": "Justera & Beskär",
+                "howto.step3.description": "Justera beskärningsområdet på din bild, klicka sedan på beskär-knappen för att bearbeta din bild.",
+                "howto.step4.title": "Ladda Ner Resultat",
+                "howto.step4.description": "Ladda ner din beskurna bild med ett klick. Inga vattenstämplar, ingen registrering krävs.",
+                "cropper.title": "Bildbeskärningsverktyg",
+                "cropper.upload.text": "Dra och släpp din bild här eller klicka för att bläddra",
+                "cropper.upload.button": "Välj Bild",
+                "cropper.options.title": "Beskärningsalternativ",
+                "cropper.aspectRatio.title": "Bildförhållande",
+                "cropper.aspectRatio.free": "Frihand",
+                "cropper.format.title": "Utdataformat",
+                "cropper.preview.title": "Förhandsvisning",
+                "cropper.preview.original": "Original",
+                "cropper.preview.cropped": "Beskuren",
+                "cropper.processing": "Bearbetar: 0%",
+                "cropper.crop": "Beskär Bild",
+                "cropper.download": "Ladda Ner",
+                "cropper.reset": "Återställ",
+                "cropper.controls.move": "Flytta",
+                "cropper.controls.crop": "Beskärningsområde",
+                "cropper.controls.zoomIn": "Zooma In",
+                "cropper.controls.zoomOut": "Zooma Ut",
+                "cropper.controls.rotateLeft": "Rotera Vänster",
+                "cropper.controls.rotateRight": "Rotera Höger",
+                "cropper.controls.reset": "Återställ Vy",
+                "footer.follow": "FÖLJ OSS",
+                "footer.categories": "Populära Kategorier",
+                "footer.categories.pdf": "PDF-verktyg",
+                "footer.categories.image": "Bildverktyg",
+                "footer.categories.text": "Textverktyg",
+                "footer.categories.av": "Ljud/Video Verktyg",
+                "footer.categories.web": "Webb/Utvecklare Verktyg",
+                "footer.categories.calc": "Kalkylatorverktyg",
+                "footer.categories.util": "Verktyg för Verktyg",
+                "footer.categories.color": "Färgverktyg",
+                "footer.quicklinks": "Snabblänkar",
+                "footer.links.tools": "Alla Verktyg",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Kontakt",
+                "footer.links.privacy": "Integritetspolicy",
+                "footer.links.disclaimer": "Ansvarsfriskrivning",
+                "footer.links.terms": "Användarvillkor",
+                "footer.copyright": "© 2025 LollyPoPDF. Alla rättigheter förbehållna."
+            },
+            fi: {
+                "nav.home": "Koti",
+                "nav.about": "Tietoa Meistä",
+                "nav.tools": "Työkalut",
+                "nav.contact": "Yhteystiedot",
+                "hero.title": "Ilmainen Kuvien Rajaus Heti",
+                "hero.description": "Ilmainen online-työkalu kuviesi rajaamiseen tiettyihin mittoihin. Valitse esiasetetuista kuvasuhteista tai aseta mukautetut mitat. Ei rekisteröitymistä.",
+                "howto.title": "Kuinka Rajata Kuvasi",
+                "howto.step1.title": "Lataa Kuva",
+                "howto.step1.description": "Napsauta latausalueetta tai vedä ja pudota kuvatiedostosi. Tuemme JPG, PNG, GIF, WEBP ja muuta.",
+                "howto.step2.title": "Valitse Kuvasuhde",
+                "howto.step2.description": "Valitse esiasetetuista kuvasuhteista kuten 16:9, 4:3, 1:1 tai aseta mukautetut mitat vapaaseen rajaamiseen.",
+                "howto.step3.title": "Säädä & Rajaa",
+                "howto.step3.description": "Säädä rajausaluetta kuvassasi, napsauta sitten rajaa-painiketta käsitelläksesi kuvasi.",
+                "howto.step4.title": "Lataa Tulos",
+                "howto.step4.description": "Lataa rajattu kuvasi yhdellä napsautuksella. Ei vesileimoja, ei rekisteröitymistä.",
+                "cropper.title": "Kuvanrajaus työkalu",
+                "cropper.upload.text": "Vedä ja pudota kuvasi tähän tai napsauta selataksesi",
+                "cropper.upload.button": "Valitse Kuva",
+                "cropper.options.title": "Rajausvaihtoehdot",
+                "cropper.aspectRatio.title": "Kuvasuhde",
+                "cropper.aspectRatio.free": "Vapaa",
+                "cropper.format.title": "Tulostusmuoto",
+                "cropper.preview.title": "Esikatselu",
+                "cropper.preview.original": "Alkuperäinen",
+                "cropper.preview.cropped": "Rajattu",
+                "cropper.processing": "Käsitellään: 0%",
+                "cropper.crop": "Rajaa Kuva",
+                "cropper.download": "Lataa",
+                "cropper.reset": "Nollaa",
+                "cropper.controls.move": "Siirrä",
+                "cropper.controls.crop": "Rajausalue",
+                "cropper.controls.zoomIn": "Lähennä",
+                "cropper.controls.zoomOut": "Loitonna",
+                "cropper.controls.rotateLeft": "Kierrä Vasemmalle",
+                "cropper.controls.rotateRight": "Kierrä Oikealle",
+                "cropper.controls.reset": "Nollaa Näkymä",
+                "footer.follow": "SEURA MEITÄ",
+                "footer.categories": "Suositut Kategoriat",
+                "footer.categories.pdf": "PDF-työkalut",
+                "footer.categories.image": "Kuvatyökalut",
+                "footer.categories.text": "Tekstityökalut",
+                "footer.categories.av": "Ääni/Video Työkalut",
+                "footer.categories.web": "Web/Kehittäjä Työkalut",
+                "footer.categories.calc": "Laskurityökalut",
+                "footer.categories.util": "Aputyökalut",
+                "footer.categories.color": "Värityökalut",
+                "footer.quicklinks": "Pikalinkit",
+                "footer.links.tools": "Kaikki Työkalut",
+                "footer.links.faq": "UKK",
+                "footer.links.contact": "Yhteystiedot",
+                "footer.links.privacy": "Tietosuojakäytäntö",
+                "footer.links.disclaimer": "Vastuuvapauslauseke",
+                "footer.links.terms": "Käyttöehdot",
+                "footer.copyright": "© 2025 LollyPoPDF. Kaikki oikeudet pidätetään."
+            },
+            cs: {
+                "nav.home": "Domů",
+                "nav.about": "O Nás",
+                "nav.tools": "Nástroje",
+                "nav.contact": "Kontakt",
+                "hero.title": "Zdarma Ořezávání Obrázků Okamžitě",
+                "hero.description": "Bezplatný online nástroj pro ořezávání obrázků na specifické rozměry. Vyberte z přednastavených poměrů stran nebo nastavte vlastní rozměry. Bez registrace.",
+                "howto.title": "Jak Ořezat Vaše Obrázky",
+                "howto.step1.title": "Nahrajte Váš Obrázek",
+                "howto.step1.description": "Klikněte na oblast nahrávání nebo přetáhněte soubor obrázku. Podporujeme JPG, PNG, GIF, WEBP a další.",
+                "howto.step2.title": "Vyberte Poměr Stran",
+                "howto.step2.description": "Vyberte z přednastavených poměrů stran jako 16:9, 4:3, 1:1 nebo nastavte vlastní rozměry pro volné ořezávání.",
+                "howto.step3.title": "Upravte a Ořízněte",
+                "howto.step3.description": "Upravte oblast ořezu na vašem obrázku, poté klikněte na tlačítko oříznout pro zpracování obrázku.",
+                "howto.step4.title": "Stáhněte Výsledek",
+                "howto.step4.description": "Stáhněte váš oříznutý obrázek jedním kliknutím. Žádné vodoznaky, žádná registrace.",
+                "cropper.title": "Nástroj pro Ořezávání Obrázků",
+                "cropper.upload.text": "Přetáhněte váš obrázek sem nebo klikněte pro procházení",
+                "cropper.upload.button": "Vybrat Obrázek",
+                "cropper.options.title": "Možnosti Ořezávání",
+                "cropper.aspectRatio.title": "Poměr Stran",
+                "cropper.aspectRatio.free": "Volný",
+                "cropper.format.title": "Výstupní Formát",
+                "cropper.preview.title": "Náhled",
+                "cropper.preview.original": "Původní",
+                "cropper.preview.cropped": "Oříznutý",
+                "cropper.processing": "Zpracovávání: 0%",
+                "cropper.crop": "Oříznout Obrázek",
+                "cropper.download": "Stáhnout",
+                "cropper.reset": "Obnovit",
+                "cropper.controls.move": "Přesunout",
+                "cropper.controls.crop": "Oblast Ořezu",
+                "cropper.controls.zoomIn": "Přiblížit",
+                "cropper.controls.zoomOut": "Oddálit",
+                "cropper.controls.rotateLeft": "Otočit Doleva",
+                "cropper.controls.rotateRight": "Otočit Doprava",
+                "cropper.controls.reset": "Obnovit Pohled",
+                "footer.follow": "SLEDUJTE NÁS",
+                "footer.categories": "Populární Kategorie",
+                "footer.categories.pdf": "PDF Nástroje",
+                "footer.categories.image": "Obrázkové Nástroje",
+                "footer.categories.text": "Textové Nástroje",
+                "footer.categories.av": "Audio/Video Nástroje",
+                "footer.categories.web": "Web/Vývojářské Nástroje",
+                "footer.categories.calc": "Kalkulační Nástroje",
+                "footer.categories.util": "Užitkové Nástroje",
+                "footer.categories.color": "Barevné Nástroje",
+                "footer.quicklinks": "Rychlé Odkazy",
+                "footer.links.tools": "Všechny Nástroje",
+                "footer.links.faq": "Často Kladené Otázky",
+                "footer.links.contact": "Kontakt",
+                "footer.links.privacy": "Zásady Ochrany Osobních Údajů",
+                "footer.links.disclaimer": "Odmítnutí Odpovědnosti",
+                "footer.links.terms": "Podmínky Služby",
+                "footer.copyright": "© 2025 LollyPoPDF. Všechna práva vyhrazena."
+            }
+            
+        };
+
+        // Function to change language
+        function changeLanguage(langCode) {
+            const langData = translations[langCode];
+            if (!langData) return;
+            
+            // Update all elements with data-i18n attribute
+            document.querySelectorAll('[data-i18n]').forEach(element => {
+                const key = element.getAttribute('data-i18n');
+                if (langData[key]) {
+                    element.textContent = langData[key];
+                }
+            });
+            
+            // Update current language display
+            currentLanguageElement.textContent = languages.find(lang => lang.code === langCode)?.name || 'English';
+            
+            // Save language preference
+            localStorage.setItem('language', langCode);
+        }
+
+        // Initialize language
+        const savedLanguage = localStorage.getItem('language') || 'en';
+        changeLanguage(savedLanguage);
+        
+        // Language selection handler
+        languageDropdown.addEventListener('click', (e) => {
+            if (e.target.classList.contains('language-option')) {
+                const langCode = e.target.getAttribute('data-lang');
+                changeLanguage(langCode);
+            }
+        });
+    </script>
+</body>
+</html>

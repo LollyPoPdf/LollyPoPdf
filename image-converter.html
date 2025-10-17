@@ -202,6 +202,49 @@
             color: var(--header-text);
         }
 
+        /* Mobile Menu */
+        .mobile-menu {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            width: 100%;
+            background-color: var(--white);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            z-index: 999;
+        }
+
+        .dark-mode .mobile-menu {
+            background-color: var(--bg-secondary);
+        }
+
+        .mobile-menu.active {
+            display: block;
+        }
+
+        .mobile-menu ul {
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .mobile-menu a {
+            display: block;
+            padding: 10px 0;
+            font-weight: 500;
+            color: var(--header-text);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .dark-mode .mobile-menu a {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .mobile-menu a:hover {
+            color: var(--accent-color);
+        }
+
         /* Hero Section */
         .hero {
             background-color: var(--secondary-color);
@@ -673,7 +716,7 @@
             bottom: 50px;
             left: 0;
             width: 100%;
-            height: 1px;
+            height: 2px;
             background-color: rgba(255, 255, 255, 0.2);
         }
 
@@ -816,9 +859,9 @@
             <nav>
                 <ul>
                     <li><a href="https://lollypopdf.com#home" class="nav-link" data-i18n="nav.home">Home</a></li>
-                    <li><a href="https://lollypopdf.github.io/LollyPoPdf#about" class="nav-link" data-i18n="nav.about">About Us</a></li>
+                    <li><a href="https://lollypopdf.com#about" class="nav-link" data-i18n="nav.about">About Us</a></li>
                     <li><a href="https://lollypopdf.com#tools" class="nav-link" data-i18n="nav.tools">Tools</a></li>
-                    <li><a href="contact.html" class="nav-link" data-i18n="nav.contact">Contact</a></li>
+                    <li><a href="https://lollypopdf.com#contact" class="nav-link" data-i18n="nav.contact">Contact</a></li>
                 </ul>
             </nav>
             
@@ -827,10 +870,20 @@
                 <button class="theme-toggle" id="themeToggle">
                     <i class="fas fa-moon"></i>
                 </button>
-                <button class="mobile-menu-btn">
+                <button class="mobile-menu-btn" id="mobileMenuBtn">
                     <i class="fas fa-bars"></i>
                 </button>
             </div>
+        </div>
+        
+        <!-- Mobile Menu -->
+        <div class="mobile-menu" id="mobileMenu">
+            <ul>
+                <li><a href="https://lollypopdf.com#home" class="nav-link" data-i18n="nav.home">Home</a></li>
+                <li><a href="https://lollypopdf.github.io/LollyPoPdf#about" class="nav-link" data-i18n="nav.about">About Us</a></li>
+                <li><a href="https://lollypopdf.com#tools" class="nav-link" data-i18n="nav.tools">Tools</a></li>
+                <li><a href="contact.html" class="nav-link" data-i18n="nav.contact">Contact</a></li>
+            </ul>
         </div>
     </header>
 
@@ -1070,6 +1123,30 @@
                 themeToggle.innerHTML = '<i class="fas fa-moon"></i>';
                 localStorage.setItem('theme', 'light');
             }
+        });
+
+        // Mobile Menu Toggle
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const mobileMenu = document.getElementById('mobileMenu');
+        
+        mobileMenuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('active');
+            
+            // Change icon based on menu state
+            if (mobileMenu.classList.contains('active')) {
+                mobileMenuBtn.innerHTML = '<i class="fas fa-times"></i>';
+            } else {
+                mobileMenuBtn.innerHTML = '<i class="fas fa-bars"></i>';
+            }
+        });
+
+        // Close mobile menu when clicking on a link
+        const mobileMenuLinks = mobileMenu.querySelectorAll('a');
+        mobileMenuLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                mobileMenu.classList.remove('active');
+                mobileMenuBtn.innerHTML = '<i class="fas fa-bars"></i>';
+            });
         });
 
         // Image Converter Functionality
@@ -1733,7 +1810,7 @@
                 "footer.links.privacy": "プライバシーポリシー",
                 "footer.links.disclaimer": "免責事項",
                 "footer.links.terms": "利用規約",
-                "footer.copyright": "© 2025 LollyPoPDF. All rights reserved."
+                "footer.copyright": "© 2025 LollyPoPDF. 無断転載を禁じます."
             },
             ru: {
                 "nav.home": "Главная",
@@ -1839,7 +1916,7 @@
                 "footer.links.privacy": "개인정보 보호정책",
                 "footer.links.disclaimer": "면책 조항",
                 "footer.links.terms": "이용 약관",
-                "footer.copyright": "© 2025 LollyPoPDF. All rights reserved."
+                "footer.copyright": "© 2025 LollyPoPDF. 모든 권리 보유."
             },
             "zh-CN": {
                 "nav.home": "首页",

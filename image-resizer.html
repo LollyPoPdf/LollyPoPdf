@@ -1,0 +1,3083 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Resizer | LollyPoPdf</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #9370db;
+            --primary-dark: #8a2be2;
+            --secondary-color: #f0ebff;
+            --text-color: #333333;
+            --text-light: #6b7280;
+            --bg-color: #ffffff;
+            --bg-secondary: #f9f9f9;
+            --border-radius: 12px;
+            --transition: all 0.3s ease;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --header-height: 80px;
+            --white: #ffffff;
+            --header-text: #6b7280;
+            --accent-color: #9370db;
+        }
+
+        .dark-mode {
+            --primary-color: #a391f2;
+            --primary-dark: #8a2be2;
+            --secondary-color: #2d2d2d;
+            --text-color: #f0f0f0;
+            --text-light: #a0a0a0;
+            --bg-color: #1a1a1a;
+            --bg-secondary: #2d2d2d;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+            --white: #1a1a1a;
+            --header-text: #a0a0a0;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            transition: var(--transition);
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        ul {
+            list-style: none;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header Styles */
+        header {
+            background-color: var(--white);
+            color: var(--header-text);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+        }
+
+        .logo-icon {
+            position: relative;
+            width: 40px;
+            height: 40px;
+        }
+
+        .logo-circle {
+            width: 40px;
+            height: 40px;
+            border-radius: 40%;
+            background: linear-gradient(to bottom right, #9370db, #8a2be2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .logo-stem {
+            position: absolute;
+            bottom: -17px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 6px;
+            height: 17px;
+            background-color: #8a2be2;
+            border-radius: 0 0 3px 3px;
+        }
+
+        .logo-text {
+            font-size: 24px;
+            font-weight: bold;
+            color: #9370db;
+        }
+
+        nav ul {
+            display: flex;
+            gap: 30px;
+            list-style: none;
+        }
+
+        nav a {
+            font-weight: 500;
+            position: relative;
+            color: var(--header-text);
+            padding: 8px 0;
+            border-radius: 0;
+            transition: var(--transition);
+            text-decoration: none;
+        }
+
+        nav a:hover {
+            color: var(--accent-color);
+        }
+
+        nav a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: var(--accent-color);
+            transition: width 0.3s ease;
+        }
+
+        nav a:hover::after {
+            width: 100%;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .email {
+            font-size: 14px;
+            color: var(--header-text);
+        }
+
+        .theme-toggle {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 20px;
+            color: var(--header-text);
+            padding: 8px;
+            border-radius: 50%;
+            transition: var(--transition);
+        }
+
+        .theme-toggle:hover {
+            background-color: #f0ebff;
+            color: var(--accent-color);
+        }
+
+        .dark-mode .theme-toggle:hover {
+            background-color: #2d3748;
+            color: var(--accent-color);
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--header-text);
+        }
+
+        /* Mobile Menu */
+        .mobile-menu {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            width: 100%;
+            background-color: var(--white);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            z-index: 999;
+        }
+
+        .dark-mode .mobile-menu {
+            background-color: var(--bg-secondary);
+        }
+
+        .mobile-menu.active {
+            display: block;
+        }
+
+        .mobile-menu ul {
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .mobile-menu a {
+            display: block;
+            padding: 10px 0;
+            font-weight: 500;
+            color: var(--header-text);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .dark-mode .mobile-menu a {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .mobile-menu a:hover {
+            color: var(--accent-color);
+        }
+
+        /* Hero Section */
+        .hero {
+            background-color: var(--secondary-color);
+            padding: 60px 0;
+            text-align: center;
+        }
+
+        .dark-mode .hero {
+            background: linear-gradient(135deg, #2a1a4a, #3d2a6d);
+        }
+
+        .hero h1 {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            color: #000;
+        }
+
+        .dark-mode .hero h1 {
+            color: var(--text-color);
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            color: var(--text-color);
+            max-width: 700px;
+            margin: 0 auto 30px;
+        }
+
+        /* How to Resize Section */
+        .how-to-section {
+            padding: 80px 0;
+            background-color: var(--bg-color);
+        }
+
+        .dark-mode .how-to-section {
+            background-color: var(--bg-secondary);
+        }
+
+        .section-title {
+            font-size: 2rem;
+            text-align: center;
+            margin-bottom: 40px;
+            color: #000000;
+        }
+
+        .dark-mode .section-title {
+            color: var(--text-color);
+        }
+
+        .steps-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 40px;
+        }
+
+        .step-box {
+            background-color: var(--bg-secondary);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            padding: 30px;
+            min-height: 200px;
+            position: relative;
+        }
+
+        .step-number {
+            width: 40px;
+            height: 40px;
+            background-color: var(--primary-color);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 16px;
+            margin-bottom: 15px;
+        }
+
+        .step-title {
+            font-size: 18px;
+            color: #000000;
+            margin-bottom: 10px;
+        }
+
+        .dark-mode .step-title {
+            color: var(--text-color);
+        }
+
+        .step-description {
+            font-size: 14px;
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        /* Resizer Tool */
+        .resizer-section {
+            padding: 80px 0;
+            background-color: var(--secondary-color);
+        }
+
+        .dark-mode .resizer-section {
+            background: linear-gradient(135deg, #2a1a4a, #3d2a6d);
+        }
+
+        .resizer-title {
+            font-size: 2.5rem;
+            text-align: center;
+            margin-bottom: 40px;
+            color: #a391f2;
+        }
+
+        .dark-mode .resizer-title {
+            color: #a391f2;
+        }
+
+        .resizer-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: var(--bg-color);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            padding: 40px;
+        }
+
+        .upload-area {
+            border: 2px dashed var(--primary-color);
+            border-radius: var(--border-radius);
+            padding: 40px 20px;
+            text-align: center;
+            margin-bottom: 30px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .upload-area:hover {
+            background-color: var(--secondary-color);
+        }
+
+        .upload-icon {
+            font-size: 48px;
+            color: var(--primary-color);
+            margin-bottom: 15px;
+        }
+
+        .upload-text {
+            margin-bottom: 15px;
+        }
+
+        .upload-btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: var(--transition);
+        }
+
+        .upload-btn:hover {
+            background-color: var(--primary-dark);
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        .dimensions-selection {
+            margin-bottom: 30px;
+            display: none;
+        }
+
+        .dimensions-title {
+            margin-bottom: 15px;
+            color: var(--primary-color);
+        }
+
+        .dimension-inputs {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .dimension-group {
+            flex: 1;
+            min-width: 150px;
+        }
+
+        .dimension-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: var(--text-color);
+        }
+
+        .dimension-input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid var(--primary-color);
+            border-radius: var(--border-radius);
+            background-color: var(--bg-secondary);
+            color: var(--text-color);
+            font-size: 16px;
+        }
+
+        .dimension-input:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(147, 112, 219, 0.3);
+        }
+
+        .aspect-ratio-toggle {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .toggle-label {
+            font-size: 14px;
+            color: var(--text-color);
+        }
+
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 24px;
+        }
+
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .toggle-slider {
+            background-color: var(--primary-color);
+        }
+
+        input:checked + .toggle-slider:before {
+            transform: translateX(26px);
+        }
+
+        .preview-container {
+            display: none;
+            margin-bottom: 30px;
+        }
+
+        .preview-title {
+            margin-bottom: 15px;
+            color: var(--primary-color);
+        }
+
+        .preview-images {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .preview-box {
+            flex: 1;
+            min-width: 250px;
+            text-align: center;
+        }
+
+        .preview-label {
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        .preview-img {
+            max-width: 100%;
+            max-height: 300px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+        }
+
+        .file-info {
+            margin-top: 10px;
+            font-size: 14px;
+            color: var(--text-light);
+        }
+
+        .action-buttons {
+            display: none;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .action-btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: var(--transition);
+            flex: 1;
+            min-width: 150px;
+        }
+
+        .resize-btn {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .resize-btn:hover {
+            background-color: var(--primary-dark);
+        }
+
+        .download-btn {
+            background-color: white;
+            color: var(--primary-color);
+            border: 2px solid var(--primary-color);
+        }
+
+        .download-btn:hover {
+            background-color: var(--secondary-color);
+        }
+
+        .reset-btn {
+            background-color: var(--text-light);
+            color: white;
+        }
+
+        .reset-btn:hover {
+            background-color: #5a6268;
+        }
+
+        .processing {
+            display: none;
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .spinner {
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            border-left-color: var(--primary-color);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background-color: var(--bg-secondary);
+            border-radius: 4px;
+            margin: 15px 0;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background-color: var(--primary-color);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .progress-text {
+            font-size: 14px;
+            color: var(--text-light);
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Footer */
+        footer {
+            background-color: #000000;
+            color: white;
+            padding: 60px 0 80px;
+            position: relative;
+        }
+
+        .footer-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 60px;
+        }
+
+        .footer-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            text-decoration: none;
+        }
+
+        .footer-logo .logo-icon {
+            width: 40px;
+            height: 40px;
+        }
+
+        .footer-logo .logo-text {
+            color: #9370db;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .footer-section h3 {
+            color: white;
+            font-weight: 600;
+            font-size: 20px;
+            margin-bottom: 20px;
+        }
+
+        .footer-section h4 {
+            color: #9370db;
+            font-size: 18px;
+            margin-bottom: 15px;
+        }
+
+        .footer-links li {
+            margin-bottom: 10px;
+        }
+
+        .footer-links a {
+            color: white;
+        }
+
+        .footer-links a:hover {
+            color: #9370db;
+        }
+
+        .social-icons {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .social-icon {
+            width: 40px;
+            height: 40px;
+            background-color: #9370db;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+        }
+
+        .social-icon:hover {
+            background-color: #8a2be2;
+            transform: translateY(-3px);
+        }
+
+        .copyright {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            color: #f9f7ff;
+            font-size: 12px;
+        }
+
+        .footer-line {
+            position: absolute;
+            bottom: 50px;
+            left: 0;
+            width: 100%;
+            height: 1px;
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        /* Language Switcher */
+        .language-switcher {
+            position: fixed;
+            bottom: 10px;
+            right: 10px;
+            z-index: 1000;
+        }
+
+        .language-btn {
+            background-color: #9370db;
+            color: white;
+            border: none;
+            border-radius: 30px;
+            padding: 5px 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .language-dropdown {
+            position: absolute;
+            bottom: 100%;
+            right: 0;
+            width: 300px;
+            background-color: white;
+            border-radius: var(--border-radius);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            display: none;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .dark-mode .language-dropdown {
+            background-color: var(--bg-secondary);
+        }
+
+        .language-switcher:hover .language-dropdown {
+            display: grid;
+        }
+
+        .language-option {
+            padding: 8px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            text-align: center;
+            font-size: 14px;
+        }
+
+        .language-option:hover {
+            background-color: white;
+            color: #9370db;
+        }
+
+        .dark-mode .language-option:hover {
+            background-color: var(--bg-color);
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 992px) {
+            .steps-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .footer-container {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            nav ul, .email {
+                display: none;
+            }
+            
+            .mobile-menu-btn {
+                display: block;
+            }
+            
+            .hero h1, .resizer-title {
+                font-size: 2rem;
+            }
+            
+            .hero p {
+                font-size: 1rem;
+            }
+            
+            .dimension-inputs {
+                flex-direction: column;
+            }
+            
+            .preview-images {
+                flex-direction: column;
+            }
+            
+            .language-dropdown {
+                width: 250px;
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .footer-container {
+                grid-template-columns: 1fr;
+                gap: 40px;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .resizer-container {
+                padding: 20px;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+            
+            .action-btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container header-container">
+            <a href="https://lollypopdf.com" class="logo">
+                <div class="logo-icon">
+                    <div class="logo-circle">LPdf</div>
+                    <div class="logo-stem"></div>
+                </div>
+                <span class="logo-text">LollyPoPdf</span>
+            </a>
+            
+            <nav>
+                <ul>
+                    <li><a href="https://lollypopdf.com#home" class="nav-link" data-i18n="nav.home">Home</a></li>
+                    <li><a href="https://lollypopdf.com#about" class="nav-link" data-i18n="nav.about">About Us</a></li>
+                    <li><a href="https://lollypopdf.com#tools" class="nav-link" data-i18n="nav.tools">Tools</a></li>
+                    <li><a href="https://lollypopdf.com#contact" class="nav-link" data-i18n="nav.contact">Contact</a></li>
+                </ul>
+            </nav>
+            
+            <div class="header-right">
+                <span class="email">lollypoppdf@gmail.com</span>
+                <button class="theme-toggle" id="themeToggle">
+                    <i class="fas fa-moon"></i>
+                </button>
+                <button class="mobile-menu-btn" id="mobileMenuBtn">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </div>
+        
+        <!-- Mobile Menu -->
+        <div class="mobile-menu" id="mobileMenu">
+            <ul>
+                <li><a href="https://lollypopdf.com#home" class="nav-link" data-i18n="nav.home">Home</a></li>
+                <li><a href="https://lollypopdf.github.io/LollyPoPdf#about" class="nav-link" data-i18n="nav.about">About Us</a></li>
+                <li><a href="https://lollypopdf.github.io/LollyPoPdf#tools" class="nav-link" data-i18n="nav.tools">Tools</a></li>
+                <li><a href="contact.html" class="nav-link" data-i18n="nav.contact">Contact</a></li>
+            </ul>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <h1 data-i18n="hero.title">Free Resize Images Instantly</h1>
+            <p data-i18n="hero.description">Free online tool to resize your images to specific dimensions. Maintain aspect ratio or customize width and height. No registration required.</p>
+        </div>
+    </section>
+
+    <!-- How to Resize Section -->
+    <section class="how-to-section">
+        <div class="container">
+            <h2 class="section-title" data-i18n="howto.title">How to Resize your Images</h2>
+            <div class="steps-container">
+                <div class="step-box">
+                    <div class="step-number">1</div>
+                    <h3 class="step-title" data-i18n="howto.step1.title">Upload Your Image</h3>
+                    <p class="step-description" data-i18n="howto.step1.description">Click the upload area or drag and drop your image file. We support JPG, PNG, GIF, WEBP and more.</p>
+                </div>
+                <div class="step-box">
+                    <div class="step-number">2</div>
+                    <h3 class="step-title" data-i18n="howto.step2.title">Set Dimensions</h3>
+                    <p class="step-description" data-i18n="howto.step2.description">Enter your desired width and height. Toggle aspect ratio lock to maintain proportions automatically.</p>
+                </div>
+                <div class="step-box">
+                    <div class="step-number">3</div>
+                    <h3 class="step-title" data-i18n="howto.step3.title">Preview & Resize</h3>
+                    <p class="step-description" data-i18n="howto.step3.description">See a preview of your original and resized image side by side, then click the resize button.</p>
+                </div>
+                <div class="step-box">
+                    <div class="step-number">4</div>
+                    <h3 class="step-title" data-i18n="howto.step4.title">Download Result</h3>
+                    <p class="step-description" data-i18n="howto.step4.description">Download your resized image with the click of a button. No watermarks, no registration required.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Resizer Tool -->
+    <section class="resizer-section">
+        <div class="container">
+            <h2 class="resizer-title" data-i18n="resizer.title">Image Resizer Tool</h2>
+            <div class="resizer-container">
+                <div class="upload-area" id="uploadArea">
+                    <i class="fas fa-cloud-upload-alt upload-icon"></i>
+                    <p class="upload-text" data-i18n="resizer.upload.text">Drag & drop your image here or click to browse</p>
+                    <button class="upload-btn" data-i18n="resizer.upload.button">Select Image</button>
+                    <input type="file" id="fileInput" class="file-input" accept="image/*">
+                </div>
+                
+                <div class="dimensions-selection" id="dimensionsSelection">
+                    <h3 class="dimensions-title" data-i18n="resizer.dimensions.title">Set Dimensions</h3>
+                    <div class="dimension-inputs">
+                        <div class="dimension-group">
+                            <label class="dimension-label" for="widthInput">Width (px)</label>
+                            <input type="number" id="widthInput" class="dimension-input" min="1" max="10000" placeholder="Width">
+                        </div>
+                        <div class="dimension-group">
+                            <label class="dimension-label" for="heightInput">Height (px)</label>
+                            <input type="number" id="heightInput" class="dimension-input" min="1" max="10000" placeholder="Height">
+                        </div>
+                    </div>
+                    <div class="aspect-ratio-toggle">
+                        <span class="toggle-label" data-i18n="resizer.aspectRatio">Maintain aspect ratio</span>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="aspectRatioToggle" checked>
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                </div>
+                
+                <div class="preview-container" id="previewContainer">
+                    <h3 class="preview-title" data-i18n="resizer.preview.title">Preview</h3>
+                    <div class="preview-images">
+                        <div class="preview-box">
+                            <div class="preview-label" data-i18n="resizer.preview.original">Original</div>
+                            <img id="originalPreview" class="preview-img" src="" alt="Original Image">
+                            <div class="file-info" id="originalInfo"></div>
+                        </div>
+                        <div class="preview-box">
+                            <div class="preview-label" data-i18n="resizer.preview.resized">Resized</div>
+                            <img id="resizedPreview" class="preview-img" src="" alt="Resized Image">
+                            <div class="file-info" id="resizedInfo"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="processing" id="processing">
+                    <div class="spinner"></div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progressFill"></div>
+                    </div>
+                    <p class="progress-text" id="progressText" data-i18n="resizer.processing">Processing: 0%</p>
+                </div>
+                
+                <div class="action-buttons" id="actionButtons">
+                    <button class="action-btn resize-btn" id="resizeBtn" data-i18n="resizer.resize">Resize Image</button>
+                    <button class="action-btn download-btn" id="downloadBtn" data-i18n="resizer.download">Download</button>
+                    <button class="action-btn reset-btn" id="resetBtn" data-i18n="resizer.reset">Reset</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container footer-container">
+            <!-- Left Section -->
+            <div class="footer-section">
+                <a href="https://lollypopdf.com" class="footer-logo">
+                    <div class="logo-icon">
+                        <div class="logo-circle">LPdf</div>
+                        <div class="logo-stem"></div>
+                    </div>
+                    <span class="logo-text">LollyPoPdf</span>
+                </a>
+                <h3 data-i18n="footer.follow">FOLLOW US</h3>
+                <div class="social-icons">
+                    <a href="https://facebook.com/lollypopdf" class="social-icon"><i class="fab fa-facebook-f"></i></a>
+                    <a href="https://linkedin.com/company/lollypopdf" class="social-icon"><i class="fab fa-linkedin-in"></i></a>
+                    <a href="https://twitter.com/lollypopdf" class="social-icon"><i class="fab fa-twitter"></i></a>
+                    <a href="https://instagram.com/lollypopdf" class="social-icon"><i class="fab fa-instagram"></i></a>
+                    <a href="https://pinterest.com/lollypopdf" class="social-icon"><i class="fab fa-pinterest-p"></i></a>
+                </div>
+            </div>
+            
+            <!-- Middle Section - Popular Categories -->
+            <div class="footer-section">
+                <h4 data-i18n="footer.categories">Popular Categories</h4>
+                <ul class="footer-links">
+                    <li><a href="https://lollypopdf.com#pdf-tools" data-i18n="footer.categories.pdf">PDF Tools</a></li>
+                    <li><a href="https://lollypopdf.com#image-tools" data-i18n="footer.categories.image">Image Tools</a></li>
+                    <li><a href="https://lollypopdf.com#text-tools" data-i18n="footer.categories.text">Text Tools</a></li>
+                    <li><a href="https://lollypopdf.com#audio-video-tools" data-i18n="footer.categories.av">Audio/Video Tools</a></li>
+                    <li><a href="https://lollypopdf.com#web-developer-tools" data-i18n="footer.categories.web">WebDeveloper Tools</a></li>
+                    <li><a href="https://lollypopdf.com#calculator-tools" data-i18n="footer.categories.calc">Calculator Tools</a></li>
+                    <li><a href="https://lollypopdf.com#utility-tools" data-i18n="footer.categories.util">Utility Tools</a></li>
+                    <li><a href="https://lollypopdf.com#color-tools" data-i18n="footer.categories.color">Color Tools</a></li>
+                </ul>
+            </div>
+            
+            <!-- Right Section - Quick Links -->
+            <div class="footer-section">
+                <h4 data-i18n="footer.quicklinks">Quick Links</h4>
+                <ul class="footer-links">
+                    <li><a href="https://lollypopdf.com#home" data-i18n="nav.home">Home</a></li>
+                    <li><a href="tools.html" data-i18n="footer.links.tools">All Tools</a></li>
+                    <li><a href="faq.html" data-i18n="footer.links.faq">FAQ</a></li>
+                    <li><a href="contact.html" data-i18n="footer.links.contact">Contact</a></li>
+                    <li><a href="privacy-policy.html" data-i18n="footer.links.privacy">Privacy Policy</a></li>
+                    <li><a href="disclaimer.html" data-i18n="footer.links.disclaimer">Disclaimer</a></li>
+                    <li><a href="terms.html" data-i18n="footer.links.terms">Terms of Service</a></li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="footer-line"></div>
+        <div class="copyright" data-i18n="footer.copyright">© 2025 LollyPoPDF. All rights reserved.</div>
+    </footer>
+
+    <!-- Language Switcher -->
+    <div class="language-switcher">
+        <button class="language-btn">
+            <i class="fas fa-globe"></i>
+            <span id="currentLanguage">English</span>
+        </button>
+        <div class="language-dropdown">
+            <div class="language-option" data-lang="en">English</div>
+            <div class="language-option" data-lang="es">Español</div>
+            <div class="language-option" data-lang="fr">Français</div>
+            <div class="language-option" data-lang="de">Deutsch</div>
+            <div class="language-option" data-lang="it">Italiano</div>
+            <div class="language-option" data-lang="pt">Português</div>
+            <div class="language-option" data-lang="ja">日本語</div>
+            <div class="language-option" data-lang="ru">Pусский</div>
+            <div class="language-option" data-lang="ko">한국어</div>
+            <div class="language-option" data-lang="zh-CN">中文 (简体)</div>
+            <div class="language-option" data-lang="zh-TW">中文 (繁體)</div>
+            <div class="language-option" data-lang="ar">العربية</div>
+            <div class="language-option" data-lang="fa">فارسی</div>
+            <div class="language-option" data-lang="bg">Български</div>
+            <div class="language-option" data-lang="ca">Català</div>
+            <div class="language-option" data-lang="nl">Nederlands</div>
+            <div class="language-option" data-lang="el">Ελληνικά</div>
+            <div class="language-option" data-lang="hi">हिन्दी</div>
+            <div class="language-option" data-lang="te">తెలుగు</div>
+            <div class="language-option" data-lang="kn">ಕನ್ನಡ</div>
+            <div class="language-option" data-lang="ta">தமிழ்</div>
+            <div class="language-option" data-lang="ml">മലയാളം</div>
+            <div class="language-option" data-lang="id">Bahasa Indonesia</div>
+            <div class="language-option" data-lang="ms">Bahasa Melayu</div>
+            <div class="language-option" data-lang="pl">Polski</div>
+            <div class="language-option" data-lang="th">ภาษาไทย</div>
+            <div class="language-option" data-lang="tr">Türkçe</div>
+            <div class="language-option" data-lang="uk">Українська</div>
+            <div class="language-option" data-lang="vi">Tiếng Việt</div>
+            <div class="language-option" data-lang="is">Íslenska</div>
+            <div class="language-option" data-lang="no">Norsk</div>
+            <div class="language-option" data-lang="sv">Svenska</div>
+            <div class="language-option" data-lang="fi">Suomi</div>
+            <div class="language-option" data-lang="cs">Čeština</div>
+        </div>
+    </div>
+
+    <script>
+        // Theme Toggle
+        const themeToggle = document.getElementById('themeToggle');
+        const body = document.body;
+        
+        // Check for saved theme preference or respect OS preference
+        const savedTheme = localStorage.getItem('theme') || 
+            (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        
+        if (savedTheme === 'dark') {
+            body.classList.add('dark-mode');
+            themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+        }
+        
+        themeToggle.addEventListener('click', () => {
+            body.classList.toggle('dark-mode');
+            const isDarkMode = body.classList.contains('dark-mode');
+            
+            if (isDarkMode) {
+                themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+                localStorage.setItem('theme', 'dark');
+            } else {
+                themeToggle.innerHTML = '<i class="fas fa-moon"></i>';
+                localStorage.setItem('theme', 'light');
+            }
+        });
+
+        // Mobile Menu Toggle
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const mobileMenu = document.getElementById('mobileMenu');
+        
+        mobileMenuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('active');
+            
+            // Change icon based on menu state
+            if (mobileMenu.classList.contains('active')) {
+                mobileMenuBtn.innerHTML = '<i class="fas fa-times"></i>';
+            } else {
+                mobileMenuBtn.innerHTML = '<i class="fas fa-bars"></i>';
+            }
+        });
+
+        // Close mobile menu when clicking on a link
+        const mobileMenuLinks = mobileMenu.querySelectorAll('a');
+        mobileMenuLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                mobileMenu.classList.remove('active');
+                mobileMenuBtn.innerHTML = '<i class="fas fa-bars"></i>';
+            });
+        });
+
+        // Image Resizer Functionality
+        const uploadArea = document.getElementById('uploadArea');
+        const fileInput = document.getElementById('fileInput');
+        const originalPreview = document.getElementById('originalPreview');
+        const resizedPreview = document.getElementById('resizedPreview');
+        const originalInfo = document.getElementById('originalInfo');
+        const resizedInfo = document.getElementById('resizedInfo');
+        const previewContainer = document.getElementById('previewContainer');
+        const resizeBtn = document.getElementById('resizeBtn');
+        const downloadBtn = document.getElementById('downloadBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        const processing = document.getElementById('processing');
+        const progressFill = document.getElementById('progressFill');
+        const progressText = document.getElementById('progressText');
+        const dimensionsSelection = document.getElementById('dimensionsSelection');
+        const actionButtons = document.getElementById('actionButtons');
+        const widthInput = document.getElementById('widthInput');
+        const heightInput = document.getElementById('heightInput');
+        const aspectRatioToggle = document.getElementById('aspectRatioToggle');
+        
+        let currentFile = null;
+        let resizedBlob = null;
+        let originalWidth = 0;
+        let originalHeight = 0;
+        let aspectRatio = 1;
+        
+        // Upload area click handler
+        uploadArea.addEventListener('click', () => {
+            fileInput.click();
+        });
+        
+        // File input change handler
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                handleFile(e.target.files[0]);
+            }
+        });
+        
+        // Drag and drop functionality
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.style.backgroundColor = 'var(--secondary-color)';
+        });
+        
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.style.backgroundColor = '';
+        });
+        
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.style.backgroundColor = '';
+            
+            if (e.dataTransfer.files.length > 0) {
+                handleFile(e.dataTransfer.files[0]);
+            }
+        });
+        
+        // Handle the selected file - NO FILE SIZE LIMITS
+        function handleFile(file) {
+            // Check if file is an image
+            if (!file.type.match('image.*')) {
+                alert('Please select an image file (JPG, PNG, GIF, etc.)');
+                return;
+            }
+            
+            // NO FILE SIZE LIMITS - UNLIMITED USE
+            currentFile = file;
+            
+            // Display original image preview
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                originalPreview.src = e.target.result;
+                originalInfo.textContent = `${file.name} (${formatFileSize(file.size)})`;
+                previewContainer.style.display = 'block';
+                
+                // Get image dimensions
+                const img = new Image();
+                img.onload = function() {
+                    originalWidth = this.width;
+                    originalHeight = this.height;
+                    aspectRatio = originalWidth / originalHeight;
+                    
+                    // Set default dimensions
+                    widthInput.value = originalWidth;
+                    heightInput.value = originalHeight;
+                    
+                    // Show the resizer options after image is uploaded
+                    dimensionsSelection.style.display = 'block';
+                    actionButtons.style.display = 'flex';
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+        
+        // Aspect ratio handling
+        widthInput.addEventListener('input', () => {
+            if (aspectRatioToggle.checked && widthInput.value) {
+                heightInput.value = Math.round(widthInput.value / aspectRatio);
+            }
+        });
+        
+        heightInput.addEventListener('input', () => {
+            if (aspectRatioToggle.checked && heightInput.value) {
+                widthInput.value = Math.round(heightInput.value * aspectRatio);
+            }
+        });
+        
+        // Resize the image
+        function resizeImage() {
+            if (!currentFile) {
+                alert('Please select an image first');
+                return;
+            }
+            
+            const newWidth = parseInt(widthInput.value);
+            const newHeight = parseInt(heightInput.value);
+            
+            if (!newWidth || !newHeight || newWidth <= 0 || newHeight <= 0) {
+                alert('Please enter valid width and height values');
+                return;
+            }
+            
+            if (newWidth > 10000 || newHeight > 10000) {
+                alert('Maximum dimension size is 10000px');
+                return;
+            }
+            
+            processing.style.display = 'block';
+            resizeBtn.disabled = true;
+            
+            // Reset progress
+            updateProgress(0);
+            
+            // Simulate progress steps
+            let progress = 0;
+            const progressInterval = setInterval(() => {
+                progress += 5;
+                updateProgress(progress);
+                
+                if (progress >= 100) {
+                    clearInterval(progressInterval);
+                    performResize(newWidth, newHeight);
+                }
+            }, 50);
+        }
+        
+        // Update progress bar and text
+        function updateProgress(percent) {
+            progressFill.style.width = `${percent}%`;
+            progressText.textContent = `Processing: ${percent}%`;
+        }
+        
+        // Perform the actual resize
+        function performResize(newWidth, newHeight) {
+            const img = new Image();
+            img.onload = () => {
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                
+                // Set canvas dimensions
+                canvas.width = newWidth;
+                canvas.height = newHeight;
+                
+                // Draw image on canvas with new dimensions
+                ctx.drawImage(img, 0, 0, newWidth, newHeight);
+                
+                // Convert to blob
+                canvas.toBlob((blob) => {
+                    resizedBlob = blob;
+                    const resizedUrl = URL.createObjectURL(blob);
+                    
+                    resizedPreview.src = resizedUrl;
+                    resizedInfo.textContent = `resized_${newWidth}x${newHeight}.${getFileExtension(currentFile.name)} (${formatFileSize(blob.size)})`;
+                    
+                    processing.style.display = 'none';
+                    resizeBtn.disabled = false;
+                }, currentFile.type);
+            };
+            
+            img.src = URL.createObjectURL(currentFile);
+        }
+        
+        // Format file size
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+        
+        // Get file extension
+        function getFileExtension(filename) {
+            return filename.split('.').pop();
+        }
+        
+        // Resize button handler
+        resizeBtn.addEventListener('click', resizeImage);
+        
+        // Download button handler
+        downloadBtn.addEventListener('click', () => {
+            if (!resizedBlob) {
+                alert('Please resize an image first');
+                return;
+            }
+            
+            const newWidth = parseInt(widthInput.value);
+            const newHeight = parseInt(heightInput.value);
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(resizedBlob);
+            a.download = `resized_${newWidth}x${newHeight}.${getFileExtension(currentFile.name)}`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        });
+        
+        // Reset button handler
+        resetBtn.addEventListener('click', () => {
+            currentFile = null;
+            resizedBlob = null;
+            fileInput.value = '';
+            originalPreview.src = '';
+            resizedPreview.src = '';
+            originalInfo.textContent = '';
+            resizedInfo.textContent = '';
+            previewContainer.style.display = 'none';
+            processing.style.display = 'none';
+            resizeBtn.disabled = false;
+            
+            // Hide resizer options
+            dimensionsSelection.style.display = 'none';
+            actionButtons.style.display = 'none';
+            
+            // Reset progress
+            updateProgress(0);
+            
+            // Reset dimensions
+            widthInput.value = '';
+            heightInput.value = '';
+            aspectRatioToggle.checked = true;
+        });
+
+        // Language Switcher
+        const languageBtn = document.querySelector('.language-btn');
+        const currentLanguageElement = document.getElementById('currentLanguage');
+        const languageDropdown = document.querySelector('.language-dropdown');
+        
+        const languages = [
+            { code: 'en', name: 'English' },
+            { code: 'es', name: 'Español' },
+            { code: 'fr', name: 'Français' },
+            { code: 'de', name: 'Deutsch' },
+            { code: 'it', name: 'Italiano' },
+            { code: 'pt', name: 'Português' },
+            { code: 'ja', name: '日本語' },
+            { code: 'ru', name: 'Pусский' },
+            { code: 'ko', name: '한국어' },
+            { code: 'zh-CN', name: '中文 (简体)' },
+            { code: 'zh-TW', name: '中文 (繁體)' },
+            { code: 'ar', name: 'العربية' },
+            { code: 'fa', name: 'فارسی' },
+            { code: 'bg', name: 'Български' },
+            { code: 'ca', name: 'Català' },
+            { code: 'nl', name: 'Nederlands' },
+            { code: 'el', name: 'Ελληνικά' },
+            { code: 'hi', name: 'हिन्दी' },
+            { code: 'te', name: 'తెలుగు' },
+            { code: 'kn', name: 'ಕನ್ನಡ' },
+            { code: 'ta', name: 'தமிழ்' },
+            { code: 'ml', name: 'മലയാളം' },
+            { code: 'id', name: 'Bahasa Indonesia' },
+            { code: 'ms', name: 'Bahasa Melayu' },
+            { code: 'pl', name: 'Polski' },
+            { code: 'th', name: 'ภาษาไทย' },
+            { code: 'tr', name: 'Türkçe' },
+            { code: 'uk', name: 'Українська' },
+            { code: 'vi', name: 'Tiếng Việt' },
+            { code: 'is', name: 'Íslenska' },
+            { code: 'no', name: 'Norsk' },
+            { code: 'sv', name: 'Svenska' },
+            { code: 'fi', name: 'Suomi' },
+            { code: 'cs', name: 'Čeština' }
+        ];
+        
+        // Translation data (all languages included as before)
+        const translations = {
+            en: {
+                "nav.home": "Home",
+                "nav.about": "About Us",
+                "nav.tools": "Tools",
+                "nav.contact": "Contact",
+                "hero.title": "Free Resize Images Instantly",
+                "hero.description": "Free online tool to resize your images to specific dimensions. Maintain aspect ratio or customize width and height. No registration required.",
+                "howto.title": "How to Resize your Images",
+                "howto.step1.title": "Upload Your Image",
+                "howto.step1.description": "Click the upload area or drag and drop your image file. We support JPG, PNG, GIF, WEBP and more.",
+                "howto.step2.title": "Set Dimensions",
+                "howto.step2.description": "Enter your desired width and height. Toggle aspect ratio lock to maintain proportions automatically.",
+                "howto.step3.title": "Preview & Resize",
+                "howto.step3.description": "See a preview of your original and resized image side by side, then click the resize button.",
+                "howto.step4.title": "Download Result",
+                "howto.step4.description": "Download your resized image with the click of a button. No watermarks, no registration required.",
+                "resizer.title": "Image Resizer Tool",
+                "resizer.upload.text": "Drag & drop your image here or click to browse",
+                "resizer.upload.button": "Select Image",
+                "resizer.dimensions.title": "Set Dimensions",
+                "resizer.aspectRatio": "Maintain aspect ratio",
+                "resizer.preview.title": "Preview",
+                "resizer.preview.original": "Original",
+                "resizer.preview.resized": "Resized",
+                "resizer.processing": "Processing: 0%",
+                "resizer.resize": "Resize Image",
+                "resizer.download": "Download",
+                "resizer.reset": "Reset",
+                "footer.follow": "FOLLOW US",
+                "footer.categories": "Popular Categories",
+                "footer.categories.pdf": "PDF Tools",
+                "footer.categories.image": "Image Tools",
+                "footer.categories.text": "Text Tools",
+                "footer.categories.av": "Audio/Video Tools",
+                "footer.categories.web": "Web/Developer Tools",
+                "footer.categories.calc": "Calculator Tools",
+                "footer.categories.util": "Utility Tools",
+                "footer.categories.color": "Color Tools",
+                "footer.quicklinks": "Quick Links",
+                "footer.links.tools": "All Tools",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Contact",
+                "footer.links.privacy": "Privacy Policy",
+                "footer.links.disclaimer": "Disclaimer",
+                "footer.links.terms": "Terms of Service",
+                "footer.copyright": "© 2025 LollyPoPDF. All rights reserved."
+            },
+            es: {
+                "nav.home": "Inicio",
+                "nav.about": "Sobre Nosotros",
+                "nav.tools": "Herramientas",
+                "nav.contact": "Contacto",
+                "hero.title": "Redimensionar Imágenes Gratis Instantáneamente",
+                "hero.description": "Herramienta online gratuita para redimensionar tus imágenes a dimensiones específicas. Mantén la relación de aspecto o personaliza ancho y alto. No se requiere registro.",
+                "howto.title": "Cómo Redimensionar tus Imágenes",
+                "howto.step1.title": "Sube Tu Imagen",
+                "howto.step1.description": "Haz clic en el área de carga o arrastra y suelta tu archivo de imagen. Admitimos JPG, PNG, GIF, WEBP y más.",
+                "howto.step2.title": "Establece Dimensiones",
+                "howto.step2.description": "Ingresa el ancho y alto deseados. Activa el bloqueo de relación de aspecto para mantener las proporciones automáticamente.",
+                "howto.step3.title": "Vista Previa y Redimensionar",
+                "howto.step3.description": "Ve una vista previa de tu imagen original y redimensionada lado a lado, luego haz clic en el botón redimensionar.",
+                "howto.step4.title": "Descargar Resultado",
+                "howto.step4.description": "Descarga tu imagen redimensionada con un clic. Sin marcas de agua, sin registro requerido.",
+                "resizer.title": "Herramienta de Redimensionado de Imágenes",
+                "resizer.upload.text": "Arrastra y suelta tu imagen aquí o haz clic para buscar",
+                "resizer.upload.button": "Seleccionar Imagen",
+                "resizer.dimensions.title": "Establecer Dimensiones",
+                "resizer.aspectRatio": "Mantener relación de aspecto",
+                "resizer.preview.title": "Vista Previa",
+                "resizer.preview.original": "Original",
+                "resizer.preview.resized": "Redimensionado",
+                "resizer.processing": "Procesando: 0%",
+                "resizer.resize": "Redimensionar Imagen",
+                "resizer.download": "Descargar",
+                "resizer.reset": "Restablecer",
+                "footer.follow": "SÍGUENOS",
+                "footer.categories": "Categorías Populares",
+                "footer.categories.pdf": "Herramientas PDF",
+                "footer.categories.image": "Herramientas de Imagen",
+                "footer.categories.text": "Herramientas de Texto",
+                "footer.categories.av": "Herramientas de Audio/Video",
+                "footer.categories.web": "Herramientas Web/Desarrollador",
+                "footer.categories.calc": "Herramientas de Calculadora",
+                "footer.categories.util": "Herramientas de Utilidad",
+                "footer.categories.color": "Herramientas de Color",
+                "footer.quicklinks": "Enlaces Rápidos",
+                "footer.links.tools": "Todas las Herramientas",
+                "footer.links.faq": "Preguntas Frecuentes",
+                "footer.links.contact": "Contacto",
+                "footer.links.privacy": "Política de Privacidad",
+                "footer.links.disclaimer": "Descargo de Responsabilidad",
+                "footer.links.terms": "Términos de Servicio",
+                "footer.copyright": "© 2025 LollyPoPDF. Todos los derechos reservados."
+            },
+            fr: {
+                "nav.home": "Accueil",
+                "nav.about": "À Propos",
+                "nav.tools": "Outils",
+                "nav.contact": "Contact",
+                "hero.title": "Redimensionner des Images Gratuitement Instantanément",
+                "hero.description": "Outil en ligne gratuit pour redimensionner vos images à des dimensions spécifiques. Conservez le ratio d'aspect ou personnalisez largeur et hauteur. Aucune inscription requise.",
+                "howto.title": "Comment Redimensionner vos Images",
+                "howto.step1.title": "Téléchargez Votre Image",
+                "howto.step1.description": "Cliquez sur la zone de téléchargement ou faites glisser et déposez votre fichier image. Nous prenons en charge JPG, PNG, GIF, WEBP et plus.",
+                "howto.step2.title": "Définir les Dimensions",
+                "howto.step2.description": "Entrez la largeur et la hauteur souhaitées. Activez le verrouillage du ratio d'aspect pour conserver automatiquement les proportions.",
+                "howto.step3.title": "Aperçu et Redimensionner",
+                "howto.step3.description": "Voyez un aperçu de votre image originale et redimensionnée côte à côte, puis cliquez sur le bouton redimensionner.",
+                "howto.step4.title": "Télécharger le Résultat",
+                "howto.step4.description": "Téléchargez votre image redimensionnée en un clic. Sans filigrane, sans inscription requise.",
+                "resizer.title": "Outil de Redimensionnement d'Images",
+                "resizer.upload.text": "Glissez-déposez votre image ici ou cliquez pour parcourir",
+                "resizer.upload.button": "Sélectionner une Image",
+                "resizer.dimensions.title": "Définir les Dimensions",
+                "resizer.aspectRatio": "Conserver le ratio d'aspect",
+                "resizer.preview.title": "Aperçu",
+                "resizer.preview.original": "Original",
+                "resizer.preview.resized": "Redimensionné",
+                "resizer.processing": "Traitement: 0%",
+                "resizer.resize": "Redimensionner l'Image",
+                "resizer.download": "Télécharger",
+                "resizer.reset": "Réinitialiser",
+                "footer.follow": "SUIVEZ-NOUS",
+                "footer.categories": "Catégories Populaires",
+                "footer.categories.pdf": "Outils PDF",
+                "footer.categories.image": "Outils d'Image",
+                "footer.categories.text": "Outils de Texte",
+                "footer.categories.av": "Outils Audio/Video",
+                "footer.categories.web": "Outils Web/Développeur",
+                "footer.categories.calc": "Outils de Calculatrice",
+                "footer.categories.util": "Outils d'Utilité",
+                "footer.categories.color": "Outils de Couleur",
+                "footer.quicklinks": "Liens Rapides",
+                "footer.links.tools": "Tous les Outils",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Contact",
+                "footer.links.privacy": "Politique de Confidentialité",
+                "footer.links.disclaimer": "Avertissement",
+                "footer.links.terms": "Conditions d'Utilisation",
+                "footer.copyright": "© 2025 LollyPoPDF. Tous droits réservés."
+            },
+            de: {
+                "nav.home": "Startseite",
+                "nav.about": "Über Uns",
+                "nav.tools": "Werkzeuge",
+                "nav.contact": "Kontakt",
+                "hero.title": "Kostenlos Bilder Sofort Größe Ändern",
+                "hero.description": "Kostenloses Online-Tool zum Ändern der Bildgröße auf bestimmte Abmessungen. Seitenverhältnis beibehalten oder Breite und Höhe anpassen. Keine Registrierung erforderlich.",
+                "howto.title": "So Ändern Sie die Größe Ihrer Bilder",
+                "howto.step1.title": "Laden Sie Ihr Bild Hoch",
+                "howto.step1.description": "Klicken Sie auf den Upload-Bereich oder ziehen Sie Ihre Bilddatei per Drag & Drop. Wir unterstützen JPG, PNG, GIF, WEBP und mehr.",
+                "howto.step2.title": "Abmessungen Festlegen",
+                "howto.step2.description": "Geben Sie die gewünschte Breite und Höhe ein. Schalten Sie das Seitenverhältnis-Sperre um, um Proportionen automatisch beizubehalten.",
+                "howto.step3.title": "Vorschau & Größe Ändern",
+                "howto.step3.description": "Sehen Sie eine Vorschau Ihres Original- und Größe-geänderten Bildes nebeneinander, dann klicken Sie auf die Schaltfläche Größe ändern.",
+                "howto.step4.title": "Ergebnis Herunterladen",
+                "howto.step4.description": "Laden Sie Ihr Größe-geändertes Bild mit einem Klick herunter. Keine Wasserzeichen, keine Registrierung erforderlich.",
+                "resizer.title": "Bildgrößenänderungs-Tool",
+                "resizer.upload.text": "Ziehen Sie Ihr Bild hierher oder klicken Sie zum Durchsuchen",
+                "resizer.upload.button": "Bild Auswählen",
+                "resizer.dimensions.title": "Abmessungen Festlegen",
+                "resizer.aspectRatio": "Seitenverhältnis beibehalten",
+                "resizer.preview.title": "Vorschau",
+                "resizer.preview.original": "Original",
+                "resizer.preview.resized": "Größe Geändert",
+                "resizer.processing": "Verarbeitung: 0%",
+                "resizer.resize": "Bildgröße Ändern",
+                "resizer.download": "Herunterladen",
+                "resizer.reset": "Zurücksetzen",
+                "footer.follow": "FOLGEN SIE UNS",
+                "footer.categories": "Beliebte Kategorien",
+                "footer.categories.pdf": "PDF-Tools",
+                "footer.categories.image": "Bild-Tools",
+                "footer.categories.text": "Text-Tools",
+                "footer.categories.av": "Audio/Video-Tools",
+                "footer.categories.web": "Web/Entwickler-Tools",
+                "footer.categories.calc": "Rechner-Tools",
+                "footer.categories.util": "Dienstprogramm-Tools",
+                "footer.categories.color": "Farb-Tools",
+                "footer.quicklinks": "Schnelllinks",
+                "footer.links.tools": "Alle Tools",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Kontakt",
+                "footer.links.privacy": "Datenschutzrichtlinie",
+                "footer.links.disclaimer": "Haftungsausschluss",
+                "footer.links.terms": "Nutzungsbedingungen",
+                "footer.copyright": "© 2025 LollyPoPDF. Alle Rechte vorbehalten."
+            },
+            it: {
+                "nav.home": "Home",
+                "nav.about": "Chi Siamo",
+                "nav.tools": "Strumenti",
+                "nav.contact": "Contatto",
+                "hero.title": "Ridimensiona Immagini Gratis Istantaneamente",
+                "hero.description": "Strumento online gratuito per ridimensionare le tue immagini a dimensioni specifiche. Mantieni le proporzioni o personalizza larghezza e altezza. Nessuna registrazione richiesta.",
+                "howto.title": "Come Ridimensionare le Tue Immagini",
+                "howto.step1.title": "Carica la Tua Immagine",
+                "howto.step1.description": "Clicca sull'area di caricamento o trascina e rilascia il tuo file immagine. Supportiamo JPG, PNG, GIF, WEBP e altro.",
+                "howto.step2.title": "Imposta Dimensioni",
+                "howto.step2.description": "Inserisci la larghezza e l'altezza desiderate. Attiva il blocco delle proporzioni per mantenerle automaticamente.",
+                "howto.step3.title": "Anteprima e Ridimensiona",
+                "howto.step3.description": "Vedi un'anteprima della tua immagine originale e ridimensionata affiancate, poi clicca sul pulsante ridimensiona.",
+                "howto.step4.title": "Scarica il Risultato",
+                "howto.step4.description": "Scarica la tua immagine ridimensionata con un clic. Nessuna filigrana, nessuna registrazione richiesta.",
+                "resizer.title": "Strumento di Ridimensionamento Immagini",
+                "resizer.upload.text": "Trascina e rilascia la tua immagine qui o clicca per sfogliare",
+                "resizer.upload.button": "Seleziona Immagine",
+                "resizer.dimensions.title": "Imposta Dimensioni",
+                "resizer.aspectRatio": "Mantieni proporzioni",
+                "resizer.preview.title": "Anteprima",
+                "resizer.preview.original": "Originale",
+                "resizer.preview.resized": "Ridimensionata",
+                "resizer.processing": "Elaborazione: 0%",
+                "resizer.resize": "Ridimensiona Immagine",
+                "resizer.download": "Scarica",
+                "resizer.reset": "Ripristina",
+                "footer.follow": "SEGUICI",
+                "footer.categories": "Categorie Popolari",
+                "footer.categories.pdf": "Strumenti PDF",
+                "footer.categories.image": "Strumenti Immagine",
+                "footer.categories.text": "Strumenti Testo",
+                "footer.categories.av": "Strumenti Audio/Video",
+                "footer.categories.web": "Strumenti Web/Sviluppatore",
+                "footer.categories.calc": "Strumenti Calcolatrice",
+                "footer.categories.util": "Strumenti Utilità",
+                "footer.categories.color": "Strumenti Colore",
+                "footer.quicklinks": "Link Rapidi",
+                "footer.links.tools": "Tutti gli Strumenti",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Contatto",
+                "footer.links.privacy": "Informativa sulla Privacy",
+                "footer.links.disclaimer": "Disclaimer",
+                "footer.links.terms": "Termini di Servizio",
+                "footer.copyright": "© 2025 LollyPoPDF. Tutti i diritti riservati."
+            },
+            pt: {
+                "nav.home": "Início",
+                "nav.about": "Sobre Nós",
+                "nav.tools": "Ferramentas",
+                "nav.contact": "Contato",
+                "hero.title": "Redimensionar Imagens Gratuitamente Instantaneamente",
+                "hero.description": "Ferramenta online gratuita para redimensionar suas imagens para dimensões específicas. Mantenha a proporção ou personalize largura e altura. Nenhum registro necessário.",
+                "howto.title": "Como Redimensionar suas Imagens",
+                "howto.step1.title": "Carregue Sua Imagem",
+                "howto.step1.description": "Clique na área de upload ou arraste e solte seu arquivo de imagem. Suportamos JPG, PNG, GIF, WEBP e mais.",
+                "howto.step2.title": "Definir Dimensões",
+                "howto.step2.description": "Insira a largura e altura desejadas. Ative o bloqueio de proporção para manter as proporções automaticamente.",
+                "howto.step3.title": "Pré-visualizar e Redimensionar",
+                "howto.step3.description": "Veja uma pré-visualização da sua imagem original e redimensionada lado a lado, depois clique no botão redimensionar.",
+                "howto.step4.title": "Baixar Resultado",
+                "howto.step4.description": "Baixe sua imagem redimensionada com um clique. Sem marcas d'água, sem registro necessário.",
+                "resizer.title": "Ferramenta de Redimensionamento de Imagens",
+                "resizer.upload.text": "Arraste e solte sua imagem aqui ou clique para procurar",
+                "resizer.upload.button": "Selecionar Imagem",
+                "resizer.dimensions.title": "Definir Dimensões",
+                "resizer.aspectRatio": "Manter proporção",
+                "resizer.preview.title": "Pré-visualização",
+                "resizer.preview.original": "Original",
+                "resizer.preview.resized": "Redimensionada",
+                "resizer.processing": "Processando: 0%",
+                "resizer.resize": "Redimensionar Imagem",
+                "resizer.download": "Baixar",
+                "resizer.reset": "Redefinir",
+                "footer.follow": "SIGA-NOS",
+                "footer.categories": "Categorias Populares",
+                "footer.categories.pdf": "Ferramentas PDF",
+                "footer.categories.image": "Ferramentas de Imagem",
+                "footer.categories.text": "Ferramentas de Texto",
+                "footer.categories.av": "Ferramentas de Áudio/Video",
+                "footer.categories.web": "Ferramentas Web/Desenvolvedor",
+                "footer.categories.calc": "Ferramentas de Calculadora",
+                "footer.categories.util": "Ferramentas de Utilidade",
+                "footer.categories.color": "Ferramentas de Cor",
+                "footer.quicklinks": "Links Rápidos",
+                "footer.links.tools": "Todas as Ferramentas",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Contato",
+                "footer.links.privacy": "Política de Privacidade",
+                "footer.links.disclaimer": "Aviso Legal",
+                "footer.links.terms": "Termos de Serviço",
+                "footer.copyright": "© 2025 LollyPoPDF. Todos os direitos reservados."
+            },
+            ja: {
+                "nav.home": "ホーム",
+                "nav.about": "会社概要",
+                "nav.tools": "ツール",
+                "nav.contact": "お問い合わせ",
+                "hero.title": "画像を無料で即時リサイズ",
+                "hero.description": "画像を特定のサイズにリサイズする無料オンラインツール。アスペクト比を維持するか、幅と高さをカスタマイズ。登録不要",
+                "howto.title": "画像リサイズ方法",
+                "howto.step1.title": "画像をアップロード",
+                "howto.step1.description": "アップロードエリアをクリックするか、画像ファイルをドラッグ＆ドロップしてください。JPG、PNG、GIF、WEBPなどをサポートしています。",
+                "howto.step2.title": "サイズを設定",
+                "howto.step2.description": "希望の幅と高さを入力してください。アスペクト比ロックをオンにすると自動的に比率を維持します。",
+                "howto.step3.title": "プレビューとリサイズ",
+                "howto.step3.description": "元画像とリサイズ後の画像を並べてプレビューし、リサイズボタンをクリックします。",
+                "howto.step4.title": "結果をダウンロード",
+                "howto.step4.description": "ワンクリックでリサイズした画像をダウンロード。透かしなし、登録不要。",
+                "resizer.title": "画像リサイズツール",
+                "resizer.upload.text": "画像をここにドラッグ＆ドロップするか、クリックして参照",
+                "resizer.upload.button": "画像を選択",
+                "resizer.dimensions.title": "サイズを設定",
+                "resizer.aspectRatio": "アスペクト比を維持",
+                "resizer.preview.title": "プレビュー",
+                "resizer.preview.original": "元画像",
+                "resizer.preview.resized": "リサイズ後",
+                "resizer.processing": "処理中: 0%",
+                "resizer.resize": "画像をリサイズ",
+                "resizer.download": "ダウンロード",
+                "resizer.reset": "リセット",
+                "footer.follow": "フォローする",
+                "footer.categories": "人気カテゴリー",
+                "footer.categories.pdf": "PDFツール",
+                "footer.categories.image": "画像ツール",
+                "footer.categories.text": "テキストツール",
+                "footer.categories.av": "オーディオ/ビデオツール",
+                "footer.categories.web": "Web/開発者ツール",
+                "footer.categories.calc": "計算機ツール",
+                "footer.categories.util": "ユーティリティツール",
+                "footer.categories.color": "カラーツール",
+                "footer.quicklinks": "クイックリンク",
+                "footer.links.tools": "すべてのツール",
+                "footer.links.faq": "よくある質問",
+                "footer.links.contact": "お問い合わせ",
+                "footer.links.privacy": "プライバシーポリシー",
+                "footer.links.disclaimer": "免責事項",
+                "footer.links.terms": "利用規約",
+                "footer.copyright": "© 2025 LollyPoPDF. 無断転載を禁じます."
+            },
+            ru: {
+                "nav.home": "Главная",
+                "nav.about": "О нас",
+                "nav.tools": "Инструменты",
+                "nav.contact": "Контакты",
+                "hero.title": "Бесплатно Изменение Размера Изображений Мгновенно",
+                "hero.description": "Бесплатный онлайн-инструмент для изменения размера ваших изображений до конкретных размеров. Сохраняйте соотношение сторон или настраивайте ширину и высоту. Без регистрации.",
+                "howto.title": "Как Изменить Размер Ваших Изображений",
+                "howto.step1.title": "Загрузите Ваше Изображение",
+                "howto.step1.description": "Нажмите на область загрузки или перетащите файл изображения. Мы поддерживаем JPG, PNG, GIF, WEBP и другие.",
+                "howto.step2.title": "Установите Размеры",
+                "howto.step2.description": "Введите желаемую ширину и высоту. Включите блокировку соотношения сторон для автоматического сохранения пропорций.",
+                "howto.step3.title": "Просмотр и Изменение Размера",
+                "howto.step3.description": "Посмотрите предварительный просмотр исходного и измененного изображения рядом, затем нажмите кнопку изменения размера.",
+                "howto.step4.title": "Скачать Результат",
+                "howto.step4.description": "Скачайте ваше измененное изображение одним щелчком. Без водяных знаков, без регистрации.",
+                "resizer.title": "Инструмент Изменения Размера Изображений",
+                "resizer.upload.text": "Перетащите изображение сюда или нажмите для выбора",
+                "resizer.upload.button": "Выбрать Изображение",
+                "resizer.dimensions.title": "Установить Размеры",
+                "resizer.aspectRatio": "Сохранить соотношение сторон",
+                "resizer.preview.title": "Предварительный Просмотр",
+                "resizer.preview.original": "Оригинал",
+                "resizer.preview.resized": "Измененный",
+                "resizer.processing": "Обработка: 0%",
+                "resizer.resize": "Изменить Размер Изображения",
+                "resizer.download": "Скачать",
+                "resizer.reset": "Сбросить",
+                "footer.follow": "СЛЕДУЙТЕ ЗА НАМИ",
+                "footer.categories": "Популярные Категории",
+                "footer.categories.pdf": "PDF Инструменты",
+                "footer.categories.image": "Инструменты для Изображений",
+                "footer.categories.text": "Текстовые Инструменты",
+                "footer.categories.av": "Аудио/Видео Инструменты",
+                "footer.categories.web": "Веб/Инструменты Разработчика",
+                "footer.categories.calc": "Инструменты Калькулятора",
+                "footer.categories.util": "Утилиты",
+                "footer.categories.color": "Цветовые Инструменты",
+                "footer.quicklinks": "Быстрые Ссылки",
+                "footer.links.tools": "Все Инструменты",
+                "footer.links.faq": "Часто Задаваемые Вопросы",
+                "footer.links.contact": "Контакты",
+                "footer.links.privacy": "Политика Конфиденциальности",
+                "footer.links.disclaimer": "Отказ от Ответственности",
+                "footer.links.terms": "Условия Использования",
+                "footer.copyright": "© 2025 LollyPoPDF. Все права защищены."
+            },
+            ko: {
+                "nav.home": "홈",
+                "nav.about": "회사 소개",
+                "nav.tools": "도구",
+                "nav.contact": "연락처",
+                "hero.title": "이미지 무료 즉시 크기 조정",
+                "hero.description": "이미지를 특정 크기로 조정하는 무료 온라인 도구. 종횡비 유지 또는 너비와 높이 사용자 지정. 등록 불필요",
+                "howto.title": "이미지 크기 조정 방법",
+                "howto.step1.title": "이미지 업로드",
+                "howto.step1.description": "업로드 영역을 클릭하거나 이미지 파일을 드래그 앤 드롭하세요. JPG, PNG, GIF, WEBP 등을 지원합니다.",
+                "howto.step2.title": "크기 설정",
+                "howto.step2.description": "원하는 너비와 높이를 입력하세요. 종횡비 잠금을 켜면 자동으로 비율을 유지합니다.",
+                "howto.step3.title": "미리보기 및 크기 조정",
+                "howto.step3.description": "원본과 크기 조정된 이미지를 나란히 미리 본 후 크기 조정 버튼을 클릭하세요.",
+                "howto.step4.title": "결과 다운로드",
+                "howto.step4.description": "한 번의 클릭으로 크기 조정된 이미지를 다운로드하세요. 워터마크 없음, 등록 불필요.",
+                "resizer.title": "이미지 크기 조정 도구",
+                "resizer.upload.text": "이미지를 여기에 드래그 앤 드롭하거나 클릭하여 찾아보기",
+                "resizer.upload.button": "이미지 선택",
+                "resizer.dimensions.title": "크기 설정",
+                "resizer.aspectRatio": "종횡비 유지",
+                "resizer.preview.title": "미리보기",
+                "resizer.preview.original": "원본",
+                "resizer.preview.resized": "크기 조정됨",
+                "resizer.processing": "처리 중: 0%",
+                "resizer.resize": "이미지 크기 조정",
+                "resizer.download": "다운로드",
+                "resizer.reset": "재설정",
+                "footer.follow": "팔로우하기",
+                "footer.categories": "인기 카테고리",
+                "footer.categories.pdf": "PDF 도구",
+                "footer.categories.image": "이미지 도구",
+                "footer.categories.text": "텍스트 도구",
+                "footer.categories.av": "오디오/비디오 도구",
+                "footer.categories.web": "웹/개발자 도구",
+                "footer.categories.calc": "계산기 도구",
+                "footer.categories.util": "유틸리티 도구",
+                "footer.categories.color": "색상 도구",
+                "footer.quicklinks": "빠른 링크",
+                "footer.links.tools": "모든 도구",
+                "footer.links.faq": "자주 묻는 질문",
+                "footer.links.contact": "연락처",
+                "footer.links.privacy": "개인정보 보호정책",
+                "footer.links.disclaimer": "면책 조항",
+                "footer.links.terms": "이용 약관",
+                "footer.copyright": "© 2025 LollyPoPDF. 모든 권리 보유."
+            },
+            "zh-CN": {
+                "nav.home": "首页",
+                "nav.about": "关于我们",
+                "nav.tools": "工具",
+                "nav.contact": "联系我们",
+                "hero.title": "免费即时调整图片大小",
+                "hero.description": "免费在线工具，可将图片调整为特定尺寸。保持宽高比或自定义宽度和高度。无需注册。",
+                "howto.title": "如何调整图片大小",
+                "howto.step1.title": "上传您的图片",
+                "howto.step1.description": "点击上传区域或拖放您的图片文件。我们支持JPG、PNG、GIF、WEBP等格式。",
+                "howto.step2.title": "设置尺寸",
+                "howto.step2.description": "输入所需的宽度和高度。切换宽高比锁定以自动保持比例。",
+                "howto.step3.title": "预览和调整大小",
+                "howto.step3.description": "并排查看原始和调整后的图片预览，然后单击调整大小按钮。",
+                "howto.step4.title": "下载结果",
+                "howto.step4.description": "一键下载调整后的图片。无水印，无需注册。",
+                "resizer.title": "图片大小调整工具",
+                "resizer.upload.text": "将图片拖放到此处或点击浏览",
+                "resizer.upload.button": "选择图片",
+                "resizer.dimensions.title": "设置尺寸",
+                "resizer.aspectRatio": "保持宽高比",
+                "resizer.preview.title": "预览",
+                "resizer.preview.original": "原始",
+                "resizer.preview.resized": "已调整大小",
+                "resizer.processing": "处理中: 0%",
+                "resizer.resize": "调整图片大小",
+                "resizer.download": "下载",
+                "resizer.reset": "重置",
+                "footer.follow": "关注我们",
+                "footer.categories": "热门类别",
+                "footer.categories.pdf": "PDF工具",
+                "footer.categories.image": "图片工具",
+                "footer.categories.text": "文本工具",
+                "footer.categories.av": "音频/视频工具",
+                "footer.categories.web": "网页/开发者工具",
+                "footer.categories.calc": "计算器工具",
+                "footer.categories.util": "实用工具",
+                "footer.categories.color": "颜色工具",
+                "footer.quicklinks": "快速链接",
+                "footer.links.tools": "所有工具",
+                "footer.links.faq": "常见问题",
+                "footer.links.contact": "联系我们",
+                "footer.links.privacy": "隐私政策",
+                "footer.links.disclaimer": "免责声明",
+                "footer.links.terms": "服务条款",
+                "footer.copyright": "© 2025 LollyPoPDF. 保留所有权利。"
+            },
+            "zh-TW": {
+                "nav.home": "首頁",
+                "nav.about": "關於我們",
+                "nav.tools": "工具",
+                "nav.contact": "聯絡我們",
+                "hero.title": "免費即時調整圖片大小",
+                "hero.description": "免費線上工具，可將圖片調整為特定尺寸。保持寬高比或自定義寬度和高度。無需註冊。",
+                "howto.title": "如何調整圖片大小",
+                "howto.step1.title": "上傳您的圖片",
+                "howto.step1.description": "點擊上傳區域或拖放您的圖片檔案。我們支援JPG、PNG、GIF、WEBP等格式。",
+                "howto.step2.title": "設定尺寸",
+                "howto.step2.description": "輸入所需的寬度和高度。切換寬高比鎖定以自動保持比例。",
+                "howto.step3.title": "預覽和調整大小",
+                "howto.step3.description": "並排查看原始和調整後的圖片預覽，然後點擊調整大小按鈕。",
+                "howto.step4.title": "下載結果",
+                "howto.step4.description": "一鍵下載調整後的圖片。無浮水印，無需註冊。",
+                "resizer.title": "圖片大小調整工具",
+                "resizer.upload.text": "將圖片拖放到此處或點擊瀏覽",
+                "resizer.upload.button": "選擇圖片",
+                "resizer.dimensions.title": "設定尺寸",
+                "resizer.aspectRatio": "保持寬高比",
+                "resizer.preview.title": "預覽",
+                "resizer.preview.original": "原始",
+                "resizer.preview.resized": "已調整大小",
+                "resizer.processing": "處理中: 0%",
+                "resizer.resize": "調整圖片大小",
+                "resizer.download": "下載",
+                "resizer.reset": "重置",
+                "footer.follow": "關注我們",
+                "footer.categories": "熱門類別",
+                "footer.categories.pdf": "PDF工具",
+                "footer.categories.image": "圖片工具",
+                "footer.categories.text": "文字工具",
+                "footer.categories.av": "音頻/視頻工具",
+                "footer.categories.web": "網頁/開發者工具",
+                "footer.categories.calc": "計算機工具",
+                "footer.categories.util": "實用工具",
+                "footer.categories.color": "顏色工具",
+                "footer.quicklinks": "快速連結",
+                "footer.links.tools": "所有工具",
+                "footer.links.faq": "常見問題",
+                "footer.links.contact": "聯絡我們",
+                "footer.links.privacy": "隱私政策",
+                "footer.links.disclaimer": "免責聲明",
+                "footer.links.terms": "服務條款",
+                "footer.copyright": "© 2025 LollyPoPDF. 版權所有。"
+            },
+            ar: {
+                "nav.home": "الرئيسية",
+                "nav.about": "من نحن",
+                "nav.tools": "الأدوات",
+                "nav.contact": "اتصل بنا",
+                "hero.title": "تغيير حجم الصور مجاناً فورياً",
+                "hero.description": "أداة مجانية على الإنترنت لتغيير حجم صورك إلى أبعاد محددة. حافظ على نسبة العرض إلى الارتفاع أو خصص العرض والارتفاع. لا يلزم التسجيل.",
+                "howto.title": "كيفية تغيير حجم صورك",
+                "howto.step1.title": "قم بتحميل صورتك",
+                "howto.step1.description": "انقر على منطقة التحميل أو اسحب وأفلت ملف الصورة. نحن ندعم JPG وPNG وGIF وWEBP والمزيد.",
+                "howto.step2.title": "تعيين الأبعاد",
+                "howto.step2.description": "أدخل العرض والارتفاع المطلوبين. قم بتبديل قفل نسبة العرض إلى الارتفاع للحفاظ على النسب تلقائياً.",
+                "howto.step3.title": "معاينة وتغيير الحجم",
+                "howto.step3.description": "شاهد معاينة صورتك الأصلية والمعدلة حجمها جنباً إلى جنب، ثم انقر على زر تغيير الحجم.",
+                "howto.step4.title": "تحميل النتيجة",
+                "howto.step4.description": "قم بتحميل صورتك المعدلة حجمها بنقرة واحدة. لا توجد علامات مائية، ولا يلزم التسجيل.",
+                "resizer.title": "أداة تغيير حجم الصور",
+                "resizer.upload.text": "اسحب وأفلت صورتك هنا أو انقر للتصفح",
+                "resizer.upload.button": "اختر صورة",
+                "resizer.dimensions.title": "تعيين الأبعاد",
+                "resizer.aspectRatio": "الحفاظ على نسبة العرض إلى الارتفاع",
+                "resizer.preview.title": "معاينة",
+                "resizer.preview.original": "الأصلية",
+                "resizer.preview.resized": "تم تغيير الحجم",
+                "resizer.processing": "جاري المعالجة: 0%",
+                "resizer.resize": "تغيير حجم الصورة",
+                "resizer.download": "تحميل",
+                "resizer.reset": "إعادة تعيين",
+                "footer.follow": "تابعنا",
+                "footer.categories": "الفئات الشائعة",
+                "footer.categories.pdf": "أدوات PDF",
+                "footer.categories.image": "أدوات الصور",
+                "footer.categories.text": "أدوات النص",
+                "footer.categories.av": "أدوات الصوت/الفيديو",
+                "footer.categories.web": "أدوات الويب/المطور",
+                "footer.categories.calc": "أدوات الآلة الحاسبة",
+                "footer.categories.util": "أدوات المساعدة",
+                "footer.categories.color": "أدوات الألوان",
+                "footer.quicklinks": "روابط سريعة",
+                "footer.links.tools": "جميع الأدوات",
+                "footer.links.faq": "الأسئلة الشائعة",
+                "footer.links.contact": "اتصل بنا",
+                "footer.links.privacy": "سياسة الخصوصية",
+                "footer.links.disclaimer": "إخلاء المسؤولية",
+                "footer.links.terms": "شروط الخدمة",
+                "footer.copyright": "© 2025 LollyPoPDF. جميع الحقوق محفوظة."
+            },
+            fa: {
+                "nav.home": "خانه",
+                "nav.about": "درباره ما",
+                "nav.tools": "ابزارها",
+                "nav.contact": "تماس با ما",
+                "hero.title": "تغییر اندازه رایگان تصاویر بصورت آنی",
+                "hero.description": "ابزار آنلاین رایگان برای تغییر اندازه تصاویر شما به ابعاد مشخص. حفظ نسبت تصویر یا سفارشی کردن عرض و ارتفاع. بدون نیاز به ثبت نام",
+                "howto.title": "نحوه تغییر اندازه تصاویر شما",
+                "howto.step1.title": "تصویر خود را آپلود کنید",
+                "howto.step1.description": "روی منطقه آپلود کلیک کنید یا فایل تصویر خود را بکشید و رها کنید. ما از JPG، PNG، GIF، WEBP و بیشتر پشتیبانی می‌کنیم.",
+                "howto.step2.title": "تنظیم ابعاد",
+                "howto.step2.description": "عرض و ارتفاع مورد نظر خود را وارد کنید. قفل نسبت تصویر را برای حفظ خودکار تناسب‌ها فعال کنید.",
+                "howto.step3.title": "پیش‌نمایش و تغییر اندازه",
+                "howto.step3.description": "پیش‌نمایش تصویر اصلی و تغییر اندازه داده شده خود را کنار هم ببینید، سپس دکمه تغییر اندازه را کلیک کنید.",
+                "howto.step4.title": "دانلود نتیجه",
+                "howto.step4.description": "تصویر تغییر اندازه داده شده خود را با یک کلیک دانلود کنید. بدون واترمارک، بدون نیاز به ثبت نام.",
+                "resizer.title": "ابزار تغییر اندازه تصویر",
+                "resizer.upload.text": "تصویر خود را اینجا بکشید و رها کنید یا برای جستجو کلیک کنید",
+                "resizer.upload.button": "انتخاب تصویر",
+                "resizer.dimensions.title": "تنظیم ابعاد",
+                "resizer.aspectRatio": "حفظ نسبت تصویر",
+                "resizer.preview.title": "پیش‌نمایش",
+                "resizer.preview.original": "اصلی",
+                "resizer.preview.resized": "تغییر اندازه داده شده",
+                "resizer.processing": "در حال پردازش: 0%",
+                "resizer.resize": "تغییر اندازه تصویر",
+                "resizer.download": "دانلود",
+                "resizer.reset": "بازنشانی",
+                "footer.follow": "ما را دنبال کنید",
+                "footer.categories": "دسته‌بندی‌های محبوب",
+                "footer.categories.pdf": "ابزارهای PDF",
+                "footer.categories.image": "ابزارهای تصویر",
+                "footer.categories.text": "ابزارهای متن",
+                "footer.categories.av": "ابزارهای صوتی/تصویری",
+                "footer.categories.web": "ابزارهای وب/توسعه‌دهنده",
+                "footer.categories.calc": "ابزارهای ماشین حساب",
+                "footer.categories.util": "ابزارهای کمکی",
+                "footer.categories.color": "ابزارهای رنگ",
+                "footer.quicklinks": "لینک‌های سریع",
+                "footer.links.tools": "همه ابزارها",
+                "footer.links.faq": "سوالات متداول",
+                "footer.links.contact": "تماس با ما",
+                "footer.links.privacy": "سیاست حفظ حریم خصوصی",
+                "footer.links.disclaimer": "سلب مسئولیت",
+                "footer.links.terms": "شرایط خدمات",
+                "footer.copyright": "© 2025 LollyPoPDF. تمامی حقوق محفوظ است."
+            },
+            bg: {
+                "nav.home": "Начало",
+                "nav.about": "За нас",
+                "nav.tools": "Инструменти",
+                "nav.contact": "Контакт",
+                "hero.title": "Безплатно Преоразмеряване на Изображения Моментално",
+                "hero.description": "Безплатен онлайн инструмент за преоразмеряване на вашите изображения до конкретни размери. Поддържайте съотношението или персонализирайте ширина и височина. Не се изисква регистрация.",
+                "howto.title": "Как да Преоразмерите Вашите Изображения",
+                "howto.step1.title": "Качете Вашето Изображение",
+                "howto.step1.description": "Кликнете върху зоната за качване или плъзнете и пуснете файла с изображение. Поддържаме JPG, PNG, GIF, WEBP и други.",
+                "howto.step2.title": "Задайте Размери",
+                "howto.step2.description": "Въведете желаната ширина и височина. Превключете заключването на съотношението, за да поддържате автоматично пропорциите.",
+                "howto.step3.title": "Преглед и Преоразмеряване",
+                "howto.step3.description": "Вижте преглед на вашето оригинално и преоразмерено изображение едно до друго, след това кликнете бутона за преоразмеряване.",
+                "howto.step4.title": "Изтеглете Резултата",
+                "howto.step4.description": "Изтеглете вашето преоразмерено изображение с един клик. Без водни знаци, без регистрация.",
+                "resizer.title": "Инструмент за Преоразмеряване на Изображения",
+                "resizer.upload.text": "Плъзнете и пуснете изображението тук или кликнете за преглед",
+                "resizer.upload.button": "Изберете Изображение",
+                "resizer.dimensions.title": "Задайте Размери",
+                "resizer.aspectRatio": "Поддържайте съотношението",
+                "resizer.preview.title": "Преглед",
+                "resizer.preview.original": "Оригинал",
+                "resizer.preview.resized": "Преоразмерено",
+                "resizer.processing": "Обработване: 0%",
+                "resizer.resize": "Преоразмерете Изображение",
+                "resizer.download": "Изтегли",
+                "resizer.reset": "Нулирай",
+                "footer.follow": "СЛЕДВАЙТЕ НИ",
+                "footer.categories": "Популярни Категории",
+                "footer.categories.pdf": "PDF Инструменти",
+                "footer.categories.image": "Инструменти за Изображения",
+                "footer.categories.text": "Текстови Инструменти",
+                "footer.categories.av": "Аудио/Видео Инструменти",
+                "footer.categories.web": "Уеб/Инструменти за Разработчици",
+                "footer.categories.calc": "Инструменти за Калкулатор",
+                "footer.categories.util": "Помощни Инструменти",
+                "footer.categories.color": "Инструменти за Цвят",
+                "footer.quicklinks": "Бързи Връзки",
+                "footer.links.tools": "Всички Инструменти",
+                "footer.links.faq": "Често Задавани Въпроси",
+                "footer.links.contact": "Контакт",
+                "footer.links.privacy": "Политика за Поверителност",
+                "footer.links.disclaimer": "Отказ от Отговорност",
+                "footer.links.terms": "Условия за Ползване",
+                "footer.copyright": "© 2025 LollyPoPDF. Всички права запазени."
+            },
+            ca: {
+                "nav.home": "Inici",
+                "nav.about": "Sobre nosaltres",
+                "nav.tools": "Eines",
+                "nav.contact": "Contacte",
+                "hero.title": "Canvia la Mida de les Imatges Gratuïtament Instantàniament",
+                "hero.description": "Eina en línia gratuïta per canviar la mida de les teves imatges a dimensions específiques. Mantingueu la relació d'aspecte o personalitzeu amplada i alçada. No es requereix registre.",
+                "howto.title": "Com Canviar la Mida de les teves Imatges",
+                "howto.step1.title": "Puja la teva Imatge",
+                "howto.step1.description": "Fes clic a l'àrea de pujada o arrossega i deixa anar el teu fitxer d'imatge. Admetem JPG, PNG, GIF, WEBP i més.",
+                "howto.step2.title": "Estableix Dimensions",
+                "howto.step2.description": "Introdueix l'amplada i alçada desitjades. Activa el bloqueig de relació d'aspecte per mantenir les proporcions automàticament.",
+                "howto.step3.title": "Vista prèvia i Canvia la Mida",
+                "howto.step3.description": "Veure una vista prèvia de la teva imatge original i de mida canviada una al costat de l'altra, després fes clic al botó de canviar mida.",
+                "howto.step4.title": "Descarrega el Resultat",
+                "howto.step4.description": "Descarrega la teva imatge de mida canviada amb un clic. Sense marques d'aigua, sense registre requerit.",
+                "resizer.title": "Eina de Canvi de Mida d'Imatges",
+                "resizer.upload.text": "Arrossega i deixa anar la teva imatge aquí o fes clic per navegar",
+                "resizer.upload.button": "Selecciona Imatge",
+                "resizer.dimensions.title": "Estableix Dimensions",
+                "resizer.aspectRatio": "Mantingueu la relació d'aspecte",
+                "resizer.preview.title": "Vista prèvia",
+                "resizer.preview.original": "Original",
+                "resizer.preview.resized": "Mida Canviada",
+                "resizer.processing": "Processant: 0%",
+                "resizer.resize": "Canvia la Mida de la Imatge",
+                "resizer.download": "Descarrega",
+                "resizer.reset": "Restableix",
+                "footer.follow": "SEGUEIX-NOS",
+                "footer.categories": "Categories Populars",
+                "footer.categories.pdf": "Eines PDF",
+                "footer.categories.image": "Eines d'Imatge",
+                "footer.categories.text": "Eines de Text",
+                "footer.categories.av": "Eines d'Àudio/Video",
+                "footer.categories.web": "Eines Web/Desenvolupador",
+                "footer.categories.calc": "Eines de Calculadora",
+                "footer.categories.util": "Eines d'Utilitat",
+                "footer.categories.color": "Eines de Color",
+                "footer.quicklinks": "Enllaços Ràpids",
+                "footer.links.tools": "Totes les Eines",
+                "footer.links.faq": "PMF",
+                "footer.links.contact": "Contacte",
+                "footer.links.privacy": "Política de Privadesa",
+                "footer.links.disclaimer": "Descàrrec de Responsabilitat",
+                "footer.links.terms": "Termes del Servei",
+                "footer.copyright": "© 2025 LollyPoPDF. Tots els drets reservats."
+            },
+            nl: {
+                "nav.home": "Home",
+                "nav.about": "Over Ons",
+                "nav.tools": "Tools",
+                "nav.contact": "Contact",
+                "hero.title": "Gratis Afbeeldingen Direct Formaat Aanpassen",
+                "hero.description": "Gratis online tool om uw afbeeldingen aan te passen aan specifieke afmetingen. Behoud beeldverhouding of pas breedte en hoogte aan. Geen registratie vereist.",
+                "howto.title": "Hoe u uw afbeeldingen kunt aanpassen",
+                "howto.step1.title": "Upload uw afbeelding",
+                "howto.step1.description": "Klik op het uploadgebied of sleep uw afbeeldingsbestand. We ondersteunen JPG, PNG, GIF, WEBP en meer.",
+                "howto.step2.title": "Stel afmetingen in",
+                "howto.step2.description": "Voer uw gewenste breedte en hoogte in. Schakel beeldverhoudingsvergrendeling in om verhoudingen automatisch te behouden.",
+                "howto.step3.title": "Voorbeeld & Formaat aanpassen",
+                "howto.step3.description": "Bekijk een voorbeeld van uw originele en aangepaste afbeelding naast elkaar en klik vervolgens op de knop Formaat aanpassen.",
+                "howto.step4.title": "Download Resultaat",
+                "howto.step4.description": "Download uw aangepaste afbeelding met één klik. Geen watermerken, geen registratie vereist.",
+                "resizer.title": "Afbeeldingsformaat Tool",
+                "resizer.upload.text": "Sleep uw afbeelding hierheen of klik om te bladeren",
+                "resizer.upload.button": "Selecteer Afbeelding",
+                "resizer.dimensions.title": "Stel afmetingen in",
+                "resizer.aspectRatio": "Behoud beeldverhouding",
+                "resizer.preview.title": "Voorbeeld",
+                "resizer.preview.original": "Origineel",
+                "resizer.preview.resized": "Aangepast",
+                "resizer.processing": "Verwerken: 0%",
+                "resizer.resize": "Formaat aanpassen",
+                "resizer.download": "Downloaden",
+                "resizer.reset": "Resetten",
+                "footer.follow": "VOLG ONS",
+                "footer.categories": "Populaire Categorieën",
+                "footer.categories.pdf": "PDF Tools",
+                "footer.categories.image": "Afbeelding Tools",
+                "footer.categories.text": "Tekst Tools",
+                "footer.categories.av": "Audio/Video Tools",
+                "footer.categories.web": "Web/Developer Tools",
+                "footer.categories.calc": "Rekenmachine Tools",
+                "footer.categories.util": "Utility Tools",
+                "footer.categories.color": "Kleur Tools",
+                "footer.quicklinks": "Snelle Links",
+                "footer.links.tools": "Alle Tools",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Contact",
+                "footer.links.privacy": "Privacybeleid",
+                "footer.links.disclaimer": "Disclaimer",
+                "footer.links.terms": "Servicevoorwaarden",
+                "footer.copyright": "© 2025 LollyPoPDF. Alle rechten voorbehouden."
+            },
+            el: {
+                "nav.home": "Αρχική",
+                "nav.about": "Σχετικά με εμάς",
+                "nav.tools": "Εργαλεία",
+                "nav.contact": "Επικοινωνία",
+                "hero.title": "Δωρεάν Αλλαγή Μεγέθους Εικόνων Άμεσα",
+                "hero.description": "Δωρεάν διαδικτυακό εργαλείο για αλλαγή μεγέθους των εικόνων σας σε συγκεκριμένες διαστάσεις. Διατηρήστε την αναλογία διαστάσεων ή προσαρμόστε πλάτος και ύψος. Δεν απαιτείται εγγραφή.",
+                "howto.title": "Πώς να Αλλάξετε το Μέγεθος των Εικόνων σας",
+                "howto.step1.title": "Ανεβάστε την Εικόνα σας",
+                "howto.step1.description": "Κάντε κλικ στην περιοχή μεταφόρτωσης ή σύρετε και αποθέστε το αρχείο εικόνας σας. Υποστηρίζουμε JPG, PNG, GIF, WEBP και άλλα.",
+                "howto.step2.title": "Ορισμός Διαστάσεων",
+                "howto.step2.description": "Εισάγετε το επιθυμητό πλάτος και ύψος. Εναλλαγή κλειδώματος αναλογίας για διατήρηση των αναλογιών αυτόματα.",
+                "howto.step3.title": "Προεπισκόπηση & Αλλαγή Μεγέθους",
+                "howto.step3.description": "Δείτε μια προεπισκόπηση της αρχικής και της αλλαγμένης εικόνας σας δίπλα-δίπλα, στη συνέχεια κάντε κλικ στο κουμπί αλλαγής μεγέθους.",
+                "howto.step4.title": "Λήψη Αποτελέσματος",
+                "howto.step4.description": "Κατεβάστε την εικόνα σας με αλλαγμένο μέγεθος με ένα κλικ. Χωρίς υδατογραφήματα, χωρίς απαίτηση εγγραφής.",
+                "resizer.title": "Εργαλείο Αλλαγής Μεγέθους Εικόνας",
+                "resizer.upload.text": "Σύρετε και αποθέστε την εικόνα σας εδώ ή κάντε κλικ για περιήγηση",
+                "resizer.upload.button": "Επιλογή Εικόνας",
+                "resizer.dimensions.title": "Ορισμός Διαστάσεων",
+                "resizer.aspectRatio": "Διατήρηση αναλογίας διαστάσεων",
+                "resizer.preview.title": "Προεπισκόπηση",
+                "resizer.preview.original": "Πρωτότυπο",
+                "resizer.preview.resized": "Αλλαγμένο Μέγεθος",
+                "resizer.processing": "Επεξεργασία: 0%",
+                "resizer.resize": "Αλλαγή Μεγέθους Εικόνας",
+                "resizer.download": "Λήψη",
+                "resizer.reset": "Επαναφορά",
+                "footer.follow": "ΑΚΟΛΟΥΘΗΣΤΕ ΜΑΣ",
+                "footer.categories": "Δημοφιλείς Κατηγορίες",
+                "footer.categories.pdf": "Εργαλεία PDF",
+                "footer.categories.image": "Εργαλεία Εικόνας",
+                "footer.categories.text": "Εργαλεία Κειμένου",
+                "footer.categories.av": "Εργαλεία Ήχου/Βίντεο",
+                "footer.categories.web": "Εργαλεία Web/Προγραμματιστή",
+                "footer.categories.calc": "Εργαλεία Αριθμομηχανής",
+                "footer.categories.util": "Εργαλεία Χρησιμότητας",
+                "footer.categories.color": "Εργαλεία Χρώματος",
+                "footer.quicklinks": "Γρήγοροι Σύνδεσμοι",
+                "footer.links.tools": "Όλα τα Εργαλεία",
+                "footer.links.faq": "Συχνές Ερωτήσεις",
+                "footer.links.contact": "Επικοινωνία",
+                "footer.links.privacy": "Πολιτική Απορρήτου",
+                "footer.links.disclaimer": "Αποποίηση Ευθυνών",
+                "footer.links.terms": "Όροι Υπηρεσίας",
+                "footer.copyright": "© 2025 LollyPoPDF. Με επιφύλαξη παντός δικαιώματος."
+            },
+            hi: {
+                "nav.home": "होम",
+                "nav.about": "हमारे बारे में",
+                "nav.tools": "टूल्स",
+                "nav.contact": "संपर्क करें",
+                "hero.title": "मुफ्त में तुरंत छवियों का आकार बदलें",
+                "hero.description": "विशिष्ट आयामों के लिए अपनी छवियों का आकार बदलने के लिए मुफ्त ऑनलाइन टूल। पहलू अनुपात बनाए रखें या चौड़ाई और ऊंचाई अनुकूलित करें। कोई पंजीकरण आवश्यक नहीं।",
+                "howto.title": "अपनी छवियों का आकार कैसे बदलें",
+                "howto.step1.title": "अपनी छवि अपलोड करें",
+                "howto.step1.description": "अपलोड क्षेत्र पर क्लिक करें या अपनी छवि फ़ाइल खींचें और छोड़ें। हम JPG, PNG, GIF, WEBP और अधिक का समर्थन करते हैं।",
+                "howto.step2.title": "आयाम सेट करें",
+                "howto.step2.description": "अपनी वांछित चौड़ाई और ऊंचाई दर्ज करें। अनुपात स्वचालित रूप से बनाए रखने के लिए पहलू अनुपात लॉक टॉगल करें।",
+                "howto.step3.title": "पूर्वावलोकन और आकार बदलें",
+                "howto.step3.description": "अपनी मूल और आकार बदली गई छवि का साथ-साथ पूर्वावलोकन देखें, फिर आकार बदलें बटन पर क्लिक करें।",
+                "howto.step4.title": "परिणाम डाउनलोड करें",
+                "howto.step4.description": "एक क्लिक के साथ अपनी आकार बदली गई छवि डाउनलोड करें। कोई वॉटरमार्क नहीं, कोई पंजीकरण आवश्यक नहीं।",
+                "resizer.title": "छवि आकार बदलने वाला टूल",
+                "resizer.upload.text": "अपनी छवि को यहां खींचें और छोड़ें या ब्राउज़ करने के लिए क्लिक करें",
+                "resizer.upload.button": "छवि चुनें",
+                "resizer.dimensions.title": "आयाम सेट करें",
+                "resizer.aspectRatio": "पहलू अनुपात बनाए रखें",
+                "resizer.preview.title": "पूर्वावलोकन",
+                "resizer.preview.original": "मूल",
+                "resizer.preview.resized": "आकार बदला हुआ",
+                "resizer.processing": "प्रसंस्करण: 0%",
+                "resizer.resize": "छवि का आकार बदलें",
+                "resizer.download": "डाउनलोड",
+                "resizer.reset": "रीसेट",
+                "footer.follow": "हमें फॉलो करें",
+                "footer.categories": "लोकप्रिय श्रेणियां",
+                "footer.categories.pdf": "PDF टूल्स",
+                "footer.categories.image": "छवि टूल्स",
+                "footer.categories.text": "टेक्स्ट टूल्स",
+                "footer.categories.av": "ऑडियो/वीडियो टूल्स",
+                "footer.categories.web": "वेब/डेवलपर टूल्स",
+                "footer.categories.calc": "कैलकुलेटर टूल्स",
+                "footer.categories.util": "यूटिलिटी टूल्स",
+                "footer.categories.color": "रंग टूल्स",
+                "footer.quicklinks": "त्वरित लिंक",
+                "footer.links.tools": "सभी टूल्स",
+                "footer.links.faq": "सामान्य प्रश्न",
+                "footer.links.contact": "संपर्क करें",
+                "footer.links.privacy": "गोपनीयता नीति",
+                "footer.links.disclaimer": "अस्वीकरण",
+                "footer.links.terms": "सेवा की शर्तें",
+                "footer.copyright": "© 2025 LollyPoPDF. सर्वाधिकार सुरक्षित।"
+            },
+            te: {
+                "nav.home": "హోమ్",
+                "nav.about": "మా గురించి",
+                "nav.tools": "టూల్స్",
+                "nav.contact": "సంప్రదించండి",
+                "hero.title": "ఉచితంగా తక్షణంగా ఇమేజ్‌లను రీసైజ్ చేయండి",
+                "hero.description": "మీ ఇమేజ్‌లను నిర్దిష్ట కొలతలకు రీసైజ్ చేయడానికి ఉచిత ఆన్‌లైన్ టూల్. ఆస్పెక్ట్ రేషియోని నిర్వహించండి లేదా వెడల్పు మరియు ఎత్తును అనుకూలీకరించండి. నమోదు అవసరం లేదు.",
+                "howto.title": "మీ ఇమేజ్‌లను రీసైజ్ చేయడం ఎలా",
+                "howto.step1.title": "మీ ఇమేజ్‌ను అప్‌లోడ్ చేయండి",
+                "howto.step1.description": "అప్‌లోడ్ ప్రాంతంపై క్లిక్ చేయండి లేదా మీ ఇమేజ్ ఫైల్‌ను డ్రాగ్ మరియు డ్రాప్ చేయండి. మేము JPG, PNG, GIF, WEBP మరియు మరిన్నింటిని మద్దతు చేస్తాము.",
+                "howto.step2.title": "కొలతలను సెట్ చేయండి",
+                "howto.step2.description": "మీ కోరిక వెడల్పు మరియు ఎత్తును నమోదు చేయండి. నిష్పత్తులను స్వయంచాలకంగా నిర్వహించడానికి ఆస్పెక్ట్ రేషియో లాక్‌ను టోగుల్ చేయండి.",
+                "howto.step3.title": "ప్రివ్యూ & రీసైజ్",
+                "howto.step3.description": "మీ అసలు మరియు రీసైజ్ చేసిన ఇమేజ్‌ను పక్కపక్కనే చూడండి, ఆపై రీసైజ్ బటన్‌పై క్లిక్ చేయండి.",
+                "howto.step4.title": "ఫలితాన్ని డౌన్‌లోడ్ చేయండి",
+                "howto.step4.description": "క్లిక్ చేయడంతో మీ రీసైజ్ చేసిన ఇమేజ్‌ను డౌన్‌లోడ్ చేయండి. వాటర్‌మార్క్‌లు లేవు, నమోదు అవసరం లేదు.",
+                "resizer.title": "ఇమేజ్ రీసైజర్ టూల్",
+                "resizer.upload.text": "మీ ఇమేజ్‌ను ఇక్కడ డ్రాగ్ మరియు డ్రాప్ చేయండి లేదా బ్రౌజ్ చేయడానికి క్లిక్ చేయండి",
+                "resizer.upload.button": "ఇమేజ్‌ను ఎంచుకోండి",
+                "resizer.dimensions.title": "కొలతలను సెట్ చేయండి",
+                "resizer.aspectRatio": "ఆస్పెక్ట్ రేషియోని నిర్వహించండి",
+                "resizer.preview.title": "ప్రివ్యూ",
+                "resizer.preview.original": "అసలు",
+                "resizer.preview.resized": "రీసైజ్ చేయబడింది",
+                "resizer.processing": "ప్రాసెసింగ్: 0%",
+                "resizer.resize": "ఇమేజ్‌ను రీసైజ్ చేయండి",
+                "resizer.download": "డౌన్‌లోడ్",
+                "resizer.reset": "రీసెట్",
+                "footer.follow": "మమ్మల్ని ఫాలో అవ్వండి",
+                "footer.categories": "జనాదరణ పొందిన వర్గాలు",
+                "footer.categories.pdf": "PDF టూల్స్",
+                "footer.categories.image": "ఇమేజ్ టూల్స్",
+                "footer.categories.text": "టెక్స్ట్ టూల్స్",
+                "footer.categories.av": "ఆడియో/వీడియో టూల్స్",
+                "footer.categories.web": "వెబ్/డెవలపర్ టూల్స్",
+                "footer.categories.calc": "కాలిక్యులేటర్ టూల్స్",
+                "footer.categories.util": "యుటిలిటీ టూల్స్",
+                "footer.categories.color": "కలర్ టూల్స్",
+                "footer.quicklinks": "త్వరిత లింకులు",
+                "footer.links.tools": "అన్ని టూల్స్",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "సంప్రదించండి",
+                "footer.links.privacy": "గోప్యతా విధానం",
+                "footer.links.disclaimer": "డిస్క్లైమర్",
+                "footer.links.terms": "సేవా నిబంధనలు",
+                "footer.copyright": "© 2025 LollyPoPDF. అన్ని హక్కులు రిజర్వు."
+            },
+            kn: {
+                "nav.home": "ಮುಖಪುಟ",
+                "nav.about": "ನಮ್ಮ ಬಗ್ಗೆ",
+                "nav.tools": "ಉಪಕರಣಗಳು",
+                "nav.contact": "ಸಂಪರ್ಕಿಸಿ",
+                "hero.title": "ಚಿತ್ರಗಳನ್ನು ತಕ್ಷಣವೇ ಉಚಿತವಾಗಿ ಗಾತ್ರ ಬದಲಾಯಿಸಿ",
+                "hero.description": "ನಿಮ್ಮ ಚಿತ್ರಗಳನ್ನು ನಿರ್ದಿಷ್ಟ ಆಯಾಮಗಳಿಗೆ ಗಾತ್ರ ಬದಲಾಯಿಸಲು ಉಚಿತ ಆನ್ಲೈನ್ ಉಪಕರಣ. ಆಕಾರ ಅನುಪಾತವನ್ನು ಕಾಪಾಡಿಕೊಳ್ಳಿ ಅಥವಾ ಅಗಲ ಮತ್ತು ಎತ್ತರವನ್ನು ಹೊಂದಿಸಿ. ನೋಂದಣಿ ಅಗತ್ಯವಿಲ್ಲ.",
+                "howto.title": "ನಿಮ್ಮ ಚಿತ್ರಗಳ ಗಾತ್ರವನ್ನು ಹೇಗೆ ಬದಲಾಯಿಸುವುದು",
+                "howto.step1.title": "ನಿಮ್ಮ ಚಿತ್ರವನ್ನು ಅಪ್ಲೋಡ್ ಮಾಡಿ",
+                "howto.step1.description": "ಅಪ್ಲೋಡ್ ಪ್ರದೇಶದ ಮೇಲೆ ಕ್ಲಿಕ್ ಮಾಡಿ ಅಥವಾ ನಿಮ್ಮ ಚಿತ್ರ ಫೈಲ್ ಅನ್ನು ಎಳೆದು ಬಿಡಿ. ನಾವು JPG, PNG, GIF, WEBP ಮತ್ತು ಹೆಚ್ಚಿನವುಗಳನ್ನು ಬೆಂಬಲಿಸುತ್ತೇವೆ.",
+                "howto.step2.title": "ಆಯಾಮಗಳನ್ನು ಹೊಂದಿಸಿ",
+                "howto.step2.description": "ನಿಮ್ಮ ಬಯಕೆಯ ಅಗಲ ಮತ್ತು ಎತ್ತರವನ್ನು ನಮೂದಿಸಿ. ಅನುಪಾತಗಳನ್ನು ಸ್ವಯಂಚಾಲಿತವಾಗಿ ಕಾಪಾಡಿಕೊಳ್ಳಲು ಆಕಾರ ಅನುಪಾತ ಲಾಕ್ ಅನ್ನು ಟಾಗಲ್ ಮಾಡಿ.",
+                "howto.step3.title": "ಪೂರ್ವವೀಕ್ಷಣೆ ಮತ್ತು ಗಾತ್ರ ಬದಲಾವಣೆ",
+                "howto.step3.description": "ನಿಮ್ಮ ಮೂಲ ಮತ್ತು ಗಾತ್ರ ಬದಲಾಯಿಸಿದ ಚಿತ್ರದ ಪೂರ್ವವೀಕ್ಷಣೆಯನ್ನು ಪಕ್ಕಪಕ್ಕದಲ್ಲಿ ನೋಡಿ, ನಂತರ ಗಾತ್ರ ಬದಲಾವಣೆ ಬಟನ್ ಅನ್ನು ಕ್ಲಿಕ್ ಮಾಡಿ.",
+                "howto.step4.title": "ಫಲಿತಾಂಶವನ್ನು ಡೌನ್ಲೋಡ್ ಮಾಡಿ",
+                "howto.step4.description": "ಕ್ಲಿಕ್ ಮಾಡುವುದರೊಂದಿಗೆ ನಿಮ್ಮ ಗಾತ್ರ ಬದಲಾಯಿಸಿದ ಚಿತ್ರವನ್ನು ಡೌನ್ಲೋಡ್ ಮಾಡಿ. ವಾಟರ್ಮಾರ್ಕ್‌ಗಳಿಲ್ಲ, ನೋಂದಣಿ ಅಗತ್ಯವಿಲ್ಲ.",
+                "resizer.title": "ಚಿತ್ರ ಗಾತ್ರ ಬದಲಾವಣೆ ಉಪಕರಣ",
+                "resizer.upload.text": "ನಿಮ್ಮ ಚಿತ್ರವನ್ನು ಇಲ್ಲಿ ಎಳೆದು ಬಿಡಿ ಅಥವಾ ಬ್ರೌಸ್ ಮಾಡಲು ಕ್ಲಿಕ್ ಮಾಡಿ",
+                "resizer.upload.button": "ಚಿತ್ರವನ್ನು ಆಯ್ಕೆಮಾಡಿ",
+                "resizer.dimensions.title": "ಆಯಾಮಗಳನ್ನು ಹೊಂದಿಸಿ",
+                "resizer.aspectRatio": "ಆಕಾರ ಅನುಪಾತವನ್ನು ಕಾಪಾಡಿಕೊಳ್ಳಿ",
+                "resizer.preview.title": "ಪೂರ್ವವೀಕ್ಷಣೆ",
+                "resizer.preview.original": "ಮೂಲ",
+                "resizer.preview.resized": "ಗಾತ್ರ ಬದಲಾಯಿಸಲಾಗಿದೆ",
+                "resizer.processing": "ಸಂಸ್ಕರಣೆ: 0%",
+                "resizer.resize": "ಚಿತ್ರದ ಗಾತ್ರ ಬದಲಾಯಿಸಿ",
+                "resizer.download": "ಡೌನ್ಲೋಡ್",
+                "resizer.reset": "ರೀಸೆಟ್",
+                "footer.follow": "ನಮ್ಮನ್ನು ಅನುಸರಿಸಿ",
+                "footer.categories": "ಜನಪ್ರಿಯ ವರ್ಗಗಳು",
+                "footer.categories.pdf": "PDF ಉಪಕರಣಗಳು",
+                "footer.categories.image": "ಚಿತ್ರ ಉಪಕರಣಗಳು",
+                "footer.categories.text": "ಪಠ್ಯ ಉಪಕರಣಗಳು",
+                "footer.categories.av": "ಆಡಿಯೋ/ವೀಡಿಯೋ ಉಪಕರಣಗಳು",
+                "footer.categories.web": "ವೆಬ್/ಡೆವಲಪರ್ ಉಪಕರಣಗಳು",
+                "footer.categories.calc": "ಕ್ಯಾಲ್ಕುಲೇಟರ್ ಉಪಕರಣಗಳು",
+                "footer.categories.util": "ಯುಟಿಲಿಟಿ ಉಪಕರಣಗಳು",
+                "footer.categories.color": "ಬಣ್ಣ ಉಪಕರಣಗಳು",
+                "footer.quicklinks": "ತ್ವರಿತ ಲಿಂಕ್‌ಗಳು",
+                "footer.links.tools": "ಎಲ್ಲಾ ಉಪಕರಣಗಳು",
+                "footer.links.faq": "ಸಾಮಾನ್ಯ ಪ್ರಶ್ನೆಗಳು",
+                "footer.links.contact": "ಸಂಪರ್ಕಿಸಿ",
+                "footer.links.privacy": "ಗೌಪ್ಯತಾ ನೀತಿ",
+                "footer.links.disclaimer": "ಡಿಸ್ಕ್ಲೈಮರ್",
+                "footer.links.terms": "ಸೇವಾ ನಿಯಮಗಳು",
+                "footer.copyright": "© 2025 LollyPoPDF. ಎಲ್ಲಾ ಹಕ್ಕುಗಳು ಕಾಯ್ದಿರಿಸಲಾಗಿದೆ."
+            },
+            ta: {
+                "nav.home": "முகப்பு",
+                "nav.about": "எங்களைப் பற்றி",
+                "nav.tools": "கருவிகள்",
+                "nav.contact": "தொடர்பு கொள்ள",
+                "hero.title": "படங்களை உடனடியாக இலவசமாக அளவு மாற்று",
+                "hero.description": "உங்கள் படங்களை குறிப்பிட்ட பரிமாணங்களுக்கு அளவு மாற்ற இலவச ஆன்லைன் கருவி. விகிதத்தை பராமரிக்கவும் அல்லது அகலம் மற்றும் உயரத்தை தனிப்பயனாக்கவும். பதிவு தேவையில்லை.",
+                "howto.title": "உங்கள் படங்களை அளவு மாற்றுவது எப்படி",
+                "howto.step1.title": "உங்கள் படத்தை பதிவேற்றவும்",
+                "howto.step1.description": "பதிவேற்ற பகுதியை கிளிக் செய்யவும் அல்லது உங்கள் பட கோப்பை இழுத்து விடவும். நாங்கள் JPG, PNG, GIF, WEBP மற்றும் பலவற்றை ஆதரிக்கிறோம்.",
+                "howto.step2.title": "பரிமாணங்களை அமைக்கவும்",
+                "howto.step2.description": "உங்கள் விரும்பிய அகலம் மற்றும் உயரத்தை உள்ளிடவும். விகிதங்களை தானாக பராமரிக்க விகிதம் பூட்டை மாற்று.",
+                "howto.step3.title": "முன்னோட்டம் & அளவு மாற்று",
+                "howto.step3.description": "உங்கள் அசல் மற்றும் அளவு மாற்றப்பட்ட படத்தின் முன்னோட்டத்தை பக்கத்தில் பக்கமாக காணவும், பின்னர் அளவு மாற்று பொத்தானை கிளிக் செய்யவும்.",
+                "howto.step4.title": "முடிவை பதிவிறக்கவும்",
+                "howto.step4.description": "கிளிக் செய்வதன் மூலம் உங்கள் அளவு மாற்றப்பட்ட படத்தை பதிவிறக்கவும். நீர்முத்திரைகள் இல்லை, பதிவு தேவையில்லை.",
+                "resizer.title": "பட அளவு மாற்றும் கருவி",
+                "resizer.upload.text": "உங்கள் படத்தை இங்கே இழுத்து விடவும் அல்லது உலாவ கிளிக் செய்யவும்",
+                "resizer.upload.button": "படத்தை தேர்ந்தெடுக்கவும்",
+                "resizer.dimensions.title": "பரிமாணங்களை அமைக்கவும்",
+                "resizer.aspectRatio": "விகிதத்தை பராமரிக்கவும்",
+                "resizer.preview.title": "முன்னோட்டம்",
+                "resizer.preview.original": "அசல்",
+                "resizer.preview.resized": "அளவு மாற்றப்பட்டது",
+                "resizer.processing": "செயலாக்கம்: 0%",
+                "resizer.resize": "படத்தை அளவு மாற்று",
+                "resizer.download": "பதிவிறக்க",
+                "resizer.reset": "மீட்டமை",
+                "footer.follow": "எங்களை பின்தொடரவும்",
+                "footer.categories": "பிரபலமான வகைகள்",
+                "footer.categories.pdf": "PDF கருவிகள்",
+                "footer.categories.image": "பட கருவிகள்",
+                "footer.categories.text": "உரை கருவிகள்",
+                "footer.categories.av": "ஆடியோ/வீடியோ கருவிகள்",
+                "footer.categories.web": "வலை/டெவலப்பர் கருவிகள்",
+                "footer.categories.calc": "கால்குலேட்டர் கருவிகள்",
+                "footer.categories.util": "பயன்பாட்டு கருவிகள்",
+                "footer.categories.color": "நிற கருவிகள்",
+                "footer.quicklinks": "விரைவு இணைப்புகள்",
+                "footer.links.tools": "அனைத்து கருவிகள்",
+                "footer.links.faq": "அடிக்கடி கேட்கப்படும் கேள்விகள்",
+                "footer.links.contact": "தொடர்பு கொள்ள",
+                "footer.links.privacy": "தனியுரிமைக் கொள்கை",
+                "footer.links.disclaimer": "மறுப்பு",
+                "footer.links.terms": "சேவை விதிமுறைகள்",
+                "footer.copyright": "© 2025 LollyPoPDF. அனைத்து உரிமைகளும் பாதுகாக்கப்பட்டவை."
+            },
+            ml: {
+                "nav.home": "ഹോം",
+                "nav.about": "നമ്മളെക്കുറിച്ച്",
+                "nav.tools": "ടൂളുകൾ",
+                "nav.contact": "ബന്ധപ്പെടുക",
+                "hero.title": "ഇമേജുകൾ സൗജന്യമായി തൽക്ഷണം വലിപ്പം മാറ്റുക",
+                "hero.description": "നിങ്ങളുടെ ഇമേജുകൾ നിർദ്ദിഷ്ട അളവുകളിലേക്ക് വലിപ്പം മാറ്റാനുള്ള സൗജന്യ ഓൺലൈൻ ടൂൾ. അനുപാതം നിലനിർത്തുക അല്ലെങ്കിൽ വീതിയും ഉയരവും ഇഷ്ടാനുസൃതമാക്കുക. രജിസ്ട്രേഷൻ ആവശ്യമില്ല.",
+                "howto.title": "നിങ്ങളുടെ ഇമേജുകൾ വലിപ്പം മാറ്റുന്നത് എങ്ങനെ",
+                "howto.step1.title": "നിങ്ങളുടെ ഇമേജ് അപ്‌ലോഡ് ചെയ്യുക",
+                "howto.step1.description": "അപ്‌ലോഡ് ഏരിയയിൽ ക്ലിക്ക് ചെയ്യുക അല്ലെങ്കിൽ നിങ്ങളുടെ ഇമേജ് ഫയൽ വലിച്ചിടുക. ഞങ്ങൾ JPG, PNG, GIF, WEBP എന്നിവയെ പിന്തുണയ്ക്കുന്നു.",
+                "howto.step2.title": "അളവുകൾ സജ്ജമാക്കുക",
+                "howto.step2.description": "നിങ്ങളുടെ ആവശ്യമുള്ള വീതിയും ഉയരവും നൽകുക. അനുപാതങ്ങൾ സ്വയമേവ നിലനിർത്താൻ അനുപാതം ലോക്ക് ടോഗിൾ ചെയ്യുക.",
+                "howto.step3.title": "പ്രിവ്യൂ & വലിപ്പം മാറ്റുക",
+                "howto.step3.description": "നിങ്ങളുടെ ഒറിജിനൽ, വലിപ്പം മാറ്റിയ ഇമേജ് സൈഡ് ബൈ സൈഡ് കാണുക, തുടർന്ന് റിസൈസ് ബട്ടൺ ക്ലിക്ക് ചെയ്യുക.",
+                "howto.step4.title": "ഫലം ഡൗൺലോഡ് ചെയ്യുക",
+                "howto.step4.description": "ക്ലിക്ക് ചെയ്തുകൊണ്ട് നിങ്ങളുടെ വലിപ്പം മാറ്റിയ ഇമേജ് ഡൗൺലോഡ് ചെയ്യുക. വാട്ടർമാർക്കുകളില്ല, രജിസ്ട്രേഷൻ ആവശ്യമില്ല.",
+                "resizer.title": "ഇമേജ് റിസൈസർ ടൂൾ",
+                "resizer.upload.text": "നിങ്ങളുടെ ഇമേജ് ഇവിടെ വലിച്ചിടുക അല്ലെങ്കിൽ ബ്രൗസ് ചെയ്യാൻ ക്ലിക്ക് ചെയ്യുക",
+                "resizer.upload.button": "ഇമേജ് തിരഞ്ഞെടുക്കുക",
+                "resizer.dimensions.title": "അളവുകൾ സജ്ജമാക്കുക",
+                "resizer.aspectRatio": "അനുപാതം നിലനിർത്തുക",
+                "resizer.preview.title": "പ്രിവ്യൂ",
+                "resizer.preview.original": "ഒറിജിനൽ",
+                "resizer.preview.resized": "വലിപ്പം മാറ്റിയത്",
+                "resizer.processing": "പ്രോസസ്സിംഗ്: 0%",
+                "resizer.resize": "ഇമേജ് വലിപ്പം മാറ്റുക",
+                "resizer.download": "ഡൗൺലോഡ്",
+                "resizer.reset": "റീസെറ്റ്",
+                "footer.follow": "ഞങ്ങളെ പിന്തുടരുക",
+                "footer.categories": "ജനപ്രിയ വിഭാഗങ്ങൾ",
+                "footer.categories.pdf": "PDF ടൂളുകൾ",
+                "footer.categories.image": "ഇമേജ് ടൂളുകൾ",
+                "footer.categories.text": "ടെക്‌സ്റ്റ് ടൂളുകൾ",
+                "footer.categories.av": "ഓഡിയോ/വീഡിയോ ടൂളുകൾ",
+                "footer.categories.web": "വെബ്/ഡെവലപ്പർ ടൂളുകൾ",
+                "footer.categories.calc": "കാൽക്കുലേറ്റർ ടൂളുകൾ",
+                "footer.categories.util": "യൂട്ടിലിറ്റി ടൂളുകൾ",
+                "footer.categories.color": "കളർ ടൂളുകൾ",
+                "footer.quicklinks": "ദ്രുത ലിങ്കുകൾ",
+                "footer.links.tools": "എല്ലാ ടൂളുകളും",
+                "footer.links.faq": "പതിവുചോദ്യങ്ങൾ",
+                "footer.links.contact": "ബന്ധപ്പെടുക",
+                "footer.links.privacy": "സ്വകാര്യതാ നയം",
+                "footer.links.disclaimer": "അസ്വീകാര്യത",
+                "footer.links.terms": "സേവന നിബന്ധനകൾ",
+                "footer.copyright": "© 2025 LollyPoPDF. എല്ലാ അവകാശങ്ങളും നിക്ഷിപ്തം."
+            },
+            id: {
+                "nav.home": "Beranda",
+                "nav.about": "Tentang Kami",
+                "nav.tools": "Alat",
+                "nav.contact": "Kontak",
+                "hero.title": "Ubah Ukuran Gambar Secara Instan Gratis",
+                "hero.description": "Alat online gratis untuk mengubah ukuran gambar Anda ke dimensi spesifik. Pertahankan rasio aspek atau sesuaikan lebar dan tinggi. Tidak perlu registrasi.",
+                "howto.title": "Cara Mengubah Ukuran Gambar Anda",
+                "howto.step1.title": "Unggah Gambar Anda",
+                "howto.step1.description": "Klik area unggah atau seret dan lepas file gambar Anda. Kami mendukung JPG, PNG, GIF, WEBP dan lainnya.",
+                "howto.step2.title": "Atur Dimensi",
+                "howto.step2.description": "Masukkan lebar dan tinggi yang diinginkan. Aktifkan kunci rasio aspek untuk mempertahankan proporsi secara otomatis.",
+                "howto.step3.title": "Pratinjau & Ubah Ukuran",
+                "howto.step3.description": "Lihat pratinjau gambar asli dan yang diubah ukurannya secara berdampingan, lalu klik tombol ubah ukuran.",
+                "howto.step4.title": "Unduh Hasil",
+                "howto.step4.description": "Unduh gambar yang telah diubah ukurannya dengan sekali klik. Tanpa watermark, tanpa registrasi.",
+                "resizer.title": "Alat Pengubah Ukuran Gambar",
+                "resizer.upload.text": "Seret dan lepas gambar Anda di sini atau klik untuk menjelajahi",
+                "resizer.upload.button": "Pilih Gambar",
+                "resizer.dimensions.title": "Atur Dimensi",
+                "resizer.aspectRatio": "Pertahankan rasio aspek",
+                "resizer.preview.title": "Pratinjau",
+                "resizer.preview.original": "Asli",
+                "resizer.preview.resized": "Diubah Ukuran",
+                "resizer.processing": "Memproses: 0%",
+                "resizer.resize": "Ubah Ukuran Gambar",
+                "resizer.download": "Unduh",
+                "resizer.reset": "Atur Ulang",
+                "footer.follow": "IKUTI KAMI",
+                "footer.categories": "Kategori Populer",
+                "footer.categories.pdf": "Alat PDF",
+                "footer.categories.image": "Alat Gambar",
+                "footer.categories.text": "Alat Teks",
+                "footer.categories.av": "Alat Audio/Video",
+                "footer.categories.web": "Alat Web/Pengembang",
+                "footer.categories.calc": "Alat Kalkulator",
+                "footer.categories.util": "Alat Utilitas",
+                "footer.categories.color": "Alat Warna",
+                "footer.quicklinks": "Tautan Cepat",
+                "footer.links.tools": "Semua Alat",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Kontak",
+                "footer.links.privacy": "Kebijakan Privasi",
+                "footer.links.disclaimer": "Penafian",
+                "footer.links.terms": "Syarat Layanan",
+                "footer.copyright": "© 2025 LollyPoPDF. Hak cipta dilindungi."
+            },
+            ms: {
+                "nav.home": "Laman Utama",
+                "nav.about": "Tentang Kami",
+                "nav.tools": "Alat",
+                "nav.contact": "Hubungi",
+                "hero.title": "Saiz Semula Imej Secara Percuma serta-merta",
+                "hero.description": "Alat dalam talian percuma untuk menukar saiz imej anda kepada dimensi tertentu. Kekalkan nisbah aspek atau sesuaikan lebar dan tinggi. Tiada pendaftaran diperlukan.",
+                "howto.title": "Cara Menukar Saiz Imej Anda",
+                "howto.step1.title": "Muat Naik Imej Anda",
+                "howto.step1.description": "Klik kawasan muat naik atau seret dan lepaskan fail imej anda. Kami menyokong JPG, PNG, GIF, WEBP dan banyak lagi.",
+                "howto.step2.title": "Tetapkan Dimensi",
+                "howto.step2.description": "Masukkan lebar dan tinggi yang dikehendaki. Togol kunci nisbah aspek untuk mengekalkan perkadaran secara automatik.",
+                "howto.step3.title": "Pratonton & Tukar Saiz",
+                "howto.step3.description": "Lihat pratonton imej asal dan yang ditukar saiznya bersebelahan, kemudian klik butang tukar saiz.",
+                "howto.step4.title": "Muat Turun Hasil",
+                "howto.step4.description": "Muat turun imej yang ditukar saiznya dengan satu klik. Tiada tanda air, tiada pendaftaran diperlukan.",
+                "resizer.title": "Alat Penukar Saiz Imej",
+                "resizer.upload.text": "Seret dan lepaskan imej anda di sini atau klik untuk melayari",
+                "resizer.upload.button": "Pilih Imej",
+                "resizer.dimensions.title": "Tetapkan Dimensi",
+                "resizer.aspectRatio": "Kekalkan nisbah aspek",
+                "resizer.preview.title": "Pratonton",
+                "resizer.preview.original": "Asal",
+                "resizer.preview.resized": "Ditukar Saiz",
+                "resizer.processing": "Memproses: 0%",
+                "resizer.resize": "Tukar Saiz Imej",
+                "resizer.download": "Muat Turun",
+                "resizer.reset": "Tetapkan Semula",
+                "footer.follow": "IKUTI KAMI",
+                "footer.categories": "Kategori Popular",
+                "footer.categories.pdf": "Alat PDF",
+                "footer.categories.image": "Alat Imej",
+                "footer.categories.text": "Alat Teks",
+                "footer.categories.av": "Alat Audio/Video",
+                "footer.categories.web": "Alat Web/Pembangun",
+                "footer.categories.calc": "Alat Kalkulator",
+                "footer.categories.util": "Alat Utiliti",
+                "footer.categories.color": "Alat Warna",
+                "footer.quicklinks": "Pautan Pantas",
+                "footer.links.tools": "Semua Alat",
+                "footer.links.faq": "Soalan Lazim",
+                "footer.links.contact": "Hubungi",
+                "footer.links.privacy": "Dasar Privasi",
+                "footer.links.disclaimer": "Penafian",
+                "footer.links.terms": "Syarat Perkhidmatan",
+                "footer.copyright": "© 2025 LollyPoPDF. Hak cipta terpelihara."
+            },
+            pl: {
+                "nav.home": "Strona główna",
+                "nav.about": "O nas",
+                "nav.tools": "Narzędzia",
+                "nav.contact": "Kontakt",
+                "hero.title": "Bezpłatna zmiana rozmiaru obrazów natychmiast",
+                "hero.description": "Bezpłatne narzędzie online do zmiany rozmiaru obrazów na określone wymiary. Zachowaj proporcje lub dostosuj szerokość i wysokość. Bez rejestracji.",
+                "howto.title": "Jak zmienić rozmiar obrazów",
+                "howto.step1.title": "Prześlij swój obraz",
+                "howto.step1.description": "Kliknij obszar przesyłania lub przeciągnij i upuść plik obrazu. Obsługujemy JPG, PNG, GIF, WEBP i inne.",
+                "howto.step2.title": "Ustaw wymiary",
+                "howto.step2.description": "Wprowadź żądaną szerokość i wysokość. Przełącz blokadę proporcji, aby automatycznie zachować proporcje.",
+                "howto.step3.title": "Podgląd i zmiana rozmiaru",
+                "howto.step3.description": "Zobacz podgląd oryginalnego i zmienionego obrazu obok siebie, a następnie kliknij przycisk zmiany rozmiaru.",
+                "howto.step4.title": "Pobierz wynik",
+                "howto.step4.description": "Pobierz obraz o zmienionym rozmiarze jednym kliknięciem. Bez znaków wodnych, bez rejestracji.",
+                "resizer.title": "Narzędzie do zmiany rozmiaru obrazu",
+                "resizer.upload.text": "Przeciągnij i upuść swój obraz tutaj lub kliknij, aby przeglądać",
+                "resizer.upload.button": "Wybierz obraz",
+                "resizer.dimensions.title": "Ustaw wymiary",
+                "resizer.aspectRatio": "Zachowaj proporcje",
+                "resizer.preview.title": "Podgląd",
+                "resizer.preview.original": "Oryginał",
+                "resizer.preview.resized": "Zmieniony rozmiar",
+                "resizer.processing": "Przetwarzanie: 0%",
+                "resizer.resize": "Zmień rozmiar obrazu",
+                "resizer.download": "Pobierz",
+                "resizer.reset": "Resetuj",
+                "footer.follow": "OBSERWUJ NAS",
+                "footer.categories": "Popularne kategorie",
+                "footer.categories.pdf": "Narzędzia PDF",
+                "footer.categories.image": "Narzędzia obrazów",
+                "footer.categories.text": "Narzędzia tekstowe",
+                "footer.categories.av": "Narzędzia audio/wideo",
+                "footer.categories.web": "Narzędzia web/deweloperskie",
+                "footer.categories.calc": "Narzędzia kalkulatora",
+                "footer.categories.util": "Narzędzia użytkowe",
+                "footer.categories.color": "Narzędzia kolorów",
+                "footer.quicklinks": "Szybkie linki",
+                "footer.links.tools": "Wszystkie narzędzia",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Kontakt",
+                "footer.links.privacy": "Polityka prywatności",
+                "footer.links.disclaimer": "Zastrzeżenie",
+                "footer.links.terms": "Warunki usługi",
+                "footer.copyright": "© 2025 LollyPoPDF. Wszelkie prawa zastrzeżone."
+            },
+            th: {
+                "nav.home": "หน้าแรก",
+                "nav.about": "เกี่ยวกับเรา",
+                "nav.tools": "เครื่องมือ",
+                "nav.contact": "ติดต่อ",
+                "hero.title": "เปลี่ยนขนาดรูปภาพฟรีทันที",
+                "hero.description": "เครื่องมือออนไลน์ฟรีสำหรับเปลี่ยนขนาดรูปภาพของคุณเป็นขนาดเฉพาะ รักษาอัตราส่วนหรือปรับความกว้างและความสูง ไม่ต้องลงทะเบียน",
+                "howto.title": "วิธีการเปลี่ยนขนาดรูปภาพของคุณ",
+                "howto.step1.title": "อัปโหลดรูปภาพของคุณ",
+                "howto.step1.description": "คลิกพื้นที่อัปโหลดหรือลากและวางไฟล์รูปภาพของคุณ เรารองรับ JPG, PNG, GIF, WEBP และอื่นๆ",
+                "howto.step2.title": "ตั้งค่าขนาด",
+                "howto.step2.description": "ป้อนความกว้างและความสูงที่ต้องการ เปิดใช้ล็อคอัตราส่วนเพื่อรักษาสัดส่วนโดยอัตโนมัติ",
+                "howto.step3.title": "แสดงตัวอย่างและเปลี่ยนขนาด",
+                "howto.step3.description": "ดูตัวอย่างรูปภาพต้นฉบับและที่เปลี่ยนขนาดเคียงข้างกัน จากนั้นคลิกปุ่มเปลี่ยนขนาด",
+                "howto.step4.title": "ดาวน์โหลดผลลัพธ์",
+                "howto.step4.description": "ดาวน์โหลดรูปภาพที่เปลี่ยนขนาดด้วยการคลิกเดียว ไม่มีลายน้ำ ไม่ต้องลงทะเบียน",
+                "resizer.title": "เครื่องมือเปลี่ยนขนาดรูปภาพ",
+                "resizer.upload.text": "ลากและวางรูปภาพของคุณที่นี่หรือคลิกเพื่อเรียกดู",
+                "resizer.upload.button": "เลือกรูปภาพ",
+                "resizer.dimensions.title": "ตั้งค่าขนาด",
+                "resizer.aspectRatio": "รักษาอัตราส่วน",
+                "resizer.preview.title": "แสดงตัวอย่าง",
+                "resizer.preview.original": "ต้นฉบับ",
+                "resizer.preview.resized": "เปลี่ยนขนาดแล้ว",
+                "resizer.processing": "กำลังประมวลผล: 0%",
+                "resizer.resize": "เปลี่ยนขนาดรูปภาพ",
+                "resizer.download": "ดาวน์โหลด",
+                "resizer.reset": "รีเซ็ต",
+                "footer.follow": "ติดตามเรา",
+                "footer.categories": "หมวดหมู่ยอดนิยม",
+                "footer.categories.pdf": "เครื่องมือ PDF",
+                "footer.categories.image": "เครื่องมือรูปภาพ",
+                "footer.categories.text": "เครื่องมือข้อความ",
+                "footer.categories.av": "เครื่องมือเสียง/วิดีโอ",
+                "footer.categories.web": "เครื่องมือเว็บ/นักพัฒนา",
+                "footer.categories.calc": "เครื่องมือเครื่องคิดเลข",
+                "footer.categories.util": "เครื่องมืออรรถประโยชน์",
+                "footer.categories.color": "เครื่องมือสี",
+                "footer.quicklinks": "ลิงก์ด่วน",
+                "footer.links.tools": "เครื่องมือทั้งหมด",
+                "footer.links.faq": "คำถามที่พบบ่อย",
+                "footer.links.contact": "ติดต่อ",
+                "footer.links.privacy": "นโยบายความเป็นส่วนตัว",
+                "footer.links.disclaimer": "ข้อจำกัดความรับผิดชอบ",
+                "footer.links.terms": "ข้อกำหนดการให้บริการ",
+                "footer.copyright": "© 2025 LollyPoPDF. สงวนลิขสิทธิ์."
+            },
+            tr: {
+                "nav.home": "Ana Sayfa",
+                "nav.about": "Hakkımızda",
+                "nav.tools": "Araçlar",
+                "nav.contact": "İletişim",
+                "hero.title": "Görüntüleri Anında Ücretsiz Boyutlandırın",
+                "hero.description": "Görüntülerinizi belirli boyutlara yeniden boyutlandırmak için ücretsiz çevrimiçi araç. En boy oranını koruyun veya genişlik ve yüksekliği özelleştirin. Kayıt gerekmez.",
+                "howto.title": "Görüntülerinizi Nasıl Yeniden Boyutlandırırsınız",
+                "howto.step1.title": "Görüntünüzü Yükleyin",
+                "howto.step1.description": "Yükleme alanını tıklayın veya görüntü dosyanızı sürükleyip bırakın. JPG, PNG, GIF, WEBP ve daha fazlasını destekliyoruz.",
+                "howto.step2.title": "Boyutları Ayarlayın",
+                "howto.step2.description": "İstediğiniz genişlik ve yüksekliği girin. Oranları otomatik olarak korumak için en boy oranı kilidini açın/kapatın.",
+                "howto.step3.title": "Önizleme ve Yeniden Boyutlandırma",
+                "howto.step3.description": "Orijinal ve yeniden boyutlandırılmış görüntünüzün yan yana önizlemesini görün, ardından yeniden boyutlandır düğmesini tıklayın.",
+                "howto.step4.title": "Sonucu İndirin",
+                "howto.step4.description": "Yeniden boyutlandırılmış görüntünüzü tek tıklamayla indirin. Filigran yok, kayıt gerekmez.",
+                "resizer.title": "Görüntü Yeniden Boyutlandırma Aracı",
+                "resizer.upload.text": "Görüntünüzü buraya sürükleyip bırakın veya göz atmak için tıklayın",
+                "resizer.upload.button": "Görüntü Seç",
+                "resizer.dimensions.title": "Boyutları Ayarlayın",
+                "resizer.aspectRatio": "En boy oranını koru",
+                "resizer.preview.title": "Önizleme",
+                "resizer.preview.original": "Orijinal",
+                "resizer.preview.resized": "Yeniden Boyutlandırıldı",
+                "resizer.processing": "İşleniyor: 0%",
+                "resizer.resize": "Görüntüyü Yeniden Boyutlandır",
+                "resizer.download": "İndir",
+                "resizer.reset": "Sıfırla",
+                "footer.follow": "BİZİ TAKİP EDİN",
+                "footer.categories": "Popüler Kategoriler",
+                "footer.categories.pdf": "PDF Araçları",
+                "footer.categories.image": "Görüntü Araçları",
+                "footer.categories.text": "Metin Araçları",
+                "footer.categories.av": "Ses/Video Araçları",
+                "footer.categories.web": "Web/Geliştirici Araçları",
+                "footer.categories.calc": "Hesap Makinesi Araçları",
+                "footer.categories.util": "Yardımcı Araçlar",
+                "footer.categories.color": "Renk Araçları",
+                "footer.quicklinks": "Hızlı Bağlantılar",
+                "footer.links.tools": "Tüm Araçlar",
+                "footer.links.faq": "SSS",
+                "footer.links.contact": "İletişim",
+                "footer.links.privacy": "Gizlilik Politikası",
+                "footer.links.disclaimer": "Feragatname",
+                "footer.links.terms": "Hizmet Şartları",
+                "footer.copyright": "© 2025 LollyPoPDF. Tüm hakları saklıdır."
+            },
+            uk: {
+                "nav.home": "Головна",
+                "nav.about": "Про нас",
+                "nav.tools": "Інструменти",
+                "nav.contact": "Контакти",
+                "hero.title": "Безкоштовна зміна розміру зображень миттєво",
+                "hero.description": "Безкоштовний онлайн-інструмент для зміни розміру ваших зображень до конкретних розмірів. Зберігайте співвідношення сторін або налаштуйте ширину та висоту. Реєстрація не потрібна.",
+                "howto.title": "Як змінити розмір ваших зображень",
+                "howto.step1.title": "Завантажте ваше зображення",
+                "howto.step1.description": "Натисніть на область завантаження або перетягніть файл зображення. Ми підтримуємо JPG, PNG, GIF, WEBP та інші.",
+                "howto.step2.title": "Встановіть розміри",
+                "howto.step2.description": "Введіть бажану ширину та висоту. Перемикайте блокування співвідношення сторін для автоматичного збереження пропорцій.",
+                "howto.step3.title": "Попередній перегляд та зміна розміру",
+                "howto.step3.description": "Перегляньте попередній перегляд оригінального та зміненого зображення поруч, потім натисніть кнопку зміни розміру.",
+                "howto.step4.title": "Завантажте результат",
+                "howto.step4.description": "Завантажте ваше зображення зі зміненим розміром одним клацанням. Без водяних знаків, без реєстрації.",
+                "resizer.title": "Інструмент зміни розміру зображення",
+                "resizer.upload.text": "Перетягніть ваше зображення сюди або натисніть для перегляду",
+                "resizer.upload.button": "Вибрати зображення",
+                "resizer.dimensions.title": "Встановіть розміри",
+                "resizer.aspectRatio": "Зберегти співвідношення сторін",
+                "resizer.preview.title": "Попередній перегляд",
+                "resizer.preview.original": "Оригінал",
+                "resizer.preview.resized": "Змінено розмір",
+                "resizer.processing": "Обробка: 0%",
+                "resizer.resize": "Змінити розмір зображення",
+                "resizer.download": "Завантажити",
+                "resizer.reset": "Скинути",
+                "footer.follow": "СЛІДКУЙТЕ ЗА НАМИ",
+                "footer.categories": "Популярні категорії",
+                "footer.categories.pdf": "PDF Інструменти",
+                "footer.categories.image": "Інструменти зображень",
+                "footer.categories.text": "Текстові інструменти",
+                "footer.categories.av": "Аудіо/Відео інструменти",
+                "footer.categories.web": "Веб/Розробницькі інструменти",
+                "footer.categories.calc": "Калькуляторні інструменти",
+                "footer.categories.util": "Утилітарні інструменти",
+                "footer.categories.color": "Кольорові інструменти",
+                "footer.quicklinks": "Швидкі посилання",
+                "footer.links.tools": "Всі інструменти",
+                "footer.links.faq": "Часті запитання",
+                "footer.links.contact": "Контакти",
+                "footer.links.privacy": "Політика конфіденційності",
+                "footer.links.disclaimer": "Відмова від відповідальності",
+                "footer.links.terms": "Умови використання",
+                "footer.copyright": "© 2025 LollyPoPDF. Всі права захищені."
+            },
+            vi: {
+                "nav.home": "Trang chủ",
+                "nav.about": "Về chúng tôi",
+                "nav.tools": "Công cụ",
+                "nav.contact": "Liên hệ",
+                "hero.title": "Thay đổi kích thước hình ảnh miễn phí ngay lập tức",
+                "hero.description": "Công cụ trực tuyến miễn phí để thay đổi kích thước hình ảnh của bạn thành kích thước cụ thể. Duy trì tỷ lệ khung hình hoặc tùy chỉnh chiều rộng và chiều cao. Không cần đăng ký.",
+                "howto.title": "Cách thay đổi kích thước hình ảnh của bạn",
+                "howto.step1.title": "Tải lên hình ảnh của bạn",
+                "howto.step1.description": "Nhấp vào khu vực tải lên hoặc kéo và thả tệp hình ảnh của bạn. Chúng tôi hỗ trợ JPG, PNG, GIF, WEBP và nhiều hơn nữa.",
+                "howto.step2.title": "Đặt kích thước",
+                "howto.step2.description": "Nhập chiều rộng và chiều cao mong muốn. Chuyển đổi khóa tỷ lệ khung hình để tự động duy trì tỷ lệ.",
+                "howto.step3.title": "Xem trước & Thay đổi kích thước",
+                "howto.step3.description": "Xem trước hình ảnh gốc và đã thay đổi kích thước cạnh nhau, sau đó nhấp vào nút thay đổi kích thước.",
+                "howto.step4.title": "Tải xuống kết quả",
+                "howto.step4.description": "Tải xuống hình ảnh đã thay đổi kích thước của bạn bằng một cú nhấp chuột. Không có hình mờ, không cần đăng ký.",
+                "resizer.title": "Công cụ thay đổi kích thước hình ảnh",
+                "resizer.upload.text": "Kéo và thả hình ảnh của bạn vào đây hoặc nhấp để duyệt",
+                "resizer.upload.button": "Chọn hình ảnh",
+                "resizer.dimensions.title": "Đặt kích thước",
+                "resizer.aspectRatio": "Duy trì tỷ lệ khung hình",
+                "resizer.preview.title": "Xem trước",
+                "resizer.preview.original": "Gốc",
+                "resizer.preview.resized": "Đã thay đổi kích thước",
+                "resizer.processing": "Đang xử lý: 0%",
+                "resizer.resize": "Thay đổi kích thước hình ảnh",
+                "resizer.download": "Tải xuống",
+                "resizer.reset": "Đặt lại",
+                "footer.follow": "THEO DÕI CHÚNG TÔI",
+                "footer.categories": "Danh mục phổ biến",
+                "footer.categories.pdf": "Công cụ PDF",
+                "footer.categories.image": "Công cụ hình ảnh",
+                "footer.categories.text": "Công cụ văn bản",
+                "footer.categories.av": "Công cụ âm thanh/hình ảnh",
+                "footer.categories.web": "Công cụ web/ nhà phát triển",
+                "footer.categories.calc": "Công cụ máy tính",
+                "footer.categories.util": "Công cụ tiện ích",
+                "footer.categories.color": "Công cụ màu sắc",
+                "footer.quicklinks": "Liên kết nhanh",
+                "footer.links.tools": "Tất cả công cụ",
+                "footer.links.faq": "Câu hỏi thường gặp",
+                "footer.links.contact": "Liên hệ",
+                "footer.links.privacy": "Chính sách bảo mật",
+                "footer.links.disclaimer": "Tuyên bố miễn trừ trách nhiệm",
+                "footer.links.terms": "Điều khoản dịch vụ",
+                "footer.copyright": "© 2025 LollyPoPDF. Đã đăng ký bản quyền."
+            },
+            is: {
+                "nav.home": "Heim",
+                "nav.about": "Um okkur",
+                "nav.tools": "Verkfæri",
+                "nav.contact": "Hafa samband",
+                "hero.title": "Breystu stærð mynda ókeypis samstundis",
+                "hero.description": "Ókeypis netkerfi til að breyta stærð mynda í ákveðnar víddir. Geymdu hlutfall eða sérsníddu breidd og hæð. Engin skráning krafist.",
+                "howto.title": "Hvernig á að breyta stærð mynda",
+                "howto.step1.title": "Hladdu upp myndinni þinni",
+                "howto.step1.description": "Smelltu á upphleðslusvæðið eða dragðu og slepptu myndaskránni þinni. Við styðjum JPG, PNG, GIF, WEBP og fleira.",
+                "howto.step2.title": "Stilltu víddir",
+                "howto.step2.description": "Sláðu inn æskilega breidd og hæð. Víxla hlutfallslás til að viðhalda hlutföllum sjálfkrafa.",
+                "howto.step3.title": "Forskoðun og stærðarbreyting",
+                "howto.step3.description": "Skoðaðu forsýn á upprunalegu og stærðarbreyttu myndinni hlið við hlið, smelltu síðan á stærðarbreytingarhnappinn.",
+                "howto.step4.title": "Sæktu niðurstöðuna",
+                "howto.step4.description": "Sæktu stærðarbreyttu myndina þína með einum smelli. Engin vatnsmerki, engin skráning krafist.",
+                "resizer.title": "Stærðarbreytir fyrir myndir",
+                "resizer.upload.text": "Dragðu og slepptu myndinni þinni hér eða smelltu til að skoða",
+                "resizer.upload.button": "Veldu mynd",
+                "resizer.dimensions.title": "Stilltu víddir",
+                "resizer.aspectRatio": "Geymdu hlutfall",
+                "resizer.preview.title": "Forskoðun",
+                "resizer.preview.original": "Upprunaleg",
+                "resizer.preview.resized": "Stærð breytt",
+                "resizer.processing": "Vinnsla: 0%",
+                "resizer.resize": "Breyta stærð myndar",
+                "resizer.download": "Sækja",
+                "resizer.reset": "Endurstilla",
+                "footer.follow": "FYLGDU OKKUR",
+                "footer.categories": "Vinsælar flokkar",
+                "footer.categories.pdf": "PDF verkfæri",
+                "footer.categories.image": "Myndaverkfæri",
+                "footer.categories.text": "Textaverkfæri",
+                "footer.categories.av": "Hljóð-/myndbandaverkfæri",
+                "footer.categories.web": "Vefur/forritunarverkfæri",
+                "footer.categories.calc": "Reiknivélarverkfæri",
+                "footer.categories.util": "Gagnleg verkfæri",
+                "footer.categories.color": "Litverkfæri",
+                "footer.quicklinks": "Flýtileiðir",
+                "footer.links.tools": "Öll verkfæri",
+                "footer.links.faq": "Algengar spurningar",
+                "footer.links.contact": "Hafa samband",
+                "footer.links.privacy": "Meðferð persónuupplýsinga",
+                "footer.links.disclaimer": "Ábyrgðarafsal",
+                "footer.links.terms": "Þjónustuskilmálar",
+                "footer.copyright": "© 2025 LollyPoPDF. Allur réttur áskilinn."
+            },
+            no: {
+                "nav.home": "Hjem",
+                "nav.about": "Om oss",
+                "nav.tools": "Verktøy",
+                "nav.contact": "Kontakt",
+                "hero.title": "Gratis endring av bildestørrelse umiddelbart",
+                "hero.description": "Gratis online verktøy for å endre størrelsen på bildene dine til spesifikke dimensjoner. Behold billedformatet eller tilpass bredde og høyde. Ingen registrering kreves.",
+                "howto.title": "Hvordan endre størrelsen på bildene dine",
+                "howto.step1.title": "Last opp bildet ditt",
+                "howto.step1.description": "Klikk på opplastingsområdet eller dra og slipp bildefilen din. Vi støtter JPG, PNG, GIF, WEBP og mer.",
+                "howto.step2.title": "Angi dimensjoner",
+                "howto.step2.description": "Skriv inn ønsket bredde og høyde. Veksle bilderelås for å opprettholde proporsjoner automatisk.",
+                "howto.step3.title": "Forhåndsvisning og størrelsesendring",
+                "howto.step3.description": "Se en forhåndsvisning av originalen og bildet med endret størrelse side om side, og klikk deretter på knappen for størrelsesendring.",
+                "howto.step4.title": "Last ned resultatet",
+                "howto.step4.description": "Last ned bildet ditt med endret størrelse med ett klikk. Ingen vannmerker, ingen registrering kreves.",
+                "resizer.title": "Verktøy for bildestørrelseendring",
+                "resizer.upload.text": "Dra og slipp bildet ditt her eller klikk for å bla",
+                "resizer.upload.button": "Velg bilde",
+                "resizer.dimensions.title": "Angi dimensjoner",
+                "resizer.aspectRatio": "Behold billedformat",
+                "resizer.preview.title": "Forhåndsvisning",
+                "resizer.preview.original": "Original",
+                "resizer.preview.resized": "Størrelse endret",
+                "resizer.processing": "Behandling: 0%",
+                "resizer.resize": "Endre bildestørrelse",
+                "resizer.download": "Last ned",
+                "resizer.reset": "Tilbakestill",
+                "footer.follow": "FØLG OSS",
+                "footer.categories": "Populære kategorier",
+                "footer.categories.pdf": "PDF-verktøy",
+                "footer.categories.image": "Bildeverktøy",
+                "footer.categories.text": "Tekstverktøy",
+                "footer.categories.av": "Lyd-/videoverktøy",
+                "footer.categories.web": "Nett-/utviklerverktøy",
+                "footer.categories.calc": "Kalkulatorverktøy",
+                "footer.categories.util": "Nytteverktøy",
+                "footer.categories.color": "Fargeverktøy",
+                "footer.quicklinks": "Hurtiglenker",
+                "footer.links.tools": "Alle verktøy",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Kontakt",
+                "footer.links.privacy": "Personvernregler",
+                "footer.links.disclaimer": "Ansvarsfraskrivelse",
+                "footer.links.terms": "Tjenestevilkår",
+                "footer.copyright": "© 2025 LollyPoPDF. Alle rettigheter forbeholdt."
+            },
+            sv: {
+                "nav.home": "Hem",
+                "nav.about": "Om oss",
+                "nav.tools": "Verktyg",
+                "nav.contact": "Kontakt",
+                "hero.title": "Ändra bildstorlek gratis omedelbart",
+                "hero.description": "Gratis onlineverktyg för att ändra storleken på dina bilder till specifika dimensioner. Behåll bildförhållandet eller anpassa bredd och höjd. Ingen registrering krävs.",
+                "howto.title": "Hur du ändrar storlek på dina bilder",
+                "howto.step1.title": "Ladda upp din bild",
+                "howto.step1.description": "Klicka på uppladdningsområdet eller dra och släpp din bildfil. Vi stöder JPG, PNG, GIF, WEBP och mer.",
+                "howto.step2.title": "Ställ in dimensioner",
+                "howto.step2.description": "Ange önskad bredd och höjd. Växla bildförhållandelås för att automatiskt upprätthålla proportioner.",
+                "howto.step3.title": "Förhandsgranska & Ändra storlek",
+                "howto.step3.description": "Se en förhandsvisning av originalet och den storleksändrade bilden sida vid sida, klicka sedan på knappen ändra storlek.",
+                "howto.step4.title": "Ladda ner resultatet",
+                "howto.step4.description": "Ladda ner din storleksändrade bild med ett klick. Inga vattenstämplar, ingen registrering krävs.",
+                "resizer.title": "Verktyg för bildstorleksändring",
+                "resizer.upload.text": "Dra och släpp din bild här eller klicka för att bläddra",
+                "resizer.upload.button": "Välj bild",
+                "resizer.dimensions.title": "Ställ in dimensioner",
+                "resizer.aspectRatio": "Behåll bildförhållande",
+                "resizer.preview.title": "Förhandsgranskning",
+                "resizer.preview.original": "Original",
+                "resizer.preview.resized": "Storlek ändrad",
+                "resizer.processing": "Bearbetning: 0%",
+                "resizer.resize": "Ändra bildstorlek",
+                "resizer.download": "Ladda ner",
+                "resizer.reset": "Återställ",
+                "footer.follow": "FÖLJ OSS",
+                "footer.categories": "Populära kategorier",
+                "footer.categories.pdf": "PDF-verktyg",
+                "footer.categories.image": "Bildverktyg",
+                "footer.categories.text": "Textverktyg",
+                "footer.categories.av": "Ljud-/videoverktyg",
+                "footer.categories.web": "Webb/utvecklarverktyg",
+                "footer.categories.calc": "Kalkylatorverktyg",
+                "footer.categories.util": "Verktyg för verktyg",
+                "footer.categories.color": "Färgverktyg",
+                "footer.quicklinks": "Snabblänkar",
+                "footer.links.tools": "Alla verktyg",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Kontakt",
+                "footer.links.privacy": "Integritetspolicy",
+                "footer.links.disclaimer": "Ansvarsfriskrivning",
+                "footer.links.terms": "Användarvillkor",
+                "footer.copyright": "© 2025 LollyPoPDF. Alla rättigheter förbehållna."
+            },
+            fi: {
+                "nav.home": "Koti",
+                "nav.about": "Tietoa meistä",
+                "nav.tools": "Työkalut",
+                "nav.contact": "Ota yhteyttä",
+                "hero.title": "Muuta kuvien kokoa ilmaiseksi heti",
+                "hero.description": "Ilmainen online-työkalu kuviesi koon muuttamiseen tiettyihin mittoihin. Säilytä kuvasuhde tai mukauta leveys ja korkeus. Rekisteröitymistä ei tarvita.",
+                "howto.title": "Kuinka muuttaa kuviesi kokoa",
+                "howto.step1.title": "Lataa kuvasi",
+                "howto.step1.description": "Napsauta latausalueetta tai vedä ja pudota kuvatiedostosi. Tuemme JPG, PNG, GIF, WEBP ja enemmän.",
+                "howto.step2.title": "Aseta mitat",
+                "howto.step2.description": "Syötä haluamasi leveys ja korkeus. Vaihda kuvasuhteen lukitus säilyttääksesi mittasuhteet automaattisesti.",
+                "howto.step3.title": "Esikatsele ja muuta kokoa",
+                "howto.step3.description": "Katso alkuperäisen ja koon muutetun kuvan esikatselu rinnakkain, napsauta sitten koonmuutospainiketta.",
+                "howto.step4.title": "Lataa tulos",
+                "howto.step4.description": "Lataa koonmuutettu kuvasi yhdellä napsautuksella. Ei vesileimoja, ei rekisteröitymistä.",
+                "resizer.title": "Kuvan koonmuutostyökalu",
+                "resizer.upload.text": "Vedä ja pudota kuvasi tähän tai napsauta selataksesi",
+                "resizer.upload.button": "Valitse kuva",
+                "resizer.dimensions.title": "Aseta mitat",
+                "resizer.aspectRatio": "Säilytä kuvasuhde",
+                "resizer.preview.title": "Esikatselu",
+                "resizer.preview.original": "Alkuperäinen",
+                "resizer.preview.resized": "Koko muutettu",
+                "resizer.processing": "Käsittely: 0%",
+                "resizer.resize": "Muuta kuvan kokoa",
+                "resizer.download": "Lataa",
+                "resizer.reset": "Nollaa",
+                "footer.follow": "SEURA MEITÄ",
+                "footer.categories": "Suositut luokat",
+                "footer.categories.pdf": "PDF-työkalut",
+                "footer.categories.image": "Kuvatyökalut",
+                "footer.categories.text": "Tekstityökalut",
+                "footer.categories.av": "Ääni/videotyökalut",
+                "footer.categories.web": "Web-/kehittäjätyökalut",
+                "footer.categories.calc": "Laskinityökalut",
+                "footer.categories.util": "Aputyökalut",
+                "footer.categories.color": "Värityökalut",
+                "footer.quicklinks": "Pikalinkit",
+                "footer.links.tools": "Kaikki työkalut",
+                "footer.links.faq": "UKK",
+                "footer.links.contact": "Ota yhteyttä",
+                "footer.links.privacy": "Tietosuojakäytäntö",
+                "footer.links.disclaimer": "Vastuuvapauslauseke",
+                "footer.links.terms": "Käyttöehdot",
+                "footer.copyright": "© 2025 LollyPoPDF. Kaikki oikeudet pidätetään."
+            },
+            cs: {
+                "nav.home": "Domů",
+                "nav.about": "O nás",
+                "nav.tools": "Nástroje",
+                "nav.contact": "Kontakt",
+                "hero.title": "Zdarma změňte velikost obrázků okamžitě",
+                "hero.description": "Bezplatný online nástroj pro změnu velikosti obrázků na konkrétní rozměry. Zachovejte poměr stran nebo přizpůsobte šířku a výšku. Není vyžadována registrace.",
+                "howto.title": "Jak změnit velikost obrázků",
+                "howto.step1.title": "Nahrajte svůj obrázek",
+                "howto.step1.description": "Klikněte na oblast pro nahrání nebo přetáhněte soubor obrázku. Podporujeme JPG, PNG, GIF, WEBP a další.",
+                "howto.step2.title": "Nastavte rozměry",
+                "howto.step2.description": "Zadejte požadovanou šířku a výšku. Přepněte zámek poměru stran pro automatické zachování proporcí.",
+                "howto.step3.title": "Náhled a změna velikosti",
+                "howto.step3.description": "Podívejte se na náhled původního a změněného obrázku vedle sebe, poté klikněte na tlačítko změnit velikost.",
+                "howto.step4.title": "Stáhněte výsledek",
+                "howto.step4.description": "Stáhněte si obrázek se změněnou velikostí jedním kliknutím. Žádné vodoznaky, žádná registrace.",
+                "resizer.title": "Nástroj pro změnu velikosti obrázku",
+                "resizer.upload.text": "Přetáhněte obrázek sem nebo kliknutím procházejte",
+                "resizer.upload.button": "Vyberte obrázek",
+                "resizer.dimensions.title": "Nastavte rozměry",
+                "resizer.aspectRatio": "Zachovat poměr stran",
+                "resizer.preview.title": "Náhled",
+                "resizer.preview.original": "Původní",
+                "resizer.preview.resized": "Změněná velikost",
+                "resizer.processing": "Zpracování: 0%",
+                "resizer.resize": "Změnit velikost obrázku",
+                "resizer.download": "Stáhnout",
+                "resizer.reset": "Obnovit",
+                "footer.follow": "SLEDUJTE NÁS",
+                "footer.categories": "Populární kategorie",
+                "footer.categories.pdf": "PDF nástroje",
+                "footer.categories.image": "Obrázkové nástroje",
+                "footer.categories.text": "Textové nástroje",
+                "footer.categories.av": "Audio/video nástroje",
+                "footer.categories.web": "Web/vývojářské nástroje",
+                "footer.categories.calc": "Kalkulačkové nástroje",
+                "footer.categories.util": "Užitečné nástroje",
+                "footer.categories.color": "Barevné nástroje",
+                "footer.quicklinks": "Rychlé odkazy",
+                "footer.links.tools": "Všechny nástroje",
+                "footer.links.faq": "Časté otázky",
+                "footer.links.contact": "Kontakt",
+                "footer.links.privacy": "Zásady ochrany osobních údajů",
+                "footer.links.disclaimer": "Odmítnutí odpovědnosti",
+                "footer.links.terms": "Podmínky služby",
+                "footer.copyright": "© 2025 LollyPoPDF. Všechna práva vyhrazena."
+            }
+
+        };
+
+        // Function to change language
+        function changeLanguage(langCode) {
+            const langData = translations[langCode];
+            if (!langData) return;
+            
+            // Update all elements with data-i18n attribute
+            document.querySelectorAll('[data-i18n]').forEach(element => {
+                const key = element.getAttribute('data-i18n');
+                if (langData[key]) {
+                    element.textContent = langData[key];
+                }
+            });
+            
+            // Update current language display
+            currentLanguageElement.textContent = languages.find(lang => lang.code === langCode)?.name || 'English';
+            
+            // Save language preference
+            localStorage.setItem('language', langCode);
+        }
+
+        // Initialize language
+        const savedLanguage = localStorage.getItem('language') || 'en';
+        changeLanguage(savedLanguage);
+        
+        // Language selection handler
+        languageDropdown.addEventListener('click', (e) => {
+            if (e.target.classList.contains('language-option')) {
+                const langCode = e.target.getAttribute('data-lang');
+                changeLanguage(langCode);
+            }
+        });
+    </script>
+</body>
+</html>

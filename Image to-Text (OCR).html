@@ -1,0 +1,3073 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image to Text (OCR) Tool | LollyPoPdf</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/tesseract.js@4/dist/tesseract.min.js"></script>
+    <style>
+        :root {
+            --primary-color: #9370db;
+            --primary-dark: #8a2be2;
+            --secondary-color: #f0ebff;
+            --text-color: #333333;
+            --text-light: #6b7280;
+            --bg-color: #ffffff;
+            --bg-secondary: #f9f9f9;
+            --border-radius: 12px;
+            --transition: all 0.3s ease;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --header-height: 80px;
+            --white: #ffffff;
+            --header-text: #6b7280;
+            --accent-color: #9370db;
+        }
+
+        .dark-mode {
+            --primary-color: #a391f2;
+            --primary-dark: #8a2be2;
+            --secondary-color: #2d2d2d;
+            --text-color: #f0f0f0;
+            --text-light: #a0a0a0;
+            --bg-color: #1a1a1a;
+            --bg-secondary: #2d2d2d;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+            --white: #1a1a1a;
+            --header-text: #a0a0a0;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            transition: var(--transition);
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        ul {
+            list-style: none;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header Styles */
+        header {
+            background-color: var(--white);
+            color: var(--header-text);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+        }
+
+        .logo-icon {
+            position: relative;
+            width: 40px;
+            height: 40px;
+        }
+
+        .logo-circle {
+            width: 40px;
+            height: 40px;
+            border-radius: 40%;
+            background: linear-gradient(to bottom right, #9370db, #8a2be2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .logo-stem {
+            position: absolute;
+            bottom: -17px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 6px;
+            height: 17px;
+            background-color: #8a2be2;
+            border-radius: 0 0 3px 3px;
+        }
+
+        .logo-text {
+            font-size: 24px;
+            font-weight: bold;
+            color: #9370db;
+        }
+
+        nav ul {
+            display: flex;
+            gap: 30px;
+            list-style: none;
+        }
+
+        nav a {
+            font-weight: 500;
+            position: relative;
+            color: var(--header-text);
+            padding: 8px 0;
+            border-radius: 0;
+            transition: var(--transition);
+            text-decoration: none;
+        }
+
+        nav a:hover {
+            color: var(--accent-color);
+        }
+
+        nav a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: var(--accent-color);
+            transition: width 0.3s ease;
+        }
+
+        nav a:hover::after {
+            width: 100%;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .email {
+            font-size: 14px;
+            color: var(--header-text);
+        }
+
+        .theme-toggle {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 20px;
+            color: var(--header-text);
+            padding: 8px;
+            border-radius: 50%;
+            transition: var(--transition);
+        }
+
+        .theme-toggle:hover {
+            background-color: #f0ebff;
+            color: var(--accent-color);
+        }
+
+        .dark-mode .theme-toggle:hover {
+            background-color: #2d3748;
+            color: var(--accent-color);
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--header-text);
+        }
+
+        /* Mobile Menu */
+        .mobile-menu {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            width: 100%;
+            background-color: var(--white);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            z-index: 999;
+        }
+
+        .dark-mode .mobile-menu {
+            background-color: var(--bg-secondary);
+        }
+
+        .mobile-menu.active {
+            display: block;
+        }
+
+        .mobile-menu ul {
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .mobile-menu a {
+            display: block;
+            padding: 10px 0;
+            font-weight: 500;
+            color: var(--header-text);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .dark-mode .mobile-menu a {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .mobile-menu a:hover {
+            color: var(--accent-color);
+        }
+
+        /* Hero Section */
+        .hero {
+            background-color: var(--secondary-color);
+            padding: 60px 0;
+            text-align: center;
+        }
+
+        .dark-mode .hero {
+            background: linear-gradient(135deg, #2a1a4a, #3d2a6d);
+        }
+
+        .hero h1 {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            color: #000;
+        }
+
+        .dark-mode .hero h1 {
+            color: var(--text-color);
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            color: var(--text-color);
+            max-width: 700px;
+            margin: 0 auto 30px;
+        }
+
+        /* How to OCR Section */
+        .how-to-section {
+            padding: 80px 0;
+            background-color: var(--bg-color);
+        }
+
+        .dark-mode .how-to-section {
+            background-color: var(--bg-secondary);
+        }
+
+        .section-title {
+            font-size: 2rem;
+            text-align: center;
+            margin-bottom: 40px;
+            color: #000000;
+        }
+
+        .dark-mode .section-title {
+            color: var(--text-color);
+        }
+
+        .steps-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 40px;
+        }
+
+        .step-box {
+            background-color: var(--bg-secondary);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            padding: 30px;
+            min-height: 200px;
+            position: relative;
+        }
+
+        .step-number {
+            width: 40px;
+            height: 40px;
+            background-color: var(--primary-color);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 16px;
+            margin-bottom: 15px;
+        }
+
+        .step-title {
+            font-size: 18px;
+            color: #000000;
+            margin-bottom: 10px;
+        }
+
+        .dark-mode .step-title {
+            color: var(--text-color);
+        }
+
+        .step-description {
+            font-size: 14px;
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        /* OCR Tool */
+        .ocr-section {
+            padding: 80px 0;
+            background-color: var(--secondary-color);
+        }
+
+        .dark-mode .ocr-section {
+            background: linear-gradient(135deg, #2a1a4a, #3d2a6d);
+        }
+
+        .ocr-title {
+            font-size: 2.5rem;
+            text-align: center;
+            margin-bottom: 40px;
+            color: #a391f2;
+        }
+
+        .dark-mode .ocr-title {
+            color: #a391f2;
+        }
+
+        .ocr-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background-color: var(--bg-color);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            padding: 40px;
+        }
+
+        .upload-area {
+            border: 2px dashed var(--primary-color);
+            border-radius: var(--border-radius);
+            padding: 40px 20px;
+            text-align: center;
+            margin-bottom: 30px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .upload-area:hover {
+            background-color: var(--secondary-color);
+        }
+
+        .upload-icon {
+            font-size: 48px;
+            color: var(--primary-color);
+            margin-bottom: 15px;
+        }
+
+        .upload-text {
+            margin-bottom: 15px;
+        }
+
+        .upload-btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: var(--transition);
+        }
+
+        .upload-btn:hover {
+            background-color: var(--primary-dark);
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        .ocr-options {
+            margin-bottom: 30px;
+            display: none;
+        }
+
+        .ocr-title {
+            margin-bottom: 15px;
+            color: var(--primary-color);
+        }
+
+        .ocr-controls {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .control-label {
+            font-weight: bold;
+            color: var(--text-color);
+        }
+
+        .control-input {
+            padding: 12px 15px;
+            border: 2px solid var(--primary-color);
+            border-radius: var(--border-radius);
+            background-color: var(--bg-secondary);
+            color: var(--text-color);
+            font-size: 16px;
+        }
+
+        .control-input:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(147, 112, 219, 0.3);
+        }
+
+        .language-dropdown {
+            padding: 12px 15px;
+            border: 2px solid var(--primary-color);
+            border-radius: var(--border-radius);
+            background-color: var(--bg-secondary);
+            color: var(--text-color);
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .preprocessing-options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .preprocessing-option {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .preview-container {
+            display: none;
+            margin-bottom: 30px;
+        }
+
+        .preview-title {
+            margin-bottom: 15px;
+            color: var(--primary-color);
+        }
+
+        .preview-content {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .preview-box {
+            flex: 1;
+            min-width: 250px;
+            text-align: center;
+        }
+
+        .preview-label {
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        .preview-img {
+            max-width: 100%;
+            max-height: 300px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+        }
+
+        .text-preview {
+            background-color: var(--bg-secondary);
+            border-radius: var(--border-radius);
+            padding: 20px;
+            min-height: 300px;
+            max-height: 400px;
+            overflow-y: auto;
+            text-align: left;
+            box-shadow: var(--shadow);
+        }
+
+        .file-info {
+            margin-top: 10px;
+            font-size: 14px;
+            color: var(--text-light);
+        }
+
+        .processing {
+            display: none;
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .spinner {
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            border-left-color: var(--primary-color);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background-color: var(--bg-secondary);
+            border-radius: 4px;
+            margin: 15px 0;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background-color: var(--primary-color);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .progress-text {
+            font-size: 14px;
+            color: var(--text-light);
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .action-buttons {
+            display: none;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .action-btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: var(--transition);
+            flex: 1;
+            min-width: 150px;
+        }
+
+        .ocr-btn {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .ocr-btn:hover {
+            background-color: var(--primary-dark);
+        }
+
+        .download-btn {
+            background-color: white;
+            color: var(--primary-color);
+            border: 2px solid var(--primary-color);
+        }
+
+        .download-btn:hover {
+            background-color: var(--secondary-color);
+        }
+
+        .reset-btn {
+            background-color: var(--text-light);
+            color: white;
+        }
+
+        .reset-btn:hover {
+            background-color: #5a6268;
+        }
+
+        /* Footer */
+        footer {
+            background-color: #000000;
+            color: white;
+            padding: 60px 0 80px;
+            position: relative;
+        }
+
+        .footer-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 60px;
+        }
+
+        .footer-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            text-decoration: none;
+        }
+
+        .footer-logo .logo-icon {
+            width: 40px;
+            height: 40px;
+        }
+
+        .footer-logo .logo-text {
+            color: #9370db;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .footer-section h3 {
+            color: white;
+            font-weight: 600;
+            font-size: 20px;
+            margin-bottom: 20px;
+        }
+
+        .footer-section h4 {
+            color: #9370db;
+            font-size: 18px;
+            margin-bottom: 15px;
+        }
+
+        .footer-links li {
+            margin-bottom: 10px;
+        }
+
+        .footer-links a {
+            color: white;
+        }
+
+        .footer-links a:hover {
+            color: #9370db;
+        }
+
+        .social-icons {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .social-icon {
+            width: 40px;
+            height: 40px;
+            background-color: #9370db;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+        }
+
+        .social-icon:hover {
+            background-color: #8a2be2;
+            transform: translateY(-3px);
+        }
+
+        .copyright {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            color: #f9f7ff;
+            font-size: 12px;
+        }
+
+        .footer-line {
+            position: absolute;
+            bottom: 50px;
+            left: 0;
+            width: 100%;
+            height: 1px;
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        /* Language Switcher */
+        .language-switcher {
+            position: fixed;
+            bottom: 10px;
+            right: 10px;
+            z-index: 1000;
+        }
+
+        .language-btn {
+            background-color: #9370db;
+            color: white;
+            border: none;
+            border-radius: 30px;
+            padding: 5px 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .language-dropdown-menu {
+            position: absolute;
+            bottom: 100%;
+            right: 0;
+            width: 300px;
+            background-color: white;
+            border-radius: var(--border-radius);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            display: none;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .dark-mode .language-dropdown-menu {
+            background-color: var(--bg-secondary);
+        }
+
+        .language-switcher:hover .language-dropdown-menu {
+            display: grid;
+        }
+
+        .language-option {
+            padding: 8px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            text-align: center;
+            font-size: 14px;
+        }
+
+        .language-option:hover {
+            background-color: white;
+            color: #9370db;
+        }
+
+        .dark-mode .language-option:hover {
+            background-color: var(--bg-color);
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 992px) {
+            .steps-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .footer-container {
+                grid-template-columns: 1fr 1fr;
+            }
+            
+            .ocr-controls {
+                grid-template-columns: 1fr;
+            }
+            
+            .preview-content {
+                flex-direction: column;
+            }
+        }
+
+        @media (max-width: 768px) {
+            nav ul, .email {
+                display: none;
+            }
+            
+            .mobile-menu-btn {
+                display: block;
+            }
+            
+            .hero h1, .ocr-title {
+                font-size: 2rem;
+            }
+            
+            .hero p {
+                font-size: 1rem;
+            }
+            
+            .language-dropdown-menu {
+                width: 250px;
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .footer-container {
+                grid-template-columns: 1fr;
+                gap: 40px;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .ocr-container {
+                padding: 20px;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+            
+            .action-btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container header-container">
+            <a href="https://lollypopdf.com" class="logo">
+                <div class="logo-icon">
+                    <div class="logo-circle">LPdf</div>
+                    <div class="logo-stem"></div>
+                </div>
+                <span class="logo-text">LollyPoPdf</span>
+            </a>
+            
+            <nav>
+                <ul>
+                    <li><a href="https://lollypopdf.github.io/LollyPoPdf#home" class="nav-link" data-i18n="nav.home">Home</a></li>
+                    <li><a href="https://lollypopdf.github.io/LollyPoPdf#about" class="nav-link" data-i18n="nav.about">About Us</a></li>
+                    <li><a href="https://lollypopdf.github.io/LollyPoPdf#tools" class="nav-link" data-i18n="nav.tools">Tools</a></li>
+                    <li><a href="contact.html" class="nav-link" data-i18n="nav.contact">Contact</a></li>
+                </ul>
+            </nav>
+            
+            <div class="header-right">
+                <span class="email">lollypoppdf@gmail.com</span>
+                <button class="theme-toggle" id="themeToggle">
+                    <i class="fas fa-moon"></i>
+                </button>
+                <button class="mobile-menu-btn" id="mobileMenuBtn">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </div>
+        
+        <!-- Mobile Menu -->
+        <div class="mobile-menu" id="mobileMenu">
+            <ul>
+                <li><a href="https://lollypopdf.github.io/LollyPoPdf#home" class="nav-link" data-i18n="nav.home">Home</a></li>
+                <li><a href="https://lollypopdf.github.io/LollyPoPdf#about" class="nav-link" data-i18n="nav.about">About Us</a></li>
+                <li><a href="https://lollypopdf.github.io/LollyPoPdf#tools" class="nav-link" data-i18n="nav.tools">Tools</a></li>
+                <li><a href="contact.html" class="nav-link" data-i18n="nav.contact">Contact</a></li>
+            </ul>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <h1 data-i18n="hero.title">Free Image to Text (OCR) Tool</h1>
+            <p data-i18n="hero.description">Extract text from images instantly with our free OCR tool. Supports multiple languages, image preprocessing, and works entirely in your browser. No registration required.</p>
+        </div>
+    </section>
+
+    <!-- How to OCR Section -->
+    <section class="how-to-section">
+        <div class="container">
+            <h2 class="section-title" data-i18n="howto.title">How to Extract Text from Images</h2>
+            <div class="steps-container">
+                <div class="step-box">
+                    <div class="step-number">1</div>
+                    <h3 class="step-title" data-i18n="howto.step1.title">Upload Your Image</h3>
+                    <p class="step-description" data-i18n="howto.step1.description">Click the upload area or drag and drop your image file. We support JPG, PNG, GIF, WEBP and more.</p>
+                </div>
+                <div class="step-box">
+                    <div class="step-number">2</div>
+                    <h3 class="step-title" data-i18n="howto.step2.title">Configure OCR Settings</h3>
+                    <p class="step-description" data-i18n="howto.step2.description">Select language, enable preprocessing options, and choose output format for optimal text extraction.</p>
+                </div>
+                <div class="step-box">
+                    <div class="step-number">3</div>
+                    <h3 class="step-title" data-i18n="howto.step3.title">Extract Text</h3>
+                    <p class="step-description" data-i18n="howto.step3.description">Click the "Extract Text" button to process your image. See real-time progress as OCR works.</p>
+                </div>
+                <div class="step-box">
+                    <div class="step-number">4</div>
+                    <h3 class="step-title" data-i18n="howto.step4.title">Copy or Download</h3>
+                    <p class="step-description" data-i18n="howto.step4.description">Copy the extracted text to clipboard or download it as a text file. No registration required.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- OCR Tool -->
+    <section class="ocr-section">
+        <div class="container">
+            <h2 class="ocr-title" data-i18n="ocr.title">Image to Text (OCR) Tool</h2>
+            <div class="ocr-container">
+                <div class="upload-area" id="uploadArea">
+                    <i class="fas fa-cloud-upload-alt upload-icon"></i>
+                    <p class="upload-text" data-i18n="ocr.upload.text">Drag & drop your image here or click to browse</p>
+                    <button class="upload-btn" data-i18n="ocr.upload.button">Select Image</button>
+                    <input type="file" id="fileInput" class="file-input" accept="image/*">
+                </div>
+                
+                <div class="ocr-options" id="ocrOptions">
+                    <h3 class="ocr-title" data-i18n="ocr.options.title">OCR Options</h3>
+                    
+                    <div class="ocr-controls">
+                        <div class="control-group">
+                            <label class="control-label" for="languageSelect">Language</label>
+                            <select id="languageSelect" class="language-dropdown">
+                                <option value="eng">English</option>
+                                <option value="spa">Spanish</option>
+                                <option value="fra">French</option>
+                                <option value="deu">German</option>
+                                <option value="ita">Italian</option>
+                                <option value="por">Portuguese</option>
+                                <option value="rus">Russian</option>
+                                <option value="jpn">Japanese</option>
+                                <option value="chi_sim">Chinese (Simplified)</option>
+                                <option value="chi_tra">Chinese (Traditional)</option>
+                                <option value="ara">Arabic</option>
+                                <option value="hin">Hindi</option>
+                                <option value="kor">Korean</option>
+                                <option value="kor">Telugu</option>
+                            </select>
+                        </div>
+                        
+                        <div class="control-group">
+                            <label class="control-label">Image Preprocessing</label>
+                            <div class="preprocessing-options">
+                                <div class="preprocessing-option">
+                                    <input type="checkbox" id="grayscale" checked>
+                                    <label for="grayscale">Grayscale</label>
+                                </div>
+                                <div class="preprocessing-option">
+                                    <input type="checkbox" id="contrast">
+                                    <label for="contrast">Enhance Contrast</label>
+                                </div>
+                                <div class="preprocessing-option">
+                                    <input type="checkbox" id="deskew">
+                                    <label for="deskew">Auto Deskew</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="preview-container" id="previewContainer">
+                    <h3 class="preview-title" data-i18n="ocr.preview.title">Preview</h3>
+                    <div class="preview-content">
+                        <div class="preview-box">
+                            <div class="preview-label" data-i18n="ocr.preview.original">Original Image</div>
+                            <img id="originalPreview" class="preview-img" src="" alt="Original Image">
+                            <div class="file-info" id="originalInfo"></div>
+                        </div>
+                        <div class="preview-box">
+                            <div class="preview-label" data-i18n="ocr.preview.text">Extracted Text</div>
+                            <div id="textPreview" class="text-preview"></div>
+                            <div class="file-info" id="textInfo"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="processing" id="processing">
+                    <div class="spinner"></div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progressFill"></div>
+                    </div>
+                    <p class="progress-text" id="progressText" data-i18n="ocr.processing">Processing: 0%</p>
+                </div>
+                
+                <div class="action-buttons" id="actionButtons">
+                    <button class="action-btn ocr-btn" id="ocrBtn" data-i18n="ocr.extract">Extract Text</button>
+                    <button class="action-btn download-btn" id="downloadBtn" data-i18n="ocr.download">Download Text</button>
+                    <button class="action-btn reset-btn" id="resetBtn" data-i18n="ocr.reset">Reset</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container footer-container">
+            <!-- Left Section -->
+            <div class="footer-section">
+                <a href="https://lollypopdf.com" class="footer-logo">
+                    <div class="logo-icon">
+                        <div class="logo-circle">LPdf</div>
+                        <div class="logo-stem"></div>
+                    </div>
+                    <span class="logo-text">LollyPoPdf</span>
+                </a>
+                <h3 data-i18n="footer.follow">FOLLOW US</h3>
+                <div class="social-icons">
+                    <a href="https://facebook.com/lollypopdf" class="social-icon"><i class="fab fa-facebook-f"></i></a>
+                    <a href="https://linkedin.com/company/lollypopdf" class="social-icon"><i class="fab fa-linkedin-in"></i></a>
+                    <a href="https://twitter.com/lollypopdf" class="social-icon"><i class="fab fa-twitter"></i></a>
+                    <a href="https://instagram.com/lollypopdf" class="social-icon"><i class="fab fa-instagram"></i></a>
+                    <a href="https://pinterest.com/lollypopdf" class="social-icon"><i class="fab fa-pinterest-p"></i></a>
+                </div>
+            </div>
+            
+            <!-- Middle Section - Popular Categories -->
+            <div class="footer-section">
+                <h4 data-i18n="footer.categories">Popular Categories</h4>
+                <ul class="footer-links">
+                    <li><a href="https://lollypopdf.com#pdf-tools" data-i18n="footer.categories.pdf">PDF Tools</a></li>
+                    <li><a href="https://lollypopdf.com#image-tools" data-i18n="footer.categories.image">Image Tools</a></li>
+                    <li><a href="https://lollypopdf.com#text-tools" data-i18n="footer.categories.text">Text Tools</a></li>
+                    <li><a href="https://lollypopdf.com#audio-video-tools" data-i18n="footer.categories.av">Audio/Video Tools</a></li>
+                    <li><a href="https://lollypopdf.com#web-developer-tools" data-i18n="footer.categories.web">WebDeveloper Tools</a></li>
+                    <li><a href="https://lollypopdf.com#calculator-tools" data-i18n="footer.categories.calc">Calculator Tools</a></li>
+                    <li><a href="https://lollypopdf.com#utility-tools" data-i18n="footer.categories.util">Utility Tools</a></li>
+                    <li><a href="https://lollypopdf.com#color-tools" data-i18n="footer.categories.color">Color Tools</a></li>
+                </ul>
+            </div>
+            
+            <!-- Right Section - Quick Links -->
+            <div class="footer-section">
+                <h4 data-i18n="footer.quicklinks">Quick Links</h4>
+                <ul class="footer-links">
+                    <li><a href="https://lollypopdf.github.io/LollyPoPdf#home" data-i18n="nav.home">Home</a></li>
+                    <li><a href="tools.html" data-i18n="footer.links.tools">All Tools</a></li>
+                    <li><a href="faq.html" data-i18n="footer.links.faq">FAQ</a></li>
+                    <li><a href="contact.html" data-i18n="footer.links.contact">Contact</a></li>
+                    <li><a href="privacy-policy.html" data-i18n="footer.links.privacy">Privacy Policy</a></li>
+                    <li><a href="disclaimer.html" data-i18n="footer.links.disclaimer">Disclaimer</a></li>
+                    <li><a href="terms.html" data-i18n="footer.links.terms">Terms of Service</a></li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="footer-line"></div>
+        <div class="copyright" data-i18n="footer.copyright">© 2025 LollyPoPDF. All rights reserved.</div>
+    </footer>
+
+    <!-- Language Switcher -->
+    <div class="language-switcher">
+        <button class="language-btn">
+            <i class="fas fa-globe"></i>
+            <span id="currentLanguage">English</span>
+        </button>
+        <div class="language-dropdown-menu">
+            <div class="language-option" data-lang="en">English</div>
+            <div class="language-option" data-lang="es">Español</div>
+            <div class="language-option" data-lang="fr">Français</div>
+            <div class="language-option" data-lang="de">Deutsch</div>
+            <div class="language-option" data-lang="it">Italiano</div>
+            <div class="language-option" data-lang="pt">Português</div>
+            <div class="language-option" data-lang="ja">日本語</div>
+            <div class="language-option" data-lang="ru">Pусский</div>
+            <div class="language-option" data-lang="ko">한국어</div>
+            <div class="language-option" data-lang="zh-CN">中文 (简体)</div>
+            <div class="language-option" data-lang="zh-TW">中文 (繁體)</div>
+            <div class="language-option" data-lang="ar">العربية</div>
+            <div class="language-option" data-lang="fa">فارسی</div>
+            <div class="language-option" data-lang="bg">Български</div>
+            <div class="language-option" data-lang="ca">Català</div>
+            <div class="language-option" data-lang="nl">Nederlands</div>
+            <div class="language-option" data-lang="el">Ελληνικά</div>
+            <div class="language-option" data-lang="hi">हिन्दी</div>
+            <div class="language-option" data-lang="te">తెలుగు</div>
+            <div class="language-option" data-lang="kn">ಕನ್ನಡ</div>
+            <div class="language-option" data-lang="ta">தமிழ்</div>
+            <div class="language-option" data-lang="ml">മലയാളം</div>
+            <div class="language-option" data-lang="id">Bahasa Indonesia</div>
+            <div class="language-option" data-lang="ms">Bahasa Melayu</div>
+            <div class="language-option" data-lang="pl">Polski</div>
+            <div class="language-option" data-lang="th">ภาษาไทย</div>
+            <div class="language-option" data-lang="tr">Türkçe</div>
+            <div class="language-option" data-lang="uk">Українська</div>
+            <div class="language-option" data-lang="vi">Tiếng Việt</div>
+            <div class="language-option" data-lang="is">Íslenska</div>
+            <div class="language-option" data-lang="no">Norsk</div>
+            <div class="language-option" data-lang="sv">Svenska</div>
+            <div class="language-option" data-lang="fi">Suomi</div>
+            <div class="language-option" data-lang="cs">Čeština</div>
+        </div>
+    </div>
+
+    <script>
+        // Theme Toggle
+        const themeToggle = document.getElementById('themeToggle');
+        const body = document.body;
+        
+        // Check for saved theme preference or respect OS preference
+        const savedTheme = localStorage.getItem('theme') || 
+            (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        
+        if (savedTheme === 'dark') {
+            body.classList.add('dark-mode');
+            themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+        }
+        
+        themeToggle.addEventListener('click', () => {
+            body.classList.toggle('dark-mode');
+            const isDarkMode = body.classList.contains('dark-mode');
+            
+            if (isDarkMode) {
+                themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+                localStorage.setItem('theme', 'dark');
+            } else {
+                themeToggle.innerHTML = '<i class="fas fa-moon"></i>';
+                localStorage.setItem('theme', 'light');
+            }
+        });
+
+        // Mobile Menu Toggle
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const mobileMenu = document.getElementById('mobileMenu');
+        
+        mobileMenuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('active');
+            
+            // Change icon based on menu state
+            if (mobileMenu.classList.contains('active')) {
+                mobileMenuBtn.innerHTML = '<i class="fas fa-times"></i>';
+            } else {
+                mobileMenuBtn.innerHTML = '<i class="fas fa-bars"></i>';
+            }
+        });
+
+        // Close mobile menu when clicking on a link
+        const mobileMenuLinks = mobileMenu.querySelectorAll('a');
+        mobileMenuLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                mobileMenu.classList.remove('active');
+                mobileMenuBtn.innerHTML = '<i class="fas fa-bars"></i>';
+            });
+        });
+
+        // Image OCR Functionality
+        const uploadArea = document.getElementById('uploadArea');
+        const fileInput = document.getElementById('fileInput');
+        const originalPreview = document.getElementById('originalPreview');
+        const textPreview = document.getElementById('textPreview');
+        const originalInfo = document.getElementById('originalInfo');
+        const textInfo = document.getElementById('textInfo');
+        const previewContainer = document.getElementById('previewContainer');
+        const ocrBtn = document.getElementById('ocrBtn');
+        const downloadBtn = document.getElementById('downloadBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        const processing = document.getElementById('processing');
+        const progressFill = document.getElementById('progressFill');
+        const progressText = document.getElementById('progressText');
+        const ocrOptions = document.getElementById('ocrOptions');
+        const actionButtons = document.getElementById('actionButtons');
+        
+        // OCR controls
+        const languageSelect = document.getElementById('languageSelect');
+        const grayscaleCheckbox = document.getElementById('grayscale');
+        const contrastCheckbox = document.getElementById('contrast');
+        const deskewCheckbox = document.getElementById('deskew');
+        
+        let currentFile = null;
+        let extractedText = '';
+        let worker = null;
+        
+        // Upload area click handler
+        uploadArea.addEventListener('click', () => {
+            fileInput.click();
+        });
+        
+        // File input change handler
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                handleFile(e.target.files[0]);
+            }
+        });
+        
+        // Drag and drop functionality
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.style.backgroundColor = 'var(--secondary-color)';
+        });
+        
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.style.backgroundColor = '';
+        });
+        
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.style.backgroundColor = '';
+            
+            if (e.dataTransfer.files.length > 0) {
+                handleFile(e.dataTransfer.files[0]);
+            }
+        });
+        
+        // Handle the selected file - NO FILE SIZE LIMITS
+        function handleFile(file) {
+            // Check if file is an image
+            if (!file.type.match('image.*')) {
+                alert('Please select an image file (JPG, PNG, GIF, etc.)');
+                return;
+            }
+            
+            // NO FILE SIZE LIMITS - UNLIMITED USE
+            currentFile = file;
+            
+            // Display original image preview
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                originalPreview.src = e.target.result;
+                originalInfo.textContent = `${file.name} (${formatFileSize(file.size)})`;
+                previewContainer.style.display = 'block';
+                
+                // Show the OCR options after image is uploaded
+                ocrOptions.style.display = 'block';
+                actionButtons.style.display = 'flex';
+                
+                // Clear previous text
+                textPreview.textContent = '';
+                textInfo.textContent = '';
+            };
+            reader.readAsDataURL(file);
+        }
+        
+        // Format file size
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+        
+        // Preprocess image
+        function preprocessImage(image) {
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            
+            canvas.width = image.width;
+            canvas.height = image.height;
+            
+            // Draw original image
+            ctx.drawImage(image, 0, 0);
+            
+            // Apply preprocessing options
+            if (grayscaleCheckbox.checked) {
+                const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                const data = imageData.data;
+                
+                for (let i = 0; i < data.length; i += 4) {
+                    const avg = (data[i] + data[i + 1] + data[i + 2]) / 3;
+                    data[i] = avg;     // red
+                    data[i + 1] = avg; // green
+                    data[i + 2] = avg; // blue
+                }
+                
+                ctx.putImageData(imageData, 0, 0);
+            }
+            
+            if (contrastCheckbox.checked) {
+                // Simple contrast enhancement
+                const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                const data = imageData.data;
+                const factor = 1.5; // Contrast factor
+                
+                for (let i = 0; i < data.length; i += 4) {
+                    data[i] = factor * (data[i] - 128) + 128;     // red
+                    data[i + 1] = factor * (data[i + 1] - 128) + 128; // green
+                    data[i + 2] = factor * (data[i + 2] - 128) + 128; // blue
+                }
+                
+                ctx.putImageData(imageData, 0, 0);
+            }
+            
+            return canvas;
+        }
+        
+        // Update progress bar and text
+        function updateProgress(percent) {
+            progressFill.style.width = `${percent}%`;
+            progressText.textContent = `Processing: ${Math.round(percent)}%`;
+        }
+        
+        // Perform OCR
+        function performOCR() {
+            if (!currentFile) {
+                alert('Please select an image first');
+                return;
+            }
+            
+            processing.style.display = 'block';
+            ocrBtn.disabled = true;
+            
+            // Reset progress
+            updateProgress(0);
+            
+            // Initialize Tesseract worker
+            const selectedLanguage = languageSelect.value;
+            
+            Tesseract.createWorker({
+                logger: m => {
+                    if (m.status === 'recognizing text') {
+                        updateProgress(m.progress * 100);
+                    }
+                }
+            }).then(createdWorker => {
+                worker = createdWorker;
+                return worker.load();
+            }).then(() => {
+                return worker.loadLanguage(selectedLanguage);
+            }).then(() => {
+                return worker.initialize(selectedLanguage);
+            }).then(() => {
+                // Preprocess image if needed
+                const img = new Image();
+                img.onload = () => {
+                    let processedImage = img;
+                    
+                    if (grayscaleCheckbox.checked || contrastCheckbox.checked) {
+                        processedImage = preprocessImage(img);
+                    }
+                    
+                    // Perform OCR
+                    return worker.recognize(processedImage).then(result => {
+                        extractedText = result.data.text;
+                        
+                        // Display extracted text
+                        textPreview.textContent = extractedText;
+                        textInfo.textContent = `Characters: ${extractedText.length}`;
+                        
+                        processing.style.display = 'none';
+                        ocrBtn.disabled = false;
+                        
+                        // Terminate worker
+                        worker.terminate();
+                        worker = null;
+                    });
+                };
+                img.src = URL.createObjectURL(currentFile);
+            }).catch(err => {
+                console.error(err);
+                alert('An error occurred during OCR processing. Please try again.');
+                processing.style.display = 'none';
+                ocrBtn.disabled = false;
+                
+                if (worker) {
+                    worker.terminate();
+                    worker = null;
+                }
+            });
+        }
+        
+        // OCR button handler
+        ocrBtn.addEventListener('click', performOCR);
+        
+        // Download button handler
+        downloadBtn.addEventListener('click', () => {
+            if (!extractedText) {
+                alert('Please extract text first');
+                return;
+            }
+            
+            const blob = new Blob([extractedText], { type: 'text/plain' });
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = 'extracted-text.txt';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        });
+        
+        // Reset button handler
+        resetBtn.addEventListener('click', () => {
+            currentFile = null;
+            extractedText = '';
+            fileInput.value = '';
+            originalPreview.src = '';
+            textPreview.textContent = '';
+            originalInfo.textContent = '';
+            textInfo.textContent = '';
+            previewContainer.style.display = 'none';
+            processing.style.display = 'none';
+            ocrBtn.disabled = false;
+            
+            // Hide OCR options
+            ocrOptions.style.display = 'none';
+            actionButtons.style.display = 'none';
+            
+            // Reset progress
+            updateProgress(0);
+            
+            // Reset controls to default values
+            languageSelect.value = 'eng';
+            grayscaleCheckbox.checked = true;
+            contrastCheckbox.checked = false;
+            deskewCheckbox.checked = false;
+            
+            // Terminate worker if active
+            if (worker) {
+                worker.terminate();
+                worker = null;
+            }
+        });
+
+        // Language Switcher
+        const languageBtn = document.querySelector('.language-btn');
+        const currentLanguageElement = document.getElementById('currentLanguage');
+        const languageDropdown = document.querySelector('.language-dropdown-menu');
+        
+        const languages = [
+            { code: 'en', name: 'English' },
+            { code: 'es', name: 'Español' },
+            { code: 'fr', name: 'Français' },
+            { code: 'de', name: 'Deutsch' },
+            { code: 'it', name: 'Italiano' },
+            { code: 'pt', name: 'Português' },
+            { code: 'ja', name: '日本語' },
+            { code: 'ru', name: 'Pусский' },
+            { code: 'ko', name: '한국어' },
+            { code: 'zh-CN', name: '中文 (简体)' },
+            { code: 'zh-TW', name: '中文 (繁體)' },
+            { code: 'ar', name: 'العربية' },
+            { code: 'fa', name: 'فارسی' },
+            { code: 'bg', name: 'Български' },
+            { code: 'ca', name: 'Català' },
+            { code: 'nl', name: 'Nederlands' },
+            { code: 'el', name: 'Ελληνικά' },
+            { code: 'hi', name: 'हिन्दी' },
+            { code: 'te', name: 'తెలుగు' },
+            { code: 'kn', name: 'ಕನ್ನಡ' },
+            { code: 'ta', name: 'தமிழ்' },
+            { code: 'ml', name: 'മലയാളം' },
+            { code: 'id', name: 'Bahasa Indonesia' },
+            { code: 'ms', name: 'Bahasa Melayu' },
+            { code: 'pl', name: 'Polski' },
+            { code: 'th', name: 'ภาษาไทย' },
+            { code: 'tr', name: 'Türkçe' },
+            { code: 'uk', name: 'Українська' },
+            { code: 'vi', name: 'Tiếng Việt' },
+            { code: 'is', name: 'Íslenska' },
+            { code: 'no', name: 'Norsk' },
+            { code: 'sv', name: 'Svenska' },
+            { code: 'fi', name: 'Suomi' },
+            { code: 'cs', name: 'Čeština' }
+        ];
+        
+        // Translation data
+        const translations = {
+            en: {
+                "nav.home": "Home",
+                "nav.about": "About Us",
+                "nav.tools": "Tools",
+                "nav.contact": "Contact",
+                "hero.title": "Free Image to Text (OCR) Tool",
+                "hero.description": "Extract text from images instantly with our free OCR tool. Supports multiple languages, image preprocessing, and works entirely in your browser. No registration required.",
+                "howto.title": "How to Extract Text from Images",
+                "howto.step1.title": "Upload Your Image",
+                "howto.step1.description": "Click the upload area or drag and drop your image file. We support JPG, PNG, GIF, WEBP and more.",
+                "howto.step2.title": "Configure OCR Settings",
+                "howto.step2.description": "Select language, enable preprocessing options, and choose output format for optimal text extraction.",
+                "howto.step3.title": "Extract Text",
+                "howto.step3.description": "Click the 'Extract Text' button to process your image. See real-time progress as OCR works.",
+                "howto.step4.title": "Copy or Download",
+                "howto.step4.description": "Copy the extracted text to clipboard or download it as a text file. No registration required.",
+                "ocr.title": "Image to Text (OCR) Tool",
+                "ocr.upload.text": "Drag & drop your image here or click to browse",
+                "ocr.upload.button": "Select Image",
+                "ocr.options.title": "OCR Options",
+                "ocr.preview.title": "Preview",
+                "ocr.preview.original": "Original Image",
+                "ocr.preview.text": "Extracted Text",
+                "ocr.processing": "Processing: 0%",
+                "ocr.extract": "Extract Text",
+                "ocr.download": "Download Text",
+                "ocr.reset": "Reset",
+                "footer.follow": "FOLLOW US",
+                "footer.categories": "Popular Categories",
+                "footer.categories.pdf": "PDF Tools",
+                "footer.categories.image": "Image Tools",
+                "footer.categories.text": "Text Tools",
+                "footer.categories.av": "Audio/Video Tools",
+                "footer.categories.web": "Web/Developer Tools",
+                "footer.categories.calc": "Calculator Tools",
+                "footer.categories.util": "Utility Tools",
+                "footer.categories.color": "Color Tools",
+                "footer.quicklinks": "Quick Links",
+                "footer.links.tools": "All Tools",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Contact",
+                "footer.links.privacy": "Privacy Policy",
+                "footer.links.disclaimer": "Disclaimer",
+                "footer.links.terms": "Terms of Service",
+                "footer.copyright": "© 2025 LollyPoPDF. All rights reserved."
+            },
+            es: {
+                "nav.home": "Inicio",
+                "nav.about": "Sobre Nosotros",
+                "nav.tools": "Herramientas",
+                "nav.contact": "Contacto",
+                "hero.title": "Herramienta Gratuita de Imagen a Texto (OCR)",
+                "hero.description": "Extrae texto de imágenes instantáneamente con nuestra herramienta OCR gratuita. Soporta múltiples idiomas, preprocesamiento de imágenes y funciona completamente en tu navegador. No se requiere registro.",
+                "howto.title": "Cómo Extraer Texto de Imágenes",
+                "howto.step1.title": "Sube Tu Imagen",
+                "howto.step1.description": "Haz clic en el área de carga o arrastra y suelta tu archivo de imagen. Admitimos JPG, PNG, GIF, WEBP y más.",
+                "howto.step2.title": "Configura las Opciones de OCR",
+                "howto.step2.description": "Selecciona el idioma, activa las opciones de preprocesamiento y elige el formato de salida para una extracción óptima de texto.",
+                "howto.step3.title": "Extraer Texto",
+                "howto.step3.description": "Haz clic en el botón 'Extraer Texto' para procesar tu imagen. Ve el progreso en tiempo real mientras funciona el OCR.",
+                "howto.step4.title": "Copiar o Descargar",
+                "howto.step4.description": "Copia el texto extraído al portapapeles o descárgalo como un archivo de texto. Sin registro requerido.",
+                "ocr.title": "Herramienta de Imagen a Texto (OCR)",
+                "ocr.upload.text": "Arrastra y suelta tu imagen aquí o haz clic para buscar",
+                "ocr.upload.button": "Seleccionar Imagen",
+                "ocr.options.title": "Opciones de OCR",
+                "ocr.preview.title": "Vista Previa",
+                "ocr.preview.original": "Imagen Original",
+                "ocr.preview.text": "Texto Extraído",
+                "ocr.processing": "Procesando: 0%",
+                "ocr.extract": "Extraer Texto",
+                "ocr.download": "Descargar Texto",
+                "ocr.reset": "Restablecer",
+                "footer.follow": "SÍGUENOS",
+                "footer.categories": "Categorías Populares",
+                "footer.categories.pdf": "Herramientas PDF",
+                "footer.categories.image": "Herramientas de Imagen",
+                "footer.categories.text": "Herramientas de Texto",
+                "footer.categories.av": "Herramientas de Audio/Video",
+                "footer.categories.web": "Herramientas Web/Desarrollador",
+                "footer.categories.calc": "Herramientas de Calculadora",
+                "footer.categories.util": "Herramientas de Utilidad",
+                "footer.categories.color": "Herramientas de Color",
+                "footer.quicklinks": "Enlaces Rápidos",
+                "footer.links.tools": "Todas las Herramientas",
+                "footer.links.faq": "Preguntas Frecuentes",
+                "footer.links.contact": "Contacto",
+                "footer.links.privacy": "Política de Privacidad",
+                "footer.links.disclaimer": "Descargo de Responsabilidad",
+                "footer.links.terms": "Términos de Servicio",
+                "footer.copyright": "© 2025 LollyPoPDF. Todos los derechos reservados."
+            },
+            fr: {
+                "nav.home": "Accueil",
+                "nav.about": "À propos",
+                "nav.tools": "Outils",
+                "nav.contact": "Contact",
+                "hero.title": "Outil Gratuit d'Image en Texte (OCR)",
+                "hero.description": "Extrayez du texte d'images instantanément avec notre outil OCR gratuit. Prend en charge plusieurs langues, le prétraitement d'images et fonctionne entièrement dans votre navigateur. Aucune inscription requise.",
+                "howto.title": "Comment Extraire du Texte d'Images",
+                "howto.step1.title": "Téléchargez Votre Image",
+                "howto.step1.description": "Cliquez sur la zone de téléchargement ou faites glisser et déposez votre fichier image. Nous prenons en charge JPG, PNG, GIF, WEBP et plus.",
+                "howto.step2.title": "Configurez les Paramètres OCR",
+                "howto.step2.description": "Sélectionnez la langue, activez les options de prétraitement et choisissez le format de sortie pour une extraction optimale du texte.",
+                "howto.step3.title": "Extraire le Texte",
+                "howto.step3.description": "Cliquez sur le bouton 'Extraire le Texte' pour traiter votre image. Voir la progression en temps réel pendant que l'OCR fonctionne.",
+                "howto.step4.title": "Copier ou Télécharger",
+                "howto.step4.description": "Copiez le texte extrait dans le presse-papiers ou téléchargez-le sous forme de fichier texte. Aucune inscription requise.",
+                "ocr.title": "Outil d'Image en Texte (OCR)",
+                "ocr.upload.text": "Glissez-déposez votre image ici ou cliquez pour parcourir",
+                "ocr.upload.button": "Sélectionner une Image",
+                "ocr.options.title": "Options OCR",
+                "ocr.preview.title": "Aperçu",
+                "ocr.preview.original": "Image Originale",
+                "ocr.preview.text": "Texte Extraît",
+                "ocr.processing": "Traitement: 0%",
+                "ocr.extract": "Extraire le Texte",
+                "ocr.download": "Télécharger le Texte",
+                "ocr.reset": "Réinitialiser",
+                "footer.follow": "SUIVEZ-NOUS",
+                "footer.categories": "Catégories Populaires",
+                "footer.categories.pdf": "Outils PDF",
+                "footer.categories.image": "Outils d'Image",
+                "footer.categories.text": "Outils de Texte",
+                "footer.categories.av": "Outils Audio/Video",
+                "footer.categories.web": "Outils Web/Développeur",
+                "footer.categories.calc": "Outils de Calculatrice",
+                "footer.categories.util": "Outils Utilitaires",
+                "footer.categories.color": "Outils de Couleur",
+                "footer.quicklinks": "Liens Rapides",
+                "footer.links.tools": "Tous les Outils",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Contact",
+                "footer.links.privacy": "Politique de Confidentialité",
+                "footer.links.disclaimer": "Avertissement",
+                "footer.links.terms": "Conditions d'Utilisation",
+                "footer.copyright": "© 2025 LollyPoPDF. Tous droits réservés."
+            },
+            de: {
+                "nav.home": "Startseite",
+                "nav.about": "Über Uns",
+                "nav.tools": "Werkzeuge",
+                "nav.contact": "Kontakt",
+                "hero.title": "Kostenloses Bild-zu-Text (OCR) Werkzeug",
+                "hero.description": "Extrahieren Sie sofort Text aus Bildern mit unserem kostenlosen OCR-Werkzeug. Unterstützt mehrere Sprachen, Bildvorverarbeitung und arbeitet vollständig in Ihrem Browser. Keine Registrierung erforderlich.",
+                "howto.title": "So Extrahieren Sie Text aus Bildern",
+                "howto.step1.title": "Laden Sie Ihr Bild Hoch",
+                "howto.step1.description": "Klicken Sie auf den Upload-Bereich oder ziehen Sie Ihre Bilddatei per Drag & Drop. Wir unterstützen JPG, PNG, GIF, WEBP und mehr.",
+                "howto.step2.title": "Konfigurieren Sie die OCR-Einstellungen",
+                "howto.step2.description": "Wählen Sie die Sprache, aktivieren Sie Vorverarbeitungsoptionen und wählen Sie das Ausgabeformat für optimale Textextraktion.",
+                "howto.step3.title": "Text Extrahieren",
+                "howto.step3.description": "Klicken Sie auf die Schaltfläche 'Text Extrahieren', um Ihr Bild zu verarbeiten. Sehen Sie den Echtzeit-Fortschritt, während die OCR arbeitet.",
+                "howto.step4.title": "Kopieren oder Herunterladen",
+                "howto.step4.description": "Kopieren Sie den extrahierten Text in die Zwischenablage oder laden Sie ihn als Textdatei herunter. Keine Registrierung erforderlich.",
+                "ocr.title": "Bild-zu-Text (OCR) Werkzeug",
+                "ocr.upload.text": "Ziehen Sie Ihr Bild hierher oder klicken Sie, um zu durchsuchen",
+                "ocr.upload.button": "Bild Auswählen",
+                "ocr.options.title": "OCR-Optionen",
+                "ocr.preview.title": "Vorschau",
+                "ocr.preview.original": "Originalbild",
+                "ocr.preview.text": "Extrahierter Text",
+                "ocr.processing": "Verarbeitung: 0%",
+                "ocr.extract": "Text Extrahieren",
+                "ocr.download": "Text Herunterladen",
+                "ocr.reset": "Zurücksetzen",
+                "footer.follow": "FOLGEN SIE UNS",
+                "footer.categories": "Beliebte Kategorien",
+                "footer.categories.pdf": "PDF-Werkzeuge",
+                "footer.categories.image": "Bildwerkzeuge",
+                "footer.categories.text": "Textwerkzeuge",
+                "footer.categories.av": "Audio/Video-Werkzeuge",
+                "footer.categories.web": "Web/Entwickler-Werkzeuge",
+                "footer.categories.calc": "Rechnerwerkzeuge",
+                "footer.categories.util": "Hilfsprogramme",
+                "footer.categories.color": "Farbwerkzeuge",
+                "footer.quicklinks": "Schnelllinks",
+                "footer.links.tools": "Alle Werkzeuge",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Kontakt",
+                "footer.links.privacy": "Datenschutzrichtlinie",
+                "footer.links.disclaimer": "Haftungsausschluss",
+                "footer.links.terms": "Nutzungsbedingungen",
+                "footer.copyright": "© 2025 LollyPoPDF. Alle Rechte vorbehalten."
+            },
+            it: {
+                "nav.home": "Home",
+                "nav.about": "Chi Siamo",
+                "nav.tools": "Strumenti",
+                "nav.contact": "Contatto",
+                "hero.title": "Strumento Gratuito da Immagine a Testo (OCR)",
+                "hero.description": "Estrai testo dalle immagini istantaneamente con il nostro strumento OCR gratuito. Supporta più lingue, pre-elaborazione delle immagini e funziona interamente nel tuo browser. Nessuna registrazione richiesta.",
+                "howto.title": "Come Estrarre Testo dalle Immagini",
+                "howto.step1.title": "Carica la Tua Immagine",
+                "howto.step1.description": "Clicca sull'area di caricamento o trascina e rilascia il tuo file immagine. Supportiamo JPG, PNG, GIF, WEBP e altro.",
+                "howto.step2.title": "Configura le Impostazioni OCR",
+                "howto.step2.description": "Seleziona la lingua, abilita le opzioni di pre-elaborazione e scegli il formato di output per l'estrazione ottimale del testo.",
+                "howto.step3.title": "Estrai Testo",
+                "howto.step3.description": "Clicca sul pulsante 'Estrai Testo' per elaborare la tua immagine. Guarda i progressi in tempo reale mentre l'OCR lavora.",
+                "howto.step4.title": "Copia o Scarica",
+                "howto.step4.description": "Copia il testo estratto negli appunti o scaricalo come file di testo. Nessuna registrazione richiesta.",
+                "ocr.title": "Strumento da Immagine a Testo (OCR)",
+                "ocr.upload.text": "Trascina e rilascia la tua immagine qui o clicca per sfogliare",
+                "ocr.upload.button": "Seleziona Immagine",
+                "ocr.options.title": "Opzioni OCR",
+                "ocr.preview.title": "Anteprima",
+                "ocr.preview.original": "Immagine Originale",
+                "ocr.preview.text": "Testo Estratto",
+                "ocr.processing": "Elaborazione: 0%",
+                "ocr.extract": "Estrai Testo",
+                "ocr.download": "Scarica Testo",
+                "ocr.reset": "Ripristina",
+                "footer.follow": "SEGUICI",
+                "footer.categories": "Categorie Popolari",
+                "footer.categories.pdf": "Strumenti PDF",
+                "footer.categories.image": "Strumenti Immagine",
+                "footer.categories.text": "Strumenti Testo",
+                "footer.categories.av": "Strumenti Audio/Video",
+                "footer.categories.web": "Strumenti Web/Sviluppatore",
+                "footer.categories.calc": "Strumenti Calcolatrice",
+                "footer.categories.util": "Strumenti Utilità",
+                "footer.categories.color": "Strumenti Colore",
+                "footer.quicklinks": "Link Rapidi",
+                "footer.links.tools": "Tutti gli Strumenti",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Contatto",
+                "footer.links.privacy": "Informativa sulla Privacy",
+                "footer.links.disclaimer": "Disclaimer",
+                "footer.links.terms": "Termini di Servizio",
+                "footer.copyright": "© 2025 LollyPoPDF. Tutti i diritti riservati."
+            },
+            pt: {
+                "nav.home": "Início",
+                "nav.about": "Sobre Nós",
+                "nav.tools": "Ferramentas",
+                "nav.contact": "Contato",
+                "hero.title": "Ferramenta Gratuita de Imagem para Texto (OCR)",
+                "hero.description": "Extraia texto de imagens instantaneamente com nossa ferramenta OCR gratuita. Suporta vários idiomas, pré-processamento de imagem e funciona totalmente no seu navegador. Nenhum registro necessário.",
+                "howto.title": "Como Extrair Texto de Imagens",
+                "howto.step1.title": "Carregue Sua Imagem",
+                "howto.step1.description": "Clique na área de upload ou arraste e solte seu arquivo de imagem. Suportamos JPG, PNG, GIF, WEBP e mais.",
+                "howto.step2.title": "Configurar Opções de OCR",
+                "howto.step2.description": "Selecione o idioma, ative as opções de pré-processamento e escolha o formato de saída para extração ideal de texto.",
+                "howto.step3.title": "Extrair Texto",
+                "howto.step3.description": "Clique no botão 'Extrair Texto' para processar sua imagem. Veja o progresso em tempo real enquanto o OCR funciona.",
+                "howto.step4.title": "Copiar ou Baixar",
+                "howto.step4.description": "Copie o texto extraído para a área de transferência ou baixe-o como um arquivo de texto. Nenhum registro necessário.",
+                "ocr.title": "Ferramenta de Imagem para Texto (OCR)",
+                "ocr.upload.text": "Arraste e solte sua imagem aqui ou clique para procurar",
+                "ocr.upload.button": "Selecionar Imagem",
+                "ocr.options.title": "Opções de OCR",
+                "ocr.preview.title": "Pré-visualização",
+                "ocr.preview.original": "Imagem Original",
+                "ocr.preview.text": "Texto Extraído",
+                "ocr.processing": "Processando: 0%",
+                "ocr.extract": "Extrair Texto",
+                "ocr.download": "Baixar Texto",
+                "ocr.reset": "Redefinir",
+                "footer.follow": "SIGA-NOS",
+                "footer.categories": "Categorias Populares",
+                "footer.categories.pdf": "Ferramentas PDF",
+                "footer.categories.image": "Ferramentas de Imagem",
+                "footer.categories.text": "Ferramentas de Texto",
+                "footer.categories.av": "Ferramentas de Áudio/Video",
+                "footer.categories.web": "Ferramentas Web/Desenvolvedor",
+                "footer.categories.calc": "Ferramentas de Calculadora",
+                "footer.categories.util": "Ferramentas de Utilidade",
+                "footer.categories.color": "Ferramentas de Cor",
+                "footer.quicklinks": "Links Rápidos",
+                "footer.links.tools": "Todas as Ferramentas",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Contato",
+                "footer.links.privacy": "Política de Privacidade",
+                "footer.links.disclaimer": "Aviso Legal",
+                "footer.links.terms": "Termos de Serviço",
+                "footer.copyright": "© 2025 LollyPoPDF. Todos os direitos reservados."
+            },
+            ja: {
+                "nav.home": "ホーム",
+                "nav.about": "会社概要",
+                "nav.tools": "ツール",
+                "nav.contact": "お問い合わせ",
+                "hero.title": "無料画像テキスト変換(OCR)ツール",
+                "hero.description": "無料のOCRツールで画像から瞬時にテキストを抽出します。複数言語対応、画像前処理機能付きで、ブラウザ上で完全に動作します。登録不要です。",
+                "howto.title": "画像からテキストを抽出する方法",
+                "howto.step1.title": "画像をアップロード",
+                "howto.step1.description": "アップロードエリアをクリックするか、画像ファイルをドラッグ＆ドロップしてください。JPG、PNG、GIF、WEBPなどをサポートしています。",
+                "howto.step2.title": "OCR設定を構成",
+                "howto.step2.description": "言語を選択し、前処理オプションを有効にして、最適なテキスト抽出のための出力形式を選択します。",
+                "howto.step3.title": "テキストを抽出",
+                "howto.step3.description": "「テキスト抽出」ボタンをクリックして画像を処理します。OCRの動作中にリアルタイムの進捗状況を確認できます。",
+                "howto.step4.title": "コピーまたはダウンロード",
+                "howto.step4.description": "抽出したテキストをクリップボードにコピーするか、テキストファイルとしてダウンロードします。登録は不要です。",
+                "ocr.title": "画像テキスト変換(OCR)ツール",
+                "ocr.upload.text": "画像をここにドラッグ＆ドロップするか、クリックして参照",
+                "ocr.upload.button": "画像を選択",
+                "ocr.options.title": "OCRオプション",
+                "ocr.preview.title": "プレビュー",
+                "ocr.preview.original": "元の画像",
+                "ocr.preview.text": "抽出されたテキスト",
+                "ocr.processing": "処理中: 0%",
+                "ocr.extract": "テキストを抽出",
+                "ocr.download": "テキストをダウンロード",
+                "ocr.reset": "リセット",
+                "footer.follow": "フォローする",
+                "footer.categories": "人気カテゴリ",
+                "footer.categories.pdf": "PDFツール",
+                "footer.categories.image": "画像ツール",
+                "footer.categories.text": "テキストツール",
+                "footer.categories.av": "オーディオ/ビデオツール",
+                "footer.categories.web": "Web/開発者ツール",
+                "footer.categories.calc": "電卓ツール",
+                "footer.categories.util": "ユーティリティツール",
+                "footer.categories.color": "カラーツール",
+                "footer.quicklinks": "クイックリンク",
+                "footer.links.tools": "すべてのツール",
+                "footer.links.faq": "よくある質問",
+                "footer.links.contact": "お問い合わせ",
+                "footer.links.privacy": "プライバシーポリシー",
+                "footer.links.disclaimer": "免責事項",
+                "footer.links.terms": "利用規約",
+                "footer.copyright": "© 2025 LollyPoPDF. 無断転載を禁じます."
+            },
+            ru: {
+                "nav.home": "Главная",
+                "nav.about": "О нас",
+                "nav.tools": "Инструменты",
+                "nav.contact": "Контакты",
+                "hero.title": "Бесплатный инструмент преобразования изображения в текст (OCR)",
+                "hero.description": "Извлекайте текст из изображений мгновенно с помощью нашего бесплатного инструмента OCR. Поддерживает несколько языков, предварительную обработку изображений и работает полностью в вашем браузере. Регистрация не требуется.",
+                "howto.title": "Как извлечь текст из изображений",
+                "howto.step1.title": "Загрузите ваше изображение",
+                "howto.step1.description": "Нажмите на область загрузки или перетащите файл изображения. Мы поддерживаем JPG, PNG, GIF, WEBP и другие форматы.",
+                "howto.step2.title": "Настройте параметры OCR",
+                "howto.step2.description": "Выберите язык, включите опции предварительной обработки и выберите формат вывода для оптимального извлечения текста.",
+                "howto.step3.title": "Извлечь текст",
+                "howto.step3.description": "Нажмите кнопку 'Извлечь текст' для обработки вашего изображения. Смотрите прогресс в реальном времени во время работы OCR.",
+                "howto.step4.title": "Копировать или скачать",
+                "howto.step4.description": "Скопируйте извлеченный текст в буфер обмена или скачайте его в виде текстового файла. Регистрация не требуется.",
+                "ocr.title": "Инструмент преобразования изображения в текст (OCR)",
+                "ocr.upload.text": "Перетащите ваше изображение сюда или нажмите для выбора",
+                "ocr.upload.button": "Выбрать изображение",
+                "ocr.options.title": "Параметры OCR",
+                "ocr.preview.title": "Предпросмотр",
+                "ocr.preview.original": "Исходное изображение",
+                "ocr.preview.text": "Извлеченный текст",
+                "ocr.processing": "Обработка: 0%",
+                "ocr.extract": "Извлечь текст",
+                "ocr.download": "Скачать текст",
+                "ocr.reset": "Сбросить",
+                "footer.follow": "СЛЕДУЙТЕ ЗА НАМИ",
+                "footer.categories": "Популярные категории",
+                "footer.categories.pdf": "PDF инструменты",
+                "footer.categories.image": "Инструменты для изображений",
+                "footer.categories.text": "Текстовые инструменты",
+                "footer.categories.av": "Аудио/Видео инструменты",
+                "footer.categories.web": "Веб/Разработчик инструменты",
+                "footer.categories.calc": "Калькуляторные инструменты",
+                "footer.categories.util": "Утилиты",
+                "footer.categories.color": "Цветовые инструменты",
+                "footer.quicklinks": "Быстрые ссылки",
+                "footer.links.tools": "Все инструменты",
+                "footer.links.faq": "ЧаВо",
+                "footer.links.contact": "Контакты",
+                "footer.links.privacy": "Политика конфиденциальности",
+                "footer.links.disclaimer": "Отказ от ответственности",
+                "footer.links.terms": "Условия использования",
+                "footer.copyright": "© 2025 LollyPoPDF. Все права защищены."
+            },
+            ko: {
+                "nav.home": "홈",
+                "nav.about": "회사 소개",
+                "nav.tools": "도구",
+                "nav.contact": "연락처",
+                "hero.title": "무료 이미지 텍스트 변환(OCR) 도구",
+                "hero.description": "무료 OCR 도구로 이미지에서 텍스트를 즉시 추출하세요. 여러 언어 지원, 이미지 전처리 기능, 브라우저에서 완전히 작동합니다. 등록 불필요.",
+                "howto.title": "이미지에서 텍스트 추출 방법",
+                "howto.step1.title": "이미지 업로드",
+                "howto.step1.description": "업로드 영역을 클릭하거나 이미지 파일을 드래그 앤 드롭하세요. JPG, PNG, GIF, WEBP 등을 지원합니다.",
+                "howto.step2.title": "OCR 설정 구성",
+                "howto.step2.description": "언어를 선택하고 전처리 옵션을 활성화하며 최적의 텍스트 추출을 위한 출력 형식을 선택하세요.",
+                "howto.step3.title": "텍스트 추출",
+                "howto.step3.description": "이미지를 처리하려면 '텍스트 추출' 버튼을 클릭하세요. OCR 작동 중 실시간 진행 상황을 확인할 수 있습니다.",
+                "howto.step4.title": "복사 또는 다운로드",
+                "howto.step4.description": "추출된 텍스트를 클립보드에 복사하거나 텍스트 파일로 다운로드하세요. 등록 불필요.",
+                "ocr.title": "이미지 텍스트 변환(OCR) 도구",
+                "ocr.upload.text": "이미지를 여기에 드래그 앤 드롭하거나 클릭하여 찾아보기",
+                "ocr.upload.button": "이미지 선택",
+                "ocr.options.title": "OCR 옵션",
+                "ocr.preview.title": "미리보기",
+                "ocr.preview.original": "원본 이미지",
+                "ocr.preview.text": "추출된 텍스트",
+                "ocr.processing": "처리 중: 0%",
+                "ocr.extract": "텍스트 추출",
+                "ocr.download": "텍스트 다운로드",
+                "ocr.reset": "재설정",
+                "footer.follow": "팔로우하기",
+                "footer.categories": "인기 카테고리",
+                "footer.categories.pdf": "PDF 도구",
+                "footer.categories.image": "이미지 도구",
+                "footer.categories.text": "텍스트 도구",
+                "footer.categories.av": "오디오/비디오 도구",
+                "footer.categories.web": "웹/개발자 도구",
+                "footer.categories.calc": "계산기 도구",
+                "footer.categories.util": "유틸리티 도구",
+                "footer.categories.color": "색상 도구",
+                "footer.quicklinks": "빠른 링크",
+                "footer.links.tools": "모든 도구",
+                "footer.links.faq": "자주 묻는 질문",
+                "footer.links.contact": "연락처",
+                "footer.links.privacy": "개인정보 보호정책",
+                "footer.links.disclaimer": "면책 조항",
+                "footer.links.terms": "이용약관",
+                "footer.copyright": "© 2025 LollyPoPDF. 모든 권리 보유."
+            },
+            "zh-CN": {
+                "nav.home": "首页",
+                "nav.about": "关于我们",
+                "nav.tools": "工具",
+                "nav.contact": "联系我们",
+                "hero.title": "免费图片转文字(OCR)工具",
+                "hero.description": "使用我们的免费OCR工具即时从图片中提取文字。支持多种语言、图像预处理，完全在您的浏览器中运行。无需注册。",
+                "howto.title": "如何从图片中提取文字",
+                "howto.step1.title": "上传您的图片",
+                "howto.step1.description": "点击上传区域或拖放您的图片文件。我们支持JPG、PNG、GIF、WEBP等格式。",
+                "howto.step2.title": "配置OCR设置",
+                "howto.step2.description": "选择语言，启用预处理选项，并选择输出格式以获得最佳文字提取效果。",
+                "howto.step3.title": "提取文字",
+                "howto.step3.description": "点击'提取文字'按钮处理您的图片。查看OCR工作时的实时进度。",
+                "howto.step4.title": "复制或下载",
+                "howto.step4.description": "将提取的文字复制到剪贴板或下载为文本文件。无需注册。",
+                "ocr.title": "图片转文字(OCR)工具",
+                "ocr.upload.text": "将图片拖放到此处或点击浏览",
+                "ocr.upload.button": "选择图片",
+                "ocr.options.title": "OCR选项",
+                "ocr.preview.title": "预览",
+                "ocr.preview.original": "原始图片",
+                "ocr.preview.text": "提取的文字",
+                "ocr.processing": "处理中: 0%",
+                "ocr.extract": "提取文字",
+                "ocr.download": "下载文字",
+                "ocr.reset": "重置",
+                "footer.follow": "关注我们",
+                "footer.categories": "热门分类",
+                "footer.categories.pdf": "PDF工具",
+                "footer.categories.image": "图片工具",
+                "footer.categories.text": "文字工具",
+                "footer.categories.av": "音频/视频工具",
+                "footer.categories.web": "网页/开发者工具",
+                "footer.categories.calc": "计算器工具",
+                "footer.categories.util": "实用工具",
+                "footer.categories.color": "颜色工具",
+                "footer.quicklinks": "快速链接",
+                "footer.links.tools": "所有工具",
+                "footer.links.faq": "常见问题",
+                "footer.links.contact": "联系我们",
+                "footer.links.privacy": "隐私政策",
+                "footer.links.disclaimer": "免责声明",
+                "footer.links.terms": "服务条款",
+                "footer.copyright": "© 2025 LollyPoPDF. 版权所有。"
+            },
+            "zh-TW": {
+                "nav.home": "首頁",
+                "nav.about": "關於我們",
+                "nav.tools": "工具",
+                "nav.contact": "聯絡我們",
+                "hero.title": "免費圖片轉文字(OCR)工具",
+                "hero.description": "使用我們的免費OCR工具即時從圖片中提取文字。支援多種語言、圖像預處理，完全在您的瀏覽器中運行。無需註冊。",
+                "howto.title": "如何從圖片中提取文字",
+                "howto.step1.title": "上傳您的圖片",
+                "howto.step1.description": "點擊上傳區域或拖放您的圖片檔案。我們支援JPG、PNG、GIF、WEBP等格式。",
+                "howto.step2.title": "配置OCR設定",
+                "howto.step2.description": "選擇語言，啟用預處理選項，並選擇輸出格式以獲得最佳文字提取效果。",
+                "howto.step3.title": "提取文字",
+                "howto.step3.description": "點擊'提取文字'按鈕處理您的圖片。查看OCR工作時的即時進度。",
+                "howto.step4.title": "複製或下載",
+                "howto.step4.description": "將提取的文字複製到剪貼簿或下載為文字檔案。無需註冊。",
+                "ocr.title": "圖片轉文字(OCR)工具",
+                "ocr.upload.text": "將圖片拖放到此處或點擊瀏覽",
+                "ocr.upload.button": "選擇圖片",
+                "ocr.options.title": "OCR選項",
+                "ocr.preview.title": "預覽",
+                "ocr.preview.original": "原始圖片",
+                "ocr.preview.text": "提取的文字",
+                "ocr.processing": "處理中: 0%",
+                "ocr.extract": "提取文字",
+                "ocr.download": "下載文字",
+                "ocr.reset": "重設",
+                "footer.follow": "關注我們",
+                "footer.categories": "熱門分類",
+                "footer.categories.pdf": "PDF工具",
+                "footer.categories.image": "圖片工具",
+                "footer.categories.text": "文字工具",
+                "footer.categories.av": "音訊/視訊工具",
+                "footer.categories.web": "網頁/開發者工具",
+                "footer.categories.calc": "計算機工具",
+                "footer.categories.util": "實用工具",
+                "footer.categories.color": "顏色工具",
+                "footer.quicklinks": "快速連結",
+                "footer.links.tools": "所有工具",
+                "footer.links.faq": "常見問題",
+                "footer.links.contact": "聯絡我們",
+                "footer.links.privacy": "隱私權政策",
+                "footer.links.disclaimer": "免責聲明",
+                "footer.links.terms": "服務條款",
+                "footer.copyright": "© 2025 LollyPoPDF. 版權所有。"
+            },
+            ar: {
+                "nav.home": "الصفحة الرئيسية",
+                "nav.about": "من نحن",
+                "nav.tools": "الأدوات",
+                "nav.contact": "اتصل بنا",
+                "hero.title": "أداة مجانية لتحويل الصور إلى نص (OCR)",
+                "hero.description": "استخرج النص من الصور فورًا باستخدام أداة OCR المجانية الخاصة بنا. تدعم لغات متعددة، معالجة مسبقة للصور، وتعمل بالكامل في متصفحك. لا يلزم التسجيل.",
+                "howto.title": "كيفية استخراج النص من الصور",
+                "howto.step1.title": "قم بتحميل صورتك",
+                "howto.step1.description": "انقر على منطقة التحميل أو اسحب وأفلت ملف الصورة الخاص بك. نحن ندعم JPG وPNG وGIF وWEBP والمزيد.",
+                "howto.step2.title": "تكوين إعدادات OCR",
+                "howto.step2.description": "حدد اللغة، وقم بتمكين خيارات المعالجة المسبقة، واختر تنسيق الإخراج لاستخراج النص الأمثل.",
+                "howto.step3.title": "استخراج النص",
+                "howto.step3.description": "انقر على زر 'استخراج النص' لمعالجة صورتك. شاهد التقدم في الوقت الفعلي أثناء عمل OCR.",
+                "howto.step4.title": "نسخ أو تنزيل",
+                "howto.step4.description": "انسخ النص المستخرج إلى الحافظة أو قم بتنزيله كملف نصي. لا يلزم التسجيل.",
+                "ocr.title": "أداة تحويل الصور إلى نص (OCR)",
+                "ocr.upload.text": "اسحب وأفلت صورتك هنا أو انقر للتصفح",
+                "ocr.upload.button": "اختر صورة",
+                "ocr.options.title": "خيارات OCR",
+                "ocr.preview.title": "معاينة",
+                "ocr.preview.original": "الصورة الأصلية",
+                "ocr.preview.text": "النص المستخرج",
+                "ocr.processing": "جاري المعالجة: 0%",
+                "ocr.extract": "استخراج النص",
+                "ocr.download": "تنزيل النص",
+                "ocr.reset": "إعادة تعيين",
+                "footer.follow": "تابعنا",
+                "footer.categories": "الفئات الشائعة",
+                "footer.categories.pdf": "أدوات PDF",
+                "footer.categories.image": "أدوات الصور",
+                "footer.categories.text": "أدوات النص",
+                "footer.categories.av": "أدوات الصوت/الفيديو",
+                "footer.categories.web": "أدوات الويب/المطور",
+                "footer.categories.calc": "أدوات الآلة الحاسبة",
+                "footer.categories.util": "أدوات المساعدة",
+                "footer.categories.color": "أدوات الألوان",
+                "footer.quicklinks": "روابط سريعة",
+                "footer.links.tools": "جميع الأدوات",
+                "footer.links.faq": "الأسئلة الشائعة",
+                "footer.links.contact": "اتصل بنا",
+                "footer.links.privacy": "سياسة الخصوصية",
+                "footer.links.disclaimer": "إخلاء المسؤولية",
+                "footer.links.terms": "شروط الخدمة",
+                "footer.copyright": "© 2025 LollyPoPDF. جميع الحقوق محفوظة."
+            },
+            fa: {
+                "nav.home": "خانه",
+                "nav.about": "درباره ما",
+                "nav.tools": "ابزارها",
+                "nav.contact": "تماس با ما",
+                "hero.title": "ابزار رایگان تصویر به متن (OCR)",
+                "hero.description": "با ابزار OCR رایگان ما فوراً متن را از تصاویر استخراج کنید. از چندین زبان پشتیبانی می‌کند، پیش‌پردازش تصویر دارد و کاملاً در مرورگر شما کار می‌کند. نیازی به ثبت نام نیست.",
+                "howto.title": "نحوه استخراج متن از تصاویر",
+                "howto.step1.title": "تصویر خود را آپلود کنید",
+                "howto.step1.description": "روی ناحیه آپلود کلیک کنید یا فایل تصویر خود را بکشید و رها کنید. ما از JPG، PNG، GIF، WEBP و موارد دیگر پشتیبانی می‌کنیم.",
+                "howto.step2.title": "تنظیمات OCR را پیکربندی کنید",
+                "howto.step2.description": "زبان را انتخاب کنید، گزینه‌های پیش‌پردازش را فعال کنید و فرمت خروجی را برای استخراج بهینه متن انتخاب کنید.",
+                "howto.step3.title": "متن را استخراج کنید",
+                "howto.step3.description": "برای پردازش تصویر خود روی دکمه 'استخراج متن' کلیک کنید. پیشرفت بلادرنگ را در حین کار OCR مشاهده کنید.",
+                "howto.step4.title": "کپی یا دانلود",
+                "howto.step4.description": "متن استخراج شده را در کلیپ بورد کپی کنید یا آن را به عنوان فایل متنی دانلود کنید. نیازی به ثبت نام نیست.",
+                "ocr.title": "ابزار تصویر به متن (OCR)",
+                "ocr.upload.text": "تصویر خود را به اینجا بکشید و رها کنید یا برای مرور کلیک کنید",
+                "ocr.upload.button": "انتخاب تصویر",
+                "ocr.options.title": "گزینه‌های OCR",
+                "ocr.preview.title": "پیش‌نمایش",
+                "ocr.preview.original": "تصویر اصلی",
+                "ocr.preview.text": "متن استخراج شده",
+                "ocr.processing": "در حال پردازش: 0%",
+                "ocr.extract": "استخراج متن",
+                "ocr.download": "دانلود متن",
+                "ocr.reset": "بازنشانی",
+                "footer.follow": "ما را دنبال کنید",
+                "footer.categories": "دسته‌بندی‌های محبوب",
+                "footer.categories.pdf": "ابزارهای PDF",
+                "footer.categories.image": "ابزارهای تصویر",
+                "footer.categories.text": "ابزارهای متن",
+                "footer.categories.av": "ابزارهای صوتی/تصویری",
+                "footer.categories.web": "ابزارهای وب/توسعه‌دهنده",
+                "footer.categories.calc": "ابزارهای ماشین حساب",
+                "footer.categories.util": "ابزارهای کمکی",
+                "footer.categories.color": "ابزارهای رنگ",
+                "footer.quicklinks": "لینک‌های سریع",
+                "footer.links.tools": "همه ابزارها",
+                "footer.links.faq": "سوالات متداول",
+                "footer.links.contact": "تماس با ما",
+                "footer.links.privacy": "سیاست حفظ حریم خصوصی",
+                "footer.links.disclaimer": "سلب مسئولیت",
+                "footer.links.terms": "شرایط خدمات",
+                "footer.copyright": "© 2025 LollyPoPDF. تمامی حقوق محفوظ است."
+            },
+            bg: {
+                "nav.home": "Начало",
+                "nav.about": "За нас",
+                "nav.tools": "Инструменти",
+                "nav.contact": "Контакт",
+                "hero.title": "Безплатен инструмент за изображение към текст (OCR)",
+                "hero.description": "Извличайте текст от изображения мигновено с нашия безплатен OCR инструмент. Поддържа множество езици, предварителна обработка на изображения и работи изцяло във вашия браузър. Не се изисква регистрация.",
+                "howto.title": "Как да извлечете текст от изображения",
+                "howto.step1.title": "Качете вашето изображение",
+                "howto.step1.description": "Кликнете върху зоната за качване или плъзнете и пуснете вашия файл с изображение. Поддържаме JPG, PNG, GIF, WEBP и други.",
+                "howto.step2.title": "Конфигурирайте настройките на OCR",
+                "howto.step2.description": "Изберете език, активирайте опции за предварителна обработка и изберете изходен формат за оптимално извличане на текст.",
+                "howto.step3.title": "Извлечете текст",
+                "howto.step3.description": "Кликнете върху бутона 'Извлечете текст' за обработка на вашето изображение. Гледайте прогреса в реално време, докато OCR работи.",
+                "howto.step4.title": "Копирайте или изтеглете",
+                "howto.step4.description": "Копирайте извлечения текст в клипборда или го изтеглете като текстов файл. Не се изисква регистрация.",
+                "ocr.title": "Инструмент за изображение към текст (OCR)",
+                "ocr.upload.text": "Плъзнете и пуснете вашето изображение тук или кликнете за преглед",
+                "ocr.upload.button": "Изберете изображение",
+                "ocr.options.title": "Опции на OCR",
+                "ocr.preview.title": "Преглед",
+                "ocr.preview.original": "Оригинално изображение",
+                "ocr.preview.text": "Извлечен текст",
+                "ocr.processing": "Обработване: 0%",
+                "ocr.extract": "Извлечете текст",
+                "ocr.download": "Изтеглете текст",
+                "ocr.reset": "Нулиране",
+                "footer.follow": "СЛЕДВАТЕ НИ",
+                "footer.categories": "Популярни категории",
+                "footer.categories.pdf": "PDF инструменти",
+                "footer.categories.image": "Инструменти за изображения",
+                "footer.categories.text": "Текстови инструменти",
+                "footer.categories.av": "Аудио/Видео инструменти",
+                "footer.categories.web": "Уеб/Разработчик инструменти",
+                "footer.categories.calc": "Калкулаторни инструменти",
+                "footer.categories.util": "Помощни инструменти",
+                "footer.categories.color": "Цветови инструменти",
+                "footer.quicklinks": "Бързи връзки",
+                "footer.links.tools": "Всички инструменти",
+                "footer.links.faq": "ЧЗВ",
+                "footer.links.contact": "Контакт",
+                "footer.links.privacy": "Политика за поверителност",
+                "footer.links.disclaimer": "Отказ от отговорност",
+                "footer.links.terms": "Условия за ползване",
+                "footer.copyright": "© 2025 LollyPoPDF. Всички права запазени."
+            },
+            ca: {
+                "nav.home": "Inici",
+                "nav.about": "Sobre nosaltres",
+                "nav.tools": "Eines",
+                "nav.contact": "Contacte",
+                "hero.title": "Eina gratuïta d'Imatge a Text (OCR)",
+                "hero.description": "Extreu text d'imatges instantàniament amb la nostra eina OCR gratuïta. Admet múltiples idiomes, preprocessament d'imatges i funciona completament al teu navegador. No cal registre.",
+                "howto.title": "Com extreure text d'imatges",
+                "howto.step1.title": "Puja la teva imatge",
+                "howto.step1.description": "Fes clic a l'àrea de pujada o arrossega i deixa anar el teu fitxer d'imatge. Admetem JPG, PNG, GIF, WEBP i més.",
+                "howto.step2.title": "Configura els paràmetres de l'OCR",
+                "howto.step2.description": "Selecciona l'idioma, activa les opcions de preprocessament i tria el format de sortida per a una extracció òptima de text.",
+                "howto.step3.title": "Extreu el text",
+                "howto.step3.description": "Fes clic al botó 'Extreu el text' per processar la teva imatge. Veure el progrés en temps real mentre l'OCR funciona.",
+                "howto.step4.title": "Copia o descarrega",
+                "howto.step4.description": "Copia el text extret al porta-retalls o descarrega'l com a fitxer de text. No cal registre.",
+                "ocr.title": "Eina d'Imatge a Text (OCR)",
+                "ocr.upload.text": "Arrossega i deixa anar la teva imatge aquí o fes clic per navegar",
+                "ocr.upload.button": "Selecciona imatge",
+                "ocr.options.title": "Opcions de l'OCR",
+                "ocr.preview.title": "Vista prèvia",
+                "ocr.preview.original": "Imatge original",
+                "ocr.preview.text": "Text extret",
+                "ocr.processing": "Processant: 0%",
+                "ocr.extract": "Extreu el text",
+                "ocr.download": "Descarrega el text",
+                "ocr.reset": "Restableix",
+                "footer.follow": "SEGUEIX-NOS",
+                "footer.categories": "Categories populars",
+                "footer.categories.pdf": "Eines PDF",
+                "footer.categories.image": "Eines d'imatge",
+                "footer.categories.text": "Eines de text",
+                "footer.categories.av": "Eines d'Àudio/Video",
+                "footer.categories.web": "Eines Web/Desenvolupador",
+                "footer.categories.calc": "Eines de calculadora",
+                "footer.categories.util": "Eines d'utilitat",
+                "footer.categories.color": "Eines de color",
+                "footer.quicklinks": "Enllaços ràpids",
+                "footer.links.tools": "Totes les eines",
+                "footer.links.faq": "PMF",
+                "footer.links.contact": "Contacte",
+                "footer.links.privacy": "Política de privadesa",
+                "footer.links.disclaimer": "Avís legal",
+                "footer.links.terms": "Termes del servei",
+                "footer.copyright": "© 2025 LollyPoPDF. Tots els drets reservats."
+            },
+            nl: {
+                "nav.home": "Home",
+                "nav.about": "Over ons",
+                "nav.tools": "Tools",
+                "nav.contact": "Contact",
+                "hero.title": "Gratis Afbeelding naar Tekst (OCR) Tool",
+                "hero.description": "Extraheer direct tekst uit afbeeldingen met onze gratis OCR-tool. Ondersteunt meerdere talen, beeldvoorbewerking en werkt volledig in uw browser. Geen registratie vereist.",
+                "howto.title": "Hoe tekst uit afbeeldingen te extraheren",
+                "howto.step1.title": "Upload uw afbeelding",
+                "howto.step1.description": "Klik op het uploadgebied of sleep en zet uw afbeeldingsbestand neer. We ondersteunen JPG, PNG, GIF, WEBP en meer.",
+                "howto.step2.title": "Configureer OCR-instellingen",
+                "howto.step2.description": "Selecteer taal, schakel voorbewerkingsopties in en kies uitvoerformaat voor optimale teksextractie.",
+                "howto.step3.title": "Extraheer tekst",
+                "howto.step3.description": "Klik op de knop 'Extraheer tekst' om uw afbeelding te verwerken. Zie realtime voortgang terwijl OCR werkt.",
+                "howto.step4.title": "Kopiëren of downloaden",
+                "howto.step4.description": "Kopieer de geëxtraheerde tekst naar het klembord of download het als een tekstbestand. Geen registratie vereist.",
+                "ocr.title": "Afbeelding naar Tekst (OCR) Tool",
+                "ocr.upload.text": "Sleep uw afbeelding hierheen of klik om te bladeren",
+                "ocr.upload.button": "Selecteer afbeelding",
+                "ocr.options.title": "OCR-opties",
+                "ocr.preview.title": "Voorbeeld",
+                "ocr.preview.original": "Originele afbeelding",
+                "ocr.preview.text": "Geëxtraheerde tekst",
+                "ocr.processing": "Verwerken: 0%",
+                "ocr.extract": "Extraheer tekst",
+                "ocr.download": "Download tekst",
+                "ocr.reset": "Resetten",
+                "footer.follow": "VOLG ONS",
+                "footer.categories": "Populaire categorieën",
+                "footer.categories.pdf": "PDF-tools",
+                "footer.categories.image": "Afbeeldingstools",
+                "footer.categories.text": "Teksttools",
+                "footer.categories.av": "Audio/Video tools",
+                "footer.categories.web": "Web/Developer tools",
+                "footer.categories.calc": "Rekenmachinetools",
+                "footer.categories.util": "Hulpprogramma's",
+                "footer.categories.color": "Kleurtools",
+                "footer.quicklinks": "Snelle links",
+                "footer.links.tools": "Alle tools",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Contact",
+                "footer.links.privacy": "Privacybeleid",
+                "footer.links.disclaimer": "Disclaimer",
+                "footer.links.terms": "Servicevoorwaarden",
+                "footer.copyright": "© 2025 LollyPoPDF. Alle rechten voorbehouden."
+            },
+            el: {
+                "nav.home": "Αρχική",
+                "nav.about": "Σχετικά με εμάς",
+                "nav.tools": "Εργαλεία",
+                "nav.contact": "Επικοινωνία",
+                "hero.title": "Δωρεάν Εργαλείο Εικόνας σε Κείμενο (OCR)",
+                "hero.description": "Εξάγετε κείμενο από εικόνες αμέσως με το δωρεάν εργαλείο OCR μας. Υποστηρίζει πολλές γλώσσες, προεπεξεργασία εικόνας και λειτουργεί πλήρως στο πρόγραμμα περιήγησής σας. Δεν απαιτείται εγγραφή.",
+                "howto.title": "Πώς να εξαγάγετε κείμενο από εικόνες",
+                "howto.step1.title": "Ανεβάστε την εικόνα σας",
+                "howto.step1.description": "Κάντε κλικ στην περιοχή μεταφόρτωσης ή σύρετε και αποθέστε το αρχείο εικόνας σας. Υποστηρίζουμε JPG, PNG, GIF, WEBP και άλλα.",
+                "howto.step2.title": "Διαμορφώστε τις ρυθμίσεις OCR",
+                "howto.step2.description": "Επιλέξτε γλώσσα, ενεργοποιήστε τις επιλογές προεπεξεργασίας και επιλέξτε μορφή εξόδου για βέλτιστη εξαγωγή κειμένου.",
+                "howto.step3.title": "Εξαγωγή κειμένου",
+                "howto.step3.description": "Κάντε κλικ στο κουμπί 'Εξαγωγή κειμένου' για να επεξεργαστείτε την εικόνα σας. Δείτε την πρόοδο σε πραγματικό χρόνο καθώς λειτουργεί το OCR.",
+                "howto.step4.title": "Αντιγραφή ή λήψη",
+                "howto.step4.description": "Αντιγράψτε το εξαγόμενο κείμενο στο πρόχειρο ή κατεβάστε το ως αρχείο κειμένου. Δεν απαιτείται εγγραφή.",
+                "ocr.title": "Εργαλείο Εικόνας σε Κείμενο (OCR)",
+                "ocr.upload.text": "Σύρετε και αποθέστε την εικόνα σας εδώ ή κάντε κλικ για περιήγηση",
+                "ocr.upload.button": "Επιλέξτε εικόνα",
+                "ocr.options.title": "Επιλογές OCR",
+                "ocr.preview.title": "Προεπισκόπηση",
+                "ocr.preview.original": "Πρωτότυπη εικόνα",
+                "ocr.preview.text": "Εξαγόμενο κείμενο",
+                "ocr.processing": "Επεξεργασία: 0%",
+                "ocr.extract": "Εξαγωγή κειμένου",
+                "ocr.download": "Λήψη κειμένου",
+                "ocr.reset": "Επαναφορά",
+                "footer.follow": "ΑΚΟΛΟΥΘΗΣΤΕ ΜΑΣ",
+                "footer.categories": "Δημοφιλείς κατηγορίες",
+                "footer.categories.pdf": "Εργαλεία PDF",
+                "footer.categories.image": "Εργαλεία εικόνας",
+                "footer.categories.text": "Εργαλεία κειμένου",
+                "footer.categories.av": "Εργαλεία Ήχου/Βίντεο",
+                "footer.categories.web": "Εργαλεία Web/Προγραμματιστή",
+                "footer.categories.calc": "Εργαλεία αριθμομηχανής",
+                "footer.categories.util": "Εργαλεία χρησιμότητας",
+                "footer.categories.color": "Εργαλεία χρώματος",
+                "footer.quicklinks": "Γρήγοροι σύνδεσμοι",
+                "footer.links.tools": "Όλα τα εργαλεία",
+                "footer.links.faq": "Συχνές ερωτήσεις",
+                "footer.links.contact": "Επικοινωνία",
+                "footer.links.privacy": "Πολιτική απορρήτου",
+                "footer.links.disclaimer": "Αποποίηση ευθυνών",
+                "footer.links.terms": "Όροι χρήσης",
+                "footer.copyright": "© 2025 LollyPoPDF. Με επιφύλαξη παντός δικαιώματος."
+            },
+            hi: {
+                "nav.home": "होम",
+                "nav.about": "हमारे बारे में",
+                "nav.tools": "टूल्स",
+                "nav.contact": "संपर्क करें",
+                "hero.title": "मुफ्त इमेज टू टेक्स्ट (OCR) टूल",
+                "hero.description": "हमारे मुफ्त OCR टूल से तुरंत इमेज से टेक्स्ट निकालें। कई भाषाओं का समर्थन करता है, इमेज प्रीप्रोसेसिंग, और पूरी तरह से आपके ब्राउज़र में काम करता है। कोई पंजीकरण आवश्यक नहीं।",
+                "howto.title": "इमेज से टेक्स्ट कैसे निकालें",
+                "howto.step1.title": "अपनी इमेज अपलोड करें",
+                "howto.step1.description": "अपलोड एरिया पर क्लिक करें या अपनी इमेज फ़ाइल को ड्रैग और ड्रॉप करें। हम JPG, PNG, GIF, WEBP और अधिक सपोर्ट करते हैं।",
+                "howto.step2.title": "OCR सेटिंग्स कॉन्फ़िगर करें",
+                "howto.step2.description": "भाषा चुनें, प्रीप्रोसेसिंग विकल्प सक्षम करें, और इष्टतम टेक्स्ट निष्कर्षण के लिए आउटपुट फॉर्मेट चुनें।",
+                "howto.step3.title": "टेक्स्ट निकालें",
+                "howto.step3.description": "अपनी इमेज को प्रोसेस करने के लिए 'टेक्स्ट निकालें' बटन पर क्लिक करें। OCR काम करते समय रियल-टाइम प्रगति देखें।",
+                "howto.step4.title": "कॉपी या डाउनलोड करें",
+                "howto.step4.description": "निकाले गए टेक्स्ट को क्लिपबोर्ड पर कॉपी करें या इसे टेक्स्ट फ़ाइल के रूप में डाउनलोड करें। कोई पंजीकरण आवश्यक नहीं।",
+                "ocr.title": "इमेज टू टेक्स्ट (OCR) टूल",
+                "ocr.upload.text": "अपनी इमेज को यहां ड्रैग और ड्रॉप करें या ब्राउज़ करने के लिए क्लिक करें",
+                "ocr.upload.button": "इमेज चुनें",
+                "ocr.options.title": "OCR विकल्प",
+                "ocr.preview.title": "पूर्वावलोकन",
+                "ocr.preview.original": "मूल इमेज",
+                "ocr.preview.text": "निकाला गया टेक्स्ट",
+                "ocr.processing": "प्रोसेसिंग: 0%",
+                "ocr.extract": "टेक्स्ट निकालें",
+                "ocr.download": "टेक्स्ट डाउनलोड करें",
+                "ocr.reset": "रीसेट करें",
+                "footer.follow": "हमें फॉलो करें",
+                "footer.categories": "लोकप्रिय श्रेणियां",
+                "footer.categories.pdf": "PDF टूल्स",
+                "footer.categories.image": "इमेज टूल्स",
+                "footer.categories.text": "टेक्स्ट टूल्स",
+                "footer.categories.av": "ऑडियो/वीडियो टूल्स",
+                "footer.categories.web": "वेब/डेवलपर टूल्स",
+                "footer.categories.calc": "कैलकुलेटर टूल्स",
+                "footer.categories.util": "यूटिलिटी टूल्स",
+                "footer.categories.color": "कलर टूल्स",
+                "footer.quicklinks": "त्वरित लिंक",
+                "footer.links.tools": "सभी टूल्स",
+                "footer.links.faq": "सामान्य प्रश्न",
+                "footer.links.contact": "संपर्क करें",
+                "footer.links.privacy": "गोपनीयता नीति",
+                "footer.links.disclaimer": "अस्वीकरण",
+                "footer.links.terms": "सेवा की शर्तें",
+                "footer.copyright": "© 2025 LollyPoPDF. सर्वाधिकार सुरक्षित।"
+            },
+            te: {
+                "nav.home": "హోమ్",
+                "nav.about": "మా గురించి",
+                "nav.tools": "టూల్స్",
+                "nav.contact": "సంప్రదించండి",
+                "hero.title": "ఉచిత ఇమేజ్ టు టెక్స్ట్ (OCR) టూల్",
+                "hero.description": "మా ఉచిత OCR టూల్‌తో ఇమేజీల నుండి వెంటనే టెక్స్ట్‌ని సేకరించండి. బహుళ భాషలను మద్దతు ఇస్తుంది, ఇమేజ్ ప్రీప్రాసెసింగ్, మరియు మీ బ్రౌజర్‌లో పూర్తిగా పనిచేస్తుంది. నమోదు అవసరం లేదు.",
+                "howto.title": "ఇమేజీల నుండి టెక్స్ట్ ఎలా సేకరించాలి",
+                "howto.step1.title": "మీ ఇమేజ్‌ను అప్‌లోడ్ చేయండి",
+                "howto.step1.description": "అప్‌లోడ్ ప్రాంతంపై క్లిక్ చేయండి లేదా మీ ఇమేజ్ ఫైల్‌ను డ్రాగ్ మరియు డ్రాప్ చేయండి. మేము JPG, PNG, GIF, WEBP మరియు మరిన్నింటిని మద్దతు ఇస్తాము.",
+                "howto.step2.title": "OCR సెట్టింగ్‌లను కాన్ఫిగర్ చేయండి",
+                "howto.step2.description": "భాషను ఎంచుకోండి, ప్రీప్రాసెసింగ్ ఎంపికలను ప్రారంభించండి మరియు ఆప్టిమల్ టెక్స్ట్ సేకరణ కోసం అవుట్పుట్ ఫార్మాట్‌ను ఎంచుకోండి.",
+                "howto.step3.title": "టెక్స్ట్ సేకరించండి",
+                "howto.step3.description": "మీ ఇమేజ్‌ను ప్రాసెస్ చేయడానికి 'టెక్స్ట్ సేకరించండి' బటన్‌పై క్లిక్ చేయండి. OCR పనిచేస్తున్నప్పుడు రియల్-టైమ్ ప్రోగ్రెస్‌ను చూడండి.",
+                "howto.step4.title": "కాపీ చేయండి లేదా డౌన్‌లోడ్ చేయండి",
+                "howto.step4.description": "సేకరించిన టెక్స్ట్‌ను క్లిప్‌బోర్డ్‌కు కాపీ చేయండి లేదా దానిని టెక్స్ట్ ఫైల్‌గా డౌన్‌లోడ్ చేయండి. నమోదు అవసరం లేదు.",
+                "ocr.title": "ఇమేజ్ టు టెక్స్ట్ (OCR) టూల్",
+                "ocr.upload.text": "మీ ఇమేజ్‌ను ఇక్కడ డ్రాగ్ మరియు డ్రాప్ చేయండి లేదా బ్రౌజ్ చేయడానికి క్లిక్ చేయండి",
+                "ocr.upload.button": "ఇమేజ్ ఎంచుకోండి",
+                "ocr.options.title": "OCR ఎంపికలు",
+                "ocr.preview.title": "ప్రివ్యూ",
+                "ocr.preview.original": "అసలు ఇమేజ్",
+                "ocr.preview.text": "సేకరించిన టెక్స్ట్",
+                "ocr.processing": "ప్రాసెసింగ్: 0%",
+                "ocr.extract": "టెక్స్ట్ సేకరించండి",
+                "ocr.download": "టెక్స్ట్ డౌన్‌లోడ్ చేయండి",
+                "ocr.reset": "రీసెట్ చేయండి",
+                "footer.follow": "మమ్మల్ని అనుసరించండి",
+                "footer.categories": "జనాదరణ పొందిన వర్గాలు",
+                "footer.categories.pdf": "PDF టూల్స్",
+                "footer.categories.image": "ఇమేజ్ టూల్స్",
+                "footer.categories.text": "టెక్స్ట్ టూల్స్",
+                "footer.categories.av": "ఆడియో/వీడియో టూల్స్",
+                "footer.categories.web": "వెబ్/డెవలపర్ టూల్స్",
+                "footer.categories.calc": "కాలిక్యులేటర్ టూల్స్",
+                "footer.categories.util": "యుటిలిటీ టూల్స్",
+                "footer.categories.color": "కలర్ టూల్స్",
+                "footer.quicklinks": "త్వరిత లింకులు",
+                "footer.links.tools": "అన్ని టూల్స్",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "సంప్రదించండి",
+                "footer.links.privacy": "గోప్యతా విధానం",
+                "footer.links.disclaimer": "డిస్క్లెయిమర్",
+                "footer.links.terms": "సేవా నిబంధనలు",
+                "footer.copyright": "© 2025 LollyPoPDF. అన్ని హక్కులు ప్రత్యేకించబడినవి."
+            },
+            kn: {
+                "nav.home": "ಹೋಮ್",
+                "nav.about": "ನಮ್ಮ ಬಗ್ಗೆ",
+                "nav.tools": "ಟೂಲ್ಸ್",
+                "nav.contact": "ಸಂಪರ್ಕಿಸಿ",
+                "hero.title": "ಉಚಿತ ಇಮೇಜ್ ಟು ಟೆಕ್ಸ್ಟ್ (OCR) ಟೂಲ್",
+                "hero.description": "ನಮ್ಮ ಉಚಿತ OCR ಟೂಲ್‌ನೊಂದಿಗೆ ಇಮೇಜ್‌ಗಳಿಂದ ತಕ್ಷಣವೇ ಪಠ್ಯವನ್ನು ಹೊರತೆಗೆಯಿರಿ. ಬಹು ಭಾಷೆಗಳನ್ನು ಬೆಂಬಲಿಸುತ್ತದೆ, ಇಮೇಜ್ ಪ್ರೀಪ್ರಾಸೆಸಿಂಗ್, ಮತ್ತು ನಿಮ್ಮ ಬ್ರೌಸರ್‌ನಲ್ಲಿ ಸಂಪೂರ್ಣವಾಗಿ ಕಾರ್ಯನಿರ್ವಹಿಸುತ್ತದೆ. ನೋಂದಣಿ ಅಗತ್ಯವಿಲ್ಲ.",
+                "howto.title": "ಇಮೇಜ್‌ಗಳಿಂದ ಪಠ್ಯವನ್ನು ಹೇಗೆ ಹೊರತೆಗೆಯುವುದು",
+                "howto.step1.title": "ನಿಮ್ಮ ಇಮೇಜ್ ಅನ್ನು ಅಪ್ಲೋಡ್ ಮಾಡಿ",
+                "howto.step1.description": "ಅಪ್ಲೋಡ್ ಪ್ರದೇಶದ ಮೇಲೆ ಕ್ಲಿಕ್ ಮಾಡಿ ಅಥವಾ ನಿಮ್ಮ ಇಮೇಜ್ ಫೈಲ್ ಅನ್ನು ಎಳೆದು ಬಿಡಿ. ನಾವು JPG, PNG, GIF, WEBP ಮತ್ತು ಹೆಚ್ಚಿನವುಗಳನ್ನು ಬೆಂಬಲಿಸುತ್ತೇವೆ.",
+                "howto.step2.title": "OCR ಸೆಟ್ಟಿಂಗ್‌ಗಳನ್ನು ಕಾನ್ಫಿಗರ್ ಮಾಡಿ",
+                "howto.step2.description": "ಭಾಷೆಯನ್ನು ಆಯ್ಕೆಮಾಡಿ, ಪ್ರೀಪ್ರಾಸೆಸಿಂಗ್ ಆಯ್ಕೆಗಳನ್ನು ಸಕ್ರಿಯಗೊಳಿಸಿ ಮತ್ತು ಸೂಕ್ತ ಪಠ್ಯ ಹೊರತೆಗೆಯುವಿಕೆಗಾಗಿ ಔಟ್ಪುಟ್ ಫಾರ್ಮ್ಯಾಟ್ ಅನ್ನು ಆಯ್ಕೆಮಾಡಿ.",
+                "howto.step3.title": "ಪಠ್ಯವನ್ನು ಹೊರತೆಗೆಯಿರಿ",
+                "howto.step3.description": "ನಿಮ್ಮ ಇಮೇಜ್ ಅನ್ನು ಪ್ರಕ್ರಿಯೆಗೊಳಿಸಲು 'ಪಠ್ಯ ಹೊರತೆಗೆಯಿರಿ' ಬಟನ್ ಅನ್ನು ಕ್ಲಿಕ್ ಮಾಡಿ. OCR ಕಾರ್ಯನಿರ್ವಹಿಸುವಾಗ ರಿಯಲ್-ಟೈಮ್ ಪ್ರೋಗ್ರೆಸ್ ಅನ್ನು ನೋಡಿ.",
+                "howto.step4.title": "ಕಾಪಿ ಅಥವಾ ಡೌನ್‌ಲೋಡ್ ಮಾಡಿ",
+                "howto.step4.description": "ಹೊರತೆಗೆದ ಪಠ್ಯವನ್ನು ಕ್ಲಿಪ್‌ಬೋರ್ಡ್‌ಗೆ ಕಾಪಿ ಮಾಡಿ ಅಥವಾ ಅದನ್ನು ಪಠ್ಯ ಫೈಲ್ ಆಗಿ ಡೌನ್‌ಲೋಡ್ ಮಾಡಿ. ನೋಂದಣಿ ಅಗತ್ಯವಿಲ್ಲ.",
+                "ocr.title": "ಇಮೇಜ್ ಟು ಟೆಕ್ಸ್ಟ್ (OCR) ಟೂಲ್",
+                "ocr.upload.text": "ನಿಮ್ಮ ಇಮೇಜ್ ಅನ್ನು ಇಲ್ಲಿ ಎಳೆದು ಬಿಡಿ ಅಥವಾ ಬ್ರೌಸ್ ಮಾಡಲು ಕ್ಲಿಕ್ ಮಾಡಿ",
+                "ocr.upload.button": "ಇಮೇಜ್ ಆಯ್ಕೆಮಾಡಿ",
+                "ocr.options.title": "OCR ಆಯ್ಕೆಗಳು",
+                "ocr.preview.title": "ಪ್ರಿವ್ಯೂ",
+                "ocr.preview.original": "ಮೂಲ ಇಮೇಜ್",
+                "ocr.preview.text": "ಹೊರತೆಗೆದ ಪಠ್ಯ",
+                "ocr.processing": "ಪ್ರಕ್ರಿಯೆ: 0%",
+                "ocr.extract": "ಪಠ್ಯ ಹೊರತೆಗೆಯಿರಿ",
+                "ocr.download": "ಪಠ್ಯ ಡೌನ್‌ಲೋಡ್ ಮಾಡಿ",
+                "ocr.reset": "ರೀಸೆಟ್ ಮಾಡಿ",
+                "footer.follow": "ನಮ್ಮನ್ನು ಅನುಸರಿಸಿ",
+                "footer.categories": "ಜನಪ್ರಿಯ ವರ್ಗಗಳು",
+                "footer.categories.pdf": "PDF ಟೂಲ್ಸ್",
+                "footer.categories.image": "ಇಮೇಜ್ ಟೂಲ್ಸ್",
+                "footer.categories.text": "ಟೆಕ್ಸ್ಟ್ ಟೂಲ್ಸ್",
+                "footer.categories.av": "ಆಡಿಯೋ/ವೀಡಿಯೋ ಟೂಲ್ಸ್",
+                "footer.categories.web": "ವೆಬ್/ಡೆವಲಪರ್ ಟೂಲ್ಸ್",
+                "footer.categories.calc": "ಕ್ಯಾಲ್ಕುಲೇಟರ್ ಟೂಲ್ಸ್",
+                "footer.categories.util": "ಯುಟಿಲಿಟಿ ಟೂಲ್ಸ್",
+                "footer.categories.color": "ಕಲರ್ ಟೂಲ್ಸ್",
+                "footer.quicklinks": "ತ್ವರಿತ ಲಿಂಕ್‌ಗಳು",
+                "footer.links.tools": "ಎಲ್ಲಾ ಟೂಲ್ಸ್",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "ಸಂಪರ್ಕಿಸಿ",
+                "footer.links.privacy": "ಗೌಪ್ಯತಾ ನೀತಿ",
+                "footer.links.disclaimer": "ಡಿಸ್ಕ್ಲೇಮರ್",
+                "footer.links.terms": "ಸೇವಾ ನಿಯಮಗಳು",
+                "footer.copyright": "© 2025 LollyPoPDF. ಎಲ್ಲಾ ಹಕ್ಕುಗಳು ಕಾಯ್ದಿರಿಸಿವೆ."
+            },
+            ta: {
+                "nav.home": "முகப்பு",
+                "nav.about": "எங்களைப் பற்றி",
+                "nav.tools": "கருவிகள்",
+                "nav.contact": "தொடர்பு கொள்ள",
+                "hero.title": "இலவச பட-உரை (OCR) கருவி",
+                "hero.description": "எங்கள் இலவச OCR கருவியுடன் படங்களிலிருந்து உடனடியாக உரையைப் பிரித்தெடுக்கவும். பல மொழிகளை ஆதரிக்கிறது, பட முன்-செயலாக்கம், மற்றும் உங்கள் உலாவியில் முழுமையாக வேலை செய்கிறது. பதிவு தேவையில்லை.",
+                "howto.title": "படங்களிலிருந்து உரையை எவ்வாறு பிரித்தெடுப்பது",
+                "howto.step1.title": "உங்கள் படத்தை பதிவேற்றவும்",
+                "howto.step1.description": "பதிவேற்ற பகுதியைக் கிளிக் செய்யவும் அல்லது உங்கள் பட கோப்பை இழுத்து விடவும். நாங்கள் JPG, PNG, GIF, WEBP மற்றும் பலவற்றை ஆதரிக்கிறோம்.",
+                "howto.step2.title": "OCR அமைப்புகளை கட்டமைக்கவும்",
+                "howto.step2.description": "மொழியைத் தேர்ந்தெடுக்கவும், முன்-செயலாக்க விருப்பங்களை இயக்கவும் மற்றும் உகந்த உரை பிரித்தெடுப்பிற்கான வெளியீட்டு வடிவத்தைத் தேர்ந்தெடுக்கவும்.",
+                "howto.step3.title": "உரையை பிரித்தெடுக்கவும்",
+                "howto.step3.description": "உங்கள் படத்தை செயலாக்க 'உரையை பிரித்தெடுக்கவும்' பொத்தானைக் கிளிக் செய்யவும். OCR வேலை செய்யும் போது நிகழ்நேர முன்னேற்றத்தைக் காண்க.",
+                "howto.step4.title": "நகலெடு அல்லது பதிவிறக்கவும்",
+                "howto.step4.description": "பிரித்தெடுக்கப்பட்ட உரையை கிளிப்போர்டுக்கு நகலெடுக்கவும் அல்லது அதை உரை கோப்பாக பதிவிறக்கவும். பதிவு தேவையில்லை.",
+                "ocr.title": "பட-உரை (OCR) கருவி",
+                "ocr.upload.text": "உங்கள் படத்தை இங்கே இழுத்து விடவும் அல்லது உலாவ கிளிக் செய்யவும்",
+                "ocr.upload.button": "படத்தைத் தேர்ந்தெடுக்கவும்",
+                "ocr.options.title": "OCR விருப்பங்கள்",
+                "ocr.preview.title": "முன்னோட்ட",
+                "ocr.preview.original": "அசல் படம்",
+                "ocr.preview.text": "பிரித்தெடுக்கப்பட்ட உரை",
+                "ocr.processing": "செயலாக்கம்: 0%",
+                "ocr.extract": "உரையை பிரித்தெடுக்கவும்",
+                "ocr.download": "உரையை பதிவிறக்கவும்",
+                "ocr.reset": "மீட்டமைக்கவும்",
+                "footer.follow": "எங்களைப் பின்தொடரவும்",
+                "footer.categories": "பிரபலமான வகைகள்",
+                "footer.categories.pdf": "PDF கருவிகள்",
+                "footer.categories.image": "பட கருவிகள்",
+                "footer.categories.text": "உரை கருவிகள்",
+                "footer.categories.av": "ஆடியோ/வீடியோ கருவிகள்",
+                "footer.categories.web": "வலை/டெவலப்பர் கருவிகள்",
+                "footer.categories.calc": "கால்குலேட்டர் கருவிகள்",
+                "footer.categories.util": "பயன்பாட்டு கருவிகள்",
+                "footer.categories.color": "வண்ண கருவிகள்",
+                "footer.quicklinks": "விரைவு இணைப்புகள்",
+                "footer.links.tools": "அனைத்து கருவிகள்",
+                "footer.links.faq": "அடிக்கடி கேட்கப்படும் கேள்விகள்",
+                "footer.links.contact": "தொடர்பு கொள்ள",
+                "footer.links.privacy": "தனியுரிமைக் கொள்கை",
+                "footer.links.disclaimer": "பொறுப்புத் துறப்பு",
+                "footer.links.terms": "சேவை விதிமுறைகள்",
+                "footer.copyright": "© 2025 LollyPoPDF. அனைத்து உரிமைகளும் பாதுகாக்கப்பட்டவை."
+            },
+            ml: {
+                "nav.home": "ഹോം",
+                "nav.about": "ഞങ്ങളെക്കുറിച്ച്",
+                "nav.tools": "ടൂളുകൾ",
+                "nav.contact": "ബന്ധപ്പെടുക",
+                "hero.title": "സൗജന്യ ഇമേജ് ടു ടെക്‌സ്റ്റ് (OCR) ടൂൾ",
+                "hero.description": "ഞങ്ങളുടെ സൗജന്യ OCR ടൂൾ ഉപയോഗിച്ച് ഇമേജുകളിൽ നിന്ന് ഉടൻ ടെക്‌സ്റ്റ് എക്‌സ്ട്രാക്റ്റ് ചെയ്യുക. മൾട്ടിപ്പിൾ ഭാഷകൾ സപ്പോർട്ട് ചെയ്യുന്നു, ഇമേജ് പ്രീപ്രോസസ്സിംഗ്, നിങ്ങളുടെ ബ്രൗസറിൽ പൂർണ്ണമായി പ്രവർത്തിക്കുന്നു. രജിസ്ട്രേഷൻ ആവശ്യമില്ല.",
+                "howto.title": "ഇമേജുകളിൽ നിന്ന് ടെക്‌സ്റ്റ് എങ്ങനെ എക്‌സ്ട്രാക്റ്റ് ചെയ്യാം",
+                "howto.step1.title": "നിങ്ങളുടെ ഇമേജ് അപ്‌ലോഡ് ചെയ്യുക",
+                "howto.step1.description": "അപ്‌ലോഡ് ഏരിയയിൽ ക്ലിക്ക് ചെയ്യുക അല്ലെങ്കിൽ നിങ്ങളുടെ ഇമേജ് ഫയൽ ഡ്രാഗ് ചെയ്ത് ഡ്രോപ്പ് ചെയ്യുക. ഞങ്ങൾ JPG, PNG, GIF, WEBP എന്നിവയെ സപ്പോർട്ട് ചെയ്യുന്നു.",
+                "howto.step2.title": "OCR സെറ്റിംഗുകൾ കോൺഫിഗർ ചെയ്യുക",
+                "howto.step2.description": "ഭാഷ തിരഞ്ഞെടുക്കുക, പ്രീപ്രോസസ്സിംഗ് ഓപ്ഷനുകൾ എനേബിൾ ചെയ്യുക, ഒപ്റ്റിമൽ ടെക്‌സ്റ്റ് എക്‌സ്ട്രാക്ഷനായി ഔട്ട്പുട്ട് ഫോർമാറ്റ് തിരഞ്ഞെടുക്കുക.",
+                "howto.step3.title": "ടെക്‌സ്റ്റ് എക്‌സ്ട്രാക്റ്റ് ചെയ്യുക",
+                "howto.step3.description": "നിങ്ങളുടെ ഇമേജ് പ്രോസസ്സ് ചെയ്യാൻ 'ടെക്‌സ്റ്റ് എക്‌സ്ട്രാക്റ്റ് ചെയ്യുക' ബട്ടൺ ക്ലിക്ക് ചെയ്യുക. OCR പ്രവർത്തിക്കുമ്പോൾ റിയൽ-ടൈം പ്രോഗ്രസ് കാണുക.",
+                "howto.step4.title": "കോപ്പി അല്ലെങ്കിൽ ഡൗൺലോഡ് ചെയ്യുക",
+                "howto.step4.description": "എക്‌സ്ട്രാക്റ്റ് ചെയ്ത ടെക്‌സ്റ്റ് ക്ലിപ്പ്ബോർഡിലേക്ക് കോപ്പി ചെയ്യുക അല്ലെങ്കിൽ അത് ഒരു ടെക്‌സ്റ്റ് ഫയലായി ഡൗൺലോഡ് ചെയ്യുക. രജിസ്ട്രേഷൻ ആവശ്യമില്ല.",
+                "ocr.title": "ഇമേജ് ടു ടെക്‌സ്റ്റ് (OCR) ടൂൾ",
+                "ocr.upload.text": "നിങ്ങളുടെ ഇമേജ് ഇവിടെ ഡ്രാഗ് ചെയ്ത് ഡ്രോപ്പ് ചെയ്യുക അല്ലെങ്കിൽ ബ്രൗസ് ചെയ്യാൻ ക്ലിക്ക് ചെയ്യുക",
+                "ocr.upload.button": "ഇമേജ് തിരഞ്ഞെടുക്കുക",
+                "ocr.options.title": "OCR ഓപ്ഷനുകൾ",
+                "ocr.preview.title": "പ്രിവ്യൂ",
+                "ocr.preview.original": "ഒറിജിനൽ ഇമേജ്",
+                "ocr.preview.text": "എക്‌സ്ട്രാക്റ്റ് ചെയ്ത ടെക്‌സ്റ്റ്",
+                "ocr.processing": "പ്രോസസ്സിംഗ്: 0%",
+                "ocr.extract": "ടെക്‌സ്റ്റ് എക്‌സ്ട്രാക്റ്റ് ചെയ്യുക",
+                "ocr.download": "ടെക്‌സ്റ്റ് ഡൗൺലോഡ് ചെയ്യുക",
+                "ocr.reset": "റീസെറ്റ് ചെയ്യുക",
+                "footer.follow": "ഞങ്ങളെ പിന്തുടരുക",
+                "footer.categories": "ജനപ്രിയ വിഭാഗങ്ങൾ",
+                "footer.categories.pdf": "PDF ടൂളുകൾ",
+                "footer.categories.image": "ഇമേജ് ടൂളുകൾ",
+                "footer.categories.text": "ടെക്‌സ്റ്റ് ടൂളുകൾ",
+                "footer.categories.av": "ഓഡിയോ/വീഡിയോ ടൂളുകൾ",
+                "footer.categories.web": "വെബ്/ഡെവലപ്പർ ടൂളുകൾ",
+                "footer.categories.calc": "കാൽക്കുലേറ്റർ ടൂളുകൾ",
+                "footer.categories.util": "യൂട്ടിലിറ്റി ടൂളുകൾ",
+                "footer.categories.color": "കളർ ടൂളുകൾ",
+                "footer.quicklinks": "ദ്രുത ലിങ്കുകൾ",
+                "footer.links.tools": "എല്ലാ ടൂളുകളും",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "ബന്ധപ്പെടുക",
+                "footer.links.privacy": "സ്വകാര്യതാ നയം",
+                "footer.links.disclaimer": "ഡിസ്ക്ലെയിമർ",
+                "footer.links.terms": "സേവന നിബന്ധനകൾ",
+                "footer.copyright": "© 2025 LollyPoPDF. എല്ലാ അവകാശങ്ങളും നിക്ഷിപ്തം."
+            },
+            id: {
+                "nav.home": "Beranda",
+                "nav.about": "Tentang Kami",
+                "nav.tools": "Alat",
+                "nav.contact": "Kontak",
+                "hero.title": "Alat Gambar ke Teks (OCR) Gratis",
+                "hero.description": "Ekstrak teks dari gambar secara instan dengan alat OCR gratis kami. Mendukung banyak bahasa, pra-pemrosesan gambar, dan bekerja sepenuhnya di browser Anda. Tidak perlu pendaftaran.",
+                "howto.title": "Cara Mengekstrak Teks dari Gambar",
+                "howto.step1.title": "Unggah Gambar Anda",
+                "howto.step1.description": "Klik area unggah atau seret dan lepas file gambar Anda. Kami mendukung JPG, PNG, GIF, WEBP dan lainnya.",
+                "howto.step2.title": "Konfigurasi Pengaturan OCR",
+                "howto.step2.description": "Pilih bahasa, aktifkan opsi pra-pemrosesan, dan pilih format keluaran untuk ekstraksi teks optimal.",
+                "howto.step3.title": "Ekstrak Teks",
+                "howto.step3.description": "Klik tombol 'Ekstrak Teks' untuk memproses gambar Anda. Lihat progres real-time saat OCR bekerja.",
+                "howto.step4.title": "Salin atau Unduh",
+                "howto.step4.description": "Salin teks yang diekstrak ke clipboard atau unduh sebagai file teks. Tidak perlu pendaftaran.",
+                "ocr.title": "Alat Gambar ke Teks (OCR)",
+                "ocr.upload.text": "Seret dan lepas gambar Anda di sini atau klik untuk menelusuri",
+                "ocr.upload.button": "Pilih Gambar",
+                "ocr.options.title": "Opsi OCR",
+                "ocr.preview.title": "Pratinjau",
+                "ocr.preview.original": "Gambar Asli",
+                "ocr.preview.text": "Teks yang Diekstrak",
+                "ocr.processing": "Memproses: 0%",
+                "ocr.extract": "Ekstrak Teks",
+                "ocr.download": "Unduh Teks",
+                "ocr.reset": "Atur Ulang",
+                "footer.follow": "IKUTI KAMI",
+                "footer.categories": "Kategori Populer",
+                "footer.categories.pdf": "Alat PDF",
+                "footer.categories.image": "Alat Gambar",
+                "footer.categories.text": "Alat Teks",
+                "footer.categories.av": "Alat Audio/Video",
+                "footer.categories.web": "Alat Web/Pengembang",
+                "footer.categories.calc": "Alat Kalkulator",
+                "footer.categories.util": "Alat Utilitas",
+                "footer.categories.color": "Alat Warna",
+                "footer.quicklinks": "Tautan Cepat",
+                "footer.links.tools": "Semua Alat",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Kontak",
+                "footer.links.privacy": "Kebijakan Privasi",
+                "footer.links.disclaimer": "Penafian",
+                "footer.links.terms": "Syarat Layanan",
+                "footer.copyright": "© 2025 LollyPoPDF. Hak cipta dilindungi."
+            },
+            ms: {
+                "nav.home": "Laman Utama",
+                "nav.about": "Tentang Kami",
+                "nav.tools": "Alat",
+                "nav.contact": "Hubungi",
+                "hero.title": "Alat Imej ke Teks (OCR) Percuma",
+                "hero.description": "Ekstrak teks dari imej serta-merta dengan alat OCR percuma kami. Menyokong pelbagai bahasa, pra-pemprosesan imej, dan berfungsi sepenuhnya dalam pelayar anda. Tiada pendaftaran diperlukan.",
+                "howto.title": "Cara Mengekstrak Teks dari Imej",
+                "howto.step1.title": "Muat Naik Imej Anda",
+                "howto.step1.description": "Klik kawasan muat naik atau seret dan lepaskan fail imej anda. Kami menyokong JPG, PNG, GIF, WEBP dan banyak lagi.",
+                "howto.step2.title": "Konfigurasi Tetapan OCR",
+                "howto.step2.description": "Pilih bahasa, dayakan pilihan pra-pemprosesan, dan pilih format output untuk pengekstrakan teks optimum.",
+                "howto.step3.title": "Ekstrak Teks",
+                "howto.step3.description": "Klik butang 'Ekstrak Teks' untuk memproses imej anda. Lihat kemajuan masa nyata semasa OCR berfungsi.",
+                "howto.step4.title": "Salin atau Muat Turun",
+                "howto.step4.description": "Salin teks yang diekstrak ke papan keratan atau muat turun sebagai fail teks. Tiada pendaftaran diperlukan.",
+                "ocr.title": "Alat Imej ke Teks (OCR)",
+                "ocr.upload.text": "Seret dan lepaskan imej anda di sini atau klik untuk melayari",
+                "ocr.upload.button": "Pilih Imej",
+                "ocr.options.title": "Pilihan OCR",
+                "ocr.preview.title": "Pratonton",
+                "ocr.preview.original": "Imej Asal",
+                "ocr.preview.text": "Teks yang Diekstrak",
+                "ocr.processing": "Memproses: 0%",
+                "ocr.extract": "Ekstrak Teks",
+                "ocr.download": "Muat Turun Teks",
+                "ocr.reset": "Tetapkan Semula",
+                "footer.follow": "IKUTI KAMI",
+                "footer.categories": "Kategori Popular",
+                "footer.categories.pdf": "Alat PDF",
+                "footer.categories.image": "Alat Imej",
+                "footer.categories.text": "Alat Teks",
+                "footer.categories.av": "Alat Audio/Video",
+                "footer.categories.web": "Alat Web/Pembangun",
+                "footer.categories.calc": "Alat Kalkulator",
+                "footer.categories.util": "Alat Utiliti",
+                "footer.categories.color": "Alat Warna",
+                "footer.quicklinks": "Pautan Pantas",
+                "footer.links.tools": "Semua Alat",
+                "footer.links.faq": "Soalan Lazim",
+                "footer.links.contact": "Hubungi",
+                "footer.links.privacy": "Dasar Privasi",
+                "footer.links.disclaimer": "Penafian",
+                "footer.links.terms": "Syarat Perkhidmatan",
+                "footer.copyright": "© 2025 LollyPoPDF. Hak cipta terpelihara."
+            },
+            pl: {
+                "nav.home": "Strona główna",
+                "nav.about": "O nas",
+                "nav.tools": "Narzędzia",
+                "nav.contact": "Kontakt",
+                "hero.title": "Darmowe narzędzie Obraz na Tekst (OCR)",
+                "hero.description": "Wyodrębnij tekst z obrazów natychmiast za pomocą naszego darmowego narzędzia OCR. Obsługuje wiele języków, wstępne przetwarzanie obrazu i działa całkowicie w Twojej przeglądarce. Bez rejestracji.",
+                "howto.title": "Jak wyodrębnić tekst z obrazów",
+                "howto.step1.title": "Prześlij swój obraz",
+                "howto.step1.description": "Kliknij obszar przesyłania lub przeciągnij i upuść plik obrazu. Obsługujemy JPG, PNG, GIF, WEBP i inne.",
+                "howto.step2.title": "Skonfiguruj ustawienia OCR",
+                "howto.step2.description": "Wybierz język, włącz opcje przetwarzania wstępnego i wybierz format wyjściowy dla optymalnego wyodrębniania tekstu.",
+                "howto.step3.title": "Wyodrębnij tekst",
+                "howto.step3.description": "Kliknij przycisk 'Wyodrębnij tekst', aby przetworzyć obraz. Zobacz postęp w czasie rzeczywistym podczas pracy OCR.",
+                "howto.step4.title": "Kopiuj lub pobierz",
+                "howto.step4.description": "Skopiuj wyodrębniony tekst do schowka lub pobierz go jako plik tekstowy. Bez rejestracji.",
+                "ocr.title": "Narzędzie Obraz na Tekst (OCR)",
+                "ocr.upload.text": "Przeciągnij i upuść swój obraz tutaj lub kliknij, aby przeglądać",
+                "ocr.upload.button": "Wybierz obraz",
+                "ocr.options.title": "Opcje OCR",
+                "ocr.preview.title": "Podgląd",
+                "ocr.preview.original": "Oryginalny obraz",
+                "ocr.preview.text": "Wyodrębniony tekst",
+                "ocr.processing": "Przetwarzanie: 0%",
+                "ocr.extract": "Wyodrębnij tekst",
+                "ocr.download": "Pobierz tekst",
+                "ocr.reset": "Resetuj",
+                "footer.follow": "OBSERWUJ NAS",
+                "footer.categories": "Popularne kategorie",
+                "footer.categories.pdf": "Narzędzia PDF",
+                "footer.categories.image": "Narzędzia obrazów",
+                "footer.categories.text": "Narzędzia tekstowe",
+                "footer.categories.av": "Narzędzia audio/wideo",
+                "footer.categories.web": "Narzędzia internetowe/deweloperskie",
+                "footer.categories.calc": "Narzędzia kalkulatora",
+                "footer.categories.util": "Narzędzia użytkowe",
+                "footer.categories.color": "Narzędzia kolorów",
+                "footer.quicklinks": "Szybkie linki",
+                "footer.links.tools": "Wszystkie narzędzia",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Kontakt",
+                "footer.links.privacy": "Polityka prywatności",
+                "footer.links.disclaimer": "Zastrzeżenie",
+                "footer.links.terms": "Warunki usługi",
+                "footer.copyright": "© 2025 LollyPoPDF. Wszelkie prawa zastrzeżone."
+            },
+            th: {
+                "nav.home": "หน้าแรก",
+                "nav.about": "เกี่ยวกับเรา",
+                "nav.tools": "เครื่องมือ",
+                "nav.contact": "ติดต่อ",
+                "hero.title": "เครื่องมือแปลงภาพเป็นข้อความ (OCR) ฟรี",
+                "hero.description": "ดึงข้อความจากภาพทันทีด้วยเครื่องมือ OCR ฟรีของเรา รองรับหลายภาษา การประมวลผลภาพล่วงหน้า และทำงานทั้งหมดในเบราว์เซอร์ของคุณ ไม่ต้องลงทะเบียน",
+                "howto.title": "วิธีการดึงข้อความจากภาพ",
+                "howto.step1.title": "อัปโหลดภาพของคุณ",
+                "howto.step1.description": "คลิกพื้นที่อัปโหลดหรือลากและวางไฟล์ภาพของคุณ เรารองรับ JPG, PNG, GIF, WEBP และอื่นๆ",
+                "howto.step2.title": "กำหนดค่าการตั้งค่า OCR",
+                "howto.step2.description": "เลือกภาษา เปิดใช้งานตัวเลือกการประมวลผลล่วงหน้า และเลือกรูปแบบผลลัพธ์สำหรับการดึงข้อความที่เหมาะสมที่สุด",
+                "howto.step3.title": "ดึงข้อความ",
+                "howto.step3.description": "คลิกปุ่ม 'ดึงข้อความ' เพื่อประมวลผลภาพของคุณ ดูความคืบหน้าตามเวลาจริงขณะที่ OCR ทำงาน",
+                "howto.step4.title": "คัดลอกหรือดาวน์โหลด",
+                "howto.step4.description": "คัดลอกข้อความที่ดึงมาไปยังคลิปบอร์ดหรือดาวน์โหลดเป็นไฟล์ข้อความ ไม่ต้องลงทะเบียน",
+                "ocr.title": "เครื่องมือแปลงภาพเป็นข้อความ (OCR)",
+                "ocr.upload.text": "ลากและวางภาพของคุณที่นี่หรือคลิกเพื่อเรียกดู",
+                "ocr.upload.button": "เลือกภาพ",
+                "ocr.options.title": "ตัวเลือก OCR",
+                "ocr.preview.title": "ตัวอย่าง",
+                "ocr.preview.original": "ภาพต้นฉบับ",
+                "ocr.preview.text": "ข้อความที่ดึงมา",
+                "ocr.processing": "กำลังประมวลผล: 0%",
+                "ocr.extract": "ดึงข้อความ",
+                "ocr.download": "ดาวน์โหลดข้อความ",
+                "ocr.reset": "รีเซ็ต",
+                "footer.follow": "ติดตามเรา",
+                "footer.categories": "หมวดหมู่ยอดนิยม",
+                "footer.categories.pdf": "เครื่องมือ PDF",
+                "footer.categories.image": "เครื่องมือภาพ",
+                "footer.categories.text": "เครื่องมือข้อความ",
+                "footer.categories.av": "เครื่องมือเสียง/วิดีโอ",
+                "footer.categories.web": "เครื่องมือเว็บ/นักพัฒนา",
+                "footer.categories.calc": "เครื่องมือเครื่องคิดเลข",
+                "footer.categories.util": "เครื่องมืออรรถประโยชน์",
+                "footer.categories.color": "เครื่องมือสี",
+                "footer.quicklinks": "ลิงก์ด่วน",
+                "footer.links.tools": "เครื่องมือทั้งหมด",
+                "footer.links.faq": "คำถามที่พบบ่อย",
+                "footer.links.contact": "ติดต่อ",
+                "footer.links.privacy": "นโยบายความเป็นส่วนตัว",
+                "footer.links.disclaimer": "ข้อปฏิเสธความรับผิดชอบ",
+                "footer.links.terms": "เงื่อนไขการให้บริการ",
+                "footer.copyright": "© 2025 LollyPoPDF. สงวนลิขสิทธิ์."
+            },
+            tr: {
+                "nav.home": "Ana Sayfa",
+                "nav.about": "Hakkımızda",
+                "nav.tools": "Araçlar",
+                "nav.contact": "İletişim",
+                "hero.title": "Ücretsiz Görüntüden Metne (OCR) Aracı",
+                "hero.description": "Ücretsiz OCR aracımızla görüntülerden anında metin çıkarın. Çoklu dil desteği, görüntü ön işleme ve tamamen tarayıcınızda çalışır. Kayıt gerekmez.",
+                "howto.title": "Görüntülerden Metin Nasıl Çıkarılır",
+                "howto.step1.title": "Görüntünüzü Yükleyin",
+                "howto.step1.description": "Yükleme alanını tıklayın veya görüntü dosyanızı sürükleyip bırakın. JPG, PNG, GIF, WEBP ve daha fazlasını destekliyoruz.",
+                "howto.step2.title": "OCR Ayarlarını Yapılandırın",
+                "howto.step2.description": "Dil seçin, ön işleme seçeneklerini etkinleştirin ve optimum metin çıkarma için çıktı formatını seçin.",
+                "howto.step3.title": "Metni Çıkar",
+                "howto.step3.description": "Görüntünüzü işlemek için 'Metni Çıkar' düğmesini tıklayın. OCR çalışırken gerçek zamanlı ilerlemeyi görün.",
+                "howto.step4.title": "Kopyala veya İndir",
+                "howto.step4.description": "Çıkarılan metni panoya kopyalayın veya metin dosyası olarak indirin. Kayıt gerekmez.",
+                "ocr.title": "Görüntüden Metne (OCR) Aracı",
+                "ocr.upload.text": "Görüntünüzü buraya sürükleyip bırakın veya göz atmak için tıklayın",
+                "ocr.upload.button": "Görüntü Seç",
+                "ocr.options.title": "OCR Seçenekleri",
+                "ocr.preview.title": "Önizleme",
+                "ocr.preview.original": "Orijinal Görüntü",
+                "ocr.preview.text": "Çıkarılan Metin",
+                "ocr.processing": "İşleniyor: 0%",
+                "ocr.extract": "Metni Çıkar",
+                "ocr.download": "Metni İndir",
+                "ocr.reset": "Sıfırla",
+                "footer.follow": "BİZİ TAKİP EDİN",
+                "footer.categories": "Popüler Kategoriler",
+                "footer.categories.pdf": "PDF Araçları",
+                "footer.categories.image": "Görüntü Araçları",
+                "footer.categories.text": "Metin Araçları",
+                "footer.categories.av": "Ses/Video Araçları",
+                "footer.categories.web": "Web/Geliştirici Araçları",
+                "footer.categories.calc": "Hesap Makinesi Araçları",
+                "footer.categories.util": "Yardımcı Araçlar",
+                "footer.categories.color": "Renk Araçları",
+                "footer.quicklinks": "Hızlı Bağlantılar",
+                "footer.links.tools": "Tüm Araçlar",
+                "footer.links.faq": "SSS",
+                "footer.links.contact": "İletişim",
+                "footer.links.privacy": "Gizlilik Politikası",
+                "footer.links.disclaimer": "Feragatname",
+                "footer.links.terms": "Hizmet Şartları",
+                "footer.copyright": "© 2025 LollyPoPDF. Tüm hakları saklıdır."
+            },
+            uk: {
+                "nav.home": "Головна",
+                "nav.about": "Про нас",
+                "nav.tools": "Інструменти",
+                "nav.contact": "Контакт",
+                "hero.title": "Безкоштовний інструмент Зображення в Текст (OCR)",
+                "hero.description": "Видобувайте текст із зображень миттєво за допомогою нашого безкоштовного інструменту OCR. Підтримує багато мов, попередню обробку зображень і повністю працює у вашому браузері. Реєстрація не потрібна.",
+                "howto.title": "Як видобути текст із зображень",
+                "howto.step1.title": "Завантажте ваше зображення",
+                "howto.step1.description": "Натисніть на область завантаження або перетягніть файл зображення. Ми підтримуємо JPG, PNG, GIF, WEBP та інші.",
+                "howto.step2.title": "Налаштуйте параметри OCR",
+                "howto.step2.description": "Виберіть мову, увімкніть опції попередньої обробки та виберіть формат виводу для оптимального видобування тексту.",
+                "howto.step3.title": "Видобути текст",
+                "howto.step3.description": "Натисніть кнопку 'Видобути текст' для обробки вашого зображення. Дивіться прогрес у реальному часі під час роботи OCR.",
+                "howto.step4.title": "Копіювати або завантажити",
+                "howto.step4.description": "Скопіюйте видобутий текст у буфер обміну або завантажте його як текстовий файл. Реєстрація не потрібна.",
+                "ocr.title": "Інструмент Зображення в Текст (OCR)",
+                "ocr.upload.text": "Перетягніть ваше зображення сюди або натисніть для перегляду",
+                "ocr.upload.button": "Вибрати зображення",
+                "ocr.options.title": "Параметри OCR",
+                "ocr.preview.title": "Попередній перегляд",
+                "ocr.preview.original": "Оригінальне зображення",
+                "ocr.preview.text": "Видобутий текст",
+                "ocr.processing": "Обробка: 0%",
+                "ocr.extract": "Видобути текст",
+                "ocr.download": "Завантажити текст",
+                "ocr.reset": "Скинути",
+                "footer.follow": "СЛІДКУЙТЕ ЗА НАМИ",
+                "footer.categories": "Популярні категорії",
+                "footer.categories.pdf": "PDF інструменти",
+                "footer.categories.image": "Інструменти для зображень",
+                "footer.categories.text": "Текстові інструменти",
+                "footer.categories.av": "Аудіо/Відео інструменти",
+                "footer.categories.web": "Веб/Розробник інструменти",
+                "footer.categories.calc": "Калькуляторні інструменти",
+                "footer.categories.util": "Утиліти",
+                "footer.categories.color": "Кольорові інструменти",
+                "footer.quicklinks": "Швидкі посилання",
+                "footer.links.tools": "Всі інструменти",
+                "footer.links.faq": "ЧаПи",
+                "footer.links.contact": "Контакт",
+                "footer.links.privacy": "Політика конфіденційності",
+                "footer.links.disclaimer": "Відмова від відповідальності",
+                "footer.links.terms": "Умови використання",
+                "footer.copyright": "© 2025 LollyPoPDF. Всі права захищені."
+            },
+            vi: {
+                "nav.home": "Trang chủ",
+                "nav.about": "Về chúng tôi",
+                "nav.tools": "Công cụ",
+                "nav.contact": "Liên hệ",
+                "hero.title": "Công cụ Hình ảnh sang Văn bản (OCR) Miễn phí",
+                "hero.description": "Trích xuất văn bản từ hình ảnh ngay lập tức với công cụ OCR miễn phí của chúng tôi. Hỗ trợ đa ngôn ngữ, tiền xử lý hình ảnh và hoạt động hoàn toàn trong trình duyệt của bạn. Không cần đăng ký.",
+                "howto.title": "Cách Trích xuất Văn bản từ Hình ảnh",
+                "howto.step1.title": "Tải lên Hình ảnh của Bạn",
+                "howto.step1.description": "Nhấp vào khu vực tải lên hoặc kéo và thả tệp hình ảnh của bạn. Chúng tôi hỗ trợ JPG, PNG, GIF, WEBP và hơn thế nữa.",
+                "howto.step2.title": "Cấu hình Cài đặt OCR",
+                "howto.step2.description": "Chọn ngôn ngữ, bật các tùy chọn tiền xử lý và chọn định dạng đầu ra để trích xuất văn bản tối ưu.",
+                "howto.step3.title": "Trích xuất Văn bản",
+                "howto.step3.description": "Nhấp vào nút 'Trích xuất Văn bản' để xử lý hình ảnh của bạn. Xem tiến trình thời gian thực khi OCR hoạt động.",
+                "howto.step4.title": "Sao chép hoặc Tải xuống",
+                "howto.step4.description": "Sao chép văn bản được trích xuất vào clipboard hoặc tải xuống dưới dạng tệp văn bản. Không cần đăng ký.",
+                "ocr.title": "Công cụ Hình ảnh sang Văn bản (OCR)",
+                "ocr.upload.text": "Kéo và thả hình ảnh của bạn vào đây hoặc nhấp để duyệt",
+                "ocr.upload.button": "Chọn Hình ảnh",
+                "ocr.options.title": "Tùy chọn OCR",
+                "ocr.preview.title": "Xem trước",
+                "ocr.preview.original": "Hình ảnh Gốc",
+                "ocr.preview.text": "Văn bản Được Trích xuất",
+                "ocr.processing": "Đang xử lý: 0%",
+                "ocr.extract": "Trích xuất Văn bản",
+                "ocr.download": "Tải xuống Văn bản",
+                "ocr.reset": "Đặt lại",
+                "footer.follow": "THEO DÕI CHÚNG TÔI",
+                "footer.categories": "Danh mục Phổ biến",
+                "footer.categories.pdf": "Công cụ PDF",
+                "footer.categories.image": "Công cụ Hình ảnh",
+                "footer.categories.text": "Công cụ Văn bản",
+                "footer.categories.av": "Công cụ Âm thanh/Video",
+                "footer.categories.web": "Công cụ Web/Nhà phát triển",
+                "footer.categories.calc": "Công cụ Máy tính",
+                "footer.categories.util": "Công cụ Tiện ích",
+                "footer.categories.color": "Công cụ Màu sắc",
+                "footer.quicklinks": "Liên kết Nhanh",
+                "footer.links.tools": "Tất cả Công cụ",
+                "footer.links.faq": "Câu hỏi Thường gặp",
+                "footer.links.contact": "Liên hệ",
+                "footer.links.privacy": "Chính sách Quyền riêng tư",
+                "footer.links.disclaimer": "Tuyên bố Miễn trừ Trách nhiệm",
+                "footer.links.terms": "Điều khoản Dịch vụ",
+                "footer.copyright": "© 2025 LollyPoPDF. Đã đăng ký bản quyền."
+            },
+            is: {
+                "nav.home": "Heim",
+                "nav.about": "Um okkur",
+                "nav.tools": "Verkfæri",
+                "nav.contact": "Hafa samband",
+                "hero.title": "Ókeypis Mynd í Texta (OCR) Tól",
+                "hero.description": "Draggðu texta úr myndum augnabliklega með ókeypis OCR tóli okkar. Styður mörg tungumál, myndaförvinnslu og vinnur algjörlega í vafranum þínum. Engin skráning krafist.",
+                "howto.title": "Hvernig á að draga texta úr myndum",
+                "howto.step1.title": "Hladdu upp myndinni þinni",
+                "howto.step1.description": "Smelltu á upphleðslusvæðið eða dragðu og slepptu myndaskránni þinni. Við styðjum JPG, PNG, GIF, WEBP og fleira.",
+                "howto.step2.title": "Stilltu OCR stillingar",
+                "howto.step2.description": "Veldu tungumál, virkjaðu förvinnsluvalkosti og veldu úttaksform fyrir ákjósanlega textadrátt.",
+                "howto.step3.title": "Draggðu texta",
+                "howto.step3.description": "Smelltu á 'Draggðu texta' hnappinn til að vinna úr myndinni þinni. Sjáðu rauntímaframvindu á meðan OCR vinnur.",
+                "howto.step4.title": "Afrita eða sækja",
+                "howto.step4.description": "Afritaðu dregna textann á klippiborðið eða sæktu hann sem textaskrá. Engin skráning krafist.",
+                "ocr.title": "Mynd í Texta (OCR) Tól",
+                "ocr.upload.text": "Dragðu og slepptu myndinni þinni hér eða smelltu til að skoða",
+                "ocr.upload.button": "Veldu mynd",
+                "ocr.options.title": "OCR valkostir",
+                "ocr.preview.title": "Forskoðun",
+                "ocr.preview.original": "Upprunaleg mynd",
+                "ocr.preview.text": "Dreginn texti",
+                "ocr.processing": "Vinnsla: 0%",
+                "ocr.extract": "Draggðu texta",
+                "ocr.download": "Sækja texta",
+                "ocr.reset": "Endurstilla",
+                "footer.follow": "FYLGDU OKKUR",
+                "footer.categories": "Vinsælar flokkar",
+                "footer.categories.pdf": "PDF tól",
+                "footer.categories.image": "Myndatól",
+                "footer.categories.text": "Textatól",
+                "footer.categories.av": "Hljóð/Myndband tól",
+                "footer.categories.web": "Vefur/Forritari tól",
+                "footer.categories.calc": "Reiknivélar tól",
+                "footer.categories.util": "Gagnleg tól",
+                "footer.categories.color": "Litatól",
+                "footer.quicklinks": "Flýtihlekkir",
+                "footer.links.tools": "Öll tól",
+                "footer.links.faq": "Algengar spurningar",
+                "footer.links.contact": "Hafa samband",
+                "footer.links.privacy": "Meðferðarstefna",
+                "footer.links.disclaimer": "Fyrirvari",
+                "footer.links.terms": "Þjónustuskilmálar",
+                "footer.copyright": "© 2025 LollyPoPDF. Öll réttindi áskilin."
+            },
+            no: {
+                "nav.home": "Hjem",
+                "nav.about": "Om oss",
+                "nav.tools": "Verktøy",
+                "nav.contact": "Kontakt",
+                "hero.title": "Gratis Bilde til Tekst (OCR) Verktøy",
+                "hero.description": "Trekk ut tekst fra bilder umiddelbart med vårt gratis OCR-verktøy. Støtter flere språk, bildeforbehandling og fungerer helt i nettleseren din. Ingen registrering kreves.",
+                "howto.title": "Hvordan trekke ut tekst fra bilder",
+                "howto.step1.title": "Last opp bildet ditt",
+                "howto.step1.description": "Klikk på opplastingsområdet eller dra og slipp bildefilen din. Vi støtter JPG, PNG, GIF, WEBP og mer.",
+                "howto.step2.title": "Konfigurer OCR-innstillinger",
+                "howto.step2.description": "Velg språk, aktiver forbehandlingsalternativer og velg utdataformat for optimal tekstrekkefunksjon.",
+                "howto.step3.title": "Trekk ut tekst",
+                "howto.step3.description": "Klikk på 'Trekk ut tekst'-knappen for å behandle bildet ditt. Se sanntidsfremdrift mens OCR arbeider.",
+                "howto.step4.title": "Kopier eller last ned",
+                "howto.step4.description": "Kopier den uttrukne teksten til utklippstavlen eller last den ned som en tekstfil. Ingen registrering kreves.",
+                "ocr.title": "Bilde til Tekst (OCR) Verktøy",
+                "ocr.upload.text": "Dra og slipp bildet ditt her eller klikk for å bla",
+                "ocr.upload.button": "Velg bilde",
+                "ocr.options.title": "OCR-alternativer",
+                "ocr.preview.title": "Forhåndsvisning",
+                "ocr.preview.original": "Originalbilde",
+                "ocr.preview.text": "Uttrukket tekst",
+                "ocr.processing": "Behandler: 0%",
+                "ocr.extract": "Trekk ut tekst",
+                "ocr.download": "Last ned tekst",
+                "ocr.reset": "Tilbakestill",
+                "footer.follow": "FØLG OSS",
+                "footer.categories": "Populære kategorier",
+                "footer.categories.pdf": "PDF-verktøy",
+                "footer.categories.image": "Bildeverktøy",
+                "footer.categories.text": "Tekstverktøy",
+                "footer.categories.av": "Lyd/Video verktøy",
+                "footer.categories.web": "Web/Utvikler verktøy",
+                "footer.categories.calc": "Kalkulatorverktøy",
+                "footer.categories.util": "Nytteverktøy",
+                "footer.categories.color": "Fargeverktøy",
+                "footer.quicklinks": "Hurtiglenker",
+                "footer.links.tools": "Alle verktøy",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Kontakt",
+                "footer.links.privacy": "Personvernregler",
+                "footer.links.disclaimer": "Ansvarsfraskrivelse",
+                "footer.links.terms": "Tjenestevilkår",
+                "footer.copyright": "© 2025 LollyPoPDF. Alle rettigheter forbeholdt."
+            },
+            sv: {
+                "nav.home": "Hem",
+                "nav.about": "Om oss",
+                "nav.tools": "Verktyg",
+                "nav.contact": "Kontakt",
+                "hero.title": "Gratis Bild till Text (OCR) Verktyg",
+                "hero.description": "Extrahera text från bilder direkt med vårt gratis OCR-verktyg. Stöder flera språk, bildförbehandling och fungerar helt i din webbläsare. Ingen registrering krävs.",
+                "howto.title": "Hur man extraherar text från bilder",
+                "howto.step1.title": "Ladda upp din bild",
+                "howto.step1.description": "Klicka på uppladdningsområdet eller dra och släpp din bildfil. Vi stöder JPG, PNG, GIF, WEBP och mer.",
+                "howto.step2.title": "Konfigurera OCR-inställningar",
+                "howto.step2.description": "Välj språk, aktivera förbehandlingsalternativ och välj utdataformat för optimal textextrahering.",
+                "howto.step3.title": "Extrahera text",
+                "howto.step3.description": "Klicka på knappen 'Extrahera text' för att bearbeta din bild. Se realtidsframsteg medan OCR arbetar.",
+                "howto.step4.title": "Kopiera eller ladda ner",
+                "howto.step4.description": "Kopiera den extraherade texten till urklipp eller ladda ner den som en textfil. Ingen registrering krävs.",
+                "ocr.title": "Bild till Text (OCR) Verktyg",
+                "ocr.upload.text": "Dra och släpp din bild här eller klicka för att bläddra",
+                "ocr.upload.button": "Välj bild",
+                "ocr.options.title": "OCR-alternativ",
+                "ocr.preview.title": "Förhandsvisning",
+                "ocr.preview.original": "Originalbild",
+                "ocr.preview.text": "Extraherad text",
+                "ocr.processing": "Bearbetar: 0%",
+                "ocr.extract": "Extrahera text",
+                "ocr.download": "Ladda ner text",
+                "ocr.reset": "Återställ",
+                "footer.follow": "FÖLJ OSS",
+                "footer.categories": "Populära kategorier",
+                "footer.categories.pdf": "PDF-verktyg",
+                "footer.categories.image": "Bildverktyg",
+                "footer.categories.text": "Textverktyg",
+                "footer.categories.av": "Ljud/Video verktyg",
+                "footer.categories.web": "Webb/Utvecklare verktyg",
+                "footer.categories.calc": "Kalkylatorverktyg",
+                "footer.categories.util": "Verktyg för verktyg",
+                "footer.categories.color": "Färgverktyg",
+                "footer.quicklinks": "Snabblänkar",
+                "footer.links.tools": "Alla verktyg",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Kontakt",
+                "footer.links.privacy": "Integritetspolicy",
+                "footer.links.disclaimer": "Ansvarsfriskrivning",
+                "footer.links.terms": "Användarvillkor",
+                "footer.copyright": "© 2025 LollyPoPDF. Alla rättigheter förbehållna."
+            },
+            fi: {
+                "nav.home": "Koti",
+                "nav.about": "Tietoa meistä",
+                "nav.tools": "Työkalut",
+                "nav.contact": "Yhteystiedot",
+                "hero.title": "Ilmainen Kuvasta Tekstiin (OCR) -työkalu",
+                "hero.description": "Pura teksti kuvista heti ilmaisella OCR-työkalullamme. Tukee useita kieliä, kuvan esikäsittelyä ja toimii kokonaan selaimesi sisällä. Rekisteröintiä ei tarvita.",
+                "howto.title": "Kuinka purkaa teksti kuvista",
+                "howto.step1.title": "Lataa kuvasi",
+                "howto.step1.description": "Napsauta latausalueetta tai vedä ja pudota kuvatiedostosi. Tuemme JPG, PNG, GIF, WEBP ja enemmän.",
+                "howto.step2.title": "Määritä OCR-asetukset",
+                "howto.step2.description": "Valitse kieli, ota esikäsittelyvaihtoehdot käyttöön ja valitse tulostusmuoto optimaalista tekstinpurku varten.",
+                "howto.step3.title": "Pura teksti",
+                "howto.step3.description": "Napsauta 'Pura teksti' -painiketta käsitelläksesi kuvasi. Katso reaaliaikaista edistymistä OCR:n työskennellessä.",
+                "howto.step4.title": "Kopioi tai lataa",
+                "howto.step4.description": "Kopioi purettu teksti leikepöydälle tai lataa se tekstitiedostona. Rekisteröintiä ei tarvita.",
+                "ocr.title": "Kuvasta Tekstiin (OCR) -työkalu",
+                "ocr.upload.text": "Vedä ja pudota kuvasi tähän tai napsauta selataksesi",
+                "ocr.upload.button": "Valitse kuva",
+                "ocr.options.title": "OCR-vaihtoehdot",
+                "ocr.preview.title": "Esikatselu",
+                "ocr.preview.original": "Alkuperäinen kuva",
+                "ocr.preview.text": "Purettu teksti",
+                "ocr.processing": "Käsitellään: 0%",
+                "ocr.extract": "Pura teksti",
+                "ocr.download": "Lataa teksti",
+                "ocr.reset": "Nollaa",
+                "footer.follow": "SEURA MEITÄ",
+                "footer.categories": "Suositut kategoriat",
+                "footer.categories.pdf": "PDF-työkalut",
+                "footer.categories.image": "Kuvatyökalut",
+                "footer.categories.text": "Tekstityökalut",
+                "footer.categories.av": "Ääni/Video työkalut",
+                "footer.categories.web": "Web/Kehittäjä työkalut",
+                "footer.categories.calc": "Laskinityökalut",
+                "footer.categories.util": "Aputyökalut",
+                "footer.categories.color": "Värityökalut",
+                "footer.quicklinks": "Pikalinkit",
+                "footer.links.tools": "Kaikki työkalut",
+                "footer.links.faq": "UKK",
+                "footer.links.contact": "Yhteystiedot",
+                "footer.links.privacy": "Tietosuojakäytäntö",
+                "footer.links.disclaimer": "Vastuuvapauslauseke",
+                "footer.links.terms": "Käyttöehdot",
+                "footer.copyright": "© 2025 LollyPoPDF. Kaikki oikeudet pidätetään."
+            },
+            cs: {
+                "nav.home": "Domů",
+                "nav.about": "O nás",
+                "nav.tools": "Nástroje",
+                "nav.contact": "Kontakt",
+                "hero.title": "Bezplatný nástroj Obrázek na Text (OCR)",
+                "hero.description": "Extrahujte text z obrázků okamžitě s naším bezplatným OCR nástrojem. Podporuje více jazyků, předzpracování obrázků a funguje zcela ve vašem prohlížeči. Není vyžadována registrace.",
+                "howto.title": "Jak extrahovat text z obrázků",
+                "howto.step1.title": "Nahrajte svůj obrázek",
+                "howto.step1.description": "Klikněte na oblast pro nahrávání nebo přetáhněte soubor s obrázkem. Podporujeme JPG, PNG, GIF, WEBP a další.",
+                "howto.step2.title": "Nakonfigurujte nastavení OCR",
+                "howto.step2.description": "Vyberte jazyk, povolte možnosti předzpracování a zvolte výstupní formát pro optimální extrakci textu.",
+                "howto.step3.title": "Extrahovat text",
+                "howto.step3.description": "Klikněte na tlačítko 'Extrahovat text' pro zpracování vašeho obrázku. Sledujte průběh v reálném čase, zatímco OCR pracuje.",
+                "howto.step4.title": "Kopírovat nebo stáhnout",
+                "howto.step4.description": "Zkopírujte extrahovaný text do schránky nebo si jej stáhněte jako textový soubor. Není vyžadována registrace.",
+                "ocr.title": "Nástroj Obrázek na Text (OCR)",
+                "ocr.upload.text": "Přetáhněte svůj obrázek sem nebo klikněte pro procházení",
+                "ocr.upload.button": "Vybrat obrázek",
+                "ocr.options.title": "Možnosti OCR",
+                "ocr.preview.title": "Náhled",
+                "ocr.preview.original": "Původní obrázek",
+                "ocr.preview.text": "Extrahovaný text",
+                "ocr.processing": "Zpracovává se: 0%",
+                "ocr.extract": "Extrahovat text",
+                "ocr.download": "Stáhnout text",
+                "ocr.reset": "Resetovat",
+                "footer.follow": "SLEDUJTE NÁS",
+                "footer.categories": "Populární kategorie",
+                "footer.categories.pdf": "PDF nástroje",
+                "footer.categories.image": "Obrázkové nástroje",
+                "footer.categories.text": "Textové nástroje",
+                "footer.categories.av": "Audio/Video nástroje",
+                "footer.categories.web": "Web/Vývojářské nástroje",
+                "footer.categories.calc": "Kalkulačkové nástroje",
+                "footer.categories.util": "Užitečné nástroje",
+                "footer.categories.color": "Barevné nástroje",
+                "footer.quicklinks": "Rychlé odkazy",
+                "footer.links.tools": "Všechny nástroje",
+                "footer.links.faq": "Často kladené otázky",
+                "footer.links.contact": "Kontakt",
+                "footer.links.privacy": "Zásady ochrany osobních údajů",
+                "footer.links.disclaimer": "Odmítnutí odpovědnosti",
+                "footer.links.terms": "Podmínky služby",
+                "footer.copyright": "© 2025 LollyPoPDF. Všechna práva vyhrazena."
+            }
+
+        };
+
+        // Function to change language
+        function changeLanguage(langCode) {
+            const langData = translations[langCode];
+            if (!langData) return;
+            
+            // Update all elements with data-i18n attribute
+            document.querySelectorAll('[data-i18n]').forEach(element => {
+                const key = element.getAttribute('data-i18n');
+                if (langData[key]) {
+                    element.textContent = langData[key];
+                }
+            });
+            
+            // Update current language display
+            currentLanguageElement.textContent = languages.find(lang => lang.code === langCode)?.name || 'English';
+            
+            // Save language preference
+            localStorage.setItem('language', langCode);
+        }
+
+        // Initialize language
+        const savedLanguage = localStorage.getItem('language') || 'en';
+        changeLanguage(savedLanguage);
+        
+        // Language selection handler
+        languageDropdown.addEventListener('click', (e) => {
+            if (e.target.classList.contains('language-option')) {
+                const langCode = e.target.getAttribute('data-lang');
+                changeLanguage(langCode);
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,3962 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Blur Tool | LollyPoPdf</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #9370db;
+            --primary-dark: #8a2be2;
+            --secondary-color: #f0ebff;
+            --text-color: #333333;
+            --text-light: #6b7280;
+            --bg-color: #ffffff;
+            --bg-secondary: #f9f9f9;
+            --border-radius: 12px;
+            --transition: all 0.3s ease;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --header-height: 80px;
+            --white: #ffffff;
+            --header-text: #6b7280;
+            --accent-color: #9370db;
+        }
+
+        .dark-mode {
+            --primary-color: #a391f2;
+            --primary-dark: #8a2be2;
+            --secondary-color: #2d2d2d;
+            --text-color: #f0f0f0;
+            --text-light: #a0a0a0;
+            --bg-color: #1a1a1a;
+            --bg-secondary: #2d2d2d;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+            --white: #1a1a1a;
+            --header-text: #a0a0a0;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            transition: var(--transition);
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        ul {
+            list-style: none;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header Styles */
+        header {
+            background-color: var(--white);
+            color: var(--header-text);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+        }
+
+        .logo-icon {
+            position: relative;
+            width: 40px;
+            height: 40px;
+        }
+
+        .logo-circle {
+            width: 40px;
+            height: 40px;
+            border-radius: 40%;
+            background: linear-gradient(to bottom right, #9370db, #8a2be2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .logo-stem {
+            position: absolute;
+            bottom: -17px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 6px;
+            height: 17px;
+            background-color: #8a2be2;
+            border-radius: 0 0 3px 3px;
+        }
+
+        .logo-text {
+            font-size: 24px;
+            font-weight: bold;
+            color: #9370db;
+        }
+
+        nav ul {
+            display: flex;
+            gap: 30px;
+            list-style: none;
+        }
+
+        nav a {
+            font-weight: 500;
+            position: relative;
+            color: var(--header-text);
+            padding: 8px 0;
+            border-radius: 0;
+            transition: var(--transition);
+            text-decoration: none;
+        }
+
+        nav a:hover {
+            color: var(--accent-color);
+        }
+
+        nav a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: var(--accent-color);
+            transition: width 0.3s ease;
+        }
+
+        nav a:hover::after {
+            width: 100%;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .email {
+            font-size: 14px;
+            color: var(--header-text);
+        }
+
+        .theme-toggle {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 20px;
+            color: var(--header-text);
+            padding: 8px;
+            border-radius: 50%;
+            transition: var(--transition);
+        }
+
+        .theme-toggle:hover {
+            background-color: #f0ebff;
+            color: var(--accent-color);
+        }
+
+        .dark-mode .theme-toggle:hover {
+            background-color: #2d3748;
+            color: var(--accent-color);
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--header-text);
+        }
+
+        /* Mobile Menu */
+        .mobile-menu {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            width: 100%;
+            background-color: var(--white);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            z-index: 999;
+        }
+
+        .dark-mode .mobile-menu {
+            background-color: var(--bg-secondary);
+        }
+
+        .mobile-menu.active {
+            display: block;
+        }
+
+        .mobile-menu ul {
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .mobile-menu a {
+            display: block;
+            padding: 10px 0;
+            font-weight: 500;
+            color: var(--header-text);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .dark-mode .mobile-menu a {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .mobile-menu a:hover {
+            color: var(--accent-color);
+        }
+
+        /* Hero Section */
+        .hero {
+            background-color: var(--secondary-color);
+            padding: 60px 0;
+            text-align: center;
+        }
+
+        .dark-mode .hero {
+            background: linear-gradient(135deg, #2a1a4a, #3d2a6d);
+        }
+
+        .hero h1 {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            color: #000;
+        }
+
+        .dark-mode .hero h1 {
+            color: var(--text-color);
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            color: var(--text-color);
+            max-width: 700px;
+            margin: 0 auto 30px;
+        }
+
+        /* How to Blur Section */
+        .how-to-section {
+            padding: 80px 0;
+            background-color: var(--bg-color);
+        }
+
+        .dark-mode .how-to-section {
+            background-color: var(--bg-secondary);
+        }
+
+        .section-title {
+            font-size: 2rem;
+            text-align: center;
+            margin-bottom: 40px;
+            color: #000000;
+        }
+
+        .dark-mode .section-title {
+            color: var(--text-color);
+        }
+
+        .steps-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 40px;
+        }
+
+        .step-box {
+            background-color: var(--bg-secondary);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            padding: 30px;
+            min-height: 200px;
+            position: relative;
+        }
+
+        .step-number {
+            width: 40px;
+            height: 40px;
+            background-color: var(--primary-color);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 16px;
+            margin-bottom: 15px;
+        }
+
+        .step-title {
+            font-size: 18px;
+            color: #000000;
+            margin-bottom: 10px;
+        }
+
+        .dark-mode .step-title {
+            color: var(--text-color);
+        }
+
+        .step-description {
+            font-size: 14px;
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        /* Blur Tool */
+        .blur-section {
+            padding: 80px 0;
+            background-color: var(--secondary-color);
+        }
+
+        .dark-mode .blur-section {
+            background: linear-gradient(135deg, #2a1a4a, #3d2a6d);
+        }
+
+        .blur-title {
+            font-size: 2.5rem;
+            text-align: center;
+            margin-bottom: 40px;
+            color: #a391f2;
+        }
+
+        .dark-mode .blur-title {
+            color: #a391f2;
+        }
+
+        .blur-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background-color: var(--bg-color);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            padding: 40px;
+        }
+
+        .upload-area {
+            border: 2px dashed var(--primary-color);
+            border-radius: var(--border-radius);
+            padding: 40px 20px;
+            text-align: center;
+            margin-bottom: 30px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .upload-area:hover {
+            background-color: var(--secondary-color);
+        }
+
+        .upload-icon {
+            font-size: 48px;
+            color: var(--primary-color);
+            margin-bottom: 15px;
+        }
+
+        .upload-text {
+            margin-bottom: 15px;
+        }
+
+        .upload-btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: var(--transition);
+        }
+
+        .upload-btn:hover {
+            background-color: var(--primary-dark);
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        .blur-options {
+            margin-bottom: 30px;
+            display: none;
+        }
+
+        .blur-title {
+            margin-bottom: 15px;
+            color: var(--primary-color);
+        }
+
+        .blur-type-selection {
+            margin-bottom: 20px;
+        }
+
+        .blur-type-title {
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        .blur-type-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .blur-type-btn {
+            padding: 8px 15px;
+            background-color: var(--bg-secondary);
+            border: 1px solid var(--primary-color);
+            border-radius: 20px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .blur-type-btn.active {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .blur-type-btn:hover {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .blur-controls {
+            margin-bottom: 20px;
+        }
+
+        .blur-slider-container {
+            margin-bottom: 15px;
+        }
+
+        .slider-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+
+        .slider-value {
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        .blur-slider {
+            width: 100%;
+            height: 8px;
+            border-radius: 4px;
+            background: var(--bg-secondary);
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        .blur-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--primary-color);
+            cursor: pointer;
+        }
+
+        .blur-slider::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--primary-color);
+            cursor: pointer;
+            border: none;
+        }
+
+        .selective-blur-controls {
+            display: none;
+            margin-top: 15px;
+        }
+
+        .tool-selection {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .tool-btn {
+            padding: 8px 15px;
+            background-color: var(--bg-secondary);
+            border: 1px solid var(--primary-color);
+            border-radius: 20px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .tool-btn.active {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .tool-btn:hover {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .brush-controls {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .brush-size-container, .brush-opacity-container {
+            flex: 1;
+            min-width: 150px;
+        }
+
+        .brush-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: var(--text-color);
+        }
+
+        .brush-slider {
+            width: 100%;
+        }
+
+        .output-format {
+            margin-top: 20px;
+        }
+
+        .format-title {
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        .format-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .format-btn {
+            padding: 8px 15px;
+            background-color: var(--bg-secondary);
+            border: 1px solid var(--primary-color);
+            border-radius: 20px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .format-btn.active {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .format-btn:hover {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .blur-canvas-container {
+            display: none;
+            margin-bottom: 20px;
+            text-align: center;
+            position: relative;
+        }
+
+        .blur-canvas {
+            max-width: 100%;
+            max-height: 400px;
+            border: 2px solid var(--primary-color);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            cursor: crosshair;
+        }
+
+        .canvas-controls {
+            display: none;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .canvas-control-btn {
+            padding: 8px 15px;
+            background-color: var(--bg-secondary);
+            border: 1px solid var(--primary-color);
+            border-radius: 20px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .canvas-control-btn:hover {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .blur-preview-container {
+            display: none;
+            margin-bottom: 30px;
+        }
+
+        .blur-preview-title {
+            margin-bottom: 15px;
+            color: var(--primary-color);
+        }
+
+        .blur-preview-images {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .blur-preview-box {
+            flex: 1;
+            min-width: 250px;
+            text-align: center;
+        }
+
+        .blur-preview-label {
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        .blur-preview-img {
+            max-width: 100%;
+            max-height: 300px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+        }
+
+        .file-info {
+            margin-top: 10px;
+            font-size: 14px;
+            color: var(--text-light);
+        }
+
+        .processing {
+            display: none;
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .spinner {
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            border-left-color: var(--primary-color);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background-color: var(--bg-secondary);
+            border-radius: 4px;
+            margin: 15px 0;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background-color: var(--primary-color);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .progress-text {
+            font-size: 14px;
+            color: var(--text-light);
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .action-buttons {
+            display: none;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .action-btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: var(--transition);
+            flex: 1;
+            min-width: 150px;
+        }
+
+        .apply-btn {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .apply-btn:hover {
+            background-color: var(--primary-dark);
+        }
+
+        .download-btn {
+            background-color: white;
+            color: var(--primary-color);
+            border: 2px solid var(--primary-color);
+        }
+
+        .download-btn:hover {
+            background-color: var(--secondary-color);
+        }
+
+        .reset-btn {
+            background-color: var(--text-light);
+            color: white;
+        }
+
+        .reset-btn:hover {
+            background-color: #5a6268;
+        }
+
+        /* Footer */
+        footer {
+            background-color: #000000;
+            color: white;
+            padding: 60px 0 80px;
+            position: relative;
+        }
+
+        .footer-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 60px;
+        }
+
+        .footer-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            text-decoration: none;
+        }
+
+        .footer-logo .logo-icon {
+            width: 40px;
+            height: 40px;
+        }
+
+        .footer-logo .logo-text {
+            color: #9370db;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .footer-section h3 {
+            color: white;
+            font-weight: 600;
+            font-size: 20px;
+            margin-bottom: 20px;
+        }
+
+        .footer-section h4 {
+            color: #9370db;
+            font-size: 18px;
+            margin-bottom: 15px;
+        }
+
+        .footer-links li {
+            margin-bottom: 10px;
+        }
+
+        .footer-links a {
+            color: white;
+        }
+
+        .footer-links a:hover {
+            color: #9370db;
+        }
+
+        .social-icons {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .social-icon {
+            width: 40px;
+            height: 40px;
+            background-color: #9370db;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+        }
+
+        .social-icon:hover {
+            background-color: #8a2be2;
+            transform: translateY(-3px);
+        }
+
+        .copyright {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            color: #f9f7ff;
+            font-size: 12px;
+        }
+
+        .footer-line {
+            position: absolute;
+            bottom: 50px;
+            left: 0;
+            width: 100%;
+            height: 1px;
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        /* Language Switcher */
+        .language-switcher {
+            position: fixed;
+            bottom: 10px;
+            right: 10px;
+            z-index: 1000;
+        }
+
+        .language-btn {
+            background-color: #9370db;
+            color: white;
+            border: none;
+            border-radius: 30px;
+            padding: 5px 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .language-dropdown {
+            position: absolute;
+            bottom: 100%;
+            right: 0;
+            width: 300px;
+            background-color: white;
+            border-radius: var(--border-radius);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            display: none;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .dark-mode .language-dropdown {
+            background-color: var(--bg-secondary);
+        }
+
+        .language-switcher:hover .language-dropdown {
+            display: grid;
+        }
+
+        .language-option {
+            padding: 8px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            text-align: center;
+            font-size: 14px;
+        }
+
+        .language-option:hover {
+            background-color: white;
+            color: #9370db;
+        }
+
+        .dark-mode .language-option:hover {
+            background-color: var(--bg-color);
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 992px) {
+            .steps-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .footer-container {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            nav ul, .email {
+                display: none;
+            }
+            
+            .mobile-menu-btn {
+                display: block;
+            }
+            
+            .hero h1, .blur-title {
+                font-size: 2rem;
+            }
+            
+            .hero p {
+                font-size: 1rem;
+            }
+            
+            .blur-preview-images {
+                flex-direction: column;
+            }
+            
+            .language-dropdown {
+                width: 250px;
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .footer-container {
+                grid-template-columns: 1fr;
+                gap: 40px;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .blur-container {
+                padding: 20px;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+            
+            .action-btn {
+                width: 100%;
+            }
+            
+            .brush-controls {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container header-container">
+            <a href="https://lollypopdf.com" class="logo">
+                <div class="logo-icon">
+                    <div class="logo-circle">LPdf</div>
+                    <div class="logo-stem"></div>
+                </div>
+                <span class="logo-text">LollyPoPdf</span>
+            </a>
+            
+            <nav>
+                <ul>
+                    <li><a href="https://lollypopdf.github.io/LollyPoPdf#home" class="nav-link" data-i18n="nav.home">Home</a></li>
+                    <li><a href="https://lollypopdf.github.io/LollyPoPdf#about" class="nav-link" data-i18n="nav.about">About Us</a></li>
+                    <li><a href="https://lollypopdf.github.io/LollyPoPdf#tools" class="nav-link" data-i18n="nav.tools">Tools</a></li>
+                    <li><a href="contact.html" class="nav-link" data-i18n="nav.contact">Contact</a></li>
+                </ul>
+            </nav>
+            
+            <div class="header-right">
+                <span class="email">lollypoppdf@gmail.com</span>
+                <button class="theme-toggle" id="themeToggle">
+                    <i class="fas fa-moon"></i>
+                </button>
+                <button class="mobile-menu-btn" id="mobileMenuBtn">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </div>
+        
+        <!-- Mobile Menu -->
+        <div class="mobile-menu" id="mobileMenu">
+            <ul>
+                <li><a href="https://lollypopdf.github.io/LollyPoPdf#home" class="nav-link" data-i18n="nav.home">Home</a></li>
+                <li><a href="https://lollypopdf.github.io/LollyPoPdf#about" class="nav-link" data-i18n="nav.about">About Us</a></li>
+                <li><a href="https://lollypopdf.github.io/LollyPoPdf#tools" class="nav-link" data-i18n="nav.tools">Tools</a></li>
+                <li><a href="contact.html" class="nav-link" data-i18n="nav.contact">Contact</a></li>
+            </ul>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <h1 data-i18n="hero.title">Free Image Blur Tool</h1>
+            <p data-i18n="hero.description">Blur your images instantly with our free tool. Apply full blur, selective blur, or background blur. No registration required.</p>
+        </div>
+    </section>
+
+    <!-- How to Blur Section -->
+    <section class="how-to-section">
+        <div class="container">
+            <h2 class="section-title" data-i18n="howto.title">How to Blur Your Images</h2>
+            <div class="steps-container">
+                <div class="step-box">
+                    <div class="step-number">1</div>
+                    <h3 class="step-title" data-i18n="howto.step1.title">Upload Your Image</h3>
+                    <p class="step-description" data-i18n="howto.step1.description">Click the upload area or drag and drop your image file. We support JPG, PNG, GIF, WEBP and more.</p>
+                </div>
+                <div class="step-box">
+                    <div class="step-number">2</div>
+                    <h3 class="step-title" data-i18n="howto.step2.title">Choose Blur Type</h3>
+                    <p class="step-description" data-i18n="howto.step2.description">Select from full blur, selective blur, or background blur. Adjust blur strength with the slider.</p>
+                </div>
+                <div class="step-box">
+                    <div class="step-number">3</div>
+                    <h3 class="step-title" data-i18n="howto.step3.title">Apply & Preview</h3>
+                    <p class="step-description" data-i18n="howto.step3.description">For selective blur, use the brush tool to paint blur areas. See real-time preview of your changes.</p>
+                </div>
+                <div class="step-box">
+                    <div class="step-number">4</div>
+                    <h3 class="step-title" data-i18n="howto.step4.title">Download Result</h3>
+                    <p class="step-description" data-i18n="howto.step4.description">Download your blurred image with the click of a button. No watermarks, no registration required.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Blur Tool -->
+    <section class="blur-section">
+        <div class="container">
+            <h2 class="blur-title" data-i18n="blur.title">Image Blur Tool</h2>
+            <div class="blur-container">
+                <div class="upload-area" id="uploadArea">
+                    <i class="fas fa-cloud-upload-alt upload-icon"></i>
+                    <p class="upload-text" data-i18n="blur.upload.text">Drag & drop your image here or click to browse</p>
+                    <button class="upload-btn" data-i18n="blur.upload.button">Select Image</button>
+                    <input type="file" id="fileInput" class="file-input" accept="image/*">
+                </div>
+                
+                <div class="blur-options" id="blurOptions">
+                    <h3 class="blur-title" data-i18n="blur.options.title">Blur Options</h3>
+                    
+                    <div class="blur-type-selection">
+                        <div class="blur-type-title" data-i18n="blur.type.title">Blur Type</div>
+                        <div class="blur-type-buttons">
+                            <button class="blur-type-btn active" data-type="full" data-i18n="blur.type.full">Full Blur</button>
+                            <button class="blur-type-btn" data-type="selective" data-i18n="blur.type.selective">Selective Blur</button>
+                            <button class="blur-type-btn" data-type="background" data-i18n="blur.type.background">Background Blur</button>
+                        </div>
+                    </div>
+                    
+                    <div class="blur-controls">
+                        <div class="blur-slider-container">
+                            <div class="slider-label">
+                                <span data-i18n="blur.strength">Blur Strength</span>
+                                <span class="slider-value" id="blurValue">5px</span>
+                            </div>
+                            <input type="range" min="0" max="20" value="5" class="blur-slider" id="blurSlider">
+                        </div>
+                        
+                        <div class="selective-blur-controls" id="selectiveControls">
+                            <div class="tool-selection">
+                                <button class="tool-btn active" id="brushBtn" data-i18n="blur.tools.brush">Brush</button>
+                                <button class="tool-btn" id="eraserBtn" data-i18n="blur.tools.eraser">Eraser</button>
+                            </div>
+                            
+                            <div class="brush-controls">
+                                <div class="brush-size-container">
+                                    <div class="slider-label">
+                                        <span data-i18n="blur.brush.size">Brush Size</span>
+                                        <span class="slider-value" id="brushSizeValue">20px</span>
+                                    </div>
+                                    <input type="range" min="5" max="100" value="20" class="brush-slider" id="brushSizeSlider">
+                                </div>
+                                
+                                <div class="brush-opacity-container">
+                                    <div class="slider-label">
+                                        <span data-i18n="blur.brush.opacity">Brush Opacity</span>
+                                        <span class="slider-value" id="brushOpacityValue">100%</span>
+                                    </div>
+                                    <input type="range" min="10" max="100" value="100" class="brush-slider" id="brushOpacitySlider">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="output-format">
+                        <div class="format-title" data-i18n="blur.format.title">Output Format</div>
+                        <div class="format-buttons">
+                            <button class="format-btn active" data-format="png">PNG</button>
+                            <button class="format-btn" data-format="jpg">JPG</button>
+                            <button class="format-btn" data-format="jpeg">JPEG</button>
+                            <button class="format-btn" data-format="bmp">BMP</button>
+                            <button class="format-btn" data-format="gif">GIF</button>
+                            <button class="format-btn" data-format="tiff">TIFF</button>
+                            <button class="format-btn" data-format="webp">WEBP</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="blur-canvas-container" id="canvasContainer">
+                    <canvas id="blurCanvas" class="blur-canvas"></canvas>
+                </div>
+                
+                <div class="canvas-controls" id="canvasControls">
+                    <button class="canvas-control-btn" id="zoomInBtn" data-i18n="blur.controls.zoomIn">Zoom In</button>
+                    <button class="canvas-control-btn" id="zoomOutBtn" data-i18n="blur.controls.zoomOut">Zoom Out</button>
+                    <button class="canvas-control-btn" id="resetViewBtn" data-i18n="blur.controls.reset">Reset View</button>
+                </div>
+                
+                <div class="blur-preview-container" id="previewContainer">
+                    <h3 class="blur-preview-title" data-i18n="blur.preview.title">Preview</h3>
+                    <div class="blur-preview-images">
+                        <div class="blur-preview-box">
+                            <div class="blur-preview-label" data-i18n="blur.preview.original">Original</div>
+                            <img id="originalPreview" class="blur-preview-img" src="" alt="Original Image">
+                            <div class="file-info" id="originalInfo"></div>
+                        </div>
+                        <div class="blur-preview-box">
+                            <div class="blur-preview-label" data-i18n="blur.preview.blurred">Blurred</div>
+                            <img id="blurredPreview" class="blur-preview-img" src="" alt="Blurred Image">
+                            <div class="file-info" id="blurredInfo"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="processing" id="processing">
+                    <div class="spinner"></div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progressFill"></div>
+                    </div>
+                    <p class="progress-text" id="progressText" data-i18n="blur.processing">Processing: 0%</p>
+                </div>
+                
+                <div class="action-buttons" id="actionButtons">
+                    <button class="action-btn apply-btn" id="applyBtn" data-i18n="blur.apply">Apply Blur</button>
+                    <button class="action-btn download-btn" id="downloadBtn" data-i18n="blur.download">Download</button>
+                    <button class="action-btn reset-btn" id="resetBtn" data-i18n="blur.reset">Reset</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container footer-container">
+            <!-- Left Section -->
+            <div class="footer-section">
+                <a href="https://lollypopdf.com" class="footer-logo">
+                    <div class="logo-icon">
+                        <div class="logo-circle">LPdf</div>
+                        <div class="logo-stem"></div>
+                    </div>
+                    <span class="logo-text">LollyPoPdf</span>
+                </a>
+                <h3 data-i18n="footer.follow">FOLLOW US</h3>
+                <div class="social-icons">
+                    <a href="https://facebook.com/lollypopdf" class="social-icon"><i class="fab fa-facebook-f"></i></a>
+                    <a href="https://linkedin.com/company/lollypopdf" class="social-icon"><i class="fab fa-linkedin-in"></i></a>
+                    <a href="https://twitter.com/lollypopdf" class="social-icon"><i class="fab fa-twitter"></i></a>
+                    <a href="https://instagram.com/lollypopdf" class="social-icon"><i class="fab fa-instagram"></i></a>
+                    <a href="https://pinterest.com/lollypopdf" class="social-icon"><i class="fab fa-pinterest-p"></i></a>
+                </div>
+            </div>
+            
+            <!-- Middle Section - Popular Categories -->
+            <div class="footer-section">
+                <h4 data-i18n="footer.categories">Popular Categories</h4>
+                <ul class="footer-links">
+                    <li><a href="https://lollypopdf.com#pdf-tools" data-i18n="footer.categories.pdf">PDF Tools</a></li>
+                    <li><a href="https://lollypopdf.com#image-tools" data-i18n="footer.categories.image">Image Tools</a></li>
+                    <li><a href="https://lollypopdf.com#text-tools" data-i18n="footer.categories.text">Text Tools</a></li>
+                    <li><a href="https://lollypopdf.com#audio-video-tools" data-i18n="footer.categories.av">Audio/Video Tools</a></li>
+                    <li><a href="https://lollypopdf.com#web-developer-tools" data-i18n="footer.categories.web">WebDeveloper Tools</a></li>
+                    <li><a href="https://lollypopdf.com#calculator-tools" data-i18n="footer.categories.calc">Calculator Tools</a></li>
+                    <li><a href="https://lollypopdf.com#utility-tools" data-i18n="footer.categories.util">Utility Tools</a></li>
+                    <li><a href="https://lollypopdf.com#color-tools" data-i18n="footer.categories.color">Color Tools</a></li>
+                </ul>
+            </div>
+            
+            <!-- Right Section - Quick Links -->
+            <div class="footer-section">
+                <h4 data-i18n="footer.quicklinks">Quick Links</h4>
+                <ul class="footer-links">
+                    <li><a href="https://lollypopdf.github.io/LollyPoPdf#home" data-i18n="nav.home">Home</a></li>
+                    <li><a href="https://lollypopdf.github.io/LollyPoPdf#tools" data-i18n="footer.links.tools">All Tools</a></li>
+                    <li><a href="faq.html" data-i18n="footer.links.faq">FAQ</a></li>
+                    <li><a href="contact.html" data-i18n="footer.links.contact">Contact</a></li>
+                    <li><a href="privacy-policy.html" data-i18n="footer.links.privacy">Privacy Policy</a></li>
+                    <li><a href="disclaimer.html" data-i18n="footer.links.disclaimer">Disclaimer</a></li>
+                    <li><a href="terms.html" data-i18n="footer.links.terms">Terms of Service</a></li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="footer-line"></div>
+        <div class="copyright" data-i18n="footer.copyright">© 2025 LollyPoPDF. All rights reserved.</div>
+    </footer>
+
+    <!-- Language Switcher -->
+    <div class="language-switcher">
+        <button class="language-btn">
+            <i class="fas fa-globe"></i>
+            <span id="currentLanguage">English</span>
+        </button>
+        <div class="language-dropdown">
+            <div class="language-option" data-lang="en">English</div>
+            <div class="language-option" data-lang="es">Español</div>
+            <div class="language-option" data-lang="fr">Français</div>
+            <div class="language-option" data-lang="de">Deutsch</div>
+            <div class="language-option" data-lang="it">Italiano</div>
+            <div class="language-option" data-lang="pt">Português</div>
+            <div class="language-option" data-lang="ja">日本語</div>
+            <div class="language-option" data-lang="ru">Pусский</div>
+            <div class="language-option" data-lang="ko">한국어</div>
+            <div class="language-option" data-lang="zh-CN">中文 (简体)</div>
+            <div class="language-option" data-lang="zh-TW">中文 (繁體)</div>
+            <div class="language-option" data-lang="ar">العربية</div>
+            <div class="language-option" data-lang="fa">فارسی</div>
+            <div class="language-option" data-lang="bg">Български</div>
+            <div class="language-option" data-lang="ca">Català</div>
+            <div class="language-option" data-lang="nl">Nederlands</div>
+            <div class="language-option" data-lang="el">Ελληνικά</div>
+            <div class="language-option" data-lang="hi">हिन्दी</div>
+            <div class="language-option" data-lang="te">తెలుగు</div>
+            <div class="language-option" data-lang="kn">ಕನ್ನಡ</div>
+            <div class="language-option" data-lang="ta">தமிழ்</div>
+            <div class="language-option" data-lang="ml">മലയാളം</div>
+            <div class="language-option" data-lang="id">Bahasa Indonesia</div>
+            <div class="language-option" data-lang="ms">Bahasa Melayu</div>
+            <div class="language-option" data-lang="pl">Polski</div>
+            <div class="language-option" data-lang="th">ภาษาไทย</div>
+            <div class="language-option" data-lang="tr">Türkçe</div>
+            <div class="language-option" data-lang="uk">Українська</div>
+            <div class="language-option" data-lang="vi">Tiếng Việt</div>
+            <div class="language-option" data-lang="is">Íslenska</div>
+            <div class="language-option" data-lang="no">Norsk</div>
+            <div class="language-option" data-lang="sv">Svenska</div>
+            <div class="language-option" data-lang="fi">Suomi</div>
+            <div class="language-option" data-lang="cs">Čeština</div>
+        </div>
+    </div>
+
+    <script>
+        // Theme Toggle
+        const themeToggle = document.getElementById('themeToggle');
+        const body = document.body;
+        
+        // Check for saved theme preference or respect OS preference
+        const savedTheme = localStorage.getItem('theme') || 
+            (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        
+        if (savedTheme === 'dark') {
+            body.classList.add('dark-mode');
+            themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+        }
+        
+        themeToggle.addEventListener('click', () => {
+            body.classList.toggle('dark-mode');
+            const isDarkMode = body.classList.contains('dark-mode');
+            
+            if (isDarkMode) {
+                themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+                localStorage.setItem('theme', 'dark');
+            } else {
+                themeToggle.innerHTML = '<i class="fas fa-moon"></i>';
+                localStorage.setItem('theme', 'light');
+            }
+        });
+
+        // Mobile Menu Toggle
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const mobileMenu = document.getElementById('mobileMenu');
+        
+        mobileMenuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('active');
+            
+            // Change icon based on menu state
+            if (mobileMenu.classList.contains('active')) {
+                mobileMenuBtn.innerHTML = '<i class="fas fa-times"></i>';
+            } else {
+                mobileMenuBtn.innerHTML = '<i class="fas fa-bars"></i>';
+            }
+        });
+
+        // Close mobile menu when clicking on a link
+        const mobileMenuLinks = mobileMenu.querySelectorAll('a');
+        mobileMenuLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                mobileMenu.classList.remove('active');
+                mobileMenuBtn.innerHTML = '<i class="fas fa-bars"></i>';
+            });
+        });
+
+        // Image Blur Functionality
+        const uploadArea = document.getElementById('uploadArea');
+        const fileInput = document.getElementById('fileInput');
+        const originalPreview = document.getElementById('originalPreview');
+        const blurredPreview = document.getElementById('blurredPreview');
+        const originalInfo = document.getElementById('originalInfo');
+        const blurredInfo = document.getElementById('blurredInfo');
+        const previewContainer = document.getElementById('previewContainer');
+        const applyBtn = document.getElementById('applyBtn');
+        const downloadBtn = document.getElementById('downloadBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        const processing = document.getElementById('processing');
+        const progressFill = document.getElementById('progressFill');
+        const progressText = document.getElementById('progressText');
+        const blurOptions = document.getElementById('blurOptions');
+        const actionButtons = document.getElementById('actionButtons');
+        const canvasContainer = document.getElementById('canvasContainer');
+        const blurCanvas = document.getElementById('blurCanvas');
+        const canvasControls = document.getElementById('canvasControls');
+        
+        // Blur type buttons
+        const blurTypeButtons = document.querySelectorAll('.blur-type-btn');
+        const formatButtons = document.querySelectorAll('.format-btn');
+        
+        // Blur controls
+        const blurSlider = document.getElementById('blurSlider');
+        const blurValue = document.getElementById('blurValue');
+        const selectiveControls = document.getElementById('selectiveControls');
+        const brushBtn = document.getElementById('brushBtn');
+        const eraserBtn = document.getElementById('eraserBtn');
+        const brushSizeSlider = document.getElementById('brushSizeSlider');
+        const brushSizeValue = document.getElementById('brushSizeValue');
+        const brushOpacitySlider = document.getElementById('brushOpacitySlider');
+        const brushOpacityValue = document.getElementById('brushOpacityValue');
+        
+        // Canvas control buttons
+        const zoomInBtn = document.getElementById('zoomInBtn');
+        const zoomOutBtn = document.getElementById('zoomOutBtn');
+        const resetViewBtn = document.getElementById('resetViewBtn');
+        
+        let currentFile = null;
+        let blurredBlob = null;
+        let originalWidth = 0;
+        let originalHeight = 0;
+        let currentBlurType = 'full';
+        let currentFormat = 'png';
+        let ctx = blurCanvas.getContext('2d');
+        
+        // Canvas state
+        let image = null;
+        let scale = 1;
+        let offsetX = 0;
+        let offsetY = 0;
+        let isDrawing = false;
+        let lastX = 0;
+        let lastY = 0;
+        let currentTool = 'brush';
+        let brushSize = 20;
+        let brushOpacity = 1;
+        let maskCanvas = null;
+        let maskCtx = null;
+        
+        // Upload area click handler
+        uploadArea.addEventListener('click', () => {
+            fileInput.click();
+        });
+        
+        // File input change handler
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                handleFile(e.target.files[0]);
+            }
+        });
+        
+        // Drag and drop functionality
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.style.backgroundColor = 'var(--secondary-color)';
+        });
+        
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.style.backgroundColor = '';
+        });
+        
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.style.backgroundColor = '';
+            
+            if (e.dataTransfer.files.length > 0) {
+                handleFile(e.dataTransfer.files[0]);
+            }
+        });
+        
+        // Handle the selected file - NO FILE SIZE LIMITS
+        function handleFile(file) {
+            // Check if file is an image
+            if (!file.type.match('image.*')) {
+                alert('Please select an image file (JPG, PNG, GIF, etc.)');
+                return;
+            }
+            
+            // NO FILE SIZE LIMITS - UNLIMITED USE
+            currentFile = file;
+            
+            // Display original image preview
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                originalPreview.src = e.target.result;
+                originalInfo.textContent = `${file.name} (${formatFileSize(file.size)})`;
+                previewContainer.style.display = 'block';
+                
+                // Load image for canvas
+                image = new Image();
+                image.onload = function() {
+                    originalWidth = this.width;
+                    originalHeight = this.height;
+                    
+                    // Set up canvas
+                    setupCanvas();
+                    
+                    // Show the blur options after image is uploaded
+                    blurOptions.style.display = 'block';
+                    canvasContainer.style.display = 'block';
+                    canvasControls.style.display = 'flex';
+                    actionButtons.style.display = 'flex';
+                };
+                image.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+        
+        // Set up canvas with image
+        function setupCanvas() {
+            // Set canvas size
+            const maxWidth = 800;
+            const maxHeight = 500;
+            
+            let canvasWidth = image.width;
+            let canvasHeight = image.height;
+            
+            // Scale down if image is too large
+            if (canvasWidth > maxWidth || canvasHeight > maxHeight) {
+                const ratio = Math.min(maxWidth / canvasWidth, maxHeight / canvasHeight);
+                canvasWidth *= ratio;
+                canvasHeight *= ratio;
+            }
+            
+            blurCanvas.width = canvasWidth;
+            blurCanvas.height = canvasHeight;
+            
+            // Create mask canvas for selective blur
+            maskCanvas = document.createElement('canvas');
+            maskCanvas.width = image.width;
+            maskCanvas.height = image.height;
+            maskCtx = maskCanvas.getContext('2d');
+            
+            // Initialize mask with transparent
+            maskCtx.clearRect(0, 0, maskCanvas.width, maskCanvas.height);
+            
+            // Calculate initial scale and offset to center image
+            scale = Math.min(canvasWidth / image.width, canvasHeight / image.height);
+            offsetX = (canvasWidth - image.width * scale) / 2;
+            offsetY = (canvasHeight - image.height * scale) / 2;
+            
+            // Draw image on canvas
+            drawImage();
+        }
+        
+        // Draw image on canvas with current transformations
+        function drawImage() {
+            ctx.clearRect(0, 0, blurCanvas.width, blurCanvas.height);
+            
+            // Save context state
+            ctx.save();
+            
+            // Apply scale and offset
+            ctx.translate(offsetX, offsetY);
+            ctx.scale(scale, scale);
+            
+            // Draw image
+            ctx.drawImage(image, 0, 0);
+            
+            // For selective blur, draw the mask overlay
+            if (currentBlurType === 'selective') {
+                ctx.globalAlpha = 0.3;
+                ctx.drawImage(maskCanvas, 0, 0);
+                ctx.globalAlpha = 1;
+            }
+            
+            // Restore context state
+            ctx.restore();
+        }
+        
+        // Apply blur to the image
+        function applyBlur() {
+            if (!currentFile) {
+                alert('Please select an image first');
+                return;
+            }
+            
+            processing.style.display = 'block';
+            applyBtn.disabled = true;
+            
+            // Reset progress
+            updateProgress(0);
+            
+            // Simulate progress steps
+            let progress = 0;
+            const progressInterval = setInterval(() => {
+                progress += 5;
+                updateProgress(progress);
+                
+                if (progress >= 100) {
+                    clearInterval(progressInterval);
+                    performBlur();
+                }
+            }, 50);
+        }
+        
+        // Update progress bar and text
+        function updateProgress(percent) {
+            progressFill.style.width = `${percent}%`;
+            progressText.textContent = `Processing: ${percent}%`;
+        }
+        
+        // Perform the actual blur
+        function performBlur() {
+            // Create a temporary canvas for blurring
+            const tempCanvas = document.createElement('canvas');
+            const tempCtx = tempCanvas.getContext('2d');
+            
+            // Set canvas dimensions to original image size
+            tempCanvas.width = image.width;
+            tempCanvas.height = image.height;
+            
+            // Draw the original image
+            tempCtx.drawImage(image, 0, 0);
+            
+            // Apply blur based on type
+            if (currentBlurType === 'full') {
+                // Apply blur to entire image
+                const blurAmount = blurSlider.value;
+                tempCtx.filter = `blur(${blurAmount}px)`;
+                tempCtx.drawImage(tempCanvas, 0, 0);
+            } else if (currentBlurType === 'selective') {
+                // Apply blur only to masked areas
+                applySelectiveBlur(tempCanvas, tempCtx);
+            } else if (currentBlurType === 'background') {
+                // Apply blur to background (everything except center)
+                applyBackgroundBlur(tempCanvas, tempCtx);
+            }
+            
+            // Convert to blob
+            tempCanvas.toBlob((blob) => {
+                blurredBlob = blob;
+                const blurredUrl = URL.createObjectURL(blob);
+                
+                blurredPreview.src = blurredUrl;
+                blurredInfo.textContent = `blurred.${currentFormat} (${formatFileSize(blob.size)})`;
+                
+                processing.style.display = 'none';
+                applyBtn.disabled = false;
+            }, `image/${currentFormat}`);
+        }
+        
+        // Apply selective blur based on mask
+        function applySelectiveBlur(canvas, ctx) {
+            const blurAmount = blurSlider.value;
+            
+            // Create a blurred version of the image
+            const blurredCanvas = document.createElement('canvas');
+            const blurredCtx = blurredCanvas.getContext('2d');
+            blurredCanvas.width = canvas.width;
+            blurredCanvas.height = canvas.height;
+            blurredCtx.drawImage(canvas, 0, 0);
+            blurredCtx.filter = `blur(${blurAmount}px)`;
+            blurredCtx.drawImage(blurredCanvas, 0, 0);
+            
+            // Draw the original image
+            ctx.drawImage(canvas, 0, 0);
+            
+            // Use the mask to composite the blurred areas
+            ctx.globalCompositeOperation = 'source-in';
+            ctx.drawImage(maskCanvas, 0, 0);
+            ctx.globalCompositeOperation = 'source-over';
+            
+            // Draw the blurred image with the inverse mask
+            ctx.globalCompositeOperation = 'destination-over';
+            ctx.drawImage(blurredCanvas, 0, 0);
+            ctx.globalCompositeOperation = 'source-over';
+        }
+        
+        // Apply background blur (blur everything except center)
+        function applyBackgroundBlur(canvas, ctx) {
+            const blurAmount = blurSlider.value;
+            
+            // Create a blurred version of the image
+            const blurredCanvas = document.createElement('canvas');
+            const blurredCtx = blurredCanvas.getContext('2d');
+            blurredCanvas.width = canvas.width;
+            blurredCanvas.height = canvas.height;
+            blurredCtx.drawImage(canvas, 0, 0);
+            blurredCtx.filter = `blur(${blurAmount}px)`;
+            blurredCtx.drawImage(blurredCanvas, 0, 0);
+            
+            // Draw the blurred background
+            ctx.drawImage(blurredCanvas, 0, 0);
+            
+            // Calculate center area (approximately 60% of image)
+            const centerWidth = canvas.width * 0.6;
+            const centerHeight = canvas.height * 0.6;
+            const centerX = (canvas.width - centerWidth) / 2;
+            const centerY = (canvas.height - centerHeight) / 2;
+            
+            // Draw the original center area
+            ctx.drawImage(
+                canvas,
+                centerX, centerY, centerWidth, centerHeight,
+                centerX, centerY, centerWidth, centerHeight
+            );
+        }
+        
+        // Format file size
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+        
+        // Blur type selection
+        blurTypeButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                // Remove active class from all buttons
+                blurTypeButtons.forEach(btn => btn.classList.remove('active'));
+                
+                // Add active class to clicked button
+                button.classList.add('active');
+                
+                // Set current blur type
+                currentBlurType = button.getAttribute('data-type');
+                
+                // Show/hide selective blur controls
+                if (currentBlurType === 'selective') {
+                    selectiveControls.style.display = 'block';
+                } else {
+                    selectiveControls.style.display = 'none';
+                }
+                
+                // Redraw canvas
+                drawImage();
+            });
+        });
+        
+        // Format selection
+        formatButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                // Remove active class from all buttons
+                formatButtons.forEach(btn => btn.classList.remove('active'));
+                
+                // Add active class to clicked button
+                button.classList.add('active');
+                
+                // Set current format
+                currentFormat = button.getAttribute('data-format');
+            });
+        });
+        
+        // Blur slider update
+        blurSlider.addEventListener('input', () => {
+            blurValue.textContent = `${blurSlider.value}px`;
+        });
+        
+        // Brush size slider update
+        brushSizeSlider.addEventListener('input', () => {
+            brushSize = parseInt(brushSizeSlider.value);
+            brushSizeValue.textContent = `${brushSize}px`;
+        });
+        
+        // Brush opacity slider update
+        brushOpacitySlider.addEventListener('input', () => {
+            brushOpacity = parseInt(brushOpacitySlider.value) / 100;
+            brushOpacityValue.textContent = `${brushOpacity * 100}%`;
+        });
+        
+        // Tool selection
+        brushBtn.addEventListener('click', () => {
+            currentTool = 'brush';
+            brushBtn.classList.add('active');
+            eraserBtn.classList.remove('active');
+        });
+        
+        eraserBtn.addEventListener('click', () => {
+            currentTool = 'eraser';
+            eraserBtn.classList.add('active');
+            brushBtn.classList.remove('active');
+        });
+        
+        // Canvas mouse events for drawing
+        blurCanvas.addEventListener('mousedown', (e) => {
+            if (currentBlurType !== 'selective') return;
+            
+            isDrawing = true;
+            const rect = blurCanvas.getBoundingClientRect();
+            const x = (e.clientX - rect.left - offsetX) / scale;
+            const y = (e.clientY - rect.top - offsetY) / scale;
+            
+            lastX = x;
+            lastY = y;
+            
+            drawOnMask(x, y, x, y);
+        });
+        
+        blurCanvas.addEventListener('mousemove', (e) => {
+            if (!isDrawing || currentBlurType !== 'selective') return;
+            
+            const rect = blurCanvas.getBoundingClientRect();
+            const x = (e.clientX - rect.left - offsetX) / scale;
+            const y = (e.clientY - rect.top - offsetY) / scale;
+            
+            drawOnMask(lastX, lastY, x, y);
+            
+            lastX = x;
+            lastY = y;
+        });
+        
+        blurCanvas.addEventListener('mouseup', () => {
+            isDrawing = false;
+        });
+        
+        blurCanvas.addEventListener('mouseleave', () => {
+            isDrawing = false;
+        });
+        
+        // Draw on mask canvas
+        function drawOnMask(fromX, fromY, toX, toY) {
+            maskCtx.globalCompositeOperation = currentTool === 'brush' ? 'source-over' : 'destination-out';
+            maskCtx.globalAlpha = brushOpacity;
+            maskCtx.lineWidth = brushSize;
+            maskCtx.lineCap = 'round';
+            maskCtx.lineJoin = 'round';
+            
+            maskCtx.beginPath();
+            maskCtx.moveTo(fromX, fromY);
+            maskCtx.lineTo(toX, toY);
+            maskCtx.stroke();
+            maskCtx.closePath();
+            
+            // Redraw canvas
+            drawImage();
+        }
+        
+        // Canvas control buttons
+        zoomInBtn.addEventListener('click', () => {
+            scale *= 1.1;
+            drawImage();
+        });
+        
+        zoomOutBtn.addEventListener('click', () => {
+            scale /= 1.1;
+            drawImage();
+        });
+        
+        resetViewBtn.addEventListener('click', () => {
+            scale = Math.min(blurCanvas.width / image.width, blurCanvas.height / image.height);
+            offsetX = (blurCanvas.width - image.width * scale) / 2;
+            offsetY = (blurCanvas.height - image.height * scale) / 2;
+            drawImage();
+        });
+        
+        // Apply button handler
+        applyBtn.addEventListener('click', applyBlur);
+        
+        // Download button handler
+        downloadBtn.addEventListener('click', () => {
+            if (!blurredBlob) {
+                alert('Please apply blur to an image first');
+                return;
+            }
+            
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blurredBlob);
+            a.download = `blurred.${currentFormat}`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        });
+        
+        // Reset button handler
+        resetBtn.addEventListener('click', () => {
+            currentFile = null;
+            blurredBlob = null;
+            fileInput.value = '';
+            originalPreview.src = '';
+            blurredPreview.src = '';
+            originalInfo.textContent = '';
+            blurredInfo.textContent = '';
+            previewContainer.style.display = 'none';
+            processing.style.display = 'none';
+            applyBtn.disabled = false;
+            
+            // Hide blur options
+            blurOptions.style.display = 'none';
+            canvasContainer.style.display = 'none';
+            canvasControls.style.display = 'none';
+            actionButtons.style.display = 'none';
+            
+            // Reset progress
+            updateProgress(0);
+            
+            // Reset blur settings
+            blurSlider.value = 5;
+            blurValue.textContent = '5px';
+            
+            // Reset brush settings
+            brushSizeSlider.value = 20;
+            brushSizeValue.textContent = '20px';
+            brushOpacitySlider.value = 100;
+            brushOpacityValue.textContent = '100%';
+            
+            // Reset blur type
+            blurTypeButtons.forEach(btn => btn.classList.remove('active'));
+            document.querySelector('.blur-type-btn[data-type="full"]').classList.add('active');
+            currentBlurType = 'full';
+            selectiveControls.style.display = 'none';
+            
+            // Reset format
+            formatButtons.forEach(btn => btn.classList.remove('active'));
+            document.querySelector('.format-btn[data-format="png"]').classList.add('active');
+            currentFormat = 'png';
+            
+            // Reset canvas state
+            image = null;
+            scale = 1;
+            offsetX = 0;
+            offsetY = 0;
+            isDrawing = false;
+            currentTool = 'brush';
+            brushSize = 20;
+            brushOpacity = 1;
+            ctx.clearRect(0, 0, blurCanvas.width, blurCanvas.height);
+            
+            // Reset mask
+            if (maskCtx) {
+                maskCtx.clearRect(0, 0, maskCanvas.width, maskCanvas.height);
+            }
+        });
+
+        // Language Switcher
+        const languageBtn = document.querySelector('.language-btn');
+        const currentLanguageElement = document.getElementById('currentLanguage');
+        const languageDropdown = document.querySelector('.language-dropdown');
+        
+        const languages = [
+            { code: 'en', name: 'English' },
+            { code: 'es', name: 'Español' },
+            { code: 'fr', name: 'Français' },
+            { code: 'de', name: 'Deutsch' },
+            { code: 'it', name: 'Italiano' },
+            { code: 'pt', name: 'Português' },
+            { code: 'ja', name: '日本語' },
+            { code: 'ru', name: 'Pусский' },
+            { code: 'ko', name: '한국어' },
+            { code: 'zh-CN', name: '中文 (简体)' },
+            { code: 'zh-TW', name: '中文 (繁體)' },
+            { code: 'ar', name: 'العربية' },
+            { code: 'fa', name: 'فارسی' },
+            { code: 'bg', name: 'Български' },
+            { code: 'ca', name: 'Català' },
+            { code: 'nl', name: 'Nederlands' },
+            { code: 'el', name: 'Ελληνικά' },
+            { code: 'hi', name: 'हिन्दी' },
+            { code: 'te', name: 'తెలుగు' },
+            { code: 'kn', name: 'ಕನ್ನಡ' },
+            { code: 'ta', name: 'தமிழ்' },
+            { code: 'ml', name: 'മലയാളം' },
+            { code: 'id', name: 'Bahasa Indonesia' },
+            { code: 'ms', name: 'Bahasa Melayu' },
+            { code: 'pl', name: 'Polski' },
+            { code: 'th', name: 'ภาษาไทย' },
+            { code: 'tr', name: 'Türkçe' },
+            { code: 'uk', name: 'Українська' },
+            { code: 'vi', name: 'Tiếng Việt' },
+            { code: 'is', name: 'Íslenska' },
+            { code: 'no', name: 'Norsk' },
+            { code: 'sv', name: 'Svenska' },
+            { code: 'fi', name: 'Suomi' },
+            { code: 'cs', name: 'Čeština' }
+        ];
+        
+        // Translation data
+        const translations = {
+            en: {
+                "nav.home": "Home",
+                "nav.about": "About Us",
+                "nav.tools": "Tools",
+                "nav.contact": "Contact",
+                "hero.title": "Free Image Blur Tool",
+                "hero.description": "Blur your images instantly with our free tool. Apply full blur, selective blur, or background blur. No registration required.",
+                "howto.title": "How to Blur Your Images",
+                "howto.step1.title": "Upload Your Image",
+                "howto.step1.description": "Click the upload area or drag and drop your image file. We support JPG, PNG, GIF, WEBP and more.",
+                "howto.step2.title": "Choose Blur Type",
+                "howto.step2.description": "Select from full blur, selective blur, or background blur. Adjust blur strength with the slider.",
+                "howto.step3.title": "Apply & Preview",
+                "howto.step3.description": "For selective blur, use the brush tool to paint blur areas. See real-time preview of your changes.",
+                "howto.step4.title": "Download Result",
+                "howto.step4.description": "Download your blurred image with the click of a button. No watermarks, no registration required.",
+                "blur.title": "Image Blur Tool",
+                "blur.upload.text": "Drag & drop your image here or click to browse",
+                "blur.upload.button": "Select Image",
+                "blur.options.title": "Blur Options",
+                "blur.type.title": "Blur Type",
+                "blur.type.full": "Full Blur",
+                "blur.type.selective": "Selective Blur",
+                "blur.type.background": "Background Blur",
+                "blur.strength": "Blur Strength",
+                "blur.tools.brush": "Brush",
+                "blur.tools.eraser": "Eraser",
+                "blur.brush.size": "Brush Size",
+                "blur.brush.opacity": "Brush Opacity",
+                "blur.format.title": "Output Format",
+                "blur.preview.title": "Preview",
+                "blur.preview.original": "Original",
+                "blur.preview.blurred": "Blurred",
+                "blur.processing": "Processing: 0%",
+                "blur.apply": "Apply Blur",
+                "blur.download": "Download",
+                "blur.reset": "Reset",
+                "blur.controls.zoomIn": "Zoom In",
+                "blur.controls.zoomOut": "Zoom Out",
+                "blur.controls.reset": "Reset View",
+                "footer.follow": "FOLLOW US",
+                "footer.categories": "Popular Categories",
+                "footer.categories.pdf": "PDF Tools",
+                "footer.categories.image": "Image Tools",
+                "footer.categories.text": "Text Tools",
+                "footer.categories.av": "Audio/Video Tools",
+                "footer.categories.web": "Web/Developer Tools",
+                "footer.categories.calc": "Calculator Tools",
+                "footer.categories.util": "Utility Tools",
+                "footer.categories.color": "Color Tools",
+                "footer.quicklinks": "Quick Links",
+                "footer.links.tools": "All Tools",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Contact",
+                "footer.links.privacy": "Privacy Policy",
+                "footer.links.disclaimer": "Disclaimer",
+                "footer.links.terms": "Terms of Service",
+                "footer.copyright": "© 2025 LollyPoPDF. All rights reserved."
+            },
+            es: {
+                "nav.home": "Inicio",
+                "nav.about": "Sobre Nosotros",
+                "nav.tools": "Herramientas",
+                "nav.contact": "Contacto",
+                "hero.title": "Herramienta Gratuita de Desenfoque de Imágenes",
+                "hero.description": "Desenfoca tus imágenes instantáneamente con nuestra herramienta gratuita. Aplica desenfoque completo, selectivo o de fondo. No se requiere registro.",
+                "howto.title": "Cómo Desenfocar tus Imágenes",
+                "howto.step1.title": "Sube Tu Imagen",
+                "howto.step1.description": "Haz clic en el área de carga o arrastra y suelta tu archivo de imagen. Admitimos JPG, PNG, GIF, WEBP y más.",
+                "howto.step2.title": "Elige Tipo de Desenfoque",
+                "howto.step2.description": "Selecciona entre desenfoque completo, selectivo o de fondo. Ajusta la intensidad con el control deslizante.",
+                "howto.step3.title": "Aplica y Previsualiza",
+                "howto.step3.description": "Para desenfoque selectivo, usa la herramienta de pincel para pintar áreas de desenfoque. Ve la vista previa en tiempo real de tus cambios.",
+                "howto.step4.title": "Descarga el Resultado",
+                "howto.step4.description": "Descarga tu imagen desenfocada con un clic. Sin marcas de agua, sin registro requerido.",
+                "blur.title": "Herramienta de Desenfoque de Imágenes",
+                "blur.upload.text": "Arrastra y suelta tu imagen aquí o haz clic para buscar",
+                "blur.upload.button": "Seleccionar Imagen",
+                "blur.options.title": "Opciones de Desenfoque",
+                "blur.type.title": "Tipo de Desenfoque",
+                "blur.type.full": "Desenfoque Completo",
+                "blur.type.selective": "Desenfoque Selectivo",
+                "blur.type.background": "Desenfoque de Fondo",
+                "blur.strength": "Intensidad de Desenfoque",
+                "blur.tools.brush": "Pincel",
+                "blur.tools.eraser": "Borrador",
+                "blur.brush.size": "Tamaño del Pincel",
+                "blur.brush.opacity": "Opacidad del Pincel",
+                "blur.format.title": "Formato de Salida",
+                "blur.preview.title": "Vista Previa",
+                "blur.preview.original": "Original",
+                "blur.preview.blurred": "Desenfocado",
+                "blur.processing": "Procesando: 0%",
+                "blur.apply": "Aplicar Desenfoque",
+                "blur.download": "Descargar",
+                "blur.reset": "Restablecer",
+                "blur.controls.zoomIn": "Acercar",
+                "blur.controls.zoomOut": "Alejar",
+                "blur.controls.reset": "Restablecer Vista",
+                "footer.follow": "SÍGUENOS",
+                "footer.categories": "Categorías Populares",
+                "footer.categories.pdf": "Herramientas PDF",
+                "footer.categories.image": "Herramientas de Imagen",
+                "footer.categories.text": "Herramientas de Texto",
+                "footer.categories.av": "Herramientas de Audio/Video",
+                "footer.categories.web": "Herramientas Web/Desarrollador",
+                "footer.categories.calc": "Herramientas de Calculadora",
+                "footer.categories.util": "Herramientas de Utilidad",
+                "footer.categories.color": "Herramientas de Color",
+                "footer.quicklinks": "Enlaces Rápidos",
+                "footer.links.tools": "Todas las Herramientas",
+                "footer.links.faq": "Preguntas Frecuentes",
+                "footer.links.contact": "Contacto",
+                "footer.links.privacy": "Política de Privacidad",
+                "footer.links.disclaimer": "Descargo de Responsabilidad",
+                "footer.links.terms": "Términos de Servicio",
+                "footer.copyright": "© 2025 LollyPoPDF. Todos los derechos reservados."
+            },
+            fr: {
+                "nav.home": "Accueil",
+                "nav.about": "À Propos",
+                "nav.tools": "Outils",
+                "nav.contact": "Contact",
+                "hero.title": "Outil Gratuit de Flou d'Image",
+                "hero.description": "Floutez vos images instantanément avec notre outil gratuit. Appliquez un flou complet, sélectif ou d'arrière-plan. Aucune inscription requise.",
+                "howto.title": "Comment Flouter vos Images",
+                "howto.step1.title": "Téléchargez Votre Image",
+                "howto.step1.description": "Cliquez sur la zone de téléchargement ou faites glisser et déposez votre fichier image. Nous prenons en charge JPG, PNG, GIF, WEBP et plus.",
+                "howto.step2.title": "Choisissez le Type de Flou",
+                "howto.step2.description": "Sélectionnez entre flou complet, sélectif ou d'arrière-plan. Ajustez l'intensité du flou avec le curseur.",
+                "howto.step3.title": "Appliquez et Prévisualisez",
+                "howto.step3.description": "Pour le flou sélectif, utilisez l'outil pinceau pour peindre les zones de flou. Voyez l'aperçu en temps réel de vos modifications.",
+                "howto.step4.title": "Téléchargez le Résultat",
+                "howto.step4.description": "Téléchargez votre image floutée en un clic. Sans filigrane, aucune inscription requise.",
+                "blur.title": "Outil de Flou d'Image",
+                "blur.upload.text": "Faites glisser et déposez votre image ici ou cliquez pour parcourir",
+                "blur.upload.button": "Sélectionner une Image",
+                "blur.options.title": "Options de Flou",
+                "blur.type.title": "Type de Flou",
+                "blur.type.full": "Flou Complet",
+                "blur.type.selective": "Flou Sélectif",
+                "blur.type.background": "Flou d'Arrière-plan",
+                "blur.strength": "Intensité du Flou",
+                "blur.tools.brush": "Pinceau",
+                "blur.tools.eraser": "Gomme",
+                "blur.brush.size": "Taille du Pinceau",
+                "blur.brush.opacity": "Opacité du Pinceau",
+                "blur.format.title": "Format de Sortie",
+                "blur.preview.title": "Aperçu",
+                "blur.preview.original": "Original",
+                "blur.preview.blurred": "Flouté",
+                "blur.processing": "Traitement: 0%",
+                "blur.apply": "Appliquer le Flou",
+                "blur.download": "Télécharger",
+                "blur.reset": "Réinitialiser",
+                "blur.controls.zoomIn": "Zoomer",
+                "blur.controls.zoomOut": "Dézoomer",
+                "blur.controls.reset": "Réinitialiser la Vue",
+                "footer.follow": "SUIVEZ-NOUS",
+                "footer.categories": "Catégories Populaires",
+                "footer.categories.pdf": "Outils PDF",
+                "footer.categories.image": "Outils d'Image",
+                "footer.categories.text": "Outils de Texte",
+                "footer.categories.av": "Outils Audio/Vidéo",
+                "footer.categories.web": "Outils Web/Développeur",
+                "footer.categories.calc": "Outils de Calculatrice",
+                "footer.categories.util": "Outils Utilitaires",
+                "footer.categories.color": "Outils de Couleur",
+                "footer.quicklinks": "Liens Rapides",
+                "footer.links.tools": "Tous les Outils",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Contact",
+                "footer.links.privacy": "Politique de Confidentialité",
+                "footer.links.disclaimer": "Avertissement",
+                "footer.links.terms": "Conditions d'Utilisation",
+                "footer.copyright": "© 2025 LollyPoPDF. Tous droits réservés."
+            },
+            de: {
+                "nav.home": "Startseite",
+                "nav.about": "Über Uns",
+                "nav.tools": "Werkzeuge",
+                "nav.contact": "Kontakt",
+                "hero.title": "Kostenloses Bildunschärfe-Werkzeug",
+                "hero.description": "Unschärfen Sie Ihre Bilder sofort mit unserem kostenlosen Werkzeug. Wenden Sie Vollunschärfe, selektive Unschärfe oder Hintergrundunschärfe an. Keine Registrierung erforderlich.",
+                "howto.title": "So Unschärfen Sie Ihre Bilder",
+                "howto.step1.title": "Laden Sie Ihr Bild Hoch",
+                "howto.step1.description": "Klicken Sie auf den Upload-Bereich oder ziehen Sie Ihre Bilddatei per Drag & Drop. Wir unterstützen JPG, PNG, GIF, WEBP und mehr.",
+                "howto.step2.title": "Wählen Sie Unschärfe-Typ",
+                "howto.step2.description": "Wählen Sie zwischen Vollunschärfe, selektiver Unschärfe oder Hintergrundunschärfe. Passen Sie die Unschärfestärke mit dem Schieberegler an.",
+                "howto.step3.title": "Anwenden und Vorschau",
+                "howto.step3.description": "Verwenden Sie für selektive Unschärfe das Pinselwerkzeug, um Unschärfebereiche zu malen. Sehen Sie die Echtzeit-Vorschau Ihrer Änderungen.",
+                "howto.step4.title": "Ergebnis Herunterladen",
+                "howto.step4.description": "Laden Sie Ihr unscharfes Bild mit einem Klick herunter. Keine Wasserzeichen, keine Registrierung erforderlich.",
+                "blur.title": "Bildunschärfe-Werkzeug",
+                "blur.upload.text": "Ziehen Sie Ihr Bild hierher oder klicken Sie zum Durchsuchen",
+                "blur.upload.button": "Bild Auswählen",
+                "blur.options.title": "Unschärfe-Optionen",
+                "blur.type.title": "Unschärfe-Typ",
+                "blur.type.full": "Vollunschärfe",
+                "blur.type.selective": "Selektive Unschärfe",
+                "blur.type.background": "Hintergrundunschärfe",
+                "blur.strength": "Unschärfestärke",
+                "blur.tools.brush": "Pinsel",
+                "blur.tools.eraser": "Radierer",
+                "blur.brush.size": "Pinselgröße",
+                "blur.brush.opacity": "Pinseldeckkraft",
+                "blur.format.title": "Ausgabeformat",
+                "blur.preview.title": "Vorschau",
+                "blur.preview.original": "Original",
+                "blur.preview.blurred": "Unschärfe",
+                "blur.processing": "Verarbeitung: 0%",
+                "blur.apply": "Unschärfe Anwenden",
+                "blur.download": "Herunterladen",
+                "blur.reset": "Zurücksetzen",
+                "blur.controls.zoomIn": "Vergrößern",
+                "blur.controls.zoomOut": "Verkleinern",
+                "blur.controls.reset": "Ansicht Zurücksetzen",
+                "footer.follow": "FOLGEN SIE UNS",
+                "footer.categories": "Beliebte Kategorien",
+                "footer.categories.pdf": "PDF-Werkzeuge",
+                "footer.categories.image": "Bildwerkzeuge",
+                "footer.categories.text": "Textwerkzeuge",
+                "footer.categories.av": "Audio/Video-Werkzeuge",
+                "footer.categories.web": "Web/Entwickler-Werkzeuge",
+                "footer.categories.calc": "Rechnerwerkzeuge",
+                "footer.categories.util": "Hilfsprogramme",
+                "footer.categories.color": "Farbwerkzeuge",
+                "footer.quicklinks": "Schnelllinks",
+                "footer.links.tools": "Alle Werkzeuge",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Kontakt",
+                "footer.links.privacy": "Datenschutzrichtlinie",
+                "footer.links.disclaimer": "Haftungsausschluss",
+                "footer.links.terms": "Nutzungsbedingungen",
+                "footer.copyright": "© 2025 LollyPoPDF. Alle Rechte vorbehalten."
+            },
+            it: {
+                "nav.home": "Home",
+                "nav.about": "Chi Siamo",
+                "nav.tools": "Strumenti",
+                "nav.contact": "Contatto",
+                "hero.title": "Strumento Gratuito di Sfocatura Immagini",
+                "hero.description": "Sfoca le tue immagini istantaneamente con il nostro strumento gratuito. Applica sfocatura completa, selettiva o dello sfondo. Nessuna registrazione richiesta.",
+                "howto.title": "Come Sfocare le Tue Immagini",
+                "howto.step1.title": "Carica la Tua Immagine",
+                "howto.step1.description": "Clicca sull'area di caricamento o trascina e rilascia il tuo file immagine. Supportiamo JPG, PNG, GIF, WEBP e altro.",
+                "howto.step2.title": "Scegli il Tipo di Sfocatura",
+                "howto.step2.description": "Seleziona tra sfocatura completa, selettiva o dello sfondo. Regola l'intensità della sfocatura con il cursore.",
+                "howto.step3.title": "Applica e Anteprima",
+                "howto.step3.description": "Per la sfocatura selettiva, usa lo strumento pennello per dipingere le aree di sfocatura. Vedi l'anteprima in tempo reale delle tue modifiche.",
+                "howto.step4.title": "Scarica il Risultato",
+                "howto.step4.description": "Scarica la tua immagine sfocata con un clic. Nessuna filigrana, nessuna registrazione richiesta.",
+                "blur.title": "Strumento di Sfocatura Immagini",
+                "blur.upload.text": "Trascina e rilascia la tua immagine qui o clicca per sfogliare",
+                "blur.upload.button": "Seleziona Immagine",
+                "blur.options.title": "Opzioni di Sfocatura",
+                "blur.type.title": "Tipo di Sfocatura",
+                "blur.type.full": "Sfocatura Completa",
+                "blur.type.selective": "Sfocatura Selettiva",
+                "blur.type.background": "Sfocatura Sfondo",
+                "blur.strength": "Intensità Sfocatura",
+                "blur.tools.brush": "Pennello",
+                "blur.tools.eraser": "Gomma",
+                "blur.brush.size": "Dimensione Pennello",
+                "blur.brush.opacity": "Opacità Pennello",
+                "blur.format.title": "Formato di Uscita",
+                "blur.preview.title": "Anteprima",
+                "blur.preview.original": "Originale",
+                "blur.preview.blurred": "Sfocato",
+                "blur.processing": "Elaborazione: 0%",
+                "blur.apply": "Applica Sfocatura",
+                "blur.download": "Scarica",
+                "blur.reset": "Ripristina",
+                "blur.controls.zoomIn": "Ingrandisci",
+                "blur.controls.zoomOut": "Riduci",
+                "blur.controls.reset": "Ripristina Vista",
+                "footer.follow": "SEGUICI",
+                "footer.categories": "Categorie Popolari",
+                "footer.categories.pdf": "Strumenti PDF",
+                "footer.categories.image": "Strumenti Immagine",
+                "footer.categories.text": "Strumenti Testo",
+                "footer.categories.av": "Strumenti Audio/Video",
+                "footer.categories.web": "Strumenti Web/Sviluppatore",
+                "footer.categories.calc": "Strumenti Calcolatrice",
+                "footer.categories.util": "Strumenti Utilità",
+                "footer.categories.color": "Strumenti Colore",
+                "footer.quicklinks": "Link Rapidi",
+                "footer.links.tools": "Tutti gli Strumenti",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Contatto",
+                "footer.links.privacy": "Informativa sulla Privacy",
+                "footer.links.disclaimer": "Disclaimer",
+                "footer.links.terms": "Termini di Servizio",
+                "footer.copyright": "© 2025 LollyPoPDF. Tutti i diritti riservati."
+            },
+            pt: {
+                "nav.home": "Início",
+                "nav.about": "Sobre Nós",
+                "nav.tools": "Ferramentas",
+                "nav.contact": "Contato",
+                "hero.title": "Ferramenta Gratuita de Desfoque de Imagem",
+                "hero.description": "Desfoque suas imagens instantaneamente com nossa ferramenta gratuita. Aplique desfoque total, seletivo ou de fundo. Nenhum registro necessário.",
+                "howto.title": "Como Desfocar Suas Imagens",
+                "howto.step1.title": "Faça Upload da Sua Imagem",
+                "howto.step1.description": "Clique na área de upload ou arraste e solte seu arquivo de imagem. Suportamos JPG, PNG, GIF, WEBP e mais.",
+                "howto.step2.title": "Escolha o Tipo de Desfoque",
+                "howto.step2.description": "Selecione entre desfoque total, seletivo ou de fundo. Ajuste a intensidade do desfoque com o controle deslizante.",
+                "howto.step3.title": "Aplique e Visualize",
+                "howto.step3.description": "Para desfoque seletivo, use a ferramenta pincel para pintar áreas de desfoque. Veja a visualização em tempo real das suas alterações.",
+                "howto.step4.title": "Baixe o Resultado",
+                "howto.step4.description": "Baixe sua imagem desfocada com um clique. Sem marcas d'água, nenhum registro necessário.",
+                "blur.title": "Ferramenta de Desfoque de Imagem",
+                "blur.upload.text": "Arraste e solte sua imagem aqui ou clique para procurar",
+                "blur.upload.button": "Selecionar Imagem",
+                "blur.options.title": "Opções de Desfoque",
+                "blur.type.title": "Tipo de Desfoque",
+                "blur.type.full": "Desfoque Total",
+                "blur.type.selective": "Desfoque Seletivo",
+                "blur.type.background": "Desfoque de Fundo",
+                "blur.strength": "Intensidade do Desfoque",
+                "blur.tools.brush": "Pincel",
+                "blur.tools.eraser": "Borracha",
+                "blur.brush.size": "Tamanho do Pincel",
+                "blur.brush.opacity": "Opacidade do Pincel",
+                "blur.format.title": "Formato de Saída",
+                "blur.preview.title": "Visualização",
+                "blur.preview.original": "Original",
+                "blur.preview.blurred": "Desfocado",
+                "blur.processing": "Processando: 0%",
+                "blur.apply": "Aplicar Desfoque",
+                "blur.download": "Baixar",
+                "blur.reset": "Redefinir",
+                "blur.controls.zoomIn": "Aumentar Zoom",
+                "blur.controls.zoomOut": "Diminuir Zoom",
+                "blur.controls.reset": "Redefinir Visualização",
+                "footer.follow": "SIGA-NOS",
+                "footer.categories": "Categorias Populares",
+                "footer.categories.pdf": "Ferramentas PDF",
+                "footer.categories.image": "Ferramentas de Imagem",
+                "footer.categories.text": "Ferramentas de Texto",
+                "footer.categories.av": "Ferramentas de Áudio/Vídeo",
+                "footer.categories.web": "Ferramentas Web/Desenvolvedor",
+                "footer.categories.calc": "Ferramentas de Calculadora",
+                "footer.categories.util": "Ferramentas de Utilidade",
+                "footer.categories.color": "Ferramentas de Cor",
+                "footer.quicklinks": "Links Rápidos",
+                "footer.links.tools": "Todas as Ferramentas",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Contato",
+                "footer.links.privacy": "Política de Privacidade",
+                "footer.links.disclaimer": "Aviso Legal",
+                "footer.links.terms": "Termos de Serviço",
+                "footer.copyright": "© 2025 LollyPoPDF. Todos os direitos reservados."
+            },
+            ja: {
+                "nav.home": "ホーム",
+                "nav.about": "会社概要",
+                "nav.tools": "ツール",
+                "nav.contact": "お問い合わせ",
+                "hero.title": "無料画像ぼかしツール",
+                "hero.description": "無料ツールで画像を瞬時にぼかします。全面ぼかし、選択的ぼかし、背景ぼかしを適用できます。登録不要。",
+                "howto.title": "画像のぼかし方",
+                "howto.step1.title": "画像をアップロード",
+                "howto.step1.description": "アップロードエリアをクリックするか、画像ファイルをドラッグ＆ドロップしてください。JPG、PNG、GIF、WEBPなどをサポートしています。",
+                "howto.step2.title": "ぼかしタイプを選択",
+                "howto.step2.description": "全面ぼかし、選択的ぼかし、背景ぼかしから選択します。スライダーでぼかしの強度を調整します。",
+                "howto.step3.title": "適用とプレビュー",
+                "howto.step3.description": "選択的ぼかしの場合、ブラシツールを使用してぼかし領域を描画します。変更内容をリアルタイムでプレビューできます。",
+                "howto.step4.title": "結果をダウンロード",
+                "howto.step4.description": "ワンクリックでぼかした画像をダウンロードできます。透かしなし、登録不要。",
+                "blur.title": "画像ぼかしツール",
+                "blur.upload.text": "画像をここにドラッグ＆ドロップするか、クリックして参照",
+                "blur.upload.button": "画像を選択",
+                "blur.options.title": "ぼかしオプション",
+                "blur.type.title": "ぼかしタイプ",
+                "blur.type.full": "全面ぼかし",
+                "blur.type.selective": "選択的ぼかし",
+                "blur.type.background": "背景ぼかし",
+                "blur.strength": "ぼかし強度",
+                "blur.tools.brush": "ブラシ",
+                "blur.tools.eraser": "消しゴム",
+                "blur.brush.size": "ブラシサイズ",
+                "blur.brush.opacity": "ブラシ不透明度",
+                "blur.format.title": "出力形式",
+                "blur.preview.title": "プレビュー",
+                "blur.preview.original": "元画像",
+                "blur.preview.blurred": "ぼかし済み",
+                "blur.processing": "処理中: 0%",
+                "blur.apply": "ぼかしを適用",
+                "blur.download": "ダウンロード",
+                "blur.reset": "リセット",
+                "blur.controls.zoomIn": "ズームイン",
+                "blur.controls.zoomOut": "ズームアウト",
+                "blur.controls.reset": "表示をリセット",
+                "footer.follow": "フォローする",
+                "footer.categories": "人気カテゴリ",
+                "footer.categories.pdf": "PDFツール",
+                "footer.categories.image": "画像ツール",
+                "footer.categories.text": "テキストツール",
+                "footer.categories.av": "音声/動画ツール",
+                "footer.categories.web": "Web/開発者ツール",
+                "footer.categories.calc": "計算機ツール",
+                "footer.categories.util": "ユーティリティツール",
+                "footer.categories.color": "カラーツール",
+                "footer.quicklinks": "クイックリンク",
+                "footer.links.tools": "すべてのツール",
+                "footer.links.faq": "よくある質問",
+                "footer.links.contact": "お問い合わせ",
+                "footer.links.privacy": "プライバシーポリシー",
+                "footer.links.disclaimer": "免責事項",
+                "footer.links.terms": "利用規約",
+                "footer.copyright": "© 2025 LollyPoPDF. 無断転載を禁じます."
+            },
+            ru: {
+                "nav.home": "Главная",
+                "nav.about": "О нас",
+                "nav.tools": "Инструменты",
+                "nav.contact": "Контакты",
+                "hero.title": "Бесплатный Инструмент Размытия Изображений",
+                "hero.description": "Размывайте свои изображения мгновенно с нашим бесплатным инструментом. Применяйте полное размытие, выборочное размытие или размытие фона. Регистрация не требуется.",
+                "howto.title": "Как Размыть Ваши Изображения",
+                "howto.step1.title": "Загрузите Ваше Изображение",
+                "howto.step1.description": "Нажмите на область загрузки или перетащите файл изображения. Мы поддерживаем JPG, PNG, GIF, WEBP и другие.",
+                "howto.step2.title": "Выберите Тип Размытия",
+                "howto.step2.description": "Выберите между полным размытием, выборочным размытием или размытием фона. Настройте силу размытия с помощью ползунка.",
+                "howto.step3.title": "Примените и Предварительный Просмотр",
+                "howto.step3.description": "Для выборочного размытия используйте инструмент кисть для рисования областей размытия. Смотрите предварительный просмотр в реальном времени ваших изменений.",
+                "howto.step4.title": "Скачайте Результат",
+                "howto.step4.description": "Скачайте ваше размытое изображение одним щелчком. Без водяных знаков, регистрация не требуется.",
+                "blur.title": "Инструмент Размытия Изображений",
+                "blur.upload.text": "Перетащите ваше изображение сюда или нажмите для просмотра",
+                "blur.upload.button": "Выбрать Изображение",
+                "blur.options.title": "Опции Размытия",
+                "blur.type.title": "Тип Размытия",
+                "blur.type.full": "Полное Размытие",
+                "blur.type.selective": "Выборочное Размытие",
+                "blur.type.background": "Размытие Фона",
+                "blur.strength": "Сила Размытия",
+                "blur.tools.brush": "Кисть",
+                "blur.tools.eraser": "Ластик",
+                "blur.brush.size": "Размер Кисти",
+                "blur.brush.opacity": "Непрозрачность Кисти",
+                "blur.format.title": "Выходной Формат",
+                "blur.preview.title": "Предварительный Просмотр",
+                "blur.preview.original": "Оригинал",
+                "blur.preview.blurred": "Размытый",
+                "blur.processing": "Обработка: 0%",
+                "blur.apply": "Применить Размытие",
+                "blur.download": "Скачать",
+                "blur.reset": "Сбросить",
+                "blur.controls.zoomIn": "Увеличить",
+                "blur.controls.zoomOut": "Уменьшить",
+                "blur.controls.reset": "Сбросить Вид",
+                "footer.follow": "СЛЕДУЙТЕ ЗА НАМИ",
+                "footer.categories": "Популярные Категории",
+                "footer.categories.pdf": "PDF Инструменты",
+                "footer.categories.image": "Инструменты Изображений",
+                "footer.categories.text": "Текстовые Инструменты",
+                "footer.categories.av": "Аудио/Видео Инструменты",
+                "footer.categories.web": "Веб/Разработчик Инструменты",
+                "footer.categories.calc": "Калькуляторные Инструменты",
+                "footer.categories.util": "Утилитарные Инструменты",
+                "footer.categories.color": "Цветовые Инструменты",
+                "footer.quicklinks": "Быстрые Ссылки",
+                "footer.links.tools": "Все Инструменты",
+                "footer.links.faq": "ЧаВО",
+                "footer.links.contact": "Контакты",
+                "footer.links.privacy": "Политика Конфиденциальности",
+                "footer.links.disclaimer": "Отказ от Ответственности",
+                "footer.links.terms": "Условия Использования",
+                "footer.copyright": "© 2025 LollyPoPDF. Все права защищены."
+            },
+            ko: {
+                "nav.home": "홈",
+                "nav.about": "회사 소개",
+                "nav.tools": "도구",
+                "nav.contact": "연락처",
+                "hero.title": "무료 이미지 블러 도구",
+                "hero.description": "무료 도구로 이미지를 즉시 블러 처리하세요. 전체 블러, 선택적 블러, 배경 블러를 적용할 수 있습니다. 등록 불필요.",
+                "howto.title": "이미지 블러 처리 방법",
+                "howto.step1.title": "이미지 업로드",
+                "howto.step1.description": "업로드 영역을 클릭하거나 이미지 파일을 드래그 앤 드롭하세요. JPG, PNG, GIF, WEBP 등을 지원합니다.",
+                "howto.step2.title": "블러 유형 선택",
+                "howto.step2.description": "전체 블러, 선택적 블러, 배경 블러 중 선택하세요. 슬라이더로 블러 강도를 조절합니다.",
+                "howto.step3.title": "적용 및 미리보기",
+                "howto.step3.description": "선택적 블러의 경우 브러시 도구를 사용하여 블러 영역을 그립니다. 변경 사항을 실시간으로 미리 볼 수 있습니다.",
+                "howto.step4.title": "결과 다운로드",
+                "howto.step4.description": "한 번의 클릭으로 블러 처리된 이미지를 다운로드하세요. 워터마크 없음, 등록 불필요.",
+                "blur.title": "이미지 블러 도구",
+                "blur.upload.text": "이미지를 여기로 드래그 앤 드롭하거나 클릭하여 찾아보기",
+                "blur.upload.button": "이미지 선택",
+                "blur.options.title": "블러 옵션",
+                "blur.type.title": "블러 유형",
+                "blur.type.full": "전체 블러",
+                "blur.type.selective": "선택적 블러",
+                "blur.type.background": "배경 블러",
+                "blur.strength": "블러 강도",
+                "blur.tools.brush": "브러시",
+                "blur.tools.eraser": "지우개",
+                "blur.brush.size": "브러시 크기",
+                "blur.brush.opacity": "브러시 불투명도",
+                "blur.format.title": "출력 형식",
+                "blur.preview.title": "미리보기",
+                "blur.preview.original": "원본",
+                "blur.preview.blurred": "블러 처리됨",
+                "blur.processing": "처리 중: 0%",
+                "blur.apply": "블러 적용",
+                "blur.download": "다운로드",
+                "blur.reset": "재설정",
+                "blur.controls.zoomIn": "확대",
+                "blur.controls.zoomOut": "축소",
+                "blur.controls.reset": "보기 재설정",
+                "footer.follow": "팔로우하기",
+                "footer.categories": "인기 카테고리",
+                "footer.categories.pdf": "PDF 도구",
+                "footer.categories.image": "이미지 도구",
+                "footer.categories.text": "텍스트 도구",
+                "footer.categories.av": "오디오/비디오 도구",
+                "footer.categories.web": "웹/개발자 도구",
+                "footer.categories.calc": "계산기 도구",
+                "footer.categories.util": "유틸리티 도구",
+                "footer.categories.color": "색상 도구",
+                "footer.quicklinks": "빠른 링크",
+                "footer.links.tools": "모든 도구",
+                "footer.links.faq": "자주 묻는 질문",
+                "footer.links.contact": "연락처",
+                "footer.links.privacy": "개인정보 보호정책",
+                "footer.links.disclaimer": "면책 조항",
+                "footer.links.terms": "서비스 약관",
+                "footer.copyright": "© 2025 LollyPoPDF. 모든 권리 보유."
+            },
+            "zh-CN": {
+                "nav.home": "首页",
+                "nav.about": "关于我们",
+                "nav.tools": "工具",
+                "nav.contact": "联系我们",
+                "hero.title": "免费图片模糊工具",
+                "hero.description": "使用我们的免费工具即时模糊您的图片。应用全图模糊、选择性模糊或背景模糊。无需注册。",
+                "howto.title": "如何模糊您的图片",
+                "howto.step1.title": "上传您的图片",
+                "howto.step1.description": "点击上传区域或拖放您的图片文件。我们支持JPG、PNG、GIF、WEBP等格式。",
+                "howto.step2.title": "选择模糊类型",
+                "howto.step2.description": "从全图模糊、选择性模糊或背景模糊中选择。使用滑块调整模糊强度。",
+                "howto.step3.title": "应用和预览",
+                "howto.step3.description": "对于选择性模糊，使用画笔工具绘制模糊区域。实时预览您的更改。",
+                "howto.step4.title": "下载结果",
+                "howto.step4.description": "一键下载您的模糊图片。无水印，无需注册。",
+                "blur.title": "图片模糊工具",
+                "blur.upload.text": "将您的图片拖放到此处或点击浏览",
+                "blur.upload.button": "选择图片",
+                "blur.options.title": "模糊选项",
+                "blur.type.title": "模糊类型",
+                "blur.type.full": "全图模糊",
+                "blur.type.selective": "选择性模糊",
+                "blur.type.background": "背景模糊",
+                "blur.strength": "模糊强度",
+                "blur.tools.brush": "画笔",
+                "blur.tools.eraser": "橡皮擦",
+                "blur.brush.size": "画笔大小",
+                "blur.brush.opacity": "画笔不透明度",
+                "blur.format.title": "输出格式",
+                "blur.preview.title": "预览",
+                "blur.preview.original": "原图",
+                "blur.preview.blurred": "模糊后",
+                "blur.processing": "处理中: 0%",
+                "blur.apply": "应用模糊",
+                "blur.download": "下载",
+                "blur.reset": "重置",
+                "blur.controls.zoomIn": "放大",
+                "blur.controls.zoomOut": "缩小",
+                "blur.controls.reset": "重置视图",
+                "footer.follow": "关注我们",
+                "footer.categories": "热门分类",
+                "footer.categories.pdf": "PDF工具",
+                "footer.categories.image": "图片工具",
+                "footer.categories.text": "文本工具",
+                "footer.categories.av": "音频/视频工具",
+                "footer.categories.web": "网页/开发者工具",
+                "footer.categories.calc": "计算器工具",
+                "footer.categories.util": "实用工具",
+                "footer.categories.color": "颜色工具",
+                "footer.quicklinks": "快速链接",
+                "footer.links.tools": "所有工具",
+                "footer.links.faq": "常见问题",
+                "footer.links.contact": "联系我们",
+                "footer.links.privacy": "隐私政策",
+                "footer.links.disclaimer": "免责声明",
+                "footer.links.terms": "服务条款",
+                "footer.copyright": "© 2025 LollyPoPDF. 保留所有权利。"
+            },
+            "zh-TW": {
+                "nav.home": "首頁",
+                "nav.about": "關於我們",
+                "nav.tools": "工具",
+                "nav.contact": "聯絡我們",
+                "hero.title": "免費圖片模糊工具",
+                "hero.description": "使用我們的免費工具即時模糊您的圖片。應用全圖模糊、選擇性模糊或背景模糊。無需註冊。",
+                "howto.title": "如何模糊您的圖片",
+                "howto.step1.title": "上傳您的圖片",
+                "howto.step1.description": "點擊上傳區域或拖放您的圖片檔案。我們支援JPG、PNG、GIF、WEBP等格式。",
+                "howto.step2.title": "選擇模糊類型",
+                "howto.step2.description": "從全圖模糊、選擇性模糊或背景模糊中選擇。使用滑桿調整模糊強度。",
+                "howto.step3.title": "應用和預覽",
+                "howto.step3.description": "對於選擇性模糊，使用畫筆工具繪製模糊區域。即時預覽您的變更。",
+                "howto.step4.title": "下載結果",
+                "howto.step4.description": "一鍵下載您的模糊圖片。無浮水印，無需註冊。",
+                "blur.title": "圖片模糊工具",
+                "blur.upload.text": "將您的圖片拖放到此處或點擊瀏覽",
+                "blur.upload.button": "選擇圖片",
+                "blur.options.title": "模糊選項",
+                "blur.type.title": "模糊類型",
+                "blur.type.full": "全圖模糊",
+                "blur.type.selective": "選擇性模糊",
+                "blur.type.background": "背景模糊",
+                "blur.strength": "模糊強度",
+                "blur.tools.brush": "畫筆",
+                "blur.tools.eraser": "橡皮擦",
+                "blur.brush.size": "畫筆大小",
+                "blur.brush.opacity": "畫筆不透明度",
+                "blur.format.title": "輸出格式",
+                "blur.preview.title": "預覽",
+                "blur.preview.original": "原圖",
+                "blur.preview.blurred": "模糊後",
+                "blur.processing": "處理中: 0%",
+                "blur.apply": "應用模糊",
+                "blur.download": "下載",
+                "blur.reset": "重設",
+                "blur.controls.zoomIn": "放大",
+                "blur.controls.zoomOut": "縮小",
+                "blur.controls.reset": "重設檢視",
+                "footer.follow": "追蹤我們",
+                "footer.categories": "熱門分類",
+                "footer.categories.pdf": "PDF工具",
+                "footer.categories.image": "圖片工具",
+                "footer.categories.text": "文字工具",
+                "footer.categories.av": "音訊/視訊工具",
+                "footer.categories.web": "網頁/開發者工具",
+                "footer.categories.calc": "計算機工具",
+                "footer.categories.util": "實用工具",
+                "footer.categories.color": "顏色工具",
+                "footer.quicklinks": "快速連結",
+                "footer.links.tools": "所有工具",
+                "footer.links.faq": "常見問題",
+                "footer.links.contact": "聯絡我們",
+                "footer.links.privacy": "隱私權政策",
+                "footer.links.disclaimer": "免責聲明",
+                "footer.links.terms": "服務條款",
+                "footer.copyright": "© 2025 LollyPoPDF. 版權所有。"
+            },
+            ar: {
+                "nav.home": "الرئيسية",
+                "nav.about": "من نحن",
+                "nav.tools": "الأدوات",
+                "nav.contact": "اتصل بنا",
+                "hero.title": "أداة طمس الصور المجانية",
+                "hero.description": "اطمس صورك فورياً باستخدام أداتنا المجانية. طبق الطمس الكامل، الانتقائي أو طمس الخلفية. لا حاجة للتسجيل.",
+                "howto.title": "كيفية طمس صورك",
+                "howto.step1.title": "قم برفع صورتك",
+                "howto.step1.description": "انقر على منطقة الرفع أو اسحب وأفلت ملف الصورة. ندعم JPG، PNG، GIF، WEBP والمزيد.",
+                "howto.step2.title": "اختر نوع الطمس",
+                "howto.step2.description": "اختر بين الطمس الكامل، الانتقائي أو طمس الخلفية. اضبط قوة الطمس باستخدام المنزلق.",
+                "howto.step3.title": "طبق واعرض المعاينة",
+                "howto.step3.description": "للطمس الانتقائي، استخدم أداة الفرشاة لرسم مناطق الطمس. شاهد المعاينة الفورية لتغييراتك.",
+                "howto.step4.title": "حمّل النتيجة",
+                "howto.step4.description": "حمّل صورتك المطموسة بنقرة واحدة. بدون علامات مائية، لا حاجة للتسجيل.",
+                "blur.title": "أداة طمس الصور",
+                "blur.upload.text": "اسحب وأفلت صورتك هنا أو انقر للتصفح",
+                "blur.upload.button": "اختر صورة",
+                "blur.options.title": "خيارات الطمس",
+                "blur.type.title": "نوع الطمس",
+                "blur.type.full": "طمس كامل",
+                "blur.type.selective": "طمس انتقائي",
+                "blur.type.background": "طمس الخلفية",
+                "blur.strength": "قوة الطمس",
+                "blur.tools.brush": "فرشاة",
+                "blur.tools.eraser": "ممحاة",
+                "blur.brush.size": "حجم الفرشاة",
+                "blur.brush.opacity": "شفافية الفرشاة",
+                "blur.format.title": "تنسيق الإخراج",
+                "blur.preview.title": "معاينة",
+                "blur.preview.original": "الأصلية",
+                "blur.preview.blurred": "مطموسة",
+                "blur.processing": "جاري المعالجة: 0%",
+                "blur.apply": "طبق الطمس",
+                "blur.download": "تحميل",
+                "blur.reset": "إعادة تعيين",
+                "blur.controls.zoomIn": "تكبير",
+                "blur.controls.zoomOut": "تصغير",
+                "blur.controls.reset": "إعادة تعيين العرض",
+                "footer.follow": "تابعنا",
+                "footer.categories": "الفئات الشائعة",
+                "footer.categories.pdf": "أدوات PDF",
+                "footer.categories.image": "أدوات الصور",
+                "footer.categories.text": "أدوات النص",
+                "footer.categories.av": "أدوات الصوت/الفيديو",
+                "footer.categories.web": "أدوات الويب/المطور",
+                "footer.categories.calc": "أدوات الآلة الحاسبة",
+                "footer.categories.util": "أدوات المساعدة",
+                "footer.categories.color": "أدوات الألوان",
+                "footer.quicklinks": "روابط سريعة",
+                "footer.links.tools": "جميع الأدوات",
+                "footer.links.faq": "الأسئلة الشائعة",
+                "footer.links.contact": "اتصل بنا",
+                "footer.links.privacy": "سياسة الخصوصية",
+                "footer.links.disclaimer": "إخلاء المسؤولية",
+                "footer.links.terms": "شروط الخدمة",
+                "footer.copyright": "© 2025 LollyPoPDF. جميع الحقوق محفوظة."
+            },
+            fa: {
+                "nav.home": "خانه",
+                "nav.about": "درباره ما",
+                "nav.tools": "ابزارها",
+                "nav.contact": "تماس با ما",
+                "hero.title": "ابزار رایگان محو کردن تصاویر",
+                "hero.description": "با ابزار رایگان ما تصاویر خود را فوراً محو کنید. محوی کامل، انتخابی یا پس زمینه اعمال کنید. بدون نیاز به ثبت نام.",
+                "howto.title": "نحوه محو کردن تصاویر شما",
+                "howto.step1.title": "تصویر خود را آپلود کنید",
+                "howto.step1.description": "روی ناحیه آپلود کلیک کنید یا فایل تصویر خود را بکشید و رها کنید. ما JPG, PNG, GIF, WEBP و بیشتر را پشتیبانی می کنیم.",
+                "howto.step2.title": "نوع محو را انتخاب کنید",
+                "howto.step2.description": "از بین محوی کامل، انتخابی یا پس زمینه انتخاب کنید. قدرت محو را با نوار لغزنده تنظیم کنید.",
+                "howto.step3.title": "اعمال و پیش نمایش",
+                "howto.step3.description": "برای محوی انتخابی، از ابزار قلم مو برای رنگ آمیزی مناطق محو استفاده کنید. پیش نمایش زنده تغییرات خود را ببینید.",
+                "howto.step4.title": "دانلود نتیجه",
+                "howto.step4.description": "تصویر محو شده خود را با یک کلیک دانلود کنید. بدون واترمارک، بدون نیاز به ثبت نام.",
+                "blur.title": "ابزار محو تصویر",
+                "blur.upload.text": "تصویر خود را اینجا بکشید و رها کنید یا برای جستجو کلیک کنید",
+                "blur.upload.button": "انتخاب تصویر",
+                "blur.options.title": "گزینه های محو",
+                "blur.type.title": "نوع محو",
+                "blur.type.full": "محوی کامل",
+                "blur.type.selective": "محوی انتخابی",
+                "blur.type.background": "محوی پس زمینه",
+                "blur.strength": "قدرت محو",
+                "blur.tools.brush": "قلم مو",
+                "blur.tools.eraser": "پاک کن",
+                "blur.brush.size": "اندازه قلم مو",
+                "blur.brush.opacity": "شفافیت قلم مو",
+                "blur.format.title": "فرمت خروجی",
+                "blur.preview.title": "پیش نمایش",
+                "blur.preview.original": "اصلی",
+                "blur.preview.blurred": "محو شده",
+                "blur.processing": "در حال پردازش: 0%",
+                "blur.apply": "اعمال محو",
+                "blur.download": "دانلود",
+                "blur.reset": "بازنشانی",
+                "blur.controls.zoomIn": "بزرگنمایی",
+                "blur.controls.zoomOut": "کوچکنمایی",
+                "blur.controls.reset": "بازنشانی نمای",
+                "footer.follow": "ما را دنبال کنید",
+                "footer.categories": "دسته‌بندی‌های محبوب",
+                "footer.categories.pdf": "ابزارهای PDF",
+                "footer.categories.image": "ابزارهای تصویر",
+                "footer.categories.text": "ابزارهای متن",
+                "footer.categories.av": "ابزارهای صدا/ویدیو",
+                "footer.categories.web": "ابزارهای وب/توسعه‌دهنده",
+                "footer.categories.calc": "ابزارهای ماشین حساب",
+                "footer.categories.util": "ابزارهای کمکی",
+                "footer.categories.color": "ابزارهای رنگ",
+                "footer.quicklinks": "لینک‌های سریع",
+                "footer.links.tools": "همه ابزارها",
+                "footer.links.faq": "سوالات متداول",
+                "footer.links.contact": "تماس با ما",
+                "footer.links.privacy": "سیاست حفظ حریم خصوصی",
+                "footer.links.disclaimer": "سلب مسئولیت",
+                "footer.links.terms": "شرایط خدمات",
+                "footer.copyright": "© 2025 LollyPoPDF. تمامی حقوق محفوظ است."
+            },
+            bg: {
+                "nav.home": "Начало",
+                "nav.about": "За нас",
+                "nav.tools": "Инструменти",
+                "nav.contact": "Контакт",
+                "hero.title": "Безплатен инструмент за размазване на изображения",
+                "hero.description": "Размажете вашите изображения мигновено с нашия безплатен инструмент. Прилагайте пълно размазване, селективно размазване или размазване на фона. Не е необходима регистрация.",
+                "howto.title": "Как да размажете вашите изображения",
+                "howto.step1.title": "Качете вашето изображение",
+                "howto.step1.description": "Кликнете върху зоната за качване или плъзнете и пуснете вашия файл с изображение. Поддържаме JPG, PNG, GIF, WEBP и други.",
+                "howto.step2.title": "Изберете тип размазване",
+                "howto.step2.description": "Изберете между пълно размазване, селективно размазване или размазване на фона. Регулирайте силата на размазването с плъзгача.",
+                "howto.step3.title": "Приложете и прегледайте",
+                "howto.step3.description": "За селективно размазване, използвайте инструмента четка за рисуване на зони за размазване. Вижте преглед в реално време на вашите промени.",
+                "howto.step4.title": "Изтеглете резултата",
+                "howto.step4.description": "Изтеглете вашето размазано изображение с едно кликване. Без водни знаци, не е необходима регистрация.",
+                "blur.title": "Инструмент за размазване на изображения",
+                "blur.upload.text": "Плъзнете и пуснете вашето изображение тук или кликнете за преглед",
+                "blur.upload.button": "Изберете изображение",
+                "blur.options.title": "Опции за размазване",
+                "blur.type.title": "Тип размазване",
+                "blur.type.full": "Пълно размазване",
+                "blur.type.selective": "Селективно размазване",
+                "blur.type.background": "Размазване на фона",
+                "blur.strength": "Сила на размазване",
+                "blur.tools.brush": "Четка",
+                "blur.tools.eraser": "Гума",
+                "blur.brush.size": "Размер на четката",
+                "blur.brush.opacity": "Непрозрачност на четката",
+                "blur.format.title": "Изходен формат",
+                "blur.preview.title": "Преглед",
+                "blur.preview.original": "Оригинал",
+                "blur.preview.blurred": "Размазано",
+                "blur.processing": "Обработване: 0%",
+                "blur.apply": "Приложи размазване",
+                "blur.download": "Изтегли",
+                "blur.reset": "Нулирай",
+                "blur.controls.zoomIn": "Увеличи",
+                "blur.controls.zoomOut": "Намали",
+                "blur.controls.reset": "Нулирай изглед",
+                "footer.follow": "СЛЕДВАЙТЕ НИ",
+                "footer.categories": "Популярни категории",
+                "footer.categories.pdf": "PDF инструменти",
+                "footer.categories.image": "Инструменти за изображения",
+                "footer.categories.text": "Текстови инструменти",
+                "footer.categories.av": "Аудио/Видео инструменти",
+                "footer.categories.web": "Уеб/Разработчик инструменти",
+                "footer.categories.calc": "Калкулаторни инструменти",
+                "footer.categories.util": "Помощни инструменти",
+                "footer.categories.color": "Цветови инструменти",
+                "footer.quicklinks": "Бързи връзки",
+                "footer.links.tools": "Всички инструменти",
+                "footer.links.faq": "ЧЗВ",
+                "footer.links.contact": "Контакт",
+                "footer.links.privacy": "Политика за поверителност",
+                "footer.links.disclaimer": "Освобождаване от отговорност",
+                "footer.links.terms": "Условия за ползване",
+                "footer.copyright": "© 2025 LollyPoPDF. Всички права запазени."
+            },
+            ca: {
+                "nav.home": "Inici",
+                "nav.about": "Sobre nosaltres",
+                "nav.tools": "Eines",
+                "nav.contact": "Contacte",
+                "hero.title": "Eina gratuïta de desenfoc d'imatges",
+                "hero.description": "Desenfoca les teves imatges instantàniament amb la nostra eina gratuïta. Aplica desenfoc complet, selectiu o de fons. No cal registre.",
+                "howto.title": "Com desenfocar les teves imatges",
+                "howto.step1.title": "Puja la teva imatge",
+                "howto.step1.description": "Fes clic a l'àrea de pujada o arrossega i deixa anar el teu fitxer d'imatge. Admetem JPG, PNG, GIF, WEBP i més.",
+                "howto.step2.title": "Tria el tipus de desenfoc",
+                "howto.step2.description": "Selecciona entre desenfoc complet, selectiu o de fons. Ajusta la força del desenfoc amb el control lliscant.",
+                "howto.step3.title": "Aplica i previsualitza",
+                "howto.step3.description": "Per al desenfoc selectiu, utilitza l'eina pinzell per pintar àrees de desenfoc. Veure la previsualització en temps real dels teus canvis.",
+                "howto.step4.title": "Descarrega el resultat",
+                "howto.step4.description": "Descarrega la teva imatge desenfocada amb un clic. Sense marques d'aigua, sense necessitat de registre.",
+                "blur.title": "Eina de desenfoc d'imatges",
+                "blur.upload.text": "Arrossega i deixa anar la teva imatge aquí o fes clic per navegar",
+                "blur.upload.button": "Selecciona imatge",
+                "blur.options.title": "Opcions de desenfoc",
+                "blur.type.title": "Tipus de desenfoc",
+                "blur.type.full": "Desenfoc complet",
+                "blur.type.selective": "Desenfoc selectiu",
+                "blur.type.background": "Desenfoc de fons",
+                "blur.strength": "Força del desenfoc",
+                "blur.tools.brush": "Pinzell",
+                "blur.tools.eraser": "Goma d'esborrar",
+                "blur.brush.size": "Mida del pinzell",
+                "blur.brush.opacity": "Opacitat del pinzell",
+                "blur.format.title": "Format de sortida",
+                "blur.preview.title": "Previsualització",
+                "blur.preview.original": "Original",
+                "blur.preview.blurred": "Desenfocat",
+                "blur.processing": "Processant: 0%",
+                "blur.apply": "Aplica desenfoc",
+                "blur.download": "Descarrega",
+                "blur.reset": "Restableix",
+                "blur.controls.zoomIn": "Amplia",
+                "blur.controls.zoomOut": "Redueix",
+                "blur.controls.reset": "Restableix la vista",
+                "footer.follow": "SEGUEIX-NOS",
+                "footer.categories": "Categories populars",
+                "footer.categories.pdf": "Eines PDF",
+                "footer.categories.image": "Eines d'imatge",
+                "footer.categories.text": "Eines de text",
+                "footer.categories.av": "Eines d'àudio/vídeo",
+                "footer.categories.web": "Eines web/desenvolupador",
+                "footer.categories.calc": "Eines de calculadora",
+                "footer.categories.util": "Eines d'utilitat",
+                "footer.categories.color": "Eines de color",
+                "footer.quicklinks": "Enllaços ràpids",
+                "footer.links.tools": "Totes les eines",
+                "footer.links.faq": "PMF",
+                "footer.links.contact": "Contacte",
+                "footer.links.privacy": "Política de privadesa",
+                "footer.links.disclaimer": "Descàrrec de responsabilitat",
+                "footer.links.terms": "Termes del servei",
+                "footer.copyright": "© 2025 LollyPoPDF. Tots els drets reservats."
+            },
+            nl: {
+                "nav.home": "Home",
+                "nav.about": "Over ons",
+                "nav.tools": "Tools",
+                "nav.contact": "Contact",
+                "hero.title": "Gratis Afbeelding Vervaging Tool",
+                "hero.description": "Vervaag uw afbeeldingen direct met onze gratis tool. Pas volledige vervaging, selectieve vervaging of achtergrondvervaging toe. Geen registratie vereist.",
+                "howto.title": "Hoe uw afbeeldingen te vervagen",
+                "howto.step1.title": "Upload uw afbeelding",
+                "howto.step1.description": "Klik op het uploadgebied of sleep en zet uw afbeeldingsbestand neer. We ondersteunen JPG, PNG, GIF, WEBP en meer.",
+                "howto.step2.title": "Kies Vervagingstype",
+                "howto.step2.description": "Selecteer tussen volledige vervaging, selectieve vervaging of achtergrondvervaging. Pas de vervagingssterkte aan met de schuifregelaar.",
+                "howto.step3.title": "Pas toe en bekijk voorbeeld",
+                "howto.step3.description": "Gebruik voor selectieve vervaging het penseelgereedschap om vervagingsgebieden te schilderen. Zie realtime voorbeeld van uw wijzigingen.",
+                "howto.step4.title": "Download resultaat",
+                "howto.step4.description": "Download uw vervaagde afbeelding met één klik. Zonder watermerken, geen registratie vereist.",
+                "blur.title": "Afbeelding Vervaging Tool",
+                "blur.upload.text": "Sleep uw afbeelding hierheen of klik om te bladeren",
+                "blur.upload.button": "Selecteer afbeelding",
+                "blur.options.title": "Vervagingsopties",
+                "blur.type.title": "Vervagingstype",
+                "blur.type.full": "Volledige Vervaging",
+                "blur.type.selective": "Selectieve Vervaging",
+                "blur.type.background": "Achtergrondvervaging",
+                "blur.strength": "Vervagingssterkte",
+                "blur.tools.brush": "Penseel",
+                "blur.tools.eraser": "Gum",
+                "blur.brush.size": "Penseelgrootte",
+                "blur.brush.opacity": "Penseeldekking",
+                "blur.format.title": "Uitvoerformaat",
+                "blur.preview.title": "Voorbeeld",
+                "blur.preview.original": "Origineel",
+                "blur.preview.blurred": "Vervaagd",
+                "blur.processing": "Verwerken: 0%",
+                "blur.apply": "Pas Vervaging Toe",
+                "blur.download": "Download",
+                "blur.reset": "Reset",
+                "blur.controls.zoomIn": "Zoom In",
+                "blur.controls.zoomOut": "Zoom Uit",
+                "blur.controls.reset": "Reset Weergave",
+                "footer.follow": "VOLG ONS",
+                "footer.categories": "Populaire Categorieën",
+                "footer.categories.pdf": "PDF Tools",
+                "footer.categories.image": "Afbeelding Tools",
+                "footer.categories.text": "Tekst Tools",
+                "footer.categories.av": "Audio/Video Tools",
+                "footer.categories.web": "Web/Developer Tools",
+                "footer.categories.calc": "Rekenmachine Tools",
+                "footer.categories.util": "Hulpprogramma Tools",
+                "footer.categories.color": "Kleur Tools",
+                "footer.quicklinks": "Snelle Links",
+                "footer.links.tools": "Alle Tools",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Contact",
+                "footer.links.privacy": "Privacybeleid",
+                "footer.links.disclaimer": "Disclaimer",
+                "footer.links.terms": "Servicevoorwaarden",
+                "footer.copyright": "© 2025 LollyPoPDF. Alle rechten voorbehouden."
+            },
+            el: {
+                "nav.home": "Αρχική",
+                "nav.about": "Σχετικά με εμάς",
+                "nav.tools": "Εργαλεία",
+                "nav.contact": "Επικοινωνία",
+                "hero.title": "Δωρεάν Εργαλείο Θόλωσης Εικόνων",
+                "hero.description": "Θολώστε τις εικόνες σας αμέσως με το δωρεάν μας εργαλείο. Εφαρμόστε πλήρη θόλωση, επιλεκτική θόλωση ή θόλωση φόντου. Δεν απαιτείται εγγραφή.",
+                "howto.title": "Πώς να Θολώσετε τις Εικόνες σας",
+                "howto.step1.title": "Ανεβάστε την Εικόνα σας",
+                "howto.step1.description": "Κάντε κλικ στην περιοχή μεταφόρτωσης ή σύρετε και αποθέστε το αρχείο εικόνας σας. Υποστηρίζουμε JPG, PNG, GIF, WEBP και άλλα.",
+                "howto.step2.title": "Επιλέξτε Τύπο Θόλωσης",
+                "howto.step2.description": "Επιλέξτε μεταξύ πλήρους θόλωσης, επιλεκτικής θόλωσης ή θόλωσης φόντου. Ρυθμίστε την ένταση θόλωσης με τον ρυθμιστικό δρομέα.",
+                "howto.step3.title": "Εφαρμόστε και Προεπισκόπηση",
+                "howto.step3.description": "Για επιλεκτική θόλωση, χρησιμοποιήστε το εργαλείο πινέλου για να ζωγραφίσετε περιοχές θόλωσης. Δείτε προεπισκόπηση σε πραγματικό χρόνο των αλλαγών σας.",
+                "howto.step4.title": "Κατεβάστε το Αποτέλεσμα",
+                "howto.step4.description": "Κατεβάστε την θολωμένη εικόνα σας με ένα κλικ. Χωρίς υδατογραφήματα, χωρίς απαίτηση εγγραφής.",
+                "blur.title": "Εργαλείο Θόλωσης Εικόνων",
+                "blur.upload.text": "Σύρετε και αποθέστε την εικόνα σας εδώ ή κάντε κλικ για περιήγηση",
+                "blur.upload.button": "Επιλέξτε Εικόνα",
+                "blur.options.title": "Επιλογές Θόλωσης",
+                "blur.type.title": "Τύπος Θόλωσης",
+                "blur.type.full": "Πλήρης Θόλωση",
+                "blur.type.selective": "Επιλεκτική Θόλωση",
+                "blur.type.background": "Θόλωση Φόντου",
+                "blur.strength": "Ένταση Θόλωσης",
+                "blur.tools.brush": "Πινέλο",
+                "blur.tools.eraser": "Γόμα",
+                "blur.brush.size": "Μέγεθος Πινέλου",
+                "blur.brush.opacity": "Διαφάνεια Πινέλου",
+                "blur.format.title": "Μορφή Εξόδου",
+                "blur.preview.title": "Προεπισκόπηση",
+                "blur.preview.original": "Πρωτότυπο",
+                "blur.preview.blurred": "Θολωμένο",
+                "blur.processing": "Επεξεργασία: 0%",
+                "blur.apply": "Εφαρμογή Θόλωσης",
+                "blur.download": "Λήψη",
+                "blur.reset": "Επαναφορά",
+                "blur.controls.zoomIn": "Μεγέθυνση",
+                "blur.controls.zoomOut": "Σμίκρυνση",
+                "blur.controls.reset": "Επαναφορά Προβολής",
+                "footer.follow": "ΑΚΟΛΟΥΘΗΣΤΕ ΜΑΣ",
+                "footer.categories": "Δημοφιλείς Κατηγορίες",
+                "footer.categories.pdf": "Εργαλεία PDF",
+                "footer.categories.image": "Εργαλεία Εικόνας",
+                "footer.categories.text": "Εργαλεία Κειμένου",
+                "footer.categories.av": "Εργαλεία Ήχου/Βίντεο",
+                "footer.categories.web": "Εργαλεία Web/Προγραμματιστή",
+                "footer.categories.calc": "Εργαλεία Αριθμομηχανής",
+                "footer.categories.util": "Εργαλεία Χρησιμότητας",
+                "footer.categories.color": "Εργαλεία Χρώματος",
+                "footer.quicklinks": "Γρήγοροι Σύνδεσμοι",
+                "footer.links.tools": "Όλα τα Εργαλεία",
+                "footer.links.faq": "Συχνές Ερωτήσεις",
+                "footer.links.contact": "Επικοινωνία",
+                "footer.links.privacy": "Πολιτική Απορρήτου",
+                "footer.links.disclaimer": "Αποποίηση Ευθυνών",
+                "footer.links.terms": "Όροι Χρήσης",
+                "footer.copyright": "© 2025 LollyPoPDF. Με επιφύλαξη παντός δικαιώματος."
+            },
+            hi: {
+                "nav.home": "होम",
+                "nav.about": "हमारे बारे में",
+                "nav.tools": "टूल्स",
+                "nav.contact": "संपर्क करें",
+                "hero.title": "मुफ्त इमेज ब्लर टूल",
+                "hero.description": "हमारे मुफ्त टूल से अपनी इमेज को तुरंत ब्लर करें। फुल ब्लर, सेलेक्टिव ब्लर, या बैकग्राउंड ब्लर लागू करें। कोई पंजीकरण आवश्यक नहीं।",
+                "howto.title": "अपनी इमेज को ब्लर कैसे करें",
+                "howto.step1.title": "अपनी इमेज अपलोड करें",
+                "howto.step1.description": "अपलोड एरिया पर क्लिक करें या अपनी इमेज फ़ाइल को ड्रैग और ड्रॉप करें। हम JPG, PNG, GIF, WEBP और अधिक सपोर्ट करते हैं।",
+                "howto.step2.title": "ब्लर प्रकार चुनें",
+                "howto.step2.description": "फुल ब्लर, सेलेक्टिव ब्लर, या बैकग्राउंड ब्लर में से चुनें। स्लाइडर से ब्लर स्ट्रेंथ एडजस्ट करें।",
+                "howto.step3.title": "लागू करें और प्रीव्यू देखें",
+                "howto.step3.description": "सेलेक्टिव ब्लर के लिए, ब्लर एरिया पेंट करने के लिए ब्रश टूल का उपयोग करें। अपने बदलावों का रियल-टाइम प्रीव्यू देखें।",
+                "howto.step4.title": "रिजल्ट डाउनलोड करें",
+                "howto.step4.description": "एक क्लिक से अपनी ब्लर की गई इमेज डाउनलोड करें। बिना वॉटरमार्क, बिना पंजीकरण।",
+                "blur.title": "इमेज ब्लर टूल",
+                "blur.upload.text": "अपनी इमेज यहां ड्रैग और ड्रॉप करें या ब्राउज़ करने के लिए क्लिक करें",
+                "blur.upload.button": "इमेज चुनें",
+                "blur.options.title": "ब्लर विकल्प",
+                "blur.type.title": "ब्लर प्रकार",
+                "blur.type.full": "फुल ब्लर",
+                "blur.type.selective": "सेलेक्टिव ब्लर",
+                "blur.type.background": "बैकग्राउंड ब्लर",
+                "blur.strength": "ब्लर स्ट्रेंथ",
+                "blur.tools.brush": "ब्रश",
+                "blur.tools.eraser": "इरेज़र",
+                "blur.brush.size": "ब्रश साइज़",
+                "blur.brush.opacity": "ब्रश ओपेसिटी",
+                "blur.format.title": "आउटपुट फॉर्मेट",
+                "blur.preview.title": "प्रीव्यू",
+                "blur.preview.original": "ओरिजिनल",
+                "blur.preview.blurred": "ब्लर किया गया",
+                "blur.processing": "प्रोसेसिंग: 0%",
+                "blur.apply": "ब्लर लागू करें",
+                "blur.download": "डाउनलोड",
+                "blur.reset": "रीसेट",
+                "blur.controls.zoomIn": "ज़ूम इन",
+                "blur.controls.zoomOut": "ज़ूम आउट",
+                "blur.controls.reset": "व्यू रीसेट करें",
+                "footer.follow": "हमें फॉलो करें",
+                "footer.categories": "लोकप्रिय श्रेणियाँ",
+                "footer.categories.pdf": "PDF टूल्स",
+                "footer.categories.image": "इमेज टूल्स",
+                "footer.categories.text": "टेक्स्ट टूल्स",
+                "footer.categories.av": "ऑडियो/वीडियो टूल्स",
+                "footer.categories.web": "वेब/डेवलपर टूल्स",
+                "footer.categories.calc": "कैलकुलेटर टूल्स",
+                "footer.categories.util": "यूटिलिटी टूल्स",
+                "footer.categories.color": "कलर टूल्स",
+                "footer.quicklinks": "क्विक लिंक्स",
+                "footer.links.tools": "सभी टूल्स",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "संपर्क करें",
+                "footer.links.privacy": "प्राइवेसी पॉलिसी",
+                "footer.links.disclaimer": "डिस्क्लेमर",
+                "footer.links.terms": "सर्विस की शर्तें",
+                "footer.copyright": "© 2025 LollyPoPDF. सभी अधिकार सुरक्षित।"
+            },
+            te: {
+                "nav.home": "హోమ్",
+                "nav.about": "మా గురించి",
+                "nav.tools": "టూల్స్",
+                "nav.contact": "సంప్రదించండి",
+                "hero.title": "ఉచిత ఇమేజ్ బ్లర్ టూల్",
+                "hero.description": "మా ఉచిత టూల్‌తో మీ ఇమేజ్‌లను తక్షణంగా బ్లర్ చేయండి. పూర్తి బ్లర్, సెలెక్టివ్ బ్లర్ లేదా బ్యాక్‌గ్రౌండ్ బ్లర్‌ను వర్తింపజేయండి. నమోదు అవసరం లేదు.",
+                "howto.title": "మీ ఇమేజ్‌లను బ్లర్ చేయడం ఎలా",
+                "howto.step1.title": "మీ ఇమేజ్‌ను అప్‌లోడ్ చేయండి",
+                "howto.step1.description": "అప్‌లోడ్ ప్రాంతంపై క్లిక్ చేయండి లేదా మీ ఇమేజ్ ఫైల్‌ను డ్రాగ్ మరియు డ్రాప్ చేయండి. మేము JPG, PNG, GIF, WEBP మరియు మరిన్నింటిని మద్దతు ఇస్తాము.",
+                "howto.step2.title": "బ్లర్ రకాన్ని ఎంచుకోండి",
+                "howto.step2.description": "పూర్తి బ్లర్, సెలెక్టివ్ బ్లర్ లేదా బ్యాక్‌గ్రౌండ్ బ్లర్ మధ్య ఎంచుకోండి. స్లయిడర్‌తో బ్లర్ స్ట్రెంత్‌ను సర్దుబాటు చేయండి.",
+                "howto.step3.title": "వర్తింపజేసి మరియు ప్రివ్యూ చూడండి",
+                "howto.step3.description": "సెలెక్టివ్ బ్లర్ కోసం, బ్లర్ ప్రాంతాలను పెయింట్ చేయడానికి బ్రష్ టూల్‌ను ఉపయోగించండి. మీ మార్పుల రియల్-టైమ్ ప్రివ్యూను చూడండి.",
+                "howto.step4.title": "ఫలితాన్ని డౌన్‌లోడ్ చేయండి",
+                "howto.step4.description": "ఒక క్లిక్‌తో మీ బ్లర్ చేసిన ఇమేజ్‌ను డౌన్‌లోడ్ చేయండి. వాటర్‌మార్క్ లేకుండా, నమోదు అవసరం లేదు.",
+                "blur.title": "ఇమేజ్ బ్లర్ టూల్",
+                "blur.upload.text": "మీ ఇమేజ్‌ను ఇక్కడ డ్రాగ్ మరియు డ్రాప్ చేయండి లేదా బ్రౌజ్ చేయడానికి క్లిక్ చేయండి",
+                "blur.upload.button": "ఇమేజ్ ఎంచుకోండి",
+                "blur.options.title": "బ్లర్ ఎంపికలు",
+                "blur.type.title": "బ్లర్ రకం",
+                "blur.type.full": "పూర్తి బ్లర్",
+                "blur.type.selective": "సెలెక్టివ్ బ్లర్",
+                "blur.type.background": "బ్యాక్‌గ్రౌండ్ బ్లర్",
+                "blur.strength": "బ్లర్ స్ట్రెంత్",
+                "blur.tools.brush": "బ్రష్",
+                "blur.tools.eraser": "ఎరేజర్",
+                "blur.brush.size": "బ్రష్ సైజ్",
+                "blur.brush.opacity": "బ్రష్ ఒపాసిటీ",
+                "blur.format.title": "అవుట్‌పుట్ ఫార్మాట్",
+                "blur.preview.title": "ప్రివ్యూ",
+                "blur.preview.original": "అసలు",
+                "blur.preview.blurred": "బ్లర్ చేయబడింది",
+                "blur.processing": "ప్రాసెసింగ్: 0%",
+                "blur.apply": "బ్లర్ వర్తింపజేయండి",
+                "blur.download": "డౌన్‌లోడ్",
+                "blur.reset": "రీసెట్",
+                "blur.controls.zoomIn": "జూమ్ ఇన్",
+                "blur.controls.zoomOut": "జూమ్ అవుట్",
+                "blur.controls.reset": "వ్యూ రీసెట్ చేయండి",
+                "footer.follow": "మమ్మల్ని అనుసరించండి",
+                "footer.categories": "జనాదరణ పొందిన వర్గాలు",
+                "footer.categories.pdf": "PDF టూల్స్",
+                "footer.categories.image": "ఇమేజ్ టూల్స్",
+                "footer.categories.text": "టెక్స్ట్ టూల్స్",
+                "footer.categories.av": "ఆడియో/వీడియో టూల్స్",
+                "footer.categories.web": "వెబ్/డెవలపర్ టూల్స్",
+                "footer.categories.calc": "కాలిక్యులేటర్ టూల్స్",
+                "footer.categories.util": "యుటిలిటీ టూల్స్",
+                "footer.categories.color": "కలర్ టూల్స్",
+                "footer.quicklinks": "త్వరిత లింకులు",
+                "footer.links.tools": "అన్ని టూల్స్",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "సంప్రదించండి",
+                "footer.links.privacy": "గోప్యతా విధానం",
+                "footer.links.disclaimer": "డిస్క్లెయిమర్",
+                "footer.links.terms": "సేవా నిబంధనలు",
+                "footer.copyright": "© 2025 LollyPoPDF. అన్ని హక్కులు ప్రత్యేకించబడినవి."
+            },
+            kn: {
+                "nav.home": "ಹೋಮ್",
+                "nav.about": "ನಮ್ಮ ಬಗ್ಗೆ",
+                "nav.tools": "ಟೂಲ್ಸ್",
+                "nav.contact": "ಸಂಪರ್ಕಿಸಿ",
+                "hero.title": "ಉಚಿತ ಇಮೇಜ್ ಬ್ಲರ್ ಟೂಲ್",
+                "hero.description": "ನಮ್ಮ ಉಚಿತ ಟೂಲ್‌ನೊಂದಿಗೆ ನಿಮ್ಮ ಇಮೇಜ್‌ಗಳನ್ನು ತಕ್ಷಣ ಬ್ಲರ್ ಮಾಡಿ. ಪೂರ್ಣ ಬ್ಲರ್, ಸೆಲೆಕ್ಟಿವ್ ಬ್ಲರ್ ಅಥವಾ ಬ್ಯಾಕ್‌ಗ್ರೌಂಡ್ ಬ್ಲರ್ ಅನ್ನು ಅನ್ವಯಿಸಿ. ನೋಂದಣಿ ಅಗತ್ಯವಿಲ್ಲ.",
+                "howto.title": "ನಿಮ್ಮ ಇಮೇಜ್‌ಗಳನ್ನು ಬ್ಲರ್ ಮಾಡುವುದು ಹೇಗೆ",
+                "howto.step1.title": "ನಿಮ್ಮ ಇಮೇಜ್ ಅನ್ನು ಅಪ್‌ಲೋಡ್ ಮಾಡಿ",
+                "howto.step1.description": "ಅಪ್‌ಲೋಡ್ ಪ್ರದೇಶದ ಮೇಲೆ ಕ್ಲಿಕ್ ಮಾಡಿ ಅಥವಾ ನಿಮ್ಮ ಇಮೇಜ್ ಫೈಲ್ ಅನ್ನು ಡ್ರ್ಯಾಗ್ ಮತ್ತು ಡ್ರಾಪ್ ಮಾಡಿ. ನಾವು JPG, PNG, GIF, WEBP ಮತ್ತು ಹೆಚ್ಚಿನವುಗಳನ್ನು ಬೆಂಬಲಿಸುತ್ತೇವೆ.",
+                "howto.step2.title": "ಬ್ಲರ್ ಪ್ರಕಾರವನ್ನು ಆಯ್ಕೆಮಾಡಿ",
+                "howto.step2.description": "ಪೂರ್ಣ ಬ್ಲರ್, ಸೆಲೆಕ್ಟಿವ್ ಬ್ಲರ್ ಅಥವಾ ಬ್ಯಾಕ್‌ಗ್ರೌಂಡ್ ಬ್ಲರ್ ನಡುವೆ ಆಯ್ಕೆಮಾಡಿ. ಸ್ಲೈಡರ್‌ನೊಂದಿಗೆ ಬ್ಲರ್ ಶಕ್ತಿಯನ್ನು ಸರಿಹೊಂದಿಸಿ.",
+                "howto.step3.title": "ಅನ್ವಯಿಸಿ ಮತ್ತು ಪೂರ್ವವೀಕ್ಷಿಸಿ",
+                "howto.step3.description": "ಸೆಲೆಕ್ಟಿವ್ ಬ್ಲರ್ ಗಾಗಿ, ಬ್ಲರ್ ಪ್ರದೇಶಗಳನ್ನು ಪೇಂಟ್ ಮಾಡಲು ಬ್ರಷ್ ಟೂಲ್ ಅನ್ನು ಬಳಸಿ. ನಿಮ್ಮ ಬದಲಾವಣೆಗಳ ರಿಯಲ್-ಟೈಮ್ ಪೂರ್ವವೀಕ್ಷಣೆಯನ್ನು ನೋಡಿ.",
+                "howto.step4.title": "ಫಲಿತಾಂಶವನ್ನು ಡೌನ್‌ಲೋಡ್ ಮಾಡಿ",
+                "howto.step4.description": "ಒಂದು ಕ್ಲಿಕ್‌ನೊಂದಿಗೆ ನಿಮ್ಮ ಬ್ಲರ್ ಮಾಡಿದ ಇಮೇಜ್ ಅನ್ನು ಡೌನ್‌ಲೋಡ್ ಮಾಡಿ. ವಾಟರ್‌ಮಾರ್ಕ್ ಇಲ್ಲದೆ, ನೋಂದಣಿ ಅಗತ್ಯವಿಲ್ಲ.",
+                "blur.title": "ಇಮೇಜ್ ಬ್ಲರ್ ಟೂಲ್",
+                "blur.upload.text": "ನಿಮ್ಮ ಇಮೇಜ್ ಅನ್ನು ಇಲ್ಲಿ ಡ್ರ್ಯಾಗ್ ಮತ್ತು ಡ್ರಾಪ್ ಮಾಡಿ ಅಥವಾ ಬ್ರೌಸ್ ಮಾಡಲು ಕ್ಲಿಕ್ ಮಾಡಿ",
+                "blur.upload.button": "ಇಮೇಜ್ ಆಯ್ಕೆಮಾಡಿ",
+                "blur.options.title": "ಬ್ಲರ್ ಆಯ್ಕೆಗಳು",
+                "blur.type.title": "ಬ್ಲರ್ ಪ್ರಕಾರ",
+                "blur.type.full": "ಪೂರ್ಣ ಬ್ಲರ್",
+                "blur.type.selective": "ಸೆಲೆಕ್ಟಿವ್ ಬ್ಲರ್",
+                "blur.type.background": "ಬ್ಯಾಕ್‌ಗ್ರೌಂಡ್ ಬ್ಲರ್",
+                "blur.strength": "ಬ್ಲರ್ ಶಕ್ತಿ",
+                "blur.tools.brush": "ಬ್ರಷ್",
+                "blur.tools.eraser": "ಎರೇಸರ್",
+                "blur.brush.size": "ಬ್ರಷ್ ಗಾತ್ರ",
+                "blur.brush.opacity": "ಬ್ರಷ್ ಅಪಾರದರ್ಶಕತೆ",
+                "blur.format.title": "ಔಟ್ಪುಟ್ ಫಾರ್ಮ್ಯಾಟ್",
+                "blur.preview.title": "ಪೂರ್ವವೀಕ್ಷಣೆ",
+                "blur.preview.original": "ಮೂಲ",
+                "blur.preview.blurred": "ಬ್ಲರ್ ಮಾಡಲಾಗಿದೆ",
+                "blur.processing": "ಪ್ರಕ್ರಿಯೆ: 0%",
+                "blur.apply": "ಬ್ಲರ್ ಅನ್ವಯಿಸಿ",
+                "blur.download": "ಡೌನ್‌ಲೋಡ್",
+                "blur.reset": "ರೀಸೆಟ್",
+                "blur.controls.zoomIn": "ಜೂಮ್ ಇನ್",
+                "blur.controls.zoomOut": "ಜೂಮ್ ಔಟ್",
+                "blur.controls.reset": "ವೀಕ್ಷಣೆ ರೀಸೆಟ್ ಮಾಡಿ",
+                "footer.follow": "ನಮ್ಮನ್ನು ಅನುಸರಿಸಿ",
+                "footer.categories": "ಜನಪ್ರಿಯ ವರ್ಗಗಳು",
+                "footer.categories.pdf": "PDF ಟೂಲ್ಸ್",
+                "footer.categories.image": "ಇಮೇಜ್ ಟೂಲ್ಸ್",
+                "footer.categories.text": "ಟೆಕ್ಸ್ಟ್ ಟೂಲ್ಸ್",
+                "footer.categories.av": "ಆಡಿಯೋ/ವೀಡಿಯೋ ಟೂಲ್ಸ್",
+                "footer.categories.web": "ವೆಬ್/ಡೆವಲಪರ್ ಟೂಲ್ಸ್",
+                "footer.categories.calc": "ಕ್ಯಾಲ್ಕುಲೇಟರ್ ಟೂಲ್ಸ್",
+                "footer.categories.util": "ಯುಟಿಲಿಟಿ ಟೂಲ್ಸ್",
+                "footer.categories.color": "ಕಲರ್ ಟೂಲ್ಸ್",
+                "footer.quicklinks": "ತ್ವರಿತ ಲಿಂಕ್‌ಗಳು",
+                "footer.links.tools": "ಎಲ್ಲಾ ಟೂಲ್ಸ್",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "ಸಂಪರ್ಕಿಸಿ",
+                "footer.links.privacy": "ಗೌಪ್ಯತಾ ನೀತಿ",
+                "footer.links.disclaimer": "ಡಿಸ್ಕ್ಲೇಮರ್",
+                "footer.links.terms": "ಸೇವಾ ನಿಯಮಗಳು",
+                "footer.copyright": "© 2025 LollyPoPDF. ಎಲ್ಲಾ ಹಕ್ಕುಗಳು ಕಾಯ್ದಿರಿಸಲ್ಪಟ್ಟಿವೆ."
+            },
+            ta: {
+                "nav.home": "முகப்பு",
+                "nav.about": "எங்களைப் பற்றி",
+                "nav.tools": "கருவிகள்",
+                "nav.contact": "தொடர்பு கொள்ள",
+                "hero.title": "இலவச பட மங்கல் கருவி",
+                "hero.description": "எங்கள் இலவச கருவியுடன் உங்கள் படங்களை உடனடியாக மங்க வைக்கவும். முழு மங்கல், தேர்ந்தெடுக்கப்பட்ட மங்கல் அல்லது பின்னணி மங்கலைப் பயன்படுத்தவும். பதிவு தேவையில்லை.",
+                "howto.title": "உங்கள் படங்களை மங்க வைக்க எப்படி",
+                "howto.step1.title": "உங்கள் படத்தை பதிவேற்றவும்",
+                "howto.step1.description": "பதிவேற்ற பகுதியை கிளிக் செய்யவும் அல்லது உங்கள் பட கோப்பை இழுத்து விடவும். நாங்கள் JPG, PNG, GIF, WEBP மற்றும் பலவற்றை ஆதரிக்கிறோம்.",
+                "howto.step2.title": "மங்கல் வகையைத் தேர்ந்தெடுக்கவும்",
+                "howto.step2.description": "முழு மங்கல், தேர்ந்தெடுக்கப்பட்ட மங்கல் அல்லது பின்னணி மங்கல் ஆகியவற்றுக்கு இடையே தேர்வு செய்யவும். மங்கல் அளவை சரிசெய்யவும்.",
+                "howto.step3.title": "பயன்படுத்தவும் மற்றும் முன்னோட்டம் பார்க்கவும்",
+                "howto.step3.description": "தேர்ந்தெடுக்கப்பட்ட மங்கலுக்கு, மங்கல் பகுதிகளை வரைவதற்கு தூரிகை கருவியைப் பயன்படுத்தவும். உங்கள் மாற்றங்களின் நிகழ்நேர முன்னோட்டத்தைக் காண்க.",
+                "howto.step4.title": "முடிவைப் பதிவிறக்கவும்",
+                "howto.step4.description": "ஒரு கிளிக்கில் உங்கள் மங்கலான படத்தைப் பதிவிறக்கவும். நீர்முத்து இல்லாமல், பதிவு தேவையில்லை.",
+                "blur.title": "பட மங்கல் கருவி",
+                "blur.upload.text": "உங்கள் படத்தை இங்கே இழுத்து விடவும் அல்லது உலாவ கிளிக் செய்யவும்",
+                "blur.upload.button": "படத்தைத் தேர்ந்தெடுக்கவும்",
+                "blur.options.title": "மங்கல் விருப்பங்கள்",
+                "blur.type.title": "மங்கல் வகை",
+                "blur.type.full": "முழு மங்கல்",
+                "blur.type.selective": "தேர்ந்தெடுக்கப்பட்ட மங்கல்",
+                "blur.type.background": "பின்னணி மங்கல்",
+                "blur.strength": "மங்கல் அளவு",
+                "blur.tools.brush": "தூரிகை",
+                "blur.tools.eraser": "அழிப்பான்",
+                "blur.brush.size": "தூரிகை அளவு",
+                "blur.brush.opacity": "தூரிகை ஒளிபுகுதிறன்",
+                "blur.format.title": "வெளியீடு வடிவம்",
+                "blur.preview.title": "முன்னோட்டம்",
+                "blur.preview.original": "அசல்",
+                "blur.preview.blurred": "மங்கலானது",
+                "blur.processing": "செயலாக்கம்: 0%",
+                "blur.apply": "மங்கலைப் பயன்படுத்து",
+                "blur.download": "பதிவிறக்க",
+                "blur.reset": "மீட்டமை",
+                "blur.controls.zoomIn": "உருப்பெருக்கம்",
+                "blur.controls.zoomOut": "சிறிதாக்கம்",
+                "blur.controls.reset": "காட்சியை மீட்டமை",
+                "footer.follow": "எங்களைப் பின்தொடரவும்",
+                "footer.categories": "பிரபலமான வகைகள்",
+                "footer.categories.pdf": "PDF கருவிகள்",
+                "footer.categories.image": "பட கருவிகள்",
+                "footer.categories.text": "உரை கருவிகள்",
+                "footer.categories.av": "ஆடியோ/வீடியோ கருவிகள்",
+                "footer.categories.web": "வலை/டெவலப்பர் கருவிகள்",
+                "footer.categories.calc": "கால்குலேட்டர் கருவிகள்",
+                "footer.categories.util": "பயன்பாட்டு கருவிகள்",
+                "footer.categories.color": "நிற கருவிகள்",
+                "footer.quicklinks": "விரைவு இணைப்புகள்",
+                "footer.links.tools": "அனைத்து கருவிகள்",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "தொடர்பு கொள்ள",
+                "footer.links.privacy": "தனியுரிமைக் கொள்கை",
+                "footer.links.disclaimer": "மறுப்பு",
+                "footer.links.terms": "சேவை விதிமுறைகள்",
+                "footer.copyright": "© 2025 LollyPoPDF. அனைத்து உரிமைகளும் பாதுகாக்கப்பட்டவை."
+            },
+            ml: {
+                "nav.home": "ഹോം",
+                "nav.about": "ഞങ്ങളെക്കുറിച്ച്",
+                "nav.tools": "ടൂളുകൾ",
+                "nav.contact": "ബന്ധപ്പെടുക",
+                "hero.title": "സൗജന്യ ഇമേജ് ബ്ലർ ടൂൾ",
+                "hero.description": "ഞങ്ങളുടെ സൗജന്യ ടൂൾ ഉപയോഗിച്ച് നിങ്ങളുടെ ഇമേജുകൾ തൽക്ഷണം ബ്ലർ ചെയ്യുക. പൂർണ്ണ ബ്ലർ, സെലക്ടീവ് ബ്ലർ അല്ലെങ്കിൽ ബാക്ക്ഗ്രൗണ്ട് ബ്ലർ പ്രയോഗിക്കുക. രജിസ്ട്രേഷൻ ആവശ്യമില്ല.",
+                "howto.title": "നിങ്ങളുടെ ഇമേജുകൾ ബ്ലർ ചെയ്യുന്നത് എങ്ങനെ",
+                "howto.step1.title": "നിങ്ങളുടെ ഇമേജ് അപ്‌ലോഡ് ചെയ്യുക",
+                "howto.step1.description": "അപ്‌ലോഡ് ഏരിയയിൽ ക്ലിക്ക് ചെയ്യുക അല്ലെങ്കിൽ നിങ്ങളുടെ ഇമേജ് ഫയൽ ഡ്രാഗ് ചെയ്ത് ഡ്രോപ്പ് ചെയ്യുക. ഞങ്ങൾ JPG, PNG, GIF, WEBP എന്നിവയെ പിന്തുണയ്ക്കുന്നു.",
+                "howto.step2.title": "ബ്ലർ തരം തിരഞ്ഞെടുക്കുക",
+                "howto.step2.description": "പൂർണ്ണ ബ്ലർ, സെലക്ടീവ് ബ്ലർ അല്ലെങ്കിൽ ബാക്ക്ഗ്രൗണ്ട് ബ്ലർ എന്നിവയിൽ നിന്ന് തിരഞ്ഞെടുക്കുക. സ്ലൈഡർ ഉപയോഗിച്ച് ബ്ലർ ശക്തി ക്രമീകരിക്കുക.",
+                "howto.step3.title": "പ്രയോഗിക്കുകയും പ്രിവ്യൂ കാണുകയും ചെയ്യുക",
+                "howto.step3.description": "സെലക്ടീവ് ബ്ലറിനായി, ബ്ലർ ഏരിയകൾ പെയിന്റ് ചെയ്യാൻ ബ്രഷ് ടൂൾ ഉപയോഗിക്കുക. നിങ്ങളുടെ മാറ്റങ്ങളുടെ റിയൽ-ടൈം പ്രിവ്യൂ കാണുക.",
+                "howto.step4.title": "ഫലം ഡൗൺലോഡ് ചെയ്യുക",
+                "howto.step4.description": "ഒരു ക്ലിക്കിൽ നിങ്ങളുടെ ബ്ലർ ചെയ്ത ഇമേജ് ഡൗൺലോഡ് ചെയ്യുക. വാട്ടർമാർക്ക് ഇല്ലാതെ, രജിസ്ട്രേഷൻ ആവശ്യമില്ല.",
+                "blur.title": "ഇമേജ് ബ്ലർ ടൂൾ",
+                "blur.upload.text": "നിങ്ങളുടെ ഇമേജ് ഇവിടെ ഡ്രാഗ് ചെയ്ത് ഡ്രോപ്പ് ചെയ്യുക അല്ലെങ്കിൽ ബ്രൗസ് ചെയ്യാൻ ക്ലിക്ക് ചെയ്യുക",
+                "blur.upload.button": "ഇമേജ് തിരഞ്ഞെടുക്കുക",
+                "blur.options.title": "ബ്ലർ ഓപ്ഷനുകൾ",
+                "blur.type.title": "ബ്ലർ തരം",
+                "blur.type.full": "പൂർണ്ണ ബ്ലർ",
+                "blur.type.selective": "സെലക്ടീവ് ബ്ലർ",
+                "blur.type.background": "ബാക്ക്ഗ്രൗണ്ട് ബ്ലർ",
+                "blur.strength": "ബ്ലർ ശക്തി",
+                "blur.tools.brush": "ബ്രഷ്",
+                "blur.tools.eraser": "ഇറേസർ",
+                "blur.brush.size": "ബ്രഷ് വലുപ്പം",
+                "blur.brush.opacity": "ബ്രഷ് അപാരദർശകത",
+                "blur.format.title": "ഔട്ട്പുട്ട് ഫോർമാറ്റ്",
+                "blur.preview.title": "പ്രിവ്യൂ",
+                "blur.preview.original": "ഒറിജിനൽ",
+                "blur.preview.blurred": "ബ്ലർ ചെയ്തത്",
+                "blur.processing": "പ്രോസസ്സിംഗ്: 0%",
+                "blur.apply": "ബ്ലർ പ്രയോഗിക്കുക",
+                "blur.download": "ഡൗൺലോഡ്",
+                "blur.reset": "റീസെറ്റ്",
+                "blur.controls.zoomIn": "സൂം ഇൻ",
+                "blur.controls.zoomOut": "സൂം ഔട്ട്",
+                "blur.controls.reset": "വ്യൂ റീസെറ്റ് ചെയ്യുക",
+                "footer.follow": "ഞങ്ങളെ പിന്തുടരുക",
+                "footer.categories": "ജനപ്രിയ വിഭാഗങ്ങൾ",
+                "footer.categories.pdf": "PDF ടൂളുകൾ",
+                "footer.categories.image": "ഇമേജ് ടൂളുകൾ",
+                "footer.categories.text": "ടെക്സ്റ്റ് ടൂളുകൾ",
+                "footer.categories.av": "ഓഡിയോ/വീഡിയോ ടൂളുകൾ",
+                "footer.categories.web": "വെബ്/ഡെവലപ്പർ ടൂളുകൾ",
+                "footer.categories.calc": "കാൽക്കുലേറ്റർ ടൂളുകൾ",
+                "footer.categories.util": "യൂട്ടിലിറ്റി ടൂളുകൾ",
+                "footer.categories.color": "കളർ ടൂളുകൾ",
+                "footer.quicklinks": "ദ്രുത ലിങ്കുകൾ",
+                "footer.links.tools": "എല്ലാ ടൂളുകളും",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "ബന്ധപ്പെടുക",
+                "footer.links.privacy": "സ്വകാര്യതാ നയം",
+                "footer.links.disclaimer": "ഡിസ്ക്ലെയ്മർ",
+                "footer.links.terms": "സേവന നിബന്ധനകൾ",
+                "footer.copyright": "© 2025 LollyPoPDF. എല്ലാ അവകാശങ്ങളും നിക്ഷിപ്തം."
+            },
+            id: {
+                "nav.home": "Beranda",
+                "nav.about": "Tentang Kami",
+                "nav.tools": "Alat",
+                "nav.contact": "Kontak",
+                "hero.title": "Alat Pengaburan Gambar Gratis",
+                "hero.description": "Aburkan gambar Anda secara instan dengan alat gratis kami. Terapkan pengaburan penuh, selektif, atau latar belakang. Tidak perlu registrasi.",
+                "howto.title": "Cara Mengaburkan Gambar Anda",
+                "howto.step1.title": "Unggah Gambar Anda",
+                "howto.step1.description": "Klik area unggah atau seret dan lepas file gambar Anda. Kami mendukung JPG, PNG, GIF, WEBP dan lainnya.",
+                "howto.step2.title": "Pilih Jenis Pengaburan",
+                "howto.step2.description": "Pilih antara pengaburan penuh, selektif, atau latar belakang. Sesuaikan kekuatan pengaburan dengan slider.",
+                "howto.step3.title": "Terapkan & Pratinjau",
+                "howto.step3.description": "Untuk pengaburan selektif, gunakan alat kuas untuk mengecat area pengaburan. Lihat pratinjau waktu nyata dari perubahan Anda.",
+                "howto.step4.title": "Unduh Hasil",
+                "howto.step4.description": "Unduh gambar yang telah diaburkan dengan satu klik. Tanpa watermark, tidak perlu registrasi.",
+                "blur.title": "Alat Pengaburan Gambar",
+                "blur.upload.text": "Seret dan lepas gambar Anda di sini atau klik untuk menjelajah",
+                "blur.upload.button": "Pilih Gambar",
+                "blur.options.title": "Opsi Pengaburan",
+                "blur.type.title": "Jenis Pengaburan",
+                "blur.type.full": "Pengaburan Penuh",
+                "blur.type.selective": "Pengaburan Selektif",
+                "blur.type.background": "Pengaburan Latar Belakang",
+                "blur.strength": "Kekuatan Pengaburan",
+                "blur.tools.brush": "Kuas",
+                "blur.tools.eraser": "Penghapus",
+                "blur.brush.size": "Ukuran Kuas",
+                "blur.brush.opacity": "Opasitas Kuas",
+                "blur.format.title": "Format Keluaran",
+                "blur.preview.title": "Pratinjau",
+                "blur.preview.original": "Asli",
+                "blur.preview.blurred": "Diaburkan",
+                "blur.processing": "Memproses: 0%",
+                "blur.apply": "Terapkan Pengaburan",
+                "blur.download": "Unduh",
+                "blur.reset": "Atur Ulang",
+                "blur.controls.zoomIn": "Perbesar",
+                "blur.controls.zoomOut": "Perkecil",
+                "blur.controls.reset": "Atur Ulang Tampilan",
+                "footer.follow": "IKUTI KAMI",
+                "footer.categories": "Kategori Populer",
+                "footer.categories.pdf": "Alat PDF",
+                "footer.categories.image": "Alat Gambar",
+                "footer.categories.text": "Alat Teks",
+                "footer.categories.av": "Alat Audio/Video",
+                "footer.categories.web": "Alat Web/Pengembang",
+                "footer.categories.calc": "Alat Kalkulator",
+                "footer.categories.util": "Alat Utilitas",
+                "footer.categories.color": "Alat Warna",
+                "footer.quicklinks": "Tautan Cepat",
+                "footer.links.tools": "Semua Alat",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Kontak",
+                "footer.links.privacy": "Kebijakan Privasi",
+                "footer.links.disclaimer": "Penafian",
+                "footer.links.terms": "Syarat Layanan",
+                "footer.copyright": "© 2025 LollyPoPDF. Hak cipta dilindungi."
+            },
+            ms: {
+                "nav.home": "Laman Utama",
+                "nav.about": "Tentang Kami",
+                "nav.tools": "Alat",
+                "nav.contact": "Hubungi",
+                "hero.title": "Alat Pengaburan Imej Percuma",
+                "hero.description": "Aburkan imej anda serta-merta dengan alat percuma kami. Gunakan pengaburan penuh, selektif, atau latar belakang. Tiada pendaftaran diperlukan.",
+                "howto.title": "Cara Mengaburkan Imej Anda",
+                "howto.step1.title": "Muat Naik Imej Anda",
+                "howto.step1.description": "Klik kawasan muat naik atau seret dan lepaskan fail imej anda. Kami menyokong JPG, PNG, GIF, WEBP dan banyak lagi.",
+                "howto.step2.title": "Pilih Jenis Pengaburan",
+                "howto.step2.description": "Pilih antara pengaburan penuh, selektif, atau latar belakang. Laraskan kekuatan pengaburan dengan peluncur.",
+                "howto.step3.title": "Gunakan & Pratonton",
+                "howto.step3.description": "Untuk pengaburan selektif, gunakan alat berus untuk melukis kawasan pengaburan. Lihat pratonton masa nyata perubahan anda.",
+                "howto.step4.title": "Muat Turun Hasil",
+                "howto.step4.description": "Muat turun imej yang telah diaburkan dengan satu klik. Tanpa tanda air, tiada pendaftaran diperlukan.",
+                "blur.title": "Alat Pengaburan Imej",
+                "blur.upload.text": "Seret dan lepaskan imej anda di sini atau klik untuk meneroka",
+                "blur.upload.button": "Pilih Imej",
+                "blur.options.title": "Pilihan Pengaburan",
+                "blur.type.title": "Jenis Pengaburan",
+                "blur.type.full": "Pengaburan Penuh",
+                "blur.type.selective": "Pengaburan Selektif",
+                "blur.type.background": "Pengaburan Latar Belakang",
+                "blur.strength": "Kekuatan Pengaburan",
+                "blur.tools.brush": "Berus",
+                "blur.tools.eraser": "Pemadam",
+                "blur.brush.size": "Saiz Berus",
+                "blur.brush.opacity": "Kelegapan Berus",
+                "blur.format.title": "Format Output",
+                "blur.preview.title": "Pratonton",
+                "blur.preview.original": "Asal",
+                "blur.preview.blurred": "Diaburkan",
+                "blur.processing": "Memproses: 0%",
+                "blur.apply": "Gunakan Pengaburan",
+                "blur.download": "Muat Turun",
+                "blur.reset": "Tetapkan Semula",
+                "blur.controls.zoomIn": "Zum Masuk",
+                "blur.controls.zoomOut": "Zum Keluar",
+                "blur.controls.reset": "Tetapkan Semula Paparan",
+                "footer.follow": "IKUTI KAMI",
+                "footer.categories": "Kategori Popular",
+                "footer.categories.pdf": "Alat PDF",
+                "footer.categories.image": "Alat Imej",
+                "footer.categories.text": "Alat Teks",
+                "footer.categories.av": "Alat Audio/Video",
+                "footer.categories.web": "Alat Web/Pembangun",
+                "footer.categories.calc": "Alat Kalkulator",
+                "footer.categories.util": "Alat Utiliti",
+                "footer.categories.color": "Alat Warna",
+                "footer.quicklinks": "Pautan Pantas",
+                "footer.links.tools": "Semua Alat",
+                "footer.links.faq": "Soalan Lazim",
+                "footer.links.contact": "Hubungi",
+                "footer.links.privacy": "Dasar Privasi",
+                "footer.links.disclaimer": "Penafian",
+                "footer.links.terms": "Syarat Perkhidmatan",
+                "footer.copyright": "© 2025 LollyPoPDF. Hak cipta terpelihara."
+            },
+            pl: {
+                "nav.home": "Strona główna",
+                "nav.about": "O nas",
+                "nav.tools": "Narzędzia",
+                "nav.contact": "Kontakt",
+                "hero.title": "Darmowe narzędzie do rozmywania obrazów",
+                "hero.description": "Rozmyj swoje obrazy natychmiast za pomocą naszego darmowego narzędzia. Zastosuj pełne rozmycie, selektywne rozmycie lub rozmycie tła. Bez rejestracji.",
+                "howto.title": "Jak rozmyć swoje obrazy",
+                "howto.step1.title": "Prześlij swój obraz",
+                "howto.step1.description": "Kliknij obszar przesyłania lub przeciągnij i upuść plik obrazu. Obsługujemy JPG, PNG, GIF, WEBP i inne.",
+                "howto.step2.title": "Wybierz typ rozmycia",
+                "howto.step2.description": "Wybierz między pełnym rozmyciem, selektywnym rozmyciem lub rozmyciem tła. Dostosuj siłę rozmycia za pomocą suwaka.",
+                "howto.step3.title": "Zastosuj i podgląd",
+                "howto.step3.description": "W przypadku rozmycia selektywnego użyj narzędzia pędzla do malowania obszarów rozmycia. Zobacz podgląd w czasie rzeczywistym swoich zmian.",
+                "howto.step4.title": "Pobierz wynik",
+                "howto.step4.description": "Pobierz swój rozmyty obraz jednym kliknięciem. Bez znaków wodnych, bez rejestracji.",
+                "blur.title": "Narzędzie do rozmywania obrazów",
+                "blur.upload.text": "Przeciągnij i upuść swój obraz tutaj lub kliknij, aby przeglądać",
+                "blur.upload.button": "Wybierz obraz",
+                "blur.options.title": "Opcje rozmycia",
+                "blur.type.title": "Typ rozmycia",
+                "blur.type.full": "Pełne rozmycie",
+                "blur.type.selective": "Rozmycie selektywne",
+                "blur.type.background": "Rozmycie tła",
+                "blur.strength": "Siła rozmycia",
+                "blur.tools.brush": "Pędzel",
+                "blur.tools.eraser": "Gumka",
+                "blur.brush.size": "Rozmiar pędzla",
+                "blur.brush.opacity": "Przezroczystość pędzla",
+                "blur.format.title": "Format wyjściowy",
+                "blur.preview.title": "Podgląd",
+                "blur.preview.original": "Oryginał",
+                "blur.preview.blurred": "Rozmyty",
+                "blur.processing": "Przetwarzanie: 0%",
+                "blur.apply": "Zastosuj rozmycie",
+                "blur.download": "Pobierz",
+                "blur.reset": "Resetuj",
+                "blur.controls.zoomIn": "Powiększ",
+                "blur.controls.zoomOut": "Pomniejsz",
+                "blur.controls.reset": "Resetuj widok",
+                "footer.follow": "OBSERWUJ NAS",
+                "footer.categories": "Popularne kategorie",
+                "footer.categories.pdf": "Narzędzia PDF",
+                "footer.categories.image": "Narzędzia obrazów",
+                "footer.categories.text": "Narzędzia tekstu",
+                "footer.categories.av": "Narzędzia audio/wideo",
+                "footer.categories.web": "Narzędzia web/dewelopera",
+                "footer.categories.calc": "Narzędzia kalkulatora",
+                "footer.categories.util": "Narzędzia użytkowe",
+                "footer.categories.color": "Narzędzia kolorów",
+                "footer.quicklinks": "Szybkie linki",
+                "footer.links.tools": "Wszystkie narzędzia",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Kontakt",
+                "footer.links.privacy": "Polityka prywatności",
+                "footer.links.disclaimer": "Zastrzeżenie",
+                "footer.links.terms": "Warunki usługi",
+                "footer.copyright": "© 2025 LollyPoPDF. Wszelkie prawa zastrzeżone."
+            },
+            th: {
+                "nav.home": "หน้าหลัก",
+                "nav.about": "เกี่ยวกับเรา",
+                "nav.tools": "เครื่องมือ",
+                "nav.contact": "ติดต่อ",
+                "hero.title": "เครื่องมือเบลอภาพฟรี",
+                "hero.description": "เบลอภาพของคุณทันทีด้วยเครื่องมือฟรีของเรา ใช้การเบลอแบบเต็ม การเบลอแบบเลือกเฉพาะ หรือการเบลอพื้นหลัง ไม่ต้องลงทะเบียน",
+                "howto.title": "วิธีเบลอภาพของคุณ",
+                "howto.step1.title": "อัพโหลดภาพของคุณ",
+                "howto.step1.description": "คลิกพื้นที่อัพโหลดหรือลากและวางไฟล์ภาพของคุณ เรารองรับ JPG, PNG, GIF, WEBP และอื่นๆ",
+                "howto.step2.title": "เลือกประเภทการเบลอ",
+                "howto.step2.description": "เลือกระหว่างการเบลอแบบเต็ม การเบลอแบบเลือกเฉพาะ หรือการเบลอพื้นหลัง ปรับความแรงของการเบลอด้วยสไลด์เดอร์",
+                "howto.step3.title": "ใช้และดูตัวอย่าง",
+                "howto.step3.description": "สำหรับการเบลอแบบเลือกเฉพาะ ใช้เครื่องมือแปรงเพื่อระบายพื้นที่ที่ต้องการเบลอ ดูตัวอย่างการเปลี่ยนแปลงแบบเรียลไทม์",
+                "howto.step4.title": "ดาวน์โหลดผลลัพธ์",
+                "howto.step4.description": "ดาวน์โหลดภาพที่เบลอแล้วด้วยคลิกเดียว ไม่มีลายน้ำ ไม่ต้องลงทะเบียน",
+                "blur.title": "เครื่องมือเบลอภาพ",
+                "blur.upload.text": "ลากและวางภาพของคุณที่นี่หรือคลิกเพื่อเรียกดู",
+                "blur.upload.button": "เลือกภาพ",
+                "blur.options.title": "ตัวเลือกการเบลอ",
+                "blur.type.title": "ประเภทการเบลอ",
+                "blur.type.full": "เบลอแบบเต็ม",
+                "blur.type.selective": "เบลอแบบเลือกเฉพาะ",
+                "blur.type.background": "เบลอพื้นหลัง",
+                "blur.strength": "ความแรงของการเบลอ",
+                "blur.tools.brush": "แปรง",
+                "blur.tools.eraser": "ยางลบ",
+                "blur.brush.size": "ขนาดแปรง",
+                "blur.brush.opacity": "ความทึบของแปรง",
+                "blur.format.title": "รูปแบบผลลัพธ์",
+                "blur.preview.title": "ตัวอย่าง",
+                "blur.preview.original": "ต้นฉบับ",
+                "blur.preview.blurred": "เบลอแล้ว",
+                "blur.processing": "กำลังประมวลผล: 0%",
+                "blur.apply": "ใช้การเบลอ",
+                "blur.download": "ดาวน์โหลด",
+                "blur.reset": "รีเซ็ต",
+                "blur.controls.zoomIn": "ซูมเข้า",
+                "blur.controls.zoomOut": "ซูมออก",
+                "blur.controls.reset": "รีเซ็ตมุมมอง",
+                "footer.follow": "ติดตามเรา",
+                "footer.categories": "หมวดหมู่ยอดนิยม",
+                "footer.categories.pdf": "เครื่องมือ PDF",
+                "footer.categories.image": "เครื่องมือภาพ",
+                "footer.categories.text": "เครื่องมือข้อความ",
+                "footer.categories.av": "เครื่องมือเสียง/วิดีโอ",
+                "footer.categories.web": "เครื่องมือเว็บ/นักพัฒนา",
+                "footer.categories.calc": "เครื่องมือเครื่องคิดเลข",
+                "footer.categories.util": "เครื่องมืออรรถประโยชน์",
+                "footer.categories.color": "เครื่องมือสี",
+                "footer.quicklinks": "ลิงก์ด่วน",
+                "footer.links.tools": "เครื่องมือทั้งหมด",
+                "footer.links.faq": "คำถามที่พบบ่อย",
+                "footer.links.contact": "ติดต่อ",
+                "footer.links.privacy": "นโยบายความเป็นส่วนตัว",
+                "footer.links.disclaimer": "ข้อปฏิเสธความรับผิดชอบ",
+                "footer.links.terms": "เงื่อนไขการให้บริการ",
+                "footer.copyright": "© 2025 LollyPoPDF. สงวนลิขสิทธิ์"
+            },
+            tr: {
+                "nav.home": "Ana Sayfa",
+                "nav.about": "Hakkımızda",
+                "nav.tools": "Araçlar",
+                "nav.contact": "İletişim",
+                "hero.title": "Ücretsiz Görüntü Bulanıklaştırma Aracı",
+                "hero.description": "Ücretsiz aracımızla görüntülerinizi anında bulanıklaştırın. Tam bulanıklık, seçici bulanıklık veya arka plan bulanıklığı uygulayın. Kayıt gerekmez.",
+                "howto.title": "Görüntülerinizi Nasıl Bulanıklaştırırsınız",
+                "howto.step1.title": "Görüntünüzü Yükleyin",
+                "howto.step1.description": "Yükleme alanını tıklayın veya görüntü dosyanızı sürükleyip bırakın. JPG, PNG, GIF, WEBP ve daha fazlasını destekliyoruz.",
+                "howto.step2.title": "Bulanıklık Türünü Seçin",
+                "howto.step2.description": "Tam bulanıklık, seçici bulanıklık veya arka plan bulanıklığı arasından seçim yapın. Kaydırıcı ile bulanıklık gücünü ayarlayın.",
+                "howto.step3.title": "Uygula ve Önizle",
+                "howto.step3.description": "Seçici bulanıklık için, bulanıklık alanlarını boyamak üzere fırça aracını kullanın. Değişikliklerinizin gerçek zamanlı önizlemesini görün.",
+                "howto.step4.title": "Sonucu İndirin",
+                "howto.step4.description": "Bulanıklaştırılmış görüntünüzü tek tıkla indirin. Filigransız, kayıt gerekmez.",
+                "blur.title": "Görüntü Bulanıklaştırma Aracı",
+                "blur.upload.text": "Görüntünüzü buraya sürükleyip bırakın veya göz atmak için tıklayın",
+                "blur.upload.button": "Görüntü Seç",
+                "blur.options.title": "Bulanıklık Seçenekleri",
+                "blur.type.title": "Bulanıklık Türü",
+                "blur.type.full": "Tam Bulanıklık",
+                "blur.type.selective": "Seçici Bulanıklık",
+                "blur.type.background": "Arka Plan Bulanıklığı",
+                "blur.strength": "Bulanıklık Gücü",
+                "blur.tools.brush": "Fırça",
+                "blur.tools.eraser": "Silgi",
+                "blur.brush.size": "Fırça Boyutu",
+                "blur.brush.opacity": "Fırça Opaklığı",
+                "blur.format.title": "Çıktı Formatı",
+                "blur.preview.title": "Önizleme",
+                "blur.preview.original": "Orijinal",
+                "blur.preview.blurred": "Bulanık",
+                "blur.processing": "İşleniyor: 0%",
+                "blur.apply": "Bulanıklığı Uygula",
+                "blur.download": "İndir",
+                "blur.reset": "Sıfırla",
+                "blur.controls.zoomIn": "Yakınlaştır",
+                "blur.controls.zoomOut": "Uzaklaştır",
+                "blur.controls.reset": "Görünümü Sıfırla",
+                "footer.follow": "BİZİ TAKİP EDİN",
+                "footer.categories": "Popüler Kategoriler",
+                "footer.categories.pdf": "PDF Araçları",
+                "footer.categories.image": "Görüntü Araçları",
+                "footer.categories.text": "Metin Araçları",
+                "footer.categories.av": "Ses/Video Araçları",
+                "footer.categories.web": "Web/Geliştirici Araçları",
+                "footer.categories.calc": "Hesap Makinesi Araçları",
+                "footer.categories.util": "Yardımcı Araçlar",
+                "footer.categories.color": "Renk Araçları",
+                "footer.quicklinks": "Hızlı Bağlantılar",
+                "footer.links.tools": "Tüm Araçlar",
+                "footer.links.faq": "SSS",
+                "footer.links.contact": "İletişim",
+                "footer.links.privacy": "Gizlilik Politikası",
+                "footer.links.disclaimer": "Feragatname",
+                "footer.links.terms": "Hizmet Şartları",
+                "footer.copyright": "© 2025 LollyPoPDF. Tüm hakları saklıdır."
+            },
+            uk: {
+                "nav.home": "Головна",
+                "nav.about": "Про нас",
+                "nav.tools": "Інструменти",
+                "nav.contact": "Контакт",
+                "hero.title": "Безкоштовний інструмент розмиття зображень",
+                "hero.description": "Розмийте свої зображення миттєво за допомогою нашого безкоштовного інструменту. Застосуйте повне розмиття, вибіркове розмиття або розмиття фону. Реєстрація не потрібна.",
+                "howto.title": "Як розмити ваші зображення",
+                "howto.step1.title": "Завантажте ваше зображення",
+                "howto.step1.description": "Натисніть на область завантаження або перетягніть файл зображення. Ми підтримуємо JPG, PNG, GIF, WEBP та інші.",
+                "howto.step2.title": "Виберіть тип розмиття",
+                "howto.step2.description": "Виберіть між повним розмиттям, вибірковим розмиттям або розмиттям фону. Налаштуйте силу розмиття за допомогою повзунка.",
+                "howto.step3.title": "Застосуйте та перегляньте",
+                "howto.step3.description": "Для вибіркового розмиття використовуйте інструмент пензля для малювання областей розмиття. Переглядайте перегляд ваших змін у реальному часі.",
+                "howto.step4.title": "Завантажте результат",
+                "howto.step4.description": "Завантажте ваше розмите зображення одним клацанням. Без водяних знаків, без реєстрації.",
+                "blur.title": "Інструмент розмиття зображень",
+                "blur.upload.text": "Перетягніть ваше зображення сюди або натисніть для перегляду",
+                "blur.upload.button": "Вибрати зображення",
+                "blur.options.title": "Опції розмиття",
+                "blur.type.title": "Тип розмиття",
+                "blur.type.full": "Повне розмиття",
+                "blur.type.selective": "Вибіркове розмиття",
+                "blur.type.background": "Розмиття фону",
+                "blur.strength": "Сила розмиття",
+                "blur.tools.brush": "Пензель",
+                "blur.tools.eraser": "Гумка",
+                "blur.brush.size": "Розмір пензля",
+                "blur.brush.opacity": "Непрозорість пензля",
+                "blur.format.title": "Вихідний формат",
+                "blur.preview.title": "Перегляд",
+                "blur.preview.original": "Оригінал",
+                "blur.preview.blurred": "Розмитий",
+                "blur.processing": "Обробка: 0%",
+                "blur.apply": "Застосувати розмиття",
+                "blur.download": "Завантажити",
+                "blur.reset": "Скинути",
+                "blur.controls.zoomIn": "Збільшити",
+                "blur.controls.zoomOut": "Зменшити",
+                "blur.controls.reset": "Скинути вигляд",
+                "footer.follow": "СЛІДКУЙТЕ ЗА НАМИ",
+                "footer.categories": "Популярні категорії",
+                "footer.categories.pdf": "PDF інструменти",
+                "footer.categories.image": "Інструменти зображень",
+                "footer.categories.text": "Текстовий інструменти",
+                "footer.categories.av": "Аудіо/Відео інструменти",
+                "footer.categories.web": "Веб/Розробник інструменти",
+                "footer.categories.calc": "Калькуляторні інструменти",
+                "footer.categories.util": "Утилітарні інструменти",
+                "footer.categories.color": "Кольорові інструменти",
+                "footer.quicklinks": "Швидкі посилання",
+                "footer.links.tools": "Всі інструменти",
+                "footer.links.faq": "Часті питання",
+                "footer.links.contact": "Контакт",
+                "footer.links.privacy": "Політика конфіденційності",
+                "footer.links.disclaimer": "Відмова від відповідальності",
+                "footer.links.terms": "Умови використання",
+                "footer.copyright": "© 2025 LollyPoPDF. Всі права захищені."
+            },
+            vi: {
+                "nav.home": "Trang chủ",
+                "nav.about": "Về chúng tôi",
+                "nav.tools": "Công cụ",
+                "nav.contact": "Liên hệ",
+                "hero.title": "Công cụ làm mờ ảnh miễn phí",
+                "hero.description": "Làm mờ ảnh của bạn ngay lập tức với công cụ miễn phí của chúng tôi. Áp dụng làm mờ toàn phần, làm mờ chọn lọc hoặc làm mờ nền. Không cần đăng ký.",
+                "howto.title": "Cách làm mờ ảnh của bạn",
+                "howto.step1.title": "Tải lên ảnh của bạn",
+                "howto.step1.description": "Nhấp vào khu vực tải lên hoặc kéo và thả tệp ảnh của bạn. Chúng tôi hỗ trợ JPG, PNG, GIF, WEBP và nhiều hơn nữa.",
+                "howto.step2.title": "Chọn loại làm mờ",
+                "howto.step2.description": "Chọn giữa làm mờ toàn phần, làm mờ chọn lọc hoặc làm mờ nền. Điều chỉnh độ mờ bằng thanh trượt.",
+                "howto.step3.title": "Áp dụng & Xem trước",
+                "howto.step3.description": "Đối với làm mờ chọn lọc, sử dụng công cụ cọ vẽ để vẽ các vùng làm mờ. Xem bản xem trước thời gian thực của các thay đổi của bạn.",
+                "howto.step4.title": "Tải xuống kết quả",
+                "howto.step4.description": "Tải xuống ảnh đã làm mờ của bạn bằng một cú nhấp chuột. Không có hình mờ, không cần đăng ký.",
+                "blur.title": "Công cụ làm mờ ảnh",
+                "blur.upload.text": "Kéo và thả ảnh của bạn vào đây hoặc nhấp để duyệt",
+                "blur.upload.button": "Chọn ảnh",
+                "blur.options.title": "Tùy chọn làm mờ",
+                "blur.type.title": "Loại làm mờ",
+                "blur.type.full": "Làm mờ toàn phần",
+                "blur.type.selective": "Làm mờ chọn lọc",
+                "blur.type.background": "Làm mờ nền",
+                "blur.strength": "Độ mờ",
+                "blur.tools.brush": "Cọ vẽ",
+                "blur.tools.eraser": "Tẩy",
+                "blur.brush.size": "Kích thước cọ",
+                "blur.brush.opacity": "Độ mờ đục của cọ",
+                "blur.format.title": "Định dạng đầu ra",
+                "blur.preview.title": "Xem trước",
+                "blur.preview.original": "Gốc",
+                "blur.preview.blurred": "Đã làm mờ",
+                "blur.processing": "Đang xử lý: 0%",
+                "blur.apply": "Áp dụng làm mờ",
+                "blur.download": "Tải xuống",
+                "blur.reset": "Đặt lại",
+                "blur.controls.zoomIn": "Phóng to",
+                "blur.controls.zoomOut": "Thu nhỏ",
+                "blur.controls.reset": "Đặt lại chế độ xem",
+                "footer.follow": "THEO DÕI CHÚNG TÔI",
+                "footer.categories": "Danh mục phổ biến",
+                "footer.categories.pdf": "Công cụ PDF",
+                "footer.categories.image": "Công cụ hình ảnh",
+                "footer.categories.text": "Công cụ văn bản",
+                "footer.categories.av": "Công cụ âm thanh/video",
+                "footer.categories.web": "Công cụ web/developer",
+                "footer.categories.calc": "Công cụ máy tính",
+                "footer.categories.util": "Công cụ tiện ích",
+                "footer.categories.color": "Công cụ màu sắc",
+                "footer.quicklinks": "Liên kết nhanh",
+                "footer.links.tools": "Tất cả công cụ",
+                "footer.links.faq": "Câu hỏi thường gặp",
+                "footer.links.contact": "Liên hệ",
+                "footer.links.privacy": "Chính sách bảo mật",
+                "footer.links.disclaimer": "Tuyên bố miễn trừ trách nhiệm",
+                "footer.links.terms": "Điều khoản dịch vụ",
+                "footer.copyright": "© 2025 LollyPoPDF. Đã đăng ký bản quyền."
+            },
+            is: {
+                "nav.home": "Heim",
+                "nav.about": "Um okkur",
+                "nav.tools": "Verkfæri",
+                "nav.contact": "Hafa samband",
+                "hero.title": "Ókeypis myndaþoka tól",
+                "hero.description": "Þokaðu myndum þínum augnablikslega með ókeypis tólinu okkar. Notaðu fulla þoku, sértæka þoku eða bakgrunnsþoku. Engin skráning krafist.",
+                "howto.title": "Hvernig á að þoka myndum þínum",
+                "howto.step1.title": "Hlaða upp myndinni þinni",
+                "howto.step1.description": "Smelltu á upphleðslusvæðið eða dragðu og slepptu myndaskránni þinni. Við styðjum JPG, PNG, GIF, WEBP og fleira.",
+                "howto.step2.title": "Veldu þokutegund",
+                "howto.step2.description": "Veldu á milli fullrar þoku, sértækrar þoku eða bakgrunnsþoku. Stilltu þokustyrk með rennibrettinu.",
+                "howto.step3.title": "Beittu og forskoðaðu",
+                "howto.step3.description": "Fyrir sértæka þoku, notaðu burstatólið til að mála þokusvæði. Sjáðu rauntíma forskoðun á breytingum þínum.",
+                "howto.step4.title": "Sæktu niðurstöðuna",
+                "howto.step4.description": "Sæktu þokaða myndina þína með einum smelli. Án vatnsmerkja, engin skráning krafist.",
+                "blur.title": "Myndaþoka tól",
+                "blur.upload.text": "Dragðu og slepptu myndinni þinni hér eða smelltu til að skoða",
+                "blur.upload.button": "Veldu mynd",
+                "blur.options.title": "Þokuvalkostir",
+                "blur.type.title": "Þokutegund",
+                "blur.type.full": "Full þoka",
+                "blur.type.selective": "Sértæk þoka",
+                "blur.type.background": "Bakgrunnsþoka",
+                "blur.strength": "Þokustyrkur",
+                "blur.tools.brush": "Bursti",
+                "blur.tools.eraser": "Strika",
+                "blur.brush.size": "Bursta stærð",
+                "blur.brush.opacity": "Bursta ógegnsæi",
+                "blur.format.title": "Úttaksform",
+                "blur.preview.title": "Forskoðun",
+                "blur.preview.original": "Upprunalegt",
+                "blur.preview.blurred": "Þokað",
+                "blur.processing": "Vinnsla: 0%",
+                "blur.apply": "Beita þoku",
+                "blur.download": "Sækja",
+                "blur.reset": "Endurstilla",
+                "blur.controls.zoomIn": "Þysja inn",
+                "blur.controls.zoomOut": "Þysja út",
+                "blur.controls.reset": "Endurstilla sýn",
+                "footer.follow": "FYLGDU OKKUR",
+                "footer.categories": "Vinsælar flokkarnir",
+                "footer.categories.pdf": "PDF tól",
+                "footer.categories.image": "Mynda tól",
+                "footer.categories.text": "Texta tól",
+                "footer.categories.av": "Hljóð/myndband tól",
+                "footer.categories.web": "Vefur/forritari tól",
+                "footer.categories.calc": "Reiknivél tól",
+                "footer.categories.util": "Gagnleg tól",
+                "footer.categories.color": "Lita tól",
+                "footer.quicklinks": "Flýtileiðir",
+                "footer.links.tools": "Öll tól",
+                "footer.links.faq": "Algengar spurningar",
+                "footer.links.contact": "Hafa samband",
+                "footer.links.privacy": "Meðferð persónuupplýsinga",
+                "footer.links.disclaimer": "Fyrirvari",
+                "footer.links.terms": "Þjónustuskilmálar",
+                "footer.copyright": "© 2025 LollyPoPDF. Öll réttindi áskilin."
+            },
+            no: {
+                "nav.home": "Hjem",
+                "nav.about": "Om oss",
+                "nav.tools": "Verktøy",
+                "nav.contact": "Kontakt",
+                "hero.title": "Gratis bildeutydeliggjøringsverktøy",
+                "hero.description": "Gjør bildene dine uklare umiddelbart med vårt gratis verktøy. Bruk full utydelighet, selektiv utydelighet eller bakgrunnsutydelighet. Ingen registrering kreves.",
+                "howto.title": "Hvordan gjøre bildene dine uklare",
+                "howto.step1.title": "Last opp bildet ditt",
+                "howto.step1.description": "Klikk på opplastingsområdet eller dra og slipp bildefilen din. Vi støtter JPG, PNG, GIF, WEBP og mer.",
+                "howto.step2.title": "Velg utydelighetstype",
+                "howto.step2.description": "Velg mellom full utydelighet, selektiv utydelighet eller bakgrunnsutydelighet. Juster utydelighetsstyrken med glidebryteren.",
+                "howto.step3.title": "Bruk og forhåndsvis",
+                "howto.step3.description": "For selektiv utydelighet, bruk penselverktøyet til å male utydelighetsområder. Se sanntids forhåndsvisning av endringene dine.",
+                "howto.step4.title": "Last ned resultatet",
+                "howto.step4.description": "Last ned det utydelige bildet ditt med ett klikk. Uten vannmerker, ingen registrering kreves.",
+                "blur.title": "Bildeutydeliggjøringsverktøy",
+                "blur.upload.text": "Dra og slipp bildet ditt her eller klikk for å bla",
+                "blur.upload.button": "Velg bilde",
+                "blur.options.title": "Utydelighetsalternativer",
+                "blur.type.title": "Utydelighetstype",
+                "blur.type.full": "Full utydelighet",
+                "blur.type.selective": "Selektiv utydelighet",
+                "blur.type.background": "Bakgrunnsutydelighet",
+                "blur.strength": "Utydelighetsstyrke",
+                "blur.tools.brush": "Pensel",
+                "blur.tools.eraser": "Viskelær",
+                "blur.brush.size": "Penselstørrelse",
+                "blur.brush.opacity": "Penselugjennomsiktighet",
+                "blur.format.title": "Utdataformat",
+                "blur.preview.title": "Forhåndsvisning",
+                "blur.preview.original": "Original",
+                "blur.preview.blurred": "Utydelig",
+                "blur.processing": "Behandler: 0%",
+                "blur.apply": "Bruk utydelighet",
+                "blur.download": "Last ned",
+                "blur.reset": "Tilbakestill",
+                "blur.controls.zoomIn": "Zoom inn",
+                "blur.controls.zoomOut": "Zoom ut",
+                "blur.controls.reset": "Tilbakestill visning",
+                "footer.follow": "FØLG OSS",
+                "footer.categories": "Populære kategorier",
+                "footer.categories.pdf": "PDF-verktøy",
+                "footer.categories.image": "Bildeverktøy",
+                "footer.categories.text": "Tekstverktøy",
+                "footer.categories.av": "Lyd/videoverktøy",
+                "footer.categories.web": "Web/utviklerverktøy",
+                "footer.categories.calc": "Kalkulatorverktøy",
+                "footer.categories.util": "Nytteverktøy",
+                "footer.categories.color": "Fargeverktøy",
+                "footer.quicklinks": "Hurtiglenker",
+                "footer.links.tools": "Alle verktøy",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Kontakt",
+                "footer.links.privacy": "Personvernregler",
+                "footer.links.disclaimer": "Ansvarsfraskrivelse",
+                "footer.links.terms": "Tjenestevilkår",
+                "footer.copyright": "© 2025 LollyPoPDF. Alle rettigheter forbeholdt."
+            },
+            sv: {
+                "nav.home": "Hem",
+                "nav.about": "Om oss",
+                "nav.tools": "Verktyg",
+                "nav.contact": "Kontakt",
+                "hero.title": "Gratis bildsudsuddighetsverktyg",
+                "hero.description": "Gör dina bilder oskärpa omedelbart med vårt gratis verktyg. Använd full oskärpa, selektiv oskärpa eller bakgrundsoskärpa. Ingen registrering krävs.",
+                "howto.title": "Hur man gör dina bilder oskärpa",
+                "howto.step1.title": "Ladda upp din bild",
+                "howto.step1.description": "Klicka på uppladdningsområdet eller dra och släpp din bildfil. Vi stöder JPG, PNG, GIF, WEBP och mer.",
+                "howto.step2.title": "Välj oskärpetyp",
+                "howto.step2.description": "Välj mellan full oskärpa, selektiv oskärpa eller bakgrundsoskärpa. Justera oskärpastyrkan med reglaget.",
+                "howto.step3.title": "Applicera och förhandsgranska",
+                "howto.step3.description": "För selektiv oskärpa, använd penselverktyget för att måla oskärpaområden. Se realtids förhandsgranskning av dina ändringar.",
+                "howto.step4.title": "Ladda ner resultatet",
+                "howto.step4.description": "Ladda ner din oskärpa bild med ett klick. Utan vattenstämplar, ingen registrering krävs.",
+                "blur.title": "Bildsudsuddighetsverktyg",
+                "blur.upload.text": "Dra och släpp din bild här eller klicka för att bläddra",
+                "blur.upload.button": "Välj bild",
+                "blur.options.title": "Oskärpalternativ",
+                "blur.type.title": "Oskärpetyp",
+                "blur.type.full": "Full oskärpa",
+                "blur.type.selective": "Selektiv oskärpa",
+                "blur.type.background": "Bakgrundsoskärpa",
+                "blur.strength": "Oskärpastyrka",
+                "blur.tools.brush": "Pensel",
+                "blur.tools.eraser": "Suddgummi",
+                "blur.brush.size": "Penselstorlek",
+                "blur.brush.opacity": "Penselopacitet",
+                "blur.format.title": "Utdataformat",
+                "blur.preview.title": "Förhandsgranskning",
+                "blur.preview.original": "Original",
+                "blur.preview.blurred": "Oskärpa",
+                "blur.processing": "Bearbetar: 0%",
+                "blur.apply": "Applicera oskärpa",
+                "blur.download": "Ladda ner",
+                "blur.reset": "Återställ",
+                "blur.controls.zoomIn": "Zooma in",
+                "blur.controls.zoomOut": "Zooma ut",
+                "blur.controls.reset": "Återställ vy",
+                "footer.follow": "FÖLJ OSS",
+                "footer.categories": "Populära kategorier",
+                "footer.categories.pdf": "PDF-verktyg",
+                "footer.categories.image": "Bildverktyg",
+                "footer.categories.text": "Textverktyg",
+                "footer.categories.av": "Ljud/videoverktyg",
+                "footer.categories.web": "Webb/utvecklarverktyg",
+                "footer.categories.calc": "Kalkylatorverktyg",
+                "footer.categories.util": "Verktyg för verktyg",
+                "footer.categories.color": "Färgverktyg",
+                "footer.quicklinks": "Snabblänkar",
+                "footer.links.tools": "Alla verktyg",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Kontakt",
+                "footer.links.privacy": "Integritetspolicy",
+                "footer.links.disclaimer": "Ansvarsfriskrivning",
+                "footer.links.terms": "Användarvillkor",
+                "footer.copyright": "© 2025 LollyPoPDF. Alla rättigheter förbehållna."
+            },
+            fi: {
+                "nav.home": "Koti",
+                "nav.about": "Meistä",
+                "nav.tools": "Työkalut",
+                "nav.contact": "Yhteystiedot",
+                "hero.title": "Ilmainen kuvan sumennustyökalu",
+                "hero.description": "Tee kuvistasi sumeita heti ilmaisella työkalullamme. Käytä täyttä sumennusta, valikoivaa sumennusta tai taustan sumennusta. Rekisteröitymistä ei tarvita.",
+                "howto.title": "Kuinka tehdä kuvistasi sumeita",
+                "howto.step1.title": "Lataa kuvasi",
+                "howto.step1.description": "Napsauta latausaluetta tai vedä ja pudota kuvatiedostosi. Tuemme JPG, PNG, GIF, WEBP ja enemmän.",
+                "howto.step2.title": "Valitse sumennustyyppi",
+                "howto.step2.description": "Valitse täysi sumennus, valikoiva sumennus tai taustan sumennus. Säädä sumennuksen voimakkuutta liukusäätimellä.",
+                "howto.step3.title": "Käytä ja esikatsele",
+                "howto.step3.description": "Käytä valikoivaan sumennukseen sivellintyökalua maalataksesi sumennusalueita. Katso muutostesi reaaliaikainen esikatselu.",
+                "howto.step4.title": "Lataa tulos",
+                "howto.step4.description": "Lataa sumennettu kuvasi yhdellä napsautuksella. Ilman vesileimoja, rekisteröitymistä ei tarvita.",
+                "blur.title": "Kuvan sumennustyökalu",
+                "blur.upload.text": "Vedä ja pudota kuvasi tähän tai napsauta selataksesi",
+                "blur.upload.button": "Valitse kuva",
+                "blur.options.title": "Sumennusasetukset",
+                "blur.type.title": "Sumennustyyppi",
+                "blur.type.full": "Täysi sumennus",
+                "blur.type.selective": "Valikoiva sumennus",
+                "blur.type.background": "Taustan sumennus",
+                "blur.strength": "Sumennuksen voimakkuus",
+                "blur.tools.brush": "Sivellin",
+                "blur.tools.eraser": "Pyyhekumi",
+                "blur.brush.size": "Sivellin koko",
+                "blur.brush.opacity": "Sivellin läpinäkyvyys",
+                "blur.format.title": "Tulostusmuoto",
+                "blur.preview.title": "Esikatselu",
+                "blur.preview.original": "Alkuperäinen",
+                "blur.preview.blurred": "Sumentunut",
+                "blur.processing": "Käsitellään: 0%",
+                "blur.apply": "Käytä sumennus",
+                "blur.download": "Lataa",
+                "blur.reset": "Nollaa",
+                "blur.controls.zoomIn": "Lähennä",
+                "blur.controls.zoomOut": "Loitonna",
+                "blur.controls.reset": "Nollaa näkymä",
+                "footer.follow": "SEURA MEITÄ",
+                "footer.categories": "Suositut luokat",
+                "footer.categories.pdf": "PDF-työkalut",
+                "footer.categories.image": "Kuvatyökalut",
+                "footer.categories.text": "Tekstityökalut",
+                "footer.categories.av": "Ääni/videotyökalut",
+                "footer.categories.web": "Web/kehittäjätyökalut",
+                "footer.categories.calc": "Laskurityökalut",
+                "footer.categories.util": "Aputyökalut",
+                "footer.categories.color": "Värityökalut",
+                "footer.quicklinks": "Pikalinkit",
+                "footer.links.tools": "Kaikki työkalut",
+                "footer.links.faq": "UKK",
+                "footer.links.contact": "Yhteystiedot",
+                "footer.links.privacy": "Tietosuojakäytäntö",
+                "footer.links.disclaimer": "Vastuuvapauslauseke",
+                "footer.links.terms": "Käyttöehdot",
+                "footer.copyright": "© 2025 LollyPoPDF. Kaikki oikeudet pidätetään."
+            },
+            cs: {
+                "nav.home": "Domů",
+                "nav.about": "O nás",
+                "nav.tools": "Nástroje",
+                "nav.contact": "Kontakt",
+                "hero.title": "Bezplatný nástroj pro rozostření obrázků",
+                "hero.description": "Rozostřete své obrázky okamžitě s naším bezplatným nástrojem. Aplikujte úplné rozostření, selektivní rozostření nebo rozostření pozadí. Není vyžadována registrace.",
+                "howto.title": "Jak rozostřit vaše obrázky",
+                "howto.step1.title": "Nahrajte svůj obrázek",
+                "howto.step1.description": "Klikněte na oblast pro nahrávání nebo přetáhněte soubor obrázku. Podporujeme JPG, PNG, GIF, WEBP a další.",
+                "howto.step2.title": "Zvolte typ rozostření",
+                "howto.step2.description": "Vyberte si mezi úplným rozostřením, selektivním rozostřením nebo rozostřením pozadí. Upravte sílu rozostření pomocí posuvníku.",
+                "howto.step3.title": "Aplikujte a zobrazte náhled",
+                "howto.step3.description": "Pro selektivní rozostření použijte nástroj štětec k malování oblastí rozostření. Podívejte se na náhled změn v reálném čase.",
+                "howto.step4.title": "Stáhněte výsledek",
+                "howto.step4.description": "Stáhněte si rozostřený obrázek jedním kliknutím. Bez vodoznaků, bez registrace.",
+                "blur.title": "Nástroj pro rozostření obrázků",
+                "blur.upload.text": "Přetáhněte sem svůj obrázek nebo kliknutím procházejte",
+                "blur.upload.button": "Vybrat obrázek",
+                "blur.options.title": "Možnosti rozostření",
+                "blur.type.title": "Typ rozostření",
+                "blur.type.full": "Úplné rozostření",
+                "blur.type.selective": "Selektivní rozostření",
+                "blur.type.background": "Rozostření pozadí",
+                "blur.strength": "Síla rozostření",
+                "blur.tools.brush": "Štětec",
+                "blur.tools.eraser": "Guma",
+                "blur.brush.size": "Velikost štětce",
+                "blur.brush.opacity": "Neprůhlednost štětce",
+                "blur.format.title": "Výstupní formát",
+                "blur.preview.title": "Náhled",
+                "blur.preview.original": "Původní",
+                "blur.preview.blurred": "Rozostřený",
+                "blur.processing": "Zpracovávání: 0%",
+                "blur.apply": "Použít rozostření",
+                "blur.download": "Stáhnout",
+                "blur.reset": "Obnovit",
+                "blur.controls.zoomIn": "Přiblížit",
+                "blur.controls.zoomOut": "Oddálit",
+                "blur.controls.reset": "Obnovit zobrazení",
+                "footer.follow": "SLEDUJTE NÁS",
+                "footer.categories": "Populární kategorie",
+                "footer.categories.pdf": "PDF nástroje",
+                "footer.categories.image": "Obrázkové nástroje",
+                "footer.categories.text": "Textové nástroje",
+                "footer.categories.av": "Audio/video nástroje",
+                "footer.categories.web": "Web/vývojářské nástroje",
+                "footer.categories.calc": "Kalkulační nástroje",
+                "footer.categories.util": "Užitečné nástroje",
+                "footer.categories.color": "Barevné nástroje",
+                "footer.quicklinks": "Rychlé odkazy",
+                "footer.links.tools": "Všechny nástroje",
+                "footer.links.faq": "Často kladené otázky",
+                "footer.links.contact": "Kontakt",
+                "footer.links.privacy": "Zásady ochrany osobních údajů",
+                "footer.links.disclaimer": "Odmítnutí odpovědnosti",
+                "footer.links.terms": "Podmínky služby",
+                "footer.copyright": "© 2025 LollyPoPDF. Všechna práva vyhrazena."
+            }
+
+        };
+
+        // Function to change language
+        function changeLanguage(langCode) {
+            const langData = translations[langCode];
+            if (!langData) return;
+            
+            // Update all elements with data-i18n attribute
+            document.querySelectorAll('[data-i18n]').forEach(element => {
+                const key = element.getAttribute('data-i18n');
+                if (langData[key]) {
+                    element.textContent = langData[key];
+                }
+            });
+            
+            // Update current language display
+            currentLanguageElement.textContent = languages.find(lang => lang.code === langCode)?.name || 'English';
+            
+            // Save language preference
+            localStorage.setItem('language', langCode);
+        }
+
+        // Initialize language
+        const savedLanguage = localStorage.getItem('language') || 'en';
+        changeLanguage(savedLanguage);
+        
+        // Language selection handler
+        languageDropdown.addEventListener('click', (e) => {
+            if (e.target.classList.contains('language-option')) {
+                const langCode = e.target.getAttribute('data-lang');
+                changeLanguage(langCode);
+            }
+        });
+    </script>
+</body>
+</html>

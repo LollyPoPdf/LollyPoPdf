@@ -1,0 +1,3299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Rotator & Flipper | LollyPoPdf</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #9370db;
+            --primary-dark: #8a2be2;
+            --secondary-color: #f0ebff;
+            --text-color: #333333;
+            --text-light: #6b7280;
+            --bg-color: #ffffff;
+            --bg-secondary: #f9f9f9;
+            --border-radius: 12px;
+            --transition: all 0.3s ease;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --header-height: 80px;
+            --white: #ffffff;
+            --header-text: #6b7280;
+            --accent-color: #9370db;
+        }
+
+        .dark-mode {
+            --primary-color: #a391f2;
+            --primary-dark: #8a2be2;
+            --secondary-color: #2d2d2d;
+            --text-color: #f0f0f0;
+            --text-light: #a0a0a0;
+            --bg-color: #1a1a1a;
+            --bg-secondary: #2d2d2d;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+            --white: #1a1a1a;
+            --header-text: #a0a0a0;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            transition: var(--transition);
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        ul {
+            list-style: none;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header Styles */
+        header {
+            background-color: var(--white);
+            color: var(--header-text);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+        }
+
+        .logo-icon {
+            position: relative;
+            width: 40px;
+            height: 40px;
+        }
+
+        .logo-circle {
+            width: 40px;
+            height: 40px;
+            border-radius: 40%;
+            background: linear-gradient(to bottom right, #9370db, #8a2be2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .logo-stem {
+            position: absolute;
+            bottom: -17px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 6px;
+            height: 17px;
+            background-color: #8a2be2;
+            border-radius: 0 0 3px 3px;
+        }
+
+        .logo-text {
+            font-size: 24px;
+            font-weight: bold;
+            color: #9370db;
+        }
+
+        nav ul {
+            display: flex;
+            gap: 30px;
+            list-style: none;
+        }
+
+        nav a {
+            font-weight: 500;
+            position: relative;
+            color: var(--header-text);
+            padding: 8px 0;
+            border-radius: 0;
+            transition: var(--transition);
+            text-decoration: none;
+        }
+
+        nav a:hover {
+            color: var(--accent-color);
+        }
+
+        nav a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: var(--accent-color);
+            transition: width 0.3s ease;
+        }
+
+        nav a:hover::after {
+            width: 100%;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .email {
+            font-size: 14px;
+            color: var(--header-text);
+        }
+
+        .theme-toggle {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 20px;
+            color: var(--header-text);
+            padding: 8px;
+            border-radius: 50%;
+            transition: var(--transition);
+        }
+
+        .theme-toggle:hover {
+            background-color: #f0ebff;
+            color: var(--accent-color);
+        }
+
+        .dark-mode .theme-toggle:hover {
+            background-color: #2d3748;
+            color: var(--accent-color);
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--header-text);
+        }
+
+        /* Mobile Menu */
+        .mobile-menu {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            width: 100%;
+            background-color: var(--white);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            z-index: 999;
+        }
+
+        .dark-mode .mobile-menu {
+            background-color: var(--bg-secondary);
+        }
+
+        .mobile-menu.active {
+            display: block;
+        }
+
+        .mobile-menu ul {
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .mobile-menu a {
+            display: block;
+            padding: 10px 0;
+            font-weight: 500;
+            color: var(--header-text);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .dark-mode .mobile-menu a {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .mobile-menu a:hover {
+            color: var(--accent-color);
+        }
+
+        /* Hero Section */
+        .hero {
+            background-color: var(--secondary-color);
+            padding: 60px 0;
+            text-align: center;
+        }
+
+        .dark-mode .hero {
+            background: linear-gradient(135deg, #2a1a4a, #3d2a6d);
+        }
+
+        .hero h1 {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            color: #000;
+        }
+
+        .dark-mode .hero h1 {
+            color: var(--text-color);
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            color: var(--text-color);
+            max-width: 700px;
+            margin: 0 auto 30px;
+        }
+
+        /* How to Rotate Section */
+        .how-to-section {
+            padding: 80px 0;
+            background-color: var(--bg-color);
+        }
+
+        .dark-mode .how-to-section {
+            background-color: var(--bg-secondary);
+        }
+
+        .section-title {
+            font-size: 2rem;
+            text-align: center;
+            margin-bottom: 40px;
+            color: #000000;
+        }
+
+        .dark-mode .section-title {
+            color: var(--text-color);
+        }
+
+        .steps-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 40px;
+        }
+
+        .step-box {
+            background-color: var(--bg-secondary);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            padding: 30px;
+            min-height: 200px;
+            position: relative;
+        }
+
+        .step-number {
+            width: 40px;
+            height: 40px;
+            background-color: var(--primary-color);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 16px;
+            margin-bottom: 15px;
+        }
+
+        .step-title {
+            font-size: 18px;
+            color: #000000;
+            margin-bottom: 10px;
+        }
+
+        .dark-mode .step-title {
+            color: var(--text-color);
+        }
+
+        .step-description {
+            font-size: 14px;
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        /* Rotator Tool */
+        .rotator-section {
+            padding: 80px 0;
+            background-color: var(--secondary-color);
+        }
+
+        .dark-mode .rotator-section {
+            background: linear-gradient(135deg, #2a1a4a, #3d2a6d);
+        }
+
+        .rotator-title {
+            font-size: 2.5rem;
+            text-align: center;
+            margin-bottom: 40px;
+            color: #a391f2;
+        }
+
+        .dark-mode .rotator-title {
+            color: #a391f2;
+        }
+
+        .rotator-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background-color: var(--bg-color);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            padding: 40px;
+        }
+
+        .upload-area {
+            border: 2px dashed var(--primary-color);
+            border-radius: var(--border-radius);
+            padding: 40px 20px;
+            text-align: center;
+            margin-bottom: 30px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .upload-area:hover {
+            background-color: var(--secondary-color);
+        }
+
+        .upload-icon {
+            font-size: 48px;
+            color: var(--primary-color);
+            margin-bottom: 15px;
+        }
+
+        .upload-text {
+            margin-bottom: 15px;
+        }
+
+        .upload-btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: var(--transition);
+        }
+
+        .upload-btn:hover {
+            background-color: var(--primary-dark);
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        .rotator-options {
+            margin-bottom: 30px;
+            display: none;
+        }
+
+        .rotator-title {
+            margin-bottom: 15px;
+            color: var(--primary-color);
+        }
+
+        .rotation-controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .rotation-btn {
+            padding: 12px 20px;
+            background-color: var(--bg-secondary);
+            border: 2px solid var(--primary-color);
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: var(--transition);
+        }
+
+        .rotation-btn:hover {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .format-selection {
+            margin-top: 20px;
+        }
+
+        .format-title {
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        .format-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .format-btn {
+            padding: 8px 15px;
+            background-color: var(--bg-secondary);
+            border: 1px solid var(--primary-color);
+            border-radius: 20px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .format-btn.active {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .format-btn:hover {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .preview-container {
+            display: none;
+            margin-bottom: 30px;
+        }
+
+        .preview-title {
+            margin-bottom: 15px;
+            color: var(--primary-color);
+        }
+
+        .preview-content {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .preview-box {
+            flex: 1;
+            min-width: 250px;
+            text-align: center;
+        }
+
+        .preview-label {
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        .preview-img {
+            max-width: 100%;
+            max-height: 300px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            object-fit: contain;
+        }
+
+        .file-info {
+            margin-top: 10px;
+            font-size: 14px;
+            color: var(--text-light);
+        }
+
+        .processing {
+            display: none;
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .spinner {
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            border-left-color: var(--primary-color);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background-color: var(--bg-secondary);
+            border-radius: 4px;
+            margin: 15px 0;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background-color: var(--primary-color);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .progress-text {
+            font-size: 14px;
+            color: var(--text-light);
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .action-buttons {
+            display: none;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .action-btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: var(--transition);
+            flex: 1;
+            min-width: 150px;
+        }
+
+        .rotate-btn {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .rotate-btn:hover {
+            background-color: var(--primary-dark);
+        }
+
+        .download-btn {
+            background-color: white;
+            color: var(--primary-color);
+            border: 2px solid var(--primary-color);
+        }
+
+        .download-btn:hover {
+            background-color: var(--secondary-color);
+        }
+
+        .reset-btn {
+            background-color: var(--text-light);
+            color: white;
+        }
+
+        .reset-btn:hover {
+            background-color: #5a6268;
+        }
+
+        /* Footer */
+        footer {
+            background-color: #000000;
+            color: white;
+            padding: 60px 0 80px;
+            position: relative;
+        }
+
+        .footer-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 60px;
+        }
+
+        .footer-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            text-decoration: none;
+        }
+
+        .footer-logo .logo-icon {
+            width: 40px;
+            height: 40px;
+        }
+
+        .footer-logo .logo-text {
+            color: #9370db;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .footer-section h3 {
+            color: white;
+            font-weight: 600;
+            font-size: 20px;
+            margin-bottom: 20px;
+        }
+
+        .footer-section h4 {
+            color: #9370db;
+            font-size: 18px;
+            margin-bottom: 15px;
+        }
+
+        .footer-links li {
+            margin-bottom: 10px;
+        }
+
+        .footer-links a {
+            color: white;
+        }
+
+        .footer-links a:hover {
+            color: #9370db;
+        }
+
+        .social-icons {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .social-icon {
+            width: 40px;
+            height: 40px;
+            background-color: #9370db;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+        }
+
+        .social-icon:hover {
+            background-color: #8a2be2;
+            transform: translateY(-3px);
+        }
+
+        .copyright {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            color: #f9f7ff;
+            font-size: 12px;
+        }
+
+        .footer-line {
+            position: absolute;
+            bottom: 50px;
+            left: 0;
+            width: 100%;
+            height: 1px;
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        /* Language Switcher */
+        .language-switcher {
+            position: fixed;
+            bottom: 10px;
+            right: 10px;
+            z-index: 1000;
+        }
+
+        .language-btn {
+            background-color: #9370db;
+            color: white;
+            border: none;
+            border-radius: 30px;
+            padding: 5px 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .language-dropdown {
+            position: absolute;
+            bottom: 100%;
+            right: 0;
+            width: 300px;
+            background-color: white;
+            border-radius: var(--border-radius);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            display: none;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .dark-mode .language-dropdown {
+            background-color: var(--bg-secondary);
+        }
+
+        .language-switcher:hover .language-dropdown {
+            display: grid;
+        }
+
+        .language-option {
+            padding: 8px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            text-align: center;
+            font-size: 14px;
+        }
+
+        .language-option:hover {
+            background-color: white;
+            color: #9370db;
+        }
+
+        .dark-mode .language-option:hover {
+            background-color: var(--bg-color);
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 992px) {
+            .steps-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .footer-container {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            nav ul, .email {
+                display: none;
+            }
+            
+            .mobile-menu-btn {
+                display: block;
+            }
+            
+            .hero h1, .rotator-title {
+                font-size: 2rem;
+            }
+            
+            .hero p {
+                font-size: 1rem;
+            }
+            
+            .preview-content {
+                flex-direction: column;
+            }
+            
+            .language-dropdown {
+                width: 250px;
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .footer-container {
+                grid-template-columns: 1fr;
+                gap: 40px;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .rotator-container {
+                padding: 20px;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+            
+            .action-btn {
+                width: 100%;
+            }
+            
+            .rotation-controls {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container header-container">
+            <a href="https://lollypopdf.com" class="logo">
+                <div class="logo-icon">
+                    <div class="logo-circle">LPdf</div>
+                    <div class="logo-stem"></div>
+                </div>
+                <span class="logo-text">LollyPoPdf</span>
+            </a>
+            
+            <nav>
+                <ul>
+                    <li><a href="https://lollypopdf.github.io/LollyPoPdf#home" class="nav-link" data-i18n="nav.home">Home</a></li>
+                    <li><a href="https://lollypopdf.github.io/LollyPoPdf#about" class="nav-link" data-i18n="nav.about">About Us</a></li>
+                    <li><a href="https://lollypopdf.github.io/LollyPoPdf#tools" class="nav-link" data-i18n="nav.tools">Tools</a></li>
+                    <li><a href="contact.html" class="nav-link" data-i18n="nav.contact">Contact</a></li>
+                </ul>
+            </nav>
+            
+            <div class="header-right">
+                <span class="email">lollypoppdf@gmail.com</span>
+                <button class="theme-toggle" id="themeToggle">
+                    <i class="fas fa-moon"></i>
+                </button>
+                <button class="mobile-menu-btn" id="mobileMenuBtn">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </div>
+        
+        <!-- Mobile Menu -->
+        <div class="mobile-menu" id="mobileMenu">
+            <ul>
+                <li><a href="https://lollypopdf.github.io/LollyPoPdf#home" class="nav-link" data-i18n="nav.home">Home</a></li>
+                <li><a href="https://lollypopdf.github.io/LollyPoPdf#about" class="nav-link" data-i18n="nav.about">About Us</a></li>
+                <li><a href="https://lollypopdf.github.io/LollyPoPdf#tools" class="nav-link" data-i18n="nav.tools">Tools</a></li>
+                <li><a href="contact.html" class="nav-link" data-i18n="nav.contact">Contact</a></li>
+            </ul>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <h1 data-i18n="hero.title">Free Image Rotator & Flipper</h1>
+            <p data-i18n="hero.description">Rotate and flip your images instantly with our free tool. Supports multiple formats, no registration required.</p>
+        </div>
+    </section>
+
+    <!-- How to Rotate Section -->
+    <section class="how-to-section">
+        <div class="container">
+            <h2 class="section-title" data-i18n="howto.title">How to Rotate & Flip Images</h2>
+            <div class="steps-container">
+                <div class="step-box">
+                    <div class="step-number">1</div>
+                    <h3 class="step-title" data-i18n="howto.step1.title">Upload Your Image</h3>
+                    <p class="step-description" data-i18n="howto.step1.description">Click the upload area or drag and drop your image file. We support JPG, PNG, GIF, WEBP and more.</p>
+                </div>
+                <div class="step-box">
+                    <div class="step-number">2</div>
+                    <h3 class="step-title" data-i18n="howto.step2.title">Rotate or Flip</h3>
+                    <p class="step-description" data-i18n="howto.step2.description">Use the rotation buttons to rotate left/right or flip horizontally/vertically. See real-time preview.</p>
+                </div>
+                <div class="step-box">
+                    <div class="step-number">3</div>
+                    <h3 class="step-title" data-i18n="howto.step3.title">Choose Format</h3>
+                    <p class="step-description" data-i18n="howto.step3.description">Select your preferred output format from PNG, JPG, JPEG, BMP, GIF, WEBP, and TIFF.</p>
+                </div>
+                <div class="step-box">
+                    <div class="step-number">4</div>
+                    <h3 class="step-title" data-i18n="howto.step4.title">Download Result</h3>
+                    <p class="step-description" data-i18n="howto.step4.description">Download your rotated/flipped image with the click of a button. No watermarks, no registration required.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Rotator Tool -->
+    <section class="rotator-section">
+        <div class="container">
+            <h2 class="rotator-title" data-i18n="rotator.title">Image Rotator & Flipper Tool</h2>
+            <div class="rotator-container">
+                <div class="upload-area" id="uploadArea">
+                    <i class="fas fa-cloud-upload-alt upload-icon"></i>
+                    <p class="upload-text" data-i18n="rotator.upload.text">Drag & drop your image here or click to browse</p>
+                    <button class="upload-btn" data-i18n="rotator.upload.button">Select Image</button>
+                    <input type="file" id="fileInput" class="file-input" accept="image/*">
+                </div>
+                
+                <div class="rotator-options" id="rotatorOptions">
+                    <h3 class="rotator-title" data-i18n="rotator.options.title">Rotation & Flip Options</h3>
+                    
+                    <div class="rotation-controls">
+                        <button class="rotation-btn" id="rotateLeftBtn">
+                            <i class="fas fa-undo"></i>
+                            <span data-i18n="rotator.controls.rotateLeft">Rotate Left</span>
+                        </button>
+                        <button class="rotation-btn" id="rotateRightBtn">
+                            <i class="fas fa-redo"></i>
+                            <span data-i18n="rotator.controls.rotateRight">Rotate Right</span>
+                        </button>
+                        <button class="rotation-btn" id="flipHorizontalBtn">
+                            <i class="fas fa-arrows-alt-h"></i>
+                            <span data-i18n="rotator.controls.flipHorizontal">Flip Horizontal</span>
+                        </button>
+                        <button class="rotation-btn" id="flipVerticalBtn">
+                            <i class="fas fa-arrows-alt-v"></i>
+                            <span data-i18n="rotator.controls.flipVertical">Flip Vertical</span>
+                        </button>
+                    </div>
+                    
+                    <div class="format-selection">
+                        <div class="format-title" data-i18n="rotator.format.title">Output Format</div>
+                        <div class="format-buttons">
+                            <button class="format-btn active" data-format="png">PNG</button>
+                            <button class="format-btn" data-format="jpg">JPG</button>
+                            <button class="format-btn" data-format="jpeg">JPEG</button>
+                            <button class="format-btn" data-format="bmp">BMP</button>
+                            <button class="format-btn" data-format="gif">GIF</button>
+                            <button class="format-btn" data-format="tiff">TIFF</button>
+                            <button class="format-btn" data-format="webp">WEBP</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="preview-container" id="previewContainer">
+                    <h3 class="preview-title" data-i18n="rotator.preview.title">Preview</h3>
+                    <div class="preview-content">
+                        <div class="preview-box">
+                            <div class="preview-label" data-i18n="rotator.preview.original">Original</div>
+                            <img id="originalPreview" class="preview-img" src="" alt="Original Image">
+                            <div class="file-info" id="originalInfo"></div>
+                        </div>
+                        <div class="preview-box">
+                            <div class="preview-label" data-i18n="rotator.preview.rotated">Rotated/Flipped</div>
+                            <img id="rotatedPreview" class="preview-img" src="" alt="Rotated Image">
+                            <div class="file-info" id="rotatedInfo"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="processing" id="processing">
+                    <div class="spinner"></div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progressFill"></div>
+                    </div>
+                    <p class="progress-text" id="progressText" data-i18n="rotator.processing">Processing: 0%</p>
+                </div>
+                
+                <div class="action-buttons" id="actionButtons">
+                    <button class="action-btn rotate-btn" id="rotateActionBtn" data-i18n="rotator.rotate">Apply Rotation</button>
+                    <button class="action-btn download-btn" id="downloadBtn" data-i18n="rotator.download">Download</button>
+                    <button class="action-btn reset-btn" id="resetBtn" data-i18n="rotator.reset">Reset</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container footer-container">
+            <!-- Left Section -->
+            <div class="footer-section">
+                <a href="https://lollypopdf.com" class="footer-logo">
+                    <div class="logo-icon">
+                        <div class="logo-circle">LPdf</div>
+                        <div class="logo-stem"></div>
+                    </div>
+                    <span class="logo-text">LollyPoPdf</span>
+                </a>
+                <h3 data-i18n="footer.follow">FOLLOW US</h3>
+                <div class="social-icons">
+                    <a href="https://facebook.com/lollypopdf" class="social-icon"><i class="fab fa-facebook-f"></i></a>
+                    <a href="https://linkedin.com/company/lollypopdf" class="social-icon"><i class="fab fa-linkedin-in"></i></a>
+                    <a href="https://twitter.com/lollypopdf" class="social-icon"><i class="fab fa-twitter"></i></a>
+                    <a href="https://instagram.com/lollypopdf" class="social-icon"><i class="fab fa-instagram"></i></a>
+                    <a href="https://pinterest.com/lollypopdf" class="social-icon"><i class="fab fa-pinterest-p"></i></a>
+                </div>
+            </div>
+            
+            <!-- Middle Section - Popular Categories -->
+            <div class="footer-section">
+                <h4 data-i18n="footer.categories">Popular Categories</h4>
+                <ul class="footer-links">
+                    <li><a href="https://lollypopdf.com#pdf-tools" data-i18n="footer.categories.pdf">PDF Tools</a></li>
+                    <li><a href="https://lollypopdf.com#image-tools" data-i18n="footer.categories.image">Image Tools</a></li>
+                    <li><a href="https://lollypopdf.com#text-tools" data-i18n="footer.categories.text">Text Tools</a></li>
+                    <li><a href="https://lollypopdf.com#audio-video-tools" data-i18n="footer.categories.av">Audio/Video Tools</a></li>
+                    <li><a href="https://lollypopdf.com#web-developer-tools" data-i18n="footer.categories.web">WebDeveloper Tools</a></li>
+                    <li><a href="https://lollypopdf.com#calculator-tools" data-i18n="footer.categories.calc">Calculator Tools</a></li>
+                    <li><a href="https://lollypopdf.com#utility-tools" data-i18n="footer.categories.util">Utility Tools</a></li>
+                    <li><a href="https://lollypopdf.com#color-tools" data-i18n="footer.categories.color">Color Tools</a></li>
+                </ul>
+            </div>
+            
+            <!-- Right Section - Quick Links -->
+            <div class="footer-section">
+                <h4 data-i18n="footer.quicklinks">Quick Links</h4>
+                <ul class="footer-links">
+                    <li><a href="https://lollypopdf.github.io/LollyPoPdf#home" data-i18n="nav.home">Home</a></li>
+                    <li><a href="https://lollypopdf.github.io/LollyPoPdf#tools" data-i18n="footer.links.tools">All Tools</a></li>
+                    <li><a href="faq.html" data-i18n="footer.links.faq">FAQ</a></li>
+                    <li><a href="contact.html" data-i18n="footer.links.contact">Contact</a></li>
+                    <li><a href="privacy-policy.html" data-i18n="footer.links.privacy">Privacy Policy</a></li>
+                    <li><a href="disclaimer.html" data-i18n="footer.links.disclaimer">Disclaimer</a></li>
+                    <li><a href="terms.html" data-i18n="footer.links.terms">Terms of Service</a></li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="footer-line"></div>
+        <div class="copyright" data-i18n="footer.copyright">© 2025 LollyPoPDF. All rights reserved.</div>
+    </footer>
+
+    <!-- Language Switcher -->
+    <div class="language-switcher">
+        <button class="language-btn">
+            <i class="fas fa-globe"></i>
+            <span id="currentLanguage">English</span>
+        </button>
+        <div class="language-dropdown">
+            <div class="language-option" data-lang="en">English</div>
+            <div class="language-option" data-lang="es">Español</div>
+            <div class="language-option" data-lang="fr">Français</div>
+            <div class="language-option" data-lang="de">Deutsch</div>
+            <div class="language-option" data-lang="it">Italiano</div>
+            <div class="language-option" data-lang="pt">Português</div>
+            <div class="language-option" data-lang="ja">日本語</div>
+            <div class="language-option" data-lang="ru">Pусский</div>
+            <div class="language-option" data-lang="ko">한국어</div>
+            <div class="language-option" data-lang="zh-CN">中文 (简体)</div>
+            <div class="language-option" data-lang="zh-TW">中文 (繁體)</div>
+            <div class="language-option" data-lang="ar">العربية</div>
+            <div class="language-option" data-lang="fa">فارسی</div>
+            <div class="language-option" data-lang="bg">Български</div>
+            <div class="language-option" data-lang="ca">Català</div>
+            <div class="language-option" data-lang="nl">Nederlands</div>
+            <div class="language-option" data-lang="el">Ελληνικά</div>
+            <div class="language-option" data-lang="hi">हिन्दी</div>
+            <div class="language-option" data-lang="te">తెలుగు</div>
+            <div class="language-option" data-lang="kn">ಕನ್ನಡ</div>
+            <div class="language-option" data-lang="ta">தமிழ்</div>
+            <div class="language-option" data-lang="ml">മലയാളം</div>
+            <div class="language-option" data-lang="id">Bahasa Indonesia</div>
+            <div class="language-option" data-lang="ms">Bahasa Melayu</div>
+            <div class="language-option" data-lang="pl">Polski</div>
+            <div class="language-option" data-lang="th">ภาษาไทย</div>
+            <div class="language-option" data-lang="tr">Türkçe</div>
+            <div class="language-option" data-lang="uk">Українська</div>
+            <div class="language-option" data-lang="vi">Tiếng Việt</div>
+            <div class="language-option" data-lang="is">Íslenska</div>
+            <div class="language-option" data-lang="no">Norsk</div>
+            <div class="language-option" data-lang="sv">Svenska</div>
+            <div class="language-option" data-lang="fi">Suomi</div>
+            <div class="language-option" data-lang="cs">Čeština</div>
+        </div>
+    </div>
+
+    <script>
+        // Theme Toggle
+        const themeToggle = document.getElementById('themeToggle');
+        const body = document.body;
+        
+        // Check for saved theme preference or respect OS preference
+        const savedTheme = localStorage.getItem('theme') || 
+            (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        
+        if (savedTheme === 'dark') {
+            body.classList.add('dark-mode');
+            themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+        }
+        
+        themeToggle.addEventListener('click', () => {
+            body.classList.toggle('dark-mode');
+            const isDarkMode = body.classList.contains('dark-mode');
+            
+            if (isDarkMode) {
+                themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+                localStorage.setItem('theme', 'dark');
+            } else {
+                themeToggle.innerHTML = '<i class="fas fa-moon"></i>';
+                localStorage.setItem('theme', 'light');
+            }
+        });
+
+        // Mobile Menu Toggle
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const mobileMenu = document.getElementById('mobileMenu');
+        
+        mobileMenuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('active');
+            
+            // Change icon based on menu state
+            if (mobileMenu.classList.contains('active')) {
+                mobileMenuBtn.innerHTML = '<i class="fas fa-times"></i>';
+            } else {
+                mobileMenuBtn.innerHTML = '<i class="fas fa-bars"></i>';
+            }
+        });
+
+        // Close mobile menu when clicking on a link
+        const mobileMenuLinks = mobileMenu.querySelectorAll('a');
+        mobileMenuLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                mobileMenu.classList.remove('active');
+                mobileMenuBtn.innerHTML = '<i class="fas fa-bars"></i>';
+            });
+        });
+
+        // Image Rotator Functionality
+        const uploadArea = document.getElementById('uploadArea');
+        const fileInput = document.getElementById('fileInput');
+        const originalPreview = document.getElementById('originalPreview');
+        const rotatedPreview = document.getElementById('rotatedPreview');
+        const originalInfo = document.getElementById('originalInfo');
+        const rotatedInfo = document.getElementById('rotatedInfo');
+        const previewContainer = document.getElementById('previewContainer');
+        const rotateActionBtn = document.getElementById('rotateActionBtn');
+        const downloadBtn = document.getElementById('downloadBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        const processing = document.getElementById('processing');
+        const progressFill = document.getElementById('progressFill');
+        const progressText = document.getElementById('progressText');
+        const rotatorOptions = document.getElementById('rotatorOptions');
+        const actionButtons = document.getElementById('actionButtons');
+        
+        // Rotation buttons
+        const rotateLeftBtn = document.getElementById('rotateLeftBtn');
+        const rotateRightBtn = document.getElementById('rotateRightBtn');
+        const flipHorizontalBtn = document.getElementById('flipHorizontalBtn');
+        const flipVerticalBtn = document.getElementById('flipVerticalBtn');
+        
+        // Format buttons
+        const formatButtons = document.querySelectorAll('.format-btn');
+        
+        let currentFile = null;
+        let rotatedBlob = null;
+        let currentRotation = 0;
+        let currentFlipH = false;
+        let currentFlipV = false;
+        let currentFormat = 'png';
+        
+        // Upload area click handler
+        uploadArea.addEventListener('click', () => {
+            fileInput.click();
+        });
+        
+        // File input change handler
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                handleFile(e.target.files[0]);
+            }
+        });
+        
+        // Drag and drop functionality
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.style.backgroundColor = 'var(--secondary-color)';
+        });
+        
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.style.backgroundColor = '';
+        });
+        
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.style.backgroundColor = '';
+            
+            if (e.dataTransfer.files.length > 0) {
+                handleFile(e.dataTransfer.files[0]);
+            }
+        });
+        
+        // Handle the selected file - NO FILE SIZE LIMITS
+        function handleFile(file) {
+            // Check if file is an image
+            if (!file.type.match('image.*')) {
+                alert('Please select an image file (JPG, PNG, GIF, etc.)');
+                return;
+            }
+            
+            // NO FILE SIZE LIMITS - UNLIMITED USE
+            currentFile = file;
+            
+            // Display original image preview
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                originalPreview.src = e.target.result;
+                originalInfo.textContent = `${file.name} (${formatFileSize(file.size)})`;
+                previewContainer.style.display = 'block';
+                
+                // Reset rotation and flip
+                currentRotation = 0;
+                currentFlipH = false;
+                currentFlipV = false;
+                rotatedPreview.src = e.target.result;
+                
+                // Show the rotator options after image is uploaded
+                rotatorOptions.style.display = 'block';
+                actionButtons.style.display = 'flex';
+            };
+            reader.readAsDataURL(file);
+        }
+        
+        // Rotation and flip handlers
+        rotateLeftBtn.addEventListener('click', () => {
+            currentRotation -= 90;
+            updatePreview();
+        });
+        
+        rotateRightBtn.addEventListener('click', () => {
+            currentRotation += 90;
+            updatePreview();
+        });
+        
+        flipHorizontalBtn.addEventListener('click', () => {
+            currentFlipH = !currentFlipH;
+            updatePreview();
+        });
+        
+        flipVerticalBtn.addEventListener('click', () => {
+            currentFlipV = !currentFlipV;
+            updatePreview();
+        });
+        
+        // Format selection
+        formatButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                // Remove active class from all buttons
+                formatButtons.forEach(btn => btn.classList.remove('active'));
+                
+                // Add active class to clicked button
+                button.classList.add('active');
+                
+                // Set current format
+                currentFormat = button.getAttribute('data-format');
+            });
+        });
+        
+        // Update preview with current transformations
+        function updatePreview() {
+            if (!currentFile) return;
+            
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const img = new Image();
+                img.onload = function() {
+                    // Create canvas for transformations
+                    const canvas = document.createElement('canvas');
+                    const ctx = canvas.getContext('2d');
+                    
+                    // Calculate dimensions based on rotation
+                    let width = img.width;
+                    let height = img.height;
+                    
+                    // If rotation is 90 or 270 degrees, swap width and height
+                    if (Math.abs(currentRotation) % 180 === 90) {
+                        width = img.height;
+                        height = img.width;
+                    }
+                    
+                    canvas.width = width;
+                    canvas.height = height;
+                    
+                    // Apply transformations
+                    ctx.save();
+                    
+                    // Translate to center
+                    ctx.translate(width / 2, height / 2);
+                    
+                    // Apply rotation
+                    ctx.rotate(currentRotation * Math.PI / 180);
+                    
+                    // Apply flips
+                    let scaleX = currentFlipH ? -1 : 1;
+                    let scaleY = currentFlipV ? -1 : 1;
+                    ctx.scale(scaleX, scaleY);
+                    
+                    // Draw image
+                    ctx.drawImage(img, -img.width / 2, -img.height / 2);
+                    
+                    ctx.restore();
+                    
+                    // Update preview
+                    rotatedPreview.src = canvas.toDataURL();
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(currentFile);
+        }
+        
+        // Apply rotation and create downloadable blob
+        function applyRotation() {
+            if (!currentFile) {
+                alert('Please select an image first');
+                return;
+            }
+            
+            processing.style.display = 'block';
+            rotateActionBtn.disabled = true;
+            
+            // Reset progress
+            updateProgress(0);
+            
+            // Simulate progress steps
+            let progress = 0;
+            const progressInterval = setInterval(() => {
+                progress += 5;
+                updateProgress(progress);
+                
+                if (progress >= 100) {
+                    clearInterval(progressInterval);
+                    performRotation();
+                }
+            }, 50);
+        }
+        
+        // Update progress bar and text
+        function updateProgress(percent) {
+            progressFill.style.width = `${percent}%`;
+            progressText.textContent = `Processing: ${percent}%`;
+        }
+        
+        // Perform the actual rotation
+        function performRotation() {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const img = new Image();
+                img.onload = function() {
+                    // Create canvas for transformations
+                    const canvas = document.createElement('canvas');
+                    const ctx = canvas.getContext('2d');
+                    
+                    // Calculate dimensions based on rotation
+                    let width = img.width;
+                    let height = img.height;
+                    
+                    // If rotation is 90 or 270 degrees, swap width and height
+                    if (Math.abs(currentRotation) % 180 === 90) {
+                        width = img.height;
+                        height = img.width;
+                    }
+                    
+                    canvas.width = width;
+                    canvas.height = height;
+                    
+                    // Apply transformations
+                    ctx.save();
+                    
+                    // Translate to center
+                    ctx.translate(width / 2, height / 2);
+                    
+                    // Apply rotation
+                    ctx.rotate(currentRotation * Math.PI / 180);
+                    
+                    // Apply flips
+                    let scaleX = currentFlipH ? -1 : 1;
+                    let scaleY = currentFlipV ? -1 : 1;
+                    ctx.scale(scaleX, scaleY);
+                    
+                    // Draw image
+                    ctx.drawImage(img, -img.width / 2, -img.height / 2);
+                    
+                    ctx.restore();
+                    
+                    // Convert to blob
+                    canvas.toBlob((blob) => {
+                        rotatedBlob = blob;
+                        const rotatedUrl = URL.createObjectURL(blob);
+                        
+                        rotatedPreview.src = rotatedUrl;
+                        rotatedInfo.textContent = `rotated.${currentFormat} (${formatFileSize(blob.size)})`;
+                        
+                        processing.style.display = 'none';
+                        rotateActionBtn.disabled = false;
+                    }, `image/${currentFormat}`);
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(currentFile);
+        }
+        
+        // Format file size
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+        
+        // Get file extension
+        function getFileExtension(filename) {
+            return filename.split('.').pop();
+        }
+        
+        // Rotate button handler
+        rotateActionBtn.addEventListener('click', applyRotation);
+        
+        // Download button handler
+        downloadBtn.addEventListener('click', () => {
+            if (!rotatedBlob) {
+                alert('Please rotate/flip an image first');
+                return;
+            }
+            
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(rotatedBlob);
+            a.download = `rotated.${currentFormat}`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        });
+        
+        // Reset button handler
+        resetBtn.addEventListener('click', () => {
+            currentFile = null;
+            rotatedBlob = null;
+            fileInput.value = '';
+            originalPreview.src = '';
+            rotatedPreview.src = '';
+            originalInfo.textContent = '';
+            rotatedInfo.textContent = '';
+            previewContainer.style.display = 'none';
+            processing.style.display = 'none';
+            rotateActionBtn.disabled = false;
+            
+            // Hide rotator options
+            rotatorOptions.style.display = 'none';
+            actionButtons.style.display = 'none';
+            
+            // Reset progress
+            updateProgress(0);
+            
+            // Reset rotation and flip
+            currentRotation = 0;
+            currentFlipH = false;
+            currentFlipV = false;
+            
+            // Reset format
+            formatButtons.forEach(btn => btn.classList.remove('active'));
+            document.querySelector('.format-btn[data-format="png"]').classList.add('active');
+            currentFormat = 'png';
+        });
+
+        // Language Switcher
+        const languageBtn = document.querySelector('.language-btn');
+        const currentLanguageElement = document.getElementById('currentLanguage');
+        const languageDropdown = document.querySelector('.language-dropdown');
+        
+        const languages = [
+            { code: 'en', name: 'English' },
+            { code: 'es', name: 'Español' },
+            { code: 'fr', name: 'Français' },
+            { code: 'de', name: 'Deutsch' },
+            { code: 'it', name: 'Italiano' },
+            { code: 'pt', name: 'Português' },
+            { code: 'ja', name: '日本語' },
+            { code: 'ru', name: 'Pусский' },
+            { code: 'ko', name: '한국어' },
+            { code: 'zh-CN', name: '中文 (简体)' },
+            { code: 'zh-TW', name: '中文 (繁體)' },
+            { code: 'ar', name: 'العربية' },
+            { code: 'fa', name: 'فارسی' },
+            { code: 'bg', name: 'Български' },
+            { code: 'ca', name: 'Català' },
+            { code: 'nl', name: 'Nederlands' },
+            { code: 'el', name: 'Ελληνικά' },
+            { code: 'hi', name: 'हिन्दी' },
+            { code: 'te', name: 'తెలుగు' },
+            { code: 'kn', name: 'ಕನ್ನಡ' },
+            { code: 'ta', name: 'தமிழ்' },
+            { code: 'ml', name: 'മലയാളം' },
+            { code: 'id', name: 'Bahasa Indonesia' },
+            { code: 'ms', name: 'Bahasa Melayu' },
+            { code: 'pl', name: 'Polski' },
+            { code: 'th', name: 'ภาษาไทย' },
+            { code: 'tr', name: 'Türkçe' },
+            { code: 'uk', name: 'Українська' },
+            { code: 'vi', name: 'Tiếng Việt' },
+            { code: 'is', name: 'Íslenska' },
+            { code: 'no', name: 'Norsk' },
+            { code: 'sv', name: 'Svenska' },
+            { code: 'fi', name: 'Suomi' },
+            { code: 'cs', name: 'Čeština' }
+        ];
+        
+        // Translation data
+        const translations = {
+            en: {
+                "nav.home": "Home",
+                "nav.about": "About Us",
+                "nav.tools": "Tools",
+                "nav.contact": "Contact",
+                "hero.title": "Free Image Rotator & Flipper",
+                "hero.description": "Rotate and flip your images instantly with our free tool. Supports multiple formats, no registration required.",
+                "howto.title": "How to Rotate & Flip Images",
+                "howto.step1.title": "Upload Your Image",
+                "howto.step1.description": "Click the upload area or drag and drop your image file. We support JPG, PNG, GIF, WEBP and more.",
+                "howto.step2.title": "Rotate or Flip",
+                "howto.step2.description": "Use the rotation buttons to rotate left/right or flip horizontally/vertically. See real-time preview.",
+                "howto.step3.title": "Choose Format",
+                "howto.step3.description": "Select your preferred output format from PNG, JPG, JPEG, BMP, GIF, WEBP, and TIFF.",
+                "howto.step4.title": "Download Result",
+                "howto.step4.description": "Download your rotated/flipped image with the click of a button. No watermarks, no registration required.",
+                "rotator.title": "Image Rotator & Flipper Tool",
+                "rotator.upload.text": "Drag & drop your image here or click to browse",
+                "rotator.upload.button": "Select Image",
+                "rotator.options.title": "Rotation & Flip Options",
+                "rotator.controls.rotateLeft": "Rotate Left",
+                "rotator.controls.rotateRight": "Rotate Right",
+                "rotator.controls.flipHorizontal": "Flip Horizontal",
+                "rotator.controls.flipVertical": "Flip Vertical",
+                "rotator.format.title": "Output Format",
+                "rotator.preview.title": "Preview",
+                "rotator.preview.original": "Original",
+                "rotator.preview.rotated": "Rotated/Flipped",
+                "rotator.processing": "Processing: 0%",
+                "rotator.rotate": "Apply Rotation",
+                "rotator.download": "Download",
+                "rotator.reset": "Reset",
+                "footer.follow": "FOLLOW US",
+                "footer.categories": "Popular Categories",
+                "footer.categories.pdf": "PDF Tools",
+                "footer.categories.image": "Image Tools",
+                "footer.categories.text": "Text Tools",
+                "footer.categories.av": "Audio/Video Tools",
+                "footer.categories.web": "Web/Developer Tools",
+                "footer.categories.calc": "Calculator Tools",
+                "footer.categories.util": "Utility Tools",
+                "footer.categories.color": "Color Tools",
+                "footer.quicklinks": "Quick Links",
+                "footer.links.tools": "All Tools",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Contact",
+                "footer.links.privacy": "Privacy Policy",
+                "footer.links.disclaimer": "Disclaimer",
+                "footer.links.terms": "Terms of Service",
+                "footer.copyright": "© 2025 LollyPoPDF. All rights reserved."
+            },
+            es: {
+                "nav.home": "Inicio",
+                "nav.about": "Sobre Nosotros",
+                "nav.tools": "Herramientas",
+                "nav.contact": "Contacto",
+                "hero.title": "Rotador y Volteador de Imágenes Gratis",
+                "hero.description": "Rota y voltea tus imágenes instantáneamente con nuestra herramienta gratuita. Soporta múltiples formatos, sin registro requerido.",
+                "howto.title": "Cómo Rotar y Voltear Imágenes",
+                "howto.step1.title": "Sube Tu Imagen",
+                "howto.step1.description": "Haz clic en el área de carga o arrastra y suelta tu archivo de imagen. Admitimos JPG, PNG, GIF, WEBP y más.",
+                "howto.step2.title": "Rotar o Voltear",
+                "howto.step2.description": "Usa los botones de rotación para rotar izquierda/derecha o voltear horizontal/verticalmente. Ve la vista previa en tiempo real.",
+                "howto.step3.title": "Elige Formato",
+                "howto.step3.description": "Selecciona tu formato de salida preferido entre PNG, JPG, JPEG, BMP, GIF, WEBP y TIFF.",
+                "howto.step4.title": "Descargar Resultado",
+                "howto.step4.description": "Descarga tu imagen rotada/volteada con un clic. Sin marcas de agua, sin registro requerido.",
+                "rotator.title": "Herramienta de Rotación y Volteo de Imágenes",
+                "rotator.upload.text": "Arrastra y suelta tu imagen aquí o haz clic para buscar",
+                "rotator.upload.button": "Seleccionar Imagen",
+                "rotator.options.title": "Opciones de Rotación y Volteo",
+                "rotator.controls.rotateLeft": "Rotar Izquierda",
+                "rotator.controls.rotateRight": "Rotar Derecha",
+                "rotator.controls.flipHorizontal": "Voltear Horizontal",
+                "rotator.controls.flipVertical": "Voltear Vertical",
+                "rotator.format.title": "Formato de Salida",
+                "rotator.preview.title": "Vista Previa",
+                "rotator.preview.original": "Original",
+                "rotator.preview.rotated": "Rotada/Volteada",
+                "rotator.processing": "Procesando: 0%",
+                "rotator.rotate": "Aplicar Rotación",
+                "rotator.download": "Descargar",
+                "rotator.reset": "Restablecer",
+                "footer.follow": "SÍGUENOS",
+                "footer.categories": "Categorías Populares",
+                "footer.categories.pdf": "Herramientas PDF",
+                "footer.categories.image": "Herramientas de Imagen",
+                "footer.categories.text": "Herramientas de Texto",
+                "footer.categories.av": "Herramientas de Audio/Video",
+                "footer.categories.web": "Herramientas Web/Desarrollador",
+                "footer.categories.calc": "Herramientas de Calculadora",
+                "footer.categories.util": "Herramientas de Utilidad",
+                "footer.categories.color": "Herramientas de Color",
+                "footer.quicklinks": "Enlaces Rápidos",
+                "footer.links.tools": "Todas las Herramientas",
+                "footer.links.faq": "Preguntas Frecuentes",
+                "footer.links.contact": "Contacto",
+                "footer.links.privacy": "Política de Privacidad",
+                "footer.links.disclaimer": "Descargo de Responsabilidad",
+                "footer.links.terms": "Términos de Servicio",
+                "footer.copyright": "© 2025 LollyPoPDF. Todos los derechos reservados."
+            },
+            fr: {
+                "nav.home": "Accueil",
+                "nav.about": "À propos de nous",
+                "nav.tools": "Outils",
+                "nav.contact": "Contact",
+                "hero.title": "Outil Gratuit de Rotation et Retournement d'Images",
+                "hero.description": "Faites pivoter et retournez vos images instantanément avec notre outil gratuit. Prend en charge plusieurs formats, aucune inscription requise.",
+                "howto.title": "Comment Faire Pivoter et Retourner des Images",
+                "howto.step1.title": "Téléchargez Votre Image",
+                "howto.step1.description": "Cliquez sur la zone de téléchargement ou faites glisser et déposez votre fichier image. Nous prenons en charge JPG, PNG, GIF, WEBP et plus.",
+                "howto.step2.title": "Pivoter ou Retourner",
+                "howto.step2.description": "Utilisez les boutons de rotation pour pivoter à gauche/droite ou retourner horizontalement/verticalement. Voir l'aperçu en temps réel.",
+                "howto.step3.title": "Choisir le Format",
+                "howto.step3.description": "Sélectionnez votre format de sortie préféré parmi PNG, JPG, JPEG, BMP, GIF, WEBP et TIFF.",
+                "howto.step4.title": "Télécharger le Résultat",
+                "howto.step4.description": "Téléchargez votre image pivotée/retournée en un clic. Sans filigrane, sans inscription requise.",
+                "rotator.title": "Outil de Rotation et Retournement d'Images",
+                "rotator.upload.text": "Glissez-déposez votre image ici ou cliquez pour parcourir",
+                "rotator.upload.button": "Sélectionner une Image",
+                "rotator.options.title": "Options de Rotation et Retournement",
+                "rotator.controls.rotateLeft": "Pivoter à Gauche",
+                "rotator.controls.rotateRight": "Pivoter à Droite",
+                "rotator.controls.flipHorizontal": "Retourner Horizontalement",
+                "rotator.controls.flipVertical": "Retourner Verticalement",
+                "rotator.format.title": "Format de Sortie",
+                "rotator.preview.title": "Aperçu",
+                "rotator.preview.original": "Original",
+                "rotator.preview.rotated": "Pivoté/Retourné",
+                "rotator.processing": "Traitement: 0%",
+                "rotator.rotate": "Appliquer la Rotation",
+                "rotator.download": "Télécharger",
+                "rotator.reset": "Réinitialiser",
+                "footer.follow": "SUIVEZ-NOUS",
+                "footer.categories": "Catégories Populaires",
+                "footer.categories.pdf": "Outils PDF",
+                "footer.categories.image": "Outils d'Image",
+                "footer.categories.text": "Outils de Texte",
+                "footer.categories.av": "Outils Audio/Video",
+                "footer.categories.web": "Outils Web/Développeur",
+                "footer.categories.calc": "Outils de Calculatrice",
+                "footer.categories.util": "Outils Utilitaires",
+                "footer.categories.color": "Outils de Couleur",
+                "footer.quicklinks": "Liens Rapides",
+                "footer.links.tools": "Tous les Outils",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Contact",
+                "footer.links.privacy": "Politique de Confidentialité",
+                "footer.links.disclaimer": "Avertissement",
+                "footer.links.terms": "Conditions d'Utilisation",
+                "footer.copyright": "© 2025 LollyPoPDF. Tous droits réservés."
+            },
+            de: {
+                "nav.home": "Startseite",
+                "nav.about": "Über uns",
+                "nav.tools": "Werkzeuge",
+                "nav.contact": "Kontakt",
+                "hero.title": "Kostenloser Bilddreher und -spiegel",
+                "hero.description": "Drehen und spiegeln Sie Ihre Bilder sofort mit unserem kostenlosen Tool. Unterstützt mehrere Formate, keine Registrierung erforderlich.",
+                "howto.title": "Wie man Bilder dreht und spiegelt",
+                "howto.step1.title": "Laden Sie Ihr Bild hoch",
+                "howto.step1.description": "Klicken Sie auf den Upload-Bereich oder ziehen Sie Ihre Bilddatei per Drag & Drop. Wir unterstützen JPG, PNG, GIF, WEBP und mehr.",
+                "howto.step2.title": "Drehen oder Spiegeln",
+                "howto.step2.description": "Verwenden Sie die Drehknöpfe, um nach links/rechts zu drehen oder horizontal/vertikal zu spiegeln. Echtzeit-Vorschau anzeigen.",
+                "howto.step3.title": "Format wählen",
+                "howto.step3.description": "Wählen Sie Ihr bevorzugtes Ausgabeformat aus PNG, JPG, JPEG, BMP, GIF, WEBP und TIFF.",
+                "howto.step4.title": "Ergebnis herunterladen",
+                "howto.step4.description": "Laden Sie Ihr gedrehtes/gespiegeltes Bild mit einem Klick herunter. Keine Wasserzeichen, keine Registrierung erforderlich.",
+                "rotator.title": "Bilddreher und -spiegel Werkzeug",
+                "rotator.upload.text": "Ziehen Sie Ihr Bild hierher oder klicken Sie zum Durchsuchen",
+                "rotator.upload.button": "Bild auswählen",
+                "rotator.options.title": "Dreh- und Spiegeloptionen",
+                "rotator.controls.rotateLeft": "Nach links drehen",
+                "rotator.controls.rotateRight": "Nach rechts drehen",
+                "rotator.controls.flipHorizontal": "Horizontal spiegeln",
+                "rotator.controls.flipVertical": "Vertikal spiegeln",
+                "rotator.format.title": "Ausgabeformat",
+                "rotator.preview.title": "Vorschau",
+                "rotator.preview.original": "Original",
+                "rotator.preview.rotated": "Gedreht/Gespiegelt",
+                "rotator.processing": "Verarbeitung: 0%",
+                "rotator.rotate": "Drehung anwenden",
+                "rotator.download": "Herunterladen",
+                "rotator.reset": "Zurücksetzen",
+                "footer.follow": "FOLGEN SIE UNS",
+                "footer.categories": "Beliebte Kategorien",
+                "footer.categories.pdf": "PDF-Werkzeuge",
+                "footer.categories.image": "Bildwerkzeuge",
+                "footer.categories.text": "Textwerkzeuge",
+                "footer.categories.av": "Audio/Video-Werkzeuge",
+                "footer.categories.web": "Web/Entwickler-Werkzeuge",
+                "footer.categories.calc": "Rechnerwerkzeuge",
+                "footer.categories.util": "Hilfsprogramme",
+                "footer.categories.color": "Farbwerkzeuge",
+                "footer.quicklinks": "Schnelllinks",
+                "footer.links.tools": "Alle Werkzeuge",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Kontakt",
+                "footer.links.privacy": "Datenschutzrichtlinie",
+                "footer.links.disclaimer": "Haftungsausschluss",
+                "footer.links.terms": "Nutzungsbedingungen",
+                "footer.copyright": "© 2025 LollyPoPDF. Alle Rechte vorbehalten."
+            },
+            it: {
+                "nav.home": "Home",
+                "nav.about": "Chi siamo",
+                "nav.tools": "Strumenti",
+                "nav.contact": "Contatto",
+                "hero.title": "Ruota e Capovolgi Immagini Gratis",
+                "hero.description": "Ruota e capovolgi le tue immagini all'istante con il nostro strumento gratuito. Supporta più formati, nessuna registrazione richiesta.",
+                "howto.title": "Come Ruotare e Capovolgere le Immagini",
+                "howto.step1.title": "Carica la Tua Immagine",
+                "howto.step1.description": "Clicca sull'area di caricamento o trascina e rilascia il tuo file immagine. Supportiamo JPG, PNG, GIF, WEBP e altro.",
+                "howto.step2.title": "Ruota o Capovolgi",
+                "howto.step2.description": "Usa i pulsanti di rotazione per ruotare a sinistra/destra o capovolgere orizzontalmente/verticalmente. Vedi anteprima in tempo reale.",
+                "howto.step3.title": "Scegli il Formato",
+                "howto.step3.description": "Seleziona il tuo formato di output preferito tra PNG, JPG, JPEG, BMP, GIF, WEBP e TIFF.",
+                "howto.step4.title": "Scarica il Risultato",
+                "howto.step4.description": "Scarica la tua immagine ruotata/capovolta con un clic. Nessuna filigrana, nessuna registrazione richiesta.",
+                "rotator.title": "Strumento di Rotazione e Capovolgimento Immagini",
+                "rotator.upload.text": "Trascina e rilascia la tua immagine qui o clicca per sfogliare",
+                "rotator.upload.button": "Seleziona Immagine",
+                "rotator.options.title": "Opzioni di Rotazione e Capovolgimento",
+                "rotator.controls.rotateLeft": "Ruota a Sinistra",
+                "rotator.controls.rotateRight": "Ruota a Destra",
+                "rotator.controls.flipHorizontal": "Capovolgi Orizzontalmente",
+                "rotator.controls.flipVertical": "Capovolgi Verticalmente",
+                "rotator.format.title": "Formato di Output",
+                "rotator.preview.title": "Anteprima",
+                "rotator.preview.original": "Originale",
+                "rotator.preview.rotated": "Ruotata/Capovolta",
+                "rotator.processing": "Elaborazione: 0%",
+                "rotator.rotate": "Applica Rotazione",
+                "rotator.download": "Scarica",
+                "rotator.reset": "Ripristina",
+                "footer.follow": "SEGUICI",
+                "footer.categories": "Categorie Popolari",
+                "footer.categories.pdf": "Strumenti PDF",
+                "footer.categories.image": "Strumenti Immagine",
+                "footer.categories.text": "Strumenti Testo",
+                "footer.categories.av": "Strumenti Audio/Video",
+                "footer.categories.web": "Strumenti Web/Sviluppatore",
+                "footer.categories.calc": "Strumenti Calcolatrice",
+                "footer.categories.util": "Strumenti Utilità",
+                "footer.categories.color": "Strumenti Colore",
+                "footer.quicklinks": "Link Rapidi",
+                "footer.links.tools": "Tutti gli Strumenti",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Contatto",
+                "footer.links.privacy": "Informativa sulla Privacy",
+                "footer.links.disclaimer": "Disclaimer",
+                "footer.links.terms": "Termini di Servizio",
+                "footer.copyright": "© 2025 LollyPoPDF. Tutti i diritti riservati."
+            },
+            pt: {
+                "nav.home": "Início",
+                "nav.about": "Sobre Nós",
+                "nav.tools": "Ferramentas",
+                "nav.contact": "Contato",
+                "hero.title": "Rotacionador e Inversor de Imagens Gratuito",
+                "hero.description": "Gire e inverta suas imagens instantaneamente com nossa ferramenta gratuita. Suporta vários formatos, nenhum registro necessário.",
+                "howto.title": "Como Rotacionar e Inverter Imagens",
+                "howto.step1.title": "Carregue Sua Imagem",
+                "howto.step1.description": "Clique na área de upload ou arraste e solte seu arquivo de imagem. Suportamos JPG, PNG, GIF, WEBP e mais.",
+                "howto.step2.title": "Rotacionar ou Inverter",
+                "howto.step2.description": "Use os botões de rotação para girar para esquerda/direita ou inverter horizontal/verticalmente. Veja a prévia em tempo real.",
+                "howto.step3.title": "Escolha o Formato",
+                "howto.step3.description": "Selecione seu formato de saída preferido entre PNG, JPG, JPEG, BMP, GIF, WEBP e TIFF.",
+                "howto.step4.title": "Baixar Resultado",
+                "howto.step4.description": "Baixe sua imagem rotacionada/invertida com um clique. Sem marcas d'água, sem registro necessário.",
+                "rotator.title": "Ferramenta de Rotação e Inversão de Imagens",
+                "rotator.upload.text": "Arraste e solte sua imagem aqui ou clique para procurar",
+                "rotator.upload.button": "Selecionar Imagem",
+                "rotator.options.title": "Opções de Rotação e Inversão",
+                "rotator.controls.rotateLeft": "Girar para Esquerda",
+                "rotator.controls.rotateRight": "Girar para Direita",
+                "rotator.controls.flipHorizontal": "Inverter Horizontalmente",
+                "rotator.controls.flipVertical": "Inverter Verticalmente",
+                "rotator.format.title": "Formato de Saída",
+                "rotator.preview.title": "Pré-visualização",
+                "rotator.preview.original": "Original",
+                "rotator.preview.rotated": "Rotacionada/Invertida",
+                "rotator.processing": "Processando: 0%",
+                "rotator.rotate": "Aplicar Rotação",
+                "rotator.download": "Baixar",
+                "rotator.reset": "Redefinir",
+                "footer.follow": "SIGA-NOS",
+                "footer.categories": "Categorias Populares",
+                "footer.categories.pdf": "Ferramentas PDF",
+                "footer.categories.image": "Ferramentas de Imagem",
+                "footer.categories.text": "Ferramentas de Texto",
+                "footer.categories.av": "Ferramentas de Áudio/Video",
+                "footer.categories.web": "Ferramentas Web/Desenvolvedor",
+                "footer.categories.calc": "Ferramentas de Calculadora",
+                "footer.categories.util": "Ferramentas de Utilidade",
+                "footer.categories.color": "Ferramentas de Cor",
+                "footer.quicklinks": "Links Rápidos",
+                "footer.links.tools": "Todas as Ferramentas",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Contato",
+                "footer.links.privacy": "Política de Privacidade",
+                "footer.links.disclaimer": "Aviso Legal",
+                "footer.links.terms": "Termos de Serviço",
+                "footer.copyright": "© 2025 LollyPoPDF. Todos os direitos reservados."
+            },
+            ja: {
+                "nav.home": "ホーム",
+                "nav.about": "会社概要",
+                "nav.tools": "ツール",
+                "nav.contact": "お問い合わせ",
+                "hero.title": "無料画像回転・反転ツール",
+                "hero.description": "無料ツールで画像を瞬時に回転・反転できます。複数フォーマット対応、登録不要です。",
+                "howto.title": "画像を回転・反転する方法",
+                "howto.step1.title": "画像をアップロード",
+                "howto.step1.description": "アップロードエリアをクリックするか、画像ファイルをドラッグ＆ドロップしてください。JPG、PNG、GIF、WEBPなどをサポートしています。",
+                "howto.step2.title": "回転または反転",
+                "howto.step2.description": "回転ボタンを使用して左右に回転または水平/垂直に反転します。リアルタイムプレビューを表示します。",
+                "howto.step3.title": "フォーマットを選択",
+                "howto.step3.description": "PNG、JPG、JPEG、BMP、GIF、WEBP、TIFFから希望の出力フォーマットを選択します。",
+                "howto.step4.title": "結果をダウンロード",
+                "howto.step4.description": "クリックするだけで回転/反転した画像をダウンロードできます。透かしなし、登録不要です。",
+                "rotator.title": "画像回転・反転ツール",
+                "rotator.upload.text": "画像をここにドラッグ＆ドロップするか、クリックして参照",
+                "rotator.upload.button": "画像を選択",
+                "rotator.options.title": "回転・反転オプション",
+                "rotator.controls.rotateLeft": "左に回転",
+                "rotator.controls.rotateRight": "右に回転",
+                "rotator.controls.flipHorizontal": "水平反転",
+                "rotator.controls.flipVertical": "垂直反転",
+                "rotator.format.title": "出力フォーマット",
+                "rotator.preview.title": "プレビュー",
+                "rotator.preview.original": "元の画像",
+                "rotator.preview.rotated": "回転/反転済み",
+                "rotator.processing": "処理中: 0%",
+                "rotator.rotate": "回転を適用",
+                "rotator.download": "ダウンロード",
+                "rotator.reset": "リセット",
+                "footer.follow": "フォローする",
+                "footer.categories": "人気カテゴリ",
+                "footer.categories.pdf": "PDFツール",
+                "footer.categories.image": "画像ツール",
+                "footer.categories.text": "テキストツール",
+                "footer.categories.av": "オーディオ/ビデオツール",
+                "footer.categories.web": "Web/開発者ツール",
+                "footer.categories.calc": "電卓ツール",
+                "footer.categories.util": "ユーティリティツール",
+                "footer.categories.color": "カラーツール",
+                "footer.quicklinks": "クイックリンク",
+                "footer.links.tools": "すべてのツール",
+                "footer.links.faq": "よくある質問",
+                "footer.links.contact": "お問い合わせ",
+                "footer.links.privacy": "プライバシーポリシー",
+                "footer.links.disclaimer": "免責事項",
+                "footer.links.terms": "利用規約",
+                "footer.copyright": "© 2025 LollyPoPDF. 無断転載を禁じます."
+            },
+            ru: {
+                "nav.home": "Главная",
+                "nav.about": "О нас",
+                "nav.tools": "Инструменты",
+                "nav.contact": "Контакт",
+                "hero.title": "Бесплатный Поворот и Отражение Изображений",
+                "hero.description": "Поворачивайте и отражайте ваши изображения мгновенно с нашим бесплатным инструментом. Поддерживает несколько форматов, регистрация не требуется.",
+                "howto.title": "Как Поворачивать и Отражать Изображения",
+                "howto.step1.title": "Загрузите Ваше Изображение",
+                "howto.step1.description": "Нажмите на область загрузки или перетащите файл изображения. Мы поддерживаем JPG, PNG, GIF, WEBP и другие.",
+                "howto.step2.title": "Повернуть или Отразить",
+                "howto.step2.description": "Используйте кнопки поворота для поворота влево/вправо или отражения по горизонтали/вертикали. Смотрите предпросмотр в реальном времени.",
+                "howto.step3.title": "Выберите Формат",
+                "howto.step3.description": "Выберите предпочтительный формат вывода из PNG, JPG, JPEG, BMP, GIF, WEBP и TIFF.",
+                "howto.step4.title": "Скачать Результат",
+                "howto.step4.description": "Скачайте ваше повернутое/отраженное изображение одним щелчком. Без водяных знаков, без регистрации.",
+                "rotator.title": "Инструмент Поворота и Отражения Изображений",
+                "rotator.upload.text": "Перетащите ваше изображение сюда или нажмите для выбора",
+                "rotator.upload.button": "Выбрать Изображение",
+                "rotator.options.title": "Опции Поворота и Отражения",
+                "rotator.controls.rotateLeft": "Повернуть Влево",
+                "rotator.controls.rotateRight": "Повернуть Вправо",
+                "rotator.controls.flipHorizontal": "Отразить Горизонтально",
+                "rotator.controls.flipVertical": "Отразить Вертикально",
+                "rotator.format.title": "Формат Вывода",
+                "rotator.preview.title": "Предпросмотр",
+                "rotator.preview.original": "Оригинал",
+                "rotator.preview.rotated": "Повернуто/Отражено",
+                "rotator.processing": "Обработка: 0%",
+                "rotator.rotate": "Применить Поворот",
+                "rotator.download": "Скачать",
+                "rotator.reset": "Сбросить",
+                "footer.follow": "СЛЕДУЙТЕ ЗА НАМИ",
+                "footer.categories": "Популярные Категории",
+                "footer.categories.pdf": "PDF Инструменты",
+                "footer.categories.image": "Инструменты для Изображений",
+                "footer.categories.text": "Текстовые Инструменты",
+                "footer.categories.av": "Аудио/Видео Инструменты",
+                "footer.categories.web": "Веб/Разработчик Инструменты",
+                "footer.categories.calc": "Калькуляторные Инструменты",
+                "footer.categories.util": "Утилиты",
+                "footer.categories.color": "Цветовые Инструменты",
+                "footer.quicklinks": "Быстрые Ссылки",
+                "footer.links.tools": "Все Инструменты",
+                "footer.links.faq": "ЧаВо",
+                "footer.links.contact": "Контакт",
+                "footer.links.privacy": "Политика Конфиденциальности",
+                "footer.links.disclaimer": "Отказ от Ответственности",
+                "footer.links.terms": "Условия Использования",
+                "footer.copyright": "© 2025 LollyPoPDF. Все права защищены."
+            },
+            ko: {
+                "nav.home": "홈",
+                "nav.about": "회사 소개",
+                "nav.tools": "도구",
+                "nav.contact": "연락처",
+                "hero.title": "무료 이미지 회전 및 뒤집기 도구",
+                "hero.description": "무료 도구로 이미지를 즉시 회전하고 뒤집으세요. 여러 형식 지원, 등록 불필요.",
+                "howto.title": "이미지 회전 및 뒤집기 방법",
+                "howto.step1.title": "이미지 업로드",
+                "howto.step1.description": "업로드 영역을 클릭하거나 이미지 파일을 드래그 앤 드롭하세요. JPG, PNG, GIF, WEBP 등을 지원합니다.",
+                "howto.step2.title": "회전 또는 뒤집기",
+                "howto.step2.description": "회전 버튼을 사용하여 좌/우로 회전하거나 수평/수직으로 뒤집습니다. 실시간 미리보기를 확인하세요.",
+                "howto.step3.title": "형식 선택",
+                "howto.step3.description": "PNG, JPG, JPEG, BMP, GIF, WEBP, TIFF 중 선호하는 출력 형식을 선택하세요.",
+                "howto.step4.title": "결과 다운로드",
+                "howto.step4.description": "클릭 한 번으로 회전/뒤집힌 이미지를 다운로드하세요. 워터마크 없음, 등록 불필요.",
+                "rotator.title": "이미지 회전 및 뒤집기 도구",
+                "rotator.upload.text": "이미지를 여기에 드래그 앤 드롭하거나 클릭하여 찾아보기",
+                "rotator.upload.button": "이미지 선택",
+                "rotator.options.title": "회전 및 뒤집기 옵션",
+                "rotator.controls.rotateLeft": "왼쪽으로 회전",
+                "rotator.controls.rotateRight": "오른쪽으로 회전",
+                "rotator.controls.flipHorizontal": "수평 뒤집기",
+                "rotator.controls.flipVertical": "수직 뒤집기",
+                "rotator.format.title": "출력 형식",
+                "rotator.preview.title": "미리보기",
+                "rotator.preview.original": "원본",
+                "rotator.preview.rotated": "회전/뒤집힘",
+                "rotator.processing": "처리 중: 0%",
+                "rotator.rotate": "회전 적용",
+                "rotator.download": "다운로드",
+                "rotator.reset": "재설정",
+                "footer.follow": "팔로우하기",
+                "footer.categories": "인기 카테고리",
+                "footer.categories.pdf": "PDF 도구",
+                "footer.categories.image": "이미지 도구",
+                "footer.categories.text": "텍스트 도구",
+                "footer.categories.av": "오디오/비디오 도구",
+                "footer.categories.web": "웹/개발자 도구",
+                "footer.categories.calc": "계산기 도구",
+                "footer.categories.util": "유틸리티 도구",
+                "footer.categories.color": "색상 도구",
+                "footer.quicklinks": "빠른 링크",
+                "footer.links.tools": "모든 도구",
+                "footer.links.faq": "자주 묻는 질문",
+                "footer.links.contact": "연락처",
+                "footer.links.privacy": "개인정보 보호정책",
+                "footer.links.disclaimer": "면책 조항",
+                "footer.links.terms": "이용약관",
+                "footer.copyright": "© 2025 LollyPoPDF. 모든 권리 보유."
+            },
+            "zh-CN": {
+                "nav.home": "首页",
+                "nav.about": "关于我们",
+                "nav.tools": "工具",
+                "nav.contact": "联系我们",
+                "hero.title": "免费图片旋转和翻转工具",
+                "hero.description": "使用我们的免费工具即时旋转和翻转您的图片。支持多种格式，无需注册。",
+                "howto.title": "如何旋转和翻转图片",
+                "howto.step1.title": "上传您的图片",
+                "howto.step1.description": "点击上传区域或拖放您的图片文件。我们支持JPG、PNG、GIF、WEBP等格式。",
+                "howto.step2.title": "旋转或翻转",
+                "howto.step2.description": "使用旋转按钮左右旋转或水平/垂直翻转。查看实时预览。",
+                "howto.step3.title": "选择格式",
+                "howto.step3.description": "从PNG、JPG、JPEG、BMP、GIF、WEBP和TIFF中选择您偏好的输出格式。",
+                "howto.step4.title": "下载结果",
+                "howto.step4.description": "一键下载您旋转/翻转的图片。无水印，无需注册。",
+                "rotator.title": "图片旋转和翻转工具",
+                "rotator.upload.text": "将图片拖放到此处或点击浏览",
+                "rotator.upload.button": "选择图片",
+                "rotator.options.title": "旋转和翻转选项",
+                "rotator.controls.rotateLeft": "向左旋转",
+                "rotator.controls.rotateRight": "向右旋转",
+                "rotator.controls.flipHorizontal": "水平翻转",
+                "rotator.controls.flipVertical": "垂直翻转",
+                "rotator.format.title": "输出格式",
+                "rotator.preview.title": "预览",
+                "rotator.preview.original": "原始",
+                "rotator.preview.rotated": "已旋转/翻转",
+                "rotator.processing": "处理中: 0%",
+                "rotator.rotate": "应用旋转",
+                "rotator.download": "下载",
+                "rotator.reset": "重置",
+                "footer.follow": "关注我们",
+                "footer.categories": "热门分类",
+                "footer.categories.pdf": "PDF工具",
+                "footer.categories.image": "图片工具",
+                "footer.categories.text": "文字工具",
+                "footer.categories.av": "音频/视频工具",
+                "footer.categories.web": "网页/开发者工具",
+                "footer.categories.calc": "计算器工具",
+                "footer.categories.util": "实用工具",
+                "footer.categories.color": "颜色工具",
+                "footer.quicklinks": "快速链接",
+                "footer.links.tools": "所有工具",
+                "footer.links.faq": "常见问题",
+                "footer.links.contact": "联系我们",
+                "footer.links.privacy": "隐私政策",
+                "footer.links.disclaimer": "免责声明",
+                "footer.links.terms": "服务条款",
+                "footer.copyright": "© 2025 LollyPoPDF. 版权所有。"
+            },
+            "zh-TW": {
+                "nav.home": "首頁",
+                "nav.about": "關於我們",
+                "nav.tools": "工具",
+                "nav.contact": "聯絡我們",
+                "hero.title": "免費圖片旋轉和翻轉工具",
+                "hero.description": "使用我們的免費工具即時旋轉和翻轉您的圖片。支援多種格式，無需註冊。",
+                "howto.title": "如何旋轉和翻轉圖片",
+                "howto.step1.title": "上傳您的圖片",
+                "howto.step1.description": "點擊上傳區域或拖放您的圖片檔案。我們支援JPG、PNG、GIF、WEBP等格式。",
+                "howto.step2.title": "旋轉或翻轉",
+                "howto.step2.description": "使用旋轉按鈕左右旋轉或水平/垂直翻轉。查看即時預覽。",
+                "howto.step3.title": "選擇格式",
+                "howto.step3.description": "從PNG、JPG、JPEG、BMP、GIF、WEBP和TIFF中選擇您偏好的輸出格式。",
+                "howto.step4.title": "下載結果",
+                "howto.step4.description": "一鍵下載您旋轉/翻轉的圖片。無浮水印，無需註冊。",
+                "rotator.title": "圖片旋轉和翻轉工具",
+                "rotator.upload.text": "將圖片拖放到此處或點擊瀏覽",
+                "rotator.upload.button": "選擇圖片",
+                "rotator.options.title": "旋轉和翻轉選項",
+                "rotator.controls.rotateLeft": "向左旋轉",
+                "rotator.controls.rotateRight": "向右旋轉",
+                "rotator.controls.flipHorizontal": "水平翻轉",
+                "rotator.controls.flipVertical": "垂直翻轉",
+                "rotator.format.title": "輸出格式",
+                "rotator.preview.title": "預覽",
+                "rotator.preview.original": "原始",
+                "rotator.preview.rotated": "已旋轉/翻轉",
+                "rotator.processing": "處理中: 0%",
+                "rotator.rotate": "應用旋轉",
+                "rotator.download": "下載",
+                "rotator.reset": "重設",
+                "footer.follow": "關注我們",
+                "footer.categories": "熱門分類",
+                "footer.categories.pdf": "PDF工具",
+                "footer.categories.image": "圖片工具",
+                "footer.categories.text": "文字工具",
+                "footer.categories.av": "音訊/視訊工具",
+                "footer.categories.web": "網頁/開發者工具",
+                "footer.categories.calc": "計算機工具",
+                "footer.categories.util": "實用工具",
+                "footer.categories.color": "顏色工具",
+                "footer.quicklinks": "快速連結",
+                "footer.links.tools": "所有工具",
+                "footer.links.faq": "常見問題",
+                "footer.links.contact": "聯絡我們",
+                "footer.links.privacy": "隱私權政策",
+                "footer.links.disclaimer": "免責聲明",
+                "footer.links.terms": "服務條款",
+                "footer.copyright": "© 2025 LollyPoPDF. 版權所有。"
+            },
+            ar: {
+                "nav.home": "الصفحة الرئيسية",
+                "nav.about": "من نحن",
+                "nav.tools": "الأدوات",
+                "nav.contact": "اتصل بنا",
+                "hero.title": "أداة تدوير وعكس الصور مجاناً",
+                "hero.description": "قم بتدوير وعكس صورك على الفور باستخدام أداتنا المجانية. تدعم تنسيقات متعددة، لا يلزم التسجيل.",
+                "howto.title": "كيفية تدوير وعكس الصور",
+                "howto.step1.title": "قم بتحميل صورتك",
+                "howto.step1.description": "انقر على منطقة التحميل أو اسحب وأفلت ملف الصورة الخاص بك. نحن ندعم JPG وPNG وGIF وWEBP والمزيد.",
+                "howto.step2.title": "تدوير أو عكس",
+                "howto.step2.description": "استخدم أزرار التدوير للتدوير لليسار/اليمين أو العكس أفقي/عمودي. شاهد المعاينة في الوقت الفعلي.",
+                "howto.step3.title": "اختر التنسيق",
+                "howto.step3.description": "اختر تنسيق الإخراج المفضل لديك من بين PNG وJPG وJPEG وBMP وGIF وWEBP وTIFF.",
+                "howto.step4.title": "تحميل النتيجة",
+                "howto.step4.description": "قم بتحميل صورتك المدورة/المعكوسة بنقرة واحدة. بدون علامات مائية، بدون تسجيل مطلوب.",
+                "rotator.title": "أداة تدوير وعكس الصور",
+                "rotator.upload.text": "اسحب وأفلت صورتك هنا أو انقر للتصفح",
+                "rotator.upload.button": "اختر صورة",
+                "rotator.options.title": "خيارات التدوير والعكس",
+                "rotator.controls.rotateLeft": "تدوير لليسار",
+                "rotator.controls.rotateRight": "تدوير لليمين",
+                "rotator.controls.flipHorizontal": "عكس أفقي",
+                "rotator.controls.flipVertical": "عكس عمودي",
+                "rotator.format.title": "تنسيق الإخراج",
+                "rotator.preview.title": "معاينة",
+                "rotator.preview.original": "الأصلية",
+                "rotator.preview.rotated": "مدورة/معكوسة",
+                "rotator.processing": "جاري المعالجة: 0%",
+                "rotator.rotate": "تطبيق التدوير",
+                "rotator.download": "تحميل",
+                "rotator.reset": "إعادة تعيين",
+                "footer.follow": "تابعنا",
+                "footer.categories": "الفئات الشائعة",
+                "footer.categories.pdf": "أدوات PDF",
+                "footer.categories.image": "أدوات الصور",
+                "footer.categories.text": "أدوات النص",
+                "footer.categories.av": "أدوات الصوت/الفيديو",
+                "footer.categories.web": "أدوات الويب/المطور",
+                "footer.categories.calc": "أدوات الآلة الحاسبة",
+                "footer.categories.util": "أدوات المساعدة",
+                "footer.categories.color": "أدوات الألوان",
+                "footer.quicklinks": "روابط سريعة",
+                "footer.links.tools": "جميع الأدوات",
+                "footer.links.faq": "الأسئلة الشائعة",
+                "footer.links.contact": "اتصل بنا",
+                "footer.links.privacy": "سياسة الخصوصية",
+                "footer.links.disclaimer": "إخلاء المسؤولية",
+                "footer.links.terms": "شروط الخدمة",
+                "footer.copyright": "© 2025 LollyPoPDF. جميع الحقوق محفوظة."
+            },
+            fa: {
+                "nav.home": "خانه",
+                "nav.about": "درباره ما",
+                "nav.tools": "ابزارها",
+                "nav.contact": "تماس",
+                "hero.title": "چرخاننده و برگرداننده رایگان تصویر",
+                "hero.description": "تصاویر خود را فوراً با ابزار رایگان ما بچرخانید و برگردانید. پشتیبانی از چندین فرمت، بدون نیاز به ثبت نام.",
+                "howto.title": "نحوه چرخاندن و برگرداندن تصاویر",
+                "howto.step1.title": "تصویر خود را آپلود کنید",
+                "howto.step1.description": "روی ناحیه آپلود کلیک کنید یا فایل تصویر خود را بکشید و رها کنید. ما JPG, PNG, GIF, WEBP و بیشتر را پشتیبانی می کنیم.",
+                "howto.step2.title": "بچرخانید یا برگردانید",
+                "howto.step2.description": "از دکمه های چرخش برای چرخش چپ/راست یا برگرداندن افقی/عمودی استفاده کنید. پیش نمایش زنده را ببینید.",
+                "howto.step3.title": "فرمت را انتخاب کنید",
+                "howto.step3.description": "فرمت خروجی مورد نظر خود را از بین PNG, JPG, JPEG, BMP, GIF, WEBP و TIFF انتخاب کنید.",
+                "howto.step4.title": "نتیجه را دانلود کنید",
+                "howto.step4.description": "تصویر چرخانده/برگردانده شده خود را با یک کلیک دانلود کنید. بدون واترمارک، بدون نیاز به ثبت نام.",
+                "rotator.title": "ابزار چرخش و برگرداندن تصویر",
+                "rotator.upload.text": "تصویر خود را اینجا بکشید و رها کنید یا برای جستجو کلیک کنید",
+                "rotator.upload.button": "انتخاب تصویر",
+                "rotator.options.title": "گزینه های چرخش و برگرداندن",
+                "rotator.controls.rotateLeft": "چرخش به چپ",
+                "rotator.controls.rotateRight": "چرخش به راست",
+                "rotator.controls.flipHorizontal": "برگرداندن افقی",
+                "rotator.controls.flipVertical": "برگرداندن عمودی",
+                "rotator.format.title": "فرمت خروجی",
+                "rotator.preview.title": "پیش نمایش",
+                "rotator.preview.original": "اصلی",
+                "rotator.preview.rotated": "چرخانده/برگردانده شده",
+                "rotator.processing": "در حال پردازش: 0%",
+                "rotator.rotate": "اعمال چرخش",
+                "rotator.download": "دانلود",
+                "rotator.reset": "بازنشانی",
+                "footer.follow": "ما را دنبال کنید",
+                "footer.categories": "دسته‌بندی‌های محبوب",
+                "footer.categories.pdf": "ابزارهای PDF",
+                "footer.categories.image": "ابزارهای تصویر",
+                "footer.categories.text": "ابزارهای متن",
+                "footer.categories.av": "ابزارهای صدا/ویدیو",
+                "footer.categories.web": "ابزارهای وب/توسعه‌دهنده",
+                "footer.categories.calc": "ابزارهای ماشین‌حساب",
+                "footer.categories.util": "ابزارهای کاربردی",
+                "footer.categories.color": "ابزارهای رنگ",
+                "footer.quicklinks": "لینک‌های سریع",
+                "footer.links.tools": "همه ابزارها",
+                "footer.links.faq": "سوالات متداول",
+                "footer.links.contact": "تماس",
+                "footer.links.privacy": "سیاست حفظ حریم خصوصی",
+                "footer.links.disclaimer": "سلب مسئولیت",
+                "footer.links.terms": "شرایط خدمات",
+                "footer.copyright": "© 2025 LollyPoPDF. تمام حقوق محفوظ است."
+            },
+            bg: {
+                "nav.home": "Начало",
+                "nav.about": "За нас",
+                "nav.tools": "Инструменти",
+                "nav.contact": "Контакт",
+                "hero.title": "Безплатен въртящ и обръщащ изображения инструмент",
+                "hero.description": "Завъртайте и обръщайте изображенията си мигновено с нашия безплатен инструмент. Поддържа множество формати, не се изисква регистрация.",
+                "howto.title": "Как да завъртате и обръщате изображения",
+                "howto.step1.title": "Качете вашето изображение",
+                "howto.step1.description": "Кликнете върху зоната за качване или плъзнете и пуснете файла с изображение. Поддържаме JPG, PNG, GIF, WEBP и други.",
+                "howto.step2.title": "Завъртане или обръщане",
+                "howto.step2.description": "Използвайте бутоните за завъртане, за да завъртите наляво/надясно или да обърнете хоризонтално/вертикално. Вижте реално време на преглед.",
+                "howto.step3.title": "Изберете формат",
+                "howto.step3.description": "Изберете предпочитания от вас изходен формат от PNG, JPG, JPEG, BMP, GIF, WEBP и TIFF.",
+                "howto.step4.title": "Изтеглете резултата",
+                "howto.step4.description": "Изтеглете завърнатото/обърнато изображение с едно кликване. Без водни знаци, без регистрация.",
+                "rotator.title": "Инструмент за завъртане и обръщане на изображения",
+                "rotator.upload.text": "Плъзнете и пуснете изображението си тук или кликнете за да търсите",
+                "rotator.upload.button": "Изберете изображение",
+                "rotator.options.title": "Опции за завъртане и обръщане",
+                "rotator.controls.rotateLeft": "Завъртане наляво",
+                "rotator.controls.rotateRight": "Завъртане надясно",
+                "rotator.controls.flipHorizontal": "Обръщане хоризонтално",
+                "rotator.controls.flipVertical": "Обръщане вертикално",
+                "rotator.format.title": "Изходен формат",
+                "rotator.preview.title": "Преглед",
+                "rotator.preview.original": "Оригинал",
+                "rotator.preview.rotated": "Завъртяно/Обърнато",
+                "rotator.processing": "Обработка: 0%",
+                "rotator.rotate": "Приложи завъртане",
+                "rotator.download": "Изтегли",
+                "rotator.reset": "Нулиране",
+                "footer.follow": "СЛЕДВАЙТЕ НИ",
+                "footer.categories": "Популярни категории",
+                "footer.categories.pdf": "PDF инструменти",
+                "footer.categories.image": "Инструменти за изображения",
+                "footer.categories.text": "Текстови инструменти",
+                "footer.categories.av": "Аудио/Видео инструменти",
+                "footer.categories.web": "Уеб/Разработчик инструменти",
+                "footer.categories.calc": "Калкулаторни инструменти",
+                "footer.categories.util": "Полезни инструменти",
+                "footer.categories.color": "Инструменти за цветове",
+                "footer.quicklinks": "Бързи връзки",
+                "footer.links.tools": "Всички инструменти",
+                "footer.links.faq": "ЧЗВ",
+                "footer.links.contact": "Контакт",
+                "footer.links.privacy": "Политика за поверителност",
+                "footer.links.disclaimer": "Отказ от отговорност",
+                "footer.links.terms": "Условия за ползване",
+                "footer.copyright": "© 2025 LollyPoPDF. Всички права запазени."
+            },
+            ca: {
+                "nav.home": "Inici",
+                "nav.about": "Sobre Nosaltres",
+                "nav.tools": "Eines",
+                "nav.contact": "Contacte",
+                "hero.title": "Giratori i Voltejador d'Imatges Gratuït",
+                "hero.description": "Gira i volteja les teves imatges instantàniament amb la nostra eina gratuïta. Admet múltiples formats, sense registre requerit.",
+                "howto.title": "Com Gira i Voltejar Imatges",
+                "howto.step1.title": "Puja La Teva Imatge",
+                "howto.step1.description": "Fes clic a l'àrea de càrrega o arrossega i deixa anar el teu fitxer d'imatge. Admetem JPG, PNG, GIF, WEBP i més.",
+                "howto.step2.title": "Gira o Volteja",
+                "howto.step2.description": "Utilitza els botons de rotació per girar esquerra/dreta o voltejar horitzontal/verticalment. Veure la previsualització en temps real.",
+                "howto.step3.title": "Tria Format",
+                "howto.step3.description": "Selecciona el teu format de sortida preferit entre PNG, JPG, JPEG, BMP, GIF, WEBP i TIFF.",
+                "howto.step4.title": "Descarrega Resultat",
+                "howto.step4.description": "Descarrega la teva imatge girada/voltejada amb un clic. Sense marques d'aigua, sense registre requerit.",
+                "rotator.title": "Eina de Giratori i Voltejador d'Imatges",
+                "rotator.upload.text": "Arrossega i deixa anar la teva imatge aquí o fes clic per navegar",
+                "rotator.upload.button": "Seleccionar Imatge",
+                "rotator.options.title": "Opcions de Rotació i Volteig",
+                "rotator.controls.rotateLeft": "Girar Esquerra",
+                "rotator.controls.rotateRight": "Girar Dreta",
+                "rotator.controls.flipHorizontal": "Voltejar Horitzontal",
+                "rotator.controls.flipVertical": "Voltejar Vertical",
+                "rotator.format.title": "Format de Sortida",
+                "rotator.preview.title": "Previsualització",
+                "rotator.preview.original": "Original",
+                "rotator.preview.rotated": "Girada/Voltejada",
+                "rotator.processing": "Processant: 0%",
+                "rotator.rotate": "Aplicar Rotació",
+                "rotator.download": "Descarregar",
+                "rotator.reset": "Restablir",
+                "footer.follow": "SEGUEIX-NOS",
+                "footer.categories": "Categories Populars",
+                "footer.categories.pdf": "Eines PDF",
+                "footer.categories.image": "Eines d'Imatge",
+                "footer.categories.text": "Eines de Text",
+                "footer.categories.av": "Eines d'Àudio/Video",
+                "footer.categories.web": "Eines Web/Desenvolupador",
+                "footer.categories.calc": "Eines de Calculadora",
+                "footer.categories.util": "Eines d'Utilitat",
+                "footer.categories.color": "Eines de Color",
+                "footer.quicklinks": "Enllaços Ràpids",
+                "footer.links.tools": "Totes les Eines",
+                "footer.links.faq": "PMF",
+                "footer.links.contact": "Contacte",
+                "footer.links.privacy": "Política de Privadesa",
+                "footer.links.disclaimer": "Descàrrec de Responsabilitat",
+                "footer.links.terms": "Termes de Servei",
+                "footer.copyright": "© 2025 LollyPoPDF. Tots els drets reservats."
+            },
+            nl: {
+                "nav.home": "Startpagina",
+                "nav.about": "Over Ons",
+                "nav.tools": "Hulpmiddelen",
+                "nav.contact": "Contact",
+                "hero.title": "Gratis Afbeelding Rotator & Flipper",
+                "hero.description": "Draai en keer uw afbeeldingen direct om met onze gratis tool. Ondersteunt meerdere formaten, geen registratie vereist.",
+                "howto.title": "Hoe Afbeeldingen te Draaien en Keren",
+                "howto.step1.title": "Upload Uw Afbeelding",
+                "howto.step1.description": "Klik op het uploadgebied of sleep en zet uw afbeeldingsbestand neer. We ondersteunen JPG, PNG, GIF, WEBP en meer.",
+                "howto.step2.title": "Draaien of Keren",
+                "howto.step2.description": "Gebruik de rotatieknoppen om links/rechts te draaien of horizontaal/verticaal te keren. Zie realtime voorbeeld.",
+                "howto.step3.title": "Kies Formaat",
+                "howto.step3.description": "Selecteer uw gewenste uitvoerformaat uit PNG, JPG, JPEG, BMP, GIF, WEBP en TIFF.",
+                "howto.step4.title": "Download Resultaat",
+                "howto.step4.description": "Download uw gedraaide/gekeerde afbeelding met één klik. Geen watermerken, geen registratie vereist.",
+                "rotator.title": "Afbeelding Rotator & Flipper Hulpmiddel",
+                "rotator.upload.text": "Sleep en zet uw afbeelding hier neer of klik om te bladeren",
+                "rotator.upload.button": "Afbeelding Selecteren",
+                "rotator.options.title": "Rotatie & Keer Opties",
+                "rotator.controls.rotateLeft": "Draai Links",
+                "rotator.controls.rotateRight": "Draai Rechts",
+                "rotator.controls.flipHorizontal": "Keer Horizontaal",
+                "rotator.controls.flipVertical": "Keer Verticaal",
+                "rotator.format.title": "Uitvoerformaat",
+                "rotator.preview.title": "Voorbeeld",
+                "rotator.preview.original": "Origineel",
+                "rotator.preview.rotated": "Gedraaid/Gekeerd",
+                "rotator.processing": "Verwerken: 0%",
+                "rotator.rotate": "Rotatie Toepassen",
+                "rotator.download": "Downloaden",
+                "rotator.reset": "Resetten",
+                "footer.follow": "VOLG ONS",
+                "footer.categories": "Populaire Categorieën",
+                "footer.categories.pdf": "PDF Hulpmiddelen",
+                "footer.categories.image": "Afbeelding Hulpmiddelen",
+                "footer.categories.text": "Tekst Hulpmiddelen",
+                "footer.categories.av": "Audio/Video Hulpmiddelen",
+                "footer.categories.web": "Web/Ontwikkelaar Hulpmiddelen",
+                "footer.categories.calc": "Rekenmachine Hulpmiddelen",
+                "footer.categories.util": "Nuttige Hulpmiddelen",
+                "footer.categories.color": "Kleur Hulpmiddelen",
+                "footer.quicklinks": "Snelle Links",
+                "footer.links.tools": "Alle Hulpmiddelen",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Contact",
+                "footer.links.privacy": "Privacybeleid",
+                "footer.links.disclaimer": "Disclaimer",
+                "footer.links.terms": "Servicevoorwaarden",
+                "footer.copyright": "© 2025 LollyPoPDF. Alle rechten voorbehouden."
+            },
+            el: {
+                "nav.home": "Αρχική",
+                "nav.about": "Σχετικά με εμάς",
+                "nav.tools": "Εργαλεία",
+                "nav.contact": "Επικοινωνία",
+                "hero.title": "Δωρεάν Περιστροφέας & Αναστροφέας Εικόνων",
+                "hero.description": "Περιστρέψτε και αναστρέψτε τις εικόνες σας αμέσως με το δωρεάν μας εργαλείο. Υποστηρίζει πολλαπλές μορφές, χωρίς απαίτηση εγγραφής.",
+                "howto.title": "Πώς να Περιστρέψετε και Αναστρέψετε Εικόνες",
+                "howto.step1.title": "Ανεβάστε την Εικόνα σας",
+                "howto.step1.description": "Κάντε κλικ στην περιοχή μεταφόρτωσης ή σύρετε και αποθέστε το αρχείο εικόνας σας. Υποστηρίζουμε JPG, PNG, GIF, WEBP και άλλα.",
+                "howto.step2.title": "Περιστροφή ή Αναστροφή",
+                "howto.step2.description": "Χρησιμοποιήστε τα κουμπιά περιστροφής για να περιστρέψετε αριστερά/δεξιά ή να αναστρέψετε οριζόντια/κάθετα. Δείτε προεπισκόπηση σε πραγματικό χρόνο.",
+                "howto.step3.title": "Επιλέξτε Μορφή",
+                "howto.step3.description": "Επιλέξτε την προτιμώμενη μορφή εξόδου από PNG, JPG, JPEG, BMP, GIF, WEBP και TIFF.",
+                "howto.step4.title": "Λήψη Αποτελέσματος",
+                "howto.step4.description": "Κατεβάστε την περιστραμμένη/αναστραμμένη εικόνα σας με ένα κλικ. Χωρίς υδατογραφήματα, χωρίς απαίτηση εγγραφής.",
+                "rotator.title": "Εργαλείο Περιστροφής & Αναστροφής Εικόνων",
+                "rotator.upload.text": "Σύρετε και αποθέστε την εικόνα σας εδώ ή κάντε κλικ για περιήγηση",
+                "rotator.upload.button": "Επιλογή Εικόνας",
+                "rotator.options.title": "Επιλογές Περιστροφής & Αναστροφής",
+                "rotator.controls.rotateLeft": "Περιστροφή Αριστερά",
+                "rotator.controls.rotateRight": "Περιστροφή Δεξιά",
+                "rotator.controls.flipHorizontal": "Αναστροφή Οριζόντια",
+                "rotator.controls.flipVertical": "Αναστροφή Κάθετα",
+                "rotator.format.title": "Μορφή Εξόδου",
+                "rotator.preview.title": "Προεπισκόπηση",
+                "rotator.preview.original": "Πρωτότυπο",
+                "rotator.preview.rotated": "Περιστραμμένη/Αναστραμμένη",
+                "rotator.processing": "Επεξεργασία: 0%",
+                "rotator.rotate": "Εφαρμογή Περιστροφής",
+                "rotator.download": "Λήψη",
+                "rotator.reset": "Επαναφορά",
+                "footer.follow": "ΑΚΟΛΟΥΘΗΣΤΕ ΜΑΣ",
+                "footer.categories": "Δημοφιλείς Κατηγορίες",
+                "footer.categories.pdf": "Εργαλεία PDF",
+                "footer.categories.image": "Εργαλεία Εικόνας",
+                "footer.categories.text": "Εργαλεία Κειμένου",
+                "footer.categories.av": "Εργαλεία Ήχου/Βίντεο",
+                "footer.categories.web": "Εργαλεία Web/Προγραμματιστή",
+                "footer.categories.calc": "Εργαλεία Αριθμομηχανής",
+                "footer.categories.util": "Εργαλεία Χρησιμότητας",
+                "footer.categories.color": "Εργαλεία Χρώματος",
+                "footer.quicklinks": "Γρήγοροι Σύνδεσμοι",
+                "footer.links.tools": "Όλα τα Εργαλεία",
+                "footer.links.faq": "Συχνές Ερωτήσεις",
+                "footer.links.contact": "Επικοινωνία",
+                "footer.links.privacy": "Πολιτική Απορρήτου",
+                "footer.links.disclaimer": "Αποποίηση Ευθυνών",
+                "footer.links.terms": "Όροι Υπηρεσίας",
+                "footer.copyright": "© 2025 LollyPoPDF. Με επιφύλαξη παντός δικαιώματος."
+            },
+            hi: {
+                "nav.home": "होम",
+                "nav.about": "हमारे बारे में",
+                "nav.tools": "टूल्स",
+                "nav.contact": "संपर्क करें",
+                "hero.title": "मुफ्त इमेज रोटेटर और फ्लिपर",
+                "hero.description": "हमारे मुफ्त टूल से अपनी इमेज को तुरंत घुमाएं और पलटें। कई फॉर्मेट सपोर्ट करता है, कोई पंजीकरण आवश्यक नहीं।",
+                "howto.title": "इमेज को कैसे घुमाएं और पलटें",
+                "howto.step1.title": "अपनी इमेज अपलोड करें",
+                "howto.step1.description": "अपलोड एरिया पर क्लिक करें या अपनी इमेज फाइल को ड्रैग और ड्रॉप करें। हम JPG, PNG, GIF, WEBP और अधिक सपोर्ट करते हैं।",
+                "howto.step2.title": "घुमाएं या पलटें",
+                "howto.step2.description": "बाएं/दाएं घुमाने या क्षैतिज/लंबवत पलटने के लिए रोटेशन बटन का उपयोग करें। रीयल-टाइम प्रीव्यू देखें।",
+                "howto.step3.title": "फॉर्मेट चुनें",
+                "howto.step3.description": "PNG, JPG, JPEG, BMP, GIF, WEBP और TIFF में से अपना पसंदीदा आउटपुट फॉर्मेट चुनें।",
+                "howto.step4.title": "रिजल्ट डाउनलोड करें",
+                "howto.step4.description": "एक क्लिक में अपनी घुमाई/पलटी गई इमेज डाउनलोड करें। कोई वॉटरमार्क नहीं, कोई पंजीकरण आवश्यक नहीं।",
+                "rotator.title": "इमेज रोटेटर और फ्लिपर टूल",
+                "rotator.upload.text": "अपनी इमेज यहां ड्रैग और ड्रॉप करें या ब्राउज़ करने के लिए क्लिक करें",
+                "rotator.upload.button": "इमेज चुनें",
+                "rotator.options.title": "रोटेशन और फ्लिप विकल्प",
+                "rotator.controls.rotateLeft": "बाएं घुमाएं",
+                "rotator.controls.rotateRight": "दाएं घुमाएं",
+                "rotator.controls.flipHorizontal": "क्षैतिज पलटें",
+                "rotator.controls.flipVertical": "लंबवत पलटें",
+                "rotator.format.title": "आउटपुट फॉर्मेट",
+                "rotator.preview.title": "प्रीव्यू",
+                "rotator.preview.original": "मूल",
+                "rotator.preview.rotated": "घुमाई/पलटी गई",
+                "rotator.processing": "प्रोसेसिंग: 0%",
+                "rotator.rotate": "रोटेशन लागू करें",
+                "rotator.download": "डाउनलोड",
+                "rotator.reset": "रीसेट",
+                "footer.follow": "हमें फॉलो करें",
+                "footer.categories": "लोकप्रिय श्रेणियां",
+                "footer.categories.pdf": "PDF टूल्स",
+                "footer.categories.image": "इमेज टूल्स",
+                "footer.categories.text": "टेक्स्ट टूल्स",
+                "footer.categories.av": "ऑडियो/वीडियो टूल्स",
+                "footer.categories.web": "वेब/डेवलपर टूल्स",
+                "footer.categories.calc": "कैलकुलेटर टूल्स",
+                "footer.categories.util": "यूटिलिटी टूल्स",
+                "footer.categories.color": "कलर टूल्स",
+                "footer.quicklinks": "त्वरित लिंक",
+                "footer.links.tools": "सभी टूल्स",
+                "footer.links.faq": "सामान्य प्रश्न",
+                "footer.links.contact": "संपर्क करें",
+                "footer.links.privacy": "गोपनीयता नीति",
+                "footer.links.disclaimer": "अस्वीकरण",
+                "footer.links.terms": "सेवा की शर्तें",
+                "footer.copyright": "© 2025 LollyPoPDF. सर्वाधिकार सुरक्षित।"
+            },
+            te: {
+                "nav.home": "హోమ్",
+                "nav.about": "మా గురించి",
+                "nav.tools": "టూల్స్",
+                "nav.contact": "సంప్రదించండి",
+                "hero.title": "ఉచిత ఇమేజ్ రోటేటర్ & ఫ్లిప్పర్",
+                "hero.description": "మా ఉచిత టూల్‌తో మీ ఇమేజ్‌లను తక్షణంగా తిప్పండి మరియు ఫ్లిప్ చేయండి. బహుళ ఫార్మాట్‌లకు మద్దతు, రిజిస్ట్రేషన్ అవసరం లేదు.",
+                "howto.title": "ఇమేజ్‌లను ఎలా తిప్పాలి మరియు ఫ్లిప్ చేయాలి",
+                "howto.step1.title": "మీ ఇమేజ్‌ను అప్‌లోడ్ చేయండి",
+                "howto.step1.description": "అప్‌లోడ్ ప్రాంతంపై క్లిక్ చేయండి లేదా మీ ఇమేజ్ ఫైల్‌ను డ్రాగ్ మరియు డ్రాప్ చేయండి. మేము JPG, PNG, GIF, WEBP మరియు మరిన్నింటికి మద్దతు ఇస్తాము.",
+                "howto.step2.title": "తిప్పండి లేదా ఫ్లిప్ చేయండి",
+                "howto.step2.description": "ఎడమ/కుడి తిప్పడానికి లేదా అడ్డంగా/నిలువుగా ఫ్లిప్ చేయడానికి రోటేషన్ బటన్లను ఉపయోగించండి. రియల్-టైమ్ ప్రివ్యూ చూడండి.",
+                "howto.step3.title": "ఫార్మాట్ ఎంచుకోండి",
+                "howto.step3.description": "PNG, JPG, JPEG, BMP, GIF, WEBP మరియు TIFF నుండి మీకు నచ్చిన అవుట్‌పుట్ ఫార్మాట్‌ను ఎంచుకోండి.",
+                "howto.step4.title": "ఫలితాన్ని డౌన్‌లోడ్ చేయండి",
+                "howto.step4.description": "ఒక క్లిక్‌తో మీ తిప్పబడిన/ఫ్లిప్ చేయబడిన ఇమేజ్‌ను డౌన్‌లోడ్ చేయండి. వాటర్‌మార్క్‌లు లేవు, రిజిస్ట్రేషన్ అవసరం లేదు.",
+                "rotator.title": "ఇమేజ్ రోటేటర్ & ఫ్లిప్పర్ టూల్",
+                "rotator.upload.text": "మీ ఇమేజ్‌ను ఇక్కడ డ్రాగ్ మరియు డ్రాప్ చేయండి లేదా బ్రౌజ్ చేయడానికి క్లిక్ చేయండి",
+                "rotator.upload.button": "ఇమేజ్ ఎంచుకోండి",
+                "rotator.options.title": "రోటేషన్ & ఫ్లిప్ ఎంపికలు",
+                "rotator.controls.rotateLeft": "ఎడమకు తిప్పండి",
+                "rotator.controls.rotateRight": "కుడికి తిప్పండి",
+                "rotator.controls.flipHorizontal": "అడ్డంగా ఫ్లిప్ చేయండి",
+                "rotator.controls.flipVertical": "నిలువుగా ఫ్లిప్ చేయండి",
+                "rotator.format.title": "అవుట్‌పుట్ ఫార్మాట్",
+                "rotator.preview.title": "ప్రివ్యూ",
+                "rotator.preview.original": "అసలు",
+                "rotator.preview.rotated": "తిప్పబడిన/ఫ్లిప్ చేయబడిన",
+                "rotator.processing": "ప్రాసెసింగ్: 0%",
+                "rotator.rotate": "రోటేషన్ వర్తింపజేయండి",
+                "rotator.download": "డౌన్‌లోడ్",
+                "rotator.reset": "రీసెట్",
+                "footer.follow": "మమ్మల్ని అనుసరించండి",
+                "footer.categories": "జనాదరణ పొందిన వర్గాలు",
+                "footer.categories.pdf": "PDF టూల్స్",
+                "footer.categories.image": "ఇమేజ్ టూల్స్",
+                "footer.categories.text": "టెక్స్ట్ టూల్స్",
+                "footer.categories.av": "ఆడియో/వీడియో టూల్స్",
+                "footer.categories.web": "వెబ్/డెవలపర్ టూల్స్",
+                "footer.categories.calc": "కాలిక్యులేటర్ టూల్స్",
+                "footer.categories.util": "యుటిలిటీ టూల్స్",
+                "footer.categories.color": "కలర్ టూల్స్",
+                "footer.quicklinks": "త్వరిత లింకులు",
+                "footer.links.tools": "అన్ని టూల్స్",
+                "footer.links.faq": "తరచుగా అడిగే ప్రశ్నలు",
+                "footer.links.contact": "సంప్రదించండి",
+                "footer.links.privacy": "గోప్యతా విధానం",
+                "footer.links.disclaimer": "నిరాకరణ",
+                "footer.links.terms": "సేవా నిబంధనలు",
+                "footer.copyright": "© 2025 LollyPoPDF. హక్కులు ప్రత్యేకించబడినవి."
+            },
+            kn: {
+                "nav.home": "ಮುಖಪುಟ",
+                "nav.about": "ನಮ್ಮ ಬಗ್ಗೆ",
+                "nav.tools": "ಟೂಲ್ಸ್",
+                "nav.contact": "ಸಂಪರ್ಕಿಸಿ",
+                "hero.title": "ಉಚಿತ ಚಿತ್ರ ತಿರುಗಿಸುವಿಕೆ & ಫ್ಲಿಪ್ಪರ್",
+                "hero.description": "ನಮ್ಮ ಉಚಿತ ಟೂಲ್‌ನೊಂದಿಗೆ ನಿಮ್ಮ ಚಿತ್ರಗಳನ್ನು ತಕ್ಷಣ ತಿರುಗಿಸಿ ಮತ್ತು ಫ್ಲಿಪ್ ಮಾಡಿ. ಬಹು ಫಾರ್ಮಾಟ್‌ಗಳನ್ನು ಬೆಂಬಲಿಸುತ್ತದೆ, ನೋಂದಣಿ ಅಗತ್ಯವಿಲ್ಲ.",
+                "howto.title": "ಚಿತ್ರಗಳನ್ನು ಹೇಗೆ ತಿರುಗಿಸುವುದು ಮತ್ತು ಫ್ಲಿಪ್ ಮಾಡುವುದು",
+                "howto.step1.title": "ನಿಮ್ಮ ಚಿತ್ರವನ್ನು ಅಪ್‌ಲೋಡ್ ಮಾಡಿ",
+                "howto.step1.description": "ಅಪ್‌ಲೋಡ್ ಪ್ರದೇಶದ ಮೇಲೆ ಕ್ಲಿಕ್ ಮಾಡಿ ಅಥವಾ ನಿಮ್ಮ ಚಿತ್ರ ಫೈಲ್ ಅನ್ನು ಎಳೆದು ಬಿಡಿ. ನಾವು JPG, PNG, GIF, WEBP ಮತ್ತು ಹೆಚ್ಚಿನವುಗಳನ್ನು ಬೆಂಬಲಿಸುತ್ತೇವೆ.",
+                "howto.step2.title": "ತಿರುಗಿಸಿ ಅಥವಾ ಫ್ಲಿಪ್ ಮಾಡಿ",
+                "howto.step2.description": "ಎಡ/ಬಲ ತಿರುಗಿಸಲು ಅಥವಾ ಅಡ್ಡಲಾಗಿ/ಲಂಬವಾಗಿ ಫ್ಲಿಪ್ ಮಾಡಲು ತಿರುಗುವಿಕೆ ಬಟನ್‌ಗಳನ್ನು ಬಳಸಿ. ರಿಯಲ್-ಟೈಮ್ ಪೂರ್ವವೀಕ್ಷಣೆ ನೋಡಿ.",
+                "howto.step3.title": "ಫಾರ್ಮಾಟ್ ಆಯ್ಕೆ ಮಾಡಿ",
+                "howto.step3.description": "PNG, JPG, JPEG, BMP, GIF, WEBP ಮತ್ತು TIFF ನಿಂದ ನಿಮ್ಮ ಆದ್ಯತೆಯ ಔಟ್‌ಪುಟ್ ಫಾರ್ಮಾಟ್ ಆಯ್ಕೆ ಮಾಡಿ.",
+                "howto.step4.title": "ಫಲಿತಾಂಶವನ್ನು ಡೌನ್‌ಲೋಡ್ ಮಾಡಿ",
+                "howto.step4.description": "ಒಂದು ಕ್ಲಿಕ್‌ನೊಂದಿಗೆ ನಿಮ್ಮ ತಿರುಗಿಸಿದ/ಫ್ಲಿಪ್ ಮಾಡಿದ ಚಿತ್ರವನ್ನು ಡೌನ್‌ಲೋಡ್ ಮಾಡಿ. ವಾಟರ್‌ಮಾರ್ಕ್‌ಗಳಿಲ್ಲ, ನೋಂದಣಿ ಅಗತ್ಯವಿಲ್ಲ.",
+                "rotator.title": "ಚಿತ್ರ ತಿರುಗಿಸುವಿಕೆ & ಫ್ಲಿಪ್ಪರ್ ಟೂಲ್",
+                "rotator.upload.text": "ನಿಮ್ಮ ಚಿತ್ರವನ್ನು ಇಲ್ಲಿ ಎಳೆದು ಬಿಡಿ ಅಥವಾ ಬ್ರೌಸ್ ಮಾಡಲು ಕ್ಲಿಕ್ ಮಾಡಿ",
+                "rotator.upload.button": "ಚಿತ್ರ ಆಯ್ಕೆ ಮಾಡಿ",
+                "rotator.options.title": "ತಿರುಗುವಿಕೆ & ಫ್ಲಿಪ್ ಆಯ್ಕೆಗಳು",
+                "rotator.controls.rotateLeft": "ಎಡಕ್ಕೆ ತಿರುಗಿಸಿ",
+                "rotator.controls.rotateRight": "ಬಲಕ್ಕೆ ತಿರುಗಿಸಿ",
+                "rotator.controls.flipHorizontal": "ಅಡ್ಡಲಾಗಿ ಫ್ಲಿಪ್ ಮಾಡಿ",
+                "rotator.controls.flipVertical": "ಲಂಬವಾಗಿ ಫ್ಲಿಪ್ ಮಾಡಿ",
+                "rotator.format.title": "ಔಟ್‌ಪುಟ್ ಫಾರ್ಮಾಟ್",
+                "rotator.preview.title": "ಪೂರ್ವವೀಕ್ಷಣೆ",
+                "rotator.preview.original": "ಮೂಲ",
+                "rotator.preview.rotated": "ತಿರುಗಿಸಿದ/ಫ್ಲಿಪ್ ಮಾಡಿದ",
+                "rotator.processing": "ಪ್ರಕ್ರಿಯೆ: 0%",
+                "rotator.rotate": "ತಿರುಗುವಿಕೆ ಅನ್ವಯಿಸಿ",
+                "rotator.download": "ಡೌನ್‌ಲೋಡ್",
+                "rotator.reset": "ರೀಸೆಟ್",
+                "footer.follow": "ನಮ್ಮನ್ನು ಅನುಸರಿಸಿ",
+                "footer.categories": "ಜನಪ್ರಿಯ ವರ್ಗಗಳು",
+                "footer.categories.pdf": "PDF ಟೂಲ್ಸ್",
+                "footer.categories.image": "ಚಿತ್ರ ಟೂಲ್ಸ್",
+                "footer.categories.text": "ಟೆಕ್ಸ್ಟ್ ಟೂಲ್ಸ್",
+                "footer.categories.av": "ಆಡಿಯೋ/ವೀಡಿಯೋ ಟೂಲ್ಸ್",
+                "footer.categories.web": "ವೆಬ್/ಡೆವಲಪರ್ ಟೂಲ್ಸ್",
+                "footer.categories.calc": "ಕ್ಯಾಲ್ಕುಲೇಟರ್ ಟೂಲ್ಸ್",
+                "footer.categories.util": "ಯುಟಿಲಿಟಿ ಟೂಲ್ಸ್",
+                "footer.categories.color": "ಬಣ್ಣ ಟೂಲ್ಸ್",
+                "footer.quicklinks": "ತ್ವರಿತ ಲಿಂಕ್‌ಗಳು",
+                "footer.links.tools": "ಎಲ್ಲಾ ಟೂಲ್ಸ್",
+                "footer.links.faq": "ಸಾಮಾನ್ಯ ಪ್ರಶ್ನೆಗಳು",
+                "footer.links.contact": "ಸಂಪರ್ಕಿಸಿ",
+                "footer.links.privacy": "ಗೌಪ್ಯತಾ ನೀತಿ",
+                "footer.links.disclaimer": "ಮುನ್ಸೂಚನೆ",
+                "footer.links.terms": "ಸೇವಾ ನಿಯಮಗಳು",
+                "footer.copyright": "© 2025 LollyPoPDF. ಎಲ್ಲ ಹಕ್ಕುಗಳು ಕಾಯ್ದಿರಿಸಲ್ಪಟ್ಟಿವೆ."
+            },
+            ta: {
+                "nav.home": "முகப்பு",
+                "nav.about": "எங்களைப் பற்றி",
+                "nav.tools": "கருவிகள்",
+                "nav.contact": "தொடர்பு கொள்ள",
+                "hero.title": "இலவச பட சுழற்றி & புரட்டி",
+                "hero.description": "எங்கள் இலவச கருவியுடன் உங்கள் படங்களை உடனடியாக சுழற்றவும் மற்றும் புரட்டவும். பல வடிவங்களை ஆதரிக்கிறது, பதிவு தேவையில்லை.",
+                "howto.title": "படங்களை எப்படி சுழற்றுவது மற்றும் புரட்டுவது",
+                "howto.step1.title": "உங்கள் படத்தை பதிவேற்றவும்",
+                "howto.step1.description": "பதிவேற்ற பகுதியை கிளிக் செய்யவும் அல்லது உங்கள் பட கோப்பை இழுத்து விடவும். நாங்கள் JPG, PNG, GIF, WEBP மற்றும் பலவற்றை ஆதரிக்கிறோம்.",
+                "howto.step2.title": "சுழற்று அல்லது புரட்டு",
+                "howto.step2.description": "இடது/வலது சுழற்ற அல்லது கிடைமட்ட/செங்குத்தாக புரட்ட சுழற்சி பொத்தான்களைப் பயன்படுத்தவும். நிகழ்நேர முன்னோட்டத்தைப் பார்க்கவும்.",
+                "howto.step3.title": "வடிவத்தை தேர்ந்தெடுக்கவும்",
+                "howto.step3.description": "PNG, JPG, JPEG, BMP, GIF, WEBP மற்றும் TIFF இலிருந்து உங்களுக்கு விருப்பமான வெளியீட்டு வடிவத்தைத் தேர்ந்தெடுக்கவும்.",
+                "howto.step4.title": "முடிவை பதிவிறக்கவும்",
+                "howto.step4.description": "ஒரு கிளிக் மூலம் உங்கள் சுழற்றப்பட்ட/புரட்டப்பட்ட படத்தை பதிவிறக்கவும். நீர்முத்திரைகள் இல்லை, பதிவு தேவையில்லை.",
+                "rotator.title": "பட சுழற்றி & புரட்டி கருவி",
+                "rotator.upload.text": "உங்கள் படத்தை இங்கே இழுத்து விடவும் அல்லது உலாவ கிளிக் செய்யவும்",
+                "rotator.upload.button": "படத்தைத் தேர்ந்தெடுக்கவும்",
+                "rotator.options.title": "சுழற்சி & புரட்டு விருப்பங்கள்",
+                "rotator.controls.rotateLeft": "இடது பக்கம் சுழற்று",
+                "rotator.controls.rotateRight": "வலது பக்கம் சுழற்று",
+                "rotator.controls.flipHorizontal": "கிடைமட்டமாக புரட்டு",
+                "rotator.controls.flipVertical": "செங்குத்தாக புரட்டு",
+                "rotator.format.title": "வெளியீட்டு வடிவம்",
+                "rotator.preview.title": "முன்னோட்டம்",
+                "rotator.preview.original": "அசல்",
+                "rotator.preview.rotated": "சுழற்றப்பட்ட/புரட்டப்பட்ட",
+                "rotator.processing": "செயலாக்கம்: 0%",
+                "rotator.rotate": "சுழற்சியைப் பயன்படுத்து",
+                "rotator.download": "பதிவிறக்கம்",
+                "rotator.reset": "மீட்டமை",
+                "footer.follow": "எங்களைப் பின்தொடரவும்",
+                "footer.categories": "பிரபலமான வகைகள்",
+                "footer.categories.pdf": "PDF கருவிகள்",
+                "footer.categories.image": "பட கருவிகள்",
+                "footer.categories.text": "உரை கருவிகள்",
+                "footer.categories.av": "ஆடியோ/வீடியோ கருவிகள்",
+                "footer.categories.web": "வலை/டெவலப்பர் கருவிகள்",
+                "footer.categories.calc": "கால்குலேட்டர் கருவிகள்",
+                "footer.categories.util": "பயன்பாட்டு கருவிகள்",
+                "footer.categories.color": "நிற கருவிகள்",
+                "footer.quicklinks": "விரைவு இணைப்புகள்",
+                "footer.links.tools": "அனைத்து கருவிகள்",
+                "footer.links.faq": "அடிக்கடி கேட்கப்படும் கேள்விகள்",
+                "footer.links.contact": "தொடர்பு கொள்ள",
+                "footer.links.privacy": "தனியுரிமைக் கொள்கை",
+                "footer.links.disclaimer": "மறுப்பறிக்கை",
+                "footer.links.terms": "சேவை விதிமுறைகள்",
+                "footer.copyright": "© 2025 LollyPoPDF. அனைத்து உரிமைகளும் பாதுகாக்கப்பட்டவை."
+            },
+            ml: {
+                "nav.home": "ഹോം",
+                "nav.about": "ഞങ്ങളെക്കുറിച്ച്",
+                "nav.tools": "ടൂളുകൾ",
+                "nav.contact": "ബന്ധപ്പെടുക",
+                "hero.title": "സൗജന്യ ഇമേജ് റൊട്ടേറ്റർ & ഫ്ലിപ്പർ",
+                "hero.description": "ഞങ്ങളുടെ സൗജന്യ ടൂൾ ഉപയോഗിച്ച് നിങ്ങളുടെ ഇമേജുകൾ തൽക്ഷണം തിരിക്കുകയും ഫ്ലിപ്പ് ചെയ്യുകയും ചെയ്യുക. ഒന്നിലധികം ഫോർമാറ്റുകൾ പിന്തുണയ്ക്കുന്നു, രജിസ്ട്രേഷൻ ആവശ്യമില്ല.",
+                "howto.title": "ഇമേജുകൾ എങ്ങനെ തിരിക്കാം, ഫ്ലിപ്പ് ചെയ്യാം",
+                "howto.step1.title": "നിങ്ങളുടെ ഇമേജ് അപ്‌ലോഡ് ചെയ്യുക",
+                "howto.step1.description": "അപ്‌ലോഡ് ഏരിയയിൽ ക്ലിക്ക് ചെയ്യുക അല്ലെങ്കിൽ നിങ്ങളുടെ ഇമേജ് ഫയൽ ഡ്രാഗ് ചെയ്ത് ഡ്രോപ്പ് ചെയ്യുക. ഞങ്ങൾ JPG, PNG, GIF, WEBP എന്നിവയെ പിന്തുണയ്ക്കുന്നു.",
+                "howto.step2.title": "തിരിക്കുക അല്ലെങ്കിൽ ഫ്ലിപ്പ് ചെയ്യുക",
+                "howto.step2.description": "ഇടത്/വലത് തിരിക്കാനോ തിരശ്ചീനമായി/ലംബമായി ഫ്ലിപ്പ് ചെയ്യാനോ റൊട്ടേഷൻ ബട്ടണുകൾ ഉപയോഗിക്കുക. റിയൽ-ടൈം പ്രിവ്യൂ കാണുക.",
+                "howto.step3.title": "ഫോർമാറ്റ് തിരഞ്ഞെടുക്കുക",
+                "howto.step3.description": "PNG, JPG, JPEG, BMP, GIF, WEBP, TIFF എന്നിവയിൽ നിന്ന് നിങ്ങൾക്ക് ഇഷ്ടമുള്ള ഔട്ട്പുട്ട് ഫോർമാറ്റ് തിരഞ്ഞെടുക്കുക.",
+                "howto.step4.title": "ഫലം ഡൗൺലോഡ് ചെയ്യുക",
+                "howto.step4.description": "ഒരു ക്ലിക്ക് ഉപയോഗിച്ച് നിങ്ങളുടെ തിരിക്കപ്പെട്ട/ഫ്ലിപ്പ് ചെയ്ത ഇമേജ് ഡൗൺലോഡ് ചെയ്യുക. വാട്ടർമാർക്കുകളില്ല, രജിസ്ട്രേഷൻ ആവശ്യമില്ല.",
+                "rotator.title": "ഇമേജ് റൊട്ടേറ്റർ & ഫ്ലിപ്പർ ടൂൾ",
+                "rotator.upload.text": "നിങ്ങളുടെ ഇമേജ് ഇവിടെ ഡ്രാഗ് ചെയ്ത് ഡ്രോപ്പ് ചെയ്യുക അല്ലെങ്കിൽ ബ്രൗസ് ചെയ്യാൻ ക്ലിക്ക് ചെയ്യുക",
+                "rotator.upload.button": "ഇമേജ് തിരഞ്ഞെടുക്കുക",
+                "rotator.options.title": "റൊട്ടേഷൻ & ഫ്ലിപ്പ് ഓപ്ഷനുകൾ",
+                "rotator.controls.rotateLeft": "ഇടതുവശത്തേക്ക് തിരിക്കുക",
+                "rotator.controls.rotateRight": "വലതുവശത്തേക്ക് തിരിക്കുക",
+                "rotator.controls.flipHorizontal": "തിരശ്ചീനമായി ഫ്ലിപ്പ് ചെയ്യുക",
+                "rotator.controls.flipVertical": "ലംബമായി ഫ്ലിപ്പ് ചെയ്യുക",
+                "rotator.format.title": "ഔട്ട്പുട്ട് ഫോർമാറ്റ്",
+                "rotator.preview.title": "പ്രിവ്യൂ",
+                "rotator.preview.original": "യഥാർത്ഥ",
+                "rotator.preview.rotated": "തിരിക്കപ്പെട്ട/ഫ്ലിപ്പ് ചെയ്ത",
+                "rotator.processing": "പ്രോസസ്സിംഗ്: 0%",
+                "rotator.rotate": "റൊട്ടേഷൻ പ്രയോഗിക്കുക",
+                "rotator.download": "ഡൗൺലോഡ്",
+                "rotator.reset": "റീസെറ്റ്",
+                "footer.follow": "ഞങ്ങളെ പിന്തുടരുക",
+                "footer.categories": "ജനപ്രിയ വിഭാഗങ്ങൾ",
+                "footer.categories.pdf": "PDF ടൂളുകൾ",
+                "footer.categories.image": "ഇമേജ് ടൂളുകൾ",
+                "footer.categories.text": "ടെക്സ്റ്റ് ടൂളുകൾ",
+                "footer.categories.av": "ഓഡിയോ/വീഡിയോ ടൂളുകൾ",
+                "footer.categories.web": "വെബ്/ഡെവലപ്പർ ടൂളുകൾ",
+                "footer.categories.calc": "കാൽക്കുലേറ്റർ ടൂളുകൾ",
+                "footer.categories.util": "യൂട്ടിലിറ്റി ടൂളുകൾ",
+                "footer.categories.color": "കളർ ടൂളുകൾ",
+                "footer.quicklinks": "ദ്രുത ലിങ്കുകൾ",
+                "footer.links.tools": "എല്ലാ ടൂളുകളും",
+                "footer.links.faq": "പതിവുചോദ്യങ്ങൾ",
+                "footer.links.contact": "ബന്ധപ്പെടുക",
+                "footer.links.privacy": "സ്വകാര്യതാ നയം",
+                "footer.links.disclaimer": "അസ്വീകാര്യത",
+                "footer.links.terms": "സേവന നിബന്ധനകൾ",
+                "footer.copyright": "© 2025 LollyPoPDF. എല്ലാ അവകാശങ്ങളും നിക്ഷിപ്തം."
+            },
+            id: {
+                "nav.home": "Beranda",
+                "nav.about": "Tentang Kami",
+                "nav.tools": "Alat",
+                "nav.contact": "Kontak",
+                "hero.title": "Pemutar & Pembalik Gambar Gratis",
+                "hero.description": "Putar dan balik gambar Anda secara instan dengan alat gratis kami. Mendukung berbagai format, tidak perlu registrasi.",
+                "howto.title": "Cara Memutar & Membalik Gambar",
+                "howto.step1.title": "Unggah Gambar Anda",
+                "howto.step1.description": "Klik area unggah atau seret dan lepas file gambar Anda. Kami mendukung JPG, PNG, GIF, WEBP dan lainnya.",
+                "howto.step2.title": "Putar atau Balik",
+                "howto.step2.description": "Gunakan tombol putar untuk memutar kiri/kanan atau membalik horizontal/vertikal. Lihat pratinjau waktu nyata.",
+                "howto.step3.title": "Pilih Format",
+                "howto.step3.description": "Pilih format output yang Anda inginkan dari PNG, JPG, JPEG, BMP, GIF, WEBP, dan TIFF.",
+                "howto.step4.title": "Unduh Hasil",
+                "howto.step4.description": "Unduh gambar yang diputar/dibalik Anda dengan satu klik. Tanpa watermark, tidak perlu registrasi.",
+                "rotator.title": "Alat Pemutar & Pembalik Gambar",
+                "rotator.upload.text": "Seret dan lepas gambar Anda di sini atau klik untuk menjelajah",
+                "rotator.upload.button": "Pilih Gambar",
+                "rotator.options.title": "Opsi Putar & Balik",
+                "rotator.controls.rotateLeft": "Putar Kiri",
+                "rotator.controls.rotateRight": "Putar Kanan",
+                "rotator.controls.flipHorizontal": "Balik Horizontal",
+                "rotator.controls.flipVertical": "Balik Vertikal",
+                "rotator.format.title": "Format Output",
+                "rotator.preview.title": "Pratinjau",
+                "rotator.preview.original": "Asli",
+                "rotator.preview.rotated": "Diputar/Dibalik",
+                "rotator.processing": "Memproses: 0%",
+                "rotator.rotate": "Terapkan Putaran",
+                "rotator.download": "Unduh",
+                "rotator.reset": "Atur Ulang",
+                "footer.follow": "IKUTI KAMI",
+                "footer.categories": "Kategori Populer",
+                "footer.categories.pdf": "Alat PDF",
+                "footer.categories.image": "Alat Gambar",
+                "footer.categories.text": "Alat Teks",
+                "footer.categories.av": "Alat Audio/Video",
+                "footer.categories.web": "Alat Web/Pengembang",
+                "footer.categories.calc": "Alat Kalkulator",
+                "footer.categories.util": "Alat Utilitas",
+                "footer.categories.color": "Alat Warna",
+                "footer.quicklinks": "Tautan Cepat",
+                "footer.links.tools": "Semua Alat",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Kontak",
+                "footer.links.privacy": "Kebijakan Privasi",
+                "footer.links.disclaimer": "Penafian",
+                "footer.links.terms": "Syarat Layanan",
+                "footer.copyright": "© 2025 LollyPoPDF. Hak cipta dilindungi."
+            },
+            ms: {
+                "nav.home": "Laman Utama",
+                "nav.about": "Tentang Kami",
+                "nav.tools": "Alat",
+                "nav.contact": "Hubungi",
+                "hero.title": "Pemutar & Pembalik Imej Percuma",
+                "hero.description": "Putar dan balik imej anda serta-merta dengan alat percuma kami. Menyokong pelbagai format, tidak perlu pendaftaran.",
+                "howto.title": "Cara Memutar & Membalik Imej",
+                "howto.step1.title": "Muat Naik Imej Anda",
+                "howto.step1.description": "Klik kawasan muat naik atau seret dan lepaskan fail imej anda. Kami menyokong JPG, PNG, GIF, WEBP dan lain-lain.",
+                "howto.step2.title": "Putar atau Balik",
+                "howto.step2.description": "Gunakan butang putaran untuk memutar kiri/kanan atau membalik mengufuk/menegak. Lihat pratonton masa nyata.",
+                "howto.step3.title": "Pilih Format",
+                "howto.step3.description": "Pilih format output pilihan anda dari PNG, JPG, JPEG, BMP, GIF, WEBP, dan TIFF.",
+                "howto.step4.title": "Muat Turun Hasil",
+                "howto.step4.description": "Muat turun imej yang diputar/dibalik anda dengan satu klik. Tiada tanda air, tidak perlu pendaftaran.",
+                "rotator.title": "Alat Pemutar & Pembalik Imej",
+                "rotator.upload.text": "Seret dan lepaskan imej anda di sini atau klik untuk melayari",
+                "rotator.upload.button": "Pilih Imej",
+                "rotator.options.title": "Pilihan Putaran & Balikan",
+                "rotator.controls.rotateLeft": "Putar Kiri",
+                "rotator.controls.rotateRight": "Putar Kanan",
+                "rotator.controls.flipHorizontal": "Balik Mengufuk",
+                "rotator.controls.flipVertical": "Balik Menegak",
+                "rotator.format.title": "Format Output",
+                "rotator.preview.title": "Pratonton",
+                "rotator.preview.original": "Asal",
+                "rotator.preview.rotated": "Diputar/Dibalik",
+                "rotator.processing": "Memproses: 0%",
+                "rotator.rotate": "Gunakan Putaran",
+                "rotator.download": "Muat Turun",
+                "rotator.reset": "Tetapkan Semula",
+                "footer.follow": "IKUTI KAMI",
+                "footer.categories": "Kategori Popular",
+                "footer.categories.pdf": "Alat PDF",
+                "footer.categories.image": "Alat Imej",
+                "footer.categories.text": "Alat Teks",
+                "footer.categories.av": "Alat Audio/Video",
+                "footer.categories.web": "Alat Web/Pembangun",
+                "footer.categories.calc": "Alat Kalkulator",
+                "footer.categories.util": "Alat Utiliti",
+                "footer.categories.color": "Alat Warna",
+                "footer.quicklinks": "Pautan Pantas",
+                "footer.links.tools": "Semua Alat",
+                "footer.links.faq": "Soalan Lazim",
+                "footer.links.contact": "Hubungi",
+                "footer.links.privacy": "Dasar Privasi",
+                "footer.links.disclaimer": "Penafian",
+                "footer.links.terms": "Syarat Perkhidmatan",
+                "footer.copyright": "© 2025 LollyPoPDF. Hak cipta terpelihara."
+            },
+            pl: {
+                "nav.home": "Strona główna",
+                "nav.about": "O nas",
+                "nav.tools": "Narzędzia",
+                "nav.contact": "Kontakt",
+                "hero.title": "Darmowy Obróć i Odwróć Obraz",
+                "hero.description": "Obróć i odwróć swoje obrazy natychmiast za pomocą naszego darmowego narzędzia. Obsługuje wiele formatów, bez rejestracji.",
+                "howto.title": "Jak Obrócić i Odwrócić Obrazy",
+                "howto.step1.title": "Prześlij Swój Obraz",
+                "howto.step1.description": "Kliknij obszar przesyłania lub przeciągnij i upuść plik obrazu. Obsługujemy JPG, PNG, GIF, WEBP i inne.",
+                "howto.step2.title": "Obróć lub Odwróć",
+                "howto.step2.description": "Użyj przycisków obrotu, aby obrócić w lewo/prawo lub odwrócić poziomo/pionowo. Zobacz podgląd w czasie rzeczywistym.",
+                "howto.step3.title": "Wybierz Format",
+                "howto.step3.description": "Wybierz preferowany format wyjściowy z PNG, JPG, JPEG, BMP, GIF, WEBP i TIFF.",
+                "howto.step4.title": "Pobierz Wynik",
+                "howto.step4.description": "Pobierz swój obrócony/odwrócony obraz jednym kliknięciem. Bez znaków wodnych, bez rejestracji.",
+                "rotator.title": "Narzędzie do Obrótu i Odwracania Obrazów",
+                "rotator.upload.text": "Przeciągnij i upuść swój obraz tutaj lub kliknij, aby przeglądać",
+                "rotator.upload.button": "Wybierz Obraz",
+                "rotator.options.title": "Opcje Obrótu i Odwracania",
+                "rotator.controls.rotateLeft": "Obróć w Lewo",
+                "rotator.controls.rotateRight": "Obróć w Prawo",
+                "rotator.controls.flipHorizontal": "Odwróć Poziomo",
+                "rotator.controls.flipVertical": "Odwróć Pionowo",
+                "rotator.format.title": "Format Wyjściowy",
+                "rotator.preview.title": "Podgląd",
+                "rotator.preview.original": "Oryginał",
+                "rotator.preview.rotated": "Obrócony/Odwiedziony",
+                "rotator.processing": "Przetwarzanie: 0%",
+                "rotator.rotate": "Zastosuj Obrót",
+                "rotator.download": "Pobierz",
+                "rotator.reset": "Resetuj",
+                "footer.follow": "OBSERWUJ NAS",
+                "footer.categories": "Popularne Kategorie",
+                "footer.categories.pdf": "Narzędzia PDF",
+                "footer.categories.image": "Narzędzia Obrazów",
+                "footer.categories.text": "Narzędzia Tekstowe",
+                "footer.categories.av": "Narzędzia Audio/Wideo",
+                "footer.categories.web": "Narzędzia Web/Programisty",
+                "footer.categories.calc": "Narzędzia Kalkulatora",
+                "footer.categories.util": "Narzędzia Użytkowe",
+                "footer.categories.color": "Narzędzia Kolorów",
+                "footer.quicklinks": "Szybkie Linki",
+                "footer.links.tools": "Wszystkie Narzędzia",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Kontakt",
+                "footer.links.privacy": "Polityka Prywatności",
+                "footer.links.disclaimer": "Zastrzeżenie",
+                "footer.links.terms": "Warunki Usługi",
+                "footer.copyright": "© 2025 LollyPoPDF. Wszelkie prawa zastrzeżone."
+            },
+            th: {
+                "nav.home": "หน้าแรก",
+                "nav.about": "เกี่ยวกับเรา",
+                "nav.tools": "เครื่องมือ",
+                "nav.contact": "ติดต่อ",
+                "hero.title": "ตัวหมุนและพลิกภาพฟรี",
+                "hero.description": "หมุนและพลิกภาพของคุณทันทีด้วยเครื่องมือฟรีของเรา รองรับหลายรูปแบบ ไม่ต้องลงทะเบียน",
+                "howto.title": "วิธีการหมุนและพลิกภาพ",
+                "howto.step1.title": "อัพโหลดภาพของคุณ",
+                "howto.step1.description": "คลิกพื้นที่อัพโหลดหรือลากและวางไฟล์ภาพของคุณ เรารองรับ JPG, PNG, GIF, WEBP และอื่นๆ",
+                "howto.step2.title": "หมุนหรือพลิก",
+                "howto.step2.description": "ใช้ปุ่มหมุนเพื่อหมุนซ้าย/ขวาหรือพลิกแนวนอน/แนวตั้ง ดูตัวอย่างแบบเรียลไทม์",
+                "howto.step3.title": "เลือกรูปแบบ",
+                "howto.step3.description": "เลือกรูปแบบผลลัพธ์ที่คุณต้องการจาก PNG, JPG, JPEG, BMP, GIF, WEBP และ TIFF",
+                "howto.step4.title": "ดาวน์โหลดผลลัพธ์",
+                "howto.step4.description": "ดาวน์โหลดภาพที่หมุน/พลิกของคุณด้วยคลิกเดียว ไม่มีลายน้ำ ไม่ต้องลงทะเบียน",
+                "rotator.title": "เครื่องมือหมุนและพลิกภาพ",
+                "rotator.upload.text": "ลากและวางภาพของคุณที่นี่หรือคลิกเพื่อเรียกดู",
+                "rotator.upload.button": "เลือกภาพ",
+                "rotator.options.title": "ตัวเลือกการหมุนและพลิก",
+                "rotator.controls.rotateLeft": "หมุนซ้าย",
+                "rotator.controls.rotateRight": "หมุนขวา",
+                "rotator.controls.flipHorizontal": "พลิกแนวนอน",
+                "rotator.controls.flipVertical": "พลิกแนวตั้ง",
+                "rotator.format.title": "รูปแบบผลลัพธ์",
+                "rotator.preview.title": "ตัวอย่าง",
+                "rotator.preview.original": "ต้นฉบับ",
+                "rotator.preview.rotated": "หมุน/พลิกแล้ว",
+                "rotator.processing": "กำลังประมวลผล: 0%",
+                "rotator.rotate": "ใช้การหมุน",
+                "rotator.download": "ดาวน์โหลด",
+                "rotator.reset": "รีเซ็ต",
+                "footer.follow": "ติดตามเรา",
+                "footer.categories": "หมวดหมู่ยอดนิยม",
+                "footer.categories.pdf": "เครื่องมือ PDF",
+                "footer.categories.image": "เครื่องมือภาพ",
+                "footer.categories.text": "เครื่องมือข้อความ",
+                "footer.categories.av": "เครื่องมือเสียง/วิดีโอ",
+                "footer.categories.web": "เครื่องมือเว็บ/นักพัฒนา",
+                "footer.categories.calc": "เครื่องมือเครื่องคิดเลข",
+                "footer.categories.util": "เครื่องมืออรรถประโยชน์",
+                "footer.categories.color": "เครื่องมือสี",
+                "footer.quicklinks": "ลิงก์ด่วน",
+                "footer.links.tools": "เครื่องมือทั้งหมด",
+                "footer.links.faq": "คำถามที่พบบ่อย",
+                "footer.links.contact": "ติดต่อ",
+                "footer.links.privacy": "นโยบายความเป็นส่วนตัว",
+                "footer.links.disclaimer": "ข้อจำกัดความรับผิดชอบ",
+                "footer.links.terms": "เงื่อนไขการให้บริการ",
+                "footer.copyright": "© 2025 LollyPoPDF. สงวนลิขสิทธิ์."
+            },
+            tr: {
+                "nav.home": "Ana Sayfa",
+                "nav.about": "Hakkımızda",
+                "nav.tools": "Araçlar",
+                "nav.contact": "İletişim",
+                "hero.title": "Ücretsiz Görüntü Döndürücü ve Çevirici",
+                "hero.description": "Ücretsiz aracımızla görüntülerinizi anında döndürün ve çevirin. Birden çok formatı destekler, kayıt gerekmez.",
+                "howto.title": "Görüntüler Nasıl Döndürülür ve Çevrilir",
+                "howto.step1.title": "Görüntünüzü Yükleyin",
+                "howto.step1.description": "Yükleme alanını tıklayın veya görüntü dosyanızı sürükleyip bırakın. JPG, PNG, GIF, WEBP ve daha fazlasını destekliyoruz.",
+                "howto.step2.title": "Döndür veya Çevir",
+                "howto.step2.description": "Sol/sağ döndürmek veya yatay/dikey çevirmek için döndürme düğmelerini kullanın. Gerçek zamanlı önizlemeyi görün.",
+                "howto.step3.title": "Biçim Seçin",
+                "howto.step3.description": "PNG, JPG, JPEG, BMP, GIF, WEBP ve TIFF arasından tercih ettiğiniz çıktı biçimini seçin.",
+                "howto.step4.title": "Sonucu İndirin",
+                "howto.step4.description": "Döndürülmüş/çevrilmiş görüntünüzü tek tıklamayla indirin. Filigran yok, kayıt gerekmez.",
+                "rotator.title": "Görüntü Döndürücü ve Çevirici Aracı",
+                "rotator.upload.text": "Görüntünüzü buraya sürükleyip bırakın veya göz atmak için tıklayın",
+                "rotator.upload.button": "Görüntü Seç",
+                "rotator.options.title": "Döndürme ve Çevirme Seçenekleri",
+                "rotator.controls.rotateLeft": "Sola Döndür",
+                "rotator.controls.rotateRight": "Sağa Döndür",
+                "rotator.controls.flipHorizontal": "Yatay Çevir",
+                "rotator.controls.flipVertical": "Dikey Çevir",
+                "rotator.format.title": "Çıktı Biçimi",
+                "rotator.preview.title": "Önizleme",
+                "rotator.preview.original": "Orijinal",
+                "rotator.preview.rotated": "Döndürülmüş/Çevrilmiş",
+                "rotator.processing": "İşleniyor: %0",
+                "rotator.rotate": "Döndürmeyi Uygula",
+                "rotator.download": "İndir",
+                "rotator.reset": "Sıfırla",
+                "footer.follow": "BİZİ TAKİP EDİN",
+                "footer.categories": "Popüler Kategoriler",
+                "footer.categories.pdf": "PDF Araçları",
+                "footer.categories.image": "Görüntü Araçları",
+                "footer.categories.text": "Metin Araçları",
+                "footer.categories.av": "Ses/Video Araçları",
+                "footer.categories.web": "Web/Geliştirici Araçları",
+                "footer.categories.calc": "Hesap Makinesi Araçları",
+                "footer.categories.util": "Yardımcı Araçlar",
+                "footer.categories.color": "Renk Araçları",
+                "footer.quicklinks": "Hızlı Bağlantılar",
+                "footer.links.tools": "Tüm Araçlar",
+                "footer.links.faq": "SSS",
+                "footer.links.contact": "İletişim",
+                "footer.links.privacy": "Gizlilik Politikası",
+                "footer.links.disclaimer": "Feragatname",
+                "footer.links.terms": "Hizmet Şartları",
+                "footer.copyright": "© 2025 LollyPoPDF. Tüm hakları saklıdır."
+            },
+            uk: {
+                "nav.home": "Головна",
+                "nav.about": "Про нас",
+                "nav.tools": "Інструменти",
+                "nav.contact": "Контакт",
+                "hero.title": "Безкоштовний Обертальник та Перевертувач Зображень",
+                "hero.description": "Обертайте та перевертайте свої зображення миттєво за допомогою нашого безкоштовного інструменту. Підтримує кілька форматів, реєстрація не потрібна.",
+                "howto.title": "Як Обертати та Перевертати Зображення",
+                "howto.step1.title": "Завантажте Ваше Зображення",
+                "howto.step1.description": "Натисніть на область завантаження або перетягніть та відпустіть файл зображення. Ми підтримуємо JPG, PNG, GIF, WEBP та інші.",
+                "howto.step2.title": "Обертайте або Перевертайте",
+                "howto.step2.description": "Використовуйте кнопки обертання, щоб обертати вліво/вправо або перевертати горизонтально/вертикально. Дивіться попередній перегляд у реальному часі.",
+                "howto.step3.title": "Виберіть Формат",
+                "howto.step3.description": "Виберіть бажаний формат виводу з PNG, JPG, JPEG, BMP, GIF, WEBP та TIFF.",
+                "howto.step4.title": "Завантажте Результат",
+                "howto.step4.description": "Завантажте ваше обернене/перевернуте зображення одним клацанням. Без водяних знаків, реєстрація не потрібна.",
+                "rotator.title": "Інструмент Обертання та Перевертання Зображень",
+                "rotator.upload.text": "Перетягніть та відпустіть ваше зображення сюди або натисніть для перегляду",
+                "rotator.upload.button": "Вибрати Зображення",
+                "rotator.options.title": "Опції Обертання та Перевертання",
+                "rotator.controls.rotateLeft": "Повернути Вліво",
+                "rotator.controls.rotateRight": "Повернути Вправо",
+                "rotator.controls.flipHorizontal": "Перевернути Горизонтально",
+                "rotator.controls.flipVertical": "Перевернути Вертикально",
+                "rotator.format.title": "Вихідний Формат",
+                "rotator.preview.title": "Попередній Перегляд",
+                "rotator.preview.original": "Оригінал",
+                "rotator.preview.rotated": "Обернене/Перевернуте",
+                "rotator.processing": "Обробка: 0%",
+                "rotator.rotate": "Застосувати Обертання",
+                "rotator.download": "Завантажити",
+                "rotator.reset": "Скинути",
+                "footer.follow": "СЛІДКУЙТЕ ЗА НАМИ",
+                "footer.categories": "Популярні Категорії",
+                "footer.categories.pdf": "PDF Інструменти",
+                "footer.categories.image": "Інструменти Зображень",
+                "footer.categories.text": "Текстові Інструменти",
+                "footer.categories.av": "Аудіо/Відео Інструменти",
+                "footer.categories.web": "Веб/Розробник Інструменти",
+                "footer.categories.calc": "Калькуляторні Інструменти",
+                "footer.categories.util": "Утилітарні Інструменти",
+                "footer.categories.color": "Кольорові Інструменти",
+                "footer.quicklinks": "Швидкі Посилання",
+                "footer.links.tools": "Всі Інструменти",
+                "footer.links.faq": "Часті Запитання",
+                "footer.links.contact": "Контакт",
+                "footer.links.privacy": "Політика Конфіденційності",
+                "footer.links.disclaimer": "Відмова від Відповідальності",
+                "footer.links.terms": "Умови Використання",
+                "footer.copyright": "© 2025 LollyPoPDF. Всі права захищені."
+            },
+            vi: {
+                "nav.home": "Trang Chủ",
+                "nav.about": "Về Chúng Tôi",
+                "nav.tools": "Công Cụ",
+                "nav.contact": "Liên Hệ",
+                "hero.title": "Công Cụ Xoay & Lật Ảnh Miễn Phí",
+                "hero.description": "Xoay và lật ảnh của bạn ngay lập tức với công cụ miễn phí của chúng tôi. Hỗ trợ nhiều định dạng, không cần đăng ký.",
+                "howto.title": "Cách Xoay & Lật Ảnh",
+                "howto.step1.title": "Tải Ảnh Lên",
+                "howto.step1.description": "Nhấp vào khu vực tải lên hoặc kéo và thả tệp ảnh của bạn. Chúng tôi hỗ trợ JPG, PNG, GIF, WEBP và nhiều hơn nữa.",
+                "howto.step2.title": "Xoay hoặc Lật",
+                "howto.step2.description": "Sử dụng các nút xoay để xoay trái/phải hoặc lật ngang/dọc. Xem trước thời gian thực.",
+                "howto.step3.title": "Chọn Định Dạng",
+                "howto.step3.description": "Chọn định dạng đầu ra ưa thích của bạn từ PNG, JPG, JPEG, BMP, GIF, WEBP và TIFF.",
+                "howto.step4.title": "Tải Kết Quả",
+                "howto.step4.description": "Tải ảnh đã xoay/lật của bạn bằng một cú nhấp chuột. Không có hình mờ, không cần đăng ký.",
+                "rotator.title": "Công Cụ Xoay & Lật Ảnh",
+                "rotator.upload.text": "Kéo và thả ảnh của bạn vào đây hoặc nhấp để duyệt",
+                "rotator.upload.button": "Chọn Ảnh",
+                "rotator.options.title": "Tùy Chọn Xoay & Lật",
+                "rotator.controls.rotateLeft": "Xoay Trái",
+                "rotator.controls.rotateRight": "Xoay Phải",
+                "rotator.controls.flipHorizontal": "Lật Ngang",
+                "rotator.controls.flipVertical": "Lật Dọc",
+                "rotator.format.title": "Định Dạng Đầu Ra",
+                "rotator.preview.title": "Xem Trước",
+                "rotator.preview.original": "Gốc",
+                "rotator.preview.rotated": "Đã Xoay/Lật",
+                "rotator.processing": "Đang xử lý: 0%",
+                "rotator.rotate": "Áp Dụng Xoay",
+                "rotator.download": "Tải Xuống",
+                "rotator.reset": "Đặt Lại",
+                "footer.follow": "THEO DÕI CHÚNG TÔI",
+                "footer.categories": "Danh Mục Phổ Biến",
+                "footer.categories.pdf": "Công Cụ PDF",
+                "footer.categories.image": "Công Cụ Hình Ảnh",
+                "footer.categories.text": "Công Cụ Văn Bản",
+                "footer.categories.av": "Công Cụ Âm Thanh/Video",
+                "footer.categories.web": "Công Cụ Web/Nhà Phát Triển",
+                "footer.categories.calc": "Công Cụ Máy Tính",
+                "footer.categories.util": "Công Cụ Tiện Ích",
+                "footer.categories.color": "Công Cụ Màu Sắc",
+                "footer.quicklinks": "Liên Kết Nhanh",
+                "footer.links.tools": "Tất Cả Công Cụ",
+                "footer.links.faq": "Câu Hỏi Thường Gặp",
+                "footer.links.contact": "Liên Hệ",
+                "footer.links.privacy": "Chính Sách Bảo Mật",
+                "footer.links.disclaimer": "Tuyên Bố Miễn Trừ Trách Nhiệm",
+                "footer.links.terms": "Điều Khoản Dịch Vụ",
+                "footer.copyright": "© 2025 LollyPoPDF. Đã đăng ký bản quyền."
+            },
+            is: {
+                "nav.home": "Heim",
+                "nav.about": "Um Okkur",
+                "nav.tools": "Verkfæri",
+                "nav.contact": "Hafa Samband",
+                "hero.title": "Ókeypis Myndsnúningur & Vending",
+                "hero.description": "Snúðu og venddu myndum þínum augnablikslega með ókeypis verkfæri okkar. Styður margar snið, engin skráning krafist.",
+                "howto.title": "Hvernig á að Snúa og Venda Myndum",
+                "howto.step1.title": "Hladdu Upp Myndinni Þinni",
+                "howto.step1.description": "Smelltu á upphleðslusvæðið eða dragðu og slepptu myndaskránni þinni. Við styðjum JPG, PNG, GIF, WEBP og fleira.",
+                "howto.step2.title": "Snúa eða Venda",
+                "howto.step2.description": "Notaðu snúningshnappana til að snúa vinstri/hægri eða venda lárétt/lóðrétt. Sjá forskoðun í rauntíma.",
+                "howto.step3.title": "Veldu Snið",
+                "howto.step3.description": "Veldu það úttakssnið sem þú vilt úr PNG, JPG, JPEG, BMP, GIF, WEBP og TIFF.",
+                "howto.step4.title": "Hala Niður Niðurstöðu",
+                "howto.step4.description": "Halaðu niður snúðu/vendu myndinni þinni með einum smelli. Engin vatnsmerki, engin skráning krafist.",
+                "rotator.title": "Myndsnúnings- og Vendingarverkfæri",
+                "rotator.upload.text": "Dragðu og slepptu myndinni þinni hér eða smelltu til að skoða",
+                "rotator.upload.button": "Veldu Mynd",
+                "rotator.options.title": "Snúnings- og Vendingarvalkostir",
+                "rotator.controls.rotateLeft": "Snúa Til Vinstri",
+                "rotator.controls.rotateRight": "Snúa Til Hægri",
+                "rotator.controls.flipHorizontal": "Venda Lárétt",
+                "rotator.controls.flipVertical": "Venda Lóðrétt",
+                "rotator.format.title": "Úttakssnið",
+                "rotator.preview.title": "Forskoðun",
+                "rotator.preview.original": "Upprunaleg",
+                "rotator.preview.rotated": "Snúið/Vent",
+                "rotator.processing": "Vinnsla: 0%",
+                "rotator.rotate": "Beita Snúningi",
+                "rotator.download": "Hala Niður",
+                "rotator.reset": "Endurstilla",
+                "footer.follow": "FYLGDU OKKUR",
+                "footer.categories": "Vinsælar Flokkar",
+                "footer.categories.pdf": "PDF Verkfæri",
+                "footer.categories.image": "Myndaverkfæri",
+                "footer.categories.text": "Textaverkfæri",
+                "footer.categories.av": "Hljóð/Myndband Verkfæri",
+                "footer.categories.web": "Vefur/Þróunaraðili Verkfæri",
+                "footer.categories.calc": "Reiknivélarverkfæri",
+                "footer.categories.util": "Gagnleg Verkfæri",
+                "footer.categories.color": "Litverkfæri",
+                "footer.quicklinks": "Flýtileiðir",
+                "footer.links.tools": "Öll Verkfæri",
+                "footer.links.faq": "Algengar Spurningar",
+                "footer.links.contact": "Hafa Samband",
+                "footer.links.privacy": "Meðferðarstefna",
+                "footer.links.disclaimer": "Fyrirvari",
+                "footer.links.terms": "Þjónustuskilmálar",
+                "footer.copyright": "© 2025 LollyPoPDF. Öll réttindi áskilin."
+            },
+            no: {
+                "nav.home": "Hjem",
+                "nav.about": "Om Oss",
+                "nav.tools": "Verktøy",
+                "nav.contact": "Kontakt",
+                "hero.title": "Gratis Bilde Rotator & Vender",
+                "hero.description": "Roter og vend bildene dine umiddelbart med vårt gratis verktøy. Støtter flere formater, ingen registrering kreves.",
+                "howto.title": "Hvordan Rotere og Vende Bilder",
+                "howto.step1.title": "Last Opp Bildet Ditt",
+                "howto.step1.description": "Klikk på opplastingsområdet eller dra og slipp bildefilen din. Vi støtter JPG, PNG, GIF, WEBP og mer.",
+                "howto.step2.title": "Roter eller Vend",
+                "howto.step2.description": "Bruk rotasjonsknappene for å rotere venstre/høyre eller vende horisontalt/vertikalt. Se forhåndsvisning i sanntid.",
+                "howto.step3.title": "Velg Format",
+                "howto.step3.description": "Velg ditt foretrukne utdataformat fra PNG, JPG, JPEG, BMP, GIF, WEBP og TIFF.",
+                "howto.step4.title": "Last Ned Resultat",
+                "howto.step4.description": "Last ned det roterte/vendte bildet ditt med ett klikk. Ingen vannmerker, ingen registrering kreves.",
+                "rotator.title": "Bilde Rotator & Vender Verktøy",
+                "rotator.upload.text": "Dra og slipp bildet ditt her eller klikk for å bla",
+                "rotator.upload.button": "Velg Bilde",
+                "rotator.options.title": "Rotasjons- og Vendealternativer",
+                "rotator.controls.rotateLeft": "Roter Venstre",
+                "rotator.controls.rotateRight": "Roter Høyre",
+                "rotator.controls.flipHorizontal": "Vend Horisontalt",
+                "rotator.controls.flipVertical": "Vend Vertikalt",
+                "rotator.format.title": "Utdataformat",
+                "rotator.preview.title": "Forhåndsvisning",
+                "rotator.preview.original": "Original",
+                "rotator.preview.rotated": "Roterte/Vendte",
+                "rotator.processing": "Behandler: 0%",
+                "rotator.rotate": "Bruk Rotasjon",
+                "rotator.download": "Last Ned",
+                "rotator.reset": "Tilbakestill",
+                "footer.follow": "FØLG OSS",
+                "footer.categories": "Populære Kategorier",
+                "footer.categories.pdf": "PDF Verktøy",
+                "footer.categories.image": "Bildeverktøy",
+                "footer.categories.text": "Tekstverktøy",
+                "footer.categories.av": "Lyd/Video Verktøy",
+                "footer.categories.web": "Web/Utvikler Verktøy",
+                "footer.categories.calc": "Kalkulator Verktøy",
+                "footer.categories.util": "Nytteverktøy",
+                "footer.categories.color": "Fargeverktøy",
+                "footer.quicklinks": "Hurtiglenker",
+                "footer.links.tools": "Alle Verktøy",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Kontakt",
+                "footer.links.privacy": "Personvernregler",
+                "footer.links.disclaimer": "Ansvarsfraskrivelse",
+                "footer.links.terms": "Tjenestevilkår",
+                "footer.copyright": "© 2025 LollyPoPDF. Alle rettigheter forbeholdt."
+            },
+            sv: {
+                "nav.home": "Hem",
+                "nav.about": "Om Oss",
+                "nav.tools": "Verktyg",
+                "nav.contact": "Kontakt",
+                "hero.title": "Gratis Bildroterare & Vändare",
+                "hero.description": "Rotera och vänd dina bilder direkt med vårt gratis verktyg. Stöder flera format, ingen registrering krävs.",
+                "howto.title": "Hur man Roterar och Vänder Bilder",
+                "howto.step1.title": "Ladda Upp Din Bild",
+                "howto.step1.description": "Klicka på uppladdningsområdet eller dra och släpp din bildfil. Vi stöder JPG, PNG, GIF, WEBP och mer.",
+                "howto.step2.title": "Rotera eller Vänd",
+                "howto.step2.description": "Använd rotationsknapparna för att rotera vänster/höger eller vända horisontellt/vertikalt. Se förhandsvisning i realtid.",
+                "howto.step3.title": "Välj Format",
+                "howto.step3.description": "Välj ditt föredragna utdataformat från PNG, JPG, JPEG, BMP, GIF, WEBP och TIFF.",
+                "howto.step4.title": "Ladda Ner Resultat",
+                "howto.step4.description": "Ladda ner din roterade/vända bild med ett klick. Inga vattenstämplar, ingen registrering krävs.",
+                "rotator.title": "Bildroterare & Vändare Verktyg",
+                "rotator.upload.text": "Dra och släpp din bild här eller klicka för att bläddra",
+                "rotator.upload.button": "Välj Bild",
+                "rotator.options.title": "Rotations- och Vändalternativ",
+                "rotator.controls.rotateLeft": "Rotera Vänster",
+                "rotator.controls.rotateRight": "Rotera Höger",
+                "rotator.controls.flipHorizontal": "Vänd Horisontellt",
+                "rotator.controls.flipVertical": "Vänd Vertikalt",
+                "rotator.format.title": "Utdataformat",
+                "rotator.preview.title": "Förhandsvisning",
+                "rotator.preview.original": "Original",
+                "rotator.preview.rotated": "Roterad/Vänd",
+                "rotator.processing": "Bearbetar: 0%",
+                "rotator.rotate": "Tillämpa Rotation",
+                "rotator.download": "Ladda Ner",
+                "rotator.reset": "Återställ",
+                "footer.follow": "FÖLJ OSS",
+                "footer.categories": "Populära Kategorier",
+                "footer.categories.pdf": "PDF Verktyg",
+                "footer.categories.image": "Bildverktyg",
+                "footer.categories.text": "Textverktyg",
+                "footer.categories.av": "Ljud/Video Verktyg",
+                "footer.categories.web": "Webb/Utvecklare Verktyg",
+                "footer.categories.calc": "Kalkylator Verktyg",
+                "footer.categories.util": "Verktyg för Verktyg",
+                "footer.categories.color": "Färgverktyg",
+                "footer.quicklinks": "Snabblänkar",
+                "footer.links.tools": "Alla Verktyg",
+                "footer.links.faq": "Vanliga Frågor",
+                "footer.links.contact": "Kontakt",
+                "footer.links.privacy": "Integritetspolicy",
+                "footer.links.disclaimer": "Ansvarsfriskrivning",
+                "footer.links.terms": "Användarvillkor",
+                "footer.copyright": "© 2025 LollyPoPDF. Alla rättigheter förbehållna."
+            },
+            fi: {
+                "nav.home": "Koti",
+                "nav.about": "Meistä",
+                "nav.tools": "Työkalut",
+                "nav.contact": "Yhteystiedot",
+                "hero.title": "Ilmainen Kuvan Kääntäjä & Kääntäjä",
+                "hero.description": "Kierrä ja käännä kuviasi heti ilmaisella työkalullamme. Tukee useita muotoja, rekisteröitymistä ei tarvita.",
+                "howto.title": "Kuinka Kierretään ja Käännettään Kuvia",
+                "howto.step1.title": "Lataa Kuvasi",
+                "howto.step1.description": "Napsauta latausalueella tai vedä ja pudota kuvatiedostosi. Tuemme JPG, PNG, GIF, WEBP ja enemmän.",
+                "howto.step2.title": "Kierrä tai Käännä",
+                "howto.step2.description": "Käytä kiertopainikkeita kiertääksesi vasemmalle/oikealle tai kääntääksesi vaakasuoraan/pystysuoraan. Katso esikatselu reaaliajassa.",
+                "howto.step3.title": "Valitse Muoto",
+                "howto.step3.description": "Valitse haluamasi tulostusmuoto PNG, JPG, JPEG, BMP, GIF, WEBP ja TIFF -vaihtoehdoista.",
+                "howto.step4.title": "Lataa Tulos",
+                "howto.step4.description": "Lataa kierretty/käännetty kuvasi yhdellä napsautuksella. Ei vesileimoja, rekisteröitymistä ei tarvita.",
+                "rotator.title": "Kuvan Kääntäjä & Kääntäjä Työkalu",
+                "rotator.upload.text": "Vedä ja pudota kuvasi tähän tai napsauta selataksesi",
+                "rotator.upload.button": "Valitse Kuva",
+                "rotator.options.title": "Kierto- ja Kääntövaihtoehdot",
+                "rotator.controls.rotateLeft": "Kierrä Vasemmalle",
+                "rotator.controls.rotateRight": "Kierrä Oikealle",
+                "rotator.controls.flipHorizontal": "Käännä Vaakasuoraan",
+                "rotator.controls.flipVertical": "Käännä Pystysuoraan",
+                "rotator.format.title": "Tulostusmuoto",
+                "rotator.preview.title": "Esikatselu",
+                "rotator.preview.original": "Alkuperäinen",
+                "rotator.preview.rotated": "Kierretty/Käännetty",
+                "rotator.processing": "Käsitellään: 0%",
+                "rotator.rotate": "Käytä Kierto",
+                "rotator.download": "Lataa",
+                "rotator.reset": "Nollaa",
+                "footer.follow": "SEURA MEITÄ",
+                "footer.categories": "Suositut Kategoriat",
+                "footer.categories.pdf": "PDF Työkalut",
+                "footer.categories.image": "Kuvatyökalut",
+                "footer.categories.text": "Tekstityökalut",
+                "footer.categories.av": "Ääni/Video Työkalut",
+                "footer.categories.web": "Web/Kehittäjä Työkalut",
+                "footer.categories.calc": "Laskin Työkalut",
+                "footer.categories.util": "Aputyökalut",
+                "footer.categories.color": "Väri Työkalut",
+                "footer.quicklinks": "Pikalinkit",
+                "footer.links.tools": "Kaikki Työkalut",
+                "footer.links.faq": "UKK",
+                "footer.links.contact": "Yhteystiedot",
+                "footer.links.privacy": "Tietosuojakäytäntö",
+                "footer.links.disclaimer": "Vastuuvapauslauseke",
+                "footer.links.terms": "Käyttöehdot",
+                "footer.copyright": "© 2025 LollyPoPDF. Kaikki oikeudet pidätetään."
+            },
+            cs: {
+                "nav.home": "Domů",
+                "nav.about": "O nás",
+                "nav.tools": "Nástroje",
+                "nav.contact": "Kontakt",
+                "hero.title": "Bezplatný Obrázkový Otáčeč a Překlápěč",
+                "hero.description": "Otáčejte a převracejte své obrázky okamžitě s naším bezplatným nástrojem. Podporuje více formátů, bez registrace.",
+                "howto.title": "Jak Otáčet a Překlápět Obrázky",
+                "howto.step1.title": "Nahrajte Svůj Obrázek",
+                "howto.step1.description": "Klikněte na oblast pro nahrání nebo přetáhněte a pusťte svůj soubor obrázku. Podporujeme JPG, PNG, GIF, WEBP a další.",
+                "howto.step2.title": "Otáčet nebo Překlápět",
+                "howto.step2.description": "Použijte tlačítka otáčení k otáčení doleva/doprava nebo překlápění vodorovně/svisle. Podívejte se na náhled v reálném čase.",
+                "howto.step3.title": "Zvolte Formát",
+                "howto.step3.description": "Vyberte si preferovaný výstupní formát z PNG, JPG, JPEG, BMP, GIF, WEBP a TIFF.",
+                "howto.step4.title": "Stáhněte Výsledek",
+                "howto.step4.description": "Stáhněte si otočený/překlopený obrázek jedním kliknutím. Žádné vodoznaky, bez registrace.",
+                "rotator.title": "Nástroj pro Otáčení a Překlápění Obrázků",
+                "rotator.upload.text": "Přetáhněte a pusťte svůj obrázek sem nebo klikněte pro procházení",
+                "rotator.upload.button": "Vybrat Obrázek",
+                "rotator.options.title": "Možnosti Otáčení a Překlápění",
+                "rotator.controls.rotateLeft": "Otočit Doleva",
+                "rotator.controls.rotateRight": "Otočit Doprava",
+                "rotator.controls.flipHorizontal": "Překlopit Vodorovně",
+                "rotator.controls.flipVertical": "Překlopit Svisle",
+                "rotator.format.title": "Výstupní Formát",
+                "rotator.preview.title": "Náhled",
+                "rotator.preview.original": "Původní",
+                "rotator.preview.rotated": "Otočený/Překlopený",
+                "rotator.processing": "Zpracovávání: 0%",
+                "rotator.rotate": "Použít Otočení",
+                "rotator.download": "Stáhnout",
+                "rotator.reset": "Obnovit",
+                "footer.follow": "SLEDUJTE NÁS",
+                "footer.categories": "Populární Kategorie",
+                "footer.categories.pdf": "PDF Nástroje",
+                "footer.categories.image": "Obrázkové Nástroje",
+                "footer.categories.text": "Textové Nástroje",
+                "footer.categories.av": "Audio/Video Nástroje",
+                "footer.categories.web": "Web/Vývojářské Nástroje",
+                "footer.categories.calc": "Kalkulačkové Nástroje",
+                "footer.categories.util": "Užitečné Nástroje",
+                "footer.categories.color": "Barevné Nástroje",
+                "footer.quicklinks": "Rychlé Odkazy",
+                "footer.links.tools": "Všechny Nástroje",
+                "footer.links.faq": "Často Kladené Otázky",
+                "footer.links.contact": "Kontakt",
+                "footer.links.privacy": "Zásady Ochrany Osobních Údajů",
+                "footer.links.disclaimer": "Odmítnutí Odpovědnosti",
+                "footer.links.terms": "Podmínky Služby",
+                "footer.copyright": "© 2025 LollyPoPDF. Všechna práva vyhrazena."
+            }
+            
+
+        };
+
+        // Function to change language
+        function changeLanguage(langCode) {
+            const langData = translations[langCode];
+            if (!langData) return;
+            
+            // Update all elements with data-i18n attribute
+            document.querySelectorAll('[data-i18n]').forEach(element => {
+                const key = element.getAttribute('data-i18n');
+                if (langData[key]) {
+                    element.textContent = langData[key];
+                }
+            });
+            
+            // Update current language display
+            currentLanguageElement.textContent = languages.find(lang => lang.code === langCode)?.name || 'English';
+            
+            // Save language preference
+            localStorage.setItem('language', langCode);
+        }
+
+        // Initialize language
+        const savedLanguage = localStorage.getItem('language') || 'en';
+        changeLanguage(savedLanguage);
+        
+        // Language selection handler
+        languageDropdown.addEventListener('click', (e) => {
+            if (e.target.classList.contains('language-option')) {
+                const langCode = e.target.getAttribute('data-lang');
+                changeLanguage(langCode);
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,3462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Word Counter | LollyPoPdf</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
+    <script src="https://unpkg.com/mammoth@1.6.0/mammoth.browser.min.js"></script>
+    <style>
+        :root {
+            --primary-color: #9370db;
+            --primary-dark: #8a2be2;
+            --secondary-color: #f0ebff;
+            --text-color: #333333;
+            --text-light: #6b7280;
+            --bg-color: #ffffff;
+            --bg-secondary: #f9f9f9;
+            --border-radius: 12px;
+            --transition: all 0.3s ease;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --header-height: 80px;
+            --white: #ffffff;
+            --header-text: #6b7280;
+            --accent-color: #9370db;
+        }
+
+        .dark-mode {
+            --primary-color: #a391f2;
+            --primary-dark: #8a2be2;
+            --secondary-color: #2d2d2d;
+            --text-color: #f0f0f0;
+            --text-light: #a0a0a0;
+            --bg-color: #1a1a1a;
+            --bg-secondary: #2d2d2d;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+            --white: #1a1a1a;
+            --header-text: #a0a0a0;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            transition: var(--transition);
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        ul {
+            list-style: none;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header Styles */
+        header {
+            background-color: var(--white);
+            color: var(--header-text);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+        }
+
+        .logo-icon {
+            position: relative;
+            width: 40px;
+            height: 40px;
+        }
+
+        .logo-circle {
+            width: 40px;
+            height: 40px;
+            border-radius: 40%;
+            background: linear-gradient(to bottom right, #9370db, #8a2be2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .logo-stem {
+            position: absolute;
+            bottom: -17px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 6px;
+            height: 17px;
+            background-color: #8a2be2;
+            border-radius: 0 0 3px 3px;
+        }
+
+        .logo-text {
+            font-size: 24px;
+            font-weight: bold;
+            color: #9370db;
+        }
+
+        nav ul {
+            display: flex;
+            gap: 30px;
+            list-style: none;
+        }
+
+        nav a {
+            font-weight: 500;
+            position: relative;
+            color: var(--header-text);
+            padding: 8px 0;
+            border-radius: 0;
+            transition: var(--transition);
+            text-decoration: none;
+        }
+
+        nav a:hover {
+            color: var(--accent-color);
+        }
+
+        nav a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: var(--accent-color);
+            transition: width 0.3s ease;
+        }
+
+        nav a:hover::after {
+            width: 100%;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .email {
+            font-size: 14px;
+            color: var(--header-text);
+        }
+
+        .theme-toggle {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 20px;
+            color: var(--header-text);
+            padding: 8px;
+            border-radius: 50%;
+            transition: var(--transition);
+        }
+
+        .theme-toggle:hover {
+            background-color: #f0ebff;
+            color: var(--accent-color);
+        }
+
+        .dark-mode .theme-toggle:hover {
+            background-color: #2d3748;
+            color: var(--accent-color);
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--header-text);
+        }
+
+        /* Mobile Menu */
+        .mobile-menu {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            width: 100%;
+            background-color: var(--white);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            z-index: 999;
+        }
+
+        .dark-mode .mobile-menu {
+            background-color: var(--bg-secondary);
+        }
+
+        .mobile-menu.active {
+            display: block;
+        }
+
+        .mobile-menu ul {
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .mobile-menu a {
+            display: block;
+            padding: 10px 0;
+            font-weight: 500;
+            color: var(--header-text);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .dark-mode .mobile-menu a {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .mobile-menu a:hover {
+            color: var(--accent-color);
+        }
+
+        /* Hero Section */
+        .hero {
+            background-color: var(--secondary-color);
+            padding: 60px 0;
+            text-align: center;
+        }
+
+        .dark-mode .hero {
+            background: linear-gradient(135deg, #2a1a4a, #3d2a6d);
+        }
+
+        .hero h1 {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            color: #000;
+        }
+
+        .dark-mode .hero h1 {
+            color: var(--text-color);
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            color: var(--text-color);
+            max-width: 700px;
+            margin: 0 auto 30px;
+        }
+
+        /* How to Use Section */
+        .how-to-section {
+            padding: 80px 0;
+            background-color: var(--bg-color);
+        }
+
+        .dark-mode .how-to-section {
+            background-color: var(--bg-secondary);
+        }
+
+        .section-title {
+            font-size: 2rem;
+            text-align: center;
+            margin-bottom: 40px;
+            color: #000000;
+        }
+
+        .dark-mode .section-title {
+            color: var(--text-color);
+        }
+
+        .steps-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 40px;
+        }
+
+        .step-box {
+            background-color: var(--bg-secondary);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            padding: 30px;
+            min-height: 200px;
+            position: relative;
+        }
+
+        .step-number {
+            width: 40px;
+            height: 40px;
+            background-color: var(--primary-color);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 16px;
+            margin-bottom: 15px;
+        }
+
+        .step-title {
+            font-size: 18px;
+            color: #000000;
+            margin-bottom: 10px;
+        }
+
+        .dark-mode .step-title {
+            color: var(--text-color);
+        }
+
+        .step-description {
+            font-size: 14px;
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        /* Word Counter Tool */
+        .counter-section {
+            padding: 80px 0;
+            background-color: var(--secondary-color);
+        }
+
+        .dark-mode .counter-section {
+            background: linear-gradient(135deg, #2a1a4a, #3d2a6d);
+        }
+
+        .counter-title {
+            font-size: 2.5rem;
+            text-align: center;
+            margin-bottom: 40px;
+            color: #a391f2;
+        }
+
+        .dark-mode .counter-title {
+            color: #a391f2;
+        }
+
+        .counter-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background-color: var(--bg-color);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            padding: 40px;
+        }
+
+        .text-input-container {
+            margin-bottom: 30px;
+        }
+
+        .text-input-label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        .text-input {
+            width: 100%;
+            min-height: 200px;
+            padding: 15px;
+            border: 2px solid var(--primary-color);
+            border-radius: var(--border-radius);
+            background-color: var(--bg-secondary);
+            color: var(--text-color);
+            font-size: 16px;
+            resize: vertical;
+            font-family: inherit;
+        }
+
+        .text-input:focus {
+            outline: none;
+            border-color: var(--primary-dark);
+        }
+
+        .file-upload-container {
+            margin-bottom: 20px;
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        .file-label {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: var(--primary-color);
+            color: white;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .file-label:hover {
+            background-color: var(--primary-dark);
+        }
+
+        .file-name {
+            margin-left: 10px;
+            font-size: 14px;
+            color: var(--text-light);
+        }
+
+        .supported-formats {
+            margin-top: 10px;
+            font-size: 12px;
+            color: var(--text-light);
+        }
+
+        .loading-indicator {
+            display: none;
+            margin: 10px 0;
+            padding: 10px;
+            background-color: var(--primary-color);
+            color: white;
+            border-radius: var(--border-radius);
+            text-align: center;
+        }
+
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .stat-box {
+            background-color: var(--bg-secondary);
+            border-radius: var(--border-radius);
+            padding: 20px;
+            text-align: center;
+            box-shadow: var(--shadow);
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--primary-color);
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            color: var(--text-light);
+        }
+
+        .advanced-stats {
+            margin-bottom: 30px;
+            padding: 20px;
+            background-color: var(--bg-secondary);
+            border-radius: var(--border-radius);
+        }
+
+        .advanced-stats h3 {
+            margin-bottom: 15px;
+            color: var(--primary-color);
+        }
+
+        .advanced-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 10px;
+        }
+
+        .advanced-stat {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 10px;
+            background-color: var(--bg-color);
+            border-radius: var(--border-radius);
+        }
+
+        .advanced-value {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        .advanced-label {
+            font-size: 12px;
+            color: var(--text-light);
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .action-btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: var(--transition);
+            flex: 1;
+            min-width: 150px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .copy-btn {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .copy-btn:hover {
+            background-color: var(--primary-dark);
+        }
+
+        .clear-btn {
+            background-color: white;
+            color: var(--primary-color);
+            border: 2px solid var(--primary-color);
+        }
+
+        .clear-btn:hover {
+            background-color: var(--secondary-color);
+        }
+
+        .export-btn {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .export-btn:hover {
+            background-color: var(--primary-dark);
+        }
+
+        /* Footer */
+        footer {
+            background-color: #000000;
+            color: white;
+            padding: 60px 0 80px;
+            position: relative;
+        }
+
+        .footer-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 60px;
+        }
+
+        .footer-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            text-decoration: none;
+        }
+
+        .footer-logo .logo-icon {
+            width: 40px;
+            height: 40px;
+        }
+
+        .footer-logo .logo-text {
+            color: #9370db;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .footer-section h3 {
+            color: white;
+            font-weight: 600;
+            font-size: 20px;
+            margin-bottom: 20px;
+        }
+
+        .footer-section h4 {
+            color: #9370db;
+            font-size: 18px;
+            margin-bottom: 15px;
+        }
+
+        .footer-links li {
+            margin-bottom: 10px;
+        }
+
+        .footer-links a {
+            color: white;
+        }
+
+        .footer-links a:hover {
+            color: #9370db;
+        }
+
+        .social-icons {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .social-icon {
+            width: 40px;
+            height: 40px;
+            background-color: #9370db;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+        }
+
+        .social-icon:hover {
+            background-color: #8a2be2;
+            transform: translateY(-3px);
+        }
+
+        .copyright {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            color: #f9f7ff;
+            font-size: 12px;
+        }
+
+        .footer-line {
+            position: absolute;
+            bottom: 50px;
+            left: 0;
+            width: 100%;
+            height: 1px;
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        /* Language Switcher */
+        .language-switcher {
+            position: fixed;
+            bottom: 10px;
+            right: 10px;
+            z-index: 1000;
+        }
+
+        .language-btn {
+            background-color: #9370db;
+            color: white;
+            border: none;
+            border-radius: 30px;
+            padding: 5px 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .language-dropdown {
+            position: absolute;
+            bottom: 100%;
+            right: 0;
+            width: 300px;
+            background-color: white;
+            border-radius: var(--border-radius);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            display: none;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .dark-mode .language-dropdown {
+            background-color: var(--bg-secondary);
+        }
+
+        .language-switcher:hover .language-dropdown {
+            display: grid;
+        }
+
+        .language-option {
+            padding: 8px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            text-align: center;
+            font-size: 14px;
+        }
+
+        .language-option:hover {
+            background-color: white;
+            color: #9370db;
+        }
+
+        .dark-mode .language-option:hover {
+            background-color: var(--bg-color);
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 992px) {
+            .steps-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .footer-container {
+                grid-template-columns: 1fr 1fr;
+            }
+            
+            .stats-container {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            }
+        }
+
+        @media (max-width: 768px) {
+            nav ul, .email {
+                display: none;
+            }
+            
+            .mobile-menu-btn {
+                display: block;
+            }
+            
+            .hero h1, .counter-title {
+                font-size: 2rem;
+            }
+            
+            .hero p {
+                font-size: 1rem;
+            }
+            
+            .language-dropdown {
+                width: 250px;
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .footer-container {
+                grid-template-columns: 1fr;
+                gap: 40px;
+            }
+            
+            .stats-container {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .counter-container {
+                padding: 20px;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+            
+            .action-btn {
+                width: 100%;
+            }
+            
+            .stats-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .advanced-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container header-container">
+            <a href="https://lollypopdf.com" class="logo">
+                <div class="logo-icon">
+                    <div class="logo-circle">LPdf</div>
+                    <div class="logo-stem"></div>
+                </div>
+                <span class="logo-text">LollyPoPdf</span>
+            </a>
+            
+            <nav>
+                <ul>
+                    <li><a href="https://lollypopdf.github.io/LollyPoPdf#home" class="nav-link" data-i18n="nav.home">Home</a></li>
+                    <li><a href="https://lollypopdf.github.io/LollyPoPdf#about" class="nav-link" data-i18n="nav.about">About Us</a></li>
+                    <li><a href="https://lollypopdf.github.io/LollyPoPdf#tools" class="nav-link" data-i18n="nav.tools">Tools</a></li>
+                    <li><a href="contact.html" class="nav-link" data-i18n="nav.contact">Contact</a></li>
+                </ul>
+            </nav>
+            
+            <div class="header-right">
+                <span class="email">lollypoppdf@gmail.com</span>
+                <button class="theme-toggle" id="themeToggle">
+                    <i class="fas fa-moon"></i>
+                </button>
+                <button class="mobile-menu-btn" id="mobileMenuBtn">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </div>
+        
+        <!-- Mobile Menu -->
+        <div class="mobile-menu" id="mobileMenu">
+            <ul>
+                <li><a href="https://lollypopdf.github.io/LollyPoPdf#home" class="nav-link" data-i18n="nav.home">Home</a></li>
+                <li><a href="https://lollypopdf.github.io/LollyPoPdf#about" class="nav-link" data-i18n="nav.about">About Us</a></li>
+                <li><a href="https://lollypopdf.github.io/LollyPoPdf#tools" class="nav-link" data-i18n="nav.tools">Tools</a></li>
+                <li><a href="contact.html" class="nav-link" data-i18n="nav.contact">Contact</a></li>
+            </ul>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <h1 data-i18n="hero.title">Free Word Counter Tool</h1>
+            <p data-i18n="hero.description">Count words, characters, sentences, paragraphs and more with our free tool. Supports text files, Word documents, and PDFs. Analyze your text in real-time with no registration required.</p>
+        </div>
+    </section>
+
+    <!-- How to Use Section -->
+    <section class="how-to-section">
+        <div class="container">
+            <h2 class="section-title" data-i18n="howto.title">How to Use the Word Counter</h2>
+            <div class="steps-container">
+                <div class="step-box">
+                    <div class="step-number">1</div>
+                    <h3 class="step-title" data-i18n="howto.step1.title">Enter Your Text</h3>
+                    <p class="step-description" data-i18n="howto.step1.description">Type or paste your text into the input area. You can also upload text files, Word documents (.doc, .docx), or PDF files for analysis. The tool works with any amount of text.</p>
+                </div>
+                <div class="step-box">
+                    <div class="step-number">2</div>
+                    <h3 class="step-title" data-i18n="howto.step2.title">View Real-Time Stats</h3>
+                    <p class="step-description" data-i18n="howto.step2.description">Watch as the tool instantly calculates word count, character count, sentence count, paragraph count, and other statistics as you type or upload files.</p>
+                </div>
+                <div class="step-box">
+                    <div class="step-number">3</div>
+                    <h3 class="step-title" data-i18n="howto.step3.title">Analyze Advanced Metrics</h3>
+                    <p class="step-description" data-i18n="howto.step3.description">Explore advanced statistics like reading time, average word length, keyword density, and more detailed insights about your text.</p>
+                </div>
+                <div class="step-box">
+                    <div class="step-number">4</div>
+                    <h3 class="step-title" data-i18n="howto.step4.title">Export & Save</h3>
+                    <p class="step-description" data-i18n="howto.step4.description">Copy your text or download the statistics. Your work is automatically saved for your next session. All processing happens in your browser.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Word Counter Tool -->
+    <section class="counter-section">
+        <div class="container">
+            <h2 class="counter-title" data-i18n="counter.title">Word Counter</h2>
+            <div class="counter-container">
+                <div class="text-input-container">
+                    <label for="textInput" class="text-input-label" data-i18n="counter.input.label">Enter Your Text</label>
+                    <textarea id="textInput" class="text-input" placeholder="Type or paste your text here..." data-i18n="counter.input.placeholder"></textarea>
+                </div>
+                
+                <div class="file-upload-container">
+                    <input type="file" id="fileInput" class="file-input" accept=".txt,.md,.csv,.json,.xml,.html,.doc,.docx,.pdf">
+                    <label for="fileInput" class="file-label">
+                        <i class="fas fa-upload"></i> <span data-i18n="counter.upload">Upload Document</span>
+                    </label>
+                    <span id="fileName" class="file-name"></span>
+                    <div class="supported-formats" data-i18n="counter.supported">Supported formats: TXT, MD, CSV, JSON, XML, HTML, DOC, DOCX, PDF</div>
+                </div>
+                
+                <div class="loading-indicator" id="loadingIndicator">
+                    <i class="fas fa-spinner fa-spin"></i> <span data-i18n="counter.loading">Processing document...</span>
+                </div>
+                
+                <div class="stats-container">
+                    <div class="stat-box">
+                        <div class="stat-value" id="wordCount">0</div>
+                        <div class="stat-label" data-i18n="counter.stats.words">Words</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-value" id="charCount">0</div>
+                        <div class="stat-label" data-i18n="counter.stats.chars">Characters</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-value" id="charNoSpaces">0</div>
+                        <div class="stat-label" data-i18n="counter.stats.charsNoSpaces">Characters (no spaces)</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-value" id="sentenceCount">0</div>
+                        <div class="stat-label" data-i18n="counter.stats.sentences">Sentences</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-value" id="paragraphCount">0</div>
+                        <div class="stat-label" data-i18n="counter.stats.paragraphs">Paragraphs</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-value" id="lineCount">0</div>
+                        <div class="stat-label" data-i18n="counter.stats.lines">Lines</div>
+                    </div>
+                </div>
+                
+                <div class="advanced-stats">
+                    <h3 data-i18n="counter.advanced.title">Advanced Statistics</h3>
+                    <div class="advanced-grid">
+                        <div class="advanced-stat">
+                            <div class="advanced-value" id="readingTime">0</div>
+                            <div class="advanced-label" data-i18n="counter.advanced.reading">Reading Time (min)</div>
+                        </div>
+                        <div class="advanced-stat">
+                            <div class="advanced-value" id="avgWordLength">0</div>
+                            <div class="advanced-label" data-i18n="counter.advanced.avgWord">Avg. Word Length</div>
+                        </div>
+                        <div class="advanced-stat">
+                            <div class="advanced-value" id="avgSentenceLength">0</div>
+                            <div class="advanced-label" data-i18n="counter.advanced.avgSentence">Avg. Sentence Length</div>
+                        </div>
+                        <div class="advanced-stat">
+                            <div class="advanced-value" id="longestWord">-</div>
+                            <div class="advanced-label" data-i18n="counter.advanced.longestWord">Longest Word</div>
+                        </div>
+                        <div class="advanced-stat">
+                            <div class="advanced-value" id="uniqueWords">0</div>
+                            <div class="advanced-label" data-i18n="counter.advanced.uniqueWords">Unique Words</div>
+                        </div>
+                        <div class="advanced-stat">
+                            <div class="advanced-value" id="keywordDensity">0%</div>
+                            <div class="advanced-label" data-i18n="counter.advanced.keywordDensity">Keyword Density</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="action-buttons">
+                    <button class="action-btn copy-btn" id="copyBtn" data-i18n="counter.copy">
+                        <i class="fas fa-copy"></i> Copy Text
+                    </button>
+                    <button class="action-btn clear-btn" id="clearBtn" data-i18n="counter.clear">
+                        <i class="fas fa-trash"></i> Clear All
+                    </button>
+                    <button class="action-btn export-btn" id="exportBtn" data-i18n="counter.export">
+                        <i class="fas fa-file-export"></i> Export Stats
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container footer-container">
+            <!-- Left Section -->
+            <div class="footer-section">
+                <a href="https://lollypopdf.com" class="footer-logo">
+                    <div class="logo-icon">
+                        <div class="logo-circle">LPdf</div>
+                        <div class="logo-stem"></div>
+                    </div>
+                    <span class="logo-text">LollyPoPdf</span>
+                </a>
+                <h3 data-i18n="footer.follow">FOLLOW US</h3>
+                <div class="social-icons">
+                    <a href="https://facebook.com/lollypopdf" class="social-icon"><i class="fab fa-facebook-f"></i></a>
+                    <a href="https://linkedin.com/company/lollypopdf" class="social-icon"><i class="fab fa-linkedin-in"></i></a>
+                    <a href="https://twitter.com/lollypopdf" class="social-icon"><i class="fab fa-twitter"></i></a>
+                    <a href="https://instagram.com/lollypopdf" class="social-icon"><i class="fab fa-instagram"></i></a>
+                    <a href="https://pinterest.com/lollypopdf" class="social-icon"><i class="fab fa-pinterest-p"></i></a>
+                </div>
+            </div>
+            
+            <!-- Middle Section - Popular Categories -->
+            <div class="footer-section">
+                <h4 data-i18n="footer.categories">Popular Categories</h4>
+                <ul class="footer-links">
+                    <li><a href="https://lollypopdf.com#pdf-tools" data-i18n="footer.categories.pdf">PDF Tools</a></li>
+                    <li><a href="https://lollypopdf.com#image-tools" data-i18n="footer.categories.image">Image Tools</a></li>
+                    <li><a href="https://lollypopdf.com#text-tools" data-i18n="footer.categories.text">Text Tools</a></li>
+                    <li><a href="https://lollypopdf.com#audio-video-tools" data-i18n="footer.categories.av">Audio/Video Tools</a></li>
+                    <li><a href="https://lollypopdf.com#web-developer-tools" data-i18n="footer.categories.web">WebDeveloper Tools</a></li>
+                    <li><a href="https://lollypopdf.com#calculator-tools" data-i18n="footer.categories.calc">Calculator Tools</a></li>
+                    <li><a href="https://lollypopdf.com#utility-tools" data-i18n="footer.categories.util">Utility Tools</a></li>
+                    <li><a href="https://lollypopdf.com#color-tools" data-i18n="footer.categories.color">Color Tools</a></li>
+                </ul>
+            </div>
+            
+            <!-- Right Section - Quick Links -->
+            <div class="footer-section">
+                <h4 data-i18n="footer.quicklinks">Quick Links</h4>
+                <ul class="footer-links">
+                    <li><a href="https://lollypopdf.github.io/LollyPoPdf#home" data-i18n="nav.home">Home</a></li>
+                    <li><a href="https://lollypopdf.github.io/LollyPoPdf#tools" data-i18n="footer.links.tools">All Tools</a></li>
+                    <li><a href="faq.html" data-i18n="footer.links.faq">FAQ</a></li>
+                    <li><a href="contact.html" data-i18n="footer.links.contact">Contact</a></li>
+                    <li><a href="privacy-policy.html" data-i18n="footer.links.privacy">Privacy Policy</a></li>
+                    <li><a href="disclaimer.html" data-i18n="footer.links.disclaimer">Disclaimer</a></li>
+                    <li><a href="terms.html" data-i18n="footer.links.terms">Terms of Service</a></li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="footer-line"></div>
+        <div class="copyright" data-i18n="footer.copyright">© 2025 LollyPoPDF. All rights reserved.</div>
+    </footer>
+
+    <!-- Language Switcher -->
+    <div class="language-switcher">
+        <button class="language-btn">
+            <i class="fas fa-globe"></i>
+            <span id="currentLanguage">English</span>
+        </button>
+        <div class="language-dropdown">
+            <div class="language-option" data-lang="en">English</div>
+            <div class="language-option" data-lang="es">Español</div>
+            <div class="language-option" data-lang="fr">Français</div>
+            <div class="language-option" data-lang="de">Deutsch</div>
+            <div class="language-option" data-lang="it">Italiano</div>
+            <div class="language-option" data-lang="pt">Português</div>
+            <div class="language-option" data-lang="ja">日本語</div>
+            <div class="language-option" data-lang="ru">Pусский</div>
+            <div class="language-option" data-lang="ko">한국어</div>
+            <div class="language-option" data-lang="zh-CN">中文 (简体)</div>
+            <div class="language-option" data-lang="zh-TW">中文 (繁體)</div>
+            <div class="language-option" data-lang="ar">العربية</div>
+            <div class="language-option" data-lang="fa">فارسی</div>
+            <div class="language-option" data-lang="bg">Български</div>
+            <div class="language-option" data-lang="ca">Català</div>
+            <div class="language-option" data-lang="nl">Nederlands</div>
+            <div class="language-option" data-lang="el">Ελληνικά</div>
+            <div class="language-option" data-lang="hi">हिन्दी</div>
+            <div class="language-option" data-lang="te">తెలుగు</div>
+            <div class="language-option" data-lang="kn">ಕನ್ನಡ</div>
+            <div class="language-option" data-lang="ta">தமிழ்</div>
+            <div class="language-option" data-lang="ml">മലയാളം</div>
+            <div class="language-option" data-lang="id">Bahasa Indonesia</div>
+            <div class="language-option" data-lang="ms">Bahasa Melayu</div>
+            <div class="language-option" data-lang="pl">Polski</div>
+            <div class="language-option" data-lang="th">ภาษาไทย</div>
+            <div class="language-option" data-lang="tr">Türkçe</div>
+            <div class="language-option" data-lang="uk">Українська</div>
+            <div class="language-option" data-lang="vi">Tiếng Việt</div>
+            <div class="language-option" data-lang="is">Íslenska</div>
+            <div class="language-option" data-lang="no">Norsk</div>
+            <div class="language-option" data-lang="sv">Svenska</div>
+            <div class="language-option" data-lang="fi">Suomi</div>
+            <div class="language-option" data-lang="cs">Čeština</div>
+        </div>
+    </div>
+
+    <script>
+        // Configure PDF.js worker
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
+
+        // Theme Toggle
+        const themeToggle = document.getElementById('themeToggle');
+        const body = document.body;
+        
+        // Check for saved theme preference or respect OS preference
+        const savedTheme = localStorage.getItem('theme') || 
+            (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        
+        if (savedTheme === 'dark') {
+            body.classList.add('dark-mode');
+            themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+        }
+        
+        themeToggle.addEventListener('click', () => {
+            body.classList.toggle('dark-mode');
+            const isDarkMode = body.classList.contains('dark-mode');
+            
+            if (isDarkMode) {
+                themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+                localStorage.setItem('theme', 'dark');
+            } else {
+                themeToggle.innerHTML = '<i class="fas fa-moon"></i>';
+                localStorage.setItem('theme', 'light');
+            }
+        });
+
+        // Mobile Menu Toggle
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const mobileMenu = document.getElementById('mobileMenu');
+        
+        mobileMenuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('active');
+            
+            // Change icon based on menu state
+            if (mobileMenu.classList.contains('active')) {
+                mobileMenuBtn.innerHTML = '<i class="fas fa-times"></i>';
+            } else {
+                mobileMenuBtn.innerHTML = '<i class="fas fa-bars"></i>';
+            }
+        });
+
+        // Close mobile menu when clicking on a link
+        const mobileMenuLinks = mobileMenu.querySelectorAll('a');
+        mobileMenuLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                mobileMenu.classList.remove('active');
+                mobileMenuBtn.innerHTML = '<i class="fas fa-bars"></i>';
+            });
+        });
+
+        // Word Counter Functionality
+        const textInput = document.getElementById('textInput');
+        const fileInput = document.getElementById('fileInput');
+        const fileName = document.getElementById('fileName');
+        const loadingIndicator = document.getElementById('loadingIndicator');
+        const copyBtn = document.getElementById('copyBtn');
+        const clearBtn = document.getElementById('clearBtn');
+        const exportBtn = document.getElementById('exportBtn');
+        
+        // Stats elements
+        const wordCountEl = document.getElementById('wordCount');
+        const charCountEl = document.getElementById('charCount');
+        const charNoSpacesEl = document.getElementById('charNoSpaces');
+        const sentenceCountEl = document.getElementById('sentenceCount');
+        const paragraphCountEl = document.getElementById('paragraphCount');
+        const lineCountEl = document.getElementById('lineCount');
+        
+        // Advanced stats elements
+        const readingTimeEl = document.getElementById('readingTime');
+        const avgWordLengthEl = document.getElementById('avgWordLength');
+        const avgSentenceLengthEl = document.getElementById('avgSentenceLength');
+        const longestWordEl = document.getElementById('longestWord');
+        const uniqueWordsEl = document.getElementById('uniqueWords');
+        const keywordDensityEl = document.getElementById('keywordDensity');
+        
+        // Update all stats
+        function updateStats(text) {
+            // Basic stats
+            const words = countWords(text);
+            const chars = text.length;
+            const charsNoSpaces = text.replace(/\s/g, '').length;
+            const sentences = countSentences(text);
+            const paragraphs = countParagraphs(text);
+            const lines = countLines(text);
+            
+            wordCountEl.textContent = words;
+            charCountEl.textContent = chars;
+            charNoSpacesEl.textContent = charsNoSpaces;
+            sentenceCountEl.textContent = sentences;
+            paragraphCountEl.textContent = paragraphs;
+            lineCountEl.textContent = lines;
+            
+            // Advanced stats
+            const readingTime = calculateReadingTime(words);
+            const avgWordLength = calculateAverageWordLength(text);
+            const avgSentenceLength = calculateAverageSentenceLength(words, sentences);
+            const longestWord = findLongestWord(text);
+            const uniqueWords = countUniqueWords(text);
+            const keywordDensity = calculateKeywordDensity(text);
+            
+            readingTimeEl.textContent = readingTime;
+            avgWordLengthEl.textContent = avgWordLength;
+            avgSentenceLengthEl.textContent = avgSentenceLength;
+            longestWordEl.textContent = longestWord;
+            uniqueWordsEl.textContent = uniqueWords;
+            keywordDensityEl.textContent = keywordDensity;
+            
+            // Save to localStorage
+            localStorage.setItem('wordCounterText', text);
+        }
+        
+        // Count words
+        function countWords(text) {
+            if (!text.trim()) return 0;
+            // Split by whitespace and filter out empty strings
+            return text.trim().split(/\s+/).length;
+        }
+        
+        // Count sentences
+        function countSentences(text) {
+            if (!text.trim()) return 0;
+            // Split by sentence-ending punctuation
+            const sentences = text.split(/[.!?]+/).filter(s => s.trim());
+            return sentences.length;
+        }
+        
+        // Count paragraphs
+        function countParagraphs(text) {
+            if (!text.trim()) return 0;
+            // Split by double newlines
+            const paragraphs = text.split(/\n\s*\n/).filter(p => p.trim());
+            return paragraphs.length;
+        }
+        
+        // Count lines
+        function countLines(text) {
+            if (!text.trim()) return 0;
+            // Split by newlines
+            const lines = text.split('\n').filter(l => l.trim());
+            return lines.length;
+        }
+        
+        // Calculate reading time (assuming 200 words per minute)
+        function calculateReadingTime(words) {
+            return Math.ceil(words / 200);
+        }
+        
+        // Calculate average word length
+        function calculateAverageWordLength(text) {
+            if (!text.trim()) return 0;
+            const words = text.trim().split(/\s+/);
+            const totalChars = words.reduce((sum, word) => sum + word.length, 0);
+            return (totalChars / words.length).toFixed(1);
+        }
+        
+        // Calculate average sentence length
+        function calculateAverageSentenceLength(words, sentences) {
+            if (sentences === 0) return 0;
+            return (words / sentences).toFixed(1);
+        }
+        
+        // Find the longest word
+        function findLongestWord(text) {
+            if (!text.trim()) return '-';
+            const words = text.trim().split(/\s+/);
+            let longest = '';
+            words.forEach(word => {
+                // Remove punctuation for accurate length
+                const cleanWord = word.replace(/[^\w]/g, '');
+                if (cleanWord.length > longest.length) {
+                    longest = cleanWord;
+                }
+            });
+            return longest || '-';
+        }
+        
+        // Count unique words
+        function countUniqueWords(text) {
+            if (!text.trim()) return 0;
+            const words = text.toLowerCase().trim().split(/\s+/);
+            // Remove punctuation and create a Set for unique words
+            const uniqueWords = new Set(words.map(word => word.replace(/[^\w]/g, '')));
+            return uniqueWords.size;
+        }
+        
+        // Calculate keyword density (most frequent word)
+        function calculateKeywordDensity(text) {
+            if (!text.trim()) return '0%';
+            const words = text.toLowerCase().trim().split(/\s+/);
+            const cleanWords = words.map(word => word.replace(/[^\w]/g, '')).filter(word => word);
+            
+            // Count frequency of each word
+            const frequency = {};
+            cleanWords.forEach(word => {
+                frequency[word] = (frequency[word] || 0) + 1;
+            });
+            
+            // Find the most frequent word
+            let maxCount = 0;
+            for (const word in frequency) {
+                if (frequency[word] > maxCount) {
+                    maxCount = frequency[word];
+                }
+            }
+            
+            // Calculate density as percentage
+            const density = (maxCount / cleanWords.length) * 100;
+            return density.toFixed(1) + '%';
+        }
+        
+        // Extract text from PDF
+        async function extractTextFromPDF(file) {
+            try {
+                const arrayBuffer = await file.arrayBuffer();
+                const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+                let fullText = '';
+                
+                for (let i = 1; i <= pdf.numPages; i++) {
+                    const page = await pdf.getPage(i);
+                    const textContent = await page.getTextContent();
+                    const pageText = textContent.items.map(item => item.str).join(' ');
+                    fullText += pageText + '\n';
+                }
+                
+                return fullText;
+            } catch (error) {
+                console.error('Error extracting text from PDF:', error);
+                throw new Error('Failed to extract text from PDF. The file might be corrupted or password protected.');
+            }
+        }
+        
+        // Extract text from Word document
+        async function extractTextFromWord(file) {
+            try {
+                const arrayBuffer = await file.arrayBuffer();
+                const result = await mammoth.extractRawText({ arrayBuffer: arrayBuffer });
+                
+                if (result.value) {
+                    return result.value;
+                } else {
+                    throw new Error('No text found in the Word document');
+                }
+            } catch (error) {
+                console.error('Error extracting text from Word document:', error);
+                throw new Error('Failed to extract text from Word document. The file might be corrupted or in an unsupported format.');
+            }
+        }
+        
+        // Process uploaded file
+        async function processUploadedFile(file) {
+            loadingIndicator.style.display = 'block';
+            fileName.textContent = file.name;
+            
+            try {
+                let text = '';
+                const fileExtension = file.name.split('.').pop().toLowerCase();
+                
+                if (['txt', 'md', 'csv', 'json', 'xml', 'html'].includes(fileExtension)) {
+                    // Plain text files
+                    text = await file.text();
+                } else if (fileExtension === 'pdf') {
+                    // PDF files
+                    text = await extractTextFromPDF(file);
+                } else if (['doc', 'docx'].includes(fileExtension)) {
+                    // Word documents
+                    text = await extractTextFromWord(file);
+                } else {
+                    throw new Error('Unsupported file format');
+                }
+                
+                textInput.value = text;
+                updateStats(text);
+                loadingIndicator.style.display = 'none';
+            } catch (error) {
+                loadingIndicator.style.display = 'none';
+                alert('Error processing file: ' + error.message);
+                console.error('File processing error:', error);
+            }
+        }
+        
+        // Event listeners
+        textInput.addEventListener('input', () => {
+            updateStats(textInput.value);
+        });
+        
+        // File upload handler
+        fileInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+            
+            processUploadedFile(file);
+        });
+        
+        // Copy button
+        copyBtn.addEventListener('click', () => {
+            if (textInput.value) {
+                textInput.select();
+                document.execCommand('copy');
+                
+                // Show feedback
+                const originalText = copyBtn.innerHTML;
+                copyBtn.innerHTML = '<i class="fas fa-check"></i> Copied!';
+                
+                setTimeout(() => {
+                    copyBtn.innerHTML = originalText;
+                }, 2000);
+            }
+        });
+        
+        // Clear button
+        clearBtn.addEventListener('click', () => {
+            textInput.value = '';
+            fileInput.value = '';
+            fileName.textContent = '';
+            updateStats('');
+        });
+        
+        // Export button
+        exportBtn.addEventListener('click', () => {
+            if (!textInput.value.trim()) return;
+            
+            const stats = {
+                words: wordCountEl.textContent,
+                characters: charCountEl.textContent,
+                charactersNoSpaces: charNoSpacesEl.textContent,
+                sentences: sentenceCountEl.textContent,
+                paragraphs: paragraphCountEl.textContent,
+                lines: lineCountEl.textContent,
+                readingTime: readingTimeEl.textContent,
+                avgWordLength: avgWordLengthEl.textContent,
+                avgSentenceLength: avgSentenceLengthEl.textContent,
+                longestWord: longestWordEl.textContent,
+                uniqueWords: uniqueWordsEl.textContent,
+                keywordDensity: keywordDensityEl.textContent
+            };
+            
+            const content = `Word Counter Analysis\n\n` +
+                `Text: ${textInput.value.substring(0, 100)}${textInput.value.length > 100 ? '...' : ''}\n\n` +
+                `Basic Statistics:\n` +
+                `Words: ${stats.words}\n` +
+                `Characters: ${stats.characters}\n` +
+                `Characters (no spaces): ${stats.charactersNoSpaces}\n` +
+                `Sentences: ${stats.sentences}\n` +
+                `Paragraphs: ${stats.paragraphs}\n` +
+                `Lines: ${stats.lines}\n\n` +
+                `Advanced Statistics:\n` +
+                `Reading Time: ${stats.readingTime} minutes\n` +
+                `Average Word Length: ${stats.avgWordLength} characters\n` +
+                `Average Sentence Length: ${stats.avgSentenceLength} words\n` +
+                `Longest Word: ${stats.longestWord}\n` +
+                `Unique Words: ${stats.uniqueWords}\n` +
+                `Keyword Density: ${stats.keywordDensity}\n\n` +
+                `Generated by LollyPoPdf Word Counter`;
+            
+            const blob = new Blob([content], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'word-counter-analysis.txt';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        });
+        
+        // Initialize with saved text or empty
+        const savedText = localStorage.getItem('wordCounterText') || '';
+        textInput.value = savedText;
+        updateStats(savedText);
+        
+        // Language Switcher
+        const languageBtn = document.querySelector('.language-btn');
+        const currentLanguageElement = document.getElementById('currentLanguage');
+        const languageDropdown = document.querySelector('.language-dropdown');
+        
+        const languages = [
+            { code: 'en', name: 'English' },
+            { code: 'es', name: 'Español' },
+            { code: 'fr', name: 'Français' },
+            { code: 'de', name: 'Deutsch' },
+            { code: 'it', name: 'Italiano' },
+            { code: 'pt', name: 'Português' },
+            { code: 'ja', name: '日本語' },
+            { code: 'ru', name: 'Pусский' },
+            { code: 'ko', name: '한국어' },
+            { code: 'zh-CN', name: '中文 (简体)' },
+            { code: 'zh-TW', name: '中文 (繁體)' },
+            { code: 'ar', name: 'العربية' },
+            { code: 'fa', name: 'فارسی' },
+            { code: 'bg', name: 'Български' },
+            { code: 'ca', name: 'Català' },
+            { code: 'nl', name: 'Nederlands' },
+            { code: 'el', name: 'Ελληνικά' },
+            { code: 'hi', name: 'हिन्दी' },
+            { code: 'te', name: 'తెలుగు' },
+            { code: 'kn', name: 'ಕನ್ನಡ' },
+            { code: 'ta', name: 'தமிழ்' },
+            { code: 'ml', name: 'മലയാളം' },
+            { code: 'id', name: 'Bahasa Indonesia' },
+            { code: 'ms', name: 'Bahasa Melayu' },
+            { code: 'pl', name: 'Polski' },
+            { code: 'th', name: 'ภาษาไทย' },
+            { code: 'tr', name: 'Türkçe' },
+            { code: 'uk', name: 'Українська' },
+            { code: 'vi', name: 'Tiếng Việt' },
+            { code: 'is', name: 'Íslenska' },
+            { code: 'no', name: 'Norsk' },
+            { code: 'sv', name: 'Svenska' },
+            { code: 'fi', name: 'Suomi' },
+            { code: 'cs', name: 'Čeština' }
+        ];
+        
+        // Translation data
+        const translations = {
+            en: {
+                "nav.home": "Home",
+                "nav.about": "About Us",
+                "nav.tools": "Tools",
+                "nav.contact": "Contact",
+                "hero.title": "Free Word Counter Tool",
+                "hero.description": "Count words, characters, sentences, paragraphs and more with our free tool. Supports text files, Word documents, and PDFs. Analyze your text in real-time with no registration required.",
+                "howto.title": "How to Use the Word Counter",
+                "howto.step1.title": "Enter Your Text",
+                "howto.step1.description": "Type or paste your text into the input area. You can also upload text files, Word documents (.doc, .docx), or PDF files for analysis. The tool works with any amount of text.",
+                "howto.step2.title": "View Real-Time Stats",
+                "howto.step2.description": "Watch as the tool instantly calculates word count, character count, sentence count, paragraph count, and other statistics as you type or upload files.",
+                "howto.step3.title": "Analyze Advanced Metrics",
+                "howto.step3.description": "Explore advanced statistics like reading time, average word length, keyword density, and more detailed insights about your text.",
+                "howto.step4.title": "Export & Save",
+                "howto.step4.description": "Copy your text or download the statistics. Your work is automatically saved for your next session. All processing happens in your browser.",
+                "counter.title": "Word Counter",
+                "counter.input.label": "Enter Your Text",
+                "counter.input.placeholder": "Type or paste your text here...",
+                "counter.upload": "Upload Document",
+                "counter.supported": "Supported formats: TXT, MD, CSV, JSON, XML, HTML, DOC, DOCX, PDF",
+                "counter.loading": "Processing document...",
+                "counter.stats.words": "Words",
+                "counter.stats.chars": "Characters",
+                "counter.stats.charsNoSpaces": "Characters (no spaces)",
+                "counter.stats.sentences": "Sentences",
+                "counter.stats.paragraphs": "Paragraphs",
+                "counter.stats.lines": "Lines",
+                "counter.advanced.title": "Advanced Statistics",
+                "counter.advanced.reading": "Reading Time (min)",
+                "counter.advanced.avgWord": "Avg. Word Length",
+                "counter.advanced.avgSentence": "Avg. Sentence Length",
+                "counter.advanced.longestWord": "Longest Word",
+                "counter.advanced.uniqueWords": "Unique Words",
+                "counter.advanced.keywordDensity": "Keyword Density",
+                "counter.copy": "Copy Text",
+                "counter.clear": "Clear All",
+                "counter.export": "Export Stats",
+                "footer.follow": "FOLLOW US",
+                "footer.categories": "Popular Categories",
+                "footer.categories.pdf": "PDF Tools",
+                "footer.categories.image": "Image Tools",
+                "footer.categories.text": "Text Tools",
+                "footer.categories.av": "Audio/Video Tools",
+                "footer.categories.web": "Web/Developer Tools",
+                "footer.categories.calc": "Calculator Tools",
+                "footer.categories.util": "Utility Tools",
+                "footer.categories.color": "Color Tools",
+                "footer.quicklinks": "Quick Links",
+                "footer.links.tools": "All Tools",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Contact",
+                "footer.links.privacy": "Privacy Policy",
+                "footer.links.disclaimer": "Disclaimer",
+                "footer.links.terms": "Terms of Service",
+                "footer.copyright": "© 2025 LollyPoPDF. All rights reserved."
+            },
+            es: {
+                "nav.home": "Inicio",
+                "nav.about": "Sobre Nosotros",
+                "nav.tools": "Herramientas",
+                "nav.contact": "Contacto",
+                "hero.title": "Contador de Palabras Gratuito",
+                "hero.description": "Cuenta palabras, caracteres, oraciones, párrafos y más con nuestra herramienta gratuita. Soporta archivos de texto, documentos de Word y PDF. Analiza tu texto en tiempo real sin necesidad de registro.",
+                "howto.title": "Cómo Usar el Contador de Palabras",
+                "howto.step1.title": "Ingresa Tu Texto",
+                "howto.step1.description": "Escribe o pega tu texto en el área de entrada. También puedes subir archivos de texto, documentos de Word (.doc, .docx) o archivos PDF para análisis. La herramienta funciona con cualquier cantidad de texto.",
+                "howto.step2.title": "Ver Estadísticas en Tiempo Real",
+                "howto.step2.description": "Observa cómo la herramienta calcula instantáneamente el recuento de palabras, caracteres, oraciones, párrafos y otras estadísticas mientras escribes o subes archivos.",
+                "howto.step3.title": "Analiza Métricas Avanzadas",
+                "howto.step3.description": "Explora estadísticas avanzadas como tiempo de lectura, longitud promedio de palabras, densidad de palabras clave y más información detallada sobre tu texto.",
+                "howto.step4.title": "Exportar y Guardar",
+                "howto.step4.description": "Copia tu texto o descarga las estadísticas. Tu trabajo se guarda automáticamente para tu próxima sesión. Todo el procesamiento ocurre en tu navegador.",
+                "counter.title": "Contador de Palabras",
+                "counter.input.label": "Ingresa Tu Texto",
+                "counter.input.placeholder": "Escribe o pega tu texto aquí...",
+                "counter.upload": "Subir Documento",
+                "counter.supported": "Formatos soportados: TXT, MD, CSV, JSON, XML, HTML, DOC, DOCX, PDF",
+                "counter.loading": "Procesando documento...",
+                "counter.stats.words": "Palabras",
+                "counter.stats.chars": "Caracteres",
+                "counter.stats.charsNoSpaces": "Caracteres (sin espacios)",
+                "counter.stats.sentences": "Oraciones",
+                "counter.stats.paragraphs": "Párrafos",
+                "counter.stats.lines": "Líneas",
+                "counter.advanced.title": "Estadísticas Avanzadas",
+                "counter.advanced.reading": "Tiempo de Lectura (min)",
+                "counter.advanced.avgWord": "Long. Prom. Palabra",
+                "counter.advanced.avgSentence": "Long. Prom. Oración",
+                "counter.advanced.longestWord": "Palabra Más Larga",
+                "counter.advanced.uniqueWords": "Palabras Únicas",
+                "counter.advanced.keywordDensity": "Densidad Palabras Clave",
+                "counter.copy": "Copiar Texto",
+                "counter.clear": "Limpiar Todo",
+                "counter.export": "Exportar Estadísticas",
+                "footer.follow": "SÍGUENOS",
+                "footer.categories": "Categorías Populares",
+                "footer.categories.pdf": "Herramientas PDF",
+                "footer.categories.image": "Herramientas de Imagen",
+                "footer.categories.text": "Herramientas de Texto",
+                "footer.categories.av": "Herramientas de Audio/Video",
+                "footer.categories.web": "Herramientas Web/Desarrollador",
+                "footer.categories.calc": "Herramientas de Calculadora",
+                "footer.categories.util": "Herramientas de Utilidad",
+                "footer.categories.color": "Herramientas de Color",
+                "footer.quicklinks": "Enlaces Rápidos",
+                "footer.links.tools": "Todas las Herramientas",
+                "footer.links.faq": "Preguntas Frecuentes",
+                "footer.links.contact": "Contacto",
+                "footer.links.privacy": "Política de Privacidad",
+                "footer.links.disclaimer": "Descargo de Responsabilidad",
+                "footer.links.terms": "Términos de Servicio",
+                "footer.copyright": "© 2025 LollyPoPDF. Todos los derechos reservados."
+            },
+            fr: {
+                "nav.home": "Accueil",
+                "nav.about": "À propos de nous",
+                "nav.tools": "Outils",
+                "nav.contact": "Contact",
+                "hero.title": "Outil de Compteur de Mots Gratuit",
+                "hero.description": "Comptez les mots, caractères, phrases, paragraphes et plus avec notre outil gratuit. Prend en charge les fichiers texte, documents Word et PDF. Analysez votre texte en temps réel sans inscription requise.",
+                "howto.title": "Comment Utiliser le Compteur de Mots",
+                "howto.step1.title": "Entrez Votre Texte",
+                "howto.step1.description": "Tapez ou collez votre texte dans la zone de saisie. Vous pouvez également télécharger des fichiers texte, documents Word (.doc, .docx) ou fichiers PDF pour analyse. L'outil fonctionne avec n'importe quelle quantité de texte.",
+                "howto.step2.title": "Voir les Statistiques en Temps Réel",
+                "howto.step2.description": "Regardez comment l'outil calcule instantanément le nombre de mots, caractères, phrases, paragraphes et autres statistiques pendant que vous tapez ou téléchargez des fichiers.",
+                "howto.step3.title": "Analyser les Métriques Avancées",
+                "howto.step3.description": "Explorez des statistiques avancées comme le temps de lecture, la longueur moyenne des mots, la densité des mots-clés et plus d'informations détaillées sur votre texte.",
+                "howto.step4.title": "Exporter et Sauvegarder",
+                "howto.step4.description": "Copiez votre texte ou téléchargez les statistiques. Votre travail est automatiquement sauvegardé pour votre prochaine session. Tout le traitement se fait dans votre navigateur.",
+                "counter.title": "Compteur de Mots",
+                "counter.input.label": "Entrez Votre Texte",
+                "counter.input.placeholder": "Tapez ou collez votre texte ici...",
+                "counter.upload": "Télécharger un Document",
+                "counter.supported": "Formats supportés : TXT, MD, CSV, JSON, XML, HTML, DOC, DOCX, PDF",
+                "counter.loading": "Traitement du document...",
+                "counter.stats.words": "Mots",
+                "counter.stats.chars": "Caractères",
+                "counter.stats.charsNoSpaces": "Caractères (sans espaces)",
+                "counter.stats.sentences": "Phrases",
+                "counter.stats.paragraphs": "Paragraphes",
+                "counter.stats.lines": "Lignes",
+                "counter.advanced.title": "Statistiques Avancées",
+                "counter.advanced.reading": "Temps de Lecture (min)",
+                "counter.advanced.avgWord": "Long. Moy. Mot",
+                "counter.advanced.avgSentence": "Long. Moy. Phrase",
+                "counter.advanced.longestWord": "Mot le Plus Long",
+                "counter.advanced.uniqueWords": "Mots Uniques",
+                "counter.advanced.keywordDensity": "Densité Mots-Clés",
+                "counter.copy": "Copier le Texte",
+                "counter.clear": "Tout Effacer",
+                "counter.export": "Exporter les Stats",
+                "footer.follow": "SUIVEZ-NOUS",
+                "footer.categories": "Catégories Populaires",
+                "footer.categories.pdf": "Outils PDF",
+                "footer.categories.image": "Outils d'Image",
+                "footer.categories.text": "Outils de Texte",
+                "footer.categories.av": "Outils Audio/Video",
+                "footer.categories.web": "Outils Web/Développeur",
+                "footer.categories.calc": "Outils Calculatrice",
+                "footer.categories.util": "Outils Utilitaires",
+                "footer.categories.color": "Outils Couleur",
+                "footer.quicklinks": "Liens Rapides",
+                "footer.links.tools": "Tous les Outils",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Contact",
+                "footer.links.privacy": "Politique de Confidentialité",
+                "footer.links.disclaimer": "Avertissement",
+                "footer.links.terms": "Conditions d'Utilisation",
+                "footer.copyright": "© 2025 LollyPoPDF. Tous droits réservés."
+            },
+            de: {
+                "nav.home": "Startseite",
+                "nav.about": "Über uns",
+                "nav.tools": "Werkzeuge",
+                "nav.contact": "Kontakt",
+                "hero.title": "Kostenloses Wortzähler-Tool",
+                "hero.description": "Zählen Sie Wörter, Zeichen, Sätze, Absätze und mehr mit unserem kostenlosen Tool. Unterstützt Textdateien, Word-Dokumente und PDFs. Analysieren Sie Ihren Text in Echtzeit ohne Registrierung.",
+                "howto.title": "So verwenden Sie den Wortzähler",
+                "howto.step1.title": "Geben Sie Ihren Text ein",
+                "howto.step1.description": "Geben Sie Ihren Text in den Eingabebereich ein oder fügen Sie ihn ein. Sie können auch Textdateien, Word-Dokumente (.doc, .docx) oder PDF-Dateien zur Analyse hochladen. Das Tool funktioniert mit jeder Textmenge.",
+                "howto.step2.title": "Echtzeit-Statistiken anzeigen",
+                "howto.step2.description": "Beobachten Sie, wie das Tool sofort Wortzahl, Zeichenzahl, Satzanzahl, Absatzanzahl und andere Statistiken berechnet, während Sie tippen oder Dateien hochladen.",
+                "howto.step3.title": "Erweiterte Metriken analysieren",
+                "howto.step3.description": "Erkunden Sie erweiterte Statistiken wie Lesezeit, durchschnittliche Wortlänge, Keyword-Dichte und weitere detaillierte Einblicke in Ihren Text.",
+                "howto.step4.title": "Exportieren und Speichern",
+                "howto.step4.description": "Kopieren Sie Ihren Text oder laden Sie die Statistiken herunter. Ihre Arbeit wird automatisch für Ihre nächste Sitzung gespeichert. Die gesamte Verarbeitung erfolgt in Ihrem Browser.",
+                "counter.title": "Wortzähler",
+                "counter.input.label": "Geben Sie Ihren Text ein",
+                "counter.input.placeholder": "Geben Sie Ihren Text hier ein oder fügen Sie ihn ein...",
+                "counter.upload": "Dokument hochladen",
+                "counter.supported": "Unterstützte Formate: TXT, MD, CSV, JSON, XML, HTML, DOC, DOCX, PDF",
+                "counter.loading": "Dokument wird verarbeitet...",
+                "counter.stats.words": "Wörter",
+                "counter.stats.chars": "Zeichen",
+                "counter.stats.charsNoSpaces": "Zeichen (ohne Leerzeichen)",
+                "counter.stats.sentences": "Sätze",
+                "counter.stats.paragraphs": "Absätze",
+                "counter.stats.lines": "Zeilen",
+                "counter.advanced.title": "Erweiterte Statistiken",
+                "counter.advanced.reading": "Lesezeit (min)",
+                "counter.advanced.avgWord": "Durchschn. Wortlänge",
+                "counter.advanced.avgSentence": "Durchschn. Satzlänge",
+                "counter.advanced.longestWord": "Längstes Wort",
+                "counter.advanced.uniqueWords": "Einzigartige Wörter",
+                "counter.advanced.keywordDensity": "Keyword-Dichte",
+                "counter.copy": "Text kopieren",
+                "counter.clear": "Alles löschen",
+                "counter.export": "Statistiken exportieren",
+                "footer.follow": "FOLGEN SIE UNS",
+                "footer.categories": "Beliebte Kategorien",
+                "footer.categories.pdf": "PDF-Tools",
+                "footer.categories.image": "Bild-Tools",
+                "footer.categories.text": "Text-Tools",
+                "footer.categories.av": "Audio/Video-Tools",
+                "footer.categories.web": "Web/Entwickler-Tools",
+                "footer.categories.calc": "Rechner-Tools",
+                "footer.categories.util": "Hilfsprogramme",
+                "footer.categories.color": "Farb-Tools",
+                "footer.quicklinks": "Schnelllinks",
+                "footer.links.tools": "Alle Tools",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Kontakt",
+                "footer.links.privacy": "Datenschutzrichtlinie",
+                "footer.links.disclaimer": "Haftungsausschluss",
+                "footer.links.terms": "Nutzungsbedingungen",
+                "footer.copyright": "© 2025 LollyPoPDF. Alle Rechte vorbehalten."
+            },
+            it: {
+                "nav.home": "Home",
+                "nav.about": "Chi siamo",
+                "nav.tools": "Strumenti",
+                "nav.contact": "Contatto",
+                "hero.title": "Contatore di Parole Gratuito",
+                "hero.description": "Conta parole, caratteri, frasi, paragrafi e altro con il nostro strumento gratuito. Supporta file di testo, documenti Word e PDF. Analizza il tuo testo in tempo reale senza registrazione.",
+                "howto.title": "Come Usare il Contatore di Parole",
+                "howto.step1.title": "Inserisci il Tuo Testo",
+                "howto.step1.description": "Digita o incolla il tuo testo nell'area di input. Puoi anche caricare file di testo, documenti Word (.doc, .docx) o file PDF per l'analisi. Lo strumento funziona con qualsiasi quantità di testo.",
+                "howto.step2.title": "Visualizza Statistiche in Tempo Reale",
+                "howto.step2.description": "Guarda come lo strumento calcola istantaneamente il conteggio di parole, caratteri, frasi, paragrafi e altre statistiche mentre digiti o carichi file.",
+                "howto.step3.title": "Analizza Metriche Avanzate",
+                "howto.step3.description": "Esplora statistiche avanzate come tempo di lettura, lunghezza media delle parole, densità delle parole chiave e altri dettagli approfonditi sul tuo testo.",
+                "howto.step4.title": "Esporta e Salva",
+                "howto.step4.description": "Copia il tuo testo o scarica le statistiche. Il tuo lavoro viene salvato automaticamente per la prossima sessione. Tutta l'elaborazione avviene nel tuo browser.",
+                "counter.title": "Contatore di Parole",
+                "counter.input.label": "Inserisci il Tuo Testo",
+                "counter.input.placeholder": "Digita o incolla il tuo testo qui...",
+                "counter.upload": "Carica Documento",
+                "counter.supported": "Formati supportati: TXT, MD, CSV, JSON, XML, HTML, DOC, DOCX, PDF",
+                "counter.loading": "Elaborazione documento...",
+                "counter.stats.words": "Parole",
+                "counter.stats.chars": "Caratteri",
+                "counter.stats.charsNoSpaces": "Caratteri (senza spazi)",
+                "counter.stats.sentences": "Frasi",
+                "counter.stats.paragraphs": "Paragrafi",
+                "counter.stats.lines": "Righe",
+                "counter.advanced.title": "Statistiche Avanzate",
+                "counter.advanced.reading": "Tempo di Lettura (min)",
+                "counter.advanced.avgWord": "Lung. Media Parola",
+                "counter.advanced.avgSentence": "Lung. Media Frase",
+                "counter.advanced.longestWord": "Parola Più Lunga",
+                "counter.advanced.uniqueWords": "Parole Uniche",
+                "counter.advanced.keywordDensity": "Densità Parole Chiave",
+                "counter.copy": "Copia Testo",
+                "counter.clear": "Cancella Tutto",
+                "counter.export": "Esporta Statistiche",
+                "footer.follow": "SEGUICI",
+                "footer.categories": "Categorie Popolari",
+                "footer.categories.pdf": "Strumenti PDF",
+                "footer.categories.image": "Strumenti Immagine",
+                "footer.categories.text": "Strumenti Testo",
+                "footer.categories.av": "Strumenti Audio/Video",
+                "footer.categories.web": "Strumenti Web/Sviluppatore",
+                "footer.categories.calc": "Strumenti Calcolatrice",
+                "footer.categories.util": "Strumenti Utilità",
+                "footer.categories.color": "Strumenti Colore",
+                "footer.quicklinks": "Link Rapidi",
+                "footer.links.tools": "Tutti gli Strumenti",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Contatto",
+                "footer.links.privacy": "Informativa sulla Privacy",
+                "footer.links.disclaimer": "Disclaimer",
+                "footer.links.terms": "Termini di Servizio",
+                "footer.copyright": "© 2025 LollyPoPDF. Tutti i diritti riservati."
+            },
+            pt: {
+                "nav.home": "Início",
+                "nav.about": "Sobre Nós",
+                "nav.tools": "Ferramentas",
+                "nav.contact": "Contato",
+                "hero.title": "Contador de Palavras Gratuito",
+                "hero.description": "Conte palavras, caracteres, frases, parágrafos e mais com nossa ferramenta gratuita. Suporta arquivos de texto, documentos do Word e PDFs. Analise seu texto em tempo real sem necessidade de registro.",
+                "howto.title": "Como Usar o Contador de Palavras",
+                "howto.step1.title": "Digite Seu Texto",
+                "howto.step1.description": "Digite ou cole seu texto na área de entrada. Você também pode fazer upload de arquivos de texto, documentos do Word (.doc, .docx) ou arquivos PDF para análise. A ferramenta funciona com qualquer quantidade de texto.",
+                "howto.step2.title": "Ver Estatísticas em Tempo Real",
+                "howto.step2.description": "Observe como a ferramenta calcula instantaneamente a contagem de palavras, caracteres, frases, parágrafos e outras estatísticas enquanto você digita ou faz upload de arquivos.",
+                "howto.step3.title": "Analisar Métricas Avançadas",
+                "howto.step3.description": "Explore estatísticas avançadas como tempo de leitura, comprimento médio das palavras, densidade de palavras-chave e mais insights detalhados sobre seu texto.",
+                "howto.step4.title": "Exportar e Salvar",
+                "howto.step4.description": "Copie seu texto ou baixe as estatísticas. Seu trabalho é salvo automaticamente para sua próxima sessão. Todo o processamento acontece no seu navegador.",
+                "counter.title": "Contador de Palavras",
+                "counter.input.label": "Digite Seu Texto",
+                "counter.input.placeholder": "Digite ou cole seu texto aqui...",
+                "counter.upload": "Fazer Upload de Documento",
+                "counter.supported": "Formatos suportados: TXT, MD, CSV, JSON, XML, HTML, DOC, DOCX, PDF",
+                "counter.loading": "Processando documento...",
+                "counter.stats.words": "Palavras",
+                "counter.stats.chars": "Caracteres",
+                "counter.stats.charsNoSpaces": "Caracteres (sem espaços)",
+                "counter.stats.sentences": "Frases",
+                "counter.stats.paragraphs": "Parágrafos",
+                "counter.stats.lines": "Linhas",
+                "counter.advanced.title": "Estatísticas Avançadas",
+                "counter.advanced.reading": "Tempo de Leitura (min)",
+                "counter.advanced.avgWord": "Comp. Méd. Palavra",
+                "counter.advanced.avgSentence": "Comp. Méd. Frase",
+                "counter.advanced.longestWord": "Palavra Mais Longa",
+                "counter.advanced.uniqueWords": "Palavras Únicas",
+                "counter.advanced.keywordDensity": "Densidade Palavras-Chave",
+                "counter.copy": "Copiar Texto",
+                "counter.clear": "Limpar Tudo",
+                "counter.export": "Exportar Estatísticas",
+                "footer.follow": "SIGA-NOS",
+                "footer.categories": "Categorias Populares",
+                "footer.categories.pdf": "Ferramentas PDF",
+                "footer.categories.image": "Ferramentas de Imagem",
+                "footer.categories.text": "Ferramentas de Texto",
+                "footer.categories.av": "Ferramentas Áudio/Vídeo",
+                "footer.categories.web": "Ferramentas Web/Desenvolvedor",
+                "footer.categories.calc": "Ferramentas Calculadora",
+                "footer.categories.util": "Ferramentas Utilitárias",
+                "footer.categories.color": "Ferramentas de Cor",
+                "footer.quicklinks": "Links Rápidos",
+                "footer.links.tools": "Todas as Ferramentas",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Contato",
+                "footer.links.privacy": "Política de Privacidade",
+                "footer.links.disclaimer": "Aviso Legal",
+                "footer.links.terms": "Termos de Serviço",
+                "footer.copyright": "© 2025 LollyPoPDF. Todos os direitos reservados."
+            },
+            ja: {
+                "nav.home": "ホーム",
+                "nav.about": "会社概要",
+                "nav.tools": "ツール",
+                "nav.contact": "お問い合わせ",
+                "hero.title": "無料単語カウンターツール",
+                "hero.description": "テキストファイル、Word文書、PDFをサポートする無料ツールで、単語、文字、文、段落などをカウントします。登録不要でテキストをリアルタイム分析。",
+                "howto.title": "単語カウンターの使い方",
+                "howto.step1.title": "テキストを入力",
+                "howto.step1.description": "入力エリアにテキストを入力または貼り付けます。テキストファイル、Word文書（.doc、.docx）、PDFファイルをアップロードして分析することもできます。このツールは任意の量のテキストで動作します。",
+                "howto.step2.title": "リアルタイム統計を表示",
+                "howto.step2.description": "入力やファイルのアップロード中に、ツールが単語数、文字数、文数、段落数などを瞬時に計算する様子をご覧ください。",
+                "howto.step3.title": "高度な指標を分析",
+                "howto.step3.description": "読了時間、平均単語長、キーワード密度など、テキストに関する詳細な高度な統計を探索します。",
+                "howto.step4.title": "エクスポートと保存",
+                "howto.step4.description": "テキストをコピーするか、統計をダウンロードします。作業内容は自動的に保存され、次回のセッションで利用できます。すべての処理はブラウザ内で行われます。",
+                "counter.title": "単語カウンター",
+                "counter.input.label": "テキストを入力",
+                "counter.input.placeholder": "ここにテキストを入力または貼り付け...",
+                "counter.upload": "ドキュメントをアップロード",
+                "counter.supported": "サポート形式：TXT、MD、CSV、JSON、XML、HTML、DOC、DOCX、PDF",
+                "counter.loading": "ドキュメントを処理中...",
+                "counter.stats.words": "単語",
+                "counter.stats.chars": "文字",
+                "counter.stats.charsNoSpaces": "文字（スペースなし）",
+                "counter.stats.sentences": "文",
+                "counter.stats.paragraphs": "段落",
+                "counter.stats.lines": "行",
+                "counter.advanced.title": "高度な統計",
+                "counter.advanced.reading": "読了時間（分）",
+                "counter.advanced.avgWord": "平均単語長",
+                "counter.advanced.avgSentence": "平均文長",
+                "counter.advanced.longestWord": "最長単語",
+                "counter.advanced.uniqueWords": "ユニーク単語",
+                "counter.advanced.keywordDensity": "キーワード密度",
+                "counter.copy": "テキストをコピー",
+                "counter.clear": "すべてクリア",
+                "counter.export": "統計をエクスポート",
+                "footer.follow": "フォローする",
+                "footer.categories": "人気カテゴリ",
+                "footer.categories.pdf": "PDFツール",
+                "footer.categories.image": "画像ツール",
+                "footer.categories.text": "テキストツール",
+                "footer.categories.av": "オーディオ/ビデオツール",
+                "footer.categories.web": "Web/開発者ツール",
+                "footer.categories.calc": "電卓ツール",
+                "footer.categories.util": "ユーティリティツール",
+                "footer.categories.color": "カラーツール",
+                "footer.quicklinks": "クイックリンク",
+                "footer.links.tools": "すべてのツール",
+                "footer.links.faq": "よくある質問",
+                "footer.links.contact": "お問い合わせ",
+                "footer.links.privacy": "プライバシーポリシー",
+                "footer.links.disclaimer": "免責事項",
+                "footer.links.terms": "利用規約",
+                "footer.copyright": "© 2025 LollyPoPDF. All rights reserved."
+            },
+            ru: {
+                "nav.home": "Главная",
+                "nav.about": "О нас",
+                "nav.tools": "Инструменты",
+                "nav.contact": "Контакты",
+                "hero.title": "Бесплатный счетчик слов",
+                "hero.description": "Подсчитывайте слова, символы, предложения, абзацы и многое другое с помощью нашего бесплатного инструмента. Поддерживает текстовые файлы, документы Word и PDF. Анализируйте свой текст в реальном времени без регистрации.",
+                "howto.title": "Как использовать счетчик слов",
+                "howto.step1.title": "Введите свой текст",
+                "howto.step1.description": "Введите или вставьте свой текст в область ввода. Вы также можете загружать текстовые файлы, документы Word (.doc, .docx) или PDF-файлы для анализа. Инструмент работает с любым количеством текста.",
+                "howto.step2.title": "Просмотр статистики в реальном времени",
+                "howto.step2.description": "Наблюдайте, как инструмент мгновенно подсчитывает количество слов, символов, предложений, абзацев и другую статистику, пока вы печатаете или загружаете файлы.",
+                "howto.step3.title": "Анализ расширенных метрик",
+                "howto.step3.description": "Изучите расширенную статистику, такую как время чтения, средняя длина слов, плотность ключевых слов и другие подробные сведения о вашем тексте.",
+                "howto.step4.title": "Экспорт и сохранение",
+                "howto.step4.description": "Скопируйте свой текст или загрузите статистику. Ваша работа автоматически сохраняется для следующего сеанса. Вся обработка происходит в вашем браузере.",
+                "counter.title": "Счетчик слов",
+                "counter.input.label": "Введите свой текст",
+                "counter.input.placeholder": "Введите или вставьте свой текст здесь...",
+                "counter.upload": "Загрузить документ",
+                "counter.supported": "Поддерживаемые форматы: TXT, MD, CSV, JSON, XML, HTML, DOC, DOCX, PDF",
+                "counter.loading": "Обработка документа...",
+                "counter.stats.words": "Слова",
+                "counter.stats.chars": "Символы",
+                "counter.stats.charsNoSpaces": "Символы (без пробелов)",
+                "counter.stats.sentences": "Предложения",
+                "counter.stats.paragraphs": "Абзацы",
+                "counter.stats.lines": "Строки",
+                "counter.advanced.title": "Расширенная статистика",
+                "counter.advanced.reading": "Время чтения (мин)",
+                "counter.advanced.avgWord": "Сред. длина слова",
+                "counter.advanced.avgSentence": "Сред. длина предложения",
+                "counter.advanced.longestWord": "Самое длинное слово",
+                "counter.advanced.uniqueWords": "Уникальные слова",
+                "counter.advanced.keywordDensity": "Плотность ключевых слов",
+                "counter.copy": "Копировать текст",
+                "counter.clear": "Очистить все",
+                "counter.export": "Экспорт статистики",
+                "footer.follow": "СЛЕДУЙТЕ ЗА НАМИ",
+                "footer.categories": "Популярные категории",
+                "footer.categories.pdf": "PDF инструменты",
+                "footer.categories.image": "Инструменты для изображений",
+                "footer.categories.text": "Текстовые инструменты",
+                "footer.categories.av": "Аудио/Видео инструменты",
+                "footer.categories.web": "Веб/Разработчик инструменты",
+                "footer.categories.calc": "Калькуляторные инструменты",
+                "footer.categories.util": "Утилиты",
+                "footer.categories.color": "Цветовые инструменты",
+                "footer.quicklinks": "Быстрые ссылки",
+                "footer.links.tools": "Все инструменты",
+                "footer.links.faq": "ЧаВо",
+                "footer.links.contact": "Контакты",
+                "footer.links.privacy": "Политика конфиденциальности",
+                "footer.links.disclaimer": "Отказ от ответственности",
+                "footer.links.terms": "Условия использования",
+                "footer.copyright": "© 2025 LollyPoPDF. Все права защищены."
+            },
+            ko: {
+                "nav.home": "홈",
+                "nav.about": "회사 소개",
+                "nav.tools": "도구",
+                "nav.contact": "문의하기",
+                "hero.title": "무료 단어 카운터 도구",
+                "hero.description": "텍스트 파일, Word 문서, PDF를 지원하는 무료 도구로 단어, 문자, 문장, 단락 등을 계산합니다. 등록 없이 텍스트를 실시간 분석.",
+                "howto.title": "단어 카운터 사용 방법",
+                "howto.step1.title": "텍스트 입력",
+                "howto.step1.description": "입력 영역에 텍스트를 입력하거나 붙여넣으세요. 텍스트 파일, Word 문서(.doc, .docx) 또는 PDF 파일을 업로드하여 분석할 수도 있습니다. 이 도구는 어떤 양의 텍스트에서도 작동합니다.",
+                "howto.step2.title": "실시간 통계 보기",
+                "howto.step2.description": "입력하거나 파일을 업로드하는 동안 도구가 단어 수, 문자 수, 문장 수, 단락 수 및 기타 통계를 즉시 계산하는 것을 지켜보세요.",
+                "howto.step3.title": "고급 메트릭 분석",
+                "howto.step3.description": "읽기 시간, 평균 단어 길이, 키워드 밀도 등 텍스트에 대한 자세한 고급 통계를 탐색하세요.",
+                "howto.step4.title": "내보내기 및 저장",
+                "howto.step4.description": "텍스트를 복사하거나 통계를 다운로드하세요. 작업 내용은 다음 세션을 위해 자동으로 저장됩니다. 모든 처리는 브라우저에서 이루어집니다.",
+                "counter.title": "단어 카운터",
+                "counter.input.label": "텍스트 입력",
+                "counter.input.placeholder": "여기에 텍스트를 입력하거나 붙여넣으세요...",
+                "counter.upload": "문서 업로드",
+                "counter.supported": "지원 형식: TXT, MD, CSV, JSON, XML, HTML, DOC, DOCX, PDF",
+                "counter.loading": "문서 처리 중...",
+                "counter.stats.words": "단어",
+                "counter.stats.chars": "문자",
+                "counter.stats.charsNoSpaces": "문자 (공백 제외)",
+                "counter.stats.sentences": "문장",
+                "counter.stats.paragraphs": "단락",
+                "counter.stats.lines": "줄",
+                "counter.advanced.title": "고급 통계",
+                "counter.advanced.reading": "읽기 시간 (분)",
+                "counter.advanced.avgWord": "평균 단어 길이",
+                "counter.advanced.avgSentence": "평균 문장 길이",
+                "counter.advanced.longestWord": "가장 긴 단어",
+                "counter.advanced.uniqueWords": "고유 단어",
+                "counter.advanced.keywordDensity": "키워드 밀도",
+                "counter.copy": "텍스트 복사",
+                "counter.clear": "모두 지우기",
+                "counter.export": "통계 내보내기",
+                "footer.follow": "팔로우하기",
+                "footer.categories": "인기 카테고리",
+                "footer.categories.pdf": "PDF 도구",
+                "footer.categories.image": "이미지 도구",
+                "footer.categories.text": "텍스트 도구",
+                "footer.categories.av": "오디오/비디오 도구",
+                "footer.categories.web": "웹/개발자 도구",
+                "footer.categories.calc": "계산기 도구",
+                "footer.categories.util": "유틸리티 도구",
+                "footer.categories.color": "색상 도구",
+                "footer.quicklinks": "빠른 링크",
+                "footer.links.tools": "모든 도구",
+                "footer.links.faq": "자주 묻는 질문",
+                "footer.links.contact": "문의하기",
+                "footer.links.privacy": "개인정보 보호정책",
+                "footer.links.disclaimer": "면책 조항",
+                "footer.links.terms": "이용약관",
+                "footer.copyright": "© 2025 LollyPoPDF. All rights reserved."
+            },
+            'zh-CN': {
+                "nav.home": "首页",
+                "nav.about": "关于我们",
+                "nav.tools": "工具",
+                "nav.contact": "联系我们",
+                "hero.title": "免费字数统计工具",
+                "hero.description": "使用我们的免费工具统计单词、字符、句子、段落等。支持文本文件、Word文档和PDF。无需注册即可实时分析您的文本。",
+                "howto.title": "如何使用字数统计器",
+                "howto.step1.title": "输入您的文本",
+                "howto.step1.description": "在输入区域输入或粘贴您的文本。您也可以上传文本文件、Word文档（.doc、.docx）或PDF文件进行分析。该工具适用于任何数量的文本。",
+                "howto.step2.title": "查看实时统计",
+                "howto.step2.description": "在您输入或上传文件时，观察工具如何即时计算字数、字符数、句子数、段落数和其他统计数据。",
+                "howto.step3.title": "分析高级指标",
+                "howto.step3.description": "探索高级统计数据，如阅读时间、平均单词长度、关键词密度以及关于您文本的更多详细见解。",
+                "howto.step4.title": "导出和保存",
+                "howto.step4.description": "复制您的文本或下载统计数据。您的工作会自动保存以供下次使用。所有处理都在您的浏览器中进行。",
+                "counter.title": "字数统计器",
+                "counter.input.label": "输入您的文本",
+                "counter.input.placeholder": "在此输入或粘贴您的文本...",
+                "counter.upload": "上传文档",
+                "counter.supported": "支持格式：TXT、MD、CSV、JSON、XML、HTML、DOC、DOCX、PDF",
+                "counter.loading": "正在处理文档...",
+                "counter.stats.words": "单词",
+                "counter.stats.chars": "字符",
+                "counter.stats.charsNoSpaces": "字符（不含空格）",
+                "counter.stats.sentences": "句子",
+                "counter.stats.paragraphs": "段落",
+                "counter.stats.lines": "行",
+                "counter.advanced.title": "高级统计",
+                "counter.advanced.reading": "阅读时间（分钟）",
+                "counter.advanced.avgWord": "平均单词长度",
+                "counter.advanced.avgSentence": "平均句子长度",
+                "counter.advanced.longestWord": "最长单词",
+                "counter.advanced.uniqueWords": "唯一单词",
+                "counter.advanced.keywordDensity": "关键词密度",
+                "counter.copy": "复制文本",
+                "counter.clear": "全部清除",
+                "counter.export": "导出统计",
+                "footer.follow": "关注我们",
+                "footer.categories": "热门类别",
+                "footer.categories.pdf": "PDF工具",
+                "footer.categories.image": "图像工具",
+                "footer.categories.text": "文本工具",
+                "footer.categories.av": "音频/视频工具",
+                "footer.categories.web": "Web/开发者工具",
+                "footer.categories.calc": "计算器工具",
+                "footer.categories.util": "实用工具",
+                "footer.categories.color": "颜色工具",
+                "footer.quicklinks": "快速链接",
+                "footer.links.tools": "所有工具",
+                "footer.links.faq": "常见问题",
+                "footer.links.contact": "联系我们",
+                "footer.links.privacy": "隐私政策",
+                "footer.links.disclaimer": "免责声明",
+                "footer.links.terms": "服务条款",
+                "footer.copyright": "© 2025 LollyPoPDF. 版权所有。"
+            },
+            'zh-TW': {
+                "nav.home": "首頁",
+                "nav.about": "關於我們",
+                "nav.tools": "工具",
+                "nav.contact": "聯絡我們",
+                "hero.title": "免費字數統計工具",
+                "hero.description": "使用我們的免費工具統計單詞、字符、句子、段落等。支援文字檔案、Word文件與PDF。無需註冊即可即時分析您的文字。",
+                "howto.title": "如何使用字數統計器",
+                "howto.step1.title": "輸入您的文字",
+                "howto.step1.description": "在輸入區域輸入或貼上您的文字。您也可以上傳文字檔案、Word文件（.doc、.docx）或PDF檔案進行分析。此工具適用於任何數量的文字。",
+                "howto.step2.title": "查看即時統計",
+                "howto.step2.description": "在您輸入或上傳檔案時，觀察工具如何即時計算字數、字符數、句子數、段落數和其他統計數據。",
+                "howto.step3.title": "分析進階指標",
+                "howto.step3.description": "探索進階統計數據，如閱讀時間、平均單詞長度、關鍵詞密度以及關於您文字的更多詳細見解。",
+                "howto.step4.title": "匯出和儲存",
+                "howto.step4.description": "複製您的文字或下載統計數據。您的工作會自動儲存以供下次使用。所有處理都在您的瀏覽器中進行。",
+                "counter.title": "字數統計器",
+                "counter.input.label": "輸入您的文字",
+                "counter.input.placeholder": "在此輸入或貼上您的文字...",
+                "counter.upload": "上傳文件",
+                "counter.supported": "支援格式：TXT、MD、CSV、JSON、XML、HTML、DOC、DOCX、PDF",
+                "counter.loading": "正在處理文件...",
+                "counter.stats.words": "單詞",
+                "counter.stats.chars": "字符",
+                "counter.stats.charsNoSpaces": "字符（不含空格）",
+                "counter.stats.sentences": "句子",
+                "counter.stats.paragraphs": "段落",
+                "counter.stats.lines": "行",
+                "counter.advanced.title": "進階統計",
+                "counter.advanced.reading": "閱讀時間（分鐘）",
+                "counter.advanced.avgWord": "平均單詞長度",
+                "counter.advanced.avgSentence": "平均句子長度",
+                "counter.advanced.longestWord": "最長單詞",
+                "counter.advanced.uniqueWords": "唯一單詞",
+                "counter.advanced.keywordDensity": "關鍵詞密度",
+                "counter.copy": "複製文字",
+                "counter.clear": "全部清除",
+                "counter.export": "匯出統計",
+                "footer.follow": "關注我們",
+                "footer.categories": "熱門類別",
+                "footer.categories.pdf": "PDF工具",
+                "footer.categories.image": "圖片工具",
+                "footer.categories.text": "文字工具",
+                "footer.categories.av": "音訊/影片工具",
+                "footer.categories.web": "網頁/開發者工具",
+                "footer.categories.calc": "計算機工具",
+                "footer.categories.util": "實用工具",
+                "footer.categories.color": "顏色工具",
+                "footer.quicklinks": "快速連結",
+                "footer.links.tools": "所有工具",
+                "footer.links.faq": "常見問題",
+                "footer.links.contact": "聯絡我們",
+                "footer.links.privacy": "隱私權政策",
+                "footer.links.disclaimer": "免責聲明",
+                "footer.links.terms": "服務條款",
+                "footer.copyright": "© 2025 LollyPoPDF. 版權所有。"
+            },
+            ar: {
+                "nav.home": "الرئيسية",
+                "nav.about": "من نحن",
+                "nav.tools": "الأدوات",
+                "nav.contact": "اتصل بنا",
+                "hero.title": "أداة عداد الكلمات المجانية",
+                "hero.description": "عد الكلمات، الأحرف، الجمل، الفقرات والمزيد باستخدام أداتنا المجانية. يدعم ملفات النص، مستندات وورد، وملفات PDF. حلل نصك في الوقت الفعلي دون الحاجة للتسجيل.",
+                "howto.title": "كيفية استخدام عداد الكلمات",
+                "howto.step1.title": "أدخل نصك",
+                "howto.step1.description": "اكتب أو الصق نصك في منطقة الإدخال. يمكنك أيضًا تحميل ملفات النص، مستندات وورد (.doc، .docx) أو ملفات PDF للتحليل. تعمل الأداة مع أي كمية من النص.",
+                "howto.step2.title": "عرض الإحصائيات في الوقت الفعلي",
+                "howto.step2.description": "شاهد كيف تحسب الأداة على الفور عدد الكلمات، الأحرف، الجمل، الفقرات وإحصائيات أخرى أثناء الكتابة أو تحميل الملفات.",
+                "howto.step3.title": "تحليل المقاييس المتقدمة",
+                "howto.step3.description": "استكشف إحصائيات متقدمة مثل وقت القراءة، متوسط طول الكلمات، كثافة الكلمات المفتاحية والمزيد من الرؤى التفصيلية حول نصك.",
+                "howto.step4.title": "تصدير وحفظ",
+                "howto.step4.description": "انسخ نصك أو حمّل الإحصائيات. يتم حفظ عملك تلقائيًا لجلستك القادمة. كل المعالجة تتم في متصفحك.",
+                "counter.title": "عداد الكلمات",
+                "counter.input.label": "أدخل نصك",
+                "counter.input.placeholder": "اكتب أو الصق نصك هنا...",
+                "counter.upload": "تحميل مستند",
+                "counter.supported": "الصيغ المدعومة: TXT, MD, CSV, JSON, XML, HTML, DOC, DOCX, PDF",
+                "counter.loading": "جاري معالجة المستند...",
+                "counter.stats.words": "الكلمات",
+                "counter.stats.chars": "الأحرف",
+                "counter.stats.charsNoSpaces": "الأحرف (بدون مسافات)",
+                "counter.stats.sentences": "الجمل",
+                "counter.stats.paragraphs": "الفقرات",
+                "counter.stats.lines": "الأسطر",
+                "counter.advanced.title": "إحصائيات متقدمة",
+                "counter.advanced.reading": "وقت القراءة (دقيقة)",
+                "counter.advanced.avgWord": "متوسط طول الكلمة",
+                "counter.advanced.avgSentence": "متوسط طول الجملة",
+                "counter.advanced.longestWord": "أطول كلمة",
+                "counter.advanced.uniqueWords": "كلمات فريدة",
+                "counter.advanced.keywordDensity": "كثافة الكلمات المفتاحية",
+                "counter.copy": "نسخ النص",
+                "counter.clear": "مسح الكل",
+                "counter.export": "تصدير الإحصائيات",
+                "footer.follow": "تابعنا",
+                "footer.categories": "الفئات الشائعة",
+                "footer.categories.pdf": "أدوات PDF",
+                "footer.categories.image": "أدوات الصور",
+                "footer.categories.text": "أدوات النص",
+                "footer.categories.av": "أدوات الصوت/الفيديو",
+                "footer.categories.web": "أدوات الويب/المطور",
+                "footer.categories.calc": "أدوات الآلة الحاسبة",
+                "footer.categories.util": "أدوات المساعدة",
+                "footer.categories.color": "أدوات الألوان",
+                "footer.quicklinks": "روابط سريعة",
+                "footer.links.tools": "جميع الأدوات",
+                "footer.links.faq": "الأسئلة الشائعة",
+                "footer.links.contact": "اتصل بنا",
+                "footer.links.privacy": "سياسة الخصوصية",
+                "footer.links.disclaimer": "إخلاء المسؤولية",
+                "footer.links.terms": "شروط الخدمة",
+                "footer.copyright": "© 2025 LollyPoPDF. جميع الحقوق محفوظة."
+            },
+            fa: {
+                "nav.home": "خانه",
+                "nav.about": "درباره ما",
+                "nav.tools": "ابزارها",
+                "nav.contact": "تماس با ما",
+                "hero.title": "ابزار رایگان شمارش کلمات",
+                "hero.description": "کلمات، کاراکترها، جملات، پاراگراف ها و بیشتر را با ابزار رایگان ما بشمارید. از فایل های متنی، اسناد Word و PDF پشتیبانی می کند. متن خود را در زمان واقعی بدون نیاز به ثبت نام تحلیل کنید.",
+                "howto.title": "نحوه استفاده از شمارنده کلمات",
+                "howto.step1.title": "متن خود را وارد کنید",
+                "howto.step1.description": "متن خود را در ناحیه ورودی تایپ یا جایگذاری کنید. همچنین می توانید فایل های متنی، اسناد Word (.doc, .docx) یا فایل های PDF را برای تجزیه و تحلیل آپلود کنید. این ابزار با هر مقدار متنی کار می کند.",
+                "howto.step2.title": "مشاهده آمار بلادرنگ",
+                "howto.step2.description": "تماشا کنید که چگونه ابزار به طور آنی تعداد کلمات، کاراکترها، جملات، پاراگراف ها و سایر آمارها را در حین تایپ یا آپلود فایل ها محاسبه می کند.",
+                "howto.step3.title": "تجزیه و تحلیل معیارهای پیشرفته",
+                "howto.step3.description": "آمار پیشرفته مانند زمان خواندن، میانگین طول کلمات، چگالی کلمات کلیدی و بینش های دقیق تر درباره متن خود را کاوش کنید.",
+                "howto.step4.title": "صادرات و ذخیره",
+                "howto.step4.description": "متن خود را کپی کنید یا آمارها را دانلود کنید. کار شما به طور خودکار برای جلسه بعدی ذخیره می شود. تمام پردازش در مرورگر شما انجام می شود.",
+                "counter.title": "شمارنده کلمات",
+                "counter.input.label": "متن خود را وارد کنید",
+                "counter.input.placeholder": "متن خود را اینجا تایپ یا جایگذاری کنید...",
+                "counter.upload": "آپلود سند",
+                "counter.supported": "فرمت های پشتیبانی شده: TXT, MD, CSV, JSON, XML, HTML, DOC, DOCX, PDF",
+                "counter.loading": "در حال پردازش سند...",
+                "counter.stats.words": "کلمات",
+                "counter.stats.chars": "کاراکترها",
+                "counter.stats.charsNoSpaces": "کاراکترها (بدون فاصله)",
+                "counter.stats.sentences": "جملات",
+                "counter.stats.paragraphs": "پاراگراف ها",
+                "counter.stats.lines": "خطوط",
+                "counter.advanced.title": "آمار پیشرفته",
+                "counter.advanced.reading": "زمان خواندن (دقیقه)",
+                "counter.advanced.avgWord": "میانگین طول کلمه",
+                "counter.advanced.avgSentence": "میانگین طول جمله",
+                "counter.advanced.longestWord": "طولانی ترین کلمه",
+                "counter.advanced.uniqueWords": "کلمات منحصر به فرد",
+                "counter.advanced.keywordDensity": "چگالی کلمه کلیدی",
+                "counter.copy": "کپی متن",
+                "counter.clear": "پاک کردن همه",
+                "counter.export": "صادرات آمار",
+                "footer.follow": "ما را دنبال کنید",
+                "footer.categories": "دسته‌بندی‌های محبوب",
+                "footer.categories.pdf": "ابزارهای PDF",
+                "footer.categories.image": "ابزارهای تصویر",
+                "footer.categories.text": "ابزارهای متن",
+                "footer.categories.av": "ابزارهای صوتی/تصویری",
+                "footer.categories.web": "ابزارهای وب/توسعه‌دهنده",
+                "footer.categories.calc": "ابزارهای ماشین حساب",
+                "footer.categories.util": "ابزارهای کمکی",
+                "footer.categories.color": "ابزارهای رنگ",
+                "footer.quicklinks": "لینک‌های سریع",
+                "footer.links.tools": "همه ابزارها",
+                "footer.links.faq": "سوالات متداول",
+                "footer.links.contact": "تماس",
+                "footer.links.privacy": "سیاست حفظ حریم خصوصی",
+                "footer.links.disclaimer": "سلب مسئولیت",
+                "footer.links.terms": "شرایط خدمات",
+                "footer.copyright": "© 2025 LollyPoPDF. تمامی حقوق محفوظ است."
+            },
+            bg: {
+                "nav.home": "Начало",
+                "nav.about": "За нас",
+                "nav.tools": "Инструменти",
+                "nav.contact": "Контакт",
+                "hero.title": "Безплатен инструмент за броене на думи",
+                "hero.description": "Пребройте думи, символи, изречения, параграфи и още с нашия безплатен инструмент. Поддържа текстови файлове, Word документи и PDF. Анализирайте текста си в реално време без регистрация.",
+                "howto.title": "Как да използвате брояча на думи",
+                "howto.step1.title": "Въведете текста си",
+                "howto.step1.description": "Въведете или поставете текста си в областта за въвеждане. Можете също да качвате текстови файлове, Word документи (.doc, .docx) или PDF файлове за анализ. Инструментът работи с всякакво количество текст.",
+                "howto.step2.title": "Преглед на статистиката в реално време",
+                "howto.step2.description": "Наблюдавайте как инструментът моментално изчислява брой думи, символи, изречения, параграфи и друга статистика, докато пишете или качвате файлове.",
+                "howto.step3.title": "Анализиране на разширени метрики",
+                "howto.step3.description": "Изследвайте разширена статистика като време за четене, средна дължина на думите, плътност на ключовите думи и още подробни прозрения за вашия текст.",
+                "howto.step4.title": "Експортиране и запазване",
+                "howto.step4.description": "Копирайте текста си или изтеглете статистиката. Вашата работа се запазва автоматично за следващата ви сесия. Цялата обработка се извършва във вашия браузър.",
+                "counter.title": "Брояч на думи",
+                "counter.input.label": "Въведете текста си",
+                "counter.input.placeholder": "Въведете или поставете текста си тук...",
+                "counter.upload": "Качване на документ",
+                "counter.supported": "Поддържани формати: TXT, MD, CSV, JSON, XML, HTML, DOC, DOCX, PDF",
+                "counter.loading": "Обработка на документ...",
+                "counter.stats.words": "Думи",
+                "counter.stats.chars": "Символи",
+                "counter.stats.charsNoSpaces": "Символи (без интервали)",
+                "counter.stats.sentences": "Изречения",
+                "counter.stats.paragraphs": "Параграфи",
+                "counter.stats.lines": "Редове",
+                "counter.advanced.title": "Разширена статистика",
+                "counter.advanced.reading": "Време за четене (мин)",
+                "counter.advanced.avgWord": "Ср. дълж. на дума",
+                "counter.advanced.avgSentence": "Ср. дълж. на изречение",
+                "counter.advanced.longestWord": "Най-дълга дума",
+                "counter.advanced.uniqueWords": "Уникални думи",
+                "counter.advanced.keywordDensity": "Плътност на ключови думи",
+                "counter.copy": "Копиране на текст",
+                "counter.clear": "Изчистване на всичко",
+                "counter.export": "Експортиране на статистика",
+                "footer.follow": "СЛЕДВАЙТЕ НИ",
+                "footer.categories": "Популярни категории",
+                "footer.categories.pdf": "PDF инструменти",
+                "footer.categories.image": "Инструменти за изображения",
+                "footer.categories.text": "Текстови инструменти",
+                "footer.categories.av": "Аудио/Видео инструменти",
+                "footer.categories.web": "Уеб/Разработчик инструменти",
+                "footer.categories.calc": "Калкулаторни инструменти",
+                "footer.categories.util": "Помощни инструменти",
+                "footer.categories.color": "Цветови инструменти",
+                "footer.quicklinks": "Бързи връзки",
+                "footer.links.tools": "Всички инструменти",
+                "footer.links.faq": "ЧЗВ",
+                "footer.links.contact": "Контакт",
+                "footer.links.privacy": "Политика за поверителност",
+                "footer.links.disclaimer": "Отказ от отговорност",
+                "footer.links.terms": "Условия за ползване",
+                "footer.copyright": "© 2025 LollyPoPDF. Всички права запазени."
+            },
+            ca: {
+                "nav.home": "Inici",
+                "nav.about": "Sobre nosaltres",
+                "nav.tools": "Eines",
+                "nav.contact": "Contacte",
+                "hero.title": "Eina gratuïta de comptador de paraules",
+                "hero.description": "Compta paraules, caràcters, frases, paràgrafs i més amb la nostra eina gratuïta. Admet fitxers de text, documents Word i PDF. Analitzeu el vostre text en temps real sense necessitat de registre.",
+                "howto.title": "Com utilitzar el comptador de paraules",
+                "howto.step1.title": "Introduïu el vostre text",
+                "howto.step1.description": "Escriviu o enganxeu el vostre text a l'àrea d'entrada. També podeu pujar fitxers de text, documents Word (.doc, .docx) o fitxers PDF per a anàlisi. L'eina funciona amb qualsevol quantitat de text.",
+                "howto.step2.title": "Veure estadístiques en temps real",
+                "howto.step2.description": "Observeu com l'eina calcula instantàniament el recompte de paraules, caràcters, frases, paràgrafs i altres estadístiques mentre escriviu o pugeu fitxers.",
+                "howto.step3.title": "Analitzar mètriques avançades",
+                "howto.step3.description": "Exploreu estadístiques avançades com el temps de lectura, longitud mitjana de paraules, densitat de paraules clau i més informació detallada sobre el vostre text.",
+                "howto.step4.title": "Exportar i desar",
+                "howto.step4.description": "Copieu el vostre text o baixeu les estadístiques. La vostra feina es desa automàticament per a la propera sessió. Tot el processament passa al vostre navegador.",
+                "counter.title": "Comptador de paraules",
+                "counter.input.label": "Introduïu el vostre text",
+                "counter.input.placeholder": "Escriviu o enganxeu el vostre text aquí...",
+                "counter.upload": "Pujar document",
+                "counter.supported": "Formats admesos: TXT, MD, CSV, JSON, XML, HTML, DOC, DOCX, PDF",
+                "counter.loading": "Processant document...",
+                "counter.stats.words": "Paraules",
+                "counter.stats.chars": "Caràcters",
+                "counter.stats.charsNoSpaces": "Caràcters (sense espais)",
+                "counter.stats.sentences": "Frases",
+                "counter.stats.paragraphs": "Paràgrafs",
+                "counter.stats.lines": "Línies",
+                "counter.advanced.title": "Estadístiques avançades",
+                "counter.advanced.reading": "Temps de lectura (min)",
+                "counter.advanced.avgWord": "Long. mitj. paraula",
+                "counter.advanced.avgSentence": "Long. mitj. frase",
+                "counter.advanced.longestWord": "Paraula més llarga",
+                "counter.advanced.uniqueWords": "Paraules úniques",
+                "counter.advanced.keywordDensity": "Densitat paraules clau",
+                "counter.copy": "Copiar text",
+                "counter.clear": "Netejar tot",
+                "counter.export": "Exportar estadístiques",
+                "footer.follow": "SEGUEIX-NOS",
+                "footer.categories": "Categories populars",
+                "footer.categories.pdf": "Eines PDF",
+                "footer.categories.image": "Eines d'imatge",
+                "footer.categories.text": "Eines de text",
+                "footer.categories.av": "Eines d'àudio/vídeo",
+                "footer.categories.web": "Eines web/desenvolupador",
+                "footer.categories.calc": "Eines de calculadora",
+                "footer.categories.util": "Eines d'utilitat",
+                "footer.categories.color": "Eines de color",
+                "footer.quicklinks": "Enllaços ràpids",
+                "footer.links.tools": "Totes les eines",
+                "footer.links.faq": "PMF",
+                "footer.links.contact": "Contacte",
+                "footer.links.privacy": "Política de privadesa",
+                "footer.links.disclaimer": "Descàrrec de responsabilitat",
+                "footer.links.terms": "Termes del servei",
+                "footer.copyright": "© 2025 LollyPoPDF. Tots els drets reservats."
+            },
+            nl: {
+                "nav.home": "Home",
+                "nav.about": "Over ons",
+                "nav.tools": "Tools",
+                "nav.contact": "Contact",
+                "hero.title": "Gratis Woordenteller Tool",
+                "hero.description": "Tel woorden, karakters, zinnen, alinea's en meer met onze gratis tool. Ondersteunt tekstbestanden, Word-documenten en PDF's. Analyseer uw tekst in realtime zonder registratie.",
+                "howto.title": "Hoe de Woordenteller te gebruiken",
+                "howto.step1.title": "Voer uw tekst in",
+                "howto.step1.description": "Typ of plak uw tekst in het invoergebied. U kunt ook tekstbestanden, Word-documenten (.doc, .docx) of PDF-bestanden uploaden voor analyse. De tool werkt met elke hoeveelheid tekst.",
+                "howto.step2.title": "Bekijk realtime statistieken",
+                "howto.step2.description": "Kijk hoe de tool direct het aantal woorden, karakters, zinnen, alinea's en andere statistieken berekent terwijl u typt of bestanden uploadt.",
+                "howto.step3.title": "Analyseer geavanceerde statistieken",
+                "howto.step3.description": "Verken geavanceerde statistieken zoals leestijd, gemiddelde woordlengte, trefwoorddichtheid en meer gedetailleerde inzichten over uw tekst.",
+                "howto.step4.title": "Exporteren en opslaan",
+                "howto.step4.description": "Kopieer uw tekst of download de statistieken. Uw werk wordt automatisch opgeslagen voor uw volgende sessie. Alle verwerking gebeurt in uw browser.",
+                "counter.title": "Woordenteller",
+                "counter.input.label": "Voer uw tekst in",
+                "counter.input.placeholder": "Typ of plak uw tekst hier...",
+                "counter.upload": "Document uploaden",
+                "counter.supported": "Ondersteunde formaten: TXT, MD, CSV, JSON, XML, HTML, DOC, DOCX, PDF",
+                "counter.loading": "Document verwerken...",
+                "counter.stats.words": "Woorden",
+                "counter.stats.chars": "Karakters",
+                "counter.stats.charsNoSpaces": "Karakters (zonder spaties)",
+                "counter.stats.sentences": "Zinnen",
+                "counter.stats.paragraphs": "Alinea's",
+                "counter.stats.lines": "Regels",
+                "counter.advanced.title": "Geavanceerde statistieken",
+                "counter.advanced.reading": "Leestijd (min)",
+                "counter.advanced.avgWord": "Gem. woordlengte",
+                "counter.advanced.avgSentence": "Gem. zinslengte",
+                "counter.advanced.longestWord": "Langste woord",
+                "counter.advanced.uniqueWords": "Unieke woorden",
+                "counter.advanced.keywordDensity": "Trefwoorddichtheid",
+                "counter.copy": "Tekst kopiëren",
+                "counter.clear": "Alles wissen",
+                "counter.export": "Statistieken exporteren",
+                "footer.follow": "VOLG ONS",
+                "footer.categories": "Populaire categorieën",
+                "footer.categories.pdf": "PDF-tools",
+                "footer.categories.image": "Afbeeldingstools",
+                "footer.categories.text": "Teksttools",
+                "footer.categories.av": "Audio/Video tools",
+                "footer.categories.web": "Web/Developer tools",
+                "footer.categories.calc": "Rekenmachinetools",
+                "footer.categories.util": "Hulpprogramma's",
+                "footer.categories.color": "Kleurtools",
+                "footer.quicklinks": "Snelle links",
+                "footer.links.tools": "Alle tools",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Contact",
+                "footer.links.privacy": "Privacybeleid",
+                "footer.links.disclaimer": "Disclaimer",
+                "footer.links.terms": "Servicevoorwaarden",
+                "footer.copyright": "© 2025 LollyPoPDF. Alle rechten voorbehouden."
+            },
+            el: {
+                "nav.home": "Αρχική",
+                "nav.about": "Σχετικά με εμάς",
+                "nav.tools": "Εργαλεία",
+                "nav.contact": "Επικοινωνία",
+                "hero.title": "Δωρεάν Εργαλείο Μέτρησης Λέξεων",
+                "hero.description": "Μετρήστε λέξεις, χαρακτήρες, προτάσεις, παραγράφους και άλλα με το δωρεάν μας εργαλείο. Υποστηρίζει αρχεία κειμένου, έγγραφα Word και PDF. Αναλύστε το κείμενό σας σε πραγματικό χρόνο χωρίς απαίτηση εγγραφής.",
+                "howto.title": "Πώς να χρησιμοποιήσετε το Μέτρη Λέξεων",
+                "howto.step1.title": "Εισαγάγετε το κείμενό σας",
+                "howto.step1.description": "Πληκτρολογήστε ή επικολλήστε το κείμενό σας στην περιοχή εισαγωγής. Μπορείτε επίσης να ανεβάσετε αρχεία κειμένου, έγγραφα Word (.doc, .docx) ή αρχεία PDF για ανάλυση. Το εργαλείο λειτουργεί με οποιαδήποτε ποσότητα κειμένου.",
+                "howto.step2.title": "Προβολή στατιστικών σε πραγματικό χρόνο",
+                "howto.step2.description": "Παρακολουθήστε πώς το εργαλείο υπολογίζει αμέσως τον αριθμό λέξεων, χαρακτήρων, προτάσεων, παραγράφων και άλλων στατιστικών καθώς πληκτρολογείτε ή ανεβάζετε αρχεία.",
+                "howto.step3.title": "Ανάλυση προηγμένων μετρήσεων",
+                "howto.step3.description": "Εξερευνήστε προηγμένα στατιστικά όπως χρόνος ανάγνωσης, μέσο μήκος λέξεων, πυκνότητα λέξεων-κλειδιών και περισσότερες λεπτομερείς πληροφορίες για το κείμενό σας.",
+                "howto.step4.title": "Εξαγωγή και αποθήκευση",
+                "howto.step4.description": "Αντιγράψτε το κείμενό σας ή κατεβάστε τα στατιστικά. Η εργασία σας αποθηκεύεται αυτόματα για την επόμενη συνεδρία σας. Όλη η επεξεργασία γίνεται στο πρόγραμμα περιήγησής σας.",
+                "counter.title": "Μέτρη Λέξεων",
+                "counter.input.label": "Εισαγάγετε το κείμενό σας",
+                "counter.input.placeholder": "Πληκτρολογήστε ή επικολλήστε το κείμενό σας εδώ...",
+                "counter.upload": "Ανέβασμα εγγράφου",
+                "counter.supported": "Υποστηριζόμενες μορφές: TXT, MD, CSV, JSON, XML, HTML, DOC, DOCX, PDF",
+                "counter.loading": "Επεξεργασία εγγράφου...",
+                "counter.stats.words": "Λέξεις",
+                "counter.stats.chars": "Χαρακτήρες",
+                "counter.stats.charsNoSpaces": "Χαρακτήρες (χωρίς κενά)",
+                "counter.stats.sentences": "Προτάσεις",
+                "counter.stats.paragraphs": "Παράγραφοι",
+                "counter.stats.lines": "Γραμμές",
+                "counter.advanced.title": "Προηγμένα Στατιστικά",
+                "counter.advanced.reading": "Χρόνος Ανάγνωσης (λεπτά)",
+                "counter.advanced.avgWord": "Μέσ. Μήκος Λέξης",
+                "counter.advanced.avgSentence": "Μέσ. Μήκος Πρότασης",
+                "counter.advanced.longestWord": "Μεγαλύτερη Λέξη",
+                "counter.advanced.uniqueWords": "Μοναδικές Λέξεις",
+                "counter.advanced.keywordDensity": "Πυκνότητα Λέξεων-Κλειδιών",
+                "counter.copy": "Αντιγραφή Κειμένου",
+                "counter.clear": "Καθαρισμός Όλων",
+                "counter.export": "Εξαγωγή Στατιστικών",
+                "footer.follow": "ΑΚΟΛΟΥΘΗΣΤΕ ΜΑΣ",
+                "footer.categories": "Δημοφιλείς Κατηγορίες",
+                "footer.categories.pdf": "Εργαλεία PDF",
+                "footer.categories.image": "Εργαλεία Εικόνας",
+                "footer.categories.text": "Εργαλεία Κειμένου",
+                "footer.categories.av": "Εργαλεία Ήχου/Βίντεο",
+                "footer.categories.web": "Εργαλεία Web/Προγραμματιστή",
+                "footer.categories.calc": "Εργαλεία Αριθμομηχανής",
+                "footer.categories.util": "Βοηθητικά Εργαλεία",
+                "footer.categories.color": "Εργαλεία Χρώματος",
+                "footer.quicklinks": "Γρήγοροι Σύνδεσμοι",
+                "footer.links.tools": "Όλα τα Εργαλεία",
+                "footer.links.faq": "Συχνές Ερωτήσεις",
+                "footer.links.contact": "Επικοινωνία",
+                "footer.links.privacy": "Πολιτική Απορρήτου",
+                "footer.links.disclaimer": "Αποποίηση Ευθυνών",
+                "footer.links.terms": "Όροι Χρήσης",
+                "footer.copyright": "© 2025 LollyPoPDF. Με επιφύλαξη παντός δικαιώματος."
+            },
+            hi: {
+                "nav.home": "होम",
+                "nav.about": "हमारे बारे में",
+                "nav.tools": "टूल्स",
+                "nav.contact": "संपर्क करें",
+                "hero.title": "मुफ्त शब्द गणना उपकरण",
+                "hero.description": "हमारे मुफ्त उपकरण से शब्द, वर्ण, वाक्य, पैराग्राफ और अधिक गिनें। टेक्स्ट फाइलें, वर्ड दस्तावेज़ और PDF समर्थित हैं। बिना पंजीकरण के अपने टेक्स्ट का रीयल-टाइम विश्लेषण करें।",
+                "howto.title": "शब्द गणक का उपयोग कैसे करें",
+                "howto.step1.title": "अपना टेक्स्ट दर्ज करें",
+                "howto.step1.description": "इनपुट क्षेत्र में अपना टेक्स्ट टाइप या पेस्ट करें। आप विश्लेषण के लिए टेक्स्ट फाइलें, वर्ड दस्तावेज़ (.doc, .docx) या PDF फाइलें भी अपलोड कर सकते हैं। यह उपकरण किसी भी मात्रा में टेक्स्ट के साथ काम करता है।",
+                "howto.step2.title": "रीयल-टाइम आँकड़े देखें",
+                "howto.step2.description": "जैसे ही आप टाइप करते हैं या फाइलें अपलोड करते हैं, देखें कि कैसे उपकरण तुरंत शब्द गणना, वर्ण गणना, वाक्य गणना, पैराग्राफ गणना और अन्य आँकड़े गणना करता है।",
+                "howto.step3.title": "उन्नत मेट्रिक्स का विश्लेषण करें",
+                "howto.step3.description": "पढ़ने का समय, औसत शब्द लंबाई, कीवर्ड घनत्व और आपके टेक्स्ट के बारे में अधिक विस्तृत जानकारी जैसे उन्नत आँकड़े एक्सप्लोर करें।",
+                "howto.step4.title": "निर्यात और सहेजें",
+                "howto.step4.description": "अपना टेक्स्ट कॉपी करें या आँकड़े डाउनलोड करें। आपका काम आपके अगले सत्र के लिए स्वचालित रूप से सहेजा जाता है। सभी प्रसंस्करण आपके ब्राउज़र में होता है।",
+                "counter.title": "शब्द गणक",
+                "counter.input.label": "अपना टेक्स्ट दर्ज करें",
+                "counter.input.placeholder": "अपना टेक्स्ट यहाँ टाइप या पेस्ट करें...",
+                "counter.upload": "दस्तावेज़ अपलोड करें",
+                "counter.supported": "समर्थित प्रारूप: TXT, MD, CSV, JSON, XML, HTML, DOC, DOCX, PDF",
+                "counter.loading": "दस्तावेज़ प्रसंस्करण...",
+                "counter.stats.words": "शब्द",
+                "counter.stats.chars": "वर्ण",
+                "counter.stats.charsNoSpaces": "वर्ण (रिक्त स्थान के बिना)",
+                "counter.stats.sentences": "वाक्य",
+                "counter.stats.paragraphs": "पैराग्राफ",
+                "counter.stats.lines": "पंक्तियाँ",
+                "counter.advanced.title": "उन्नत आँकड़े",
+                "counter.advanced.reading": "पढ़ने का समय (मिनट)",
+                "counter.advanced.avgWord": "औसत शब्द लंबाई",
+                "counter.advanced.avgSentence": "औसत वाक्य लंबाई",
+                "counter.advanced.longestWord": "सबसे लंबा शब्द",
+                "counter.advanced.uniqueWords": "अद्वितीय शब्द",
+                "counter.advanced.keywordDensity": "कीवर्ड घनत्व",
+                "counter.copy": "टेक्स्ट कॉपी करें",
+                "counter.clear": "सभी साफ करें",
+                "counter.export": "आँकड़े निर्यात करें",
+                "footer.follow": "हमें फॉलो करें",
+                "footer.categories": "लोकप्रिय श्रेणियाँ",
+                "footer.categories.pdf": "PDF टूल्स",
+                "footer.categories.image": "इमेज टूल्स",
+                "footer.categories.text": "टेक्स्ट टूल्स",
+                "footer.categories.av": "ऑडियो/वीडियो टूल्स",
+                "footer.categories.web": "वेब/डेवलपर टूल्स",
+                "footer.categories.calc": "कैलकुलेटर टूल्स",
+                "footer.categories.util": "यूटिलिटी टूल्स",
+                "footer.categories.color": "कलर टूल्स",
+                "footer.quicklinks": "त्वरित लिंक",
+                "footer.links.tools": "सभी टूल्स",
+                "footer.links.faq": "सामान्य प्रश्न",
+                "footer.links.contact": "संपर्क करें",
+                "footer.links.privacy": "गोपनीयता नीति",
+                "footer.links.disclaimer": "अस्वीकरण",
+                "footer.links.terms": "सेवा की शर्तें",
+                "footer.copyright": "© 2025 LollyPoPDF. सर्वाधिकार सुरक्षित।"
+            },
+            te: {
+                "nav.home": "హోమ్",
+                "nav.about": "మా గురించి",
+                "nav.tools": "టూల్స్",
+                "nav.contact": "సంప్రదించండి",
+                "hero.title": "ఉచిత పదాల కౌంటర్ టూల్",
+                "hero.description": "మా ఉచిత టూల్తో పదాలు, అక్షరాలు, వాక్యాలు, పేరాలు మరియు మరిన్నింటిని లెక్కించండి. టెక్స్ట్ ఫైళ్లు, వర్డ్ డాక్యుమెంట్లు మరియు PDFలకు మద్దతు ఇస్తుంది. రిజిస్ట్రేషన్ అవసరం లేకుండా మీ టెక్స్ట్ను రియల్-టైంలో విశ్లేషించండి.",
+                "howto.title": "పదాల కౌంటర్ను ఎలా ఉపయోగించాలి",
+                "howto.step1.title": "మీ టెక్స్ట్ను నమోదు చేయండి",
+                "howto.step1.description": "ఇన్పుట్ ప్రాంతంలో మీ టెక్స్ట్ను టైప్ చేయండి లేదా పేస్ట్ చేయండి. విశ్లేషణ కోసం మీరు టెక్స్ట్ ఫైళ్లు, వర్డ్ డాక్యుమెంట్లు (.doc, .docx) లేదా PDF ఫైళ్లను అప్లోడ్ చేయవచ్చు. ఈ టూల్ ఏ మొత్తంలో టెక్స్ట్తోనైనా పనిచేస్తుంది.",
+                "howto.step2.title": "రియల్-టైం గణాంకాలను వీక్షించండి",
+                "howto.step2.description": "మీరు టైప్ చేస్తున్నప్పుడు లేదా ఫైళ్లను అప్లోడ్ చేస్తున్నప్పుడు, టూల్ తక్షణంగా పదాల సంఖ్య, అక్షరాల సంఖ్య, వాక్యాల సంఖ్య, పేరాల సంఖ్య మరియు ఇతర గణాంకాలను ఎలా లెక్కిస్తుందో చూడండి.",
+                "howto.step3.title": "అధునాతన మెట్రిక్స్ను విశ్లేషించండి",
+                "howto.step3.description": "చదవడానికి పట్టే సమయం, సగటు పద పొడవు, కీవర్డ్ సాంద్రత మరియు మీ టెక్స్ట్ గురించి మరిన్ని వివరణాత్మక అంశాలు వంటి అధునాతన గణాంకాలను అన్వేషించండి.",
+                "howto.step4.title": "ఎగుమతి మరియు సేవ్ చేయండి",
+                "howto.step4.description": "మీ టెక్స్ట్ను కాపీ చేయండి లేదా గణాంకాలను డౌన్లోడ్ చేయండి. మీ పని మీ తదుపరి సెషన్ కోసం స్వయంచాలకంగా సేవ్ చేయబడుతుంది. అన్ని ప్రాసెసింగ్ మీ బ్రౌజర్లో జరుగుతుంది.",
+                "counter.title": "పదాల కౌంటర్",
+                "counter.input.label": "మీ టెక్స్ట్ను నమోదు చేయండి",
+                "counter.input.placeholder": "మీ టెక్స్ట్ను ఇక్కడ టైప్ చేయండి లేదా పేస్ట్ చేయండి...",
+                "counter.upload": "డాక్యుమెంట్ అప్లోడ్ చేయండి",
+                "counter.supported": "సపోర్టెడ్ ఫార్మాట్లు: TXT, MD, CSV, JSON, XML, HTML, DOC, DOCX, PDF",
+                "counter.loading": "డాక్యుమెంట్ ప్రాసెసింగ్...",
+                "counter.stats.words": "పదాలు",
+                "counter.stats.chars": "అక్షరాలు",
+                "counter.stats.charsNoSpaces": "అక్షరాలు (స్పేస్లు లేకుండా)",
+                "counter.stats.sentences": "వాక్యాలు",
+                "counter.stats.paragraphs": "పేరాలు",
+                "counter.stats.lines": "లైన్లు",
+                "counter.advanced.title": "అధునాతన గణాంకాలు",
+                "counter.advanced.reading": "చదవడానికి సమయం (నిమి)",
+                "counter.advanced.avgWord": "సగటు పద పొడవు",
+                "counter.advanced.avgSentence": "సగటు వాక్య పొడవు",
+                "counter.advanced.longestWord": "పొడవైన పదం",
+                "counter.advanced.uniqueWords": "ప్రత్యేక పదాలు",
+                "counter.advanced.keywordDensity": "కీవర్డ్ సాంద్రత",
+                "counter.copy": "టెక్స్ట్ కాపీ చేయండి",
+                "counter.clear": "అన్ని క్లియర్ చేయండి",
+                "counter.export": "గణాంకాలను ఎగుమతి చేయండి",
+                "footer.follow": "మమ్మల్ని ఫాలో అవ్వండి",
+                "footer.categories": "జనాదరణ పొందిన వర్గాలు",
+                "footer.categories.pdf": "PDF టూల్స్",
+                "footer.categories.image": "ఇమేజ్ టూల్స్",
+                "footer.categories.text": "టెక్స్ట్ టూల్స్",
+                "footer.categories.av": "ఆడియో/వీడియో టూల్స్",
+                "footer.categories.web": "వెబ్/డెవలపర్ టూల్స్",
+                "footer.categories.calc": "కాలిక్యులేటర్ టూల్స్",
+                "footer.categories.util": "యుటిలిటీ టూల్స్",
+                "footer.categories.color": "కలర్ టూల్స్",
+                "footer.quicklinks": "త్వరిత లింకులు",
+                "footer.links.tools": "అన్ని టూల్స్",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "సంప్రదించండి",
+                "footer.links.privacy": "గోప్యతా విధానం",
+                "footer.links.disclaimer": "డిస్క్లైమర్",
+                "footer.links.terms": "సేవా నిబంధనలు",
+                "footer.copyright": "© 2025 LollyPoPDF. అన్ని హక్కులు రిజర్వ్ చేయబడ్డాయి."
+            },
+            kn: {
+                "nav.home": "ಹೋಮ್",
+                "nav.about": "ನಮ್ಮ ಬಗ್ಗೆ",
+                "nav.tools": "ಟೂಲ್ಸ್",
+                "nav.contact": "ಸಂಪರ್ಕಿಸಿ",
+                "hero.title": "ಉಚಿತ ಪದಗಳ ಎಣಿಕೆ ಉಪಕರಣ",
+                "hero.description": "ನಮ್ಮ ಉಚಿತ ಉಪಕರಣದಿಂದ ಪದಗಳು, ಅಕ್ಷರಗಳು, ವಾಕ್ಯಗಳು, ಪ್ಯಾರಾಗ್ರಾಫ್ಗಳು ಮತ್ತು ಇನ್ನಷ್ಟು ಎಣಿಕೆ ಮಾಡಿ. ಟೆಕ್ಸ್ಟ್ ಫೈಲ್ಗಳು, ವರ್ಡ್ ಡಾಕ್ಯುಮೆಂಟ್ಗಳು ಮತ್ತು PDFಗಳನ್ನು ಬೆಂಬಲಿಸುತ್ತದೆ. ನೋಂದಣಿ ಅಗತ್ಯವಿಲ್ಲದೆ ನಿಮ್ಮ ಟೆಕ್ಸ್ಟ್ ಅನ್ನು ರಿಯಲ್-ಟೈಮ್ನಲ್ಲಿ ವಿಶ್ಲೇಷಿಸಿ.",
+                "howto.title": "ಪದಗಳ ಎಣಿಕೆಯನ್ನು ಹೇಗೆ ಬಳಸುವುದು",
+                "howto.step1.title": "ನಿಮ್ಮ ಟೆಕ್ಸ್ಟ್ ಅನ್ನು ನಮೂದಿಸಿ",
+                "howto.step1.description": "ಇನ್ಪುಟ್ ಪ್ರದೇಶದಲ್ಲಿ ನಿಮ್ಮ ಟೆಕ್ಸ್ಟ್ ಅನ್ನು ಟೈಪ್ ಮಾಡಿ ಅಥವಾ ಪೇಸ್ಟ್ ಮಾಡಿ. ವಿಶ್ಲೇಷಣೆಗಾಗಿ ನೀವು ಟೆಕ್ಸ್ಟ್ ಫೈಲ್ಗಳು, ವರ್ಡ್ ಡಾಕ್ಯುಮೆಂಟ್ಗಳು (.doc, .docx) ಅಥವಾ PDF ಫೈಲ್ಗಳನ್ನು ಅಪ್ಲೋಡ್ ಮಾಡಬಹುದು. ಈ ಉಪಕರಣವು ಯಾವುದೇ ಪ್ರಮಾಣದ ಟೆಕ್ಸ್ಟ್ನೊಂದಿಗೆ ಕಾರ್ಯನಿರ್ವಹಿಸುತ್ತದೆ.",
+                "howto.step2.title": "ರಿಯಲ್-ಟೈಂ ಅಂಕಿಅಂಶಗಳನ್ನು ವೀಕ್ಷಿಸಿ",
+                "howto.step2.description": "ನೀವು ಟೈಪ್ ಮಾಡುವಾಗ ಅಥವಾ ಫೈಲ್ಗಳನ್ನು ಅಪ್ಲೋಡ್ ಮಾಡುವಾಗ, ಪದಗಳ ಎಣಿಕೆ, ಅಕ್ಷರಗಳ ಎಣಿಕೆ, ವಾಕ್ಯಗಳ ಎಣಿಕೆ, ಪ್ಯಾರಾಗ್ರಾಫ್ಗಳ ಎಣಿಕೆ ಮತ್ತು ಇತರ ಅಂಕಿಅಂಶಗಳನ್ನು ಉಪಕರಣವು ತಕ್ಷಣವೇ ಹೇಗೆ ಲೆಕ್ಕಾಚಾರ ಮಾಡುತ್ತದೆ ಎಂಬುದನ್ನು ನೋಡಿ.",
+                "howto.step3.title": "ಸುಧಾರಿತ ಮೆಟ್ರಿಕ್ಸ್ಗಳನ್ನು ವಿಶ್ಲೇಷಿಸಿ",
+                "howto.step3.description": "ಓದುವ ಸಮಯ, ಸರಾಸರಿ ಪದದ ಉದ್ದ, ಕೀವರ್ಡ್ ಸಾಂದ್ರತೆ ಮತ್ತು ನಿಮ್ಮ ಟೆಕ್ಸ್ಟ್ ಬಗ್ಗೆ ಹೆಚ್ಚಿನ ವಿವರವಾದ ಒಳನೋಟಗಳಂತಹ ಸುಧಾರಿತ ಅಂಕಿಅಂಶಗಳನ್ನು ಅನ್ವೇಷಿಸಿ.",
+                "howto.step4.title": "ರಫ್ತು ಮಾಡಿ ಮತ್ತು ಸಂರಕ್ಷಿಸಿ",
+                "howto.step4.description": "ನಿಮ್ಮ ಟೆಕ್ಸ್ಟ್ ಅನ್ನು ನಕಲಿಸಿ ಅಥವಾ ಅಂಕಿಅಂಶಗಳನ್ನು ಡೌನ್ಲೋಡ್ ಮಾಡಿ. ನಿಮ್ಮ ಕೆಲಸವು ನಿಮ್ಮ ಮುಂದಿನ ಸೆಷನ್ಗಾಗಿ ಸ್ವಯಂಚಾಲಿತವಾಗಿ ಸಂರಕ್ಷಿಸಲ್ಪಡುತ್ತದೆ. ಎಲ್ಲಾ ಪ್ರಕ್ರಿಯೆಯು ನಿಮ್ಮ ಬ್ರೌಸರ್ನಲ್ಲಿ ನಡೆಯುತ್ತದೆ.",
+                "counter.title": "ಪದಗಳ ಎಣಿಕೆ",
+                "counter.input.label": "ನಿಮ್ಮ ಟೆಕ್ಸ್ಟ್ ಅನ್ನು ನಮೂದಿಸಿ",
+                "counter.input.placeholder": "ನಿಮ್ಮ ಟೆಕ್ಸ್ಟ್ ಅನ್ನು ಇಲ್ಲಿ ಟೈಪ್ ಮಾಡಿ ಅಥವಾ ಪೇಸ್ಟ್ ಮಾಡಿ...",
+                "counter.upload": "ಡಾಕ್ಯುಮೆಂಟ್ ಅಪ್ಲೋಡ್ ಮಾಡಿ",
+                "counter.supported": "ಬೆಂಬಲಿತ ಫಾರ್ಮ್ಯಾಟ್ಗಳು: TXT, MD, CSV, JSON, XML, HTML, DOC, DOCX, PDF",
+                "counter.loading": "ಡಾಕ್ಯುಮೆಂಟ್ ಪ್ರಕ್ರಿಯೆಗೊಳ್ಳುತ್ತಿದೆ...",
+                "counter.stats.words": "ಪದಗಳು",
+                "counter.stats.chars": "ಅಕ್ಷರಗಳು",
+                "counter.stats.charsNoSpaces": "ಅಕ್ಷರಗಳು (ಖಾಲಿ ಜಾಗಗಳಿಲ್ಲದೆ)",
+                "counter.stats.sentences": "ವಾಕ್ಯಗಳು",
+                "counter.stats.paragraphs": "ಪ್ಯಾರಾಗ್ರಾಫ್ಗಳು",
+                "counter.stats.lines": "ಸಾಲುಗಳು",
+                "counter.advanced.title": "ಸುಧಾರಿತ ಅಂಕಿಅಂಶಗಳು",
+                "counter.advanced.reading": "ಓದುವ ಸಮಯ (ನಿಮಿಷ)",
+                "counter.advanced.avgWord": "ಸರಾಸರಿ ಪದದ ಉದ್ದ",
+                "counter.advanced.avgSentence": "ಸರಾಸರಿ ವಾಕ್ಯದ ಉದ್ದ",
+                "counter.advanced.longestWord": "ದೀರ್ಘವಾದ ಪದ",
+                "counter.advanced.uniqueWords": "ಅನನ್ಯ ಪದಗಳು",
+                "counter.advanced.keywordDensity": "ಕೀವರ್ಡ್ ಸಾಂದ್ರತೆ",
+                "counter.copy": "ಟೆಕ್ಸ್ಟ್ ನಕಲಿಸಿ",
+                "counter.clear": "ಎಲ್ಲಾ ತೆರವುಗೊಳಿಸಿ",
+                "counter.export": "ಅಂಕಿಅಂಶಗಳನ್ನು ರಫ್ತು ಮಾಡಿ",
+                "footer.follow": "ನಮ್ಮನ್ನು ಅನುಸರಿಸಿ",
+                "footer.categories": "ಜನಪ್ರಿಯ ವರ್ಗಗಳು",
+                "footer.categories.pdf": "PDF ಟೂಲ್ಸ್",
+                "footer.categories.image": "ಇಮೇಜ್ ಟೂಲ್ಸ್",
+                "footer.categories.text": "ಟೆಕ್ಸ್ಟ್ ಟೂಲ್ಸ್",
+                "footer.categories.av": "ಆಡಿಯೋ/ವೀಡಿಯೋ ಟೂಲ್ಸ್",
+                "footer.categories.web": "ವೆಬ್/ಡೆವಲಪರ್ ಟೂಲ್ಸ್",
+                "footer.categories.calc": "ಕ್ಯಾಲ್ಕುಲೇಟರ್ ಟೂಲ್ಸ್",
+                "footer.categories.util": "ಯುಟಿಲಿಟಿ ಟೂಲ್ಸ್",
+                "footer.categories.color": "ಕಲರ್ ಟೂಲ್ಸ್",
+                "footer.quicklinks": "ತ್ವರಿತ ಲಿಂಕ್ಗಳು",
+                "footer.links.tools": "ಎಲ್ಲಾ ಟೂಲ್ಸ್",
+                "footer.links.faq": "ಸಾಮಾನ್ಯ ಪ್ರಶ್ನೆಗಳು",
+                "footer.links.contact": "ಸಂಪರ್ಕಿಸಿ",
+                "footer.links.privacy": "ಗೌಪ್ಯತಾ ನೀತಿ",
+                "footer.links.disclaimer": "ಡಿಸ್ಕ್ಲೈಮರ್",
+                "footer.links.terms": "ಸೇವಾ ನಿಯಮಗಳು",
+                "footer.copyright": "© 2025 LollyPoPDF. ಎಲ್ಲಾ ಹಕ್ಕುಗಳು ಕಾಯ್ದಿರಿಸಲ್ಪಟ್ಟಿವೆ."
+            },
+            ta: {
+                "nav.home": "முகப்பு",
+                "nav.about": "எங்களைப் பற்றி",
+                "nav.tools": "கருவிகள்",
+                "nav.contact": "தொடர்பு கொள்ள",
+                "hero.title": "இலவச சொற்கள் எண்ணும் கருவி",
+                "hero.description": "எங்கள் இலவச கருவியைப் பயன்படுத்தி சொற்கள், எழுத்துகள், வாக்கியங்கள், பத்திகள் மற்றும் பலவற்றை எண்ணுங்கள். உரை கோப்புகள், வேர்ட் ஆவணங்கள் மற்றும் PDFகளை ஆதரிக்கிறது. பதிவு தேவையில்லாமல் உங்கள் உரையை உண்மையான நேரத்தில் பகுப்பாய்வு செய்யுங்கள்.",
+                "howto.title": "சொற்கள் எண்ணியை எவ்வாறு பயன்படுத்துவது",
+                "howto.step1.title": "உங்கள் உரையை உள்ளிடவும்",
+                "howto.step1.description": "உள்ளீட்டுப் பகுதியில் உங்கள் உரையை தட்டச்சு செய்யவும் அல்லது ஒட்டவும். பகுப்பாய்வுக்காக நீங்கள் உரை கோப்புகள், வேர்ட் ஆவணங்கள் (.doc, .docx) அல்லது PDF கோப்புகளை பதிவேற்றலாம். எந்த அளவு உரையுடனும் இந்த கருவி செயல்படும்.",
+                "howto.step2.title": "நிகழ்நேர புள்ளிவிவரங்களைக் காண்க",
+                "howto.step2.description": "நீங்கள் தட்டச்சு செய்யும்போது அல்லது கோப்புகளை பதிவேற்றும்போது, சொற்கள் எண்ணிக்கை, எழுத்துகள் எண்ணிக்கை, வாக்கியங்கள் எண்ணிக்கை, பத்திகள் எண்ணிக்கை மற்றும் பிற புள்ளிவிவரங்களை கருவி உடனடியாக எவ்வாறு கணக்கிடுகிறது என்பதைக் கவனியுங்கள்.",
+                "howto.step3.title": "மேம்பட்ட அளவீடுகளை பகுப்பாய்வு செய்யுங்கள்",
+                "howto.step3.description": "வாசிப்பு நேரம், சராசரி சொல் நீளம், முக்கிய சொல் அடர்த்தி மற்றும் உங்கள் உரை பற்றிய கூடுதல் விரிவான நுண்ணறிவுகள் போன்ற மேம்பட்ட புள்ளிவிவரங்களை ஆராயுங்கள்.",
+                "howto.step4.title": "ஏற்றுமதி மற்றும் சேமிக்கவும்",
+                "howto.step4.description": "உங்கள் உரையை நகலெடுக்கவும் அல்லது புள்ளிவிவரங்களை பதிவிறக்கவும். உங்கள் பணி உங்கள் அடுத்த அமர்வுக்காக தானாகவே சேமிக்கப்படும். அனைத்து செயலாக்கமும் உங்கள் உலாவியில் நடக்கும்.",
+                "counter.title": "சொற்கள் எண்ணி",
+                "counter.input.label": "உங்கள் உரையை உள்ளிடவும்",
+                "counter.input.placeholder": "உங்கள் உரையை இங்கே தட்டச்சு செய்யவும் அல்லது ஒட்டவும்...",
+                "counter.upload": "ஆவணத்தை பதிவேற்றவும்",
+                "counter.supported": "ஆதரிக்கப்படும் வடிவங்கள்: TXT, MD, CSV, JSON, XML, HTML, DOC, DOCX, PDF",
+                "counter.loading": "ஆவணம் செயலாக்கப்படுகிறது...",
+                "counter.stats.words": "சொற்கள்",
+                "counter.stats.chars": "எழுத்துகள்",
+                "counter.stats.charsNoSpaces": "எழுத்துகள் (இடைவெளிகள் இல்லாமல்)",
+                "counter.stats.sentences": "வாக்கியங்கள்",
+                "counter.stats.paragraphs": "பத்திகள்",
+                "counter.stats.lines": "வரிகள்",
+                "counter.advanced.title": "மேம்பட்ட புள்ளிவிவரங்கள்",
+                "counter.advanced.reading": "வாசிப்பு நேரம் (நிமி)",
+                "counter.advanced.avgWord": "சராசரி சொல் நீளம்",
+                "counter.advanced.avgSentence": "சராசரி வாக்கிய நீளம்",
+                "counter.advanced.longestWord": "நீளமான சொல்",
+                "counter.advanced.uniqueWords": "தனித்துவமான சொற்கள்",
+                "counter.advanced.keywordDensity": "முக்கிய சொல் அடர்த்தி",
+                "counter.copy": "உரையை நகலெடுக்கவும்",
+                "counter.clear": "அனைத்தையும் அழிக்கவும்",
+                "counter.export": "புள்ளிவிவரங்களை ஏற்றுமதி செய்யவும்",
+                "footer.follow": "எங்களைப் பின்தொடருங்கள்",
+                "footer.categories": "பிரபலமான வகைகள்",
+                "footer.categories.pdf": "PDF கருவிகள்",
+                "footer.categories.image": "பட கருவிகள்",
+                "footer.categories.text": "உரை கருவிகள்",
+                "footer.categories.av": "ஆடியோ/வீடியோ கருவிகள்",
+                "footer.categories.web": "வலை/டெவலப்பர் கருவிகள்",
+                "footer.categories.calc": "கால்குலேட்டர் கருவிகள்",
+                "footer.categories.util": "பயன்பாட்டு கருவிகள்",
+                "footer.categories.color": "வண்ண கருவிகள்",
+                "footer.quicklinks": "விரைவு இணைப்புகள்",
+                "footer.links.tools": "அனைத்து கருவிகள்",
+                "footer.links.faq": "அடிக்கடி கேட்கப்படும் கேள்விகள்",
+                "footer.links.contact": "தொடர்பு கொள்ள",
+                "footer.links.privacy": "தனியுரிமைக் கொள்கை",
+                "footer.links.disclaimer": "பொறுப்புத் துறப்பு",
+                "footer.links.terms": "சேவை விதிமுறைகள்",
+                "footer.copyright": "© 2025 LollyPoPDF. அனைத்து உரிமைகளும் பாதுகாக்கப்பட்டவை."
+            },
+            ml: {
+                "nav.home": "ഹോം",
+                "nav.about": "ഞങ്ങളെക്കുറിച്ച്",
+                "nav.tools": "ടൂളുകൾ",
+                "nav.contact": "ബന്ധപ്പെടുക",
+                "hero.title": "സൗജന്യ വാക്കുകളുടെ എണ്ണൽ ഉപകരണം",
+                "hero.description": "ഞങ്ങളുടെ സൗജന്യ ഉപകരണം ഉപയോഗിച്ച് വാക്കുകൾ, അക്ഷരങ്ങൾ, വാക്യങ്ങൾ, ഖണ്ഡികകൾ എന്നിവയും കൂടുതലും എണ്ണുക. ടെക്സ്റ്റ് ഫയലുകൾ, വേഡ് ഡോക്യുമെന്റുകൾ, PDF എന്നിവ പിന്തുണയ്ക്കുന്നു. രജിസ്ട്രേഷൻ ആവശ്യമില്ലാതെ നിങ്ങളുടെ ടെക്സ്റ്റ് റിയൽ-ടൈമിൽ വിശകലനം ചെയ്യുക.",
+                "howto.title": "വാക്കുകളുടെ എണ്ണൽ എങ്ങനെ ഉപയോഗിക്കാം",
+                "howto.step1.title": "നിങ്ങളുടെ ടെക്സ്റ്റ് നൽകുക",
+                "howto.step1.description": "ഇൻപുട്ട് ഏരിയയിൽ നിങ്ങളുടെ ടെക്സ്റ്റ് ടൈപ്പ് ചെയ്യുക അല്ലെങ്കിൽ പേസ്റ്റ് ചെയ്യുക. വിശകലനത്തിനായി നിങ്ങൾക്ക് ടെക്സ്റ്റ് ഫയലുകൾ, വേഡ് ഡോക്യുമെന്റുകൾ (.doc, .docx) അല്ലെങ്കിൽ PDF ഫയലുകൾ അപ്ലോഡ് ചെയ്യാവുന്നതാണ്. ഏത് അളവിലുള്ള ടെക്സ്റ്റിനും ഈ ഉപകരണം പ്രവർത്തിക്കുന്നു.",
+                "howto.step2.title": "റിയൽ-ടൈം സ്ഥിതിവിവരക്കണക്കുകൾ കാണുക",
+                "howto.step2.description": "നിങ്ങൾ ടൈപ്പ് ചെയ്യുമ്പോഴോ ഫയലുകൾ അപ്ലോഡ് ചെയ്യുമ്പോഴോ വാക്കുകളുടെ എണ്ണം, അക്ഷരങ്ങളുടെ എണ്ണം, വാക്യങ്ങളുടെ എണ്ണം, ഖണ്ഡികകളുടെ എണ്ണം, മറ്റ് സ്ഥിതിവിവരക്കണക്കുകൾ എന്നിവ ഉപകരണം തൽക്ഷണം എങ്ങനെ കണക്കാക്കുന്നു എന്ന് കാണുക.",
+                "howto.step3.title": "വിപുലമായ മെട്രിക്സുകൾ വിശകലനം ചെയ്യുക",
+                "howto.step3.description": "വായനാ സമയം, ശരാശരി വാക്ക് ദൈർഘ്യം, കീവേഡ് സാന്ദ്രത, നിങ്ങളുടെ ടെക്സ്റ്റിനെക്കുറിച്ചുള്ള കൂടുതൽ വിശദമായ ഉൾക്കാഴ്ചകൾ എന്നിവ പോലുള്ള വിപുലമായ സ്ഥിതിവിവരക്കണക്കുകൾ പര്യവേക്ഷണം ചെയ്യുക.",
+                "howto.step4.title": "കയറ്റുമതി ചെയ്യുകയും സംരക്ഷിക്കുകയും ചെയ്യുക",
+                "howto.step4.description": "നിങ്ങളുടെ ടെക്സ്റ്റ് കോപ്പി ചെയ്യുക അല്ലെങ്കിൽ സ്ഥിതിവിവരക്കണക്കുകൾ ഡൗൺലോഡ് ചെയ്യുക. നിങ്ങളുടെ ജോലി നിങ്ങളുടെ അടുത്ത സെഷനിൽ സ്വയമേവ സംരക്ഷിക്കപ്പെടുന്നു. എല്ലാ പ്രോസസ്സിംഗും നിങ്ങളുടെ ബ്രൗസറിൽ നടക്കുന്നു.",
+                "counter.title": "വാക്കുകളുടെ എണ്ണൽ",
+                "counter.input.label": "നിങ്ങളുടെ ടെക്സ്റ്റ് നൽകുക",
+                "counter.input.placeholder": "നിങ്ങളുടെ ടെക്സ്റ്റ് ഇവിടെ ടൈപ്പ് ചെയ്യുക അല്ലെങ്കിൽ പേസ്റ്റ് ചെയ്യുക...",
+                "counter.upload": "ഡോക്യുമെന്റ് അപ്ലോഡ് ചെയ്യുക",
+                "counter.supported": "പിന്തുണയ്ക്കുന്ന ഫോർമാറ്റുകൾ: TXT, MD, CSV, JSON, XML, HTML, DOC, DOCX, PDF",
+                "counter.loading": "ഡോക്യുമെന്റ് പ്രോസസ്സിംഗ്...",
+                "counter.stats.words": "വാക്കുകൾ",
+                "counter.stats.chars": "അക്ഷരങ്ങൾ",
+                "counter.stats.charsNoSpaces": "അക്ഷരങ്ങൾ (സ്പെയ്സുകൾ ഇല്ലാതെ)",
+                "counter.stats.sentences": "വാക്യങ്ങൾ",
+                "counter.stats.paragraphs": "ഖണ്ഡികകൾ",
+                "counter.stats.lines": "വരികൾ",
+                "counter.advanced.title": "വിപുലമായ സ്ഥിതിവിവരക്കണക്കുകൾ",
+                "counter.advanced.reading": "വായനാ സമയം (മിനിറ്റ്)",
+                "counter.advanced.avgWord": "ശരാശരി വാക്ക് ദൈർഘ്യം",
+                "counter.advanced.avgSentence": "ശരാശരി വാക്യ ദൈർഘ്യം",
+                "counter.advanced.longestWord": "ദീർഘമായ വാക്ക്",
+                "counter.advanced.uniqueWords": "അദ്വിതീയ വാക്കുകൾ",
+                "counter.advanced.keywordDensity": "കീവേഡ് സാന്ദ്രത",
+                "counter.copy": "ടെക്സ്റ്റ് കോപ്പി ചെയ്യുക",
+                "counter.clear": "എല്ലാം മായ്ക്കുക",
+                "counter.export": "സ്ഥിതിവിവരക്കണക്കുകൾ കയറ്റുമതി ചെയ്യുക",
+                "footer.follow": "ഞങ്ങളെ പിന്തുടരുക",
+                "footer.categories": "ജനപ്രിയ വിഭാഗങ്ങൾ",
+                "footer.categories.pdf": "PDF ടൂളുകൾ",
+                "footer.categories.image": "ഇമേജ് ടൂളുകൾ",
+                "footer.categories.text": "ടെക്സ്റ്റ് ടൂളുകൾ",
+                "footer.categories.av": "ഓഡിയോ/വീഡിയോ ടൂളുകൾ",
+                "footer.categories.web": "വെബ്/ഡെവലപ്പർ ടൂളുകൾ",
+                "footer.categories.calc": "കാൽക്കുലേറ്റർ ടൂളുകൾ",
+                "footer.categories.util": "യൂട്ടിലിറ്റി ടൂളുകൾ",
+                "footer.categories.color": "കളർ ടൂളുകൾ",
+                "footer.quicklinks": "ദ്രുത ലിങ്കുകൾ",
+                "footer.links.tools": "എല്ലാ ടൂളുകളും",
+                "footer.links.faq": "പതിവുചോദ്യങ്ങൾ",
+                "footer.links.contact": "ബന്ധപ്പെടുക",
+                "footer.links.privacy": "സ്വകാര്യതാ നയം",
+                "footer.links.disclaimer": "അസ്വീകാര്യത",
+                "footer.links.terms": "സേവന നിബന്ധനകൾ",
+                "footer.copyright": "© 2025 LollyPoPDF. എല്ലാ അവകാശങ്ങളും നിക്ഷിപ്തം."
+            },
+            id: {
+                "nav.home": "Beranda",
+                "nav.about": "Tentang Kami",
+                "nav.tools": "Alat",
+                "nav.contact": "Kontak",
+                "hero.title": "Alat Penghitung Kata Gratis",
+                "hero.description": "Hitung kata, karakter, kalimat, paragraf, dan lainnya dengan alat gratis kami. Mendukung file teks, dokumen Word, dan PDF. Analisis teks Anda secara real-time tanpa perlu pendaftaran.",
+                "howto.title": "Cara Menggunakan Penghitung Kata",
+                "howto.step1.title": "Masukkan Teks Anda",
+                "howto.step1.description": "Ketik atau tempel teks Anda ke area input. Anda juga dapat mengunggah file teks, dokumen Word (.doc, .docx), atau file PDF untuk analisis. Alat ini bekerja dengan jumlah teks berapa pun.",
+                "howto.step2.title": "Lihat Statistik Real-Time",
+                "howto.step2.description": "Perhatikan bagaimana alat ini secara instan menghitung jumlah kata, karakter, kalimat, paragraf, dan statistik lainnya saat Anda mengetik atau mengunggah file.",
+                "howto.step3.title": "Analisis Metrik Lanjutan",
+                "howto.step3.description": "Jelajahi statistik lanjutan seperti waktu baca, panjang kata rata-rata, kepadatan kata kunci, dan lebih banyak wawasan mendetail tentang teks Anda.",
+                "howto.step4.title": "Ekspor & Simpan",
+                "howto.step4.description": "Salin teks Anda atau unduh statistiknya. Pekerjaan Anda secara otomatis disimpan untuk sesi berikutnya. Semua pemrosesan terjadi di browser Anda.",
+                "counter.title": "Penghitung Kata",
+                "counter.input.label": "Masukkan Teks Anda",
+                "counter.input.placeholder": "Ketik atau tempel teks Anda di sini...",
+                "counter.upload": "Unggah Dokumen",
+                "counter.supported": "Format yang didukung: TXT, MD, CSV, JSON, XML, HTML, DOC, DOCX, PDF",
+                "counter.loading": "Memproses dokumen...",
+                "counter.stats.words": "Kata",
+                "counter.stats.chars": "Karakter",
+                "counter.stats.charsNoSpaces": "Karakter (tanpa spasi)",
+                "counter.stats.sentences": "Kalimat",
+                "counter.stats.paragraphs": "Paragraf",
+                "counter.stats.lines": "Baris",
+                "counter.advanced.title": "Statistik Lanjutan",
+                "counter.advanced.reading": "Waktu Baca (menit)",
+                "counter.advanced.avgWord": "Panjang Kata Rata-rata",
+                "counter.advanced.avgSentence": "Panjang Kalimat Rata-rata",
+                "counter.advanced.longestWord": "Kata Terpanjang",
+                "counter.advanced.uniqueWords": "Kata Unik",
+                "counter.advanced.keywordDensity": "Kepadatan Kata Kunci",
+                "counter.copy": "Salin Teks",
+                "counter.clear": "Hapus Semua",
+                "counter.export": "Ekspor Statistik",
+                "footer.follow": "IKUTI KAMI",
+                "footer.categories": "Kategori Populer",
+                "footer.categories.pdf": "Alat PDF",
+                "footer.categories.image": "Alat Gambar",
+                "footer.categories.text": "Alat Teks",
+                "footer.categories.av": "Alat Audio/Video",
+                "footer.categories.web": "Alat Web/Pengembang",
+                "footer.categories.calc": "Alat Kalkulator",
+                "footer.categories.util": "Alat Utilitas",
+                "footer.categories.color": "Alat Warna",
+                "footer.quicklinks": "Tautan Cepat",
+                "footer.links.tools": "Semua Alat",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Kontak",
+                "footer.links.privacy": "Kebijakan Privasi",
+                "footer.links.disclaimer": "Penafian",
+                "footer.links.terms": "Syarat Layanan",
+                "footer.copyright": "© 2025 LollyPoPDF. Hak cipta dilindungi."
+            },
+            ms: {
+                "nav.home": "Laman Utama",
+                "nav.about": "Tentang Kami",
+                "nav.tools": "Alat",
+                "nav.contact": "Hubungi",
+                "hero.title": "Alat Pengira Perkataan Percuma",
+                "hero.description": "Kira perkataan, aksara, ayat, perenggan dan banyak lagi dengan alat percuma kami. Menyokong fail teks, dokumen Word, dan PDF. Analisa teks anda secara masa nyata tanpa pendaftaran diperlukan.",
+                "howto.title": "Cara Menggunakan Pengira Perkataan",
+                "howto.step1.title": "Masukkan Teks Anda",
+                "howto.step1.description": "Taip atau tampal teks anda ke dalam kawasan input. Anda juga boleh memuat naik fail teks, dokumen Word (.doc, .docx), atau fail PDF untuk analisis. Alat ini berfungsi dengan sebarang jumlah teks.",
+                "howto.step2.title": "Lihat Statistik Masa Nyata",
+                "howto.step2.description": "Perhatikan bagaimana alat ini serta-merta mengira kiraan perkataan, aksara, ayat, perenggan dan statistik lain semasa anda menaip atau memuat naik fail.",
+                "howto.step3.title": "Analisa Metrik Lanjutan",
+                "howto.step3.description": "Terokai statistik lanjutan seperti masa membaca, purata panjang perkataan, ketumpatan kata kunci dan lebih banyak pandangan terperinci tentang teks anda.",
+                "howto.step4.title": "Eksport & Simpan",
+                "howto.step4.description": "Salin teks anda atau muat turun statistik. Kerja anda disimpan secara automatik untuk sesi seterusnya. Semua pemprosesan berlaku dalam pelayar anda.",
+                "counter.title": "Pengira Perkataan",
+                "counter.input.label": "Masukkan Teks Anda",
+                "counter.input.placeholder": "Taip atau tampal teks anda di sini...",
+                "counter.upload": "Muat Naik Dokumen",
+                "counter.supported": "Format yang disokong: TXT, MD, CSV, JSON, XML, HTML, DOC, DOCX, PDF",
+                "counter.loading": "Memproses dokumen...",
+                "counter.stats.words": "Perkataan",
+                "counter.stats.chars": "Aksara",
+                "counter.stats.charsNoSpaces": "Aksara (tanpa ruang)",
+                "counter.stats.sentences": "Ayat",
+                "counter.stats.paragraphs": "Perenggan",
+                "counter.stats.lines": "Baris",
+                "counter.advanced.title": "Statistik Lanjutan",
+                "counter.advanced.reading": "Masa Membaca (min)",
+                "counter.advanced.avgWord": "Pur. Panjang Perkataan",
+                "counter.advanced.avgSentence": "Pur. Panjang Ayat",
+                "counter.advanced.longestWord": "Perkataan Terpanjang",
+                "counter.advanced.uniqueWords": "Perkataan Unik",
+                "counter.advanced.keywordDensity": "Ketumpatan Kata Kunci",
+                "counter.copy": "Salin Teks",
+                "counter.clear": "Kosongkan Semua",
+                "counter.export": "Eksport Statistik",
+                "footer.follow": "IKUTI KAMI",
+                "footer.categories": "Kategori Popular",
+                "footer.categories.pdf": "Alat PDF",
+                "footer.categories.image": "Alat Imej",
+                "footer.categories.text": "Alat Teks",
+                "footer.categories.av": "Alat Audio/Video",
+                "footer.categories.web": "Alat Web/Pembangun",
+                "footer.categories.calc": "Alat Kalkulator",
+                "footer.categories.util": "Alat Utiliti",
+                "footer.categories.color": "Alat Warna",
+                "footer.quicklinks": "Pautan Pantas",
+                "footer.links.tools": "Semua Alat",
+                "footer.links.faq": "Soalan Lazim",
+                "footer.links.contact": "Hubungi",
+                "footer.links.privacy": "Dasar Privasi",
+                "footer.links.disclaimer": "Penafian",
+                "footer.links.terms": "Syarat Perkhidmatan",
+                "footer.copyright": "© 2025 LollyPoPDF. Hak cipta terpelihara."
+            },
+            pl: {
+                "nav.home": "Strona główna",
+                "nav.about": "O nas",
+                "nav.tools": "Narzędzia",
+                "nav.contact": "Kontakt",
+                "hero.title": "Darmowe narzędzie do liczenia słów",
+                "hero.description": "Liczy słowa, znaki, zdania, akapity i więcej za pomocą naszego darmowego narzędzia. Obsługuje pliki tekstowe, dokumenty Word i PDF. Analizuj swój tekst w czasie rzeczywistym bez rejestracji.",
+                "howto.title": "Jak używać licznika słów",
+                "howto.step1.title": "Wprowadź swój tekst",
+                "howto.step1.description": "Wpisz lub wklej swój tekst w obszarze wprowadzania. Możesz również przesłać pliki tekstowe, dokumenty Word (.doc, .docx) lub pliki PDF do analizy. Narzędzie działa z dowolną ilością tekstu.",
+                "howto.step2.title": "Zobacz statystyki w czasie rzeczywistym",
+                "howto.step2.description": "Obserwuj, jak narzędzie natychmiast oblicza liczbę słów, znaków, zdań, akapitów i inne statystyki podczas pisania lub przesyłania plików.",
+                "howto.step3.title": "Analizuj zaawansowane metryki",
+                "howto.step3.description": "Poznaj zaawansowane statystyki, takie jak czas czytania, średnia długość słów, gęstość słów kluczowych i więcej szczegółowych informacji o twoim tekście.",
+                "howto.step4.title": "Eksportuj i zapisz",
+                "howto.step4.description": "Skopiuj swój tekst lub pobierz statystyki. Twoja praca jest automatycznie zapisywana na następną sesję. Wszystkie przetwarzanie odbywa się w twojej przeglądarce.",
+                "counter.title": "Licznik słów",
+                "counter.input.label": "Wprowadź swój tekst",
+                "counter.input.placeholder": "Wpisz lub wklej swój tekst tutaj...",
+                "counter.upload": "Prześlij dokument",
+                "counter.supported": "Obsługiwane formaty: TXT, MD, CSV, JSON, XML, HTML, DOC, DOCX, PDF",
+                "counter.loading": "Przetwarzanie dokumentu...",
+                "counter.stats.words": "Słowa",
+                "counter.stats.chars": "Znaki",
+                "counter.stats.charsNoSpaces": "Znaki (bez spacji)",
+                "counter.stats.sentences": "Zdania",
+                "counter.stats.paragraphs": "Akapity",
+                "counter.stats.lines": "Linie",
+                "counter.advanced.title": "Zaawansowane statystyki",
+                "counter.advanced.reading": "Czas czytania (min)",
+                "counter.advanced.avgWord": "Śr. długość słowa",
+                "counter.advanced.avgSentence": "Śr. długość zdania",
+                "counter.advanced.longestWord": "Najdłuższe słowo",
+                "counter.advanced.uniqueWords": "Unikalne słowa",
+                "counter.advanced.keywordDensity": "Gęstość słów kluczowych",
+                "counter.copy": "Kopiuj tekst",
+                "counter.clear": "Wyczyść wszystko",
+                "counter.export": "Eksportuj statystyki",
+                "footer.follow": "OBSERWUJ NAS",
+                "footer.categories": "Popularne kategorie",
+                "footer.categories.pdf": "Narzędzia PDF",
+                "footer.categories.image": "Narzędzia obrazów",
+                "footer.categories.text": "Narzędzia tekstowe",
+                "footer.categories.av": "Narzędzia audio/wideo",
+                "footer.categories.web": "Narzędzia web/deweloperskie",
+                "footer.categories.calc": "Narzędzia kalkulatora",
+                "footer.categories.util": "Narzędzia użytkowe",
+                "footer.categories.color": "Narzędzia kolorów",
+                "footer.quicklinks": "Szybkie linki",
+                "footer.links.tools": "Wszystkie narzędzia",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Kontakt",
+                "footer.links.privacy": "Polityka prywatności",
+                "footer.links.disclaimer": "Zastrzeżenie",
+                "footer.links.terms": "Warunki usługi",
+                "footer.copyright": "© 2025 LollyPoPDF. Wszelkie prawa zastrzeżone."
+            },
+            th: {
+                "nav.home": "หน้าแรก",
+                "nav.about": "เกี่ยวกับเรา",
+                "nav.tools": "เครื่องมือ",
+                "nav.contact": "ติดต่อ",
+                "hero.title": "เครื่องมือนับคำฟรี",
+                "hero.description": "นับคำ อักขระ ประโยค ย่อหน้า และอื่นๆ ด้วยเครื่องมือฟรีของเรา รองรับไฟล์ข้อความ เอกสาร Word และ PDF วิเคราะห์ข้อความของคุณแบบเรียลไทม์โดยไม่ต้องลงทะเบียน",
+                "howto.title": "วิธีการใช้เครื่องมือนับคำ",
+                "howto.step1.title": "ป้อนข้อความของคุณ",
+                "howto.step1.description": "พิมพ์หรือวางข้อความของคุณในพื้นที่ป้อนข้อมูล คุณยังสามารถอัปโหลดไฟล์ข้อความ เอกสาร Word (.doc, .docx) หรือไฟล์ PDF เพื่อวิเคราะห์ เครื่องมือนี้ทำงานกับข้อความจำนวนเท่าใดก็ได้",
+                "howto.step2.title": "ดูสถิติแบบเรียลไทม์",
+                "howto.step2.description": "ดูว่าเครื่องมือคำนวณจำนวนคำ อักขระ ประโยค ย่อหน้า และสถิติอื่นๆ ทันทีขณะที่คุณพิมพ์หรืออัปโหลดไฟล์อย่างไร",
+                "howto.step3.title": "วิเคราะห์เมตริกขั้นสูง",
+                "howto.step3.description": "สำรวจสถิติขั้นสูง เช่น เวลาในการอ่าน ความยาวคำเฉลี่ย ความหนาแน่นของคำหลัก และข้อมูลเชิงลึกโดยละเอียดเพิ่มเติมเกี่ยวกับข้อความของคุณ",
+                "howto.step4.title": "ส่งออกและบันทึก",
+                "howto.step4.description": "คัดลอกข้อความของคุณหรือดาวน์โหลดสถิติ งานของคุณจะถูกบันทึกโดยอัตโนมัติสำหรับเซสชันถัดไป การประมวลผลทั้งหมดเกิดขึ้นในเบราว์เซอร์ของคุณ",
+                "counter.title": "ตัวนับคำ",
+                "counter.input.label": "ป้อนข้อความของคุณ",
+                "counter.input.placeholder": "พิมพ์หรือวางข้อความของคุณที่นี่...",
+                "counter.upload": "อัปโหลดเอกสาร",
+                "counter.supported": "รูปแบบที่รองรับ: TXT, MD, CSV, JSON, XML, HTML, DOC, DOCX, PDF",
+                "counter.loading": "กำลังประมวลผลเอกสาร...",
+                "counter.stats.words": "คำ",
+                "counter.stats.chars": "อักขระ",
+                "counter.stats.charsNoSpaces": "อักขระ (ไม่มีช่องว่าง)",
+                "counter.stats.sentences": "ประโยค",
+                "counter.stats.paragraphs": "ย่อหน้า",
+                "counter.stats.lines": "บรรทัด",
+                "counter.advanced.title": "สถิติขั้นสูง",
+                "counter.advanced.reading": "เวลาในการอ่าน (นาที)",
+                "counter.advanced.avgWord": "ความยาวคำเฉลี่ย",
+                "counter.advanced.avgSentence": "ความยาวประโยคเฉลี่ย",
+                "counter.advanced.longestWord": "คำที่ยาวที่สุด",
+                "counter.advanced.uniqueWords": "คำที่ไม่ซ้ำกัน",
+                "counter.advanced.keywordDensity": "ความหนาแน่นคำหลัก",
+                "counter.copy": "คัดลอกข้อความ",
+                "counter.clear": "ล้างทั้งหมด",
+                "counter.export": "ส่งออกสถิติ",
+                "footer.follow": "ติดตามเรา",
+                "footer.categories": "หมวดหมู่ยอดนิยม",
+                "footer.categories.pdf": "เครื่องมือ PDF",
+                "footer.categories.image": "เครื่องมือรูปภาพ",
+                "footer.categories.text": "เครื่องมือข้อความ",
+                "footer.categories.av": "เครื่องมือเสียง/วิดีโอ",
+                "footer.categories.web": "เครื่องมือเว็บ/นักพัฒนา",
+                "footer.categories.calc": "เครื่องมือเครื่องคิดเลข",
+                "footer.categories.util": "เครื่องมืออรรถประโยชน์",
+                "footer.categories.color": "เครื่องมือสี",
+                "footer.quicklinks": "ลิงก์ด่วน",
+                "footer.links.tools": "เครื่องมือทั้งหมด",
+                "footer.links.faq": "คำถามที่พบบ่อย",
+                "footer.links.contact": "ติดต่อ",
+                "footer.links.privacy": "นโยบายความเป็นส่วนตัว",
+                "footer.links.disclaimer": "ข้อจำกัดความรับผิดชอบ",
+                "footer.links.terms": "เงื่อนไขการให้บริการ",
+                "footer.copyright": "© 2025 LollyPoPDF. สงวนลิขสิทธิ์."
+            },
+            tr: {
+                "nav.home": "Ana Sayfa",
+                "nav.about": "Hakkımızda",
+                "nav.tools": "Araçlar",
+                "nav.contact": "İletişim",
+                "hero.title": "Ücretsiz Kelime Sayacı Aracı",
+                "hero.description": "Ücretsiz aracımızla kelimeleri, karakterleri, cümleleri, paragrafları ve daha fazlasını sayın. Metin dosyalarını, Word belgelerini ve PDF'leri destekler. Metninizi kayıt gerekmeden gerçek zamanlı olarak analiz edin.",
+                "howto.title": "Kelime Sayacı Nasıl Kullanılır",
+                "howto.step1.title": "Metninizi Girin",
+                "howto.step1.description": "Metninizi giriş alanına yazın veya yapıştırın. Analiz için metin dosyalarını, Word belgelerini (.doc, .docx) veya PDF dosyalarını da yükleyebilirsiniz. Araç herhangi bir miktarda metinle çalışır.",
+                "howto.step2.title": "Gerçek Zamanlı İstatistikleri Görüntüleyin",
+                "howto.step2.description": "Yazarken veya dosya yüklerken aracın anında kelime sayısı, karakter sayısı, cümle sayısı, paragraf sayısı ve diğer istatistikleri nasıl hesapladığını izleyin.",
+                "howto.step3.title": "Gelişmiş Metrikleri Analiz Edin",
+                "howto.step3.description": "Okuma süresi, ortalama kelime uzunluğu, anahtar kelime yoğunluğu ve metniniz hakkında daha ayrıntılı bilgiler gibi gelişmiş istatistikleri keşfedin.",
+                "howto.step4.title": "Dışa Aktar ve Kaydet",
+                "howto.step4.description": "Metninizi kopyalayın veya istatistikleri indirin. Çalışmanız bir sonraki oturumunuz için otomatik olarak kaydedilir. Tüm işlem tarayıcınızda gerçekleşir.",
+                "counter.title": "Kelime Sayacı",
+                "counter.input.label": "Metninizi Girin",
+                "counter.input.placeholder": "Metninizi buraya yazın veya yapıştırın...",
+                "counter.upload": "Belge Yükle",
+                "counter.supported": "Desteklenen formatlar: TXT, MD, CSV, JSON, XML, HTML, DOC, DOCX, PDF",
+                "counter.loading": "Belge işleniyor...",
+                "counter.stats.words": "Kelimeler",
+                "counter.stats.chars": "Karakterler",
+                "counter.stats.charsNoSpaces": "Karakterler (boşluksuz)",
+                "counter.stats.sentences": "Cümleler",
+                "counter.stats.paragraphs": "Paragraflar",
+                "counter.stats.lines": "Satırlar",
+                "counter.advanced.title": "Gelişmiş İstatistikler",
+                "counter.advanced.reading": "Okuma Süresi (dk)",
+                "counter.advanced.avgWord": "Ort. Kelime Uzunluğu",
+                "counter.advanced.avgSentence": "Ort. Cümle Uzunluğu",
+                "counter.advanced.longestWord": "En Uzun Kelime",
+                "counter.advanced.uniqueWords": "Benzersiz Kelimeler",
+                "counter.advanced.keywordDensity": "Anahtar Kelime Yoğunluğu",
+                "counter.copy": "Metni Kopyala",
+                "counter.clear": "Tümünü Temizle",
+                "counter.export": "İstatistikleri Dışa Aktar",
+                "footer.follow": "BİZİ TAKİP EDİN",
+                "footer.categories": "Popüler Kategoriler",
+                "footer.categories.pdf": "PDF Araçları",
+                "footer.categories.image": "Görsel Araçları",
+                "footer.categories.text": "Metin Araçları",
+                "footer.categories.av": "Ses/Video Araçları",
+                "footer.categories.web": "Web/Geliştirici Araçları",
+                "footer.categories.calc": "Hesap Makinesi Araçları",
+                "footer.categories.util": "Yardımcı Araçlar",
+                "footer.categories.color": "Renk Araçları",
+                "footer.quicklinks": "Hızlı Bağlantılar",
+                "footer.links.tools": "Tüm Araçlar",
+                "footer.links.faq": "SSS",
+                "footer.links.contact": "İletişim",
+                "footer.links.privacy": "Gizlilik Politikası",
+                "footer.links.disclaimer": "Feragatname",
+                "footer.links.terms": "Hizmet Şartları",
+                "footer.copyright": "© 2025 LollyPoPDF. Tüm hakları saklıdır."
+            },
+            uk: {
+                "nav.home": "Головна",
+                "nav.about": "Про нас",
+                "nav.tools": "Інструменти",
+                "nav.contact": "Контакт",
+                "hero.title": "Безкоштовний інструмент підрахунку слів",
+                "hero.description": "Підраховуйте слова, символи, речення, абзаци та більше за допомогою нашого безкоштовного інструменту. Підтримує текстові файли, документи Word та PDF. Аналізуйте свій текст у реальному часі без реєстрації.",
+                "howto.title": "Як використовувати лічильник слів",
+                "howto.step1.title": "Введіть свій текст",
+                "howto.step1.description": "Введіть або вставте свій текст у поле введення. Ви також можете завантажувати текстові файли, документи Word (.doc, .docx) або PDF-файли для аналізу. Інструмент працює з будь-якою кількістю тексту.",
+                "howto.step2.title": "Переглядайте статистику в реальному часі",
+                "howto.step2.description": "Спостерігайте, як інструмент миттєво підраховує кількість слів, символів, речень, абзаців та іншу статистику під час набору або завантаження файлів.",
+                "howto.step3.title": "Аналізуйте розширені метрики",
+                "howto.step3.description": "Досліджуйте розширену статистику, таку як час читання, середня довжина слів, щільність ключових слів та більш детальну інформацію про ваш текст.",
+                "howto.step4.title": "Експорт та збереження",
+                "howto.step4.description": "Скопіюйте свій текст або завантажте статистику. Ваша робота автоматично зберігається для наступного сеансу. Вся обробка відбувається у вашому браузері.",
+                "counter.title": "Лічильник слів",
+                "counter.input.label": "Введіть свій текст",
+                "counter.input.placeholder": "Введіть або вставте свій текст тут...",
+                "counter.upload": "Завантажити документ",
+                "counter.supported": "Підтримувані формати: TXT, MD, CSV, JSON, XML, HTML, DOC, DOCX, PDF",
+                "counter.loading": "Обробка документа...",
+                "counter.stats.words": "Слова",
+                "counter.stats.chars": "Символи",
+                "counter.stats.charsNoSpaces": "Символи (без пробілів)",
+                "counter.stats.sentences": "Речення",
+                "counter.stats.paragraphs": "Абзаци",
+                "counter.stats.lines": "Рядки",
+                "counter.advanced.title": "Розширена статистика",
+                "counter.advanced.reading": "Час читання (хв)",
+                "counter.advanced.avgWord": "Сер. довж. слова",
+                "counter.advanced.avgSentence": "Сер. довж. речення",
+                "counter.advanced.longestWord": "Найдовше слово",
+                "counter.advanced.uniqueWords": "Унікальні слова",
+                "counter.advanced.keywordDensity": "Щільність ключових слів",
+                "counter.copy": "Копіювати текст",
+                "counter.clear": "Очистити все",
+                "counter.export": "Експортувати статистику",
+                "footer.follow": "СЛІДКУЙТЕ ЗА НАМИ",
+                "footer.categories": "Популярні категорії",
+                "footer.categories.pdf": "PDF інструменти",
+                "footer.categories.image": "Інструменти для зображень",
+                "footer.categories.text": "Текстові інструменти",
+                "footer.categories.av": "Аудіо/Відео інструменти",
+                "footer.categories.web": "Веб/Розробник інструменти",
+                "footer.categories.calc": "Калькуляторні інструменти",
+                "footer.categories.util": "Утиліти",
+                "footer.categories.color": "Кольорові інструменти",
+                "footer.quicklinks": "Швидкі посилання",
+                "footer.links.tools": "Всі інструменти",
+                "footer.links.faq": "ЧаПи",
+                "footer.links.contact": "Контакт",
+                "footer.links.privacy": "Політика конфіденційності",
+                "footer.links.disclaimer": "Відмова від відповідальності",
+                "footer.links.terms": "Умови використання",
+                "footer.copyright": "© 2025 LollyPoPDF. Всі права захищені."
+            },
+            vi: {
+                "nav.home": "Trang chủ",
+                "nav.about": "Về chúng tôi",
+                "nav.tools": "Công cụ",
+                "nav.contact": "Liên hệ",
+                "hero.title": "Công cụ Đếm Từ Miễn phí",
+                "hero.description": "Đếm từ, ký tự, câu, đoạn văn và hơn nữa với công cụ miễn phí của chúng tôi. Hỗ trợ tệp văn bản, tài liệu Word và PDF. Phân tích văn bản của bạn trong thời gian thực mà không cần đăng ký.",
+                "howto.title": "Cách sử dụng Công cụ Đếm Từ",
+                "howto.step1.title": "Nhập văn bản của bạn",
+                "howto.step1.description": "Nhập hoặc dán văn bản của bạn vào khu vực nhập liệu. Bạn cũng có thể tải lên tệp văn bản, tài liệu Word (.doc, .docx) hoặc tệp PDF để phân tích. Công cụ hoạt động với bất kỳ lượng văn bản nào.",
+                "howto.step2.title": "Xem thống kê thời gian thực",
+                "howto.step2.description": "Xem cách công cụ ngay lập tức tính toán số từ, ký tự, câu, đoạn văn và các thống kê khác khi bạn nhập hoặc tải lên tệp.",
+                "howto.step3.title": "Phân tích số liệu nâng cao",
+                "howto.step3.description": "Khám phá thống kê nâng cao như thời gian đọc, độ dài từ trung bình, mật độ từ khóa và nhiều thông tin chi tiết hơn về văn bản của bạn.",
+                "howto.step4.title": "Xuất và Lưu",
+                "howto.step4.description": "Sao chép văn bản của bạn hoặc tải xuống thống kê. Công việc của bạn được tự động lưu cho phiên tiếp theo. Tất cả xử lý diễn ra trong trình duyệt của bạn.",
+                "counter.title": "Đếm Từ",
+                "counter.input.label": "Nhập văn bản của bạn",
+                "counter.input.placeholder": "Nhập hoặc dán văn bản của bạn ở đây...",
+                "counter.upload": "Tải lên Tài liệu",
+                "counter.supported": "Định dạng được hỗ trợ: TXT, MD, CSV, JSON, XML, HTML, DOC, DOCX, PDF",
+                "counter.loading": "Đang xử lý tài liệu...",
+                "counter.stats.words": "Từ",
+                "counter.stats.chars": "Ký tự",
+                "counter.stats.charsNoSpaces": "Ký tự (không có dấu cách)",
+                "counter.stats.sentences": "Câu",
+                "counter.stats.paragraphs": "Đoạn văn",
+                "counter.stats.lines": "Dòng",
+                "counter.advanced.title": "Thống kê Nâng cao",
+                "counter.advanced.reading": "Thời gian Đọc (phút)",
+                "counter.advanced.avgWord": "Độ dài Từ TB",
+                "counter.advanced.avgSentence": "Độ dài Câu TB",
+                "counter.advanced.longestWord": "Từ Dài nhất",
+                "counter.advanced.uniqueWords": "Từ Duy nhất",
+                "counter.advanced.keywordDensity": "Mật độ Từ khóa",
+                "counter.copy": "Sao chép Văn bản",
+                "counter.clear": "Xóa Tất cả",
+                "counter.export": "Xuất Thống kê",
+                "footer.follow": "THEO DÕI CHÚNG TÔI",
+                "footer.categories": "Danh mục Phổ biến",
+                "footer.categories.pdf": "Công cụ PDF",
+                "footer.categories.image": "Công cụ Hình ảnh",
+                "footer.categories.text": "Công cụ Văn bản",
+                "footer.categories.av": "Công cụ Âm thanh/Video",
+                "footer.categories.web": "Công cụ Web/Nhà phát triển",
+                "footer.categories.calc": "Công cụ Máy tính",
+                "footer.categories.util": "Công cụ Tiện ích",
+                "footer.categories.color": "Công cụ Màu sắc",
+                "footer.quicklinks": "Liên kết Nhanh",
+                "footer.links.tools": "Tất cả Công cụ",
+                "footer.links.faq": "Câu hỏi Thường gặp",
+                "footer.links.contact": "Liên hệ",
+                "footer.links.privacy": "Chính sách Riêng tư",
+                "footer.links.disclaimer": "Tuyên bố Miễn trừ Trách nhiệm",
+                "footer.links.terms": "Điều khoản Dịch vụ",
+                "footer.copyright": "© 2025 LollyPoPDF. Tất cả các quyền được bảo lưu."
+            },
+            is: {
+                "nav.home": "Heim",
+                "nav.about": "Um okkur",
+                "nav.tools": "Verkfæri",
+                "nav.contact": "Hafa samband",
+                "hero.title": "Ókeypis orðatalningartól",
+                "hero.description": "Teljið orð, stafi, setningar, málsgreinar og meira með ókeypis tólinu okkar. Styður textaskrár, Word skjöl og PDF. Greinið textann þinn í rauntíma án skráningar.",
+                "howto.title": "Hvernig á að nota orðatalningartólið",
+                "howto.step1.title": "Sláðu inn textann þinn",
+                "howto.step1.description": "Sláðu inn eða límdu textann þinn inn í inntakssvæðið. Þú getur einnig hlaðið upp textaskrám, Word skjölum (.doc, .docx) eða PDF skrám til greiningar. Tólið virkar með hvaða magni af texta sem er.",
+                "howto.step2.title": "Skoðaðu tölfræði í rauntíma",
+                "howto.step2.description": "Horfið á hvernig tólið reiknar strax orðafjölda, stafafjölda, setningafjölda, málsgreinafjölda og aðra tölfræði þegar þú slærð inn eða hleður upp skrám.",
+                "howto.step3.title": "Greindu ítarleg mæligildi",
+                "howto.step3.description": "Kannaðu ítarleg tölfræði eins og lesturtíma, meðallengd orða, þéttni lykilorða og fleiri ítarlegri innsýn um textann þinn.",
+                "howto.step4.title": "Flytja út og vista",
+                "howto.step4.description": "Afritaðu textann þinn eða hladdu niður tölfræðinni. Verkefni þín eru sjálfkrafa vistuð fyrir næsta lotu. Öll vinnsla á sér stað í vafranum þínum.",
+                "counter.title": "Orðatalning",
+                "counter.input.label": "Sláðu inn textann þinn",
+                "counter.input.placeholder": "Sláðu inn eða límdu textann þinn hér...",
+                "counter.upload": "Hlaða upp skjali",
+                "counter.supported": "Studd skráarsnið: TXT, MD, CSV, JSON, XML, HTML, DOC, DOCX, PDF",
+                "counter.loading": "Vinn skjal...",
+                "counter.stats.words": "Orð",
+                "counter.stats.chars": "Stafir",
+                "counter.stats.charsNoSpaces": "Stafir (án bila)",
+                "counter.stats.sentences": "Setningar",
+                "counter.stats.paragraphs": "Málsgreinar",
+                "counter.stats.lines": "Línur",
+                "counter.advanced.title": "Ítarleg tölfræði",
+                "counter.advanced.reading": "Lesturtími (mín)",
+                "counter.advanced.avgWord": "Meðallengd orðs",
+                "counter.advanced.avgSentence": "Meðallengd setningar",
+                "counter.advanced.longestWord": "Lengsta orð",
+                "counter.advanced.uniqueWords": "Einstök orð",
+                "counter.advanced.keywordDensity": "Þéttni lykilorða",
+                "counter.copy": "Afrita texta",
+                "counter.clear": "Hreinsa allt",
+                "counter.export": "Flytja út tölfræði",
+                "footer.follow": "FYLGJÐU OKKUR",
+                "footer.categories": "Vinsælar flokkar",
+                "footer.categories.pdf": "PDF tól",
+                "footer.categories.image": "Myndatól",
+                "footer.categories.text": "Textatól",
+                "footer.categories.av": "Hljóð-/myndbandatól",
+                "footer.categories.web": "Vefur/forritaratól",
+                "footer.categories.calc": "Reiknivélatól",
+                "footer.categories.util": "Hjálpartól",
+                "footer.categories.color": "Litatól",
+                "footer.quicklinks": "Flýtileiðir",
+                "footer.links.tools": "Öll tól",
+                "footer.links.faq": "Algengar spurningar",
+                "footer.links.contact": "Hafa samband",
+                "footer.links.privacy": "Meðferð persónuupplýsinga",
+                "footer.links.disclaimer": "Ábyrgðarvörn",
+                "footer.links.terms": "Þjónustuskilmálar",
+                "footer.copyright": "© 2025 LollyPoPDF. Öll réttindi áskilin."
+            },
+            no: {
+                "nav.home": "Hjem",
+                "nav.about": "Om oss",
+                "nav.tools": "Verktøy",
+                "nav.contact": "Kontakt",
+                "hero.title": "Gratis Ordtellerverktøy",
+                "hero.description": "Tell ord, tegn, setninger, avsnitt og mer med vårt gratis verktøy. Støtter tekstfiler, Word-dokumenter og PDF-er. Analyser teksten din i sanntid uten registrering.",
+                "howto.title": "Hvordan bruke Ordtelleren",
+                "howto.step1.title": "Skriv inn teksten din",
+                "howto.step1.description": "Skriv eller lim inn teksten din i inndataområdet. Du kan også laste opp tekstfiler, Word-dokumenter (.doc, .docx) eller PDF-filer for analyse. Verktøyet fungerer med enhver mengde tekst.",
+                "howto.step2.title": "Se sanntidsstatistikk",
+                "howto.step2.description": "Se hvordan verktøyet umiddelbart beregner ordtelling, tegn telling, setning telling, avsnitt telling og annen statistikk mens du skriver eller laster opp filer.",
+                "howto.step3.title": "Analyser avanserte målinger",
+                "howto.step3.description": "Utforsk avansert statistikk som lesetid, gjennomsnittlig ordlengde, nøkkelordtetthet og mer detaljert innsikt om teksten din.",
+                "howto.step4.title": "Eksporter og lagre",
+                "howto.step4.description": "Kopier teksten din eller last ned statistikken. Arbeidet ditt lagres automatisk for neste økt. All behandling skjer i nettleseren din.",
+                "counter.title": "Ordteller",
+                "counter.input.label": "Skriv inn teksten din",
+                "counter.input.placeholder": "Skriv eller lim inn teksten din her...",
+                "counter.upload": "Last opp dokument",
+                "counter.supported": "Støttede formater: TXT, MD, CSV, JSON, XML, HTML, DOC, DOCX, PDF",
+                "counter.loading": "Behandler dokument...",
+                "counter.stats.words": "Ord",
+                "counter.stats.chars": "Tegn",
+                "counter.stats.charsNoSpaces": "Tegn (uten mellomrom)",
+                "counter.stats.sentences": "Setninger",
+                "counter.stats.paragraphs": "Avsnitt",
+                "counter.stats.lines": "Linjer",
+                "counter.advanced.title": "Avansert statistikk",
+                "counter.advanced.reading": "Lesetid (min)",
+                "counter.advanced.avgWord": "Gj.sn. ordlengde",
+                "counter.advanced.avgSentence": "Gj.sn. setninglengde",
+                "counter.advanced.longestWord": "Lengste ord",
+                "counter.advanced.uniqueWords": "Unike ord",
+                "counter.advanced.keywordDensity": "Nøkkelordtetthet",
+                "counter.copy": "Kopier tekst",
+                "counter.clear": "Tøm alt",
+                "counter.export": "Eksporter statistikk",
+                "footer.follow": "FØLG OSS",
+                "footer.categories": "Populære kategorier",
+                "footer.categories.pdf": "PDF-verktøy",
+                "footer.categories.image": "Bildeverktøy",
+                "footer.categories.text": "Tekstverktøy",
+                "footer.categories.av": "Lyd/Video verktøy",
+                "footer.categories.web": "Web/Utvikler verktøy",
+                "footer.categories.calc": "Kalkulatorverktøy",
+                "footer.categories.util": "Hjelpeverktøy",
+                "footer.categories.color": "Fargeverktøy",
+                "footer.quicklinks": "Hurtiglenker",
+                "footer.links.tools": "Alle verktøy",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Kontakt",
+                "footer.links.privacy": "Personvernregler",
+                "footer.links.disclaimer": "Ansvarsfraskrivelse",
+                "footer.links.terms": "Tjenestevilkår",
+                "footer.copyright": "© 2025 LollyPoPDF. Alle rettigheter forbeholdt."
+            },
+            sv: {
+                "nav.home": "Hem",
+                "nav.about": "Om oss",
+                "nav.tools": "Verktyg",
+                "nav.contact": "Kontakt",
+                "hero.title": "Gratis ordräkneverktyg",
+                "hero.description": "Räkna ord, tecken, meningar, stycken och mer med vårt gratis verktyg. Stöder textfiler, Word-dokument och PDF. Analysera din text i realtid utan registrering.",
+                "howto.title": "Hur man använder ordräknaren",
+                "howto.step1.title": "Ange din text",
+                "howto.step1.description": "Skriv eller klistra in din text i inmatningsområdet. Du kan också ladda upp textfiler, Word-dokument (.doc, .docx) eller PDF-filer för analys. Verktyget fungerar med vilken mängd text som helst.",
+                "howto.step2.title": "Visa realtidsstatistik",
+                "howto.step2.description": "Se hur verktyget omedelbart beräknar ordantal, teckenantal, meningsantal, styckeantal och annan statistik medan du skriver eller laddar upp filer.",
+                "howto.step3.title": "Analysera avancerade mått",
+                "howto.step3.description": "Utforska avancerad statistik som lästid, genomsnittlig ordlängd, nyckelordstäthet och mer detaljerad insikt om din text.",
+                "howto.step4.title": "Exportera och spara",
+                "howto.step4.description": "Kopiera din text eller ladda ner statistiken. Ditt arbete sparas automatiskt för nästa session. All bearbetning sker i din webbläsare.",
+                "counter.title": "Ordräknare",
+                "counter.input.label": "Ange din text",
+                "counter.input.placeholder": "Skriv eller klistra in din text här...",
+                "counter.upload": "Ladda upp dokument",
+                "counter.supported": "Format som stöds: TXT, MD, CSV, JSON, XML, HTML, DOC, DOCX, PDF",
+                "counter.loading": "Bearbetar dokument...",
+                "counter.stats.words": "Ord",
+                "counter.stats.chars": "Tecken",
+                "counter.stats.charsNoSpaces": "Tecken (utan mellanslag)",
+                "counter.stats.sentences": "Meningar",
+                "counter.stats.paragraphs": "Stycken",
+                "counter.stats.lines": "Rader",
+                "counter.advanced.title": "Avancerad statistik",
+                "counter.advanced.reading": "Lästid (min)",
+                "counter.advanced.avgWord": "Genomsnittlig ordlängd",
+                "counter.advanced.avgSentence": "Genomsnittlig meningslängd",
+                "counter.advanced.longestWord": "Längsta ordet",
+                "counter.advanced.uniqueWords": "Unika ord",
+                "counter.advanced.keywordDensity": "Nyckelordstäthet",
+                "counter.copy": "Kopiera text",
+                "counter.clear": "Rensa allt",
+                "counter.export": "Exportera statistik",
+                "footer.follow": "FÖLJ OSS",
+                "footer.categories": "Populära kategorier",
+                "footer.categories.pdf": "PDF-verktyg",
+                "footer.categories.image": "Bildverktyg",
+                "footer.categories.text": "Textverktyg",
+                "footer.categories.av": "Ljud/Video verktyg",
+                "footer.categories.web": "Webb/Utvecklare verktyg",
+                "footer.categories.calc": "Kalkylatorverktyg",
+                "footer.categories.util": "Hjälpverktyg",
+                "footer.categories.color": "Färgverktyg",
+                "footer.quicklinks": "Snabblänkar",
+                "footer.links.tools": "Alla verktyg",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Kontakt",
+                "footer.links.privacy": "Integritetspolicy",
+                "footer.links.disclaimer": "Ansvarsfriskrivning",
+                "footer.links.terms": "Användarvillkor",
+                "footer.copyright": "© 2025 LollyPoPDF. Alla rättigheter förbehållna."
+            },
+            fi: {
+                "nav.home": "Koti",
+                "nav.about": "Meistä",
+                "nav.tools": "Työkalut",
+                "nav.contact": "Yhteystiedot",
+                "hero.title": "Ilmainen Sanalaskurityökalu",
+                "hero.description": "Laske sanoja, merkkejä, lauseita, kappaleita ja enemmän ilmaisella työkalullamme. Tukee tekstitiedostoja, Word-asiakirjoja ja PDF-tiedostoja. Analysoi tekstisi reaaliaikaisesti ilman rekisteröitymistä.",
+                "howto.title": "Kuinka käyttää Sanalaskuria",
+                "howto.step1.title": "Syötä teksti",
+                "howto.step1.description": "Kirjoita tai liitä tekstisi syöttöalueelle. Voit myös ladata tekstitiedostoja, Word-asiakirjoja (.doc, .docx) tai PDF-tiedostoja analysoitavaksi. Työkalu toimii millä tahansa määrällä tekstiä.",
+                "howto.step2.title": "Näe reaaliaikaiset tilastot",
+                "howto.step2.description": "Katso, kuinka työkalu laskee välittömästi sanojen, merkkien, lauseiden, kappaleiden ja muiden tilastojen määrän kirjoittaessasi tai ladatessasi tiedostoja.",
+                "howto.step3.title": "Analysoi kehittyneet mittarit",
+                "howto.step3.description": "Tutki kehittyneitä tilastoja, kuten lukuaika, keskimääräinen sanan pituus, avainsanatiheys ja lisää yksityiskohtaista tietoa tekstistäsi.",
+                "howto.step4.title": "Vie ja tallenna",
+                "howto.step4.description": "Kopioi teksti tai lataa tilastot. Työsi tallennetaan automaattisesti seuraavaa istuntoa varten. Kaikki käsittely tapahtuu selaimesi sisällä.",
+                "counter.title": "Sanalaskuri",
+                "counter.input.label": "Syötä teksti",
+                "counter.input.placeholder": "Kirjoita tai liitä teksti tähän...",
+                "counter.upload": "Lataa asiakirja",
+                "counter.supported": "Tuetut formaatit: TXT, MD, CSV, JSON, XML, HTML, DOC, DOCX, PDF",
+                "counter.loading": "Käsitellään asiakirjaa...",
+                "counter.stats.words": "Sanat",
+                "counter.stats.chars": "Merkit",
+                "counter.stats.charsNoSpaces": "Merkit (ilman välilyöntejä)",
+                "counter.stats.sentences": "Lauseet",
+                "counter.stats.paragraphs": "Kappaleet",
+                "counter.stats.lines": "Rivit",
+                "counter.advanced.title": "Kehittyneet tilastot",
+                "counter.advanced.reading": "Lukuaika (min)",
+                "counter.advanced.avgWord": "Keskim. sanan pituus",
+                "counter.advanced.avgSentence": "Keskim. lauseen pituus",
+                "counter.advanced.longestWord": "Pisin sana",
+                "counter.advanced.uniqueWords": "Yksilölliset sanat",
+                "counter.advanced.keywordDensity": "Avainsanatiheys",
+                "counter.copy": "Kopioi teksti",
+                "counter.clear": "Tyhjennä kaikki",
+                "counter.export": "Vie tilastot",
+                "footer.follow": "SEURA MEITÄ",
+                "footer.categories": "Suositut kategoriat",
+                "footer.categories.pdf": "PDF-työkalut",
+                "footer.categories.image": "Kuvatyökalut",
+                "footer.categories.text": "Tekstityökalut",
+                "footer.categories.av": "Ääni/Video työkalut",
+                "footer.categories.web": "Web/Kehittäjä työkalut",
+                "footer.categories.calc": "Laskinityökalut",
+                "footer.categories.util": "Aputyökalut",
+                "footer.categories.color": "Värityökalut",
+                "footer.quicklinks": "Pikalinkit",
+                "footer.links.tools": "Kaikki työkalut",
+                "footer.links.faq": "UKK",
+                "footer.links.contact": "Yhteystiedot",
+                "footer.links.privacy": "Tietosuojakäytäntö",
+                "footer.links.disclaimer": "Vastuuvapauslauseke",
+                "footer.links.terms": "Käyttöehdot",
+                "footer.copyright": "© 2025 LollyPoPDF. Kaikki oikeudet pidätetään."
+            },
+            cs: {
+                "nav.home": "Domů",
+                "nav.about": "O nás",
+                "nav.tools": "Nástroje",
+                "nav.contact": "Kontakt",
+                "hero.title": "Bezplatný nástroj pro počítání slov",
+                "hero.description": "Počítejte slova, znaky, věty, odstavce a další s naším bezplatným nástrojem. Podporuje textové soubory, dokumenty Word a PDF. Analyzujte svůj text v reálném čase bez registrace.",
+                "howto.title": "Jak používat Počítač slov",
+                "howto.step1.title": "Zadejte svůj text",
+                "howto.step1.description": "Napište nebo vložte svůj text do vstupní oblasti. Můžete také nahrát textové soubory, dokumenty Word (.doc, .docx) nebo soubory PDF k analýze. Nástroj funguje s jakýmkoli množstvím textu.",
+                "howto.step2.title": "Zobrazte statistiky v reálném čase",
+                "howto.step2.description": "Sledujte, jak nástroj okamžitě vypočítá počet slov, znaků, vět, odstavců a další statistiky při psaní nebo nahrávání souborů.",
+                "howto.step3.title": "Analyzujte pokročilé metriky",
+                "howto.step3.description": "Prozkoumejte pokročilé statistiky, jako je doba čtení, průměrná délka slova, hustota klíčových slov a další podrobné informace o vašem textu.",
+                "howto.step4.title": "Exportujte a uložte",
+                "howto.step4.description": "Zkopírujte svůj text nebo si stáhněte statistiky. Vaše práce je automaticky uložena pro vaši další relaci. Veškeré zpracování probíhá ve vašem prohlížeči.",
+                "counter.title": "Počítač slov",
+                "counter.input.label": "Zadejte svůj text",
+                "counter.input.placeholder": "Napište nebo vložte svůj text zde...",
+                "counter.upload": "Nahrát dokument",
+                "counter.supported": "Podporované formáty: TXT, MD, CSV, JSON, XML, HTML, DOC, DOCX, PDF",
+                "counter.loading": "Zpracovává se dokument...",
+                "counter.stats.words": "Slova",
+                "counter.stats.chars": "Znaky",
+                "counter.stats.charsNoSpaces": "Znaky (bez mezer)",
+                "counter.stats.sentences": "Věty",
+                "counter.stats.paragraphs": "Odstavce",
+                "counter.stats.lines": "Řádky",
+                "counter.advanced.title": "Pokročilé statistiky",
+                "counter.advanced.reading": "Doba čtení (min)",
+                "counter.advanced.avgWord": "Prům. délka slova",
+                "counter.advanced.avgSentence": "Prům. délka věty",
+                "counter.advanced.longestWord": "Nejdelší slovo",
+                "counter.advanced.uniqueWords": "Jedinečná slova",
+                "counter.advanced.keywordDensity": "Hustota klíčových slov",
+                "counter.copy": "Kopírovat text",
+                "counter.clear": "Vymazat vše",
+                "counter.export": "Exportovat statistiky",
+                "footer.follow": "SLEDUJTE NÁS",
+                "footer.categories": "Populární kategorie",
+                "footer.categories.pdf": "PDF nástroje",
+                "footer.categories.image": "Obrázkové nástroje",
+                "footer.categories.text": "Textové nástroje",
+                "footer.categories.av": "Audio/Video nástroje",
+                "footer.categories.web": "Web/Vývojářské nástroje",
+                "footer.categories.calc": "Kalkulační nástroje",
+                "footer.categories.util": "Pomocné nástroje",
+                "footer.categories.color": "Barevné nástroje",
+                "footer.quicklinks": "Rychlé odkazy",
+                "footer.links.tools": "Všechny nástroje",
+                "footer.links.faq": "Často kladené otázky",
+                "footer.links.contact": "Kontakt",
+                "footer.links.privacy": "Zásady ochrany osobních údajů",
+                "footer.links.disclaimer": "Odmítnutí odpovědnosti",
+                "footer.links.terms": "Podmínky služby",
+                "footer.copyright": "© 2025 LollyPoPDF. Všechna práva vyhrazena."
+            }
+        };
+
+        // Function to change language
+        function changeLanguage(langCode) {
+            const langData = translations[langCode];
+            if (!langData) return;
+            
+            // Update all elements with data-i18n attribute
+            document.querySelectorAll('[data-i18n]').forEach(element => {
+                const key = element.getAttribute('data-i18n');
+                if (langData[key]) {
+                    element.textContent = langData[key];
+                    
+                    // Update placeholder for textareas
+                    if (element.tagName === 'TEXTAREA' && element.hasAttribute('placeholder')) {
+                        element.setAttribute('placeholder', langData[key]);
+                    }
+                }
+            });
+            
+            // Update current language display
+            currentLanguageElement.textContent = languages.find(lang => lang.code === langCode)?.name || 'English';
+            
+            // Save language preference
+            localStorage.setItem('language', langCode);
+        }
+
+        // Initialize language
+        const savedLanguage = localStorage.getItem('language') || 'en';
+        changeLanguage(savedLanguage);
+        
+        // Language selection handler
+        languageDropdown.addEventListener('click', (e) => {
+            if (e.target.classList.contains('language-option')) {
+                const langCode = e.target.getAttribute('data-lang');
+                changeLanguage(langCode);
+            }
+        });
+    </script>
+</body>
+</html>

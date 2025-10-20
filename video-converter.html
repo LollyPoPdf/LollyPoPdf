@@ -1,0 +1,3577 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video Converter | LollyPoPdf</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #9370db;
+            --primary-dark: #8a2be2;
+            --secondary-color: #f0ebff;
+            --text-color: #333333;
+            --text-light: #6b7280;
+            --bg-color: #ffffff;
+            --bg-secondary: #f9f9f9;
+            --border-radius: 12px;
+            --transition: all 0.3s ease;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --header-height: 80px;
+            --white: #ffffff;
+            --header-text: #6b7280;
+            --accent-color: #9370db;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --error-color: #ef4444;
+        }
+
+        .dark-mode {
+            --primary-color: #a391f2;
+            --primary-dark: #8a2be2;
+            --secondary-color: #2d2d2d;
+            --text-color: #f0f0f0;
+            --text-light: #a0a0a0;
+            --bg-color: #1a1a1a;
+            --bg-secondary: #2d2d2d;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+            --white: #1a1a1a;
+            --header-text: #a0a0a0;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            transition: var(--transition);
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        ul {
+            list-style: none;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header Styles */
+        header {
+            background-color: var(--white);
+            color: var(--header-text);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+        }
+
+        .logo-icon {
+            position: relative;
+            width: 40px;
+            height: 40px;
+        }
+
+        .logo-circle {
+            width: 40px;
+            height: 40px;
+            border-radius: 40%;
+            background: linear-gradient(to bottom right, #9370db, #8a2be2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .logo-stem {
+            position: absolute;
+            bottom: -17px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 6px;
+            height: 17px;
+            background-color: #8a2be2;
+            border-radius: 0 0 3px 3px;
+        }
+
+        .logo-text {
+            font-size: 24px;
+            font-weight: bold;
+            color: #9370db;
+        }
+
+        nav ul {
+            display: flex;
+            gap: 30px;
+            list-style: none;
+        }
+
+        nav a {
+            font-weight: 500;
+            position: relative;
+            color: var(--header-text);
+            padding: 8px 0;
+            border-radius: 0;
+            transition: var(--transition);
+            text-decoration: none;
+        }
+
+        nav a:hover {
+            color: var(--accent-color);
+        }
+
+        nav a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: var(--accent-color);
+            transition: width 0.3s ease;
+        }
+
+        nav a:hover::after {
+            width: 100%;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .email {
+            font-size: 14px;
+            color: var(--header-text);
+        }
+
+        .theme-toggle {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 20px;
+            color: var(--header-text);
+            padding: 8px;
+            border-radius: 50%;
+            transition: var(--transition);
+        }
+
+        .theme-toggle:hover {
+            background-color: #f0ebff;
+            color: var(--accent-color);
+        }
+
+        .dark-mode .theme-toggle:hover {
+            background-color: #2d3748;
+            color: var(--accent-color);
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--header-text);
+        }
+
+        /* Mobile Menu */
+        .mobile-menu {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            width: 100%;
+            background-color: var(--white);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            z-index: 999;
+        }
+
+        .dark-mode .mobile-menu {
+            background-color: var(--bg-secondary);
+        }
+
+        .mobile-menu.active {
+            display: block;
+        }
+
+        .mobile-menu ul {
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .mobile-menu a {
+            display: block;
+            padding: 10px 0;
+            font-weight: 500;
+            color: var(--header-text);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .dark-mode .mobile-menu a {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .mobile-menu a:hover {
+            color: var(--accent-color);
+        }
+
+        /* Hero Section */
+        .hero {
+            background-color: var(--secondary-color);
+            padding: 60px 0;
+            text-align: center;
+        }
+
+        .dark-mode .hero {
+            background: linear-gradient(135deg, #2a1a4a, #3d2a6d);
+        }
+
+        .hero h1 {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            color: #000;
+        }
+
+        .dark-mode .hero h1 {
+            color: var(--text-color);
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            color: var(--text-color);
+            max-width: 700px;
+            margin: 0 auto 30px;
+        }
+
+        /* How to Use Section */
+        .how-to-section {
+            padding: 80px 0;
+            background-color: var(--bg-color);
+        }
+
+        .dark-mode .how-to-section {
+            background-color: var(--bg-secondary);
+        }
+
+        .section-title {
+            font-size: 2rem;
+            text-align: center;
+            margin-bottom: 40px;
+            color: #000000;
+        }
+
+        .dark-mode .section-title {
+            color: var(--text-color);
+        }
+
+        .steps-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 40px;
+        }
+
+        .step-box {
+            background-color: var(--bg-secondary);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            padding: 30px;
+            min-height: 200px;
+            position: relative;
+        }
+
+        .step-number {
+            width: 40px;
+            height: 40px;
+            background-color: var(--primary-color);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 16px;
+            margin-bottom: 15px;
+        }
+
+        .step-title {
+            font-size: 18px;
+            color: #000000;
+            margin-bottom: 10px;
+        }
+
+        .dark-mode .step-title {
+            color: var(--text-color);
+        }
+
+        .step-description {
+            font-size: 14px;
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        /* Tool Section */
+        .tool-section {
+            padding: 80px 0;
+            background-color: var(--secondary-color);
+        }
+
+        .dark-mode .tool-section {
+            background: linear-gradient(135deg, #2a1a4a, #3d2a6d);
+        }
+
+        .tool-title {
+            font-size: 2.5rem;
+            text-align: center;
+            margin-bottom: 40px;
+            color: #a391f2;
+        }
+
+        .dark-mode .tool-title {
+            color: #a391f2;
+        }
+
+        .tool-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background-color: var(--bg-color);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            padding: 40px;
+        }
+
+        .upload-container {
+            border: 2px dashed var(--primary-color);
+            border-radius: var(--border-radius);
+            padding: 40px;
+            text-align: center;
+            margin-bottom: 30px;
+            background-color: var(--bg-secondary);
+            transition: var(--transition);
+        }
+
+        .upload-container:hover {
+            border-color: var(--primary-dark);
+            background-color: rgba(147, 112, 219, 0.05);
+        }
+
+        .upload-container.drag-over {
+            border-color: var(--primary-dark);
+            background-color: rgba(147, 112, 219, 0.1);
+        }
+
+        .upload-icon {
+            font-size: 48px;
+            color: var(--primary-color);
+            margin-bottom: 15px;
+        }
+
+        .upload-text {
+            margin-bottom: 20px;
+            font-size: 18px;
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        .file-label {
+            display: inline-block;
+            padding: 12px 25px;
+            background-color: var(--primary-color);
+            color: white;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: var(--transition);
+            font-weight: bold;
+        }
+
+        .file-label:hover {
+            background-color: var(--primary-dark);
+        }
+
+        .file-name {
+            margin-top: 15px;
+            font-size: 14px;
+            color: var(--text-light);
+        }
+
+        .supported-formats {
+            margin-top: 10px;
+            font-size: 12px;
+            color: var(--text-light);
+        }
+
+        .video-preview-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .preview-box {
+            background-color: var(--bg-secondary);
+            border-radius: var(--border-radius);
+            padding: 20px;
+            text-align: center;
+            box-shadow: var(--shadow);
+        }
+
+        .preview-title {
+            font-size: 18px;
+            margin-bottom: 15px;
+            color: var(--primary-color);
+        }
+
+        .video-preview {
+            width: 100%;
+            max-height: 300px;
+            border-radius: var(--border-radius);
+            background-color: #000;
+        }
+
+        .options-container {
+            background-color: var(--bg-secondary);
+            border-radius: var(--border-radius);
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+
+        .options-title {
+            font-size: 18px;
+            margin-bottom: 15px;
+            color: var(--primary-color);
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .option-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .option-label {
+            display: block;
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 5px;
+        }
+
+        .option-select {
+            padding: 8px 12px;
+            border-radius: var(--border-radius);
+            border: 1px solid var(--primary-color);
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-size: 14px;
+            width: 100%;
+        }
+
+        .option-range {
+            width: 100%;
+        }
+
+        .range-value {
+            font-size: 12px;
+            color: var(--text-light);
+            text-align: center;
+        }
+
+        .loading-indicator {
+            display: none;
+            margin: 10px 0;
+            padding: 10px;
+            background-color: var(--primary-color);
+            color: white;
+            border-radius: var(--border-radius);
+            text-align: center;
+        }
+
+        .progress-container {
+            margin: 20px 0;
+            display: none;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 10px;
+            background-color: var(--bg-secondary);
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background-color: var(--primary-color);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .progress-text {
+            text-align: center;
+            margin-top: 5px;
+            font-size: 14px;
+            color: var(--text-light);
+        }
+
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .stat-box {
+            background-color: var(--bg-secondary);
+            border-radius: var(--border-radius);
+            padding: 20px;
+            text-align: center;
+            box-shadow: var(--shadow);
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--primary-color);
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            color: var(--text-light);
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .action-btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: var(--transition);
+            flex: 1;
+            min-width: 150px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .convert-btn {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .convert-btn:hover {
+            background-color: var(--primary-dark);
+        }
+
+        .convert-btn:disabled {
+            background-color: var(--text-light);
+            cursor: not-allowed;
+        }
+
+        .download-btn {
+            background-color: var(--primary-color);
+            color: white;
+            display: none;
+        }
+
+        .download-btn:hover {
+            background-color: var(--primary-dark);
+        }
+
+        .clear-btn {
+            background-color: white;
+            color: var(--primary-color);
+            border: 2px solid var(--primary-color);
+        }
+
+        .clear-btn:hover {
+            background-color: var(--secondary-color);
+        }
+
+        /* Footer */
+        footer {
+            background-color: #000000;
+            color: white;
+            padding: 60px 0 80px;
+            position: relative;
+        }
+
+        .footer-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 60px;
+        }
+
+        .footer-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            text-decoration: none;
+        }
+
+        .footer-logo .logo-icon {
+            width: 40px;
+            height: 40px;
+        }
+
+        .footer-logo .logo-text {
+            color: #9370db;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .footer-section h3 {
+            color: white;
+            font-weight: 600;
+            font-size: 20px;
+            margin-bottom: 20px;
+        }
+
+        .footer-section h4 {
+            color: #9370db;
+            font-size: 18px;
+            margin-bottom: 15px;
+        }
+
+        .footer-links li {
+            margin-bottom: 10px;
+        }
+
+        .footer-links a {
+            color: white;
+        }
+
+        .footer-links a:hover {
+            color: #9370db;
+        }
+
+        .social-icons {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .social-icon {
+            width: 40px;
+            height: 40px;
+            background-color: #9370db;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+        }
+
+        .social-icon:hover {
+            background-color: #8a2be2;
+            transform: translateY(-3px);
+        }
+
+        .copyright {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            color: #f9f7ff;
+            font-size: 12px;
+        }
+
+        .footer-line {
+            position: absolute;
+            bottom: 50px;
+            left: 0;
+            width: 100%;
+            height: 1px;
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        /* Language Switcher */
+        .language-switcher {
+            position: fixed;
+            bottom: 10px;
+            right: 10px;
+            z-index: 1000;
+        }
+
+        .language-btn {
+            background-color: #9370db;
+            color: white;
+            border: none;
+            border-radius: 30px;
+            padding: 5px 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .language-dropdown {
+            position: absolute;
+            bottom: 100%;
+            right: 0;
+            width: 300px;
+            background-color: white;
+            border-radius: var(--border-radius);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            display: none;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .dark-mode .language-dropdown {
+            background-color: var(--bg-secondary);
+        }
+
+        .language-switcher:hover .language-dropdown {
+            display: grid;
+        }
+
+        .language-option {
+            padding: 8px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            text-align: center;
+            font-size: 14px;
+        }
+
+        .language-option:hover {
+            background-color: white;
+            color: #9370db;
+        }
+
+        .dark-mode .language-option:hover {
+            background-color: var(--bg-color);
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 992px) {
+            .steps-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .footer-container {
+                grid-template-columns: 1fr 1fr;
+            }
+            
+            .stats-container {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            }
+            
+            .video-preview-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            nav ul, .email {
+                display: none;
+            }
+            
+            .mobile-menu-btn {
+                display: block;
+            }
+            
+            .hero h1, .tool-title {
+                font-size: 2rem;
+            }
+            
+            .hero p {
+                font-size: 1rem;
+            }
+            
+            .language-dropdown {
+                width: 250px;
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .footer-container {
+                grid-template-columns: 1fr;
+                gap: 40px;
+            }
+            
+            .stats-container {
+                grid-template-columns: 1fr 1fr;
+            }
+            
+            .options-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .tool-container {
+                padding: 20px;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+            
+            .action-btn {
+                width: 100%;
+            }
+            
+            .stats-container {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container header-container">
+            <a href="https://lollypopdf.com" class="logo">
+                <div class="logo-icon">
+                    <div class="logo-circle">LPdf</div>
+                    <div class="logo-stem"></div>
+                </div>
+                <span class="logo-text">LollyPoPdf</span>
+            </a>
+            
+            <nav>
+                <ul>
+                    <li><a href="https://lollypopdf.github.io/LollyPoPdf#home" class="nav-link" data-i18n="nav.home">Home</a></li>
+                    <li><a href="https://lollypopdf.github.io/LollyPoPdf#about" class="nav-link" data-i18n="nav.about">About Us</a></li>
+                    <li><a href="https://lollypopdf.github.io/LollyPoPdf#tools" class="nav-link" data-i18n="nav.tools">Tools</a></li>
+                    <li><a href="contact.html" class="nav-link" data-i18n="nav.contact">Contact</a></li>
+                </ul>
+            </nav>
+            
+            <div class="header-right">
+                <span class="email">lollypoppdf@gmail.com</span>
+                <button class="theme-toggle" id="themeToggle">
+                    <i class="fas fa-moon"></i>
+                </button>
+                <button class="mobile-menu-btn" id="mobileMenuBtn">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </div>
+        
+        <!-- Mobile Menu -->
+        <div class="mobile-menu" id="mobileMenu">
+            <ul>
+                <li><a href="https://lollypopdf.github.io/LollyPoPdf#home" class="nav-link" data-i18n="nav.home">Home</a></li>
+                <li><a href="https://lollypopdf.github.io/LollyPoPdf#about" class="nav-link" data-i18n="nav.about">About Us</a></li>
+                <li><a href="https://lollypopdf.github.io/LollyPoPdf#tools" class="nav-link" data-i18n="nav.tools">Tools</a></li>
+                <li><a href="contact.html" class="nav-link" data-i18n="nav.contact">Contact</a></li>
+            </ul>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <h1 data-i18n="hero.title">Video Converter Tool</h1>
+            <p data-i18n="hero.description">Convert videos between all popular formats - MP4, WebM, AVI, MOV, MKV, and more. All processing happens locally in your browser with no file size limits and complete privacy.</p>
+        </div>
+    </section>
+
+    <!-- How to Use Section -->
+    <section class="how-to-section">
+        <div class="container">
+            <h2 class="section-title" data-i18n="howto.title">How to Use the Video Converter</h2>
+            <div class="steps-container">
+                <div class="step-box">
+                    <div class="step-number">1</div>
+                    <h3 class="step-title" data-i18n="howto.step1.title">Upload Your Video</h3>
+                    <p class="step-description" data-i18n="howto.step1.description">Drag and drop or click to upload your video file. The tool supports MP4, MOV, AVI, MKV, WebM, FLV, and WMV formats with no file size limits.</p>
+                </div>
+                <div class="step-box">
+                    <div class="step-number">2</div>
+                    <h3 class="step-title" data-i18n="howto.step2.title">Choose Output Format & Settings</h3>
+                    <p class="step-description" data-i18n="howto.step2.description">Select your desired output format and customize settings like resolution, quality, frame rate, and more. Preview your original video on the left.</p>
+                </div>
+                <div class="step-box">
+                    <div class="step-number">3</div>
+                    <h3 class="step-title" data-i18n="howto.step3.title">Convert & Preview</h3>
+                    <p class="step-description" data-i18n="howto.step3.description">Click "Convert Video" to start processing. Watch the progress bar and preview the converted video on the right when finished.</p>
+                </div>
+                <div class="step-box">
+                    <div class="step-number">4</div>
+                    <h3 class="step-title" data-i18n="howto.step4.title">Download Result</h3>
+                    <p class="step-description" data-i18n="howto.step4.description">Download your converted video with one click. All processing happens locally in your browser - your files never leave your device.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Tool Section -->
+    <section class="tool-section">
+        <div class="container">
+            <h2 class="tool-title" data-i18n="tool.title">Video Converter</h2>
+            <div class="tool-container">
+                <!-- Upload Section -->
+                <div class="upload-container" id="uploadContainer">
+                    <div class="upload-icon">
+                        <i class="fas fa-video"></i>
+                    </div>
+                    <div class="upload-text" data-i18n="tool.upload.text">Drag & drop your video file here or click to browse</div>
+                    <input type="file" id="fileInput" class="file-input" accept="video/*">
+                    <label for="fileInput" class="file-label">
+                        <i class="fas fa-upload"></i> <span data-i18n="tool.upload.button">Choose Video File</span>
+                    </label>
+                    <div id="fileName" class="file-name"></div>
+                    <div class="supported-formats" data-i18n="tool.supported">Supported formats: MP4, MOV, AVI, MKV, WebM, FLV, WMV</div>
+                </div>
+
+                <!-- Video Previews -->
+                <div class="video-preview-container">
+                    <div class="preview-box">
+                        <h3 class="preview-title" data-i18n="tool.preview.original">Original Video</h3>
+                        <video id="originalVideo" class="video-preview" controls></video>
+                    </div>
+                    <div class="preview-box">
+                        <h3 class="preview-title" data-i18n="tool.preview.converted">Converted Video</h3>
+                        <video id="convertedVideo" class="video-preview" controls></video>
+                    </div>
+                </div>
+
+                <!-- Loading Indicator -->
+                <div class="loading-indicator" id="loadingIndicator">
+                    <i class="fas fa-spinner fa-spin"></i> <span data-i18n="tool.loading">Processing Video...</span>
+                </div>
+
+                <!-- Progress Bar -->
+                <div class="progress-container" id="progressContainer">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progressFill"></div>
+                    </div>
+                    <div class="progress-text" id="progressText">0%</div>
+                </div>
+
+                <!-- Conversion Options -->
+                <div class="options-container">
+                    <h3 class="options-title" data-i18n="tool.options.title">Conversion Options</h3>
+                    <div class="options-grid">
+                        <div class="option-group">
+                            <label for="outputFormat" class="option-label" data-i18n="tool.options.format">Output Format:</label>
+                            <select id="outputFormat" class="option-select">
+                                <option value="mp4">MP4</option>
+                                <option value="webm">WebM</option>
+                                <option value="avi">AVI</option>
+                                <option value="mov">MOV</option>
+                                <option value="mkv">MKV</option>
+                                <option value="flv">FLV</option>
+                                <option value="wmv">WMV</option>
+                            </select>
+                        </div>
+                        
+                        <div class="option-group">
+                            <label for="videoQuality" class="option-label" data-i18n="tool.options.quality">Video Quality:</label>
+                            <select id="videoQuality" class="option-select">
+                                <option value="high">High (Best Quality)</option>
+                                <option value="medium" selected>Medium (Recommended)</option>
+                                <option value="low">Low (Smaller File)</option>
+                            </select>
+                        </div>
+                        
+                        <div class="option-group">
+                            <label for="resolution" class="option-label" data-i18n="tool.options.resolution">Resolution:</label>
+                            <select id="resolution" class="option-select">
+                                <option value="original">Original</option>
+                                <option value="1080">1080p (Full HD)</option>
+                                <option value="720">720p (HD)</option>
+                                <option value="480">480p (SD)</option>
+                                <option value="360">360p</option>
+                            </select>
+                        </div>
+                        
+                        <div class="option-group">
+                            <label for="frameRate" class="option-label" data-i18n="tool.options.framerate">Frame Rate:</label>
+                            <select id="frameRate" class="option-select">
+                                <option value="original">Original</option>
+                                <option value="60">60 fps</option>
+                                <option value="30" selected>30 fps</option>
+                                <option value="24">24 fps</option>
+                                <option value="15">15 fps</option>
+                            </select>
+                        </div>
+                        
+                        <div class="option-group">
+                            <label for="audioCodec" class="option-label" data-i18n="tool.options.audio">Audio Codec:</label>
+                            <select id="audioCodec" class="option-select">
+                                <option value="aac">AAC</option>
+                                <option value="mp3">MP3</option>
+                                <option value="opus">Opus</option>
+                                <option value="none">No Audio</option>
+                            </select>
+                        </div>
+                        
+                        <div class="option-group">
+                            <label for="videoCodec" class="option-label" data-i18n="tool.options.video">Video Codec:</label>
+                            <select id="videoCodec" class="option-select">
+                                <option value="h264">H.264</option>
+                                <option value="vp9">VP9</option>
+                                <option value="h265">H.265</option>
+                                <option value="mpeg4">MPEG-4</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Statistics -->
+                <div class="stats-container">
+                    <div class="stat-box">
+                        <div class="stat-value" id="fileSize">0 MB</div>
+                        <div class="stat-label" data-i18n="tool.stats.size">File Size</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-value" id="duration">0:00</div>
+                        <div class="stat-label" data-i18n="tool.stats.duration">Duration</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-value" id="resolutionStat">-</div>
+                        <div class="stat-label" data-i18n="tool.stats.resolution">Resolution</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-value" id="conversionTime">0s</div>
+                        <div class="stat-label" data-i18n="tool.stats.time">Conversion Time</div>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="action-buttons">
+                    <button class="action-btn convert-btn" id="convertBtn" disabled data-i18n="tool.convert">
+                        <i class="fas fa-sync-alt"></i> Convert Video
+                    </button>
+                    <button class="action-btn download-btn" id="downloadBtn" data-i18n="tool.download">
+                        <i class="fas fa-download"></i> Download Video
+                    </button>
+                    <button class="action-btn clear-btn" id="clearBtn" data-i18n="tool.clear">
+                        <i class="fas fa-trash"></i> Clear All
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container footer-container">
+            <!-- Left Section -->
+            <div class="footer-section">
+                <a href="https://lollypopdf.com" class="footer-logo">
+                    <div class="logo-icon">
+                        <div class="logo-circle">LPdf</div>
+                        <div class="logo-stem"></div>
+                    </div>
+                    <span class="logo-text">LollyPoPdf</span>
+                </a>
+                <h3 data-i18n="footer.follow">FOLLOW US</h3>
+                <div class="social-icons">
+                    <a href="https://facebook.com/lollypopdf" class="social-icon"><i class="fab fa-facebook-f"></i></a>
+                    <a href="https://linkedin.com/company/lollypopdf" class="social-icon"><i class="fab fa-linkedin-in"></i></a>
+                    <a href="https://twitter.com/lollypopdf" class="social-icon"><i class="fab fa-twitter"></i></a>
+                    <a href="https://instagram.com/lollypopdf" class="social-icon"><i class="fab fa-instagram"></i></a>
+                    <a href="https://pinterest.com/lollypopdf" class="social-icon"><i class="fab fa-pinterest-p"></i></a>
+                </div>
+            </div>
+            
+            <!-- Middle Section - Popular Categories -->
+            <div class="footer-section">
+                <h4 data-i18n="footer.categories">Popular Categories</h4>
+                <ul class="footer-links">
+                    <li><a href="https://lollypopdf.com#pdf-tools" data-i18n="footer.categories.pdf">PDF Tools</a></li>
+                    <li><a href="https://lollypopdf.com#image-tools" data-i18n="footer.categories.image">Image Tools</a></li>
+                    <li><a href="https://lollypopdf.com#text-tools" data-i18n="footer.categories.text">Text Tools</a></li>
+                    <li><a href="https://lollypopdf.com#audio-video-tools" data-i18n="footer.categories.av">Audio/Video Tools</a></li>
+                    <li><a href="https://lollypopdf.com#web-developer-tools" data-i18n="footer.categories.web">WebDeveloper Tools</a></li>
+                    <li><a href="https://lollypopdf.com#calculator-tools" data-i18n="footer.categories.calc">Calculator Tools</a></li>
+                    <li><a href="https://lollypopdf.com#utility-tools" data-i18n="footer.categories.util">Utility Tools</a></li>
+                    <li><a href="https://lollypopdf.com#color-tools" data-i18n="footer.categories.color">Color Tools</a></li>
+                </ul>
+            </div>
+            
+            <!-- Right Section - Quick Links -->
+            <div class="footer-section">
+                <h4 data-i18n="footer.quicklinks">Quick Links</h4>
+                <ul class="footer-links">
+                    <li><a href="https://lollypopdf.github.io/LollyPoPdf#home" data-i18n="nav.home">Home</a></li>
+                    <li><a href="https://lollypopdf.github.io/LollyPoPdf#tools" data-i18n="footer.links.tools">All Tools</a></li>
+                    <li><a href="faq.html" data-i18n="footer.links.faq">FAQ</a></li>
+                    <li><a href="contact.html" data-i18n="footer.links.contact">Contact</a></li>
+                    <li><a href="privacy-policy.html" data-i18n="footer.links.privacy">Privacy Policy</a></li>
+                    <li><a href="disclaimer.html" data-i18n="footer.links.disclaimer">Disclaimer</a></li>
+                    <li><a href="terms.html" data-i18n="footer.links.terms">Terms of Service</a></li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="footer-line"></div>
+        <div class="copyright" data-i18n="footer.copyright">© 2025 LollyPoPDF. All rights reserved.</div>
+    </footer>
+
+    <!-- Language Switcher -->
+    <div class="language-switcher">
+        <button class="language-btn">
+            <i class="fas fa-globe"></i>
+            <span id="currentLanguage">English</span>
+        </button>
+        <div class="language-dropdown">
+            <div class="language-option" data-lang="en">English</div>
+            <div class="language-option" data-lang="es">Español</div>
+            <div class="language-option" data-lang="fr">Français</div>
+            <div class="language-option" data-lang="de">Deutsch</div>
+            <div class="language-option" data-lang="it">Italiano</div>
+            <div class="language-option" data-lang="pt">Português</div>
+            <div class="language-option" data-lang="ja">日本語</div>
+            <div class="language-option" data-lang="ru">Pусский</div>
+            <div class="language-option" data-lang="ko">한국어</div>
+            <div class="language-option" data-lang="zh-CN">中文 (简体)</div>
+            <div class="language-option" data-lang="zh-TW">中文 (繁體)</div>
+            <div class="language-option" data-lang="ar">العربية</div>
+            <div class="language-option" data-lang="fa">فارسی</div>
+            <div class="language-option" data-lang="bg">Български</div>
+            <div class="language-option" data-lang="ca">Català</div>
+            <div class="language-option" data-lang="nl">Nederlands</div>
+            <div class="language-option" data-lang="el">Ελληνικά</div>
+            <div class="language-option" data-lang="hi">हिन्दी</div>
+            <div class="language-option" data-lang="te">తెలుగు</div>
+            <div class="language-option" data-lang="kn">ಕನ್ನಡ</div>
+            <div class="language-option" data-lang="ta">தமிழ்</div>
+            <div class="language-option" data-lang="ml">മലയാളം</div>
+            <div class="language-option" data-lang="id">Bahasa Indonesia</div>
+            <div class="language-option" data-lang="ms">Bahasa Melayu</div>
+            <div class="language-option" data-lang="pl">Polski</div>
+            <div class="language-option" data-lang="th">ภาษาไทย</div>
+            <div class="language-option" data-lang="tr">Türkçe</div>
+            <div class="language-option" data-lang="uk">Українська</div>
+            <div class="language-option" data-lang="vi">Tiếng Việt</div>
+            <div class="language-option" data-lang="is">Íslenska</div>
+            <div class="language-option" data-lang="no">Norsk</div>
+            <div class="language-option" data-lang="sv">Svenska</div>
+            <div class="language-option" data-lang="fi">Suomi</div>
+            <div class="language-option" data-lang="cs">Čeština</div>
+        </div>
+    </div>
+
+    <script>
+        // Theme Toggle
+        const themeToggle = document.getElementById('themeToggle');
+        const body = document.body;
+        
+        // Check for saved theme preference or respect OS preference
+        const savedTheme = localStorage.getItem('theme') || 
+            (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        
+        if (savedTheme === 'dark') {
+            body.classList.add('dark-mode');
+            themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+        }
+        
+        themeToggle.addEventListener('click', () => {
+            body.classList.toggle('dark-mode');
+            const isDarkMode = body.classList.contains('dark-mode');
+            
+            if (isDarkMode) {
+                themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+                localStorage.setItem('theme', 'dark');
+            } else {
+                themeToggle.innerHTML = '<i class="fas fa-moon"></i>';
+                localStorage.setItem('theme', 'light');
+            }
+        });
+
+        // Mobile Menu Toggle
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const mobileMenu = document.getElementById('mobileMenu');
+        
+        mobileMenuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('active');
+            
+            // Change icon based on menu state
+            if (mobileMenu.classList.contains('active')) {
+                mobileMenuBtn.innerHTML = '<i class="fas fa-times"></i>';
+            } else {
+                mobileMenuBtn.innerHTML = '<i class="fas fa-bars"></i>';
+            }
+        });
+
+        // Close mobile menu when clicking on a link
+        const mobileMenuLinks = mobileMenu.querySelectorAll('a');
+        mobileMenuLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                mobileMenu.classList.remove('active');
+                mobileMenuBtn.innerHTML = '<i class="fas fa-bars"></i>';
+            });
+        });
+
+        // Video Converter Functionality
+        const fileInput = document.getElementById('fileInput');
+        const fileName = document.getElementById('fileName');
+        const uploadContainer = document.getElementById('uploadContainer');
+        const originalVideo = document.getElementById('originalVideo');
+        const convertedVideo = document.getElementById('convertedVideo');
+        const convertBtn = document.getElementById('convertBtn');
+        const downloadBtn = document.getElementById('downloadBtn');
+        const clearBtn = document.getElementById('clearBtn');
+        const loadingIndicator = document.getElementById('loadingIndicator');
+        const progressContainer = document.getElementById('progressContainer');
+        const progressFill = document.getElementById('progressFill');
+        const progressText = document.getElementById('progressText');
+        
+        // Stats elements
+        const fileSizeEl = document.getElementById('fileSize');
+        const durationEl = document.getElementById('duration');
+        const resolutionStatEl = document.getElementById('resolutionStat');
+        const conversionTimeEl = document.getElementById('conversionTime');
+        
+        // Options
+        const outputFormat = document.getElementById('outputFormat');
+        const videoQuality = document.getElementById('videoQuality');
+        const resolution = document.getElementById('resolution');
+        const frameRate = document.getElementById('frameRate');
+        const audioCodec = document.getElementById('audioCodec');
+        const videoCodec = document.getElementById('videoCodec');
+        
+        let currentFile = null;
+        let convertedFileUrl = null;
+        let mediaRecorder = null;
+        let recordedChunks = [];
+        
+        // File upload handler
+        fileInput.addEventListener('change', handleFileSelect);
+        
+        // Drag and drop functionality
+        uploadContainer.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadContainer.classList.add('drag-over');
+        });
+        
+        uploadContainer.addEventListener('dragleave', () => {
+            uploadContainer.classList.remove('drag-over');
+        });
+        
+        uploadContainer.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadContainer.classList.remove('drag-over');
+            
+            if (e.dataTransfer.files.length > 0) {
+                fileInput.files = e.dataTransfer.files;
+                handleFileSelect();
+            }
+        });
+        
+        // Handle file selection
+        function handleFileSelect() {
+            const file = fileInput.files[0];
+            if (!file) return;
+            
+            // Check if file is a video
+            if (!file.type.startsWith('video/')) {
+                alert('Please select a valid video file.');
+                return;
+            }
+            
+            currentFile = file;
+            fileName.textContent = file.name;
+            
+            // Create object URL for preview
+            const objectUrl = URL.createObjectURL(file);
+            originalVideo.src = objectUrl;
+            
+            // Enable convert button
+            convertBtn.disabled = false;
+            
+            // Update file stats
+            updateFileStats(file);
+        }
+        
+        // Update file statistics
+        function updateFileStats(file) {
+            // File size
+            const fileSizeMB = (file.size / (1024 * 1024)).toFixed(2);
+            fileSizeEl.textContent = `${fileSizeMB} MB`;
+            
+            // Get video duration and resolution
+            originalVideo.addEventListener('loadedmetadata', () => {
+                // Duration
+                const duration = originalVideo.duration;
+                const minutes = Math.floor(duration / 60);
+                const seconds = Math.floor(duration % 60);
+                durationEl.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+                
+                // Resolution
+                const width = originalVideo.videoWidth;
+                const height = originalVideo.videoHeight;
+                resolutionStatEl.textContent = `${width}x${height}`;
+            });
+        }
+        
+        // Convert video using MediaRecorder API
+        convertBtn.addEventListener('click', async () => {
+            if (!currentFile) return;
+            
+            // Show progress
+            progressContainer.style.display = 'block';
+            progressFill.style.width = '0%';
+            progressText.textContent = '0%';
+            
+            // Disable convert button during conversion
+            convertBtn.disabled = true;
+            convertBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Converting...';
+            
+            const startTime = Date.now();
+            
+            try {
+                // Create a canvas for video processing
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                
+                // Set canvas dimensions based on selected resolution
+                const originalWidth = originalVideo.videoWidth;
+                const originalHeight = originalVideo.videoHeight;
+                
+                let targetWidth = originalWidth;
+                let targetHeight = originalHeight;
+                
+                if (resolution.value !== 'original') {
+                    const targetHeightValue = parseInt(resolution.value);
+                    const aspectRatio = originalWidth / originalHeight;
+                    targetHeight = targetHeightValue;
+                    targetWidth = Math.round(targetHeight * aspectRatio);
+                }
+                
+                canvas.width = targetWidth;
+                canvas.height = targetHeight;
+                
+                // Create audio context for audio processing
+                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                const audioDestination = audioContext.createMediaStreamDestination();
+                
+                // Set up MediaRecorder with both video and audio tracks
+                const videoStream = canvas.captureStream();
+                
+                // Add audio track if needed
+                if (audioCodec.value !== 'none') {
+                    const audioSource = audioContext.createMediaElementSource(originalVideo);
+                    audioSource.connect(audioDestination);
+                    
+                    // Combine video and audio streams
+                    const combinedStream = new MediaStream([
+                        ...videoStream.getVideoTracks(),
+                        ...audioDestination.stream.getAudioTracks()
+                    ]);
+                    
+                    // Configure MediaRecorder options
+                    const options = getMediaRecorderOptions();
+                    mediaRecorder = new MediaRecorder(combinedStream, options);
+                } else {
+                    // Configure MediaRecorder options without audio
+                    const options = getMediaRecorderOptions();
+                    mediaRecorder = new MediaRecorder(videoStream, options);
+                }
+                
+                recordedChunks = [];
+                
+                mediaRecorder.ondataavailable = (event) => {
+                    if (event.data.size > 0) {
+                        recordedChunks.push(event.data);
+                    }
+                };
+                
+                mediaRecorder.onstop = () => {
+                    const blob = new Blob(recordedChunks, { type: mediaRecorder.mimeType });
+                    convertedFileUrl = URL.createObjectURL(blob);
+                    convertedVideo.src = convertedFileUrl;
+                    
+                    // Show download button
+                    downloadBtn.style.display = 'flex';
+                    
+                    // Update conversion time
+                    const endTime = Date.now();
+                    const conversionTime = ((endTime - startTime) / 1000).toFixed(1);
+                    conversionTimeEl.textContent = `${conversionTime}s`;
+                    
+                    // Hide progress bar
+                    progressContainer.style.display = 'none';
+                    
+                    // Re-enable convert button
+                    convertBtn.disabled = false;
+                    convertBtn.innerHTML = '<i class="fas fa-sync-alt"></i> Convert Video';
+                };
+                
+                // Start recording
+                mediaRecorder.start();
+                
+                // Process video frames
+                await processVideoFrames(canvas, ctx, originalVideo, targetWidth, targetHeight);
+                
+                // Stop recording when done
+                setTimeout(() => {
+                    mediaRecorder.stop();
+                }, 100);
+                
+            } catch (error) {
+                console.error('Conversion error:', error);
+                alert('Error converting video. Please try again with a different file or settings.');
+                
+                // Re-enable convert button
+                convertBtn.disabled = false;
+                convertBtn.innerHTML = '<i class="fas fa-sync-alt"></i> Convert Video';
+                
+                // Hide progress bar
+                progressContainer.style.display = 'none';
+            }
+        });
+        
+        // Process video frames for conversion
+        async function processVideoFrames(canvas, ctx, video, width, height) {
+            return new Promise((resolve) => {
+                let frameCount = 0;
+                const totalFrames = Math.floor(video.duration * 10); // Reduced frame count for speed
+                
+                function drawFrame() {
+                    if (video.paused || video.ended || frameCount >= totalFrames) {
+                        resolve();
+                        return;
+                    }
+                    
+                    // Draw video frame to canvas
+                    ctx.drawImage(video, 0, 0, width, height);
+                    
+                    // Update progress
+                    frameCount++;
+                    const progress = Math.min((frameCount / totalFrames) * 100, 100);
+                    progressFill.style.width = `${progress}%`;
+                    progressText.textContent = `${Math.round(progress)}%`;
+                    
+                    // Continue processing with optimized timing
+                    setTimeout(() => {
+                        requestAnimationFrame(drawFrame);
+                    }, 30); // Reduced delay for faster processing
+                }
+                
+                // Start processing
+                video.currentTime = 0;
+                video.play();
+                drawFrame();
+            });
+        }
+        
+        // Get MediaRecorder options based on user selection
+        function getMediaRecorderOptions() {
+            const format = outputFormat.value;
+            const quality = videoQuality.value;
+            
+            let mimeType, videoBitsPerSecond;
+            
+            // For formats not well supported by MediaRecorder, default to MP4
+            const supportedFormats = ['mp4', 'webm'];
+            const actualFormat = supportedFormats.includes(format) ? format : 'mp4';
+            
+            switch (actualFormat) {
+                case 'mp4':
+                    mimeType = 'video/mp4; codecs="avc1.42E01E, mp4a.40.2"';
+                    break;
+                case 'webm':
+                    mimeType = 'video/webm; codecs="vp8, opus"';
+                    break;
+                default:
+                    mimeType = 'video/mp4; codecs="avc1.42E01E, mp4a.40.2"';
+            }
+            
+            // Set video quality
+            switch (quality) {
+                case 'high':
+                    videoBitsPerSecond = 5000000; // 5 Mbps
+                    break;
+                case 'medium':
+                    videoBitsPerSecond = 2000000; // 2 Mbps
+                    break;
+                case 'low':
+                    videoBitsPerSecond = 500000; // 0.5 Mbps
+                    break;
+                default:
+                    videoBitsPerSecond = 2000000; // 2 Mbps
+            }
+            
+            return {
+                mimeType: mimeType,
+                videoBitsPerSecond: videoBitsPerSecond
+            };
+        }
+        
+        // Download converted video
+        downloadBtn.addEventListener('click', () => {
+            if (!convertedFileUrl) return;
+            
+            const a = document.createElement('a');
+            a.href = convertedFileUrl;
+            a.download = `converted-video.${outputFormat.value}`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        });
+        
+        // Clear all
+        clearBtn.addEventListener('click', () => {
+            // Reset file input
+            fileInput.value = '';
+            fileName.textContent = '';
+            
+            // Clear video previews
+            originalVideo.src = '';
+            convertedVideo.src = '';
+            
+            // Hide download button
+            downloadBtn.style.display = 'none';
+            
+            // Disable convert button
+            convertBtn.disabled = true;
+            
+            // Reset stats
+            fileSizeEl.textContent = '0 MB';
+            durationEl.textContent = '0:00';
+            resolutionStatEl.textContent = '-';
+            conversionTimeEl.textContent = '0s';
+            
+            // Clear current file
+            currentFile = null;
+            
+            // Revoke object URLs
+            if (convertedFileUrl) {
+                URL.revokeObjectURL(convertedFileUrl);
+                convertedFileUrl = null;
+            }
+        });
+        
+        // Language Switcher
+        const languageBtn = document.querySelector('.language-btn');
+        const currentLanguageElement = document.getElementById('currentLanguage');
+        const languageDropdown = document.querySelector('.language-dropdown');
+        
+        const languages = [
+            { code: 'en', name: 'English' },
+            { code: 'es', name: 'Español' },
+            { code: 'fr', name: 'Français' },
+            { code: 'de', name: 'Deutsch' },
+            { code: 'it', name: 'Italiano' },
+            { code: 'pt', name: 'Português' },
+            { code: 'ja', name: '日本語' },
+            { code: 'ru', name: 'Pусский' },
+            { code: 'ko', name: '한국어' },
+            { code: 'zh-CN', name: '中文 (简体)' },
+            { code: 'zh-TW', name: '中文 (繁體)' },
+            { code: 'ar', name: 'العربية' },
+            { code: 'fa', name: 'فارسی' },
+            { code: 'bg', name: 'Български' },
+            { code: 'ca', name: 'Català' },
+            { code: 'nl', name: 'Nederlands' },
+            { code: 'el', name: 'Ελληνικά' },
+            { code: 'hi', name: 'हिन्दी' }
+            { code: 'te', name: 'తెలుగు' },
+            { code: 'kn', name: 'ಕನ್ನಡ' },
+            { code: 'ta', name: 'தமிழ்' },
+            { code: 'ml', name: 'മലയാളം' },
+            { code: 'id', name: 'Bahasa Indonesia' },
+            { code: 'ms', name: 'Bahasa Melayu' },
+            { code: 'pl', name: 'Polski' },
+            { code: 'th', name: 'ภาษาไทย' },
+            { code: 'tr', name: 'Türkçe' },
+            { code: 'uk', name: 'Українська' },
+            { code: 'vi', name: 'Tiếng Việt' },
+            { code: 'is', name: 'Íslenska' },
+            { code: 'no', name: 'Norsk' },
+            { code: 'sv', name: 'Svenska' },
+            { code: 'fi', name: 'Suomi' },
+            { code: 'cs', name: 'Čeština' }
+        ];
+
+        // Translation data
+        const translations = {
+            en: {
+                "nav.home": "Home",
+                "nav.about": "About Us",
+                "nav.tools": "Tools",
+                "nav.contact": "Contact",
+                "hero.title": "Video Converter Tool",
+                "hero.description": "Convert videos between all popular formats - MP4, WebM, AVI, MOV, MKV, and more. All processing happens locally in your browser with no file size limits and complete privacy.",
+                "howto.title": "How to Use the Video Converter",
+                "howto.step1.title": "Upload Your Video",
+                "howto.step1.description": "Drag and drop or click to upload your video file. The tool supports MP4, MOV, AVI, MKV, WebM, FLV, and WMV formats with no file size limits.",
+                "howto.step2.title": "Choose Output Format & Settings",
+                "howto.step2.description": "Select your desired output format and customize settings like resolution, quality, frame rate, and more. Preview your original video on the left.",
+                "howto.step3.title": "Convert & Preview",
+                "howto.step3.description": "Click \"Convert Video\" to start processing. Watch the progress bar and preview the converted video on the right when finished.",
+                "howto.step4.title": "Download Result",
+                "howto.step4.description": "Download your converted video with one click. All processing happens locally in your browser - your files never leave your device.",
+                "tool.title": "Video Converter",
+                "tool.upload.text": "Drag & drop your video file here or click to browse",
+                "tool.upload.button": "Choose Video File",
+                "tool.supported": "Supported formats: MP4, MOV, AVI, MKV, WebM, FLV, WMV",
+                "tool.loading": "Processing Video...",
+                "tool.preview.original": "Original Video",
+                "tool.preview.converted": "Converted Video",
+                "tool.options.title": "Conversion Options",
+                "tool.options.format": "Output Format:",
+                "tool.options.quality": "Video Quality:",
+                "tool.options.resolution": "Resolution:",
+                "tool.options.framerate": "Frame Rate:",
+                "tool.options.audio": "Audio Codec:",
+                "tool.options.video": "Video Codec:",
+                "tool.stats.size": "File Size",
+                "tool.stats.duration": "Duration",
+                "tool.stats.resolution": "Resolution",
+                "tool.stats.time": "Conversion Time",
+                "tool.convert": "Convert Video",
+                "tool.download": "Download Video",
+                "tool.clear": "Clear All",
+                "footer.follow": "FOLLOW US",
+                "footer.categories": "Popular Categories",
+                "footer.categories.pdf": "PDF Tools",
+                "footer.categories.image": "Image Tools",
+                "footer.categories.text": "Text Tools",
+                "footer.categories.av": "Audio/Video Tools",
+                "footer.categories.web": "WebDeveloper Tools",
+                "footer.categories.calc": "Calculator Tools",
+                "footer.categories.util": "Utility Tools",
+                "footer.categories.color": "Color Tools",
+                "footer.quicklinks": "Quick Links",
+                "footer.links.tools": "All Tools",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Contact",
+                "footer.links.privacy": "Privacy Policy",
+                "footer.links.disclaimer": "Disclaimer",
+                "footer.links.terms": "Terms of Service",
+                "footer.copyright": "© 2025 LollyPoPDF. All rights reserved."
+            },
+            es: {
+                "nav.home": "Inicio",
+                "nav.about": "Sobre Nosotros",
+                "nav.tools": "Herramientas",
+                "nav.contact": "Contacto",
+                "hero.title": "Herramienta Convertidora de Video",
+                "hero.description": "Convierte videos entre todos los formatos populares - MP4, WebM, AVI, MOV, MKV y más. Todo el procesamiento ocurre localmente en tu navegador sin límites de tamaño de archivo y con privacidad completa.",
+                "howto.title": "Cómo Usar el Convertidor de Video",
+                "howto.step1.title": "Sube Tu Video",
+                "howto.step1.description": "Arrastra y suelta o haz clic para subir tu archivo de video. La herramienta soporta formatos MP4, MOV, AVI, MKV, WebM, FLV y WMV sin límites de tamaño de archivo.",
+                "howto.step2.title": "Elige Formato de Salida y Configuración",
+                "howto.step2.description": "Selecciona tu formato de salida deseado y personaliza configuraciones como resolución, calidad, velocidad de cuadros y más. Previsualiza tu video original a la izquierda.",
+                "howto.step3.title": "Convierte y Previsualiza",
+                "howto.step3.description": "Haz clic en \"Convertir Video\" para comenzar el procesamiento. Mira la barra de progreso y previsualiza el video convertido a la derecha cuando termine.",
+                "howto.step4.title": "Descarga el Resultado",
+                "howto.step4.description": "Descarga tu video convertido con un clic. Todo el procesamiento ocurre localmente en tu navegador - tus archivos nunca salen de tu dispositivo.",
+                "tool.title": "Convertidor de Video",
+                "tool.upload.text": "Arrastra y suelta tu archivo de video aquí o haz clic para buscar",
+                "tool.upload.button": "Elegir Archivo de Video",
+                "tool.supported": "Formatos soportados: MP4, MOV, AVI, MKV, WebM, FLV, WMV",
+                "tool.loading": "Procesando Video...",
+                "tool.preview.original": "Video Original",
+                "tool.preview.converted": "Video Convertido",
+                "tool.options.title": "Opciones de Conversión",
+                "tool.options.format": "Formato de Salida:",
+                "tool.options.quality": "Calidad de Video:",
+                "tool.options.resolution": "Resolución:",
+                "tool.options.framerate": "Velocidad de Cuadros:",
+                "tool.options.audio": "Códec de Audio:",
+                "tool.options.video": "Códec de Video:",
+                "tool.stats.size": "Tamaño de Archivo",
+                "tool.stats.duration": "Duración",
+                "tool.stats.resolution": "Resolución",
+                "tool.stats.time": "Tiempo de Conversión",
+                "tool.convert": "Convertir Video",
+                "tool.download": "Descargar Video",
+                "tool.clear": "Limpiar Todo",
+                "footer.follow": "SÍGUENOS",
+                "footer.categories": "Categorías Populares",
+                "footer.categories.pdf": "Herramientas PDF",
+                "footer.categories.image": "Herramientas de Imagen",
+                "footer.categories.text": "Herramientas de Texto",
+                "footer.categories.av": "Herramientas de Audio/Video",
+                "footer.categories.web": "Herramientas WebDesarrollador",
+                "footer.categories.calc": "Herramientas de Calculadora",
+                "footer.categories.util": "Herramientas de Utilidad",
+                "footer.categories.color": "Herramientas de Color",
+                "footer.quicklinks": "Enlaces Rápidos",
+                "footer.links.tools": "Todas las Herramientas",
+                "footer.links.faq": "Preguntas Frecuentes",
+                "footer.links.contact": "Contacto",
+                "footer.links.privacy": "Política de Privacidad",
+                "footer.links.disclaimer": "Descargo de Responsabilidad",
+                "footer.links.terms": "Términos de Servicio",
+                "footer.copyright": "© 2025 LollyPoPDF. Todos los derechos reservados."
+            },
+            fr: {
+                "nav.home": "Accueil",
+                "nav.about": "À propos de nous",
+                "nav.tools": "Outils",
+                "nav.contact": "Contact",
+                "hero.title": "Outil de Conversion Vidéo",
+                "hero.description": "Convertissez des vidéos entre tous les formats populaires - MP4, WebM, AVI, MOV, MKV et plus. Tout le traitement se fait localement dans votre navigateur sans limites de taille de fichier et avec une confidentialité totale.",
+                "howto.title": "Comment Utiliser le Convertisseur Vidéo",
+                "howto.step1.title": "Téléchargez Votre Vidéo",
+                "howto.step1.description": "Glissez-déposez ou cliquez pour télécharger votre fichier vidéo. L'outil prend en charge les formats MP4, MOV, AVI, MKV, WebM, FLV et WMV sans limites de taille de fichier.",
+                "howto.step2.title": "Choisissez le Format de Sortie et les Paramètres",
+                "howto.step2.description": "Sélectionnez votre format de sortie souhaité et personnalisez les paramètres comme la résolution, la qualité, la fréquence d'images, etc. Aperçu de votre vidéo originale à gauche.",
+                "howto.step3.title": "Convertir et Aperçu",
+                "howto.step3.description": "Cliquez sur \"Convertir la Vidéo\" pour commencer le traitement. Regardez la barre de progression et prévisualisez la vidéo convertie à droite une fois terminée.",
+                "howto.step4.title": "Télécharger le Résultat",
+                "howto.step4.description": "Téléchargez votre vidéo convertie en un clic. Tout le traitement se fait localement dans votre navigateur - vos fichiers ne quittent jamais votre appareil.",
+                "tool.title": "Convertisseur Vidéo",
+                "tool.upload.text": "Glissez-déposez votre fichier vidéo ici ou cliquez pour parcourir",
+                "tool.upload.button": "Choisir un Fichier Vidéo",
+                "tool.supported": "Formats pris en charge : MP4, MOV, AVI, MKV, WebM, FLV, WMV",
+                "tool.loading": "Traitement de la Vidéo...",
+                "tool.preview.original": "Vidéo Originale",
+                "tool.preview.converted": "Vidéo Convertie",
+                "tool.options.title": "Options de Conversion",
+                "tool.options.format": "Format de Sortie :",
+                "tool.options.quality": "Qualité Vidéo :",
+                "tool.options.resolution": "Résolution :",
+                "tool.options.framerate": "Fréquence d'Images :",
+                "tool.options.audio": "Codec Audio :",
+                "tool.options.video": "Codec Vidéo :",
+                "tool.stats.size": "Taille du Fichier",
+                "tool.stats.duration": "Durée",
+                "tool.stats.resolution": "Résolution",
+                "tool.stats.time": "Temps de Conversion",
+                "tool.convert": "Convertir la Vidéo",
+                "tool.download": "Télécharger la Vidéo",
+                "tool.clear": "Tout Effacer",
+                "footer.follow": "SUIVEZ-NOUS",
+                "footer.categories": "Catégories Populaires",
+                "footer.categories.pdf": "Outils PDF",
+                "footer.categories.image": "Outils d'Image",
+                "footer.categories.text": "Outils de Texte",
+                "footer.categories.av": "Outils Audio/Vidéo",
+                "footer.categories.web": "Outils WebDéveloppeur",
+                "footer.categories.calc": "Outils de Calculatrice",
+                "footer.categories.util": "Outils d'Utilité",
+                "footer.categories.color": "Outils de Couleur",
+                "footer.quicklinks": "Liens Rapides",
+                "footer.links.tools": "Tous les Outils",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Contact",
+                "footer.links.privacy": "Politique de Confidentialité",
+                "footer.links.disclaimer": "Avertissement",
+                "footer.links.terms": "Conditions d'Utilisation",
+                "footer.copyright": "© 2025 LollyPoPDF. Tous droits réservés."
+            },
+            de: {
+                "nav.home": "Startseite",
+                "nav.about": "Über uns",
+                "nav.tools": "Werkzeuge",
+                "nav.contact": "Kontakt",
+                "hero.title": "Video-Konvertierungstool",
+                "hero.description": "Konvertieren Sie Videos zwischen allen gängigen Formaten - MP4, WebM, AVI, MOV, MKV und mehr. Die gesamte Verarbeitung erfolgt lokal in Ihrem Browser ohne Dateigrößenbeschränkungen und mit vollständiger Privatsphäre.",
+                "howto.title": "So verwenden Sie den Video-Konverter",
+                "howto.step1.title": "Laden Sie Ihr Video hoch",
+                "howto.step1.description": "Ziehen Sie Ihre Videodatei per Drag & Drop oder klicken Sie, um sie hochzuladen. Das Tool unterstützt die Formate MP4, MOV, AVI, MKV, WebM, FLV und WMV ohne Dateigrößenbeschränkungen.",
+                "howto.step2.title": "Wählen Sie Ausgabeformat und Einstellungen",
+                "howto.step2.description": "Wählen Sie Ihr gewünschtes Ausgabeformat und passen Sie Einstellungen wie Auflösung, Qualität, Bildrate und mehr an. Vorschau Ihres Originalvideos auf der linken Seite.",
+                "howto.step3.title": "Konvertieren und Vorschau",
+                "howto.step3.description": "Klicken Sie auf \"Video konvertieren\", um die Verarbeitung zu starten. Beobachten Sie den Fortschrittsbalken und sehen Sie sich das konvertierte Video rechts an, wenn es fertig ist.",
+                "howto.step4.title": "Ergebnis herunterladen",
+                "howto.step4.description": "Laden Sie Ihr konvertiertes Video mit einem Klick herunter. Die gesamte Verarbeitung erfolgt lokal in Ihrem Browser - Ihre Dateien verlassen niemals Ihr Gerät.",
+                "tool.title": "Video-Konverter",
+                "tool.upload.text": "Ziehen Sie Ihre Videodatei hierher oder klicken Sie, um zu durchsuchen",
+                "tool.upload.button": "Videodatei auswählen",
+                "tool.supported": "Unterstützte Formate: MP4, MOV, AVI, MKV, WebM, FLV, WMV",
+                "tool.loading": "Video wird verarbeitet...",
+                "tool.preview.original": "Originalvideo",
+                "tool.preview.converted": "Konvertiertes Video",
+                "tool.options.title": "Konvertierungsoptionen",
+                "tool.options.format": "Ausgabeformat:",
+                "tool.options.quality": "Videoqualität:",
+                "tool.options.resolution": "Auflösung:",
+                "tool.options.framerate": "Bildrate:",
+                "tool.options.audio": "Audio-Codec:",
+                "tool.options.video": "Video-Codec:",
+                "tool.stats.size": "Dateigröße",
+                "tool.stats.duration": "Dauer",
+                "tool.stats.resolution": "Auflösung",
+                "tool.stats.time": "Konvertierungszeit",
+                "tool.convert": "Video konvertieren",
+                "tool.download": "Video herunterladen",
+                "tool.clear": "Alles löschen",
+                "footer.follow": "FOLGEN SIE UNS",
+                "footer.categories": "Beliebte Kategorien",
+                "footer.categories.pdf": "PDF-Werkzeuge",
+                "footer.categories.image": "Bildwerkzeuge",
+                "footer.categories.text": "Textwerkzeuge",
+                "footer.categories.av": "Audio/Video-Werkzeuge",
+                "footer.categories.web": "WebEntwickler-Werkzeuge",
+                "footer.categories.calc": "Rechnerwerkzeuge",
+                "footer.categories.util": "Hilfsprogramme",
+                "footer.categories.color": "Farbwerkzeuge",
+                "footer.quicklinks": "Schnelllinks",
+                "footer.links.tools": "Alle Werkzeuge",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Kontakt",
+                "footer.links.privacy": "Datenschutzrichtlinie",
+                "footer.links.disclaimer": "Haftungsausschluss",
+                "footer.links.terms": "Nutzungsbedingungen",
+                "footer.copyright": "© 2025 LollyPoPDF. Alle Rechte vorbehalten."
+            },
+             it: {
+                "nav.home": "Home",
+                "nav.about": "Chi Siamo",
+                "nav.tools": "Strumenti",
+                "nav.contact": "Contatto",
+                "hero.title": "Strumento di Conversione Video",
+                "hero.description": "Converti video tra tutti i formati popolari - MP4, WebM, AVI, MOV, MKV e altro. Tutta l'elaborazione avviene localmente nel tuo browser senza limiti di dimensione del file e con completa privacy.",
+                "howto.title": "Come Utilizzare il Convertitore Video",
+                "howto.step1.title": "Carica il Tuo Video",
+                "howto.step1.description": "Trascina e rilascia o fai clic per caricare il tuo file video. Lo strumento supporta i formati MP4, MOV, AVI, MKV, WebM, FLV e WMV senza limiti di dimensione del file.",
+                "howto.step2.title": "Scegli il Formato di Output e le Impostazioni",
+                "howto.step2.description": "Seleziona il formato di output desiderato e personalizza le impostazioni come risoluzione, qualità, frame rate e altro. Anteprima del video originale a sinistra.",
+                "howto.step3.title": "Converti e Anteprima",
+                "howto.step3.description": "Fai clic su \"Converti Video\" per avviare l'elaborazione. Guarda la barra di avanzamento e visualizza l'anteprima del video convertito a destra quando finito.",
+                "howto.step4.title": "Scarica il Risultato",
+                "howto.step4.description": "Scarica il tuo video convertito con un clic. Tutta l'elaborazione avviene localmente nel tuo browser - i tuoi file non lasciano mai il tuo dispositivo.",
+                "tool.title": "Convertitore Video",
+                "tool.upload.text": "Trascina e rilascia il tuo file video qui o fai clic per sfogliare",
+                "tool.upload.button": "Scegli File Video",
+                "tool.supported": "Formati supportati: MP4, MOV, AVI, MKV, WebM, FLV, WMV",
+                "tool.loading": "Elaborazione Video...",
+                "tool.preview.original": "Video Originale",
+                "tool.preview.converted": "Video Convertito",
+                "tool.options.title": "Opzioni di Conversione",
+                "tool.options.format": "Formato di Output:",
+                "tool.options.quality": "Qualità Video:",
+                "tool.options.resolution": "Risoluzione:",
+                "tool.options.framerate": "Frame Rate:",
+                "tool.options.audio": "Codec Audio:",
+                "tool.options.video": "Codec Video:",
+                "tool.stats.size": "Dimensione File",
+                "tool.stats.duration": "Durata",
+                "tool.stats.resolution": "Risoluzione",
+                "tool.stats.time": "Tempo di Conversione",
+                "tool.convert": "Converti Video",
+                "tool.download": "Scarica Video",
+                "tool.clear": "Cancella Tutto",
+                "footer.follow": "SEGUICI",
+                "footer.categories": "Categorie Popolari",
+                "footer.categories.pdf": "Strumenti PDF",
+                "footer.categories.image": "Strumenti Immagine",
+                "footer.categories.text": "Strumenti Testo",
+                "footer.categories.av": "Strumenti Audio/Video",
+                "footer.categories.web": "Strumenti Sviluppatore Web",
+                "footer.categories.calc": "Strumenti Calcolatrice",
+                "footer.categories.util": "Strumenti Utilità",
+                "footer.categories.color": "Strumenti Colore",
+                "footer.quicklinks": "Link Rapidi",
+                "footer.links.tools": "Tutti gli Strumenti",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Contatto",
+                "footer.links.privacy": "Informativa sulla Privacy",
+                "footer.links.disclaimer": "Disclaimer",
+                "footer.links.terms": "Termini di Servizio",
+                "footer.copyright": "© 2025 LollyPoPDF. Tutti i diritti riservati."
+            },
+            pt: {
+                "nav.home": "Início",
+                "nav.about": "Sobre Nós",
+                "nav.tools": "Ferramentas",
+                "nav.contact": "Contato",
+                "hero.title": "Ferramenta de Conversão de Vídeo",
+                "hero.description": "Converta vídeos entre todos os formatos populares - MP4, WebM, AVI, MOV, MKV e mais. Todo o processamento acontece localmente no seu navegador sem limites de tamanho de arquivo e com privacidade completa.",
+                "howto.title": "Como Usar o Conversor de Vídeo",
+                "howto.step1.title": "Carregue Seu Vídeo",
+                "howto.step1.description": "Arraste e solte ou clique para carregar seu arquivo de vídeo. A ferramenta suporta formatos MP4, MOV, AVI, MKV, WebM, FLV e WMV sem limites de tamanho de arquivo.",
+                "howto.step2.title": "Escolha o Formato de Saída e Configurações",
+                "howto.step2.description": "Selecione seu formato de saída desejado e personalize configurações como resolução, qualidade, taxa de quadros e mais. Visualize seu vídeo original à esquerda.",
+                "howto.step3.title": "Converter e Visualizar",
+                "howto.step3.description": "Clique em \"Converter Vídeo\" para iniciar o processamento. Observe a barra de progresso e visualize o vídeo convertido à direita quando terminar.",
+                "howto.step4.title": "Baixar Resultado",
+                "howto.step4.description": "Baixe seu vídeo convertido com um clique. Todo o processamento acontece localmente no seu navegador - seus arquivos nunca saem do seu dispositivo.",
+                "tool.title": "Conversor de Vídeo",
+                "tool.upload.text": "Arraste e solte seu arquivo de vídeo aqui ou clique para procurar",
+                "tool.upload.button": "Escolher Arquivo de Vídeo",
+                "tool.supported": "Formatos suportados: MP4, MOV, AVI, MKV, WebM, FLV, WMV",
+                "tool.loading": "Processando Vídeo...",
+                "tool.preview.original": "Vídeo Original",
+                "tool.preview.converted": "Vídeo Convertido",
+                "tool.options.title": "Opções de Conversão",
+                "tool.options.format": "Formato de Saída:",
+                "tool.options.quality": "Qualidade do Vídeo:",
+                "tool.options.resolution": "Resolução:",
+                "tool.options.framerate": "Taxa de Quadros:",
+                "tool.options.audio": "Codec de Áudio:",
+                "tool.options.video": "Codec de Vídeo:",
+                "tool.stats.size": "Tamanho do Arquivo",
+                "tool.stats.duration": "Duração",
+                "tool.stats.resolution": "Resolução",
+                "tool.stats.time": "Tempo de Conversão",
+                "tool.convert": "Converter Vídeo",
+                "tool.download": "Baixar Vídeo",
+                "tool.clear": "Limpar Tudo",
+                "footer.follow": "SIGA-NOS",
+                "footer.categories": "Categorias Populares",
+                "footer.categories.pdf": "Ferramentas PDF",
+                "footer.categories.image": "Ferramentas de Imagem",
+                "footer.categories.text": "Ferramentas de Texto",
+                "footer.categories.av": "Ferramentas de Áudio/Vídeo",
+                "footer.categories.web": "Ferramentas WebDesenvolvedor",
+                "footer.categories.calc": "Ferramentas de Calculadora",
+                "footer.categories.util": "Ferramentas de Utilidade",
+                "footer.categories.color": "Ferramentas de Cor",
+                "footer.quicklinks": "Links Rápidos",
+                "footer.links.tools": "Todas as Ferramentas",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Contato",
+                "footer.links.privacy": "Política de Privacidade",
+                "footer.links.disclaimer": "Aviso Legal",
+                "footer.links.terms": "Termos de Serviço",
+                "footer.copyright": "© 2025 LollyPoPDF. Todos os direitos reservados."
+            },
+            ja: {
+                "nav.home": "ホーム",
+                "nav.about": "私たちについて",
+                "nav.tools": "ツール",
+                "nav.contact": "お問い合わせ",
+                "hero.title": "ビデオコンバーターツール",
+                "hero.description": "MP4、WebM、AVI、MOV、MKVなどの人気フォーマット間でビデオを変換します。すべての処理はブラウザ内でローカルに行われ、ファイルサイズ制限がなく、完全なプライバシーが保たれます。",
+                "howto.title": "ビデオコンバーターの使い方",
+                "howto.step1.title": "ビデオをアップロード",
+                "howto.step1.description": "ビデオファイルをドラッグ＆ドロップするか、クリックしてアップロードします。このツールはMP4、MOV、AVI、MKV、WebM、FLV、WMV形式をサポートし、ファイルサイズ制限はありません。",
+                "howto.step2.title": "出力形式と設定を選択",
+                "howto.step2.description": "希望の出力形式を選択し、解像度、品質、フレームレートなどの設定をカスタマイズします。左側で元のビデオをプレビューできます。",
+                "howto.step3.title": "変換とプレビュー",
+                "howto.step3.description": "「ビデオ変換」をクリックして処理を開始します。進行状況バーを確認し、完了したら右側で変換されたビデオをプレビューします。",
+                "howto.step4.title": "結果をダウンロード",
+                "howto.step4.description": "ワンクリックで変換されたビデオをダウンロードします。すべての処理はブラウザ内でローカルに行われます - ファイルがデバイスから離れることはありません。",
+                "tool.title": "ビデオコンバーター",
+                "tool.upload.text": "ビデオファイルをここにドラッグ＆ドロップするか、クリックして参照",
+                "tool.upload.button": "ビデオファイルを選択",
+                "tool.supported": "サポート形式: MP4, MOV, AVI, MKV, WebM, FLV, WMV",
+                "tool.loading": "ビデオ処理中...",
+                "tool.preview.original": "元のビデオ",
+                "tool.preview.converted": "変換されたビデオ",
+                "tool.options.title": "変換オプション",
+                "tool.options.format": "出力形式:",
+                "tool.options.quality": "ビデオ品質:",
+                "tool.options.resolution": "解像度:",
+                "tool.options.framerate": "フレームレート:",
+                "tool.options.audio": "オーディオコーデック:",
+                "tool.options.video": "ビデオコーデック:",
+                "tool.stats.size": "ファイルサイズ",
+                "tool.stats.duration": "期間",
+                "tool.stats.resolution": "解像度",
+                "tool.stats.time": "変換時間",
+                "tool.convert": "ビデオ変換",
+                "tool.download": "ビデオダウンロード",
+                "tool.clear": "すべてクリア",
+                "footer.follow": "フォローする",
+                "footer.categories": "人気カテゴリ",
+                "footer.categories.pdf": "PDFツール",
+                "footer.categories.image": "画像ツール",
+                "footer.categories.text": "テキストツール",
+                "footer.categories.av": "オーディオ/ビデオツール",
+                "footer.categories.web": "Web開発者ツール",
+                "footer.categories.calc": "計算機ツール",
+                "footer.categories.util": "ユーティリティツール",
+                "footer.categories.color": "カラーツール",
+                "footer.quicklinks": "クイックリンク",
+                "footer.links.tools": "すべてのツール",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "お問い合わせ",
+                "footer.links.privacy": "プライバシーポリシー",
+                "footer.links.disclaimer": "免責事項",
+                "footer.links.terms": "利用規約",
+                "footer.copyright": "© 2025 LollyPoPDF. 全著作権所有。"
+            },
+            ru: {
+                "nav.home": "Главная",
+                "nav.about": "О нас",
+                "nav.tools": "Инструменты",
+                "nav.contact": "Контакты",
+                "hero.title": "Инструмент для конвертации видео",
+                "hero.description": "Конвертируйте видео между всеми популярными форматами - MP4, WebM, AVI, MOV, MKV и другими. Вся обработка происходит локально в вашем браузере без ограничений размера файла и с полной конфиденциальностью.",
+                "howto.title": "Как использовать конвертер видео",
+                "howto.step1.title": "Загрузите ваше видео",
+                "howto.step1.description": "Перетащите или нажмите, чтобы загрузить ваш видеофайл. Инструмент поддерживает форматы MP4, MOV, AVI, MKV, WebM, FLV и WMV без ограничений размера файла.",
+                "howto.step2.title": "Выберите выходной формат и настройки",
+                "howto.step2.description": "Выберите желаемый выходной формат и настройте параметры, такие как разрешение, качество, частота кадров и другие. Просмотрите исходное видео слева.",
+                "howto.step3.title": "Конвертировать и просмотреть",
+                "howto.step3.description": "Нажмите \"Конвертировать видео\", чтобы начать обработку. Следите за индикатором выполнения и просмотрите преобразованное видео справа, когда оно будет готово.",
+                "howto.step4.title": "Скачать результат",
+                "howto.step4.description": "Скачайте преобразованное видео одним щелчком. Вся обработка происходит локально в вашем браузере - ваши файлы никогда не покидают ваше устройство.",
+                "tool.title": "Конвертер видео",
+                "tool.upload.text": "Перетащите ваш видеофайл сюда или нажмите для просмотра",
+                "tool.upload.button": "Выбрать видеофайл",
+                "tool.supported": "Поддерживаемые форматы: MP4, MOV, AVI, MKV, WebM, FLV, WMV",
+                "tool.loading": "Обработка видео...",
+                "tool.preview.original": "Исходное видео",
+                "tool.preview.converted": "Преобразованное видео",
+                "tool.options.title": "Параметры конвертации",
+                "tool.options.format": "Выходной формат:",
+                "tool.options.quality": "Качество видео:",
+                "tool.options.resolution": "Разрешение:",
+                "tool.options.framerate": "Частота кадров:",
+                "tool.options.audio": "Аудиокодек:",
+                "tool.options.video": "Видеокодек:",
+                "tool.stats.size": "Размер файла",
+                "tool.stats.duration": "Продолжительность",
+                "tool.stats.resolution": "Разрешение",
+                "tool.stats.time": "Время конвертации",
+                "tool.convert": "Конвертировать видео",
+                "tool.download": "Скачать видео",
+                "tool.clear": "Очистить все",
+                "footer.follow": "СЛЕДУЙТЕ ЗА НАМИ",
+                "footer.categories": "Популярные категории",
+                "footer.categories.pdf": "PDF инструменты",
+                "footer.categories.image": "Инструменты для изображений",
+                "footer.categories.text": "Текстовые инструменты",
+                "footer.categories.av": "Аудио/Видео инструменты",
+                "footer.categories.web": "Инструменты веб-разработчика",
+                "footer.categories.calc": "Инструменты калькулятора",
+                "footer.categories.util": "Утилиты",
+                "footer.categories.color": "Инструменты цвета",
+                "footer.quicklinks": "Быстрые ссылки",
+                "footer.links.tools": "Все инструменты",
+                "footer.links.faq": "Часто задаваемые вопросы",
+                "footer.links.contact": "Контакты",
+                "footer.links.privacy": "Политика конфиденциальности",
+                "footer.links.disclaimer": "Отказ от ответственности",
+                "footer.links.terms": "Условия использования",
+                "footer.copyright": "© 2025 LollyPoPDF. Все права защищены."
+            },
+            ko: {
+                "nav.home": "홈",
+                "nav.about": "회사 소개",
+                "nav.tools": "도구",
+                "nav.contact": "연락처",
+                "hero.title": "비디오 변환 도구",
+                "hero.description": "모든 인기 형식 간에 비디오를 변환하세요 - MP4, WebM, AVI, MOV, MKV 등. 모든 처리는 브라우저에서 로컬로 이루어지며 파일 크기 제한 없이 완전한 개인 정보 보호를 제공합니다.",
+                "howto.title": "비디오 변환기 사용 방법",
+                "howto.step1.title": "비디오 업로드",
+                "howto.step1.description": "비디오 파일을 드래그 앤 드롭하거나 클릭하여 업로드하세요. 이 도구는 MP4, MOV, AVI, MKV, WebM, FLV 및 WMV 형식을 지원하며 파일 크기 제한이 없습니다.",
+                "howto.step2.title": "출력 형식 및 설정 선택",
+                "howto.step2.description": "원하는 출력 형식을 선택하고 해상도, 품질, 프레임 속도 등의 설정을 사용자 정의하세요. 왼쪽에서 원본 비디오를 미리 볼 수 있습니다.",
+                "howto.step3.title": "변환 및 미리보기",
+                "howto.step3.description": "비디오 변환을 클릭하여 처리를 시작하세요. 진행률 표시줄을 확인하고 완료되면 오른쪽에서 변환된 비디오를 미리 보세요.",
+                "howto.step4.title": "결과 다운로드",
+                "howto.step4.description": "한 번의 클릭으로 변환된 비디오를 다운로드하세요. 모든 처리는 브라우저에서 로컬로 이루어집니다 - 파일이 장치를 떠나지 않습니다.",
+                "tool.title": "비디오 변환기",
+                "tool.upload.text": "비디오 파일을 여기에 드래그 앤 드롭하거나 클릭하여 찾아보기",
+                "tool.upload.button": "비디오 파일 선택",
+                "tool.supported": "지원 형식: MP4, MOV, AVI, MKV, WebM, FLV, WMV",
+                "tool.loading": "비디오 처리 중...",
+                "tool.preview.original": "원본 비디오",
+                "tool.preview.converted": "변환된 비디오",
+                "tool.options.title": "변환 옵션",
+                "tool.options.format": "출력 형식:",
+                "tool.options.quality": "비디오 품질:",
+                "tool.options.resolution": "해상도:",
+                "tool.options.framerate": "프레임 속도:",
+                "tool.options.audio": "오디오 코덱:",
+                "tool.options.video": "비디오 코덱:",
+                "tool.stats.size": "파일 크기",
+                "tool.stats.duration": "지속 시간",
+                "tool.stats.resolution": "해상도",
+                "tool.stats.time": "변환 시간",
+                "tool.convert": "비디오 변환",
+                "tool.download": "비디오 다운로드",
+                "tool.clear": "모두 지우기",
+                "footer.follow": "팔로우하기",
+                "footer.categories": "인기 카테고리",
+                "footer.categories.pdf": "PDF 도구",
+                "footer.categories.image": "이미지 도구",
+                "footer.categories.text": "텍스트 도구",
+                "footer.categories.av": "오디오/비디오 도구",
+                "footer.categories.web": "웹 개발자 도구",
+                "footer.categories.calc": "계산기 도구",
+                "footer.categories.util": "유틸리티 도구",
+                "footer.categories.color": "색상 도구",
+                "footer.quicklinks": "빠른 링크",
+                "footer.links.tools": "모든 도구",
+                "footer.links.faq": "자주 묻는 질문",
+                "footer.links.contact": "연락처",
+                "footer.links.privacy": "개인정보 보호정책",
+                "footer.links.disclaimer": "면책 조항",
+                "footer.links.terms": "이용 약관",
+                "footer.copyright": "© 2025 LollyPoPDF. 모든 권리 보유."
+            },
+            "zh-CN": {
+                "nav.home": "首页",
+                "nav.about": "关于我们",
+                "nav.tools": "工具",
+                "nav.contact": "联系我们",
+                "hero.title": "视频转换工具",
+                "hero.description": "在所有流行格式之间转换视频 - MP4、WebM、AVI、MOV、MKV 等。所有处理都在您的浏览器本地进行，没有文件大小限制，完全保护隐私。",
+                "howto.title": "如何使用视频转换器",
+                "howto.step1.title": "上传您的视频",
+                "howto.step1.description": "拖放或点击上传您的视频文件。该工具支持 MP4、MOV、AVI、MKV、WebM、FLV 和 WMV 格式，没有文件大小限制。",
+                "howto.step2.title": "选择输出格式和设置",
+                "howto.step2.description": "选择您想要的输出格式并自定义分辨率、质量、帧速率等设置。在左侧预览原始视频。",
+                "howto.step3.title": "转换和预览",
+                "howto.step3.description": "点击\"转换视频\"开始处理。观看进度条，完成后在右侧预览转换后的视频。",
+                "howto.step4.title": "下载结果",
+                "howto.step4.description": "一键下载转换后的视频。所有处理都在您的浏览器本地进行 - 您的文件永远不会离开您的设备。",
+                "tool.title": "视频转换器",
+                "tool.upload.text": "将您的视频文件拖放到此处或点击浏览",
+                "tool.upload.button": "选择视频文件",
+                "tool.supported": "支持的格式：MP4、MOV、AVI、MKV、WebM、FLV、WMV",
+                "tool.loading": "正在处理视频...",
+                "tool.preview.original": "原始视频",
+                "tool.preview.converted": "转换后的视频",
+                "tool.options.title": "转换选项",
+                "tool.options.format": "输出格式：",
+                "tool.options.quality": "视频质量：",
+                "tool.options.resolution": "分辨率：",
+                "tool.options.framerate": "帧速率：",
+                "tool.options.audio": "音频编解码器：",
+                "tool.options.video": "视频编解码器：",
+                "tool.stats.size": "文件大小",
+                "tool.stats.duration": "持续时间",
+                "tool.stats.resolution": "分辨率",
+                "tool.stats.time": "转换时间",
+                "tool.convert": "转换视频",
+                "tool.download": "下载视频",
+                "tool.clear": "全部清除",
+                "footer.follow": "关注我们",
+                "footer.categories": "热门类别",
+                "footer.categories.pdf": "PDF 工具",
+                "footer.categories.image": "图像工具",
+                "footer.categories.text": "文本工具",
+                "footer.categories.av": "音频/视频工具",
+                "footer.categories.web": "Web 开发工具",
+                "footer.categories.calc": "计算器工具",
+                "footer.categories.util": "实用工具",
+                "footer.categories.color": "颜色工具",
+                "footer.quicklinks": "快速链接",
+                "footer.links.tools": "所有工具",
+                "footer.links.faq": "常见问题",
+                "footer.links.contact": "联系我们",
+                "footer.links.privacy": "隐私政策",
+                "footer.links.disclaimer": "免责声明",
+                "footer.links.terms": "服务条款",
+                "footer.copyright": "© 2025 LollyPoPDF。保留所有权利。"
+            },
+            "zh-TW": {
+                "nav.home": "首頁",
+                "nav.about": "關於我們",
+                "nav.tools": "工具",
+                "nav.contact": "聯絡我們",
+                "hero.title": "影片轉換工具",
+                "hero.description": "在所有流行格式之間轉換影片 - MP4、WebM、AVI、MOV、MKV 等。所有處理都在您的瀏覽器本地進行，沒有檔案大小限制，完全保護隱私。",
+                "howto.title": "如何使用影片轉換器",
+                "howto.step1.title": "上傳您的影片",
+                "howto.step1.description": "拖放或點擊上傳您的影片檔案。該工具支援 MP4、MOV、AVI、MKV、WebM、FLV 和 WMV 格式，沒有檔案大小限制。",
+                "howto.step2.title": "選擇輸出格式和設定",
+                "howto.step2.description": "選擇您想要的輸出格式並自訂解析度、品質、影格速率等設定。在左側預覽原始影片。",
+                "howto.step3.title": "轉換和預覽",
+                "howto.step3.description": "點擊\"轉換影片\"開始處理。觀看進度條，完成後在右側預覽轉換後的影片。",
+                "howto.step4.title": "下載結果",
+                "howto.step4.description": "一鍵下載轉換後的影片。所有處理都在您的瀏覽器本地進行 - 您的檔案永遠不會離開您的裝置。",
+                "tool.title": "影片轉換器",
+                "tool.upload.text": "將您的影片檔案拖放到此處或點擊瀏覽",
+                "tool.upload.button": "選擇影片檔案",
+                "tool.supported": "支援的格式：MP4、MOV、AVI、MKV、WebM、FLV、WMV",
+                "tool.loading": "正在處理影片...",
+                "tool.preview.original": "原始影片",
+                "tool.preview.converted": "轉換後的影片",
+                "tool.options.title": "轉換選項",
+                "tool.options.format": "輸出格式：",
+                "tool.options.quality": "影片品質：",
+                "tool.options.resolution": "解析度：",
+                "tool.options.framerate": "影格速率：",
+                "tool.options.audio": "音訊編解碼器：",
+                "tool.options.video": "影片編解碼器：",
+                "tool.stats.size": "檔案大小",
+                "tool.stats.duration": "持續時間",
+                "tool.stats.resolution": "解析度",
+                "tool.stats.time": "轉換時間",
+                "tool.convert": "轉換影片",
+                "tool.download": "下載影片",
+                "tool.clear": "全部清除",
+                "footer.follow": "關注我們",
+                "footer.categories": "熱門類別",
+                "footer.categories.pdf": "PDF 工具",
+                "footer.categories.image": "影像工具",
+                "footer.categories.text": "文字工具",
+                "footer.categories.av": "音訊/影片工具",
+                "footer.categories.web": "Web 開發工具",
+                "footer.categories.calc": "計算機工具",
+                "footer.categories.util": "實用工具",
+                "footer.categories.color": "顏色工具",
+                "footer.quicklinks": "快速連結",
+                "footer.links.tools": "所有工具",
+                "footer.links.faq": "常見問題",
+                "footer.links.contact": "聯絡我們",
+                "footer.links.privacy": "隱私政策",
+                "footer.links.disclaimer": "免責聲明",
+                "footer.links.terms": "服務條款",
+                "footer.copyright": "© 2025 LollyPoPDF。保留所有權利。"
+            },
+            ar: {
+                "nav.home": "الصفحة الرئيسية",
+                "nav.about": "من نحن",
+                "nav.tools": "الأدوات",
+                "nav.contact": "اتصل بنا",
+                "hero.title": "أداة تحويل الفيديو",
+                "hero.description": "قم بتحويل الفيديوهات بين جميع التنسيقات الشائعة - MP4 وWebM وAVI وMOV وMKV والمزيد. تتم جميع المعالجة محليًا في متصفحك دون حدود لحجم الملف وبخصوصية كاملة.",
+                "howto.title": "كيفية استخدام محول الفيديو",
+                "howto.step1.title": "قم بتحميل الفيديو الخاص بك",
+                "howto.step1.description": "اسحب وأفلت أو انقر لتحميل ملف الفيديو الخاص بك. تدعم الأداة تنسيقات MP4 وMOV وAVI وMKV وWebM وFLV وWMV دون حدود لحجم الملف.",
+                "howto.step2.title": "اختر تنسيق الإخراج والإعدادات",
+                "howto.step2.description": "حدد تنسيق الإخراج المطلوب وخصص الإعدادات مثل الدقة والجودة ومعدل الإطارات والمزيد. معاينة الفيديو الأصلي على اليسار.",
+                "howto.step3.title": "تحويل ومعاينة",
+                "howto.step3.description": "انقر على \"تحويل الفيديو\" لبدء المعالجة. شاهد شريط التقدم وقم بمعاينة الفيديو المحول على اليمين عند الانتهاء.",
+                "howto.step4.title": "تنزيل النتيجة",
+                "howto.step4.description": "قم بتنزيل الفيديو المحول بنقرة واحدة. تتم جميع المعالجة محليًا في متصفحك - ملفاتك لا تغادر جهازك أبدًا.",
+                "tool.title": "محول الفيديو",
+                "tool.upload.text": "اسحب وأفلت ملف الفيديو الخاص بك هنا أو انقر للتصفح",
+                "tool.upload.button": "اختر ملف فيديو",
+                "tool.supported": "التنسيقات المدعومة: MP4, MOV, AVI, MKV, WebM, FLV, WMV",
+                "tool.loading": "جاري معالجة الفيديو...",
+                "tool.preview.original": "الفيديو الأصلي",
+                "tool.preview.converted": "الفيديو المحول",
+                "tool.options.title": "خيارات التحويل",
+                "tool.options.format": "تنسيق الإخراج:",
+                "tool.options.quality": "جودة الفيديو:",
+                "tool.options.resolution": "الدقة:",
+                "tool.options.framerate": "معدل الإطارات:",
+                "tool.options.audio": "ترميز الصوت:",
+                "tool.options.video": "ترميز الفيديو:",
+                "tool.stats.size": "حجم الملف",
+                "tool.stats.duration": "المدة",
+                "tool.stats.resolution": "الدقة",
+                "tool.stats.time": "وقت التحويل",
+                "tool.convert": "تحويل الفيديو",
+                "tool.download": "تنزيل الفيديو",
+                "tool.clear": "مسح الكل",
+                "footer.follow": "تابعنا",
+                "footer.categories": "الفئات الشائعة",
+                "footer.categories.pdf": "أدوات PDF",
+                "footer.categories.image": "أدوات الصور",
+                "footer.categories.text": "أدوات النص",
+                "footer.categories.av": "أدوات الصوت/الفيديو",
+                "footer.categories.web": "أدوات مطور الويب",
+                "footer.categories.calc": "أدوات الآلة الحاسبة",
+                "footer.categories.util": "أدوات المساعدة",
+                "footer.categories.color": "أدوات الألوان",
+                "footer.quicklinks": "روابط سريعة",
+                "footer.links.tools": "جميع الأدوات",
+                "footer.links.faq": "الأسئلة الشائعة",
+                "footer.links.contact": "اتصل بنا",
+                "footer.links.privacy": "سياسة الخصوصية",
+                "footer.links.disclaimer": "إخلاء المسؤولية",
+                "footer.links.terms": "شروط الخدمة",
+                "footer.copyright": "© 2025 LollyPoPDF. جميع الحقوق محفوظة."
+            },
+            fa: {
+                "nav.home": "خانه",
+                "nav.about": "درباره ما",
+                "nav.tools": "ابزارها",
+                "nav.contact": "تماس با ما",
+                "hero.title": "ابزار تبدیل ویدیو",
+                "hero.description": "ویدیوها را بین تمام فرمت‌های محبوب تبدیل کنید - MP4, WebM, AVI, MOV, MKV و بیشتر. تمام پردازش به صورت محلی در مرورگر شما انجام می‌شود بدون محدودیت اندازه فایل و با حریم خصوصی کامل.",
+                "howto.title": "نحوه استفاده از مبدل ویدیو",
+                "howto.step1.title": "ویدیوی خود را آپلود کنید",
+                "howto.step1.description": "فایل ویدیوی خود را بکشید و رها کنید یا کلیک کنید تا آپلود شود. این ابزار از فرمت‌های MP4, MOV, AVI, MKV, WebM, FLV و WMV پشتیبانی می‌کند بدون محدودیت اندازه فایل.",
+                "howto.step2.title": "فرمت خروجی و تنظیمات را انتخاب کنید",
+                "howto.step2.description": "فرمت خروجی مورد نظر خود را انتخاب کنید و تنظیماتی مانند رزولوشن، کیفیت، نرخ فریم و بیشتر را سفارشی کنید. ویدیوی اصلی خود را در سمت چپ پیش‌نمایش کنید.",
+                "howto.step3.title": "تبدیل و پیش‌نمایش",
+                "howto.step3.description": "روی \"تبدیل ویدیو\" کلیک کنید تا پردازش شروع شود. نوار پیشرفت را تماشا کنید و ویدیوی تبدیل شده را در سمت راست پس از اتمام پیش‌نمایش کنید.",
+                "howto.step4.title": "دانلود نتیجه",
+                "howto.step4.description": "ویدیوی تبدیل شده خود را با یک کلیک دانلود کنید. تمام پردازش به صورت محلی در مرورگر شما انجام می‌شود - فایل‌های شما هرگز دستگاه شما را ترک نمی‌کنند.",
+                "tool.title": "مبدل ویدیو",
+                "tool.upload.text": "فایل ویدیوی خود را اینجا بکشید و رها کنید یا کلیک کنید تا مرور کنید",
+                "tool.upload.button": "انتخاب فایل ویدیو",
+                "tool.supported": "فرمت‌های پشتیبانی شده: MP4, MOV, AVI, MKV, WebM, FLV, WMV",
+                "tool.loading": "در حال پردازش ویدیو...",
+                "tool.preview.original": "ویدیوی اصلی",
+                "tool.preview.converted": "ویدیوی تبدیل شده",
+                "tool.options.title": "گزینه‌های تبدیل",
+                "tool.options.format": "فرمت خروجی:",
+                "tool.options.quality": "کیفیت ویدیو:",
+                "tool.options.resolution": "رزولوشن:",
+                "tool.options.framerate": "نرخ فریم:",
+                "tool.options.audio": "کدک صوتی:",
+                "tool.options.video": "کدک ویدیویی:",
+                "tool.stats.size": "اندازه فایل",
+                "tool.stats.duration": "مدت زمان",
+                "tool.stats.resolution": "رزولوشن",
+                "tool.stats.time": "زمان تبدیل",
+                "tool.convert": "تبدیل ویدیو",
+                "tool.download": "دانلود ویدیو",
+                "tool.clear": "پاک کردن همه",
+                "footer.follow": "ما را دنبال کنید",
+                "footer.categories": "دسته‌بندی‌های محبوب",
+                "footer.categories.pdf": "ابزارهای PDF",
+                "footer.categories.image": "ابزارهای تصویر",
+                "footer.categories.text": "ابزارهای متن",
+                "footer.categories.av": "ابزارهای صوتی/تصویری",
+                "footer.categories.web": "ابزارهای توسعه دهنده وب",
+                "footer.categories.calc": "ابزارهای ماشین حساب",
+                "footer.categories.util": "ابزارهای کاربردی",
+                "footer.categories.color": "ابزارهای رنگ",
+                "footer.quicklinks": "لینک‌های سریع",
+                "footer.links.tools": "همه ابزارها",
+                "footer.links.faq": "سوالات متداول",
+                "footer.links.contact": "تماس با ما",
+                "footer.links.privacy": "سیاست حفظ حریم خصوصی",
+                "footer.links.disclaimer": "سلب مسئولیت",
+                "footer.links.terms": "شرایط استفاده",
+                "footer.copyright": "© 2025 LollyPoPDF. تمامی حقوق محفوظ است."
+            },
+            bg: {
+                "nav.home": "Начало",
+                "nav.about": "За нас",
+                "nav.tools": "Инструменти",
+                "nav.contact": "Контакт",
+                "hero.title": "Инструмент за конвертиране на видео",
+                "hero.description": "Конвертирайте видеоклипове между всички популярни формати - MP4, WebM, AVI, MOV, MKV и други. Цялата обработка се извършва локално във вашия браузър без ограничения на размера на файла и с пълна поверителност.",
+                "howto.title": "Как да използвате видео конвертора",
+                "howto.step1.title": "Качете вашия видеоклип",
+                "howto.step1.description": "Плъзнете и пуснете или щракнете, за да качите вашия видео файл. Инструментът поддържа формати MP4, MOV, AVI, MKV, WebM, FLV и WMV без ограничения на размера на файла.",
+                "howto.step2.title": "Изберете изходен формат и настройки",
+                "howto.step2.description": "Изберете желания изходен формат и персонализирайте настройки като разделителна способност, качество, честота на кадрите и други. Прегледайте оригиналния видеоклип отляво.",
+                "howto.step3.title": "Конвертирайте и прегледайте",
+                "howto.step3.description": "Щракнете върху \"Конвертиране на видео\", за да започнете обработката. Наблюдавайте лентата за напредък и прегледайте конвертирания видеоклип отдясно, когато приключи.",
+                "howto.step4.title": "Изтеглете резултата",
+                "howto.step4.description": "Изтеглете конвертирания видеоклип с едно щракване. Цялата обработка се извършва локално във вашия браузър - вашите файлове никога не напускат вашето устройство.",
+                "tool.title": "Видео конвертор",
+                "tool.upload.text": "Плъзнете и пуснете вашия видео файл тук или щракнете, за да прегледате",
+                "tool.upload.button": "Изберете видео файл",
+                "tool.supported": "Поддържани формати: MP4, MOV, AVI, MKV, WebM, FLV, WMV",
+                "tool.loading": "Обработка на видео...",
+                "tool.preview.original": "Оригинален видеоклип",
+                "tool.preview.converted": "Конвертиран видеоклип",
+                "tool.options.title": "Опции за конвертиране",
+                "tool.options.format": "Изходен формат:",
+                "tool.options.quality": "Качество на видео:",
+                "tool.options.resolution": "Резолюция:",
+                "tool.options.framerate": "Честота на кадрите:",
+                "tool.options.audio": "Аудио кодек:",
+                "tool.options.video": "Видео кодек:",
+                "tool.stats.size": "Размер на файла",
+                "tool.stats.duration": "Продължителност",
+                "tool.stats.resolution": "Резолюция",
+                "tool.stats.time": "Време за конвертиране",
+                "tool.convert": "Конвертиране на видео",
+                "tool.download": "Изтегляне на видео",
+                "tool.clear": "Изчисти всичко",
+                "footer.follow": "СЛЕДВАЙТЕ НИ",
+                "footer.categories": "Популярни категории",
+                "footer.categories.pdf": "PDF инструменти",
+                "footer.categories.image": "Инструменти за изображения",
+                "footer.categories.text": "Текстови инструменти",
+                "footer.categories.av": "Аудио/Видео инструменти",
+                "footer.categories.web": "Инструменти за уеб разработчици",
+                "footer.categories.calc": "Инструменти за калкулатор",
+                "footer.categories.util": "Полезни инструменти",
+                "footer.categories.color": "Инструменти за цветове",
+                "footer.quicklinks": "Бързи връзки",
+                "footer.links.tools": "Всички инструменти",
+                "footer.links.faq": "ЧЗВ",
+                "footer.links.contact": "Контакт",
+                "footer.links.privacy": "Политика за поверителност",
+                "footer.links.disclaimer": "Отказ от отговорност",
+                "footer.links.terms": "Условия за ползване",
+                "footer.copyright": "© 2025 LollyPoPDF. Всички права запазени."
+            },
+            ca: {
+                "nav.home": "Inici",
+                "nav.about": "Sobre nosaltres",
+                "nav.tools": "Eines",
+                "nav.contact": "Contacte",
+                "hero.title": "Eina de conversió de vídeo",
+                "hero.description": "Converteix vídeos entre tots els formats populars - MP4, WebM, AVI, MOV, MKV i més. Tot el processament es realitza localment al teu navegador sense límits de mida de fitxer i amb privacitat completa.",
+                "howto.title": "Com utilitzar el convertidor de vídeo",
+                "howto.step1.title": "Puja el teu vídeo",
+                "howto.step1.description": "Arrossega i deixa anar o fes clic per pujar el teu fitxer de vídeo. L'eina admet formats MP4, MOV, AVI, MKV, WebM, FLV i WMV sense límits de mida de fitxer.",
+                "howto.step2.title": "Tria el format de sortida i la configuració",
+                "howto.step2.description": "Selecciona el format de sortida desitjat i personalitza la configuració com la resolució, la qualitat, la velocitat de fotogrames i més. Previsualitza el teu vídeo original a l'esquerra.",
+                "howto.step3.title": "Converteix i previsualitza",
+                "howto.step3.description": "Fes clic a \"Converteix vídeo\" per iniciar el processament. Mira la barra de progrés i previsualitza el vídeo convertit a la dreta quan acabi.",
+                "howto.step4.title": "Descarrega el resultat",
+                "howto.step4.description": "Descarrega el teu vídeo convertit amb un sol clic. Tot el processament es realitza localment al teu navegador - els teus fitxers mai surten del teu dispositiu.",
+                "tool.title": "Convertidor de vídeo",
+                "tool.upload.text": "Arrossega i deixa anar el teu fitxer de vídeo aquí o fes clic per navegar",
+                "tool.upload.button": "Tria fitxer de vídeo",
+                "tool.supported": "Formats admesos: MP4, MOV, AVI, MKV, WebM, FLV, WMV",
+                "tool.loading": "Processant vídeo...",
+                "tool.preview.original": "Vídeo original",
+                "tool.preview.converted": "Vídeo convertit",
+                "tool.options.title": "Opcions de conversió",
+                "tool.options.format": "Format de sortida:",
+                "tool.options.quality": "Qualitat de vídeo:",
+                "tool.options.resolution": "Resolució:",
+                "tool.options.framerate": "Velocitat de fotogrames:",
+                "tool.options.audio": "Codec d'àudio:",
+                "tool.options.video": "Codec de vídeo:",
+                "tool.stats.size": "Mida del fitxer",
+                "tool.stats.duration": "Durada",
+                "tool.stats.resolution": "Resolució",
+                "tool.stats.time": "Temps de conversió",
+                "tool.convert": "Converteix vídeo",
+                "tool.download": "Descarrega vídeo",
+                "tool.clear": "Neteja-ho tot",
+                "footer.follow": "SEGUEIX-NOS",
+                "footer.categories": "Categories populars",
+                "footer.categories.pdf": "Eines PDF",
+                "footer.categories.image": "Eines d'imatge",
+                "footer.categories.text": "Eines de text",
+                "footer.categories.av": "Eines d'àudio/vídeo",
+                "footer.categories.web": "Eines de desenvolupador web",
+                "footer.categories.calc": "Eines de calculadora",
+                "footer.categories.util": "Eines d'utilitat",
+                "footer.categories.color": "Eines de color",
+                "footer.quicklinks": "Enllaços ràpids",
+                "footer.links.tools": "Totes les eines",
+                "footer.links.faq": "PMF",
+                "footer.links.contact": "Contacte",
+                "footer.links.privacy": "Política de privadesa",
+                "footer.links.disclaimer": "Descàrrec de responsabilitat",
+                "footer.links.terms": "Termes del servei",
+                "footer.copyright": "© 2025 LollyPoPDF. Tots els drets reservats."
+            },
+            nl: {
+                "nav.home": "Startpagina",
+                "nav.about": "Over Ons",
+                "nav.tools": "Tools",
+                "nav.contact": "Contact",
+                "hero.title": "Video Converter Tool",
+                "hero.description": "Converteer video's tussen alle populaire formaten - MP4, WebM, AVI, MOV, MKV en meer. Alle verwerking gebeurt lokaal in uw browser zonder bestandsgrootte limieten en volledige privacy.",
+                "howto.title": "Hoe de Video Converter te Gebruiken",
+                "howto.step1.title": "Upload Uw Video",
+                "howto.step1.description": "Sleep en zet neer of klik om uw videobestand te uploaden. De tool ondersteunt MP4, MOV, AVI, MKV, WebM, FLV en WMV formaten zonder bestandsgrootte limieten.",
+                "howto.step2.title": "Kies Uitvoerformaat & Instellingen",
+                "howto.step2.description": "Selecteer uw gewenste uitvoerformaat en pas instellingen aan zoals resolutie, kwaliteit, framerate en meer. Bekijk een voorbeeld van uw originele video aan de linkerkant.",
+                "howto.step3.title": "Converteer & Bekijk Voorbeeld",
+                "howto.step3.description": "Klik op \"Video Converteren\" om te beginnen met verwerken. Volg de voortgangsbalk en bekijk de geconverteerde video aan de rechterkant wanneer deze klaar is.",
+                "howto.step4.title": "Download Resultaat",
+                "howto.step4.description": "Download uw geconverteerde video met één klik. Alle verwerking gebeurt lokaal in uw browser - uw bestanden verlaten nooit uw apparaat.",
+                "tool.title": "Video Converter",
+                "tool.upload.text": "Sleep en zet uw videobestand hier neer of klik om te bladeren",
+                "tool.upload.button": "Kies Videobestand",
+                "tool.supported": "Ondersteunde formaten: MP4, MOV, AVI, MKV, WebM, FLV, WMV",
+                "tool.loading": "Video Verwerken...",
+                "tool.preview.original": "Originele Video",
+                "tool.preview.converted": "Geconverteerde Video",
+                "tool.options.title": "Conversie Opties",
+                "tool.options.format": "Uitvoerformaat:",
+                "tool.options.quality": "Videokwaliteit:",
+                "tool.options.resolution": "Resolutie:",
+                "tool.options.framerate": "Framerate:",
+                "tool.options.audio": "Audiocodec:",
+                "tool.options.video": "Videocodec:",
+                "tool.stats.size": "Bestandsgrootte",
+                "tool.stats.duration": "Duur",
+                "tool.stats.resolution": "Resolutie",
+                "tool.stats.time": "Conversietijd",
+                "tool.convert": "Video Converteren",
+                "tool.download": "Video Downloaden",
+                "tool.clear": "Alles Wissen",
+                "footer.follow": "VOLG ONS",
+                "footer.categories": "Populaire Categorieën",
+                "footer.categories.pdf": "PDF Tools",
+                "footer.categories.image": "Afbeeldingstools",
+                "footer.categories.text": "Teksttools",
+                "footer.categories.av": "Audio/Video Tools",
+                "footer.categories.web": "WebDeveloper Tools",
+                "footer.categories.calc": "Rekenmachinetools",
+                "footer.categories.util": "Hulpprogramma's",
+                "footer.categories.color": "Kleurentools",
+                "footer.quicklinks": "Snelle Links",
+                "footer.links.tools": "Alle Tools",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Contact",
+                "footer.links.privacy": "Privacybeleid",
+                "footer.links.disclaimer": "Disclaimer",
+                "footer.links.terms": "Servicevoorwaarden",
+                "footer.copyright": "© 2025 LollyPoPDF. Alle rechten voorbehouden."
+            },
+            el: {
+                "nav.home": "Αρχική",
+                "nav.about": "Σχετικά με εμάς",
+                "nav.tools": "Εργαλεία",
+                "nav.contact": "Επικοινωνία",
+                "hero.title": "Εργαλείο Μετατροπής Βίντεο",
+                "hero.description": "Μετατρέψτε βίντεο μεταξύ όλων των δημοφιλών μορφών - MP4, WebM, AVI, MOV, MKV και άλλα. Όλη η επεξεργασία γίνεται τοπικά στο πρόγραμμα περιήγησής σας χωρίς όρια μεγέθους αρχείου και με πλήρη ιδιωτικότητα.",
+                "howto.title": "Πώς να Χρησιμοποιήσετε τον Μετατροπέα Βίντεο",
+                "howto.step1.title": "Ανεβάστε το Βίντεό σας",
+                "howto.step1.description": "Σύρετε και αφήστε ή κάντε κλικ για να ανεβάσετε το αρχείο βίντεό σας. Το εργαλείο υποστηρίζει μορφές MP4, MOV, AVI, MKV, WebM, FLV και WMV χωρίς όρια μεγέθους αρχείου.",
+                "howto.step2.title": "Επιλέξτε Μορφή Εξόδου & Ρυθμίσεις",
+                "howto.step2.description": "Επιλέξτε την επιθυμητή μορφή εξόδου και προσαρμόστε ρυθμίσεις όπως ανάλυση, ποιότητα, ρυθμό καρέ και άλλα. Προεπισκόπηση του αρχικού σας βίντεο στα αριστερά.",
+                "howto.step3.title": "Μετατροπή & Προεπισκόπηση",
+                "howto.step3.description": "Κάντε κλικ στο \"Μετατροπή Βίντεο\" για να ξεκινήσει η επεξεργασία. Παρακολουθήστε τη γραμμή προόδου και δείτε προεπισκόπηση του μετατρεπόμενου βίντεο στα δεξιά όταν ολοκληρωθεί.",
+                "howto.step4.title": "Λήψη Αποτελέσματος",
+                "howto.step4.description": "Κατεβάστε το μετατρεπόμενο βίντεό σας με ένα κλικ. Όλη η επεξεργασία γίνεται τοπικά στο πρόγραμμα περιήγησής σας - τα αρχεία σας δεν φεύγουν ποτέ από τη συσκευή σας.",
+                "tool.title": "Μετατροπέας Βίντεο",
+                "tool.upload.text": "Σύρετε και αφήστε το αρχείο βίντεό σας εδώ ή κάντε κλικ για περιήγηση",
+                "tool.upload.button": "Επιλέξτε Αρχείο Βίντεο",
+                "tool.supported": "Υποστηριζόμενες μορφές: MP4, MOV, AVI, MKV, WebM, FLV, WMV",
+                "tool.loading": "Επεξεργασία Βίντεο...",
+                "tool.preview.original": "Αρχικό Βίντεο",
+                "tool.preview.converted": "Μετατρεπόμενο Βίντεο",
+                "tool.options.title": "Επιλογές Μετατροπής",
+                "tool.options.format": "Μορφή Εξόδου:",
+                "tool.options.quality": "Ποιότητα Βίντεο:",
+                "tool.options.resolution": "Ανάλυση:",
+                "tool.options.framerate": "Ρυθμός Καρέ:",
+                "tool.options.audio": "Κωδικοποιητής Ήχου:",
+                "tool.options.video": "Κωδικοποιητής Βίντεο:",
+                "tool.stats.size": "Μέγεθος Αρχείου",
+                "tool.stats.duration": "Διάρκεια",
+                "tool.stats.resolution": "Ανάλυση",
+                "tool.stats.time": "Χρόνος Μετατροπής",
+                "tool.convert": "Μετατροπή Βίντεο",
+                "tool.download": "Λήψη Βίντεο",
+                "tool.clear": "Καθαρισμός Όλων",
+                "footer.follow": "ΑΚΟΛΟΥΘΗΣΤΕ ΜΑΣ",
+                "footer.categories": "Δημοφιλείς Κατηγορίες",
+                "footer.categories.pdf": "Εργαλεία PDF",
+                "footer.categories.image": "Εργαλεία Εικόνας",
+                "footer.categories.text": "Εργαλεία Κειμένου",
+                "footer.categories.av": "Εργαλεία Ήχου/Βίντεο",
+                "footer.categories.web": "Εργαλεία Web Developer",
+                "footer.categories.calc": "Εργαλεία Αριθμομηχανής",
+                "footer.categories.util": "Εργαλεία Χρησιμότητας",
+                "footer.categories.color": "Εργαλεία Χρωμάτων",
+                "footer.quicklinks": "Γρήγοροι Σύνδεσμοι",
+                "footer.links.tools": "Όλα τα Εργαλεία",
+                "footer.links.faq": "Συχνές Ερωτήσεις",
+                "footer.links.contact": "Επικοινωνία",
+                "footer.links.privacy": "Πολιτική Απορρήτου",
+                "footer.links.disclaimer": "Αποποίηση Ευθυνών",
+                "footer.links.terms": "Όροι Χρήσης",
+                "footer.copyright": "© 2025 LollyPoPDF. Με επιφύλαξη παντός δικαιώματος."
+            },
+            hi: {
+                "nav.home": "होम",
+                "nav.about": "हमारे बारे में",
+                "nav.tools": "टूल्स",
+                "nav.contact": "संपर्क करें",
+                "hero.title": "वीडियो कन्वर्टर टूल",
+                "hero.description": "सभी लोकप्रिय प्रारूपों - MP4, WebM, AVI, MOV, MKV और अधिक के बीच वीडियो कन्वर्ट करें। सभी प्रोसेसिंग आपके ब्राउज़र में स्थानीय रूप से होती है बिना फ़ाइल आकार सीमा के और पूर्ण गोपनीयता के साथ।",
+                "howto.title": "वीडियो कन्वर्टर का उपयोग कैसे करें",
+                "howto.step1.title": "अपना वीडियो अपलोड करें",
+                "howto.step1.description": "अपनी वीडियो फ़ाइल अपलोड करने के लिए ड्रैग और ड्रॉप करें या क्लिक करें। यह टूल MP4, MOV, AVI, MKV, WebM, FLV और WMV प्रारूपों को बिना फ़ाइल आकार सीमा के समर्थन करता है।",
+                "howto.step2.title": "आउटपुट प्रारूप और सेटिंग्स चुनें",
+                "howto.step2.description": "अपना वांछित आउटपुट प्रारूप चुनें और रिज़ॉल्यूशन, गुणवत्ता, फ्रेम रेट और अधिक जैसी सेटिंग्स को अनुकूलित करें। बाईं ओर अपने मूल वीडियो का पूर्वावलोकन करें।",
+                "howto.step3.title": "कन्वर्ट करें और पूर्वावलोकन करें",
+                "howto.step3.description": "प्रोसेसिंग शुरू करने के लिए \"वीडियो कन्वर्ट करें\" पर क्लिक करें। प्रगति बार देखें और समाप्त होने पर दाईं ओर कनवर्ट किए गए वीडियो का पूर्वावलोकन करें।",
+                "howto.step4.title": "परिणाम डाउनलोड करें",
+                "howto.step4.description": "एक क्लिक से अपना कनवर्ट किया गया वीडियो डाउनलोड करें। सभी प्रोसेसिंग आपके ब्राउज़र में स्थानीय रूप से होती है - आपकी फ़ाइलें कभी भी आपके डिवाइस को नहीं छोड़ती हैं।",
+                "tool.title": "वीडियो कन्वर्टर",
+                "tool.upload.text": "अपनी वीडियो फ़ाइल को यहाँ ड्रैग और ड्रॉप करें या ब्राउज़ करने के लिए क्लिक करें",
+                "tool.upload.button": "वीडियो फ़ाइल चुनें",
+                "tool.supported": "समर्थित प्रारूप: MP4, MOV, AVI, MKV, WebM, FLV, WMV",
+                "tool.loading": "वीडियो प्रोसेसिंग...",
+                "tool.preview.original": "मूल वीडियो",
+                "tool.preview.converted": "कनवर्ट किया गया वीडियो",
+                "tool.options.title": "कनवर्जन विकल्प",
+                "tool.options.format": "आउटपुट प्रारूप:",
+                "tool.options.quality": "वीडियो गुणवत्ता:",
+                "tool.options.resolution": "रिज़ॉल्यूशन:",
+                "tool.options.framerate": "फ्रेम रेट:",
+                "tool.options.audio": "ऑडियो कोडेक:",
+                "tool.options.video": "वीडियो कोडेक:",
+                "tool.stats.size": "फ़ाइल आकार",
+                "tool.stats.duration": "अवधि",
+                "tool.stats.resolution": "रिज़ॉल्यूशन",
+                "tool.stats.time": "कनवर्जन समय",
+                "tool.convert": "वीडियो कन्वर्ट करें",
+                "tool.download": "वीडियो डाउनलोड करें",
+                "tool.clear": "सभी साफ करें",
+                "footer.follow": "हमें फॉलो करें",
+                "footer.categories": "लोकप्रिय श्रेणियाँ",
+                "footer.categories.pdf": "PDF टूल्स",
+                "footer.categories.image": "इमेज टूल्स",
+                "footer.categories.text": "टेक्स्ट टूल्स",
+                "footer.categories.av": "ऑडियो/वीडियो टूल्स",
+                "footer.categories.web": "वेब डेवलपर टूल्स",
+                "footer.categories.calc": "कैलकुलेटर टूल्स",
+                "footer.categories.util": "यूटिलिटी टूल्स",
+                "footer.categories.color": "रंग टूल्स",
+                "footer.quicklinks": "त्वरित लिंक",
+                "footer.links.tools": "सभी टूल्स",
+                "footer.links.faq": "सामान्य प्रश्न",
+                "footer.links.contact": "संपर्क करें",
+                "footer.links.privacy": "गोपनीयता नीति",
+                "footer.links.disclaimer": "अस्वीकरण",
+                "footer.links.terms": "सेवा की शर्तें",
+                "footer.copyright": "© 2025 LollyPoPDF. सर्वाधिकार सुरक्षित।"
+            },
+             te: {
+                "nav.home": "హోమ్",
+                "nav.about": "మా గురించి",
+                "nav.tools": "టూల్స్",
+                "nav.contact": "సంప్రదించండి",
+                "hero.title": "వీడియో కన్వర్టర్ టూల్",
+                "hero.description": "అన్ని ప్రసిద్ధ ఫార్మాట్ల మధ్య వీడియోలను మార్చండి - MP4, WebM, AVI, MOV, MKV మరియు మరిన్ని. ఫైల్ సైజు పరిమితులు లేకుండా మరియు పూర్తి గోప్యతతో అన్ని ప్రాసెసింగ్ మీ బ్రౌజర్లో స్థానికంగా జరుగుతుంది.",
+                "howto.title": "వీడియో కన్వర్టర్ ఎలా ఉపయోగించాలి",
+                "howto.step1.title": "మీ వీడియోను అప్లోడ్ చేయండి",
+                "howto.step1.description": "మీ వీడియో ఫైల్ను అప్లోడ్ చేయడానికి డ్రాగ్ మరియు డ్రాప్ చేయండి లేదా క్లిక్ చేయండి. ఈ టూల్ MP4, MOV, AVI, MKV, WebM, FLV మరియు WMV ఫార్మాట్లను ఫైల్ సైజు పరిమితులు లేకుండా మద్దతు ఇస్తుంది.",
+                "howto.step2.title": "అవుట్పుట్ ఫార్మాట్ & సెట్టింగ్లను ఎంచుకోండి",
+                "howto.step2.description": "మీ కావలసిన అవుట్పుట్ ఫార్మాట్ను ఎంచుకోండి మరియు రిజల్యూషన్, నాణ్యత, ఫ్రేమ్ రేట్ మరియు మరిన్ని వంటి సెట్టింగ్లను కస్టమైజ్ చేయండి. ఎడమవైపు మీ అసలు వీడియోను ప్రివ్యూ చేయండి.",
+                "howto.step3.title": "కన్వర్ట్ చేయండి & ప్రివ్యూ చేయండి",
+                "howto.step3.description": "ప్రాసెసింగ్ ప్రారంభించడానికి \"వీడియోను కన్వర్ట్ చేయండి\"పై క్లిక్ చేయండి. ప్రోగ్రెస్ బార్ను చూడండి మరియు పూర్తయినప్పుడు కుడివైపు కన్వర్ట్ చేయబడిన వీడియోను ప్రివ్యూ చేయండి.",
+                "howto.step4.title": "ఫలితాన్ని డౌన్లోడ్ చేయండి",
+                "howto.step4.description": "ఒక క్లిక్తో మీ కన్వర్ట్ చేయబడిన వీడియోను డౌన్లోడ్ చేయండి. అన్ని ప్రాసెసింగ్ మీ బ్రౌజర్లో స్థానికంగా జరుగుతుంది - మీ ఫైల్స్ మీ డివైస్ను ఎప్పుడూ విడిచిపెట్టవు.",
+                "tool.title": "వీడియో కన్వర్టర్",
+                "tool.upload.text": "మీ వీడియో ఫైల్ను ఇక్కడ డ్రాగ్ మరియు డ్రాప్ చేయండి లేదా బ్రౌజ్ చేయడానికి క్లిక్ చేయండి",
+                "tool.upload.button": "వీడియో ఫైల్ను ఎంచుకోండి",
+                "tool.supported": "మద్దతు ఉన్న ఫార్మాట్లు: MP4, MOV, AVI, MKV, WebM, FLV, WMV",
+                "tool.loading": "వీడియో ప్రాసెసింగ్...",
+                "tool.preview.original": "అసలు వీడియో",
+                "tool.preview.converted": "కన్వర్ట్ చేయబడిన వీడియో",
+                "tool.options.title": "కన్వర్షన్ ఎంపికలు",
+                "tool.options.format": "అవుట్పుట్ ఫార్మాట్:",
+                "tool.options.quality": "వీడియో నాణ్యత:",
+                "tool.options.resolution": "రిజల్యూషన్:",
+                "tool.options.framerate": "ఫ్రేమ్ రేట్:",
+                "tool.options.audio": "ఆడియో కోడెక్:",
+                "tool.options.video": "వీడియో కోడెక్:",
+                "tool.stats.size": "ఫైల్ సైజు",
+                "tool.stats.duration": "వ్యవధి",
+                "tool.stats.resolution": "రిజల్యూషన్",
+                "tool.stats.time": "కన్వర్షన్ సమయం",
+                "tool.convert": "వీడియోను కన్వర్ట్ చేయండి",
+                "tool.download": "వీడియోను డౌన్లోడ్ చేయండి",
+                "tool.clear": "అన్నీ క్లియర్ చేయండి",
+                "footer.follow": "మమ్మల్ని ఫాలో అవ్వండి",
+                "footer.categories": "జనాదరణ పొందిన వర్గాలు",
+                "footer.categories.pdf": "PDF టూల్స్",
+                "footer.categories.image": "ఇమేజ్ టూల్స్",
+                "footer.categories.text": "టెక్స్ట్ టూల్స్",
+                "footer.categories.av": "ఆడియో/వీడియో టూల్స్",
+                "footer.categories.web": "వెబ్ డెవలపర్ టూల్స్",
+                "footer.categories.calc": "కాలిక్యులేటర్ టూల్స్",
+                "footer.categories.util": "యుటిలిటీ టూల్స్",
+                "footer.categories.color": "కలర్ టూల్స్",
+                "footer.quicklinks": "త్వరిత లింకులు",
+                "footer.links.tools": "అన్ని టూల్స్",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "సంప్రదించండి",
+                "footer.links.privacy": "గోప్యతా విధానం",
+                "footer.links.disclaimer": "డిస్క్లైమర్",
+                "footer.links.terms": "సేవా నిబంధనలు",
+                "footer.copyright": "© 2025 LollyPoPDF. అన్ని హక్కులు రిజర్వ్ చేయబడ్డాయి."
+            },
+            kn: {
+                "nav.home": "ಮುಖಪುಟ",
+                "nav.about": "ನಮ್ಮ ಬಗ್ಗೆ",
+                "nav.tools": "ಸಾಧನಗಳು",
+                "nav.contact": "ಸಂಪರ್ಕಿಸಿ",
+                "hero.title": "ವೀಡಿಯೊ ಕನ್ವರ್ಟರ್ ಸಾಧನ",
+                "hero.description": "ಎಲ್ಲಾ ಜನಪ್ರಿಯ ಸ್ವರೂಪಗಳ ನಡುವೆ ವೀಡಿಯೊಗಳನ್ನು ಪರಿವರ್ತಿಸಿ - MP4, WebM, AVI, MOV, MKV ಮತ್ತು ಹೆಚ್ಚು. ಎಲ್ಲಾ ಪ್ರಕ್ರಿಯೆ ನಿಮ್ಮ ಬ್ರೌಸರ್ನಲ್ಲಿ ಸ್ಥಳೀಯವಾಗಿ ನಡೆಯುತ್ತದೆ ಯಾವುದೇ ಫೈಲ್ ಗಾತ್ರದ ಮಿತಿಗಳಿಲ್ಲದೆ ಮತ್ತು ಸಂಪೂರ್ಣ ಗೌಪ್ಯತೆಯೊಂದಿಗೆ.",
+                "howto.title": "ವೀಡಿಯೊ ಕನ್ವರ್ಟರ್ ಅನ್ನು ಹೇಗೆ ಬಳಸುವುದು",
+                "howto.step1.title": "ನಿಮ್ಮ ವೀಡಿಯೊವನ್ನು ಅಪ್ಲೋಡ್ ಮಾಡಿ",
+                "howto.step1.description": "ನಿಮ್ಮ ವೀಡಿಯೊ ಫೈಲ್ ಅನ್ನು ಅಪ್ಲೋಡ್ ಮಾಡಲು ಎಳೆದು ಬಿಡಿ ಅಥವಾ ಕ್ಲಿಕ್ ಮಾಡಿ. ಈ ಸಾಧನವು MP4, MOV, AVI, MKV, WebM, FLV ಮತ್ತು WMV ಸ್ವರೂಪಗಳನ್ನು ಫೈಲ್ ಗಾತ್ರದ ಮಿತಿಗಳಿಲ್ಲದೆ ಬೆಂಬಲಿಸುತ್ತದೆ.",
+                "howto.step2.title": "ಔಟ್ಪುಟ್ ಸ್ವರೂಪ ಮತ್ತು ಸೆಟ್ಟಿಂಗ್ಗಳನ್ನು ಆರಿಸಿ",
+                "howto.step2.description": "ನಿಮ್ಮ ಬಯಸಿದ ಔಟ್ಪುಟ್ ಸ್ವರೂಪವನ್ನು ಆರಿಸಿ ಮತ್ತು ರೆಸಲ್ಯೂಶನ್, ಗುಣಮಟ್ಟ, ಫ್ರೇಮ್ ರೇಟ್ ಮತ್ತು ಹೆಚ್ಚಿನವುಗಳಂತಹ ಸೆಟ್ಟಿಂಗ್ಗಳನ್ನು ಕಸ್ಟಮೈಸ್ ಮಾಡಿ. ಎಡಭಾಗದಲ್ಲಿ ನಿಮ್ಮ ಮೂಲ ವೀಡಿಯೊವನ್ನು ಪೂರ್ವವೀಕ್ಷಿಸಿ.",
+                "howto.step3.title": "ಪರಿವರ್ತಿಸಿ ಮತ್ತು ಪೂರ್ವವೀಕ್ಷಿಸಿ",
+                "howto.step3.description": "ಪ್ರಕ್ರಿಯೆ ಪ್ರಾರಂಭಿಸಲು \"ವೀಡಿಯೊ ಪರಿವರ್ತಿಸಿ\" ಕ್ಲಿಕ್ ಮಾಡಿ. ಪ್ರಗತಿ ಪಟ್ಟಿಯನ್ನು ವೀಕ್ಷಿಸಿ ಮತ್ತು ಪೂರ್ಣಗೊಂಡಾಗ ಬಲಭಾಗದಲ್ಲಿ ಪರಿವರ್ತಿಸಲಾದ ವೀಡಿಯೊವನ್ನು ಪೂರ್ವವೀಕ್ಷಿಸಿ.",
+                "howto.step4.title": "ಫಲಿತಾಂಶವನ್ನು ಡೌನ್ಲೋಡ್ ಮಾಡಿ",
+                "howto.step4.description": "ಒಂದೇ ಕ್ಲಿಕ್ನಲ್ಲಿ ನಿಮ್ಮ ಪರಿವರ್ತಿಸಲಾದ ವೀಡಿಯೊವನ್ನು ಡೌನ್ಲೋಡ್ ಮಾಡಿ. ಎಲ್ಲಾ ಪ್ರಕ್ರಿಯೆ ನಿಮ್ಮ ಬ್ರೌಸರ್ನಲ್ಲಿ ಸ್ಥಳೀಯವಾಗಿ ನಡೆಯುತ್ತದೆ - ನಿಮ್ಮ ಫೈಲ್ಗಳು ಎಂದಿಗೂ ನಿಮ್ಮ ಸಾಧನವನ್ನು ಬಿಡುವುದಿಲ್ಲ.",
+                "tool.title": "ವೀಡಿಯೊ ಕನ್ವರ್ಟರ್",
+                "tool.upload.text": "ನಿಮ್ಮ ವೀಡಿಯೊ ಫೈಲ್ ಅನ್ನು ಇಲ್ಲಿ ಎಳೆದು ಬಿಡಿ ಅಥವಾ ಬ್ರೌಸ್ ಮಾಡಲು ಕ್ಲಿಕ್ ಮಾಡಿ",
+                "tool.upload.button": "ವೀಡಿಯೊ ಫೈಲ್ ಆರಿಸಿ",
+                "tool.supported": "ಬೆಂಬಲಿತ ಸ್ವರೂಪಗಳು: MP4, MOV, AVI, MKV, WebM, FLV, WMV",
+                "tool.loading": "ವೀಡಿಯೊ ಪ್ರಕ್ರಿಯೆಗೊಳಿಸಲಾಗುತ್ತಿದೆ...",
+                "tool.preview.original": "ಮೂಲ ವೀಡಿಯೊ",
+                "tool.preview.converted": "ಪರಿವರ್ತಿಸಲಾದ ವೀಡಿಯೊ",
+                "tool.options.title": "ಪರಿವರ್ತನೆ ಆಯ್ಕೆಗಳು",
+                "tool.options.format": "ಔಟ್ಪುಟ್ ಸ್ವರೂಪ:",
+                "tool.options.quality": "ವೀಡಿಯೊ ಗುಣಮಟ್ಟ:",
+                "tool.options.resolution": "ರೆಸಲ್ಯೂಶನ್:",
+                "tool.options.framerate": "ಫ್ರೇಮ್ ರೇಟ್:",
+                "tool.options.audio": "ಆಡಿಯೋ ಕೋಡೆಕ್:",
+                "tool.options.video": "ವೀಡಿಯೊ ಕೋಡೆಕ್:",
+                "tool.stats.size": "ಫೈಲ್ ಗಾತ್ರ",
+                "tool.stats.duration": "ಅವಧಿ",
+                "tool.stats.resolution": "ರೆಸಲ್ಯೂಶನ್",
+                "tool.stats.time": "ಪರಿವರ್ತನೆ ಸಮಯ",
+                "tool.convert": "ವೀಡಿಯೊ ಪರಿವರ್ತಿಸಿ",
+                "tool.download": "ವೀಡಿಯೊ ಡೌನ್ಲೋಡ್ ಮಾಡಿ",
+                "tool.clear": "ಎಲ್ಲಾ ತೆರವುಗೊಳಿಸಿ",
+                "footer.follow": "ನಮ್ಮನ್ನು ಅನುಸರಿಸಿ",
+                "footer.categories": "ಜನಪ್ರಿಯ ವರ್ಗಗಳು",
+                "footer.categories.pdf": "PDF ಸಾಧನಗಳು",
+                "footer.categories.image": "ಚಿತ್ರ ಸಾಧನಗಳು",
+                "footer.categories.text": "ಪಠ್ಯ ಸಾಧನಗಳು",
+                "footer.categories.av": "ಆಡಿಯೋ/ವೀಡಿಯೊ ಸಾಧನಗಳು",
+                "footer.categories.web": "ವೆಬ್ ಡೆವಲಪರ್ ಸಾಧನಗಳು",
+                "footer.categories.calc": "ಕ್ಯಾಲ್ಕುಲೇಟರ್ ಸಾಧನಗಳು",
+                "footer.categories.util": "ಯುಟಿಲಿಟಿ ಸಾಧನಗಳು",
+                "footer.categories.color": "ಬಣ್ಣ ಸಾಧನಗಳು",
+                "footer.quicklinks": "ತ್ವರಿತ ಲಿಂಕ್ಗಳು",
+                "footer.links.tools": "ಎಲ್ಲಾ ಸಾಧನಗಳು",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "ಸಂಪರ್ಕಿಸಿ",
+                "footer.links.privacy": "ಗೌಪ್ಯತಾ ನೀತಿ",
+                "footer.links.disclaimer": "ಡಿಸ್ಕ್ಲೈಮರ್",
+                "footer.links.terms": "ಸೇವಾ ನಿಬಂಧನೆಗಳು",
+                "footer.copyright": "© 2025 LollyPoPDF. ಎಲ್ಲಾ ಹಕ್ಕುಗಳು ಕಾಯ್ದಿರಿಸಿವೆ."
+            },
+            ta: {
+                "nav.home": "முகப்பு",
+                "nav.about": "எங்களைப் பற்றி",
+                "nav.tools": "கருவிகள்",
+                "nav.contact": "தொடர்பு கொள்ள",
+                "hero.title": "வீடியோ மாற்றி கருவி",
+                "hero.description": "அனைத்து பிரபலமான வடிவங்களுக்கும் இடையே வீடியோக்களை மாற்றவும் - MP4, WebM, AVI, MOV, MKV மற்றும் பல. எல்லா செயலாக்கமும் உங்கள் உலாவியில் உள்ளூரில் நடக்கிறது, கோப்பு அளவு வரம்புகள் இல்லாமல் மற்றும் முழுமையான தனியுரிமையுடன்.",
+                "howto.title": "வீடியோ மாற்றியை எவ்வாறு பயன்படுத்துவது",
+                "howto.step1.title": "உங்கள் வீடியோவை பதிவேற்றவும்",
+                "howto.step1.description": "உங்கள் வீடியோ கோப்பை பதிவேற்ற இழுத்து விடவும் அல்லது கிளிக் செய்யவும். இந்த கருவி MP4, MOV, AVI, MKV, WebM, FLV மற்றும் WMV வடிவங்களை கோப்பு அளவு வரம்புகள் இல்லாமல் ஆதரிக்கிறது.",
+                "howto.step2.title": "வெளியீட்டு வடிவம் & அமைப்புகளைத் தேர்ந்தெடுக்கவும்",
+                "howto.step2.description": "உங்கள் விரும்பிய வெளியீட்டு வடிவத்தைத் தேர்ந்தெடுத்து, தெளிவுத்திறன், தரம், பிரேம் ரேட் மற்றும் பல போன்ற அமைப்புகளைத் தனிப்பயனாக்கவும். இடதுபுறத்தில் உங்கள் அசல் வீடியோவை முன்னோட்டமிடவும்.",
+                "howto.step3.title": "மாற்றவும் & முன்னோட்டமிடவும்",
+                "howto.step3.description": "செயலாக்கத்தைத் தொடங்க \"வீடியோவை மாற்றவும்\" கிளிக் செய்யவும். முன்னேற்ற பட்டையைப் பார்த்து, முடிந்ததும் வலதுபுறத்தில் மாற்றப்பட்ட வீடியோவை முன்னோட்டமிடவும்.",
+                "howto.step4.title": "முடிவைப் பதிவிறக்கவும்",
+                "howto.step4.description": "ஒரே கிளிக்கில் உங்கள் மாற்றப்பட்ட வீடியோவைப் பதிவிறக்கவும். எல்லா செயலாக்கமும் உங்கள் உலாவியில் உள்ளூரில் நடக்கிறது - உங்கள் கோப்புகள் உங்கள் சாதனத்தை விட்டு வெளியேறுவதில்லை.",
+                "tool.title": "வீடியோ மாற்றி",
+                "tool.upload.text": "உங்கள் வீடியோ கோப்பை இங்கே இழுத்து விடவும் அல்லது உலாவ கிளிக் செய்யவும்",
+                "tool.upload.button": "வீடியோ கோப்பைத் தேர்ந்தெடுக்கவும்",
+                "tool.supported": "ஆதரிக்கப்படும் வடிவங்கள்: MP4, MOV, AVI, MKV, WebM, FLV, WMV",
+                "tool.loading": "வீடியோ செயலாக்கப்படுகிறது...",
+                "tool.preview.original": "அசல் வீடியோ",
+                "tool.preview.converted": "மாற்றப்பட்ட வீடியோ",
+                "tool.options.title": "மாற்றும் விருப்பங்கள்",
+                "tool.options.format": "வெளியீட்டு வடிவம்:",
+                "tool.options.quality": "வீடியோ தரம்:",
+                "tool.options.resolution": "தெளிவுத்திறன்:",
+                "tool.options.framerate": "பிரேம் ரேட்:",
+                "tool.options.audio": "ஒலி கோடெக்:",
+                "tool.options.video": "வீடியோ கோடெக்:",
+                "tool.stats.size": "கோப்பு அளவு",
+                "tool.stats.duration": "கால அளவு",
+                "tool.stats.resolution": "தெளிவுத்திறன்",
+                "tool.stats.time": "மாற்றும் நேரம்",
+                "tool.convert": "வீடியோவை மாற்றவும்",
+                "tool.download": "வீடியோவைப் பதிவிறக்கவும்",
+                "tool.clear": "அனைத்தையும் அழிக்கவும்",
+                "footer.follow": "எங்களைப் பின்தொடரவும்",
+                "footer.categories": "பிரபலமான வகைகள்",
+                "footer.categories.pdf": "PDF கருவிகள்",
+                "footer.categories.image": "பட கருவிகள்",
+                "footer.categories.text": "உரை கருவிகள்",
+                "footer.categories.av": "ஒலி/வீடியோ கருவிகள்",
+                "footer.categories.web": "வலை டெவலப்பர் கருவிகள்",
+                "footer.categories.calc": "கால்குலேட்டர் கருவிகள்",
+                "footer.categories.util": "பயன்பாட்டு கருவிகள்",
+                "footer.categories.color": "நிற கருவிகள்",
+                "footer.quicklinks": "விரைவு இணைப்புகள்",
+                "footer.links.tools": "அனைத்து கருவிகள்",
+                "footer.links.faq": "அடிக்கடி கேட்கப்படும் கேள்விகள்",
+                "footer.links.contact": "தொடர்பு கொள்ள",
+                "footer.links.privacy": "தனியுரிமைக் கொள்கை",
+                "footer.links.disclaimer": "பொறுப்புத் துறப்பு",
+                "footer.links.terms": "சேவை விதிமுறைகள்",
+                "footer.copyright": "© 2025 LollyPoPDF. அனைத்து உரிமைகளும் பாதுகாக்கப்பட்டவை."
+            },
+            ml: {
+                "nav.home": "ഹോം",
+                "nav.about": "ഞങ്ങളെക്കുറിച്ച്",
+                "nav.tools": "ടൂളുകൾ",
+                "nav.contact": "ബന്ധപ്പെടുക",
+                "hero.title": "വീഡിയോ കൺവെർട്ടർ ടൂൾ",
+                "hero.description": "എല്ലാ ജനപ്രിയ ഫോർമാറ്റുകൾക്കിടയിലും വീഡിയോകൾ പരിവർത്തനം ചെയ്യുക - MP4, WebM, AVI, MOV, MKV എന്നിവയും മറ്റും. എല്ലാ പ്രോസസ്സിംഗും നിങ്ങളുടെ ബ്രൗസറിൽ പ്രാദേശികമായി നടക്കുന്നു, ഫയൽ വലുപ്പ പരിധികളില്ലാതെയും പൂർണ്ണ സ്വകാര്യതയോടെയും.",
+                "howto.title": "വീഡിയോ കൺവെർട്ടർ എങ്ങനെ ഉപയോഗിക്കാം",
+                "howto.step1.title": "നിങ്ങളുടെ വീഡിയോ അപ്ലോഡ് ചെയ്യുക",
+                "howto.step1.description": "നിങ്ങളുടെ വീഡിയോ ഫയൽ അപ്ലോഡ് ചെയ്യാൻ വലിച്ചിടുക അല്ലെങ്കിൽ ക്ലിക്ക് ചെയ്യുക. ഈ ടൂൾ MP4, MOV, AVI, MKV, WebM, FLV, WMV ഫോർമാറ്റുകൾ ഫയൽ വലുപ്പ പരിധികളില്ലാതെ പിന്തുണയ്ക്കുന്നു.",
+                "howto.step2.title": "ഔട്ട്പുട്ട് ഫോർമാറ്റും സെറ്റിംഗുകളും തിരഞ്ഞെടുക്കുക",
+                "howto.step2.description": "നിങ്ങൾക്ക് ആവശ്യമുള്ള ഔട്ട്പുട്ട് ഫോർമാറ്റ് തിരഞ്ഞെടുക്കുക, റെസല്യൂഷൻ, ഗുണനിലവാരം, ഫ്രെയിം റേറ്റ് തുടങ്ങിയ സെറ്റിംഗുകൾ ഇഷ്ടാനുസൃതമാക്കുക. ഇടതുവശത്ത് നിങ്ങളുടെ ഒറിജിനൽ വീഡിയോ പ്രിവ്യൂ ചെയ്യുക.",
+                "howto.step3.title": "പരിവർത്തനം ചെയ്യുക & പ്രിവ്യൂ ചെയ്യുക",
+                "howto.step3.description": "പ്രോസസ്സിംഗ് ആരംഭിക്കാൻ \"വീഡിയോ പരിവർത്തനം ചെയ്യുക\" ക്ലിക്ക് ചെയ്യുക. പുരോഗതി ബാർ കാണുക, പൂർത്തിയായാൽ വലതുവശത്ത് പരിവർത്തനം ചെയ്ത വീഡിയോ പ്രിവ്യൂ ചെയ്യുക.",
+                "howto.step4.title": "ഫലം ഡൗൺലോഡ് ചെയ്യുക",
+                "howto.step4.description": "ഒരു ക്ലിക്കിൽ നിങ്ങളുടെ പരിവർത്തനം ചെയ്ത വീഡിയോ ഡൗൺലോഡ് ചെയ്യുക. എല്ലാ പ്രോസസ്സിംഗും നിങ്ങളുടെ ബ്രൗസറിൽ പ്രാദേശികമായി നടക്കുന്നു - നിങ്ങളുടെ ഫയലുകൾ നിങ്ങളുടെ ഉപകരണം ഉപേക്ഷിക്കുന്നില്ല.",
+                "tool.title": "വീഡിയോ കൺവെർട്ടർ",
+                "tool.upload.text": "നിങ്ങളുടെ വീഡിയോ ഫയൽ ഇവിടെ വലിച്ചിടുക അല്ലെങ്കിൽ ബ്രൗസ് ചെയ്യാൻ ക്ലിക്ക് ചെയ്യുക",
+                "tool.upload.button": "വീഡിയോ ഫയൽ തിരഞ്ഞെടുക്കുക",
+                "tool.supported": "പിന്തുണയ്ക്കുന്ന ഫോർമാറ്റുകൾ: MP4, MOV, AVI, MKV, WebM, FLV, WMV",
+                "tool.loading": "വീഡിയോ പ്രോസസ്സിംഗ്...",
+                "tool.preview.original": "ഒറിജിനൽ വീഡിയോ",
+                "tool.preview.converted": "പരിവർത്തനം ചെയ്ത വീഡിയോ",
+                "tool.options.title": "പരിവർത്തന ഓപ്ഷനുകൾ",
+                "tool.options.format": "ഔട്ട്പുട്ട് ഫോർമാറ്റ്:",
+                "tool.options.quality": "വീഡിയോ ഗുണനിലവാരം:",
+                "tool.options.resolution": "റെസല്യൂഷൻ:",
+                "tool.options.framerate": "ഫ്രെയിം റേറ്റ്:",
+                "tool.options.audio": "ഓഡിയോ കോഡെക്:",
+                "tool.options.video": "വീഡിയോ കോഡെക്:",
+                "tool.stats.size": "ഫയൽ വലുപ്പം",
+                "tool.stats.duration": "കാലയളവ്",
+                "tool.stats.resolution": "റെസല്യൂഷൻ",
+                "tool.stats.time": "പരിവർത്തന സമയം",
+                "tool.convert": "വീഡിയോ പരിവർത്തനം ചെയ്യുക",
+                "tool.download": "വീഡിയോ ഡൗൺലോഡ് ചെയ്യുക",
+                "tool.clear": "എല്ലാം മായ്ക്കുക",
+                "footer.follow": "ഞങ്ങളെ പിന്തുടരുക",
+                "footer.categories": "ജനപ്രിയ വിഭാഗങ്ങൾ",
+                "footer.categories.pdf": "PDF ടൂളുകൾ",
+                "footer.categories.image": "ഇമേജ് ടൂളുകൾ",
+                "footer.categories.text": "ടെക്സ്റ്റ് ടൂളുകൾ",
+                "footer.categories.av": "ഓഡിയോ/വീഡിയോ ടൂളുകൾ",
+                "footer.categories.web": "വെബ് ഡെവലപ്പർ ടൂളുകൾ",
+                "footer.categories.calc": "കാൽക്കുലേറ്റർ ടൂളുകൾ",
+                "footer.categories.util": "യൂട്ടിലിറ്റി ടൂളുകൾ",
+                "footer.categories.color": "കളർ ടൂളുകൾ",
+                "footer.quicklinks": "ദ്രുത ലിങ്കുകൾ",
+                "footer.links.tools": "എല്ലാ ടൂളുകളും",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "ബന്ധപ്പെടുക",
+                "footer.links.privacy": "സ്വകാര്യതാ നയം",
+                "footer.links.disclaimer": "ഡിസ്ക്ലെയിമർ",
+                "footer.links.terms": "സേവന നിബന്ധനകൾ",
+                "footer.copyright": "© 2025 LollyPoPDF. എല്ലാ അവകാശങ്ങളും നിക്ഷിപ്തം."
+            },
+            id: {
+                "nav.home": "Beranda",
+                "nav.about": "Tentang Kami",
+                "nav.tools": "Alat",
+                "nav.contact": "Kontak",
+                "hero.title": "Alat Konverter Video",
+                "hero.description": "Konversi video antara semua format populer - MP4, WebM, AVI, MOV, MKV, dan lainnya. Semua pemrosesan terjadi secara lokal di browser Anda tanpa batas ukuran file dan privasi lengkap.",
+                "howto.title": "Cara Menggunakan Konverter Video",
+                "howto.step1.title": "Unggah Video Anda",
+                "howto.step1.description": "Seret dan lepas atau klik untuk mengunggah file video Anda. Alat ini mendukung format MP4, MOV, AVI, MKV, WebM, FLV, dan WMV tanpa batas ukuran file.",
+                "howto.step2.title": "Pilih Format Output & Pengaturan",
+                "howto.step2.description": "Pilih format output yang diinginkan dan sesuaikan pengaturan seperti resolusi, kualitas, frame rate, dan lainnya. Pratinjau video asli Anda di sebelah kiri.",
+                "howto.step3.title": "Konversi & Pratinjau",
+                "howto.step3.description": "Klik \"Konversi Video\" untuk memulai pemrosesan. Tonton bilah kemajuan dan pratinjau video yang dikonversi di sebelah kanan ketika selesai.",
+                "howto.step4.title": "Unduh Hasil",
+                "howto.step4.description": "Unduh video yang dikonversi dengan satu klik. Semua pemrosesan terjadi secara lokal di browser Anda - file Anda tidak pernah meninggalkan perangkat Anda.",
+                "tool.title": "Konverter Video",
+                "tool.upload.text": "Seret dan lepas file video Anda di sini atau klik untuk menjelajah",
+                "tool.upload.button": "Pilih File Video",
+                "tool.supported": "Format yang didukung: MP4, MOV, AVI, MKV, WebM, FLV, WMV",
+                "tool.loading": "Memproses Video...",
+                "tool.preview.original": "Video Asli",
+                "tool.preview.converted": "Video yang Dikonversi",
+                "tool.options.title": "Opsi Konversi",
+                "tool.options.format": "Format Output:",
+                "tool.options.quality": "Kualitas Video:",
+                "tool.options.resolution": "Resolusi:",
+                "tool.options.framerate": "Frame Rate:",
+                "tool.options.audio": "Codec Audio:",
+                "tool.options.video": "Codec Video:",
+                "tool.stats.size": "Ukuran File",
+                "tool.stats.duration": "Durasi",
+                "tool.stats.resolution": "Resolusi",
+                "tool.stats.time": "Waktu Konversi",
+                "tool.convert": "Konversi Video",
+                "tool.download": "Unduh Video",
+                "tool.clear": "Hapus Semua",
+                "footer.follow": "IKUTI KAMI",
+                "footer.categories": "Kategori Populer",
+                "footer.categories.pdf": "Alat PDF",
+                "footer.categories.image": "Alat Gambar",
+                "footer.categories.text": "Alat Teks",
+                "footer.categories.av": "Alat Audio/Video",
+                "footer.categories.web": "Alat WebDeveloper",
+                "footer.categories.calc": "Alat Kalkulator",
+                "footer.categories.util": "Alat Utilitas",
+                "footer.categories.color": "Alat Warna",
+                "footer.quicklinks": "Tautan Cepat",
+                "footer.links.tools": "Semua Alat",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Kontak",
+                "footer.links.privacy": "Kebijakan Privasi",
+                "footer.links.disclaimer": "Penafian",
+                "footer.links.terms": "Syarat Layanan",
+                "footer.copyright": "© 2025 LollyPoPDF. Hak cipta dilindungi."
+            },
+            ms: {
+                "nav.home": "Laman Utama",
+                "nav.about": "Tentang Kami",
+                "nav.tools": "Alat",
+                "nav.contact": "Hubungi",
+                "hero.title": "Alat Penukar Video",
+                "hero.description": "Tukar video antara semua format popular - MP4, WebM, AVI, MOV, MKV, dan banyak lagi. Semua pemprosesan berlaku secara tempatan dalam pelayar anda tanpa had saiz fail dan privasi lengkap.",
+                "howto.title": "Cara Menggunakan Penukar Video",
+                "howto.step1.title": "Muat Naik Video Anda",
+                "howto.step1.description": "Seret dan lepaskan atau klik untuk memuat naik fail video anda. Alat ini menyokong format MP4, MOV, AVI, MKV, WebM, FLV, dan WMV tanpa had saiz fail.",
+                "howto.step2.title": "Pilih Format Output & Tetapan",
+                "howto.step2.description": "Pilih format output yang dikehendaki dan sesuaikan tetapan seperti resolusi, kualiti, kadar bingkai, dan banyak lagi. Pratonton video asal anda di sebelah kiri.",
+                "howto.step3.title": "Tukar & Pratonton",
+                "howto.step3.description": "Klik \"Tukar Video\" untuk memulakan pemprosesan. Tonton bar kemajuan dan pratonton video yang ditukar di sebelah kanan apabila selesai.",
+                "howto.step4.title": "Muat Turun Hasil",
+                "howto.step4.description": "Muat turun video yang ditukar dengan satu klik. Semua pemprosesan berlaku secara tempatan dalam pelayar anda - fail anda tidak pernah meninggalkan peranti anda.",
+                "tool.title": "Penukar Video",
+                "tool.upload.text": "Seret dan lepaskan fail video anda di sini atau klik untuk melayari",
+                "tool.upload.button": "Pilih Fail Video",
+                "tool.supported": "Format yang disokong: MP4, MOV, AVI, MKV, WebM, FLV, WMV",
+                "tool.loading": "Memproses Video...",
+                "tool.preview.original": "Video Asal",
+                "tool.preview.converted": "Video yang Ditukar",
+                "tool.options.title": "Pilihan Penukaran",
+                "tool.options.format": "Format Output:",
+                "tool.options.quality": "Kualiti Video:",
+                "tool.options.resolution": "Resolusi:",
+                "tool.options.framerate": "Kadar Bingkai:",
+                "tool.options.audio": "Codec Audio:",
+                "tool.options.video": "Codec Video:",
+                "tool.stats.size": "Saiz Fail",
+                "tool.stats.duration": "Tempoh",
+                "tool.stats.resolution": "Resolusi",
+                "tool.stats.time": "Masa Penukaran",
+                "tool.convert": "Tukar Video",
+                "tool.download": "Muat Turun Video",
+                "tool.clear": "Kosongkan Semua",
+                "footer.follow": "IKUTI KAMI",
+                "footer.categories": "Kategori Popular",
+                "footer.categories.pdf": "Alat PDF",
+                "footer.categories.image": "Alat Imej",
+                "footer.categories.text": "Alat Teks",
+                "footer.categories.av": "Alat Audio/Video",
+                "footer.categories.web": "Alat WebDeveloper",
+                "footer.categories.calc": "Alat Kalkulator",
+                "footer.categories.util": "Alat Utiliti",
+                "footer.categories.color": "Alat Warna",
+                "footer.quicklinks": "Pautan Pantas",
+                "footer.links.tools": "Semua Alat",
+                "footer.links.faq": "Soalan Lazim",
+                "footer.links.contact": "Hubungi",
+                "footer.links.privacy": "Dasar Privasi",
+                "footer.links.disclaimer": "Penafian",
+                "footer.links.terms": "Syarat Perkhidmatan",
+                "footer.copyright": "© 2025 LollyPoPDF. Hak cipta terpelihara."
+            },
+            pl: {
+                "nav.home": "Strona główna",
+                "nav.about": "O nas",
+                "nav.tools": "Narzędzia",
+                "nav.contact": "Kontakt",
+                "hero.title": "Narzędzie do konwersji wideo",
+                "hero.description": "Konwertuj filmy między wszystkimi popularnymi formatami - MP4, WebM, AVI, MOV, MKV i innymi. Wszystkie przetwarzania odbywają się lokalnie w Twojej przeglądarce bez ograniczeń rozmiaru pliku i z pełną prywatnością.",
+                "howto.title": "Jak korzystać z konwertera wideo",
+                "howto.step1.title": "Prześlij swój film",
+                "howto.step1.description": "Przeciągnij i upuść lub kliknij, aby przesłać plik wideo. Narzędzie obsługuje formaty MP4, MOV, AVI, MKV, WebM, FLV i WMV bez ograniczeń rozmiaru pliku.",
+                "howto.step2.title": "Wybierz format wyjściowy i ustawienia",
+                "howto.step2.description": "Wybierz żądany format wyjściowy i dostosuj ustawienia, takie jak rozdzielczość, jakość, liczba klatek na sekundę i inne. Podgląd oryginalnego wideo po lewej stronie.",
+                "howto.step3.title": "Konwertuj i podglądaj",
+                "howto.step3.description": "Kliknij \"Konwertuj wideo\", aby rozpocząć przetwarzanie. Obserwuj pasek postępu i podglądaj przekonwertowane wideo po prawej stronie po zakończeniu.",
+                "howto.step4.title": "Pobierz wynik",
+                "howto.step4.description": "Pobierz przekonwertowane wideo jednym kliknięciem. Wszystkie przetwarzania odbywają się lokalnie w Twojej przeglądarce - Twoje pliki nigdy nie opuszczają Twojego urządzenia.",
+                "tool.title": "Konwerter wideo",
+                "tool.upload.text": "Przeciągnij i upuść plik wideo tutaj lub kliknij, aby przeglądać",
+                "tool.upload.button": "Wybierz plik wideo",
+                "tool.supported": "Obsługiwane formaty: MP4, MOV, AVI, MKV, WebM, FLV, WMV",
+                "tool.loading": "Przetwarzanie wideo...",
+                "tool.preview.original": "Oryginalne wideo",
+                "tool.preview.converted": "Przekonwertowane wideo",
+                "tool.options.title": "Opcje konwersji",
+                "tool.options.format": "Format wyjściowy:",
+                "tool.options.quality": "Jakość wideo:",
+                "tool.options.resolution": "Rozdzielczość:",
+                "tool.options.framerate": "Liczba klatek na sekundę:",
+                "tool.options.audio": "Kodek audio:",
+                "tool.options.video": "Kodek wideo:",
+                "tool.stats.size": "Rozmiar pliku",
+                "tool.stats.duration": "Czas trwania",
+                "tool.stats.resolution": "Rozdzielczość",
+                "tool.stats.time": "Czas konwersji",
+                "tool.convert": "Konwertuj wideo",
+                "tool.download": "Pobierz wideo",
+                "tool.clear": "Wyczyść wszystko",
+                "footer.follow": "OBSERWUJ NAS",
+                "footer.categories": "Popularne kategorie",
+                "footer.categories.pdf": "Narzędzia PDF",
+                "footer.categories.image": "Narzędzia obrazów",
+                "footer.categories.text": "Narzędzia tekstowe",
+                "footer.categories.av": "Narzędzia audio/wideo",
+                "footer.categories.web": "Narzędzia WebDevelopera",
+                "footer.categories.calc": "Narzędzia kalkulatora",
+                "footer.categories.util": "Narzędzia użytkowe",
+                "footer.categories.color": "Narzędzia kolorów",
+                "footer.quicklinks": "Szybkie linki",
+                "footer.links.tools": "Wszystkie narzędzia",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Kontakt",
+                "footer.links.privacy": "Polityka prywatności",
+                "footer.links.disclaimer": "Zastrzeżenie",
+                "footer.links.terms": "Warunki usługi",
+                "footer.copyright": "© 2025 LollyPoPDF. Wszelkie prawa zastrzeżone."
+            },
+            th: {
+                "nav.home": "หน้าแรก",
+                "nav.about": "เกี่ยวกับเรา",
+                "nav.tools": "เครื่องมือ",
+                "nav.contact": "ติดต่อ",
+                "hero.title": "เครื่องมือแปลงวิดีโอ",
+                "hero.description": "แปลงวิดีโอระหว่างรูปแบบยอดนิยมทั้งหมด - MP4, WebM, AVI, MOV, MKV และอื่นๆ การประมวลผลทั้งหมดเกิดขึ้นภายในเบราว์เซอร์ของคุณโดยไม่มีขีดจำกัดขนาดไฟล์และความเป็นส่วนตัวอย่างสมบูรณ์",
+                "howto.title": "วิธีใช้ตัวแปลงวิดีโอ",
+                "howto.step1.title": "อัปโหลดวิดีโอของคุณ",
+                "howto.step1.description": "ลากและวางหรือคลิกเพื่ออัปโหลดไฟล์วิดีโอของคุณ เครื่องมือนี้รองรับรูปแบบ MP4, MOV, AVI, MKV, WebM, FLV และ WMV โดยไม่มีขีดจำกัดขนาดไฟล์",
+                "howto.step2.title": "เลือกรูปแบบผลลัพธ์และการตั้งค่า",
+                "howto.step2.description": "เลือกรูปแบบผลลัพธ์ที่ต้องการและปรับแต่งการตั้งค่าเช่นความละเอียด คุณภาพ อัตราเฟรม และอื่นๆ ดูตัวอย่างวิดีโอต้นฉบับของคุณทางด้านซ้าย",
+                "howto.step3.title": "แปลงและดูตัวอย่าง",
+                "howto.step3.description": "คลิก \"แปลงวิดีโอ\" เพื่อเริ่มการประมวลผล ดูแถบความคืบหน้าและดูตัวอย่างวิดีโอที่แปลงแล้วทางด้านขวาเมื่อเสร็จสิ้น",
+                "howto.step4.title": "ดาวน์โหลดผลลัพธ์",
+                "howto.step4.description": "ดาวน์โหลดวิดีโอที่แปลงแล้วด้วยคลิกเดียว การประมวลผลทั้งหมดเกิดขึ้นภายในเบราว์เซอร์ของคุณ - ไฟล์ของคุณไม่เคยออกจากอุปกรณ์ของคุณ",
+                "tool.title": "ตัวแปลงวิดีโอ",
+                "tool.upload.text": "ลากและวางไฟล์วิดีโอของคุณที่นี่หรือคลิกเพื่อเรียกดู",
+                "tool.upload.button": "เลือกไฟล์วิดีโอ",
+                "tool.supported": "รูปแบบที่รองรับ: MP4, MOV, AVI, MKV, WebM, FLV, WMV",
+                "tool.loading": "กำลังประมวลผลวิดีโอ...",
+                "tool.preview.original": "วิดีโอต้นฉบับ",
+                "tool.preview.converted": "วิดีโอที่แปลงแล้ว",
+                "tool.options.title": "ตัวเลือกการแปลง",
+                "tool.options.format": "รูปแบบผลลัพธ์:",
+                "tool.options.quality": "คุณภาพวิดีโอ:",
+                "tool.options.resolution": "ความละเอียด:",
+                "tool.options.framerate": "อัตราเฟรม:",
+                "tool.options.audio": "ตัวแปลงสัญญาณเสียง:",
+                "tool.options.video": "ตัวแปลงสัญญาณวิดีโอ:",
+                "tool.stats.size": "ขนาดไฟล์",
+                "tool.stats.duration": "ระยะเวลา",
+                "tool.stats.resolution": "ความละเอียด",
+                "tool.stats.time": "เวลาในการแปลง",
+                "tool.convert": "แปลงวิดีโอ",
+                "tool.download": "ดาวน์โหลดวิดีโอ",
+                "tool.clear": "ล้างทั้งหมด",
+                "footer.follow": "ติดตามเรา",
+                "footer.categories": "หมวดหมู่ยอดนิยม",
+                "footer.categories.pdf": "เครื่องมือ PDF",
+                "footer.categories.image": "เครื่องมือรูปภาพ",
+                "footer.categories.text": "เครื่องมือข้อความ",
+                "footer.categories.av": "เครื่องมือเสียง/วิดีโอ",
+                "footer.categories.web": "เครื่องมือนักพัฒนาเว็บ",
+                "footer.categories.calc": "เครื่องมือเครื่องคิดเลข",
+                "footer.categories.util": "เครื่องมืออรรถประโยชน์",
+                "footer.categories.color": "เครื่องมือสี",
+                "footer.quicklinks": "ลิงก์ด่วน",
+                "footer.links.tools": "เครื่องมือทั้งหมด",
+                "footer.links.faq": "คำถามที่พบบ่อย",
+                "footer.links.contact": "ติดต่อ",
+                "footer.links.privacy": "นโยบายความเป็นส่วนตัว",
+                "footer.links.disclaimer": "ข้อปฏิเสธความรับผิดชอบ",
+                "footer.links.terms": "เงื่อนไขการให้บริการ",
+                "footer.copyright": "© 2025 LollyPoPDF. สงวนลิขสิทธิ์."
+            },
+            tr: {
+                "nav.home": "Ana Sayfa",
+                "nav.about": "Hakkımızda",
+                "nav.tools": "Araçlar",
+                "nav.contact": "İletişim",
+                "hero.title": "Video Dönüştürücü Aracı",
+                "hero.description": "Tüm popüler formatlar arasında video dönüştürün - MP4, WebM, AVI, MOV, MKV ve daha fazlası. Tüm işlemler tarayıcınızda yerel olarak gerçekleşir, dosya boyutu sınırı olmadan ve tam gizlilikle.",
+                "howto.title": "Video Dönüştürücü Nasıl Kullanılır",
+                "howto.step1.title": "Videonuzu Yükleyin",
+                "howto.step1.description": "Video dosyanızı yüklemek için sürükleyip bırakın veya tıklayın. Araç, dosya boyutu sınırı olmadan MP4, MOV, AVI, MKV, WebM, FLV ve WMV formatlarını destekler.",
+                "howto.step2.title": "Çıkış Formatı ve Ayarları Seçin",
+                "howto.step2.description": "İstediğiniz çıkış formatını seçin ve çözünürlük, kalite, kare hızı ve daha fazlası gibi ayarları özelleştirin. Sol tarafta orijinal videonuzu önizleyin.",
+                "howto.step3.title": "Dönüştürün ve Önizleyin",
+                "howto.step3.description": "İşlemi başlatmak için \"Video Dönüştür\" seçeneğine tıklayın. İlerleme çubuğunu izleyin ve tamamlandığında sağ tarafta dönüştürülen videoyu önizleyin.",
+                "howto.step4.title": "Sonucu İndirin",
+                "howto.step4.description": "Dönüştürülen videonuzu tek tıklamayla indirin. Tüm işlemler tarayıcınızda yerel olarak gerçekleşir - dosyalarınız cihazınızdan asla ayrılmaz.",
+                "tool.title": "Video Dönüştürücü",
+                "tool.upload.text": "Video dosyanızı buraya sürükleyip bırakın veya göz atmak için tıklayın",
+                "tool.upload.button": "Video Dosyası Seçin",
+                "tool.supported": "Desteklenen formatlar: MP4, MOV, AVI, MKV, WebM, FLV, WMV",
+                "tool.loading": "Video İşleniyor...",
+                "tool.preview.original": "Orijinal Video",
+                "tool.preview.converted": "Dönüştürülen Video",
+                "tool.options.title": "Dönüştürme Seçenekleri",
+                "tool.options.format": "Çıkış Formatı:",
+                "tool.options.quality": "Video Kalitesi:",
+                "tool.options.resolution": "Çözünürlük:",
+                "tool.options.framerate": "Kare Hızı:",
+                "tool.options.audio": "Ses Kodeği:",
+                "tool.options.video": "Video Kodeği:",
+                "tool.stats.size": "Dosya Boyutu",
+                "tool.stats.duration": "Süre",
+                "tool.stats.resolution": "Çözünürlük",
+                "tool.stats.time": "Dönüştürme Süresi",
+                "tool.convert": "Video Dönüştür",
+                "tool.download": "Video İndir",
+                "tool.clear": "Tümünü Temizle",
+                "footer.follow": "BİZİ TAKİP EDİN",
+                "footer.categories": "Popüler Kategoriler",
+                "footer.categories.pdf": "PDF Araçları",
+                "footer.categories.image": "Resim Araçları",
+                "footer.categories.text": "Metin Araçları",
+                "footer.categories.av": "Ses/Video Araçları",
+                "footer.categories.web": "Web Geliştirici Araçları",
+                "footer.categories.calc": "Hesap Makinesi Araçları",
+                "footer.categories.util": "Yardımcı Araçlar",
+                "footer.categories.color": "Renk Araçları",
+                "footer.quicklinks": "Hızlı Bağlantılar",
+                "footer.links.tools": "Tüm Araçlar",
+                "footer.links.faq": "SSS",
+                "footer.links.contact": "İletişim",
+                "footer.links.privacy": "Gizlilik Politikası",
+                "footer.links.disclaimer": "Feragatname",
+                "footer.links.terms": "Hizmet Şartları",
+                "footer.copyright": "© 2025 LollyPoPDF. Tüm hakları saklıdır."
+            },
+            uk: {
+                "nav.home": "Головна",
+                "nav.about": "Про нас",
+                "nav.tools": "Інструменти",
+                "nav.contact": "Контакт",
+                "hero.title": "Інструмент конвертації відео",
+                "hero.description": "Конвертуйте відео між усіма популярними форматами - MP4, WebM, AVI, MOV, MKV та іншими. Вся обробка відбувається локально у вашому браузері без обмежень розміру файлу та з повною конфіденційністю.",
+                "howto.title": "Як використовувати конвертер відео",
+                "howto.step1.title": "Завантажте своє відео",
+                "howto.step1.description": "Перетягніть або клацніть, щоб завантажити ваш відеофайл. Інструмент підтримує формати MP4, MOV, AVI, MKV, WebM, FLV та WMV без обмежень розміру файлу.",
+                "howto.step2.title": "Виберіть вихідний формат та налаштування",
+                "howto.step2.description": "Виберіть бажаний вихідний формат і налаштуйте такі параметри, як роздільна здатність, якість, частота кадрів тощо. Попередній перегляд вашого оригінального відео зліва.",
+                "howto.step3.title": "Конвертуйте та переглядайте",
+                "howto.step3.description": "Клацніть \"Конвертувати відео\", щоб розпочати обробку. Спостерігайте за смугою прогресу та переглядайте конвертоване відео праворуч після завершення.",
+                "howto.step4.title": "Завантажте результат",
+                "howto.step4.description": "Завантажте конвертоване відео одним клацанням. Вся обробка відбувається локально у вашому браузері - ваші файли ніколи не залишають ваш пристрій.",
+                "tool.title": "Конвертер відео",
+                "tool.upload.text": "Перетягніть ваш відеофайл сюди або клацніть для перегляду",
+                "tool.upload.button": "Вибрати відеофайл",
+                "tool.supported": "Підтримувані формати: MP4, MOV, AVI, MKV, WebM, FLV, WMV",
+                "tool.loading": "Обробка відео...",
+                "tool.preview.original": "Оригінальне відео",
+                "tool.preview.converted": "Конвертоване відео",
+                "tool.options.title": "Параметри конвертації",
+                "tool.options.format": "Вихідний формат:",
+                "tool.options.quality": "Якість відео:",
+                "tool.options.resolution": "Роздільна здатність:",
+                "tool.options.framerate": "Частота кадрів:",
+                "tool.options.audio": "Аудіокодек:",
+                "tool.options.video": "Відеокодек:",
+                "tool.stats.size": "Розмір файлу",
+                "tool.stats.duration": "Тривалість",
+                "tool.stats.resolution": "Роздільна здатність",
+                "tool.stats.time": "Час конвертації",
+                "tool.convert": "Конвертувати відео",
+                "tool.download": "Завантажити відео",
+                "tool.clear": "Очистити все",
+                "footer.follow": "СЛІДКУЙТЕ ЗА НАМИ",
+                "footer.categories": "Популярні категорії",
+                "footer.categories.pdf": "Інструменти PDF",
+                "footer.categories.image": "Інструменти зображень",
+                "footer.categories.text": "Текстові інструменти",
+                "footer.categories.av": "Аудіо/Відео інструменти",
+                "footer.categories.web": "Інструменти веброзробника",
+                "footer.categories.calc": "Інструменти калькулятора",
+                "footer.categories.util": "Утиліти",
+                "footer.categories.color": "Кольорові інструменти",
+                "footer.quicklinks": "Швидкі посилання",
+                "footer.links.tools": "Всі інструменти",
+                "footer.links.faq": "Часті запитання",
+                "footer.links.contact": "Контакт",
+                "footer.links.privacy": "Політика конфіденційності",
+                "footer.links.disclaimer": "Відмова від відповідальності",
+                "footer.links.terms": "Умови використання",
+                "footer.copyright": "© 2025 LollyPoPDF. Всі права захищені."
+            },
+            vi: {
+                "nav.home": "Trang chủ",
+                "nav.about": "Về chúng tôi",
+                "nav.tools": "Công cụ",
+                "nav.contact": "Liên hệ",
+                "hero.title": "Công cụ chuyển đổi video",
+                "hero.description": "Chuyển đổi video giữa tất cả các định dạng phổ biến - MP4, WebM, AVI, MOV, MKV và nhiều hơn nữa. Tất cả xử lý diễn ra cục bộ trong trình duyệt của bạn mà không có giới hạn kích thước tệp và bảo mật hoàn toàn.",
+                "howto.title": "Cách sử dụng bộ chuyển đổi video",
+                "howto.step1.title": "Tải video của bạn lên",
+                "howto.step1.description": "Kéo và thả hoặc nhấp để tải tệp video của bạn lên. Công cụ hỗ trợ các định dạng MP4, MOV, AVI, MKV, WebM, FLV và WMV mà không có giới hạn kích thước tệp.",
+                "howto.step2.title": "Chọn định dạng đầu ra & cài đặt",
+                "howto.step2.description": "Chọn định dạng đầu ra mong muốn và tùy chỉnh cài đặt như độ phân giải, chất lượng, tốc độ khung hình và hơn thế nữa. Xem trước video gốc của bạn ở bên trái.",
+                "howto.step3.title": "Chuyển đổi & Xem trước",
+                "howto.step3.description": "Nhấp vào \"Chuyển đổi video\" để bắt đầu xử lý. Xem thanh tiến trình và xem trước video đã chuyển đổi ở bên phải khi hoàn tất.",
+                "howto.step4.title": "Tải kết quả về",
+                "howto.step4.description": "Tải video đã chuyển đổi của bạn xuống bằng một cú nhấp chuột. Tất cả xử lý diễn ra cục bộ trong trình duyệt của bạn - tệp của bạn không bao giờ rời khỏi thiết bị của bạn.",
+                "tool.title": "Bộ chuyển đổi video",
+                "tool.upload.text": "Kéo và thả tệp video của bạn vào đây hoặc nhấp để duyệt",
+                "tool.upload.button": "Chọn tệp video",
+                "tool.supported": "Định dạng được hỗ trợ: MP4, MOV, AVI, MKV, WebM, FLV, WMV",
+                "tool.loading": "Đang xử lý video...",
+                "tool.preview.original": "Video gốc",
+                "tool.preview.converted": "Video đã chuyển đổi",
+                "tool.options.title": "Tùy chọn chuyển đổi",
+                "tool.options.format": "Định dạng đầu ra:",
+                "tool.options.quality": "Chất lượng video:",
+                "tool.options.resolution": "Độ phân giải:",
+                "tool.options.framerate": "Tốc độ khung hình:",
+                "tool.options.audio": "Bộ mã hóa âm thanh:",
+                "tool.options.video": "Bộ mã hóa video:",
+                "tool.stats.size": "Kích thước tệp",
+                "tool.stats.duration": "Thời lượng",
+                "tool.stats.resolution": "Độ phân giải",
+                "tool.stats.time": "Thời gian chuyển đổi",
+                "tool.convert": "Chuyển đổi video",
+                "tool.download": "Tải video xuống",
+                "tool.clear": "Xóa tất cả",
+                "footer.follow": "THEO DÕI CHÚNG TÔI",
+                "footer.categories": "Danh mục phổ biến",
+                "footer.categories.pdf": "Công cụ PDF",
+                "footer.categories.image": "Công cụ hình ảnh",
+                "footer.categories.text": "Công cụ văn bản",
+                "footer.categories.av": "Công cụ âm thanh/video",
+                "footer.categories.web": "Công cụ nhà phát triển web",
+                "footer.categories.calc": "Công cụ máy tính",
+                "footer.categories.util": "Công cụ tiện ích",
+                "footer.categories.color": "Công cụ màu sắc",
+                "footer.quicklinks": "Liên kết nhanh",
+                "footer.links.tools": "Tất cả công cụ",
+                "footer.links.faq": "Câu hỏi thường gặp",
+                "footer.links.contact": "Liên hệ",
+                "footer.links.privacy": "Chính sách bảo mật",
+                "footer.links.disclaimer": "Tuyên bố miễn trừ trách nhiệm",
+                "footer.links.terms": "Điều khoản dịch vụ",
+                "footer.copyright": "© 2025 LollyPoPDF. Tất cả các quyền được bảo lưu."
+            },
+            is: {
+                "nav.home": "Heim",
+                "nav.about": "Um okkur",
+                "nav.tools": "Verkfæri",
+                "nav.contact": "Hafa samband",
+                "hero.title": "Myndbandsumbreytingartól",
+                "hero.description": "Umbreyttu myndböndum á milli allra vinsælla sniða - MP4, WebM, AVI, MOV, MKV og fleiri. Öll vinnsla á sér stað staðbundið í vafranum þínum án skráarstærðartakmarkana og með fullri næði.",
+                "howto.title": "Hvernig á að nota myndbandsumbreytirinn",
+                "howto.step1.title": "Hladdu upp myndbandinu þínu",
+                "howto.step1.description": "Dragðu og slepptu eða smelltu til að hlaða upp myndbandsskránni þinni. Tólið styður MP4, MOV, AVI, MKV, WebM, FLV og WMV snið án skráarstærðartakmarkana.",
+                "howto.step2.title": "Veldu úttakssnið og stillingar",
+                "howto.step2.description": "Veldu æskilegt úttakssnið og sérsníddu stillingar eins og upplausn, gæði, rammatíðni og fleira. Forskoðaðu upprunalega myndbandið þitt til vinstri.",
+                "howto.step3.title": "Umbreyttu og forskoða",
+                "howto.step3.description": "Smelltu á \"Umbreyta myndbandi\" til að hefja vinnslu. Fylgstu með framvindustikunni og forskoðaðu umbreytta myndbandið til hægri þegar lokið er.",
+                "howto.step4.title": "Sæktu niðurstöðuna",
+                "howto.step4.description": "Sæktu umbreytta myndbandið þitt með einum smelli. Öll vinnsla á sér stað staðbundið í vafranum þínum - skrárnar þínar yfirgefa aldrei tækið þitt.",
+                "tool.title": "Myndbandsumbreytir",
+                "tool.upload.text": "Dragðu og slepptu myndbandsskránni þinni hér eða smelltu til að skoða",
+                "tool.upload.button": "Veldu myndbandsskrá",
+                "tool.supported": "Studd snið: MP4, MOV, AVI, MKV, WebM, FLV, WMV",
+                "tool.loading": "Vinnsla myndbands...",
+                "tool.preview.original": "Upprunalegt myndband",
+                "tool.preview.converted": "Umbreytt myndband",
+                "tool.options.title": "Umbreytingarvalkostir",
+                "tool.options.format": "Úttakssnið:",
+                "tool.options.quality": "Myndbands gæði:",
+                "tool.options.resolution": "Upplausn:",
+                "tool.options.framerate": "Rammatíðni:",
+                "tool.options.audio": "Hljóðkóðun:",
+                "tool.options.video": "Myndbandskóðun:",
+                "tool.stats.size": "Skráarstærð",
+                "tool.stats.duration": "Lengd",
+                "tool.stats.resolution": "Upplausn",
+                "tool.stats.time": "Umbreytingartími",
+                "tool.convert": "Umbreyta myndbandi",
+                "tool.download": "Sækja myndband",
+                "tool.clear": "Hreinsa allt",
+                "footer.follow": "FYLGDU OKKUR",
+                "footer.categories": "Vinsælar flokkar",
+                "footer.categories.pdf": "PDF verkfæri",
+                "footer.categories.image": "Myndaverkfæri",
+                "footer.categories.text": "Textaverkfæri",
+                "footer.categories.av": "Hljóð/myndband verkfæri",
+                "footer.categories.web": "Vefþróunaraðili verkfæri",
+                "footer.categories.calc": "Reiknivélarverkfæri",
+                "footer.categories.util": "Notagildisverkfæri",
+                "footer.categories.color": "Litverkfæri",
+                "footer.quicklinks": "Flýtileiðir",
+                "footer.links.tools": "Öll verkfæri",
+                "footer.links.faq": "Algengar spurningar",
+                "footer.links.contact": "Hafa samband",
+                "footer.links.privacy": "Meðferðarstefna",
+                "footer.links.disclaimer": "Fyrirvari",
+                "footer.links.terms": "Þjónustuskilmálar",
+                "footer.copyright": "© 2025 LollyPoPDF. Öll réttindi áskilin."
+            }, 
+            no: {
+                "nav.home": "Hjem",
+                "nav.about": "Om oss",
+                "nav.tools": "Verktøy",
+                "nav.contact": "Kontakt",
+                "hero.title": "Videokonverteringsverktøy",
+                "hero.description": "Konverter videoer mellom alle populære formater - MP4, WebM, AVI, MOV, MKV og mer. All behandling skjer lokalt i nettleseren din uten filstørrelsesbegrensninger og full personvern.",
+                "howto.title": "Hvordan bruke videokonvertereren",
+                "howto.step1.title": "Last opp videoen din",
+                "howto.step1.description": "Dra og slipp eller klikk for å laste opp videofilen din. Verktøyet støtter MP4, MOV, AVI, MKV, WebM, FLV og WMV formater uten filstørrelsesbegrensninger.",
+                "howto.step2.title": "Velg utdataformat og innstillinger",
+                "howto.step2.description": "Velg ønsket utdataformat og tilpass innstillinger som oppløsning, kvalitet, bildefrekvens og mer. Forhåndsvis den originale videoen til venstre.",
+                "howto.step3.title": "Konverter og forhåndsvis",
+                "howto.step3.description": "Klikk \"Konverter video\" for å starte behandlingen. Se fremdriftslinjen og forhåndsvis den konverterte videoen til høyre når den er ferdig.",
+                "howto.step4.title": "Last ned resultatet",
+                "howto.step4.description": "Last ned den konverterte videoen med ett klikk. All behandling skjer lokalt i nettleseren din - filene dine forlater aldri enheten din.",
+                "tool.title": "Videokonverterer",
+                "tool.upload.text": "Dra og slipp videofilen din her eller klikk for å bla",
+                "tool.upload.button": "Velg videofil",
+                "tool.supported": "Støttede formater: MP4, MOV, AVI, MKV, WebM, FLV, WMV",
+                "tool.loading": "Behandler video...",
+                "tool.preview.original": "Original video",
+                "tool.preview.converted": "Konvertert video",
+                "tool.options.title": "Konverteringsalternativer",
+                "tool.options.format": "Utdataformat:",
+                "tool.options.quality": "Videokvalitet:",
+                "tool.options.resolution": "Oppløsning:",
+                "tool.options.framerate": "Bildefrekvens:",
+                "tool.options.audio": "Lydkodek:",
+                "tool.options.video": "Videokodek:",
+                "tool.stats.size": "Filstørrelse",
+                "tool.stats.duration": "Varighet",
+                "tool.stats.resolution": "Oppløsning",
+                "tool.stats.time": "Konverteringstid",
+                "tool.convert": "Konverter video",
+                "tool.download": "Last ned video",
+                "tool.clear": "Tøm alt",
+                "footer.follow": "FØLG OSS",
+                "footer.categories": "Populære kategorier",
+                "footer.categories.pdf": "PDF-verktøy",
+                "footer.categories.image": "Bildeverktøy",
+                "footer.categories.text": "Tekstverktøy",
+                "footer.categories.av": "Lyd/videoverktøy",
+                "footer.categories.web": "Nettutviklerverktøy",
+                "footer.categories.calc": "Kalkulatorverktøy",
+                "footer.categories.util": "Nytteverktøy",
+                "footer.categories.color": "Fargeverktøy",
+                "footer.quicklinks": "Hurtiglenker",
+                "footer.links.tools": "Alle verktøy",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Kontakt",
+                "footer.links.privacy": "Personvernerklæring",
+                "footer.links.disclaimer": "Ansvarsfraskrivelse",
+                "footer.links.terms": "Tjenestevilkår",
+                "footer.copyright": "© 2025 LollyPoPDF. Alle rettigheter forbeholdt."
+            },
+            sv: {
+                "nav.home": "Hem",
+                "nav.about": "Om oss",
+                "nav.tools": "Verktyg",
+                "nav.contact": "Kontakt",
+                "hero.title": "Videokonverteringsverktyg",
+                "hero.description": "Konvertera videor mellan alla populära format - MP4, WebM, AVI, MOV, MKV och mer. All bearbetning sker lokalt i din webbläsare utan filstorleksbegränsningar och fullständig integritet.",
+                "howto.title": "Hur man använder videokonverteraren",
+                "howto.step1.title": "Ladda upp din video",
+                "howto.step1.description": "Dra och släpp eller klicka för att ladda upp din videofil. Verktyget stöder MP4, MOV, AVI, MKV, WebM, FLV och WMV format utan filstorleksbegränsningar.",
+                "howto.step2.title": "Välj utdataformat och inställningar",
+                "howto.step2.description": "Välj önskat utdataformat och anpassa inställningar som upplösning, kvalitet, bildfrekvens och mer. Förhandsgranska din originalvideo till vänster.",
+                "howto.step3.title": "Konvertera och förhandsgranska",
+                "howto.step3.description": "Klicka på \"Konvertera video\" för att starta bearbetningen. Titta på förloppsindikatorn och förhandsgranska den konverterade videon till höger när den är klar.",
+                "howto.step4.title": "Ladda ner resultatet",
+                "howto.step4.description": "Ladda ner din konverterade video med ett klick. All bearbetning sker lokalt i din webbläsare - dina filer lämnar aldrig din enhet.",
+                "tool.title": "Videokonverterare",
+                "tool.upload.text": "Dra och släpp din videofil här eller klicka för att bläddra",
+                "tool.upload.button": "Välj videofil",
+                "tool.supported": "Format som stöds: MP4, MOV, AVI, MKV, WebM, FLV, WMV",
+                "tool.loading": "Bearbetar video...",
+                "tool.preview.original": "Originalvideo",
+                "tool.preview.converted": "Konverterad video",
+                "tool.options.title": "Konverteringsalternativ",
+                "tool.options.format": "Utdataformat:",
+                "tool.options.quality": "Videokvalitet:",
+                "tool.options.resolution": "Upplösning:",
+                "tool.options.framerate": "Bildfrekvens:",
+                "tool.options.audio": "Ljudcodec:",
+                "tool.options.video": "Videocodec:",
+                "tool.stats.size": "Filstorlek",
+                "tool.stats.duration": "Varaktighet",
+                "tool.stats.resolution": "Upplösning",
+                "tool.stats.time": "Konverteringstid",
+                "tool.convert": "Konvertera video",
+                "tool.download": "Ladda ner video",
+                "tool.clear": "Rensa allt",
+                "footer.follow": "FÖLJ OSS",
+                "footer.categories": "Populära kategorier",
+                "footer.categories.pdf": "PDF-verktyg",
+                "footer.categories.image": "Bildverktyg",
+                "footer.categories.text": "Textverktyg",
+                "footer.categories.av": "Ljud/videoverktyg",
+                "footer.categories.web": "Webbutvecklarverktyg",
+                "footer.categories.calc": "Kalkylatorverktyg",
+                "footer.categories.util": "Verktyg för verktyg",
+                "footer.categories.color": "Färgverktyg",
+                "footer.quicklinks": "Snabblänkar",
+                "footer.links.tools": "Alla verktyg",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Kontakt",
+                "footer.links.privacy": "Integritetspolicy",
+                "footer.links.disclaimer": "Ansvarsfriskrivning",
+                "footer.links.terms": "Användarvillkor",
+                "footer.copyright": "© 2025 LollyPoPDF. Alla rättigheter förbehållna."
+            },
+            fi: {
+                "nav.home": "Koti",
+                "nav.about": "Meistä",
+                "nav.tools": "Työkalut",
+                "nav.contact": "Yhteystiedot",
+                "hero.title": "Videomuunnintatyökalu",
+                "hero.description": "Muunna videot kaikkien suosittujen muotojen välillä - MP4, WebM, AVI, MOV, MKV ja enemmän. Kaikki käsittely tapahtuu paikallisesti selaimessasi ilman tiedostokokorajoituksia ja täydellisen yksityisyyden.",
+                "howto.title": "Kuinka käyttää videomuunninta",
+                "howto.step1.title": "Lataa videosi",
+                "howto.step1.description": "Vedä ja pudota tai napsauta ladataksesi videotiedostosi. Työkalu tukee MP4, MOV, AVI, MKV, WebM, FLV ja WMV muotoja ilman tiedostokokorajoituksia.",
+                "howto.step2.title": "Valitse tulostusmuoto ja asetukset",
+                "howto.step2.description": "Valitse haluamasi tulostusmuoto ja mukauta asetuksia kuten resoluutio, laatu, kuvataajuus ja enemmän. Esikatsele alkuperäistä videota vasemmalla.",
+                "howto.step3.title": "Muunna ja esikatsele",
+                "howto.step3.description": "Napsauta \"Muunna video\" aloittaaksesi käsittelyn. Katso edistymispalkkia ja esikatsele muunnettua videota oikealla, kun se on valmis.",
+                "howto.step4.title": "Lataa tulos",
+                "howto.step4.description": "Lataa muunnettu videosi yhdellä napsautuksella. Kaikki käsittely tapahtuu paikallisesti selaimessasi - tiedostosi eivät koskaan jätä laitetta.",
+                "tool.title": "Videomuunnin",
+                "tool.upload.text": "Vedä ja pudota videotiedostosi tähän tai napsauta selataksesi",
+                "tool.upload.button": "Valitse videotiedosto",
+                "tool.supported": "Tuetut muodot: MP4, MOV, AVI, MKV, WebM, FLV, WMV",
+                "tool.loading": "Käsitellään videota...",
+                "tool.preview.original": "Alkuperäinen video",
+                "tool.preview.converted": "Muunnettu video",
+                "tool.options.title": "Muunnosasetukset",
+                "tool.options.format": "Tulostusmuoto:",
+                "tool.options.quality": "Videon laatu:",
+                "tool.options.resolution": "Resoluutio:",
+                "tool.options.framerate": "Kuvataajuus:",
+                "tool.options.audio": "Äänikoodekki:",
+                "tool.options.video": "Videokoodekki:",
+                "tool.stats.size": "Tiedostokoko",
+                "tool.stats.duration": "Kesto",
+                "tool.stats.resolution": "Resoluutio",
+                "tool.stats.time": "Muunnosaika",
+                "tool.convert": "Muunna video",
+                "tool.download": "Lataa video",
+                "tool.clear": "Tyhjennä kaikki",
+                "footer.follow": "SEURA MEITÄ",
+                "footer.categories": "Suositut kategoriat",
+                "footer.categories.pdf": "PDF-työkalut",
+                "footer.categories.image": "Kuvatyökalut",
+                "footer.categories.text": "Tekstityökalut",
+                "footer.categories.av": "Ääni/videotyökalut",
+                "footer.categories.web": "Web-kehittäjätyökalut",
+                "footer.categories.calc": "Laskurityökalut",
+                "footer.categories.util": "Aputyökalut",
+                "footer.categories.color": "Värityökalut",
+                "footer.quicklinks": "Pikalinkit",
+                "footer.links.tools": "Kaikki työkalut",
+                "footer.links.faq": "UKK",
+                "footer.links.contact": "Yhteystiedot",
+                "footer.links.privacy": "Tietosuojakäytäntö",
+                "footer.links.disclaimer": "Vastuuvapauslauseke",
+                "footer.links.terms": "Käyttöehdot",
+                "footer.copyright": "© 2025 LollyPoPDF. Kaikki oikeudet pidätetään."
+            },
+            cs: {
+                "nav.home": "Domů",
+                "nav.about": "O nás",
+                "nav.tools": "Nástroje",
+                "nav.contact": "Kontakt",
+                "hero.title": "Nástroj pro převod videa",
+                "hero.description": "Převádějte videa mezi všemi oblíbenými formáty - MP4, WebM, AVI, MOV, MKV a další. Veškeré zpracování probíhá lokálně ve vašem prohlížeči bez omezení velikosti souboru a s úplným soukromím.",
+                "howto.title": "Jak používat převodník videa",
+                "howto.step1.title": "Nahrajte své video",
+                "howto.step1.description": "Přetáhněte nebo klikněte pro nahrání vašeho videosouboru. Nástroj podporuje formáty MP4, MOV, AVI, MKV, WebM, FLV a WMV bez omezení velikosti souboru.",
+                "howto.step2.title": "Zvolte výstupní formát a nastavení",
+                "howto.step2.description": "Vyberte požadovaný výstupní formát a přizpůsobte nastavení jako rozlišení, kvalitu, snímkovou frekvenci a další. Náhled původního videa vlevo.",
+                "howto.step3.title": "Převést a zobrazit náhled",
+                "howto.step3.description": "Klikněte na \"Převést video\" pro zahájení zpracování. Sledujte ukazatel průběhu a zobrazte náhled převedeného videa vpravo po dokončení.",
+                "howto.step4.title": "Stáhnout výsledek",
+                "howto.step4.description": "Stáhněte si převedené video jedním kliknutím. Veškeré zpracování probíhá lokálně ve vašem prohlížeči - vaše soubory nikdy neopustí vaše zařízení.",
+                "tool.title": "Převodník videa",
+                "tool.upload.text": "Přetáhněte svůj videosoubor sem nebo klikněte pro procházení",
+                "tool.upload.button": "Vybrat videosoubor",
+                "tool.supported": "Podporované formáty: MP4, MOV, AVI, MKV, WebM, FLV, WMV",
+                "tool.loading": "Zpracování videa...",
+                "tool.preview.original": "Původní video",
+                "tool.preview.converted": "Převedené video",
+                "tool.options.title": "Možnosti převodu",
+                "tool.options.format": "Výstupní formát:",
+                "tool.options.quality": "Kvalita videa:",
+                "tool.options.resolution": "Rozlišení:",
+                "tool.options.framerate": "Snímková frekvence:",
+                "tool.options.audio": "Zvukový kodek:",
+                "tool.options.video": "Video kodek:",
+                "tool.stats.size": "Velikost souboru",
+                "tool.stats.duration": "Délka",
+                "tool.stats.resolution": "Rozlišení",
+                "tool.stats.time": "Doba převodu",
+                "tool.convert": "Převést video",
+                "tool.download": "Stáhnout video",
+                "tool.clear": "Vymazat vše",
+                "footer.follow": "SLEDUJTE NÁS",
+                "footer.categories": "Populární kategorie",
+                "footer.categories.pdf": "PDF nástroje",
+                "footer.categories.image": "Obrázkové nástroje",
+                "footer.categories.text": "Textové nástroje",
+                "footer.categories.av": "Audio/video nástroje",
+                "footer.categories.web": "Webové vývojářské nástroje",
+                "footer.categories.calc": "Kalkulační nástroje",
+                "footer.categories.util": "Užitečné nástroje",
+                "footer.categories.color": "Barevné nástroje",
+                "footer.quicklinks": "Rychlé odkazy",
+                "footer.links.tools": "Všechny nástroje",
+                "footer.links.faq": "Často kladené otázky",
+                "footer.links.contact": "Kontakt",
+                "footer.links.privacy": "Zásady ochrany osobních údajů",
+                "footer.links.disclaimer": "Odmítnutí odpovědnosti",
+                "footer.links.terms": "Podmínky služby",
+                "footer.copyright": "© 2025 LollyPoPDF. Všechna práva vyhrazena."
+            }
+            
+                        
+                                              
+        };
+
+        // Function to change language
+        function changeLanguage(langCode) {
+            const langData = translations[langCode];
+            if (!langData) return;
+            
+            // Update all elements with data-i18n attribute
+            document.querySelectorAll('[data-i18n]').forEach(element => {
+                const key = element.getAttribute('data-i18n');
+                if (langData[key]) {
+                    element.textContent = langData[key];
+                }
+            });
+            
+            // Update current language display
+            currentLanguageElement.textContent = languages.find(lang => lang.code === langCode)?.name || 'English';
+            
+            // Save language preference
+            localStorage.setItem('language', langCode);
+        }
+
+        // Initialize language
+        const savedLanguage = localStorage.getItem('language') || 'en';
+        changeLanguage(savedLanguage);
+        
+        // Language selection handler
+        languageDropdown.addEventListener('click', (e) => {
+            if (e.target.classList.contains('language-option')) {
+                const langCode = e.target.getAttribute('data-lang');
+                changeLanguage(langCode);
+            }
+        });
+    </script>
+</body>
+</html>

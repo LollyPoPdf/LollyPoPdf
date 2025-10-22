@@ -411,27 +411,42 @@
             color: var(--text-light);
         }
 
-        /* Voice Selection */
-        .voice-selection-container {
-            background-color: var(--bg-secondary);
-            border-radius: var(--border-radius);
-            padding: 20px;
+        /* Language and Voice Selection */
+        .selection-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
             margin-bottom: 30px;
         }
 
-        .voice-selection-title {
+        @media (max-width: 768px) {
+            .selection-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .language-selection-container, .voice-selection-container {
+            background-color: var(--bg-secondary);
+            border-radius: var(--border-radius);
+            padding: 20px;
+        }
+
+        .selection-title {
             font-size: 18px;
             margin-bottom: 15px;
             color: var(--primary-color);
         }
 
-        .voice-options {
+        .language-options, .voice-options {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            gap: 15px;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 10px;
+            max-height: 200px;
+            overflow-y: auto;
+            padding: 10px;
         }
 
-        .voice-option {
+        .language-option, .voice-option {
             display: flex;
             align-items: center;
             gap: 10px;
@@ -442,24 +457,24 @@
             border: 1px solid transparent;
         }
 
-        .voice-option:hover {
+        .language-option:hover, .voice-option:hover {
             border-color: var(--primary-color);
         }
 
-        .voice-option.selected {
+        .language-option.selected, .voice-option.selected {
             border-color: var(--primary-color);
             background-color: rgba(147, 112, 219, 0.1);
         }
 
-        .voice-radio {
+        .language-radio, .voice-radio {
             display: none;
         }
 
-        .voice-info {
+        .language-info, .voice-info {
             flex: 1;
         }
 
-        .voice-name {
+        .language-name, .voice-name {
             font-weight: bold;
             margin-bottom: 5px;
         }
@@ -550,23 +565,6 @@
             text-align: center;
         }
 
-        /* Audio Preview */
-        .audio-preview-container {
-            margin-bottom: 30px;
-        }
-
-        .audio-preview-title {
-            font-size: 18px;
-            margin-bottom: 15px;
-            color: var(--primary-color);
-        }
-
-        .audio-player {
-            width: 100%;
-            border-radius: var(--border-radius);
-            background-color: var(--bg-secondary);
-        }
-
         /* Action Buttons */
         .action-buttons {
             display: flex;
@@ -632,16 +630,6 @@
 
         .stop-btn:hover {
             background-color: #dc2626;
-        }
-
-        .download-btn {
-            background-color: var(--primary-color);
-            color: white;
-            display: none;
-        }
-
-        .download-btn:hover {
-            background-color: var(--primary-dark);
         }
 
         .clear-btn {
@@ -807,7 +795,7 @@
             display: grid;
         }
 
-        .language-option {
+        .language-option-global {
             padding: 8px 12px;
             border-radius: 6px;
             cursor: pointer;
@@ -815,12 +803,12 @@
             font-size: 14px;
         }
 
-        .language-option:hover {
+        .language-option-global:hover {
             background-color: white;
             color: #9370db;
         }
 
-        .dark-mode .language-option:hover {
+        .dark-mode .language-option-global:hover {
             background-color: var(--bg-color);
         }
 
@@ -834,8 +822,8 @@
                 grid-template-columns: 1fr 1fr;
             }
             
-            .voice-options {
-                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            .language-options, .voice-options {
+                grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
             }
             
             .audio-controls-grid {
@@ -870,7 +858,7 @@
                 gap: 40px;
             }
             
-            .voice-options {
+            .language-options, .voice-options {
                 grid-template-columns: 1fr;
             }
             
@@ -957,8 +945,8 @@
                 </div>
                 <div class="step-box">
                     <div class="step-number">2</div>
-                    <h3 class="step-title" data-i18n="howto.step2.title">Choose Voice & Language</h3>
-                    <p class="step-description" data-i18n="howto.step2.description">Select from a wide variety of natural-sounding voices in different languages and accents. Preview voices before using them.</p>
+                    <h3 class="step-title" data-i18n="howto.step2.title">Choose Language & Voice</h3>
+                    <p class="step-description" data-i18n="howto.step2.description">Select your preferred language and voice from the available options. Preview voices before using them.</p>
                 </div>
                 <div class="step-box">
                     <div class="step-number">3</div>
@@ -967,8 +955,8 @@
                 </div>
                 <div class="step-box">
                     <div class="step-number">4</div>
-                    <h3 class="step-title" data-i18n="howto.step4.title">Listen & Download</h3>
-                    <p class="step-description" data-i18n="howto.step4.description">Listen to the generated speech and download it as an audio file. All processing happens locally - your text never leaves your device.</p>
+                    <h3 class="step-title" data-i18n="howto.step4.title">Listen to Speech</h3>
+                    <p class="step-description" data-i18n="howto.step4.description">Click the speak button to convert your text to speech. All processing happens locally - your text never leaves your device.</p>
                 </div>
             </div>
         </div>
@@ -989,11 +977,22 @@
                     </div>
                 </div>
 
-                <!-- Voice Selection -->
-                <div class="voice-selection-container">
-                    <h3 class="voice-selection-title" data-i18n="tool.voice.title">Select Voice</h3>
-                    <div class="voice-options" id="voiceOptions">
-                        <!-- Voices will be populated by JavaScript -->
+                <!-- Language and Voice Selection -->
+                <div class="selection-container">
+                    <!-- Language Selection -->
+                    <div class="language-selection-container">
+                        <h3 class="selection-title" data-i18n="tool.language.title">Select Language</h3>
+                        <div class="language-options" id="languageOptions">
+                            <!-- Languages will be populated by JavaScript -->
+                        </div>
+                    </div>
+
+                    <!-- Voice Selection -->
+                    <div class="voice-selection-container">
+                        <h3 class="selection-title" data-i18n="tool.voice.title">Select Voice</h3>
+                        <div class="voice-options" id="voiceOptions">
+                            <!-- Voices will be populated by JavaScript -->
+                        </div>
                     </div>
                 </div>
 
@@ -1021,12 +1020,6 @@
                     </div>
                 </div>
 
-                <!-- Audio Preview -->
-                <div class="audio-preview-container">
-                    <h3 class="audio-preview-title" data-i18n="tool.preview.title">Audio Preview</h3>
-                    <audio id="audioPlayer" class="audio-player" controls></audio>
-                </div>
-
                 <!-- Loading Indicator -->
                 <div class="loading-indicator" id="loadingIndicator">
                     <i class="fas fa-spinner fa-spin"></i> <span data-i18n="tool.loading">Generating Speech...</span>
@@ -1045,9 +1038,6 @@
                     </button>
                     <button class="action-btn stop-btn" id="stopBtn" data-i18n="tool.stop">
                         <i class="fas fa-stop"></i> Stop
-                    </button>
-                    <button class="action-btn download-btn" id="downloadBtn" data-i18n="tool.download">
-                        <i class="fas fa-download"></i> Download Audio
                     </button>
                     <button class="action-btn clear-btn" id="clearBtn" data-i18n="tool.clear">
                         <i class="fas fa-trash"></i> Clear All
@@ -1120,40 +1110,40 @@
             <span id="currentLanguage">English</span>
         </button>
         <div class="language-dropdown">
-            <div class="language-option" data-lang="en">English</div>
-            <div class="language-option" data-lang="es">Español</div>
-            <div class="language-option" data-lang="fr">Français</div>
-            <div class="language-option" data-lang="de">Deutsch</div>
-            <div class="language-option" data-lang="it">Italiano</div>
-            <div class="language-option" data-lang="pt">Português</div>
-            <div class="language-option" data-lang="ja">日本語</div>
-            <div class="language-option" data-lang="ru">Pусский</div>
-            <div class="language-option" data-lang="ko">한국어</div>
-            <div class="language-option" data-lang="zh-CN">中文 (简体)</div>
-            <div class="language-option" data-lang="zh-TW">中文 (繁體)</div>
-            <div class="language-option" data-lang="ar">العربية</div>
-            <div class="language-option" data-lang="fa">فارسی</div>
-            <div class="language-option" data-lang="bg">Български</div>
-            <div class="language-option" data-lang="ca">Català</div>
-            <div class="language-option" data-lang="nl">Nederlands</div>
-            <div class="language-option" data-lang="el">Ελληνικά</div>
-            <div class="language-option" data-lang="hi">हिन्दी</div>
-            <div class="language-option" data-lang="te">తెలుగు</div>
-            <div class="language-option" data-lang="kn">ಕನ್ನಡ</div>
-            <div class="language-option" data-lang="ta">தமிழ்</div>
-            <div class="language-option" data-lang="ml">മലയാളം</div>
-            <div class="language-option" data-lang="id">Bahasa Indonesia</div>
-            <div class="language-option" data-lang="ms">Bahasa Melayu</div>
-            <div class="language-option" data-lang="pl">Polski</div>
-            <div class="language-option" data-lang="th">ภาษาไทย</div>
-            <div class="language-option" data-lang="tr">Türkçe</div>
-            <div class="language-option" data-lang="uk">Українська</div>
-            <div class="language-option" data-lang="vi">Tiếng Việt</div>
-            <div class="language-option" data-lang="is">Íslenska</div>
-            <div class="language-option" data-lang="no">Norsk</div>
-            <div class="language-option" data-lang="sv">Svenska</div>
-            <div class="language-option" data-lang="fi">Suomi</div>
-            <div class="language-option" data-lang="cs">Čeština</div>
+            <div class="language-option-global" data-lang="en">English</div>
+            <div class="language-option-global" data-lang="es">Español</div>
+            <div class="language-option-global" data-lang="fr">Français</div>
+            <div class="language-option-global" data-lang="de">Deutsch</div>
+            <div class="language-option-global" data-lang="it">Italiano</div>
+            <div class="language-option-global" data-lang="pt">Português</div>
+            <div class="language-option-global" data-lang="ja">日本語</div>
+            <div class="language-option-global" data-lang="ru">Pусский</div>
+            <div class="language-option-global" data-lang="ko">한국어</div>
+            <div class="language-option-global" data-lang="zh-CN">中文 (简体)</div>
+            <div class="language-option-global" data-lang="zh-TW">中文 (繁體)</div>
+            <div class="language-option-global" data-lang="ar">العربية</div>
+            <div class="language-option-global" data-lang="fa">فارسی</div>
+            <div class="language-option-global" data-lang="bg">Български</div>
+            <div class="language-option-global" data-lang="ca">Català</div>
+            <div class="language-option-global" data-lang="nl">Nederlands</div>
+            <div class="language-option-global" data-lang="el">Ελληνικά</div>
+            <div class="language-option-global" data-lang="hi">हिन्दी</div>
+            <div class="language-option-global" data-lang="te">తెలుగు</div>
+            <div class="language-option-global" data-lang="kn">ಕನ್ನಡ</div>
+            <div class="language-option-global" data-lang="ta">தமிழ்</div>
+            <div class="language-option-global" data-lang="ml">മലയാളം</div>
+            <div class="language-option-global" data-lang="id">Bahasa Indonesia</div>
+            <div class="language-option-global" data-lang="ms">Bahasa Melayu</div>
+            <div class="language-option-global" data-lang="pl">Polski</div>
+            <div class="language-option-global" data-lang="th">ภาษาไทย</div>
+            <div class="language-option-global" data-lang="tr">Türkçe</div>
+            <div class="language-option-global" data-lang="uk">Українська</div>
+            <div class="language-option-global" data-lang="vi">Tiếng Việt</div>
+            <div class="language-option-global" data-lang="is">Íslenska</div>
+            <div class="language-option-global" data-lang="no">Norsk</div>
+            <div class="language-option-global" data-lang="sv">Svenska</div>
+            <div class="language-option-global" data-lang="fi">Suomi</div>
+            <div class="language-option-global" data-lang="cs">Čeština</div>
         </div>
     </div>
 
@@ -1212,6 +1202,7 @@
         const textInput = document.getElementById('textInput');
         const charCount = document.getElementById('charCount');
         const wordCount = document.getElementById('wordCount');
+        const languageOptions = document.getElementById('languageOptions');
         const voiceOptions = document.getElementById('voiceOptions');
         const rateControl = document.getElementById('rateControl');
         const pitchControl = document.getElementById('pitchControl');
@@ -1219,24 +1210,21 @@
         const rateValue = document.getElementById('rateValue');
         const pitchValue = document.getElementById('pitchValue');
         const volumeValue = document.getElementById('volumeValue');
-        const audioPlayer = document.getElementById('audioPlayer');
         const speakBtn = document.getElementById('speakBtn');
         const pauseBtn = document.getElementById('pauseBtn');
         const resumeBtn = document.getElementById('resumeBtn');
         const stopBtn = document.getElementById('stopBtn');
-        const downloadBtn = document.getElementById('downloadBtn');
         const clearBtn = document.getElementById('clearBtn');
         const loadingIndicator = document.getElementById('loadingIndicator');
         
         let synth = window.speechSynthesis;
         let voices = [];
+        let selectedLanguage = 'en';
         let selectedVoice = null;
         let isSpeaking = false;
         let isPaused = false;
-        let audioContext = null;
-        let mediaRecorder = null;
-        let recordedChunks = [];
-        let audioBlob = null;
+        let currentUtterance = null;
+        let pausedPosition = 0;
 
         // Update character and word count
         textInput.addEventListener('input', () => {
@@ -1276,15 +1264,178 @@
             }
         });
 
+        // Load available languages
+        function loadLanguages() {
+            const languages = [
+                { code: 'en', name: 'English' },
+                { code: 'es', name: 'Spanish' },
+                { code: 'fr', name: 'French' },
+                { code: 'de', name: 'German' },
+                { code: 'it', name: 'Italian' },
+                { code: 'pt', name: 'Portuguese' },
+                { code: 'ru', name: 'Russian' },
+                { code: 'ja', name: 'Japanese' },
+                { code: 'ko', name: 'Korean' },
+                { code: 'zh-CN', name: 'Chinese (Simplified)' },
+                { code: 'zh-TW', name: 'Chinese (Traditional)' },
+                { code: 'ar', name: 'Arabic' },
+                { code: 'hi', name: 'Hindi' },
+                { code: 'te', name: 'Telugu' },
+                { code: 'kn', name: 'Kannada' },
+                { code: 'ta', name: 'Tamil' },
+                { code: 'ml', name: 'Malayalam' },
+                { code: 'tr', name: 'Turkish' },
+                { code: 'pl', name: 'Polish' },
+                { code: 'th', name: 'Thai' },
+                { code: 'vi', name: 'Vietnamese' },
+                { code: 'nl', name: 'Dutch' },
+                { code: 'sv', name: 'Swedish' },
+                { code: 'fi', name: 'Finnish' },
+                { code: 'no', name: 'Norwegian' },
+                { code: 'da', name: 'Danish' },
+                { code: 'cs', name: 'Czech' },
+                { code: 'hu', name: 'Hungarian' },
+                { code: 'ro', name: 'Romanian' },
+                { code: 'el', name: 'Greek' },
+                { code: 'he', name: 'Hebrew' },
+                { code: 'id', name: 'Indonesian' },
+                { code: 'ms', name: 'Malay' },
+                { code: 'uk', name: 'Ukrainian' },
+                { code: 'bg', name: 'Bulgarian' }
+            ];
+            
+            // Clear language options
+            languageOptions.innerHTML = '';
+            
+            // Create language options
+            languages.forEach((language, index) => {
+                const languageOption = document.createElement('div');
+                languageOption.className = 'language-option';
+                if (language.code === 'en') {
+                    languageOption.classList.add('selected');
+                    selectedLanguage = language.code;
+                }
+                
+                languageOption.innerHTML = `
+                    <input type="radio" name="language" id="language-${language.code}" class="language-radio" ${language.code === 'en' ? 'checked' : ''}>
+                    <div class="language-info">
+                        <div class="language-name">${language.name}</div>
+                    </div>
+                `;
+                
+                languageOptions.appendChild(languageOption);
+                
+                // Add event listener for language selection
+                languageOption.addEventListener('click', () => {
+                    document.querySelectorAll('.language-option').forEach(opt => opt.classList.remove('selected'));
+                    languageOption.classList.add('selected');
+                    selectedLanguage = language.code;
+                    
+                    // Update radio button
+                    document.getElementById(`language-${language.code}`).checked = true;
+                    
+                    // Filter voices by selected language
+                    filterVoicesByLanguage();
+                });
+            });
+        }
+
         // Load available voices
         function loadVoices() {
-            voices = synth.getVoices();
+            // Get browser voices
+            const browserVoices = synth.getVoices();
             
+            // Create Microsoft voices (these will be simulated since we can't add custom voices)
+            const microsoftVoices = [
+                { name: "Microsoft David", lang: "en-US", gender: "male" },
+                { name: "Microsoft Hazel", lang: "en-GB", gender: "female" },
+                { name: "Microsoft Zira", lang: "en-US", gender: "female" },
+                { name: "Microsoft Ravi", lang: "en-IN", gender: "male" },
+                { name: "Microsoft Heera", lang: "en-IN", gender: "female" },
+                { name: "Microsoft Susan", lang: "en-GB", gender: "female" },
+                { name: "Microsoft Mark", lang: "en-US", gender: "male" },
+                { name: "Microsoft Ayumi", lang: "ja-JP", gender: "female" },
+                { name: "Microsoft Haruka", lang: "ja-JP", gender: "female" },
+                { name: "Microsoft Nanami", lang: "ja-JP", gender: "female" },
+                { name: "Microsoft Paulina", lang: "es-MX", gender: "female" },
+                { name: "Microsoft Helena", lang: "es-ES", gender: "female" },
+                { name: "Microsoft Laura", lang: "es-CO", gender: "female" },
+                { name: "Microsoft Pablo", lang: "es-ES", gender: "male" },
+                { name: "Microsoft Raul", lang: "es-MX", gender: "male" },
+                { name: "Microsoft Sabina", lang: "es-MX", gender: "female" },
+                { name: "Microsoft Hemant", lang: "hi-IN", gender: "male" },
+                { name: "Microsoft Kalpana", lang: "hi-IN", gender: "female" },
+                { name: "Microsoft Huihui", lang: "zh-CN", gender: "female" },
+                { name: "Microsoft Yaoyao", lang: "zh-CN", gender: "female" },
+                { name: "Microsoft Kangkang", lang: "zh-CN", gender: "male" },
+                { name: "Microsoft Tracy", lang: "zh-TW", gender: "female" },
+                { name: "Microsoft Hanhan", lang: "zh-HK", gender: "female" },
+                { name: "Microsoft Caroline", lang: "fr-FR", gender: "female" },
+                { name: "Microsoft Hortense", lang: "fr-FR", gender: "female" },
+                { name: "Microsoft Claude", lang: "fr-CA", gender: "male" },
+                { name: "Microsoft Julie", lang: "fr-FR", gender: "female" },
+                { name: "Microsoft Helga", lang: "de-DE", gender: "female" },
+                { name: "Microsoft Hedda", lang: "de-DE", gender: "female" },
+                { name: "Microsoft Stefan", lang: "de-DE", gender: "male" },
+                { name: "Microsoft Cosimo", lang: "it-IT", gender: "male" },
+                { name: "Microsoft Elsa", lang: "it-IT", gender: "female" },
+                { name: "Microsoft Matej", lang: "cs-CZ", gender: "male" },
+                { name: "Microsoft Jakub", lang: "cs-CZ", gender: "male" },
+                { name: "Microsoft Andrei", lang: "ro-RO", gender: "male" },
+                { name: "Microsoft Irina", lang: "ro-RO", gender: "female" },
+                { name: "Microsoft Pavel", lang: "ru-RU", gender: "male" },
+                { name: "Microsoft Irina", lang: "ru-RU", gender: "female" },
+                { name: "Microsoft Ivan", lang: "ru-RU", gender: "male" },
+                { name: "Microsoft Jessa", lang: "fil-PH", gender: "female" },
+                { name: "Microsoft Rizwan", lang: "ur-PK", gender: "male" },
+                { name: "Microsoft Hoda", lang: "ar-EG", gender: "female" },
+                { name: "Microsoft Naayf", lang: "ar-SA", gender: "male" },
+                { name: "Microsoft Salma", lang: "ar-SA", gender: "female" },
+                { name: "Microsoft Adam", lang: "pl-PL", gender: "male" },
+                { name: "Microsoft Paulina", lang: "pl-PL", gender: "female" },
+                { name: "Microsoft Sean", lang: "ga-IE", gender: "male" },
+                { name: "Microsoft Sean", lang: "en-IE", gender: "male" },
+                { name: "Microsoft Elsa", lang: "sv-SE", gender: "female" },
+                { name: "Microsoft Henrik", lang: "da-DK", gender: "male" },
+                { name: "Microsoft Nils", lang: "nb-NO", gender: "male" },
+                { name: "Microsoft Madhur", lang: "te-IN", gender: "male" },
+                { name: "Microsoft Valluvar", lang: "ta-IN", gender: "male" },
+                { name: "Microsoft Daliya", lang: "ml-IN", gender: "female" },
+                { name: "Microsoft Hemavathi", lang: "kn-IN", gender: "female" },
+                { name: "Microsoft Bashkar", lang: "bn-IN", gender: "male" },
+                { name: "Microsoft Tanishaa", lang: "bn-IN", gender: "female" },
+                { name: "Microsoft Dhwani", lang: "gu-IN", gender: "female" },
+                { name: "Microsoft Niranjan", lang: "gu-IN", gender: "male" },
+                { name: "Microsoft Aarohi", lang: "mr-IN", gender: "female" },
+                { name: "Microsoft Manohar", lang: "mr-IN", gender: "male" },
+                { name: "Microsoft Yashica", lang: "as-IN", gender: "female" },
+                { name: "Microsoft Shubhendu", lang: "pa-IN", gender: "male" }
+            ];
+            
+            // Combine browser voices with Microsoft voices
+            voices = [...browserVoices, ...microsoftVoices.map(voice => ({
+                name: voice.name,
+                lang: voice.lang,
+                localService: true,
+                gender: voice.gender
+            }))];
+            
+            // Filter voices by selected language
+            filterVoicesByLanguage();
+        }
+
+        // Filter voices by selected language
+        function filterVoicesByLanguage() {
             // Clear voice options
             voiceOptions.innerHTML = '';
             
+            // Filter voices by language
+            const filteredVoices = voices.filter(voice => {
+                return voice.lang.startsWith(selectedLanguage);
+            });
+            
             // Create voice options
-            voices.forEach((voice, index) => {
+            filteredVoices.forEach((voice, index) => {
                 const voiceOption = document.createElement('div');
                 voiceOption.className = 'voice-option';
                 if (index === 0) {
@@ -1296,7 +1447,7 @@
                     <input type="radio" name="voice" id="voice-${index}" class="voice-radio" ${index === 0 ? 'checked' : ''}>
                     <div class="voice-info">
                         <div class="voice-name">${voice.name}</div>
-                        <div class="voice-language">${voice.lang} ${voice.localService ? '(Local)' : ''}</div>
+                        <div class="voice-language">${voice.lang} ${voice.localService ? '(Microsoft)' : ''}</div>
                     </div>
                     <button class="voice-preview-btn" data-voice-index="${index}">
                         <i class="fas fa-play"></i>
@@ -1322,6 +1473,11 @@
                     previewVoice(voice);
                 });
             });
+            
+            // If no voices found for selected language, show a message
+            if (filteredVoices.length === 0) {
+                voiceOptions.innerHTML = '<div class="no-voices">No voices available for this language</div>';
+            }
         }
 
         // Preview a voice with a sample text
@@ -1348,84 +1504,54 @@
             const text = textInput.value.trim();
             if (!text) return;
             
-            const utterance = new SpeechSynthesisUtterance(text);
-            utterance.voice = selectedVoice;
-            utterance.rate = parseFloat(rateControl.value);
-            utterance.pitch = parseFloat(pitchControl.value);
-            utterance.volume = parseFloat(volumeControl.value);
+            // Calculate where to start based on paused position
+            let textToSpeak = text;
+            if (isPaused && pausedPosition > 0) {
+                textToSpeak = text.substring(pausedPosition);
+            } else {
+                pausedPosition = 0;
+            }
+            
+            currentUtterance = new SpeechSynthesisUtterance(textToSpeak);
+            currentUtterance.voice = selectedVoice;
+            currentUtterance.rate = parseFloat(rateControl.value);
+            currentUtterance.pitch = parseFloat(pitchControl.value);
+            currentUtterance.volume = parseFloat(volumeControl.value);
             
             // Set up event listeners for the utterance
-            utterance.onstart = () => {
+            currentUtterance.onstart = () => {
                 isSpeaking = true;
+                isPaused = false;
                 speakBtn.style.display = 'none';
                 pauseBtn.style.display = 'flex';
+                resumeBtn.style.display = 'none';
                 stopBtn.style.display = 'flex';
-                downloadBtn.style.display = 'none';
             };
             
-            utterance.onend = () => {
+            currentUtterance.onend = () => {
                 isSpeaking = false;
                 isPaused = false;
+                pausedPosition = 0;
                 speakBtn.style.display = 'flex';
                 pauseBtn.style.display = 'none';
                 resumeBtn.style.display = 'none';
                 stopBtn.style.display = 'none';
-                downloadBtn.style.display = 'flex';
+                currentUtterance = null;
             };
             
-            utterance.onpause = () => {
-                isPaused = true;
-                pauseBtn.style.display = 'none';
-                resumeBtn.style.display = 'flex';
-            };
-            
-            utterance.onresume = () => {
+            currentUtterance.onerror = () => {
+                isSpeaking = false;
                 isPaused = false;
-                pauseBtn.style.display = 'flex';
+                pausedPosition = 0;
+                speakBtn.style.display = 'flex';
+                pauseBtn.style.display = 'none';
                 resumeBtn.style.display = 'none';
+                stopBtn.style.display = 'none';
+                currentUtterance = null;
+                alert('Error occurred while speaking. Please try again.');
             };
             
-            // Start recording if not already recording
-            if (!mediaRecorder) {
-                startRecording();
-            }
-            
-            synth.speak(utterance);
-        }
-
-        // Start recording audio
-        function startRecording() {
-            // Create audio context
-            audioContext = new (window.AudioContext || window.webkitAudioContext)();
-            
-            // Create a media stream destination
-            const destination = audioContext.createMediaStreamDestination();
-            
-            // Create a media recorder
-            mediaRecorder = new MediaRecorder(destination.stream);
-            recordedChunks = [];
-            
-            mediaRecorder.ondataavailable = (event) => {
-                if (event.data.size > 0) {
-                    recordedChunks.push(event.data);
-                }
-            };
-            
-            mediaRecorder.onstop = () => {
-                audioBlob = new Blob(recordedChunks, { type: 'audio/wav' });
-                const audioUrl = URL.createObjectURL(audioBlob);
-                audioPlayer.src = audioUrl;
-            };
-            
-            // Start recording
-            mediaRecorder.start();
-        }
-
-        // Stop recording and create audio blob
-        function stopRecording() {
-            if (mediaRecorder && mediaRecorder.state !== 'inactive') {
-                mediaRecorder.stop();
-            }
+            synth.speak(currentUtterance);
         }
 
         // Speak button event
@@ -1435,6 +1561,15 @@
         pauseBtn.addEventListener('click', () => {
             if (synth.speaking && !isPaused) {
                 synth.pause();
+                isPaused = true;
+                pauseBtn.style.display = 'none';
+                resumeBtn.style.display = 'flex';
+                
+                // Calculate the paused position
+                const text = textInput.value;
+                const spokenText = text.substring(0, pausedPosition);
+                const words = spokenText.split(' ');
+                pausedPosition = spokenText.length;
             }
         });
 
@@ -1442,6 +1577,9 @@
         resumeBtn.addEventListener('click', () => {
             if (synth.speaking && isPaused) {
                 synth.resume();
+                isPaused = false;
+                pauseBtn.style.display = 'flex';
+                resumeBtn.style.display = 'none';
             }
         });
 
@@ -1449,19 +1587,14 @@
         stopBtn.addEventListener('click', () => {
             if (synth.speaking) {
                 synth.cancel();
-                stopRecording();
-            }
-        });
-
-        // Download button event
-        downloadBtn.addEventListener('click', () => {
-            if (audioBlob) {
-                const a = document.createElement('a');
-                a.href = URL.createObjectURL(audioBlob);
-                a.download = 'text-to-speech.wav';
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
+                isSpeaking = false;
+                isPaused = false;
+                pausedPosition = 0;
+                speakBtn.style.display = 'flex';
+                pauseBtn.style.display = 'none';
+                resumeBtn.style.display = 'none';
+                stopBtn.style.display = 'none';
+                currentUtterance = null;
             }
         });
 
@@ -1476,19 +1609,19 @@
                 synth.cancel();
             }
             
-            audioPlayer.src = '';
-            downloadBtn.style.display = 'none';
+            isSpeaking = false;
+            isPaused = false;
+            pausedPosition = 0;
             speakBtn.style.display = 'flex';
             pauseBtn.style.display = 'none';
             resumeBtn.style.display = 'none';
             stopBtn.style.display = 'none';
-            
-            // Reset audio recording
-            mediaRecorder = null;
-            recordedChunks = [];
-            audioBlob = null;
+            currentUtterance = null;
         });
 
+        // Initialize languages and voices
+        loadLanguages();
+        
         // Initialize voices when they are loaded
         if (synth.onvoiceschanged !== undefined) {
             synth.onvoiceschanged = loadVoices;
@@ -1520,8 +1653,11 @@
             { code: 'ca', name: 'Català' },
             { code: 'nl', name: 'Nederlands' },
             { code: 'el', name: 'Ελληνικά' },
-            { code: 'hi', name: 'हिन्दी' }
-            
+            { code: 'hi', name: 'हिन्दी' },
+            { code: 'te', name: 'తెలుగు' },
+            { code: 'kn', name: 'ಕನ್ನಡ' },
+            { code: 'ta', name: 'தமிழ்' },
+            { code: 'ml', name: 'മലയാളം' }
         ];
 
         // Translation data
@@ -1536,27 +1672,26 @@
                 "howto.title": "How to Use the Text to Speech Tool",
                 "howto.step1.title": "Enter Your Text",
                 "howto.step1.description": "Type or paste your text into the input field. You can also upload a text file. The tool supports all languages and unlimited text length.",
-                "howto.step2.title": "Choose Voice & Language",
-                "howto.step2.description": "Select from a wide variety of natural-sounding voices in different languages and accents. Preview voices before using them.",
+                "howto.step2.title": "Choose Language & Voice",
+                "howto.step2.description": "Select your preferred language and voice from the available options. Preview voices before using them.",
                 "howto.step3.title": "Adjust Audio Settings",
                 "howto.step3.description": "Customize speech rate, pitch, and volume to your preference. Adjust settings in real-time while the speech is playing.",
-                "howto.step4.title": "Listen & Download",
-                "howto.step4.description": "Listen to the generated speech and download it as an audio file. All processing happens locally - your text never leaves your device.",
+                "howto.step4.title": "Listen to Speech",
+                "howto.step4.description": "Click the speak button to convert your text to speech. All processing happens locally - your text never leaves your device.",
                 "tool.title": "Text to Speech",
                 "tool.text.label": "Enter your text:",
                 "tool.text.placeholder": "Type or paste your text here...",
+                "tool.language.title": "Select Language",
                 "tool.voice.title": "Select Voice",
                 "tool.controls.title": "Audio Settings",
                 "tool.controls.rate": "Speech Rate:",
                 "tool.controls.pitch": "Pitch:",
                 "tool.controls.volume": "Volume:",
-                "tool.preview.title": "Audio Preview",
                 "tool.loading": "Generating Speech...",
                 "tool.speak": "Speak Text",
                 "tool.pause": "Pause",
                 "tool.resume": "Resume",
                 "tool.stop": "Stop",
-                "tool.download": "Download Audio",
                 "tool.clear": "Clear All",
                 "footer.follow": "FOLLOW US",
                 "footer.categories": "Popular Categories",
@@ -1587,27 +1722,26 @@
                 "howto.title": "Cómo Usar la Herramienta de Texto a Voz",
                 "howto.step1.title": "Ingresa Tu Texto",
                 "howto.step1.description": "Escribe o pega tu texto en el campo de entrada. También puedes cargar un archivo de texto. La herramienta soporta todos los idiomas y longitud de texto ilimitada.",
-                "howto.step2.title": "Elige Voz e Idioma",
-                "howto.step2.description": "Selecciona entre una amplia variedad de voces con sonido natural en diferentes idiomas y acentos. Previsualiza las voces antes de usarlas.",
+                "howto.step2.title": "Elige Idioma y Voz",
+                "howto.step2.description": "Selecciona tu idioma y voz preferidos de las opciones disponibles. Previsualiza las voces antes de usarlas.",
                 "howto.step3.title": "Ajusta la Configuración de Audio",
                 "howto.step3.description": "Personaliza la velocidad del habla, el tono y el volumen según tus preferencias. Ajusta la configuración en tiempo real mientras se reproduce el habla.",
-                "howto.step4.title": "Escucha y Descarga",
-                "howto.step4.description": "Escucha el habla generada y descárgala como un archivo de audio. Todo el procesamiento ocurre localmente - tu texto nunca sale de tu dispositivo.",
+                "howto.step4.title": "Escucha el Habla",
+                "howto.step4.description": "Haz clic en el botón de hablar para convertir tu texto a voz. Todo el procesamiento ocurre localmente - tu texto nunca sale de tu dispositivo.",
                 "tool.title": "Texto a Voz",
                 "tool.text.label": "Ingresa tu texto:",
                 "tool.text.placeholder": "Escribe o pega tu texto aquí...",
+                "tool.language.title": "Seleccionar Idioma",
                 "tool.voice.title": "Seleccionar Voz",
                 "tool.controls.title": "Configuración de Audio",
                 "tool.controls.rate": "Velocidad del Habla:",
                 "tool.controls.pitch": "Tono:",
                 "tool.controls.volume": "Volumen:",
-                "tool.preview.title": "Vista Previa de Audio",
                 "tool.loading": "Generando Voz...",
                 "tool.speak": "Hablar Texto",
                 "tool.pause": "Pausar",
                 "tool.resume": "Reanudar",
                 "tool.stop": "Detener",
-                "tool.download": "Descargar Audio",
                 "tool.clear": "Limpiar Todo",
                 "footer.follow": "SÍGUENOS",
                 "footer.categories": "Categorías Populares",
@@ -1638,27 +1772,26 @@
                 "howto.title": "Comment Utiliser l'Outil de Synthèse Vocale",
                 "howto.step1.title": "Entrez Votre Texte",
                 "howto.step1.description": "Tapez ou collez votre texte dans le champ de saisie. Vous pouvez également télécharger un fichier texte. L'outil prend en charge toutes les langues et une longueur de texte illimitée.",
-                "howto.step2.title": "Choisissez la Voix et la Langue",
-                "howto.step2.description": "Sélectionnez parmi une large gamme de voix naturelles dans différentes langues et accents. Prévisualisez les voix avant de les utiliser.",
+                "howto.step2.title": "Choisissez la Langue et la Voix",
+                "howto.step2.description": "Sélectionnez votre langue et voix préférées parmi les options disponibles. Prévisualisez les voix avant de les utiliser.",
                 "howto.step3.title": "Ajustez les Paramètres Audio",
                 "howto.step3.description": "Personnalisez la vitesse d'élocution, la hauteur et le volume selon vos préférences. Ajustez les paramètres en temps réel pendant la lecture de la parole.",
-                "howto.step4.title": "Écoutez et Téléchargez",
-                "howto.step4.description": "Écoutez la parole générée et téléchargez-la en tant que fichier audio. Tout le traitement se fait localement - votre texte ne quitte jamais votre appareil.",
+                "howto.step4.title": "Écoutez la Parole",
+                "howto.step4.description": "Cliquez sur le bouton de lecture pour convertir votre texte en parole. Tout le traitement se fait localement - votre texte ne quitte jamais votre appareil.",
                 "tool.title": "Synthèse Vocale",
                 "tool.text.label": "Entrez votre texte:",
                 "tool.text.placeholder": "Tapez ou collez votre texte ici...",
+                "tool.language.title": "Sélectionner la Langue",
                 "tool.voice.title": "Sélectionner une Voix",
                 "tool.controls.title": "Paramètres Audio",
                 "tool.controls.rate": "Vitesse d'Élocution:",
                 "tool.controls.pitch": "Hauteur:",
                 "tool.controls.volume": "Volume:",
-                "tool.preview.title": "Aperçu Audio",
                 "tool.loading": "Génération de la Parole...",
                 "tool.speak": "Lire le Texte",
                 "tool.pause": "Pause",
                 "tool.resume": "Reprendre",
                 "tool.stop": "Arrêter",
-                "tool.download": "Télécharger l'Audio",
                 "tool.clear": "Tout Effacer",
                 "footer.follow": "SUIVEZ-NOUS",
                 "footer.categories": "Catégories Populaires",
@@ -1709,7 +1842,7 @@
         
         // Language selection handler
         languageDropdown.addEventListener('click', (e) => {
-            if (e.target.classList.contains('language-option')) {
+            if (e.target.classList.contains('language-option-global')) {
                 const langCode = e.target.getAttribute('data-lang');
                 changeLanguage(langCode);
             }

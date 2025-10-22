@@ -1730,7 +1730,14 @@
         
         // Initialize speech recognition
         function initSpeechRecognition() {
-            if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+            // Check for browser support
+            if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+                voiceStatus.textContent = 'Speech recognition not supported in this browser';
+                voiceStartBtn.disabled = true;
+                return;
+            }
+            
+            try {
                 const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
                 recognition = new SpeechRecognition();
                 recognition.continuous = true;
@@ -1758,6 +1765,15 @@
                     voiceStatus.classList.remove('voice-listening');
                     voiceStartBtn.style.display = 'flex';
                     voiceStopBtn.style.display = 'none';
+                    
+                    // Restart recognition if it stopped due to error
+                    if (event.error !== 'no-speech' && event.error !== 'aborted') {
+                        setTimeout(() => {
+                            if (recognition) {
+                                recognition.start();
+                            }
+                        }, 1000);
+                    }
                 };
                 
                 recognition.onend = () => {
@@ -1766,8 +1782,11 @@
                     voiceStartBtn.style.display = 'flex';
                     voiceStopBtn.style.display = 'none';
                 };
-            } else {
-                voiceStatus.textContent = 'Speech recognition not supported in this browser';
+                
+                console.log('Speech recognition initialized successfully');
+            } catch (error) {
+                console.error('Error initializing speech recognition:', error);
+                voiceStatus.textContent = 'Error initializing speech recognition';
                 voiceStartBtn.disabled = true;
             }
         }
@@ -1903,9 +1922,18 @@
         // Text-to-speech function
         function speak(text) {
             if ('speechSynthesis' in window && voiceFeedbackToggle.checked) {
+                // Cancel any ongoing speech
+                speechSynthesis.cancel();
+                
                 const utterance = new SpeechSynthesisUtterance(text);
                 utterance.rate = 1.0;
                 utterance.pitch = 1.0;
+                utterance.volume = 0.8;
+                
+                utterance.onerror = (event) => {
+                    console.error('Speech synthesis error:', event);
+                };
+                
                 speechSynthesis.speak(utterance);
             }
         }
@@ -1963,7 +1991,12 @@
         // Voice controls
         voiceStartBtn.addEventListener('click', () => {
             if (recognition) {
-                recognition.start();
+                try {
+                    recognition.start();
+                } catch (error) {
+                    console.error('Error starting speech recognition:', error);
+                    voiceStatus.textContent = 'Error starting speech recognition';
+                }
             }
         });
         
@@ -4395,7 +4428,17 @@
                 'ta': 'தமிழ்',
                 'ml': 'മലയാളം',
                 'id': 'Bahasa Indonesia',
-                'ms': 'Bahasa Melayu'
+                'ms': 'Bahasa Melayu',
+                'pl': 'Polski',
+                'th': 'ภาษาไทย',
+                'tr': 'Türkçe',
+                'uk': 'Українська',
+                'vi': 'Tiếng Việt',
+                'is': 'Íslenska',
+                'no': 'Norsk',
+                'sv': 'Svenska',
+                'fi': 'Suomi',
+                'cs': 'Čeština'
             };
             
             currentLanguageElement.textContent = languageNames[langCode] || 'English';

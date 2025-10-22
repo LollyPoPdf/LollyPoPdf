@@ -1,0 +1,2154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Text to Speech | LollyPoPdf</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #9370db;
+            --primary-dark: #8a2be2;
+            --secondary-color: #f0ebff;
+            --text-color: #333333;
+            --text-light: #6b7280;
+            --bg-color: #ffffff;
+            --bg-secondary: #f9f9f9;
+            --border-radius: 12px;
+            --transition: all 0.3s ease;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --header-height: 80px;
+            --white: #ffffff;
+            --header-text: #6b7280;
+            --accent-color: #9370db;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --error-color: #ef4444;
+        }
+
+        .dark-mode {
+            --primary-color: #a391f2;
+            --primary-dark: #8a2be2;
+            --secondary-color: #2d2d2d;
+            --text-color: #f0f0f0;
+            --text-light: #a0a0a0;
+            --bg-color: #1a1a1a;
+            --bg-secondary: #2d2d2d;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+            --white: #1a1a1a;
+            --header-text: #a0a0a0;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            transition: var(--transition);
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        ul {
+            list-style: none;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header Styles */
+        header {
+            background-color: var(--white);
+            color: var(--header-text);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+        }
+
+        .logo-icon {
+            position: relative;
+            width: 40px;
+            height: 40px;
+        }
+
+        .logo-circle {
+            width: 40px;
+            height: 40px;
+            border-radius: 40%;
+            background: linear-gradient(to bottom right, #9370db, #8a2be2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .logo-stem {
+            position: absolute;
+            bottom: -17px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 6px;
+            height: 17px;
+            background-color: #8a2be2;
+            border-radius: 0 0 3px 3px;
+        }
+
+        .logo-text {
+            font-size: 24px;
+            font-weight: bold;
+            color: #9370db;
+        }
+
+        nav ul {
+            display: flex;
+            gap: 30px;
+            list-style: none;
+        }
+
+        nav a {
+            font-weight: 500;
+            position: relative;
+            color: var(--header-text);
+            padding: 8px 0;
+            border-radius: 0;
+            transition: var(--transition);
+            text-decoration: none;
+        }
+
+        nav a:hover {
+            color: var(--accent-color);
+        }
+
+        nav a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: var(--accent-color);
+            transition: width 0.3s ease;
+        }
+
+        nav a:hover::after {
+            width: 100%;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .email {
+            font-size: 14px;
+            color: var(--header-text);
+        }
+
+        .theme-toggle {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 20px;
+            color: var(--header-text);
+            padding: 8px;
+            border-radius: 50%;
+            transition: var(--transition);
+        }
+
+        .theme-toggle:hover {
+            background-color: #f0ebff;
+            color: var(--accent-color);
+        }
+
+        .dark-mode .theme-toggle:hover {
+            background-color: #2d3748;
+            color: var(--accent-color);
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--header-text);
+        }
+
+        /* Mobile Menu */
+        .mobile-menu {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            width: 100%;
+            background-color: var(--white);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            z-index: 999;
+        }
+
+        .dark-mode .mobile-menu {
+            background-color: var(--bg-secondary);
+        }
+
+        .mobile-menu.active {
+            display: block;
+        }
+
+        .mobile-menu ul {
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .mobile-menu a {
+            display: block;
+            padding: 10px 0;
+            font-weight: 500;
+            color: var(--header-text);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .dark-mode .mobile-menu a {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .mobile-menu a:hover {
+            color: var(--accent-color);
+        }
+
+        /* Hero Section */
+        .hero {
+            background-color: var(--secondary-color);
+            padding: 60px 0;
+            text-align: center;
+        }
+
+        .dark-mode .hero {
+            background: linear-gradient(135deg, #2a1a4a, #3d2a6d);
+        }
+
+        .hero h1 {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            color: #000;
+        }
+
+        .dark-mode .hero h1 {
+            color: var(--text-color);
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            color: var(--text-color);
+            max-width: 700px;
+            margin: 0 auto 30px;
+        }
+
+        /* How to Use Section */
+        .how-to-section {
+            padding: 80px 0;
+            background-color: var(--bg-color);
+        }
+
+        .dark-mode .how-to-section {
+            background-color: var(--bg-secondary);
+        }
+
+        .section-title {
+            font-size: 2rem;
+            text-align: center;
+            margin-bottom: 40px;
+            color: #000000;
+        }
+
+        .dark-mode .section-title {
+            color: var(--text-color);
+        }
+
+        .steps-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 40px;
+        }
+
+        .step-box {
+            background-color: var(--bg-secondary);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            padding: 30px;
+            min-height: 200px;
+            position: relative;
+        }
+
+        .step-number {
+            width: 40px;
+            height: 40px;
+            background-color: var(--primary-color);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 16px;
+            margin-bottom: 15px;
+        }
+
+        .step-title {
+            font-size: 18px;
+            color: #000000;
+            margin-bottom: 10px;
+        }
+
+        .dark-mode .step-title {
+            color: var(--text-color);
+        }
+
+        .step-description {
+            font-size: 14px;
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        /* Tool Section */
+        .tool-section {
+            padding: 80px 0;
+            background-color: var(--secondary-color);
+        }
+
+        .dark-mode .tool-section {
+            background: linear-gradient(135deg, #2a1a4a, #3d2a6d);
+        }
+
+        .tool-title {
+            font-size: 2.5rem;
+            text-align: center;
+            margin-bottom: 40px;
+            color: #a391f2;
+        }
+
+        .dark-mode .tool-title {
+            color: #a391f2;
+        }
+
+        .tool-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background-color: var(--bg-color);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            padding: 40px;
+        }
+
+        /* Text Input Section */
+        .text-input-container {
+            background-color: var(--bg-secondary);
+            border-radius: var(--border-radius);
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+
+        .text-input-title {
+            font-size: 18px;
+            margin-bottom: 15px;
+            color: var(--primary-color);
+        }
+
+        .text-input {
+            width: 100%;
+            min-height: 200px;
+            padding: 15px;
+            border-radius: var(--border-radius);
+            border: 1px solid var(--primary-color);
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-size: 16px;
+            line-height: 1.6;
+            resize: vertical;
+            margin-bottom: 15px;
+        }
+
+        .text-input-actions {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .file-input-btn, .copy-btn, .clear-text-btn {
+            padding: 8px 15px;
+            border: none;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .file-input-btn {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .file-input-btn:hover {
+            background-color: var(--primary-dark);
+        }
+
+        .copy-btn {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .copy-btn:hover {
+            background-color: var(--primary-dark);
+        }
+
+        .clear-text-btn {
+            background-color: white;
+            color: var(--error-color);
+            border: 2px solid var(--error-color);
+        }
+
+        .clear-text-btn:hover {
+            background-color: var(--error-color);
+            color: white;
+        }
+
+        /* Voice Selection */
+        .voice-container {
+            background-color: var(--bg-secondary);
+            border-radius: var(--border-radius);
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+
+        .voice-title {
+            font-size: 18px;
+            margin-bottom: 15px;
+            color: var(--primary-color);
+        }
+
+        .voice-controls {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .voice-select, .language-select {
+            width: 100%;
+            padding: 12px;
+            border-radius: var(--border-radius);
+            border: 1px solid var(--primary-color);
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-size: 16px;
+        }
+
+        .voice-options {
+            display: flex;
+            gap: 15px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+
+        .voice-option {
+            padding: 8px 15px;
+            border-radius: var(--border-radius);
+            background-color: var(--bg-color);
+            border: 1px solid var(--primary-color);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .voice-option:hover, .voice-option.active {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        /* Audio Settings */
+        .settings-container {
+            background-color: var(--bg-secondary);
+            border-radius: var(--border-radius);
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+
+        .settings-title {
+            font-size: 18px;
+            margin-bottom: 15px;
+            color: var(--primary-color);
+        }
+
+        .settings-controls {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .setting-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .setting-label {
+            font-size: 14px;
+            color: var(--text-color);
+        }
+
+        .setting-input {
+            width: 100%;
+            padding: 8px;
+            border-radius: var(--border-radius);
+            border: 1px solid var(--primary-color);
+            background-color: var(--bg-color);
+            color: var(--text-color);
+        }
+
+        .range-input {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 8px;
+            border-radius: 5px;
+            background: var(--bg-color);
+            outline: none;
+        }
+
+        .range-input::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: var(--primary-color);
+            cursor: pointer;
+        }
+
+        .range-input::-moz-range-thumb {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: var(--primary-color);
+            cursor: pointer;
+            border: none;
+        }
+
+        /* Controls Section */
+        .controls-container {
+            background-color: var(--bg-secondary);
+            border-radius: var(--border-radius);
+            padding: 30px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .controls-title {
+            font-size: 18px;
+            margin-bottom: 20px;
+            color: var(--primary-color);
+        }
+
+        .controls-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .control-btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .speak-btn {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .speak-btn:hover {
+            background-color: var(--primary-dark);
+        }
+
+        .pause-btn {
+            background-color: var(--warning-color);
+            color: white;
+            display: none;
+        }
+
+        .pause-btn:hover {
+            background-color: #e69c0a;
+        }
+
+        .resume-btn {
+            background-color: var(--success-color);
+            color: white;
+            display: none;
+        }
+
+        .resume-btn:hover {
+            background-color: #0da271;
+        }
+
+        .stop-btn {
+            background-color: var(--error-color);
+            color: white;
+            display: none;
+        }
+
+        .stop-btn:hover {
+            background-color: #dc2626;
+        }
+
+        .download-btn {
+            background-color: var(--primary-color);
+            color: white;
+            display: none;
+        }
+
+        .download-btn:hover {
+            background-color: var(--primary-dark);
+        }
+
+        .speaking-indicator {
+            display: none;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .speaking-dot {
+            width: 10px;
+            height: 10px;
+            background-color: var(--primary-color);
+            border-radius: 50%;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+
+        .speaking-text {
+            font-size: 16px;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        /* Audio Preview */
+        .preview-container {
+            background-color: var(--bg-secondary);
+            border-radius: var(--border-radius);
+            padding: 30px;
+            margin-bottom: 30px;
+            display: none;
+        }
+
+        .preview-title {
+            font-size: 18px;
+            margin-bottom: 15px;
+            color: var(--primary-color);
+        }
+
+        .audio-preview {
+            width: 100%;
+            margin-bottom: 15px;
+        }
+
+        .preview-actions {
+            display: flex;
+            gap: 15px;
+            justify-content: flex-end;
+            flex-wrap: wrap;
+        }
+
+        /* Statistics */
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .stat-box {
+            background-color: var(--bg-secondary);
+            border-radius: var(--border-radius);
+            padding: 20px;
+            text-align: center;
+            box-shadow: var(--shadow);
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--primary-color);
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            color: var(--text-light);
+        }
+
+        /* Loading Indicator */
+        .loading-indicator {
+            display: none;
+            margin: 10px 0;
+            padding: 10px;
+            background-color: var(--primary-color);
+            color: white;
+            border-radius: var(--border-radius);
+            text-align: center;
+        }
+
+        /* Footer */
+        footer {
+            background-color: #000000;
+            color: white;
+            padding: 60px 0 80px;
+            position: relative;
+        }
+
+        .footer-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 60px;
+        }
+
+        .footer-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            text-decoration: none;
+        }
+
+        .footer-logo .logo-icon {
+            width: 40px;
+            height: 40px;
+        }
+
+        .footer-logo .logo-text {
+            color: #9370db;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .footer-section h3 {
+            color: white;
+            font-weight: 600;
+            font-size: 20px;
+            margin-bottom: 20px;
+        }
+
+        .footer-section h4 {
+            color: #9370db;
+            font-size: 18px;
+            margin-bottom: 15px;
+        }
+
+        .footer-links li {
+            margin-bottom: 10px;
+        }
+
+        .footer-links a {
+            color: white;
+        }
+
+        .footer-links a:hover {
+            color: #9370db;
+        }
+
+        .social-icons {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .social-icon {
+            width: 40px;
+            height: 40px;
+            background-color: #9370db;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+        }
+
+        .social-icon:hover {
+            background-color: #8a2be2;
+            transform: translateY(-3px);
+        }
+
+        .copyright {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            color: #f9f7ff;
+            font-size: 12px;
+        }
+
+        .footer-line {
+            position: absolute;
+            bottom: 50px;
+            left: 0;
+            width: 100%;
+            height: 1px;
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        /* Language Switcher */
+        .language-switcher {
+            position: fixed;
+            bottom: 10px;
+            right: 10px;
+            z-index: 1000;
+        }
+
+        .language-btn {
+            background-color: #9370db;
+            color: white;
+            border: none;
+            border-radius: 30px;
+            padding: 5px 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .language-dropdown {
+            position: absolute;
+            bottom: 100%;
+            right: 0;
+            width: 300px;
+            background-color: white;
+            border-radius: var(--border-radius);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            display: none;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .dark-mode .language-dropdown {
+            background-color: var(--bg-secondary);
+        }
+
+        .language-switcher:hover .language-dropdown {
+            display: grid;
+        }
+
+        .language-option {
+            padding: 8px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            text-align: center;
+            font-size: 14px;
+        }
+
+        .language-option:hover {
+            background-color: white;
+            color: #9370db;
+        }
+
+        .dark-mode .language-option:hover {
+            background-color: var(--bg-color);
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 992px) {
+            .steps-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .footer-container {
+                grid-template-columns: 1fr 1fr;
+            }
+            
+            .stats-container {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            }
+            
+            .voice-controls, .settings-controls {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            nav ul, .email {
+                display: none;
+            }
+            
+            .mobile-menu-btn {
+                display: block;
+            }
+            
+            .hero h1, .tool-title {
+                font-size: 2rem;
+            }
+            
+            .hero p {
+                font-size: 1rem;
+            }
+            
+            .language-dropdown {
+                width: 250px;
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .footer-container {
+                grid-template-columns: 1fr;
+                gap: 40px;
+            }
+            
+            .stats-container {
+                grid-template-columns: 1fr 1fr;
+            }
+            
+            .controls-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .preview-actions {
+                flex-direction: column;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .tool-container {
+                padding: 20px;
+            }
+            
+            .stats-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .text-input-actions {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container header-container">
+            <a href="https://lollypopdf.com" class="logo">
+                <div class="logo-icon">
+                    <div class="logo-circle">LPdf</div>
+                    <div class="logo-stem"></div>
+                </div>
+                <span class="logo-text">LollyPoPdf</span>
+            </a>
+            
+            <nav>
+                <ul>
+                    <li><a href="https://lollypopdf.github.io/LollyPoPdf#home" class="nav-link" data-i18n="nav.home">Home</a></li>
+                    <li><a href="https://lollypopdf.github.io/LollyPoPdf#about" class="nav-link" data-i18n="nav.about">About Us</a></li>
+                    <li><a href="https://lollypopdf.github.io/LollyPoPdf#tools" class="nav-link" data-i18n="nav.tools">Tools</a></li>
+                    <li><a href="contact.html" class="nav-link" data-i18n="nav.contact">Contact</a></li>
+                </ul>
+            </nav>
+            
+            <div class="header-right">
+                <span class="email">lollypoppdf@gmail.com</span>
+                <button class="theme-toggle" id="themeToggle">
+                    <i class="fas fa-moon"></i>
+                </button>
+                <button class="mobile-menu-btn" id="mobileMenuBtn">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </div>
+        
+        <!-- Mobile Menu -->
+        <div class="mobile-menu" id="mobileMenu">
+            <ul>
+                <li><a href="https://lollypopdf.github.io/LollyPoPdf#home" class="nav-link" data-i18n="nav.home">Home</a></li>
+                <li><a href="https://lollypopdf.github.io/LollyPoPdf#about" class="nav-link" data-i18n="nav.about">About Us</a></li>
+                <li><a href="https://lollypopdf.github.io/LollyPoPdf#tools" class="nav-link" data-i18n="nav.tools">Tools</a></li>
+                <li><a href="contact.html" class="nav-link" data-i18n="nav.contact">Contact</a></li>
+            </ul>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <h1 data-i18n="hero.title">Text to Speech Tool</h1>
+            <p data-i18n="hero.description">Convert text to natural-sounding speech with multiple voices and languages. Export to audio files, customize speed and pitch, and enjoy unlimited usage - all client-side with complete privacy.</p>
+        </div>
+    </section>
+
+    <!-- How to Use Section -->
+    <section class="how-to-section">
+        <div class="container">
+            <h2 class="section-title" data-i18n="howto.title">How to Use the Text to Speech Tool</h2>
+            <div class="steps-container">
+                <div class="step-box">
+                    <div class="step-number">1</div>
+                    <h3 class="step-title" data-i18n="howto.step1.title">Enter Your Text</h3>
+                    <p class="step-description" data-i18n="howto.step1.description">Type or paste your text into the input box. You can also upload a text file or use the copy button to copy text to clipboard.</p>
+                </div>
+                <div class="step-box">
+                    <div class="step-number">2</div>
+                    <h3 class="step-title" data-i18n="howto.step2.title">Select Voice & Language</h3>
+                    <p class="step-description" data-i18n="howto.step2.description">Choose from multiple voices (male/female) and languages. Preview voices before generating the full audio.</p>
+                </div>
+                <div class="step-box">
+                    <div class="step-number">3</div>
+                    <h3 class="step-title" data-i18n="howto.step3.title">Customize Settings</h3>
+                    <p class="step-description" data-i18n="howto.step3.description">Adjust speech rate, pitch, and volume to your preference. Select your preferred output format (WAV, MP3, etc.).</p>
+                </div>
+                <div class="step-box">
+                    <div class="step-number">4</div>
+                    <h3 class="step-title" data-i18n="howto.step4.title">Generate & Download</h3>
+                    <p class="step-description" data-i18n="howto.step4.description">Click 'Speak' to generate the audio. Preview the result and download the audio file in your chosen format.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Tool Section -->
+    <section class="tool-section">
+        <div class="container">
+            <h2 class="tool-title" data-i18n="tool.title">Text to Speech</h2>
+            <div class="tool-container">
+                <!-- Text Input Section -->
+                <div class="text-input-container">
+                    <h3 class="text-input-title" data-i18n="tool.text.title">Enter Text</h3>
+                    <textarea class="text-input" id="textInput" placeholder="Type or paste your text here..." data-i18n="tool.text.placeholder"></textarea>
+                    <div class="text-input-actions">
+                        <button class="file-input-btn" id="fileInputBtn">
+                            <i class="fas fa-file-upload"></i> <span data-i18n="tool.text.upload">Upload Text File</span>
+                        </button>
+                        <button class="copy-btn" id="copyBtn">
+                            <i class="fas fa-copy"></i> <span data-i18n="tool.text.copy">Copy Text</span>
+                        </button>
+                        <button class="clear-text-btn" id="clearTextBtn">
+                            <i class="fas fa-trash"></i> <span data-i18n="tool.text.clear">Clear Text</span>
+                        </button>
+                    </div>
+                    <input type="file" id="fileInput" accept=".txt,.text,.doc,.docx,.pdf" style="display: none;">
+                </div>
+
+                <!-- Voice Selection -->
+                <div class="voice-container">
+                    <h3 class="voice-title" data-i18n="tool.voice.title">Voice Selection</h3>
+                    <div class="voice-controls">
+                        <div class="setting-group">
+                            <label class="setting-label" data-i18n="tool.voice.language">Language</label>
+                            <select id="languageSelect" class="language-select">
+                                <!-- Languages will be populated by JavaScript -->
+                            </select>
+                        </div>
+                        <div class="setting-group">
+                            <label class="setting-label" data-i18n="tool.voice.voice">Voice</label>
+                            <select id="voiceSelect" class="voice-select">
+                                <!-- Voices will be populated by JavaScript -->
+                            </select>
+                        </div>
+                    </div>
+                    <div class="voice-options">
+                        <div class="voice-option" data-gender="all" data-i18n="tool.voice.all">All Voices</div>
+                        <div class="voice-option" data-gender="male" data-i18n="tool.voice.male">Male Voices</div>
+                        <div class="voice-option" data-gender="female" data-i18n="tool.voice.female">Female Voices</div>
+                        <div class="voice-option" data-gender="preview" id="previewVoiceBtn" data-i18n="tool.voice.preview">Preview Voice</div>
+                    </div>
+                </div>
+
+                <!-- Audio Settings -->
+                <div class="settings-container">
+                    <h3 class="settings-title" data-i18n="tool.settings.title">Audio Settings</h3>
+                    <div class="settings-controls">
+                        <div class="setting-group">
+                            <label class="setting-label" data-i18n="tool.settings.rate">Speech Rate</label>
+                            <input type="range" id="rateInput" class="range-input" min="0.5" max="2" step="0.1" value="1">
+                            <span id="rateValue">1.0</span>
+                        </div>
+                        <div class="setting-group">
+                            <label class="setting-label" data-i18n="tool.settings.pitch">Pitch</label>
+                            <input type="range" id="pitchInput" class="range-input" min="0.5" max="2" step="0.1" value="1">
+                            <span id="pitchValue">1.0</span>
+                        </div>
+                        <div class="setting-group">
+                            <label class="setting-label" data-i18n="tool.settings.volume">Volume</label>
+                            <input type="range" id="volumeInput" class="range-input" min="0" max="1" step="0.1" value="1">
+                            <span id="volumeValue">1.0</span>
+                        </div>
+                        <div class="setting-group">
+                            <label class="setting-label" data-i18n="tool.settings.format">Output Format</label>
+                            <select id="formatSelect" class="setting-input">
+                                <option value="wav">WAV</option>
+                                <option value="mp3">MP3</option>
+                                <option value="ogg">OGG</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Controls Section -->
+                <div class="controls-container">
+                    <h3 class="controls-title" data-i18n="tool.controls.title">Controls</h3>
+                    <div class="controls-buttons">
+                        <button class="control-btn speak-btn" id="speakBtn">
+                            <i class="fas fa-play"></i> <span data-i18n="tool.controls.speak">Speak</span>
+                        </button>
+                        <button class="control-btn pause-btn" id="pauseBtn">
+                            <i class="fas fa-pause"></i> <span data-i18n="tool.controls.pause">Pause</span>
+                        </button>
+                        <button class="control-btn resume-btn" id="resumeBtn">
+                            <i class="fas fa-play"></i> <span data-i18n="tool.controls.resume">Resume</span>
+                        </button>
+                        <button class="control-btn stop-btn" id="stopBtn">
+                            <i class="fas fa-stop"></i> <span data-i18n="tool.controls.stop">Stop</span>
+                        </button>
+                        <button class="control-btn download-btn" id="downloadBtn">
+                            <i class="fas fa-download"></i> <span data-i18n="tool.controls.download">Download Audio</span>
+                        </button>
+                    </div>
+                    <div class="speaking-indicator" id="speakingIndicator">
+                        <div class="speaking-dot"></div>
+                        <div class="speaking-text" data-i18n="tool.controls.speaking">Speaking...</div>
+                    </div>
+                </div>
+
+                <!-- Audio Preview -->
+                <div class="preview-container" id="previewContainer">
+                    <h3 class="preview-title" data-i18n="tool.preview.title">Audio Preview</h3>
+                    <audio controls class="audio-preview" id="audioPreview"></audio>
+                    <div class="preview-actions">
+                        <button class="control-btn download-btn" id="previewDownloadBtn">
+                            <i class="fas fa-download"></i> <span data-i18n="tool.preview.download">Download</span>
+                        </button>
+                        <button class="control-btn clear-text-btn" id="clearPreviewBtn">
+                            <i class="fas fa-times"></i> <span data-i18n="tool.preview.close">Close</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Loading Indicator -->
+                <div class="loading-indicator" id="loadingIndicator">
+                    <i class="fas fa-spinner fa-spin"></i> <span data-i18n="tool.loading">Generating Audio...</span>
+                </div>
+
+                <!-- Statistics -->
+                <div class="stats-container">
+                    <div class="stat-box">
+                        <div class="stat-value" id="textLength">0</div>
+                        <div class="stat-label" data-i18n="tool.stats.characters">Characters</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-value" id="wordCount">0</div>
+                        <div class="stat-label" data-i18n="tool.stats.words">Words</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-value" id="estimatedTime">0s</div>
+                        <div class="stat-label" data-i18n="tool.stats.time">Estimated Time</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-value" id="voiceCount">0</div>
+                        <div class="stat-label" data-i18n="tool.stats.voices">Available Voices</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container footer-container">
+            <!-- Left Section -->
+            <div class="footer-section">
+                <a href="https://lollypopdf.com" class="footer-logo">
+                    <div class="logo-icon">
+                        <div class="logo-circle">LPdf</div>
+                        <div class="logo-stem"></div>
+                    </div>
+                    <span class="logo-text">LollyPoPdf</span>
+                </a>
+                <h3 data-i18n="footer.follow">FOLLOW US</h3>
+                <div class="social-icons">
+                    <a href="https://facebook.com/lollypopdf" class="social-icon"><i class="fab fa-facebook-f"></i></a>
+                    <a href="https://linkedin.com/company/lollypopdf" class="social-icon"><i class="fab fa-linkedin-in"></i></a>
+                    <a href="https://twitter.com/lollypopdf" class="social-icon"><i class="fab fa-twitter"></i></a>
+                    <a href="https://instagram.com/lollypopdf" class="social-icon"><i class="fab fa-instagram"></i></a>
+                    <a href="https://pinterest.com/lollypopdf" class="social-icon"><i class="fab fa-pinterest-p"></i></a>
+                </div>
+            </div>
+            
+            <!-- Middle Section - Popular Categories -->
+            <div class="footer-section">
+                <h4 data-i18n="footer.categories">Popular Categories</h4>
+                <ul class="footer-links">
+                    <li><a href="https://lollypopdf.com#pdf-tools" data-i18n="footer.categories.pdf">PDF Tools</a></li>
+                    <li><a href="https://lollypopdf.com#image-tools" data-i18n="footer.categories.image">Image Tools</a></li>
+                    <li><a href="https://lollypopdf.com#text-tools" data-i18n="footer.categories.text">Text Tools</a></li>
+                    <li><a href="https://lollypopdf.com#audio-video-tools" data-i18n="footer.categories.av">Audio/Video Tools</a></li>
+                    <li><a href="https://lollypopdf.com#web-developer-tools" data-i18n="footer.categories.web">WebDeveloper Tools</a></li>
+                    <li><a href="https://lollypopdf.com#calculator-tools" data-i18n="footer.categories.calc">Calculator Tools</a></li>
+                    <li><a href="https://lollypopdf.com#utility-tools" data-i18n="footer.categories.util">Utility Tools</a></li>
+                    <li><a href="https://lollypopdf.com#color-tools" data-i18n="footer.categories.color">Color Tools</a></li>
+                </ul>
+            </div>
+            
+            <!-- Right Section - Quick Links -->
+            <div class="footer-section">
+                <h4 data-i18n="footer.quicklinks">Quick Links</h4>
+                <ul class="footer-links">
+                    <li><a href="https://lollypopdf.github.io/LollyPoPdf#home" data-i18n="nav.home">Home</a></li>
+                    <li><a href="https://lollypopdf.github.io/LollyPoPdf#tools" data-i18n="footer.links.tools">All Tools</a></li>
+                    <li><a href="faq.html" data-i18n="footer.links.faq">FAQ</a></li>
+                    <li><a href="contact.html" data-i18n="footer.links.contact">Contact</a></li>
+                    <li><a href="privacy-policy.html" data-i18n="footer.links.privacy">Privacy Policy</a></li>
+                    <li><a href="disclaimer.html" data-i18n="footer.links.disclaimer">Disclaimer</a></li>
+                    <li><a href="terms.html" data-i18n="footer.links.terms">Terms of Service</a></li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="footer-line"></div>
+        <div class="copyright" data-i18n="footer.copyright">© 2025 LollyPoPDF. All rights reserved.</div>
+    </footer>
+
+    <!-- Language Switcher -->
+    <div class="language-switcher">
+        <button class="language-btn">
+            <i class="fas fa-globe"></i>
+            <span id="currentLanguage">English</span>
+        </button>
+        <div class="language-dropdown">
+            <div class="language-option" data-lang="en">English</div>
+            <div class="language-option" data-lang="es">Español</div>
+            <div class="language-option" data-lang="fr">Français</div>
+            <div class="language-option" data-lang="de">Deutsch</div>
+            <div class="language-option" data-lang="it">Italiano</div>
+            <div class="language-option" data-lang="pt">Português</div>
+            <div class="language-option" data-lang="ja">日本語</div>
+            <div class="language-option" data-lang="ru">Pусский</div>
+            <div class="language-option" data-lang="ko">한국어</div>
+            <div class="language-option" data-lang="zh-CN">中文 (简体)</div>
+            <div class="language-option" data-lang="zh-TW">中文 (繁體)</div>
+            <div class="language-option" data-lang="ar">العربية</div>
+            <div class="language-option" data-lang="fa">فارسی</div>
+            <div class="language-option" data-lang="bg">Български</div>
+            <div class="language-option" data-lang="ca">Català</div>
+            <div class="language-option" data-lang="nl">Nederlands</div>
+            <div class="language-option" data-lang="el">Ελληνικά</div>
+            <div class="language-option" data-lang="hi">हिन्दी</div>
+            <div class="language-option" data-lang="te">తెలుగు</div>
+            <div class="language-option" data-lang="kn">ಕನ್ನಡ</div>
+            <div class="language-option" data-lang="ta">தமிழ்</div>
+            <div class="language-option" data-lang="ml">മലയാളം</div>
+            <div class="language-option" data-lang="id">Bahasa Indonesia</div>
+            <div class="language-option" data-lang="ms">Bahasa Melayu</div>
+            <div class="language-option" data-lang="pl">Polski</div>
+            <div class="language-option" data-lang="th">ภาษาไทย</div>
+            <div class="language-option" data-lang="tr">Türkçe</div>
+            <div class="language-option" data-lang="uk">Українська</div>
+            <div class="language-option" data-lang="vi">Tiếng Việt</div>
+            <div class="language-option" data-lang="is">Íslenska</div>
+            <div class="language-option" data-lang="no">Norsk</div>
+            <div class="language-option" data-lang="sv">Svenska</div>
+            <div class="language-option" data-lang="fi">Suomi</div>
+            <div class="language-option" data-lang="cs">Čeština</div>
+        </div>
+    </div>
+
+    <script>
+        // Theme Toggle
+        const themeToggle = document.getElementById('themeToggle');
+        const body = document.body;
+        
+        // Check for saved theme preference or respect OS preference
+        const savedTheme = localStorage.getItem('theme') || 
+            (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        
+        if (savedTheme === 'dark') {
+            body.classList.add('dark-mode');
+            themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+        }
+        
+        themeToggle.addEventListener('click', () => {
+            body.classList.toggle('dark-mode');
+            const isDarkMode = body.classList.contains('dark-mode');
+            
+            if (isDarkMode) {
+                themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+                localStorage.setItem('theme', 'dark');
+            } else {
+                themeToggle.innerHTML = '<i class="fas fa-moon"></i>';
+                localStorage.setItem('theme', 'light');
+            }
+        });
+
+        // Mobile Menu Toggle
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const mobileMenu = document.getElementById('mobileMenu');
+        
+        mobileMenuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('active');
+            
+            // Change icon based on menu state
+            if (mobileMenu.classList.contains('active')) {
+                mobileMenuBtn.innerHTML = '<i class="fas fa-times"></i>';
+            } else {
+                mobileMenuBtn.innerHTML = '<i class="fas fa-bars"></i>';
+            }
+        });
+
+        // Close mobile menu when clicking on a link
+        const mobileMenuLinks = mobileMenu.querySelectorAll('a');
+        mobileMenuLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                mobileMenu.classList.remove('active');
+                mobileMenuBtn.innerHTML = '<i class="fas fa-bars"></i>';
+            });
+        });
+
+        // Text to Speech Functionality
+        const textInput = document.getElementById('textInput');
+        const fileInputBtn = document.getElementById('fileInputBtn');
+        const fileInput = document.getElementById('fileInput');
+        const copyBtn = document.getElementById('copyBtn');
+        const clearTextBtn = document.getElementById('clearTextBtn');
+        const languageSelect = document.getElementById('languageSelect');
+        const voiceSelect = document.getElementById('voiceSelect');
+        const previewVoiceBtn = document.getElementById('previewVoiceBtn');
+        const rateInput = document.getElementById('rateInput');
+        const pitchInput = document.getElementById('pitchInput');
+        const volumeInput = document.getElementById('volumeInput');
+        const formatSelect = document.getElementById('formatSelect');
+        const rateValue = document.getElementById('rateValue');
+        const pitchValue = document.getElementById('pitchValue');
+        const volumeValue = document.getElementById('volumeValue');
+        const speakBtn = document.getElementById('speakBtn');
+        const pauseBtn = document.getElementById('pauseBtn');
+        const resumeBtn = document.getElementById('resumeBtn');
+        const stopBtn = document.getElementById('stopBtn');
+        const downloadBtn = document.getElementById('downloadBtn');
+        const speakingIndicator = document.getElementById('speakingIndicator');
+        const previewContainer = document.getElementById('previewContainer');
+        const audioPreview = document.getElementById('audioPreview');
+        const previewDownloadBtn = document.getElementById('previewDownloadBtn');
+        const clearPreviewBtn = document.getElementById('clearPreviewBtn');
+        const loadingIndicator = document.getElementById('loadingIndicator');
+        
+        // Stats elements
+        const textLengthEl = document.getElementById('textLength');
+        const wordCountEl = document.getElementById('wordCount');
+        const estimatedTimeEl = document.getElementById('estimatedTime');
+        const voiceCountEl = document.getElementById('voiceCount');
+        
+        // Speech synthesis variables
+        let synth = window.speechSynthesis;
+        let voices = [];
+        let currentUtterance = null;
+        let isSpeaking = false;
+        let isPaused = false;
+        let audioBlob = null;
+        let audioContext = null;
+        let mediaRecorder = null;
+        let audioChunks = [];
+        let audioUrl = null;
+        
+        // Update range values display
+        rateInput.addEventListener('input', () => {
+            rateValue.textContent = rateInput.value;
+            if (currentUtterance && isSpeaking) {
+                // Create a new utterance with updated settings
+                stopSpeech();
+                speakText(textInput.value);
+            }
+        });
+        
+        pitchInput.addEventListener('input', () => {
+            pitchValue.textContent = pitchInput.value;
+            if (currentUtterance && isSpeaking) {
+                // Create a new utterance with updated settings
+                stopSpeech();
+                speakText(textInput.value);
+            }
+        });
+        
+        volumeInput.addEventListener('input', () => {
+            volumeValue.textContent = volumeInput.value;
+            if (currentUtterance && isSpeaking) {
+                // Create a new utterance with updated settings
+                stopSpeech();
+                speakText(textInput.value);
+            }
+        });
+        
+        // Update text statistics
+        function updateTextStats() {
+            const text = textInput.value;
+            const textLength = text.length;
+            const wordCount = text.trim() ? text.trim().split(/\s+/).length : 0;
+            
+            textLengthEl.textContent = textLength;
+            wordCountEl.textContent = wordCount;
+            
+            // Estimate speaking time (average 150 words per minute)
+            const estimatedSeconds = Math.ceil(wordCount / 2.5);
+            estimatedTimeEl.textContent = `${estimatedSeconds}s`;
+        }
+        
+        textInput.addEventListener('input', updateTextStats);
+        
+        // File upload functionality
+        fileInputBtn.addEventListener('click', () => {
+            fileInput.click();
+        });
+        
+        fileInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                textInput.value = e.target.result;
+                updateTextStats();
+            };
+            reader.readAsText(file);
+        });
+        
+        // Copy text to clipboard
+        copyBtn.addEventListener('click', async () => {
+            try {
+                await navigator.clipboard.writeText(textInput.value);
+                
+                // Show success feedback
+                const originalText = copyBtn.innerHTML;
+                copyBtn.innerHTML = '<i class="fas fa-check"></i> Copied!';
+                setTimeout(() => {
+                    copyBtn.innerHTML = originalText;
+                }, 2000);
+            } catch (err) {
+                console.error('Failed to copy text: ', err);
+                alert('Failed to copy text to clipboard.');
+            }
+        });
+        
+        // Clear text
+        clearTextBtn.addEventListener('click', () => {
+            textInput.value = '';
+            updateTextStats();
+        });
+        
+        // Language code to full name mapping
+        const languageMap = {
+            'en-US': 'English (United States)',
+            'en-GB': 'English (Great Britain)',
+            'en-IN': 'English (India)',
+            'en-AU': 'English (Australia)',
+            'en-CA': 'English (Canada)',
+            'es-ES': 'Spanish (Spain)',
+            'es-MX': 'Spanish (Mexico)',
+            'es-CO': 'Spanish (Colombia)',
+            'fr-FR': 'French (France)',
+            'fr-CA': 'French (Canada)',
+            'de-DE': 'German (Germany)',
+            'it-IT': 'Italian (Italy)',
+            'ja-JP': 'Japanese (Japan)',
+            'ko-KR': 'Korean (South Korea)',
+            'pt-BR': 'Portuguese (Brazil)',
+            'pt-PT': 'Portuguese (Portugal)',
+            'ru-RU': 'Russian (Russia)',
+            'zh-CN': 'Chinese (Simplified, China)',
+            'zh-TW': 'Chinese (Traditional, Taiwan)',
+            'zh-HK': 'Chinese (Traditional, Hong Kong)',
+            'ar-SA': 'Arabic (Saudi Arabia)',
+            'ar-EG': 'Arabic (Egypt)',
+            'hi-IN': 'Hindi (India)',
+            'pl-PL': 'Polish (Poland)',
+            'nl-NL': 'Dutch (Netherlands)',
+            'sv-SE': 'Swedish (Sweden)',
+            'da-DK': 'Danish (Denmark)',
+            'fi-FI': 'Finnish (Finland)',
+            'no-NO': 'Norwegian (Norway)',
+            'tr-TR': 'Turkish (Turkey)',
+            'el-GR': 'Greek (Greece)',
+            'cs-CZ': 'Czech (Czech Republic)',
+            'ro-RO': 'Romanian (Romania)',
+            'hu-HU': 'Hungarian (Hungary)',
+            'th-TH': 'Thai (Thailand)',
+            'id-ID': 'Indonesian (Indonesia)',
+            'vi-VN': 'Vietnamese (Vietnam)',
+            'fil-PH': 'Filipino (Philippines)',
+            'ur-PK': 'Urdu (Pakistan)',
+            'ga-IE': 'Irish (Ireland)',
+            'en-IE': 'English (Ireland)',
+            'nb-NO': 'Norwegian Bokmål (Norway)',
+            'te-IN': 'Telugu (India)',
+            'ta-IN': 'Tamil (India)',
+            'ml-IN': 'Malayalam (India)',
+            'kn-IN': 'Kannada (India)',
+            'bn-IN': 'Bengali (India)',
+            'gu-IN': 'Gujarati (India)',
+            'mr-IN': 'Marathi (India)',
+            'as-IN': 'Assamese (India)',
+            'pa-IN': 'Punjabi (India)'
+        };
+        
+        // Load available voices
+        function loadVoices() {
+            // Get voices from the API
+            voices = synth.getVoices();
+            
+            // Add Microsoft voices if available
+            const microsoftVoices = [
+                { name: 'Microsoft David - English (United States)', lang: 'en-US' },
+                { name: 'Microsoft Hazel - English (Great Britain)', lang: 'en-GB' },
+                { name: 'Microsoft Zira - English (United States)', lang: 'en-US' },
+                { name: 'Microsoft Ravi - English (India)', lang: 'en-IN' },
+                { name: 'Microsoft Heera - English (India)', lang: 'en-IN' },
+                { name: 'Microsoft Susan - English (Great Britain)', lang: 'en-GB' },
+                { name: 'Microsoft Mark - English (United States)', lang: 'en-US' },
+                { name: 'Microsoft Ayumi - Japanese (Japan)', lang: 'ja-JP' },
+                { name: 'Microsoft Haruka - Japanese (Japan)', lang: 'ja-JP' },
+                { name: 'Microsoft Nanami - Japanese (Japan)', lang: 'ja-JP' },
+                { name: 'Microsoft Paulina - Spanish (Mexico)', lang: 'es-MX' },
+                { name: 'Microsoft Helena - Spanish (Spain)', lang: 'es-ES' },
+                { name: 'Microsoft Laura - Spanish (Colombia)', lang: 'es-CO' },
+                { name: 'Microsoft Pablo - Spanish (Spain)', lang: 'es-ES' },
+                { name: 'Microsoft Raul - Spanish (Mexico)', lang: 'es-MX' },
+                { name: 'Microsoft Sabina - Spanish (Mexico)', lang: 'es-MX' },
+                { name: 'Microsoft Hemant - Hindi (India)', lang: 'hi-IN' },
+                { name: 'Microsoft Kalpana - Hindi (India)', lang: 'hi-IN' },
+                { name: 'Microsoft Huihui - Chinese (Simplified, China)', lang: 'zh-CN' },
+                { name: 'Microsoft Yaoyao - Chinese (Simplified, China)', lang: 'zh-CN' },
+                { name: 'Microsoft Kangkang - Chinese (Simplified, China)', lang: 'zh-CN' },
+                { name: 'Microsoft Tracy - Chinese (Traditional, Taiwan)', lang: 'zh-TW' },
+                { name: 'Microsoft Hanhan - Chinese (Traditional, Hong Kong)', lang: 'zh-HK' },
+                { name: 'Microsoft Caroline - French (France)', lang: 'fr-FR' },
+                { name: 'Microsoft Hortense - French (France)', lang: 'fr-FR' },
+                { name: 'Microsoft Claude - French (Canada)', lang: 'fr-CA' },
+                { name: 'Microsoft Julie - French (France)', lang: 'fr-FR' },
+                { name: 'Microsoft Helga - German (Germany)', lang: 'de-DE' },
+                { name: 'Microsoft Hedda - German (Germany)', lang: 'de-DE' },
+                { name: 'Microsoft Stefan - German (Germany)', lang: 'de-DE' },
+                { name: 'Microsoft Cosimo - Italian (Italy)', lang: 'it-IT' },
+                { name: 'Microsoft Elsa - Italian (Italy)', lang: 'it-IT' },
+                { name: 'Microsoft Matej - Czech (Czech Republic)', lang: 'cs-CZ' },
+                { name: 'Microsoft Jakub - Czech (Czech Republic)', lang: 'cs-CZ' },
+                { name: 'Microsoft Andrei - Romanian (Romania)', lang: 'ro-RO' },
+                { name: 'Microsoft Irina - Romanian (Romania)', lang: 'ro-RO' },
+                { name: 'Microsoft Pavel - Russian (Russia)', lang: 'ru-RU' },
+                { name: 'Microsoft Irina - Russian (Russia)', lang: 'ru-RU' },
+                { name: 'Microsoft Ivan - Russian (Russia)', lang: 'ru-RU' },
+                { name: 'Microsoft Jessa - Filipino (Philippines)', lang: 'fil-PH' },
+                { name: 'Microsoft Rizwan - Urdu (Pakistan)', lang: 'ur-PK' },
+                { name: 'Microsoft Hoda - Arabic (Egypt)', lang: 'ar-EG' },
+                { name: 'Microsoft Naayf - Arabic (Saudi Arabia)', lang: 'ar-SA' },
+                { name: 'Microsoft Salma - Arabic (Saudi Arabia)', lang: 'ar-SA' },
+                { name: 'Microsoft Adam - Polish (Poland)', lang: 'pl-PL' },
+                { name: 'Microsoft Paulina - Polish (Poland)', lang: 'pl-PL' },
+                { name: 'Microsoft Sean - Irish (Ireland)', lang: 'ga-IE' },
+                { name: 'Microsoft Sean - English (Ireland)', lang: 'en-IE' },
+                { name: 'Microsoft Elsa - Swedish (Sweden)', lang: 'sv-SE' },
+                { name: 'Microsoft Henrik - Danish (Denmark)', lang: 'da-DK' },
+                { name: 'Microsoft Nils - Norwegian (Norway)', lang: 'nb-NO' },
+                { name: 'Microsoft Madhur - Telugu (India)', lang: 'te-IN' },
+                { name: 'Microsoft Valluvar - Tamil (India)', lang: 'ta-IN' },
+                { name: 'Microsoft Daliya - Malayalam (India)', lang: 'ml-IN' },
+                { name: 'Microsoft Hemavathi - Kannada (India)', lang: 'kn-IN' },
+                { name: 'Microsoft Bashkar – Bengali (India)', lang: 'bn-IN' },
+                { name: 'Microsoft Tanishaa – Bengali (India)', lang: 'bn-IN' },
+                { name: 'Microsoft Dhwani – Gujarati (India)', lang: 'gu-IN' },
+                { name: 'Microsoft Niranjan – Gujarati (India)', lang: 'gu-IN' },
+                { name: 'Microsoft Aarohi – Marathi (India)', lang: 'mr-IN' },
+                { name: 'Microsoft Manohar – Marathi (India)', lang: 'mr-IN' },
+                { name: 'Microsoft Yashica – Assamese (India)', lang: 'as-IN' },
+                { name: 'Microsoft Shubhendu – Punjabi (India)', lang: 'pa-IN' }
+            ];
+            
+            // Add Microsoft voices to the voices array
+            microsoftVoices.forEach(voice => {
+                voices.push({
+                    name: voice.name,
+                    lang: voice.lang,
+                    localService: false,
+                    voiceURI: voice.name,
+                    default: false
+                });
+            });
+            
+            voiceCountEl.textContent = voices.length;
+            
+            // Clear previous options
+            voiceSelect.innerHTML = '';
+            languageSelect.innerHTML = '';
+            
+            // Create a set to track unique languages
+            const languages = new Set();
+            
+            // Add voices to the select
+            voices.forEach((voice, index) => {
+                const option = document.createElement('option');
+                option.value = index;
+                const langName = languageMap[voice.lang] || voice.lang;
+                option.textContent = `${voice.name} (${langName})`;
+                voiceSelect.appendChild(option);
+                
+                // Add language to set
+                languages.add(voice.lang);
+            });
+            
+            // Add languages to the language select
+            languages.forEach(lang => {
+                const option = document.createElement('option');
+                option.value = lang;
+                option.textContent = languageMap[lang] || lang;
+                languageSelect.appendChild(option);
+            });
+            
+            // Filter voices when language changes
+            languageSelect.addEventListener('change', filterVoicesByLanguage);
+            
+            // Filter voices by gender
+            const voiceOptions = document.querySelectorAll('.voice-option');
+            voiceOptions.forEach(option => {
+                option.addEventListener('click', () => {
+                    // Remove active class from all options
+                    voiceOptions.forEach(opt => opt.classList.remove('active'));
+                    // Add active class to clicked option
+                    option.classList.add('active');
+                    
+                    const gender = option.getAttribute('data-gender');
+                    filterVoicesByGender(gender);
+                });
+            });
+            
+            // Set "All Voices" as active by default
+            document.querySelector('.voice-option[data-gender="all"]').classList.add('active');
+        }
+        
+        // Filter voices by language
+        function filterVoicesByLanguage() {
+            const selectedLanguage = languageSelect.value;
+            voiceSelect.innerHTML = '';
+            
+            voices.forEach((voice, index) => {
+                if (voice.lang === selectedLanguage) {
+                    const option = document.createElement('option');
+                    option.value = index;
+                    const langName = languageMap[voice.lang] || voice.lang;
+                    option.textContent = `${voice.name} (${langName})`;
+                    voiceSelect.appendChild(option);
+                }
+            });
+            
+            // If no voices for selected language, show all voices
+            if (voiceSelect.options.length === 0) {
+                voices.forEach((voice, index) => {
+                    const option = document.createElement('option');
+                    option.value = index;
+                    const langName = languageMap[voice.lang] || voice.lang;
+                    option.textContent = `${voice.name} (${langName})`;
+                    voiceSelect.appendChild(option);
+                });
+            }
+        }
+        
+        // Filter voices by gender
+        function filterVoicesByGender(gender) {
+            if (gender === 'all') {
+                filterVoicesByLanguage();
+                return;
+            }
+            
+            const selectedLanguage = languageSelect.value;
+            voiceSelect.innerHTML = '';
+            
+            voices.forEach((voice, index) => {
+                // Check if voice matches the selected language and gender
+                const matchesLanguage = selectedLanguage ? voice.lang === selectedLanguage : true;
+                const voiceName = voice.name.toLowerCase();
+                
+                // Simple gender detection based on voice name
+                let matchesGender = false;
+                if (gender === 'male') {
+                    matchesGender = voiceName.includes('male') || 
+                                   voiceName.includes('man') || 
+                                   voiceName.includes('guy') ||
+                                   voiceName.includes('david') ||
+                                   voiceName.includes('alex') ||
+                                   voiceName.includes('daniel') ||
+                                   voiceName.includes('mark') ||
+                                   voiceName.includes('ravi') ||
+                                   voiceName.includes('heera') ||
+                                   voiceName.includes('pablo') ||
+                                   voiceName.includes('raul') ||
+                                   voiceName.includes('hemant') ||
+                                   voiceName.includes('kangkang') ||
+                                   voiceName.includes('claude') ||
+                                   voiceName.includes('stefan') ||
+                                   voiceName.includes('cosimo') ||
+                                   voiceName.includes('matej') ||
+                                   voiceName.includes('jakub') ||
+                                   voiceName.includes('andrei') ||
+                                   voiceName.includes('pavel') ||
+                                   voiceName.includes('ivan') ||
+                                   voiceName.includes('rizwan') ||
+                                   voiceName.includes('naayf') ||
+                                   voiceName.includes('adam') ||
+                                   voiceName.includes('sean') ||
+                                   voiceName.includes('henrik') ||
+                                   voiceName.includes('nils') ||
+                                   voiceName.includes('madhur') ||
+                                   voiceName.includes('valluvar') ||
+                                   voiceName.includes('hemavathi') ||
+                                   voiceName.includes('bashkar') ||
+                                   voiceName.includes('niranjan') ||
+                                   voiceName.includes('manohar') ||
+                                   voiceName.includes('shubhendu');
+                } else if (gender === 'female') {
+                    matchesGender = voiceName.includes('female') || 
+                                   voiceName.includes('woman') || 
+                                   voiceName.includes('lady') ||
+                                   voiceName.includes('karen') ||
+                                   voiceName.includes('samantha') ||
+                                   voiceName.includes('victoria') ||
+                                   voiceName.includes('hazel') ||
+                                   voiceName.includes('zira') ||
+                                   voiceName.includes('susan') ||
+                                   voiceName.includes('ayumi') ||
+                                   voiceName.includes('haruka') ||
+                                   voiceName.includes('nanami') ||
+                                   voiceName.includes('paulina') ||
+                                   voiceName.includes('helena') ||
+                                   voiceName.includes('laura') ||
+                                   voiceName.includes('sabina') ||
+                                   voiceName.includes('kalpana') ||
+                                   voiceName.includes('huihui') ||
+                                   voiceName.includes('yaoyao') ||
+                                   voiceName.includes('tracy') ||
+                                   voiceName.includes('hanhan') ||
+                                   voiceName.includes('caroline') ||
+                                   voiceName.includes('hortense') ||
+                                   voiceName.includes('julie') ||
+                                   voiceName.includes('helga') ||
+                                   voiceName.includes('hedda') ||
+                                   voiceName.includes('elsa') ||
+                                   voiceName.includes('irina') ||
+                                   voiceName.includes('jessa') ||
+                                   voiceName.includes('hoda') ||
+                                   voiceName.includes('salma') ||
+                                   voiceName.includes('paulina') ||
+                                   voiceName.includes('elsa') ||
+                                   voiceName.includes('daliya') ||
+                                   voiceName.includes('tanishaa') ||
+                                   voiceName.includes('dhwani') ||
+                                   voiceName.includes('aarohi') ||
+                                   voiceName.includes('yashica');
+                }
+                
+                if (matchesLanguage && matchesGender) {
+                    const option = document.createElement('option');
+                    option.value = index;
+                    const langName = languageMap[voice.lang] || voice.lang;
+                    option.textContent = `${voice.name} (${langName})`;
+                    voiceSelect.appendChild(option);
+                }
+            });
+            
+            // If no voices match, show all voices for the language
+            if (voiceSelect.options.length === 0) {
+                filterVoicesByLanguage();
+            }
+        }
+        
+        // Stop speech function
+        function stopSpeech() {
+            if (synth.speaking) {
+                synth.cancel();
+                isSpeaking = false;
+                isPaused = false;
+                speakBtn.style.display = 'flex';
+                pauseBtn.style.display = 'none';
+                resumeBtn.style.display = 'none';
+                stopBtn.style.display = 'none';
+                speakingIndicator.style.display = 'none';
+                loadingIndicator.style.display = 'none';
+            }
+        }
+        
+        // Preview voice
+        previewVoiceBtn.addEventListener('click', () => {
+            const text = "This is a preview of the selected voice.";
+            speakText(text, true);
+        });
+        
+        // Speak text
+        function speakText(text, isPreview = false) {
+            if (!text.trim()) {
+                alert('Please enter some text to speak.');
+                return;
+            }
+            
+            if (isSpeaking && !isPreview) {
+                stopSpeech();
+            }
+            
+            const selectedVoiceIndex = parseInt(voiceSelect.value);
+            const selectedVoice = voices[selectedVoiceIndex];
+            
+            currentUtterance = new SpeechSynthesisUtterance(text);
+            
+            // Set voice properties
+            if (selectedVoice) {
+                currentUtterance.voice = selectedVoice;
+            }
+            
+            currentUtterance.rate = parseFloat(rateInput.value);
+            currentUtterance.pitch = parseFloat(pitchInput.value);
+            currentUtterance.volume = parseFloat(volumeInput.value);
+            
+            // Event handlers
+            currentUtterance.onstart = () => {
+                if (!isPreview) {
+                    isSpeaking = true;
+                    speakBtn.style.display = 'none';
+                    pauseBtn.style.display = 'flex';
+                    stopBtn.style.display = 'flex';
+                    speakingIndicator.style.display = 'flex';
+                    
+                    // Show loading indicator
+                    loadingIndicator.style.display = 'block';
+                }
+            };
+            
+            currentUtterance.onend = () => {
+                if (!isPreview) {
+                    isSpeaking = false;
+                    isPaused = false;
+                    speakBtn.style.display = 'flex';
+                    pauseBtn.style.display = 'none';
+                    resumeBtn.style.display = 'none';
+                    stopBtn.style.display = 'none';
+                    speakingIndicator.style.display = 'none';
+                    
+                    // Hide loading indicator
+                    loadingIndicator.style.display = 'none';
+                    
+                    // Show download button
+                    downloadBtn.style.display = 'flex';
+                }
+            };
+            
+            currentUtterance.onerror = (event) => {
+                console.error('Speech synthesis error:', event);
+                if (!isPreview) {
+                    isSpeaking = false;
+                    isPaused = false;
+                    speakBtn.style.display = 'flex';
+                    pauseBtn.style.display = 'none';
+                    resumeBtn.style.display = 'none';
+                    stopBtn.style.display = 'none';
+                    speakingIndicator.style.display = 'none';
+                    loadingIndicator.style.display = 'none';
+                    
+                    alert('An error occurred during speech synthesis. Please try again.');
+                }
+            };
+            
+            // Speak the text
+            synth.speak(currentUtterance);
+        }
+        
+        // Control buttons
+        speakBtn.addEventListener('click', () => {
+            const text = textInput.value;
+            if (!text.trim()) {
+                alert('Please enter some text to speak.');
+                return;
+            }
+            
+            speakText(text);
+        });
+        
+        pauseBtn.addEventListener('click', () => {
+            if (isSpeaking && !isPaused) {
+                synth.pause();
+                isPaused = true;
+                pauseBtn.style.display = 'none';
+                resumeBtn.style.display = 'flex';
+            }
+        });
+        
+        resumeBtn.addEventListener('click', () => {
+            if (isSpeaking && isPaused) {
+                synth.resume();
+                isPaused = false;
+                resumeBtn.style.display = 'none';
+                pauseBtn.style.display = 'flex';
+            }
+        });
+        
+        stopBtn.addEventListener('click', () => {
+            stopSpeech();
+        });
+        
+        // Download audio - This is a simplified version since we can't actually record the speech
+        downloadBtn.addEventListener('click', async () => {
+            alert('Audio download functionality would require server-side processing or recording capabilities. This is a client-side demo.');
+        });
+        
+        // Preview download button
+        previewDownloadBtn.addEventListener('click', () => {
+            alert('Audio download functionality would require server-side processing or recording capabilities. This is a client-side demo.');
+        });
+        
+        // Clear preview
+        clearPreviewBtn.addEventListener('click', () => {
+            previewContainer.style.display = 'none';
+            audioPreview.src = '';
+            if (audioUrl) {
+                URL.revokeObjectURL(audioUrl);
+                audioUrl = null;
+            }
+        });
+        
+        // Initialize the page
+        function init() {
+            // Load voices when they become available
+            if (synth.onvoiceschanged !== undefined) {
+                synth.onvoiceschanged = loadVoices;
+            }
+            
+            // Initial load of voices
+            loadVoices();
+            updateTextStats();
+        }
+        
+        // Language Switcher
+        const languageBtn = document.querySelector('.language-btn');
+        const currentLanguageElement = document.getElementById('currentLanguage');
+        const languageDropdown = document.querySelector('.language-dropdown');
+
+        // Translation data
+        const translations = {
+            en: {
+                "nav.home": "Home",
+                "nav.about": "About Us",
+                "nav.tools": "Tools",
+                "nav.contact": "Contact",
+                "hero.title": "Text to Speech Tool",
+                "hero.description": "Convert text to natural-sounding speech with multiple voices and languages. Export to audio files, customize speed and pitch, and enjoy unlimited usage - all client-side with complete privacy.",
+                "howto.title": "How to Use the Text to Speech Tool",
+                "howto.step1.title": "Enter Your Text",
+                "howto.step1.description": "Type or paste your text into the input box. You can also upload a text file or use the copy button to copy text to clipboard.",
+                "howto.step2.title": "Select Voice & Language",
+                "howto.step2.description": "Choose from multiple voices (male/female) and languages. Preview voices before generating the full audio.",
+                "howto.step3.title": "Customize Settings",
+                "howto.step3.description": "Adjust speech rate, pitch, and volume to your preference. Select your preferred output format (WAV, MP3, etc.).",
+                "howto.step4.title": "Generate & Download",
+                "howto.step4.description": "Click 'Speak' to generate the audio. Preview the result and download the audio file in your chosen format.",
+                "tool.title": "Text to Speech",
+                "tool.text.title": "Enter Text",
+                "tool.text.placeholder": "Type or paste your text here...",
+                "tool.text.upload": "Upload Text File",
+                "tool.text.copy": "Copy Text",
+                "tool.text.clear": "Clear Text",
+                "tool.voice.title": "Voice Selection",
+                "tool.voice.language": "Language",
+                "tool.voice.voice": "Voice",
+                "tool.voice.all": "All Voices",
+                "tool.voice.male": "Male Voices",
+                "tool.voice.female": "Female Voices",
+                "tool.voice.preview": "Preview Voice",
+                "tool.settings.title": "Audio Settings",
+                "tool.settings.rate": "Speech Rate",
+                "tool.settings.pitch": "Pitch",
+                "tool.settings.volume": "Volume",
+                "tool.settings.format": "Output Format",
+                "tool.controls.title": "Controls",
+                "tool.controls.speak": "Speak",
+                "tool.controls.pause": "Pause",
+                "tool.controls.resume": "Resume",
+                "tool.controls.stop": "Stop",
+                "tool.controls.download": "Download Audio",
+                "tool.controls.speaking": "Speaking...",
+                "tool.preview.title": "Audio Preview",
+                "tool.preview.download": "Download",
+                "tool.preview.close": "Close",
+                "tool.loading": "Generating Audio...",
+                "tool.stats.characters": "Characters",
+                "tool.stats.words": "Words",
+                "tool.stats.time": "Estimated Time",
+                "tool.stats.voices": "Available Voices",
+                "footer.follow": "FOLLOW US",
+                "footer.categories": "Popular Categories",
+                "footer.categories.pdf": "PDF Tools",
+                "footer.categories.image": "Image Tools",
+                "footer.categories.text": "Text Tools",
+                "footer.categories.av": "Audio/Video Tools",
+                "footer.categories.web": "WebDeveloper Tools",
+                "footer.categories.calc": "Calculator Tools",
+                "footer.categories.util": "Utility Tools",
+                "footer.categories.color": "Color Tools",
+                "footer.quicklinks": "Quick Links",
+                "footer.links.tools": "All Tools",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Contact",
+                "footer.links.privacy": "Privacy Policy",
+                "footer.links.disclaimer": "Disclaimer",
+                "footer.links.terms": "Terms of Service",
+                "footer.copyright": "© 2025 LollyPoPDF. All rights reserved."
+            },
+            es: {
+                "nav.home": "Inicio",
+                "nav.about": "Acerca de Nosotros",
+                "nav.tools": "Herramientas",
+                "nav.contact": "Contacto",
+                "hero.title": "Herramienta de Texto a Voz",
+                "hero.description": "Convierte texto a voz natural con múltiples voces e idiomas. Exporta a archivos de audio, personaliza velocidad y tono, y disfruta de uso ilimitado - todo en el lado del cliente con privacidad completa.",
+                "howto.title": "Cómo Usar la Herramienta de Texto a Voz",
+                "howto.step1.title": "Ingresa Tu Texto",
+                "howto.step1.description": "Escribe o pega tu texto en el cuadro de entrada. También puedes subir un archivo de texto o usar el botón copiar para copiar texto al portapapeles.",
+                "howto.step2.title": "Selecciona Voz e Idioma",
+                "howto.step2.description": "Elige entre múltiples voces (masculino/femenino) e idiomas. Previsualiza las voces antes de generar el audio completo.",
+                "howto.step3.title": "Personaliza Configuración",
+                "howto.step3.description": "Ajusta la velocidad del habla, el tono y el volumen a tu preferencia. Selecciona tu formato de salida preferido (WAV, MP3, etc.).",
+                "howto.step4.title": "Genera y Descarga",
+                "howto.step4.description": "Haz clic en 'Hablar' para generar el audio. Previsualiza el resultado y descarga el archivo de audio en tu formato elegido.",
+                "tool.title": "Texto a Voz",
+                "tool.text.title": "Ingresar Texto",
+                "tool.text.placeholder": "Escribe o pega tu texto aquí...",
+                "tool.text.upload": "Subir Archivo de Texto",
+                "tool.text.copy": "Copiar Texto",
+                "tool.text.clear": "Limpiar Texto",
+                "tool.voice.title": "Selección de Voz",
+                "tool.voice.language": "Idioma",
+                "tool.voice.voice": "Voz",
+                "tool.voice.all": "Todas las Voces",
+                "tool.voice.male": "Voces Masculinas",
+                "tool.voice.female": "Voces Femeninas",
+                "tool.voice.preview": "Previsualizar Voz",
+                "tool.settings.title": "Configuración de Audio",
+                "tool.settings.rate": "Velocidad del Habla",
+                "tool.settings.pitch": "Tono",
+                "tool.settings.volume": "Volumen",
+                "tool.settings.format": "Formato de Salida",
+                "tool.controls.title": "Controles",
+                "tool.controls.speak": "Hablar",
+                "tool.controls.pause": "Pausar",
+                "tool.controls.resume": "Reanudar",
+                "tool.controls.stop": "Detener",
+                "tool.controls.download": "Descargar Audio",
+                "tool.controls.speaking": "Hablando...",
+                "tool.preview.title": "Previsualización de Audio",
+                "tool.preview.download": "Descargar",
+                "tool.preview.close": "Cerrar",
+                "tool.loading": "Generando Audio...",
+                "tool.stats.characters": "Caracteres",
+                "tool.stats.words": "Palabras",
+                "tool.stats.time": "Tiempo Estimado",
+                "tool.stats.voices": "Voces Disponibles",
+                "footer.follow": "SÍGUENOS",
+                "footer.categories": "Categorías Populares",
+                "footer.categories.pdf": "Herramientas PDF",
+                "footer.categories.image": "Herramientas de Imagen",
+                "footer.categories.text": "Herramientas de Texto",
+                "footer.categories.av": "Herramientas de Audio/Video",
+                "footer.categories.web": "Herramientas para Desarrolladores Web",
+                "footer.categories.calc": "Herramientas de Calculadora",
+                "footer.categories.util": "Herramientas de Utilidad",
+                "footer.categories.color": "Herramientas de Color",
+                "footer.quicklinks": "Enlaces Rápidos",
+                "footer.links.tools": "Todas las Herramientas",
+                "footer.links.faq": "Preguntas Frecuentes",
+                "footer.links.contact": "Contacto",
+                "footer.links.privacy": "Política de Privacidad",
+                "footer.links.disclaimer": "Descargo de Responsabilidad",
+                "footer.links.terms": "Términos de Servicio",
+                "footer.copyright": "© 2025 LollyPoPDF. Todos los derechos reservados."
+            }
+        };
+
+        // Function to change language
+        function changeLanguage(langCode) {
+            const langData = translations[langCode];
+            if (!langData) return;
+            
+            // Update all elements with data-i18n attribute
+            document.querySelectorAll('[data-i18n]').forEach(element => {
+                const key = element.getAttribute('data-i18n');
+                if (langData[key]) {
+                    element.textContent = langData[key];
+                }
+            });
+            
+            // Update current language display
+            currentLanguageElement.textContent = document.querySelector(`.language-option[data-lang="${langCode}"]`).textContent;
+            
+            // Save language preference
+            localStorage.setItem('language', langCode);
+        }
+
+        // Initialize language
+        const savedLanguage = localStorage.getItem('language') || 'en';
+        changeLanguage(savedLanguage);
+        
+        // Language selection handler
+        languageDropdown.addEventListener('click', (e) => {
+            if (e.target.classList.contains('language-option')) {
+                const langCode = e.target.getAttribute('data-lang');
+                changeLanguage(langCode);
+            }
+        });
+
+        // Initialize the application
+        init();
+    </script>
+</body>
+</html>

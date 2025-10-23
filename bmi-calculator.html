@@ -1,0 +1,3475 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BMI Calculator Tool | LollyPoPdf</title>
+    <meta name="description" content="Free online BMI calculator tool. Calculate your Body Mass Index instantly with health category, ideal weight range, and personalized insights.">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --primary-color: #9370db;
+            --primary-dark: #8a2be2;
+            --secondary-color: #f0ebff;
+            --text-color: #333333;
+            --text-light: #6b7280;
+            --bg-color: #ffffff;
+            --bg-secondary: #f9f9f9;
+            --border-radius: 12px;
+            --transition: all 0.3s ease;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --header-height: 80px;
+            --white: #ffffff;
+            --header-text: #6b7280;
+            --accent-color: #9370db;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --error-color: #ef4444;
+            --underweight-color: #3b82f6;
+            --normal-color: #10b981;
+            --overweight-color: #f59e0b;
+            --obese-color: #ef4444;
+        }
+
+        .dark-mode {
+            --primary-color: #a391f2;
+            --primary-dark: #8a2be2;
+            --secondary-color: #2d2d2d;
+            --text-color: #f0f0f0;
+            --text-light: #a0a0a0;
+            --bg-color: #1a1a1a;
+            --bg-secondary: #2d2d2d;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+            --white: #1a1a1a;
+            --header-text: #a0a0a0;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            transition: var(--transition);
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        ul {
+            list-style: none;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header Styles */
+        header {
+            background-color: var(--white);
+            color: var(--header-text);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+        }
+
+        .logo-icon {
+            position: relative;
+            width: 40px;
+            height: 40px;
+        }
+
+        .logo-circle {
+            width: 40px;
+            height: 40px;
+            border-radius: 40%;
+            background: linear-gradient(to bottom right, #9370db, #8a2be2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .logo-stem {
+            position: absolute;
+            bottom: -17px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 6px;
+            height: 17px;
+            background-color: #8a2be2;
+            border-radius: 0 0 3px 3px;
+        }
+
+        .logo-text {
+            font-size: 24px;
+            font-weight: bold;
+            color: #9370db;
+        }
+
+        nav ul {
+            display: flex;
+            gap: 30px;
+            list-style: none;
+        }
+
+        nav a {
+            font-weight: 500;
+            position: relative;
+            color: var(--header-text);
+            padding: 8px 0;
+            border-radius: 0;
+            transition: var(--transition);
+            text-decoration: none;
+        }
+
+        nav a:hover {
+            color: var(--accent-color);
+        }
+
+        nav a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: var(--accent-color);
+            transition: width 0.3s ease;
+        }
+
+        nav a:hover::after {
+            width: 100%;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .email {
+            font-size: 14px;
+            color: var(--header-text);
+        }
+
+        .theme-toggle {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 20px;
+            color: var(--header-text);
+            padding: 8px;
+            border-radius: 50%;
+            transition: var(--transition);
+        }
+
+        .theme-toggle:hover {
+            background-color: #f0ebff;
+            color: var(--accent-color);
+        }
+
+        .dark-mode .theme-toggle:hover {
+            background-color: #2d3748;
+            color: var(--accent-color);
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--header-text);
+        }
+
+        /* Mobile Menu */
+        .mobile-menu {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            width: 100%;
+            background-color: var(--white);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            z-index: 999;
+        }
+
+        .dark-mode .mobile-menu {
+            background-color: var(--bg-secondary);
+        }
+
+        .mobile-menu.active {
+            display: block;
+        }
+
+        .mobile-menu ul {
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .mobile-menu a {
+            display: block;
+            padding: 10px 0;
+            font-weight: 500;
+            color: var(--header-text);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .dark-mode .mobile-menu a {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .mobile-menu a:hover {
+            color: var(--accent-color);
+        }
+
+        /* Hero Section */
+        .hero {
+            background-color: var(--secondary-color);
+            padding: 60px 0;
+            text-align: center;
+        }
+
+        .dark-mode .hero {
+            background: linear-gradient(135deg, #2a1a4a, #3d2a6d);
+        }
+
+        .hero h1 {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            color: #000;
+        }
+
+        .dark-mode .hero h1 {
+            color: var(--text-color);
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            color: var(--text-color);
+            max-width: 700px;
+            margin: 0 auto 30px;
+        }
+
+        /* How to Use Section */
+        .how-to-section {
+            padding: 80px 0;
+            background-color: var(--bg-color);
+        }
+
+        .dark-mode .how-to-section {
+            background-color: var(--bg-secondary);
+        }
+
+        .section-title {
+            font-size: 2rem;
+            text-align: center;
+            margin-bottom: 40px;
+            color: #000000;
+        }
+
+        .dark-mode .section-title {
+            color: var(--text-color);
+        }
+
+        .steps-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 40px;
+        }
+
+        .step-box {
+            background-color: var(--bg-secondary);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            padding: 30px;
+            min-height: 200px;
+            position: relative;
+        }
+
+        .step-number {
+            width: 40px;
+            height: 40px;
+            background-color: var(--primary-color);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 16px;
+            margin-bottom: 15px;
+        }
+
+        .step-title {
+            font-size: 18px;
+            color: #000000;
+            margin-bottom: 10px;
+        }
+
+        .dark-mode .step-title {
+            color: var(--text-color);
+        }
+
+        .step-description {
+            font-size: 14px;
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        /* Tool Section */
+        .tool-section {
+            padding: 80px 0;
+            background-color: var(--secondary-color);
+        }
+
+        .dark-mode .tool-section {
+            background: linear-gradient(135deg, #2a1a4a, #3d2a6d);
+        }
+
+        .tool-title {
+            font-size: 2.5rem;
+            text-align: center;
+            margin-bottom: 40px;
+            color: #a391f2;
+        }
+
+        .dark-mode .tool-title {
+            color: #a391f2;
+        }
+
+        .tool-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background-color: var(--bg-color);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            padding: 40px;
+        }
+
+        /* BMI Calculator Styles */
+        .bmi-calculator {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+
+        @media (max-width: 768px) {
+            .bmi-calculator {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .calculator-section {
+            background-color: var(--bg-secondary);
+            border-radius: var(--border-radius);
+            padding: 25px;
+            box-shadow: var(--shadow);
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            color: var(--primary-color);
+        }
+
+        .section-header i {
+            font-size: 20px;
+        }
+
+        .section-header h3 {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        /* Unit Toggle */
+        .unit-toggle {
+            display: flex;
+            background-color: var(--bg-color);
+            border-radius: var(--border-radius);
+            padding: 5px;
+            margin-bottom: 20px;
+        }
+
+        .unit-option {
+            flex: 1;
+            text-align: center;
+            padding: 10px;
+            cursor: pointer;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: var(--transition);
+        }
+
+        .unit-option.active {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        /* Input Fields */
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        .input-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--text-color);
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 12px 15px;
+            border-radius: var(--border-radius);
+            border: 1px solid var(--primary-color);
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-size: 16px;
+        }
+
+        .input-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        /* Calculate Button */
+        .calculate-btn {
+            width: 100%;
+            padding: 15px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: var(--border-radius);
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            margin-top: 10px;
+        }
+
+        .calculate-btn:hover {
+            background-color: var(--primary-dark);
+        }
+
+        /* Results Section */
+        .results-section {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .bmi-result {
+            text-align: center;
+            padding: 25px;
+            border-radius: var(--border-radius);
+            background-color: var(--bg-secondary);
+            box-shadow: var(--shadow);
+        }
+
+        .bmi-value {
+            font-size: 3rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .bmi-category {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+            padding: 8px 15px;
+            border-radius: 30px;
+            display: inline-block;
+        }
+
+        .underweight {
+            background-color: var(--underweight-color);
+            color: white;
+        }
+
+        .normal {
+            background-color: var(--normal-color);
+            color: white;
+        }
+
+        .overweight {
+            background-color: var(--overweight-color);
+            color: white;
+        }
+
+        .obese {
+            background-color: var(--obese-color);
+            color: white;
+        }
+
+        .bmi-scale {
+            width: 100%;
+            height: 30px;
+            background: linear-gradient(to right, var(--underweight-color), var(--normal-color), var(--overweight-color), var(--obese-color));
+            border-radius: 15px;
+            position: relative;
+            margin: 20px 0;
+        }
+
+        .bmi-marker {
+            position: absolute;
+            top: -5px;
+            width: 10px;
+            height: 40px;
+            background-color: white;
+            border: 2px solid var(--text-color);
+            border-radius: 5px;
+            transform: translateX(-50%);
+        }
+
+        .scale-labels {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            color: var(--text-light);
+            margin-top: 5px;
+        }
+
+        .ideal-weight {
+            background-color: var(--bg-secondary);
+            border-radius: var(--border-radius);
+            padding: 20px;
+            box-shadow: var(--shadow);
+        }
+
+        .ideal-weight h4 {
+            margin-bottom: 10px;
+            color: var(--primary-color);
+        }
+
+        .ideal-weight-range {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--text-color);
+        }
+
+        .health-tips {
+            background-color: var(--bg-secondary);
+            border-radius: var(--border-radius);
+            padding: 20px;
+            box-shadow: var(--shadow);
+        }
+
+        .health-tips h4 {
+            margin-bottom: 10px;
+            color: var(--primary-color);
+        }
+
+        .tips-list {
+            list-style-type: disc;
+            padding-left: 20px;
+        }
+
+        .tips-list li {
+            margin-bottom: 8px;
+            color: var(--text-color);
+        }
+
+        /* Chart Container */
+        .chart-container {
+            background-color: var(--bg-secondary);
+            border-radius: var(--border-radius);
+            padding: 20px;
+            box-shadow: var(--shadow);
+            margin-top: 20px;
+        }
+
+        .chart-container h3 {
+            margin-bottom: 15px;
+            color: var(--primary-color);
+            text-align: center;
+        }
+
+        /* History Section */
+        .history-section {
+            margin-top: 30px;
+        }
+
+        .history-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .history-title {
+            font-size: 18px;
+            color: var(--primary-color);
+        }
+
+        .clear-history {
+            background: none;
+            border: none;
+            color: var(--error-color);
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .history-list {
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .history-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 15px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+            font-size: 14px;
+        }
+
+        .dark-mode .history-item {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .history-date {
+            color: var(--text-light);
+        }
+
+        .history-bmi {
+            font-weight: 600;
+        }
+
+        /* Status Message */
+        .status-message {
+            padding: 15px;
+            border-radius: var(--border-radius);
+            margin-bottom: 20px;
+            text-align: center;
+            display: none;
+        }
+
+        .status-success {
+            background-color: rgba(16, 185, 129, 0.1);
+            color: var(--success-color);
+            border: 1px solid var(--success-color);
+        }
+
+        .status-error {
+            background-color: rgba(239, 68, 68, 0.1);
+            color: var(--error-color);
+            border: 1px solid var(--error-color);
+        }
+
+        /* Footer */
+        footer {
+            background-color: #000000;
+            color: white;
+            padding: 60px 0 80px;
+            position: relative;
+        }
+
+        .footer-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 60px;
+        }
+
+        .footer-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            text-decoration: none;
+        }
+
+        .footer-logo .logo-icon {
+            width: 40px;
+            height: 40px;
+        }
+
+        .footer-logo .logo-text {
+            color: #9370db;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .footer-section h3 {
+            color: white;
+            font-weight: 600;
+            font-size: 20px;
+            margin-bottom: 20px;
+        }
+
+        .footer-section h4 {
+            color: #9370db;
+            font-size: 18px;
+            margin-bottom: 15px;
+        }
+
+        .footer-links li {
+            margin-bottom: 10px;
+        }
+
+        .footer-links a {
+            color: white;
+        }
+
+        .footer-links a:hover {
+            color: #9370db;
+        }
+
+        .social-icons {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .social-icon {
+            width: 40px;
+            height: 40px;
+            background-color: #9370db;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+        }
+
+        .social-icon:hover {
+            background-color: #8a2be2;
+            transform: translateY(-3px);
+        }
+
+        .copyright {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            color: #f9f7ff;
+            font-size: 12px;
+        }
+
+        .footer-line {
+            position: absolute;
+            bottom: 50px;
+            left: 0;
+            width: 100%;
+            height: 1px;
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        /* Language Switcher */
+        .language-switcher {
+            position: fixed;
+            bottom: 10px;
+            right: 10px;
+            z-index: 1000;
+        }
+
+        .language-btn {
+            background-color: #9370db;
+            color: white;
+            border: none;
+            border-radius: 30px;
+            padding: 5px 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .language-dropdown {
+            position: absolute;
+            bottom: 100%;
+            right: 0;
+            width: 300px;
+            background-color: white;
+            border-radius: var(--border-radius);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            display: none;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .dark-mode .language-dropdown {
+            background-color: var(--bg-secondary);
+        }
+
+        .language-switcher:hover .language-dropdown {
+            display: grid;
+        }
+
+        .language-option {
+            padding: 8px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            text-align: center;
+            font-size: 14px;
+        }
+
+        .language-option:hover {
+            background-color: white;
+            color: #9370db;
+        }
+
+        .dark-mode .language-option:hover {
+            background-color: var(--bg-color);
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 992px) {
+            .steps-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .footer-container {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            nav ul, .email {
+                display: none;
+            }
+            
+            .mobile-menu-btn {
+                display: block;
+            }
+            
+            .hero h1, .tool-title {
+                font-size: 2rem;
+            }
+            
+            .hero p {
+                font-size: 1rem;
+            }
+            
+            .language-dropdown {
+                width: 250px;
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .footer-container {
+                grid-template-columns: 1fr;
+                gap: 40px;
+            }
+            
+            .input-row {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .tool-container {
+                padding: 20px;
+            }
+            
+            .bmi-value {
+                font-size: 2.5rem;
+            }
+            
+            .bmi-category {
+                font-size: 1.2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container header-container">
+            <a href="https://lollypopdf.com" class="logo">
+                <div class="logo-icon">
+                    <div class="logo-circle">LPdf</div>
+                    <div class="logo-stem"></div>
+                </div>
+                <span class="logo-text">LollyPoPdf</span>
+            </a>
+            
+            <nav>
+                <ul>
+                    <li><a href="https://lollypopdf.github.io/LollyPoPdf#home" class="nav-link" data-i18n="nav.home">Home</a></li>
+                    <li><a href="https://lollypopdf.github.io/LollyPoPdf#about" class="nav-link" data-i18n="nav.about">About Us</a></li>
+                    <li><a href="https://lollypopdf.github.io/LollyPoPdf#tools" class="nav-link" data-i18n="nav.tools">Tools</a></li>
+                    <li><a href="contact.html" class="nav-link" data-i18n="nav.contact">Contact</a></li>
+                </ul>
+            </nav>
+            
+            <div class="header-right">
+                <span class="email">lollypoppdf@gmail.com</span>
+                <button class="theme-toggle" id="themeToggle">
+                    <i class="fas fa-moon"></i>
+                </button>
+                <button class="mobile-menu-btn" id="mobileMenuBtn">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </div>
+        
+        <!-- Mobile Menu -->
+        <div class="mobile-menu" id="mobileMenu">
+            <ul>
+                <li><a href="https://lollypopdf.github.io/LollyPoPdf#home" class="nav-link" data-i18n="nav.home">Home</a></li>
+                <li><a href="https://lollypopdf.github.io/LollyPoPdf#about" class="nav-link" data-i18n="nav.about">About Us</a></li>
+                <li><a href="https://lollypopdf.github.io/LollyPoPdf#tools" class="nav-link" data-i18n="nav.tools">Tools</a></li>
+                <li><a href="contact.html" class="nav-link" data-i18n="nav.contact">Contact</a></li>
+            </ul>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <h1 data-i18n="hero.title">BMI Calculator Tool</h1>
+            <p data-i18n="hero.description">Calculate your Body Mass Index instantly with health category, ideal weight range, and personalized insights. All processing happens locally with complete privacy.</p>
+        </div>
+    </section>
+
+    <!-- How to Use Section -->
+    <section class="how-to-section">
+        <div class="container">
+            <h2 class="section-title" data-i18n="howto.title">How to Use the BMI Calculator</h2>
+            <div class="steps-container">
+                <div class="step-box">
+                    <div class="step-number">1</div>
+                    <h3 class="step-title" data-i18n="howto.step1.title">Choose Your Unit System</h3>
+                    <p class="step-description" data-i18n="howto.step1.description">Select between Metric (kg, cm) or Imperial (lbs, ft/in) units based on your preference. The calculator will automatically adjust the inputs.</p>
+                </div>
+                <div class="step-box">
+                    <div class="step-number">2</div>
+                    <h3 class="step-title" data-i18n="howto.step2.title">Enter Your Measurements</h3>
+                    <p class="step-description" data-i18n="howto.step2.description">Input your weight and height in the appropriate fields. For imperial units, you can enter feet and inches separately.</p>
+                </div>
+                <div class="step-box">
+                    <div class="step-number">3</div>
+                    <h3 class="step-title" data-i18n="howto.step3.title">Calculate Your BMI</h3>
+                    <p class="step-description" data-i18n="howto.step3.description">Click the "Calculate BMI" button to instantly see your BMI value, health category, and personalized insights.</p>
+                </div>
+                <div class="step-box">
+                    <div class="step-number">4</div>
+                    <h3 class="step-title" data-i18n="howto.step4.title">Understand Your Results</h3>
+                    <p class="step-description" data-i18n="howto.step4.description">Review your BMI category, ideal weight range, and health tips. Track your progress with the history feature.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Tool Section -->
+    <section class="tool-section">
+        <div class="container">
+            <h2 class="tool-title" data-i18n="tool.title">BMI Calculator</h2>
+            <div class="tool-container">
+                <!-- Status Message -->
+                <div class="status-message" id="statusMessage"></div>
+
+                <div class="bmi-calculator">
+                    <!-- Input Section -->
+                    <div class="calculator-section">
+                        <div class="section-header">
+                            <i class="fas fa-calculator"></i>
+                            <h3 data-i18n="tool.inputs">Your Measurements</h3>
+                        </div>
+                        
+                        <!-- Unit Toggle -->
+                        <div class="unit-toggle">
+                            <div class="unit-option active" id="metricOption">Metric</div>
+                            <div class="unit-option" id="imperialOption">Imperial</div>
+                        </div>
+                        
+                        <!-- Metric Inputs -->
+                        <div id="metricInputs">
+                            <div class="input-group">
+                                <label class="input-label" for="weightKg" data-i18n="tool.weight_kg">Weight (kg)</label>
+                                <input type="number" id="weightKg" class="input-field" placeholder="e.g., 70" min="1" max="300" step="0.1">
+                            </div>
+                            <div class="input-group">
+                                <label class="input-label" for="heightCm" data-i18n="tool.height_cm">Height (cm)</label>
+                                <input type="number" id="heightCm" class="input-field" placeholder="e.g., 175" min="50" max="250" step="0.1">
+                            </div>
+                        </div>
+                        
+                        <!-- Imperial Inputs -->
+                        <div id="imperialInputs" style="display: none;">
+                            <div class="input-group">
+                                <label class="input-label" for="weightLbs" data-i18n="tool.weight_lbs">Weight (lbs)</label>
+                                <input type="number" id="weightLbs" class="input-field" placeholder="e.g., 154" min="1" max="660" step="0.1">
+                            </div>
+                            <div class="input-group">
+                                <label class="input-label" data-i18n="tool.height_ft_in">Height (ft & in)</label>
+                                <div class="input-row">
+                                    <input type="number" id="heightFt" class="input-field" placeholder="Feet" min="1" max="8" step="1">
+                                    <input type="number" id="heightIn" class="input-field" placeholder="Inches" min="0" max="11" step="1">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <button class="calculate-btn" id="calculateBtn" data-i18n="tool.calculate">Calculate BMI</button>
+                    </div>
+                    
+                    <!-- Results Section -->
+                    <div class="results-section">
+                        <div class="bmi-result" id="bmiResult">
+                            <div class="bmi-value" id="bmiValue">--</div>
+                            <div class="bmi-category" id="bmiCategory">Enter your details</div>
+                            
+                            <div class="bmi-scale">
+                                <div class="bmi-marker" id="bmiMarker"></div>
+                            </div>
+                            <div class="scale-labels">
+                                <span data-i18n="tool.underweight">Underweight</span>
+                                <span data-i18n="tool.normal">Normal</span>
+                                <span data-i18n="tool.overweight">Overweight</span>
+                                <span data-i18n="tool.obese">Obese</span>
+                            </div>
+                        </div>
+                        
+                        <div class="ideal-weight" id="idealWeight">
+                            <h4 data-i18n="tool.ideal_weight">Ideal Weight Range</h4>
+                            <div class="ideal-weight-range" id="idealWeightRange">--</div>
+                        </div>
+                        
+                        <div class="health-tips">
+                            <h4 data-i18n="tool.health_tips">Health Tips</h4>
+                            <ul class="tips-list" id="healthTips">
+                                <li data-i18n="tool.tip1">Enter your measurements to get personalized health tips</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Chart Section -->
+                <div class="chart-container">
+                    <h3 data-i18n="tool.bmi_chart">BMI Chart</h3>
+                    <canvas id="bmiChart"></canvas>
+                </div>
+                
+                <!-- History Section -->
+                <div class="history-section">
+                    <div class="history-header">
+                        <h3 class="history-title" data-i18n="tool.history">Calculation History</h3>
+                        <button class="clear-history" id="clearHistory" data-i18n="tool.clear_history">Clear History</button>
+                    </div>
+                    <div class="history-list" id="historyList">
+                        <!-- History items will be populated by JavaScript -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container footer-container">
+            <!-- Left Section -->
+            <div class="footer-section">
+                <a href="https://lollypopdf.com" class="footer-logo">
+                    <div class="logo-icon">
+                        <div class="logo-circle">LPdf</div>
+                        <div class="logo-stem"></div>
+                    </div>
+                    <span class="logo-text">LollyPoPdf</span>
+                </a>
+                <h3 data-i18n="footer.follow">FOLLOW US</h3>
+                <div class="social-icons">
+                    <a href="https://facebook.com/lollypopdf" class="social-icon"><i class="fab fa-facebook-f"></i></a>
+                    <a href="https://linkedin.com/company/lollypopdf" class="social-icon"><i class="fab fa-linkedin-in"></i></a>
+                    <a href="https://twitter.com/lollypopdf" class="social-icon"><i class="fab fa-twitter"></i></a>
+                    <a href="https://instagram.com/lollypopdf" class="social-icon"><i class="fab fa-instagram"></i></a>
+                    <a href="https://pinterest.com/lollypopdf" class="social-icon"><i class="fab fa-pinterest-p"></i></a>
+                </div>
+            </div>
+            
+            <!-- Middle Section - Popular Categories -->
+            <div class="footer-section">
+                <h4 data-i18n="footer.categories">Popular Categories</h4>
+                <ul class="footer-links">
+                    <li><a href="https://lollypopdf.com#pdf-tools" data-i18n="footer.categories.pdf">PDF Tools</a></li>
+                    <li><a href="https://lollypopdf.com#image-tools" data-i18n="footer.categories.image">Image Tools</a></li>
+                    <li><a href="https://lollypopdf.com#text-tools" data-i18n="footer.categories.text">Text Tools</a></li>
+                    <li><a href="https://lollypopdf.com#audio-video-tools" data-i18n="footer.categories.av">Audio/Video Tools</a></li>
+                    <li><a href="https://lollypopdf.com#web-developer-tools" data-i18n="footer.categories.web">WebDeveloper Tools</a></li>
+                    <li><a href="https://lollypopdf.com#calculator-tools" data-i18n="footer.categories.calc">Calculator Tools</a></li>
+                    <li><a href="https://lollypopdf.com#utility-tools" data-i18n="footer.categories.util">Utility Tools</a></li>
+                    <li><a href="https://lollypopdf.com#color-tools" data-i18n="footer.categories.color">Color Tools</a></li>
+                </ul>
+            </div>
+            
+            <!-- Right Section - Quick Links -->
+            <div class="footer-section">
+                <h4 data-i18n="footer.quicklinks">Quick Links</h4>
+                <ul class="footer-links">
+                    <li><a href="https://lollypopdf.github.io/LollyPoPdf#home" data-i18n="nav.home">Home</a></li>
+                    <li><a href="https://lollypopdf.github.io/LollyPoPdf#tools" data-i18n="footer.links.tools">All Tools</a></li>
+                    <li><a href="faq.html" data-i18n="footer.links.faq">FAQ</a></li>
+                    <li><a href="contact.html" data-i18n="footer.links.contact">Contact</a></li>
+                    <li><a href="privacy-policy.html" data-i18n="footer.links.privacy">Privacy Policy</a></li>
+                    <li><a href="disclaimer.html" data-i18n="footer.links.disclaimer">Disclaimer</a></li>
+                    <li><a href="terms.html" data-i18n="footer.links.terms">Terms of Service</a></li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="footer-line"></div>
+        <div class="copyright" data-i18n="footer.copyright">© 2025 LollyPoPDF. All rights reserved.</div>
+    </footer>
+
+    <!-- Language Switcher -->
+    <div class="language-switcher">
+        <button class="language-btn">
+            <i class="fas fa-globe"></i>
+            <span id="currentLanguage">English</span>
+        </button>
+        <div class="language-dropdown">
+            <div class="language-option" data-lang="en">English</div>
+            <div class="language-option" data-lang="es">Español</div>
+            <div class="language-option" data-lang="fr">Français</div>
+            <div class="language-option" data-lang="de">Deutsch</div>
+            <div class="language-option" data-lang="it">Italiano</div>
+            <div class="language-option" data-lang="pt">Português</div>
+            <div class="language-option" data-lang="ja">日本語</div>
+            <div class="language-option" data-lang="ru">Pусский</div>
+            <div class="language-option" data-lang="ko">한국어</div>
+            <div class="language-option" data-lang="zh-CN">中文 (简体)</div>
+            <div class="language-option" data-lang="zh-TW">中文 (繁體)</div>
+            <div class="language-option" data-lang="ar">العربية</div>
+            <div class="language-option" data-lang="fa">فارسی</div>
+            <div class="language-option" data-lang="bg">Български</div>
+            <div class="language-option" data-lang="ca">Català</div>
+            <div class="language-option" data-lang="nl">Nederlands</div>
+            <div class="language-option" data-lang="el">Ελληνικά</div>
+            <div class="language-option" data-lang="hi">हिन्दी</div>
+            <div class="language-option" data-lang="te">తెలుగు</div>
+            <div class="language-option" data-lang="kn">ಕನ್ನಡ</div>
+            <div class="language-option" data-lang="ta">தமிழ்</div>
+            <div class="language-option" data-lang="ml">മലയാളം</div>
+            <div class="language-option" data-lang="id">Bahasa Indonesia</div>
+            <div class="language-option" data-lang="ms">Bahasa Melayu</div>
+            <div class="language-option" data-lang="pl">Polski</div>
+            <div class="language-option" data-lang="th">ภาษาไทย</div>
+            <div class="language-option" data-lang="tr">Türkçe</div>
+            <div class="language-option" data-lang="uk">Українська</div>
+            <div class="language-option" data-lang="vi">Tiếng Việt</div>
+            <div class="language-option" data-lang="is">Íslenska</div>
+            <div class="language-option" data-lang="no">Norsk</div>
+            <div class="language-option" data-lang="sv">Svenska</div>
+            <div class="language-option" data-lang="fi">Suomi</div>
+            <div class="language-option" data-lang="cs">Čeština</div>
+        </div>
+    </div>
+
+    <script>
+        // Theme Toggle
+        const themeToggle = document.getElementById('themeToggle');
+        const body = document.body;
+        
+        // Check for saved theme preference or respect OS preference
+        const savedTheme = localStorage.getItem('theme') || 
+            (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        
+        if (savedTheme === 'dark') {
+            body.classList.add('dark-mode');
+            themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+        }
+        
+        themeToggle.addEventListener('click', () => {
+            body.classList.toggle('dark-mode');
+            const isDarkMode = body.classList.contains('dark-mode');
+            
+            if (isDarkMode) {
+                themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+                localStorage.setItem('theme', 'dark');
+            } else {
+                themeToggle.innerHTML = '<i class="fas fa-moon"></i>';
+                localStorage.setItem('theme', 'light');
+            }
+        });
+
+        // Mobile Menu Toggle
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const mobileMenu = document.getElementById('mobileMenu');
+        
+        mobileMenuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('active');
+            
+            // Change icon based on menu state
+            if (mobileMenu.classList.contains('active')) {
+                mobileMenuBtn.innerHTML = '<i class="fas fa-times"></i>';
+            } else {
+                mobileMenuBtn.innerHTML = '<i class="fas fa-bars"></i>';
+            }
+        });
+
+        // Close mobile menu when clicking on a link
+        const mobileMenuLinks = mobileMenu.querySelectorAll('a');
+        mobileMenuLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                mobileMenu.classList.remove('active');
+                mobileMenuBtn.innerHTML = '<i class="fas fa-bars"></i>';
+            });
+        });
+
+        // BMI Calculator Functionality
+        const metricOption = document.getElementById('metricOption');
+        const imperialOption = document.getElementById('imperialOption');
+        const metricInputs = document.getElementById('metricInputs');
+        const imperialInputs = document.getElementById('imperialInputs');
+        const calculateBtn = document.getElementById('calculateBtn');
+        const bmiValue = document.getElementById('bmiValue');
+        const bmiCategory = document.getElementById('bmiCategory');
+        const bmiMarker = document.getElementById('bmiMarker');
+        const idealWeightRange = document.getElementById('idealWeightRange');
+        const healthTips = document.getElementById('healthTips');
+        const statusMessage = document.getElementById('statusMessage');
+        const clearHistoryBtn = document.getElementById('clearHistory');
+        const historyList = document.getElementById('historyList');
+        
+        // Input fields
+        const weightKg = document.getElementById('weightKg');
+        const heightCm = document.getElementById('heightCm');
+        const weightLbs = document.getElementById('weightLbs');
+        const heightFt = document.getElementById('heightFt');
+        const heightIn = document.getElementById('heightIn');
+        
+        // Chart
+        let bmiChart = null;
+        
+        // Initialize with default values
+        weightKg.value = '70';
+        heightCm.value = '175';
+        weightLbs.value = '154';
+        heightFt.value = '5';
+        heightIn.value = '9';
+        
+        // Unit toggle functionality
+        metricOption.addEventListener('click', () => {
+            metricOption.classList.add('active');
+            imperialOption.classList.remove('active');
+            metricInputs.style.display = 'block';
+            imperialInputs.style.display = 'none';
+        });
+        
+        imperialOption.addEventListener('click', () => {
+            imperialOption.classList.add('active');
+            metricOption.classList.remove('active');
+            imperialInputs.style.display = 'block';
+            metricInputs.style.display = 'none';
+        });
+        
+        // Calculate BMI
+        calculateBtn.addEventListener('click', calculateBMI);
+        
+        // Also calculate on input change for real-time updates
+        weightKg.addEventListener('input', calculateBMI);
+        heightCm.addEventListener('input', calculateBMI);
+        weightLbs.addEventListener('input', calculateBMI);
+        heightFt.addEventListener('input', calculateBMI);
+        heightIn.addEventListener('input', calculateBMI);
+        
+        // Clear history
+        clearHistoryBtn.addEventListener('click', clearHistory);
+        
+        // Load history from localStorage
+        loadHistory();
+        
+        // Initialize chart
+        initializeChart();
+        
+        // Calculate BMI function
+        function calculateBMI() {
+            let weight, height, bmi;
+            
+            if (metricOption.classList.contains('active')) {
+                // Metric calculation
+                weight = parseFloat(weightKg.value);
+                height = parseFloat(heightCm.value) / 100; // Convert cm to m
+                
+                if (!weight || !height || weight <= 0 || height <= 0) {
+                    resetResults();
+                    return;
+                }
+                
+                bmi = weight / (height * height);
+            } else {
+                // Imperial calculation
+                weight = parseFloat(weightLbs.value);
+                const feet = parseFloat(heightFt.value);
+                const inches = parseFloat(heightIn.value);
+                
+                if (!weight || !feet || weight <= 0 || feet <= 0) {
+                    resetResults();
+                    return;
+                }
+                
+                height = (feet * 12) + (inches || 0); // Convert to inches
+                bmi = (weight / (height * height)) * 703;
+            }
+            
+            // Round to one decimal place
+            bmi = Math.round(bmi * 10) / 10;
+            
+            // Update UI with results
+            updateResults(bmi, weight, height);
+            
+            // Save to history
+            saveToHistory(bmi);
+        }
+        
+        // Update results in UI
+        function updateResults(bmi, weight, height) {
+            // Update BMI value
+            bmiValue.textContent = bmi;
+            
+            // Determine category and update UI
+            let category, categoryClass, categoryText;
+            
+            if (bmi < 18.5) {
+                category = 'underweight';
+                categoryClass = 'underweight';
+                categoryText = 'Underweight';
+            } else if (bmi < 25) {
+                category = 'normal';
+                categoryClass = 'normal';
+                categoryText = 'Normal Weight';
+            } else if (bmi < 30) {
+                category = 'overweight';
+                categoryClass = 'overweight';
+                categoryText = 'Overweight';
+            } else {
+                category = 'obese';
+                categoryClass = 'obese';
+                categoryText = 'Obese';
+            }
+            
+            // Update category display
+            bmiCategory.textContent = categoryText;
+            bmiCategory.className = `bmi-category ${categoryClass}`;
+            
+            // Update marker position on scale
+            const markerPosition = Math.min(Math.max((bmi - 15) / 20, 0), 1) * 100;
+            bmiMarker.style.left = `${markerPosition}%`;
+            
+            // Calculate and display ideal weight range
+            const heightM = metricOption.classList.contains('active') ? 
+                parseFloat(heightCm.value) / 100 : 
+                ((parseFloat(heightFt.value) * 12) + (parseFloat(heightIn.value) || 0)) * 0.0254;
+            
+            const minIdealWeight = 18.5 * heightM * heightM;
+            const maxIdealWeight = 24.9 * heightM * heightM;
+            
+            if (metricOption.classList.contains('active')) {
+                idealWeightRange.textContent = `${minIdealWeight.toFixed(1)} - ${maxIdealWeight.toFixed(1)} kg`;
+            } else {
+                const minLbs = minIdealWeight * 2.20462;
+                const maxLbs = maxIdealWeight * 2.20462;
+                idealWeightRange.textContent = `${minLbs.toFixed(1)} - ${maxLbs.toFixed(1)} lbs`;
+            }
+            
+            // Update health tips
+            updateHealthTips(category);
+            
+            // Update chart
+            updateChart(bmi);
+        }
+        
+        // Reset results when inputs are invalid
+        function resetResults() {
+            bmiValue.textContent = '--';
+            bmiCategory.textContent = 'Enter your details';
+            bmiCategory.className = 'bmi-category';
+            bmiMarker.style.left = '0%';
+            idealWeightRange.textContent = '--';
+            healthTips.innerHTML = '<li data-i18n="tool.tip1">Enter your measurements to get personalized health tips</li>';
+            
+            // Reset chart
+            if (bmiChart) {
+                bmiChart.data.datasets[0].data = [0, 0, 0, 0];
+                bmiChart.update();
+            }
+        }
+        
+        // Update health tips based on BMI category
+        function updateHealthTips(category) {
+            let tips = [];
+            
+            switch(category) {
+                case 'underweight':
+                    tips = [
+                        "Consider increasing your calorie intake with nutrient-dense foods",
+                        "Include protein-rich foods in your diet like lean meats, eggs, and legumes",
+                        "Strength training can help build healthy muscle mass",
+                        "Consult a healthcare provider if you're struggling to gain weight"
+                    ];
+                    break;
+                case 'normal':
+                    tips = [
+                        "Maintain your current healthy lifestyle with balanced nutrition",
+                        "Continue regular physical activity for overall health benefits",
+                        "Monitor your weight periodically to maintain this range",
+                        "Focus on a varied diet with plenty of fruits and vegetables"
+                    ];
+                    break;
+                case 'overweight':
+                    tips = [
+                        "Consider gradual weight loss through a balanced diet and exercise",
+                        "Reduce intake of processed foods and sugary beverages",
+                        "Aim for at least 150 minutes of moderate exercise per week",
+                        "Focus on sustainable lifestyle changes rather than quick fixes"
+                    ];
+                    break;
+                case 'obese':
+                    tips = [
+                        "Consult with a healthcare provider for personalized guidance",
+                        "Consider a comprehensive weight management program",
+                        "Focus on gradual, sustainable weight loss (1-2 lbs per week)",
+                        "Incorporate both cardiovascular and strength training exercises"
+                    ];
+                    break;
+            }
+            
+            // Update tips in UI
+            healthTips.innerHTML = '';
+            tips.forEach(tip => {
+                const li = document.createElement('li');
+                li.textContent = tip;
+                healthTips.appendChild(li);
+            });
+        }
+        
+        // Initialize BMI chart
+        function initializeChart() {
+            const ctx = document.getElementById('bmiChart').getContext('2d');
+            
+            bmiChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Underweight', 'Normal', 'Overweight', 'Obese'],
+                    datasets: [{
+                        label: 'BMI Categories',
+                        data: [0, 0, 0, 0],
+                        backgroundColor: [
+                            'rgba(59, 130, 246, 0.7)',
+                            'rgba(16, 185, 129, 0.7)',
+                            'rgba(245, 158, 11, 0.7)',
+                            'rgba(239, 68, 68, 0.7)'
+                        ],
+                        borderColor: [
+                            'rgb(59, 130, 246)',
+                            'rgb(16, 185, 129)',
+                            'rgb(245, 158, 11)',
+                            'rgb(239, 68, 68)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 40,
+                            title: {
+                                display: true,
+                                text: 'BMI Value'
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return `BMI: ${context.parsed.y}`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+        
+        // Update chart with current BMI
+        function updateChart(bmi) {
+            if (!bmiChart) return;
+            
+            // Highlight the current category
+            const data = [0, 0, 0, 0];
+            
+            if (bmi < 18.5) {
+                data[0] = bmi;
+            } else if (bmi < 25) {
+                data[1] = bmi;
+            } else if (bmi < 30) {
+                data[2] = bmi;
+            } else {
+                data[3] = bmi;
+            }
+            
+            bmiChart.data.datasets[0].data = data;
+            bmiChart.update();
+        }
+        
+        // Save calculation to history
+        function saveToHistory(bmi) {
+            const history = getHistory();
+            const now = new Date();
+            const dateString = now.toLocaleDateString() + ' ' + now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+            
+            history.unshift({
+                date: dateString,
+                bmi: bmi,
+                unit: metricOption.classList.contains('active') ? 'metric' : 'imperial',
+                weight: metricOption.classList.contains('active') ? weightKg.value : weightLbs.value,
+                height: metricOption.classList.contains('active') ? heightCm.value : `${heightFt.value}'${heightIn.value}"`
+            });
+            
+            // Keep only last 10 entries
+            if (history.length > 10) {
+                history.pop();
+            }
+            
+            localStorage.setItem('bmiHistory', JSON.stringify(history));
+            loadHistory();
+        }
+        
+        // Load history from localStorage
+        function loadHistory() {
+            const history = getHistory();
+            historyList.innerHTML = '';
+            
+            if (history.length === 0) {
+                historyList.innerHTML = '<div class="history-item">No calculations yet</div>';
+                return;
+            }
+            
+            history.forEach(item => {
+                const historyItem = document.createElement('div');
+                historyItem.className = 'history-item';
+                
+                historyItem.innerHTML = `
+                    <div class="history-date">${item.date}</div>
+                    <div class="history-bmi">${item.bmi}</div>
+                    <div class="history-details">${item.weight} ${item.unit === 'metric' ? 'kg' : 'lbs'}, ${item.height} ${item.unit === 'metric' ? 'cm' : ''}</div>
+                `;
+                
+                historyList.appendChild(historyItem);
+            });
+        }
+        
+        // Get history from localStorage
+        function getHistory() {
+            const historyJSON = localStorage.getItem('bmiHistory');
+            return historyJSON ? JSON.parse(historyJSON) : [];
+        }
+        
+        // Clear history
+        function clearHistory() {
+            localStorage.removeItem('bmiHistory');
+            loadHistory();
+            showStatus('History cleared', 'success');
+        }
+        
+        // Show status message
+        function showStatus(message, type) {
+            statusMessage.textContent = message;
+            statusMessage.className = 'status-message';
+            
+            if (type === 'success') {
+                statusMessage.classList.add('status-success');
+            } else if (type === 'error') {
+                statusMessage.classList.add('status-error');
+            }
+            
+            statusMessage.style.display = 'block';
+            
+            // Auto-hide after 3 seconds
+            setTimeout(() => {
+                statusMessage.style.display = 'none';
+            }, 3000);
+        }
+
+        // Language Switcher
+        const languageBtn = document.querySelector('.language-btn');
+        const currentLanguageElement = document.getElementById('currentLanguage');
+        const languageDropdown = document.querySelector('.language-dropdown');
+        
+        const languages = [
+            { code: 'en', name: 'English' },
+            { code: 'es', name: 'Español' },
+            { code: 'fr', name: 'Français' },
+            { code: 'de', name: 'Deutsch' },
+            { code: 'it', name: 'Italiano' },
+            { code: 'pt', name: 'Português' },
+            { code: 'ja', name: '日本語' },
+            { code: 'ru', name: 'Pусский' },
+            { code: 'ko', name: '한국어' },
+            { code: 'zh-CN', name: '中文 (简体)' },
+            { code: 'zh-TW', name: '中文 (繁體)' },
+            { code: 'ar', name: 'العربية' },
+            { code: 'fa', name: 'فارسی' },
+            { code: 'bg', name: 'Български' },
+            { code: 'ca', name: 'Català' },
+            { code: 'nl', name: 'Nederlands' },
+            { code: 'el', name: 'Ελληνικά' },
+            { code: 'hi', name: 'हिन्दी' },
+            { code: 'te', name: 'తెలుగు' },
+            { code: 'kn', name: 'ಕನ್ನಡ' },
+            { code: 'ta', name: 'தமிழ்' },
+            { code: 'ml', name: 'മലയാളം' },
+            { code: 'id', name: 'Bahasa Indonesia' },
+            { code: 'ms', name: 'Bahasa Melayu' },
+            { code: 'pl', name: 'Polski' },
+            { code: 'th', name: 'ภาษาไทย' },
+            { code: 'tr', name: 'Türkçe' },
+            { code: 'uk', name: 'Українська' },
+            { code: 'vi', name: 'Tiếng Việt' },
+            { code: 'is', name: 'Íslenska' },
+            { code: 'no', name: 'Norsk' },
+            { code: 'sv', name: 'Svenska' },
+            { code: 'fi', name: 'Suomi' },
+            { code: 'cs', name: 'Čeština' }
+        ];
+
+        // Translation data
+        const translations = {
+            en: {
+                "nav.home": "Home",
+                "nav.about": "About Us",
+                "nav.tools": "Tools",
+                "nav.contact": "Contact",
+                "hero.title": "BMI Calculator Tool",
+                "hero.description": "Calculate your Body Mass Index instantly with health category, ideal weight range, and personalized insights. All processing happens locally with complete privacy.",
+                "howto.title": "How to Use the BMI Calculator",
+                "howto.step1.title": "Choose Your Unit System",
+                "howto.step1.description": "Select between Metric (kg, cm) or Imperial (lbs, ft/in) units based on your preference. The calculator will automatically adjust the inputs.",
+                "howto.step2.title": "Enter Your Measurements",
+                "howto.step2.description": "Input your weight and height in the appropriate fields. For imperial units, you can enter feet and inches separately.",
+                "howto.step3.title": "Calculate Your BMI",
+                "howto.step3.description": "Click the \"Calculate BMI\" button to instantly see your BMI value, health category, and personalized insights.",
+                "howto.step4.title": "Understand Your Results",
+                "howto.step4.description": "Review your BMI category, ideal weight range, and health tips. Track your progress with the history feature.",
+                "tool.title": "BMI Calculator",
+                "tool.inputs": "Your Measurements",
+                "tool.weight_kg": "Weight (kg)",
+                "tool.height_cm": "Height (cm)",
+                "tool.weight_lbs": "Weight (lbs)",
+                "tool.height_ft_in": "Height (ft & in)",
+                "tool.calculate": "Calculate BMI",
+                "tool.underweight": "Underweight",
+                "tool.normal": "Normal",
+                "tool.overweight": "Overweight",
+                "tool.obese": "Obese",
+                "tool.ideal_weight": "Ideal Weight Range",
+                "tool.health_tips": "Health Tips",
+                "tool.tip1": "Enter your measurements to get personalized health tips",
+                "tool.bmi_chart": "BMI Chart",
+                "tool.history": "Calculation History",
+                "tool.clear_history": "Clear History",
+                "footer.follow": "FOLLOW US",
+                "footer.categories": "Popular Categories",
+                "footer.categories.pdf": "PDF Tools",
+                "footer.categories.image": "Image Tools",
+                "footer.categories.text": "Text Tools",
+                "footer.categories.av": "Audio/Video Tools",
+                "footer.categories.web": "WebDeveloper Tools",
+                "footer.categories.calc": "Calculator Tools",
+                "footer.categories.util": "Utility Tools",
+                "footer.categories.color": "Color Tools",
+                "footer.quicklinks": "Quick Links",
+                "footer.links.tools": "All Tools",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Contact",
+                "footer.links.privacy": "Privacy Policy",
+                "footer.links.disclaimer": "Disclaimer",
+                "footer.links.terms": "Terms of Service",
+                "footer.copyright": "© 2025 LollyPoPDF. All rights reserved."
+            },
+            es: {
+                "nav.home": "Inicio",
+                "nav.about": "Sobre Nosotros",
+                "nav.tools": "Herramientas",
+                "nav.contact": "Contacto",
+                "hero.title": "Calculadora de IMC",
+                "hero.description": "Calcula tu Índice de Masa Corporal al instante con categoría de salud, rango de peso ideal y consejos personalizados. Todo el procesamiento ocurre localmente con privacidad completa.",
+                "howto.title": "Cómo Usar la Calculadora de IMC",
+                "howto.step1.title": "Elige Tu Sistema de Unidades",
+                "howto.step1.description": "Selecciona entre unidades Métricas (kg, cm) o Imperiales (lbs, pies/pulgadas) según tu preferencia. La calculadora ajustará automáticamente las entradas.",
+                "howto.step2.title": "Ingresa Tus Medidas",
+                "howto.step2.description": "Introduce tu peso y altura en los campos apropiados. Para unidades imperiales, puedes ingresar pies y pulgadas por separado.",
+                "howto.step3.title": "Calcula Tu IMC",
+                "howto.step3.description": "Haz clic en el botón \"Calcular IMC\" para ver instantáneamente tu valor de IMC, categoría de salud y consejos personalizados.",
+                "howto.step4.title": "Comprende Tus Resultados",
+                "howto.step4.description": "Revisa tu categoría de IMC, rango de peso ideal y consejos de salud. Haz un seguimiento de tu progreso con la función de historial.",
+                "tool.title": "Calculadora de IMC",
+                "tool.inputs": "Tus Medidas",
+                "tool.weight_kg": "Peso (kg)",
+                "tool.height_cm": "Altura (cm)",
+                "tool.weight_lbs": "Peso (lbs)",
+                "tool.height_ft_in": "Altura (pies & pulgadas)",
+                "tool.calculate": "Calcular IMC",
+                "tool.underweight": "Bajo peso",
+                "tool.normal": "Normal",
+                "tool.overweight": "Sobrepeso",
+                "tool.obese": "Obesidad",
+                "tool.ideal_weight": "Rango de Peso Ideal",
+                "tool.health_tips": "Consejos de Salud",
+                "tool.tip1": "Ingresa tus medidas para obtener consejos de salud personalizados",
+                "tool.bmi_chart": "Gráfico de IMC",
+                "tool.history": "Historial de Cálculos",
+                "tool.clear_history": "Borrar Historial",
+                "footer.follow": "SÍGUENOS",
+                "footer.categories": "Categorías Populares",
+                "footer.categories.pdf": "Herramientas PDF",
+                "footer.categories.image": "Herramientas de Imagen",
+                "footer.categories.text": "Herramientas de Texto",
+                "footer.categories.av": "Herramientas de Audio/Video",
+                "footer.categories.web": "Herramientas WebDesarrollador",
+                "footer.categories.calc": "Herramientas de Calculadora",
+                "footer.categories.util": "Herramientas de Utilidad",
+                "footer.categories.color": "Herramientas de Color",
+                "footer.quicklinks": "Enlaces Rápidos",
+                "footer.links.tools": "Todas las Herramientas",
+                "footer.links.faq": "Preguntas Frecuentes",
+                "footer.links.contact": "Contacto",
+                "footer.links.privacy": "Política de Privacidad",
+                "footer.links.disclaimer": "Descargo de Responsabilidad",
+                "footer.links.terms": "Términos de Servicio",
+                "footer.copyright": "© 2025 LollyPoPDF. Todos los derechos reservados."
+            },
+            fr: {
+                "nav.home": "Accueil",
+                "nav.about": "À propos de nous",
+                "nav.tools": "Outils",
+                "nav.contact": "Contact",
+                "hero.title": "Outil de Calcul d'IMC",
+                "hero.description": "Calculez votre Indice de Masse Corporelle instantanément avec catégorie de santé, plage de poids idéal et conseils personnalisés. Tout le traitement se fait localement avec une confidentialité totale.",
+                "howto.title": "Comment Utiliser le Calculateur d'IMC",
+                "howto.step1.title": "Choisissez Votre Système d'Unités",
+                "howto.step1.description": "Sélectionnez entre les unités Métriques (kg, cm) ou Impériales (lbs, pi/po) selon votre préférence. Le calculateur ajustera automatiquement les entrées.",
+                "howto.step2.title": "Entrez Vos Mesures",
+                "howto.step2.description": "Saisissez votre poids et votre taille dans les champs appropriés. Pour les unités impériales, vous pouvez entrer les pieds et les pouces séparément.",
+                "howto.step3.title": "Calculez Votre IMC",
+                "howto.step3.description": "Cliquez sur le bouton \"Calculer l'IMC\" pour voir instantanément votre valeur d'IMC, votre catégorie de santé et vos conseils personnalisés.",
+                "howto.step4.title": "Comprenez Vos Résultats",
+                "howto.step4.description": "Consultez votre catégorie d'IMC, votre plage de poids idéal et vos conseils de santé. Suivez vos progrès avec la fonction d'historique.",
+                "tool.title": "Calculateur d'IMC",
+                "tool.inputs": "Vos Mesures",
+                "tool.weight_kg": "Poids (kg)",
+                "tool.height_cm": "Taille (cm)",
+                "tool.weight_lbs": "Poids (lbs)",
+                "tool.height_ft_in": "Taille (pi & po)",
+                "tool.calculate": "Calculer l'IMC",
+                "tool.underweight": "Insuffisance pondérale",
+                "tool.normal": "Normal",
+                "tool.overweight": "Surpoids",
+                "tool.obese": "Obésité",
+                "tool.ideal_weight": "Plage de Poids Idéal",
+                "tool.health_tips": "Conseils de Santé",
+                "tool.tip1": "Entrez vos mesures pour obtenir des conseils de santé personnalisés",
+                "tool.bmi_chart": "Graphique d'IMC",
+                "tool.history": "Historique des Calculs",
+                "tool.clear_history": "Effacer l'Historique",
+                "footer.follow": "SUIVEZ-NOUS",
+                "footer.categories": "Catégories Populaires",
+                "footer.categories.pdf": "Outils PDF",
+                "footer.categories.image": "Outils d'Image",
+                "footer.categories.text": "Outils de Texte",
+                "footer.categories.av": "Outils Audio/Video",
+                "footer.categories.web": "Outils WebDéveloppeur",
+                "footer.categories.calc": "Outils de Calculatrice",
+                "footer.categories.util": "Outils d'Utilité",
+                "footer.categories.color": "Outils de Couleur",
+                "footer.quicklinks": "Liens Rapides",
+                "footer.links.tools": "Tous les Outils",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Contact",
+                "footer.links.privacy": "Politique de Confidentialité",
+                "footer.links.disclaimer": "Avertissement",
+                "footer.links.terms": "Conditions d'Utilisation",
+                "footer.copyright": "© 2025 LollyPoPDF. Tous droits réservés."
+            },
+            de: {
+                "nav.home": "Startseite",
+                "nav.about": "Über uns",
+                "nav.tools": "Werkzeuge",
+                "nav.contact": "Kontakt",
+                "hero.title": "BMI-Rechner Werkzeug",
+                "hero.description": "Berechnen Sie Ihren Body-Mass-Index sofort mit Gesundheitskategorie, Idealgewichtbereich und personalisierten Einblicken. Die gesamte Verarbeitung erfolgt lokal mit vollständiger Privatsphäre.",
+                "howto.title": "So verwenden Sie den BMI-Rechner",
+                "howto.step1.title": "Wählen Sie Ihr Einheitensystem",
+                "howto.step1.description": "Wählen Sie zwischen metrischen (kg, cm) oder imperialen (lbs, ft/in) Einheiten basierend auf Ihrer Präferenz. Der Rechner passt die Eingaben automatisch an.",
+                "howto.step2.title": "Geben Sie Ihre Maße ein",
+                "howto.step2.description": "Geben Sie Ihr Gewicht und Ihre Größe in die entsprechenden Felder ein. Für imperiale Einheiten können Sie Fuß und Zoll separat eingeben.",
+                "howto.step3.title": "Berechnen Sie Ihren BMI",
+                "howto.step3.description": "Klicken Sie auf die Schaltfläche \"BMI berechnen\", um sofort Ihren BMI-Wert, Ihre Gesundheitskategorie und personalisierte Einblicke zu sehen.",
+                "howto.step4.title": "Verstehen Sie Ihre Ergebnisse",
+                "howto.step4.description": "Überprüfen Sie Ihre BMI-Kategorie, Ihren Idealgewichtbereich und Ihre Gesundheitstipps. Verfolgen Sie Ihre Fortschritte mit der Verlauf-Funktion.",
+                "tool.title": "BMI-Rechner",
+                "tool.inputs": "Ihre Maße",
+                "tool.weight_kg": "Gewicht (kg)",
+                "tool.height_cm": "Größe (cm)",
+                "tool.weight_lbs": "Gewicht (lbs)",
+                "tool.height_ft_in": "Größe (ft & in)",
+                "tool.calculate": "BMI berechnen",
+                "tool.underweight": "Untergewicht",
+                "tool.normal": "Normal",
+                "tool.overweight": "Übergewicht",
+                "tool.obese": "Fettleibig",
+                "tool.ideal_weight": "Idealgewichtbereich",
+                "tool.health_tips": "Gesundheitstipps",
+                "tool.tip1": "Geben Sie Ihre Maße ein, um personalisierte Gesundheitstipps zu erhalten",
+                "tool.bmi_chart": "BMI-Diagramm",
+                "tool.history": "Berechnungsverlauf",
+                "tool.clear_history": "Verlauf löschen",
+                "footer.follow": "FOLGEN SIE UNS",
+                "footer.categories": "Beliebte Kategorien",
+                "footer.categories.pdf": "PDF-Werkzeuge",
+                "footer.categories.image": "Bildwerkzeuge",
+                "footer.categories.text": "Textwerkzeuge",
+                "footer.categories.av": "Audio/Video-Werkzeuge",
+                "footer.categories.web": "WebEntwickler-Werkzeuge",
+                "footer.categories.calc": "Rechnerwerkzeuge",
+                "footer.categories.util": "Hilfswerkzeuge",
+                "footer.categories.color": "Farbwerkzeuge",
+                "footer.quicklinks": "Schnelllinks",
+                "footer.links.tools": "Alle Werkzeuge",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Kontakt",
+                "footer.links.privacy": "Datenschutzrichtlinie",
+                "footer.links.disclaimer": "Haftungsausschluss",
+                "footer.links.terms": "Nutzungsbedingungen",
+                "footer.copyright": "© 2025 LollyPoPDF. Alle Rechte vorbehalten."
+            },
+            it: {
+                "nav.home": "Home",
+                "nav.about": "Chi Siamo",
+                "nav.tools": "Strumenti",
+                "nav.contact": "Contatto",
+                "hero.title": "Strumento Calcolatore IMC",
+                "hero.description": "Calcola il tuo Indice di Massa Corporea istantaneamente con categoria di salute, intervallo di peso ideale e consigli personalizzati. Tutta l'elaborazione avviene localmente con completa privacy.",
+                "howto.title": "Come Utilizzare il Calcolatore IMC",
+                "howto.step1.title": "Scegli il Tuo Sistema di Unità",
+                "howto.step1.description": "Seleziona tra unità Metriche (kg, cm) o Imperiali (lbs, ft/in) in base alla tua preferenza. Il calcolatore regolerà automaticamente gli input.",
+                "howto.step2.title": "Inserisci le Tue Misure",
+                "howto.step2.description": "Inserisci il tuo peso e altezza nei campi appropriati. Per le unità imperiali, puoi inserire piedi e pollici separatamente.",
+                "howto.step3.title": "Calcola il Tuo IMC",
+                "howto.step3.description": "Clicca il pulsante \"Calcola IMC\" per vedere istantaneamente il tuo valore IMC, categoria di salute e consigli personalizzati.",
+                "howto.step4.title": "Comprendi i Tuoi Risultati",
+                "howto.step4.description": "Rivedi la tua categoria IMC, intervallo di peso ideale e consigli sulla salute. Tieni traccia dei tuoi progressi con la funzione cronologia.",
+                "tool.title": "Calcolatore IMC",
+                "tool.inputs": "Le Tue Misure",
+                "tool.weight_kg": "Peso (kg)",
+                "tool.height_cm": "Altezza (cm)",
+                "tool.weight_lbs": "Peso (lbs)",
+                "tool.height_ft_in": "Altezza (ft & in)",
+                "tool.calculate": "Calcola IMC",
+                "tool.underweight": "Sottopeso",
+                "tool.normal": "Normale",
+                "tool.overweight": "Sovrappeso",
+                "tool.obese": "Obeso",
+                "tool.ideal_weight": "Intervallo Peso Ideale",
+                "tool.health_tips": "Consigli sulla Salute",
+                "tool.tip1": "Inserisci le tue misure per ottenere consigli sulla salute personalizzati",
+                "tool.bmi_chart": "Grafico IMC",
+                "tool.history": "Cronologia Calcoli",
+                "tool.clear_history": "Cancella Cronologia",
+                "footer.follow": "SEGUICI",
+                "footer.categories": "Categorie Popolari",
+                "footer.categories.pdf": "Strumenti PDF",
+                "footer.categories.image": "Strumenti Immagine",
+                "footer.categories.text": "Strumenti Testo",
+                "footer.categories.av": "Strumenti Audio/Video",
+                "footer.categories.web": "Strumenti Sviluppatore Web",
+                "footer.categories.calc": "Strumenti Calcolatrice",
+                "footer.categories.util": "Strumenti Utilità",
+                "footer.categories.color": "Strumenti Colore",
+                "footer.quicklinks": "Link Rapidi",
+                "footer.links.tools": "Tutti gli Strumenti",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Contatto",
+                "footer.links.privacy": "Informativa sulla Privacy",
+                "footer.links.disclaimer": "Disclaimer",
+                "footer.links.terms": "Termini di Servizio",
+                "footer.copyright": "© 2025 LollyPoPDF. Tutti i diritti riservati."
+            },
+            pt: {
+                "nav.home": "Início",
+                "nav.about": "Sobre Nós",
+                "nav.tools": "Ferramentas",
+                "nav.contact": "Contato",
+                "hero.title": "Ferramenta Calculadora de IMC",
+                "hero.description": "Calcule seu Índice de Massa Corporal instantaneamente com categoria de saúde, faixa de peso ideal e insights personalizados. Todo o processamento acontece localmente com privacidade completa.",
+                "howto.title": "Como Usar a Calculadora de IMC",
+                "howto.step1.title": "Escolha Seu Sistema de Unidades",
+                "howto.step1.description": "Selecione entre unidades Métricas (kg, cm) ou Imperiais (lbs, pés/pol) com base na sua preferência. A calculadora ajustará automaticamente as entradas.",
+                "howto.step2.title": "Insira Suas Medidas",
+                "howto.step2.description": "Insira seu peso e altura nos campos apropriados. Para unidades imperiais, você pode inserir pés e polegadas separadamente.",
+                "howto.step3.title": "Calcule Seu IMC",
+                "howto.step3.description": "Clique no botão \"Calcular IMC\" para ver instantaneamente seu valor de IMC, categoria de saúde e insights personalizados.",
+                "howto.step4.title": "Entenda Seus Resultados",
+                "howto.step4.description": "Revise sua categoria de IMC, faixa de peso ideal e dicas de saúde. Acompanhe seu progresso com o recurso de histórico.",
+                "tool.title": "Calculadora de IMC",
+                "tool.inputs": "Suas Medidas",
+                "tool.weight_kg": "Peso (kg)",
+                "tool.height_cm": "Altura (cm)",
+                "tool.weight_lbs": "Peso (lbs)",
+                "tool.height_ft_in": "Altura (pés & pol)",
+                "tool.calculate": "Calcular IMC",
+                "tool.underweight": "Abaixo do Peso",
+                "tool.normal": "Normal",
+                "tool.overweight": "Sobrepeso",
+                "tool.obese": "Obeso",
+                "tool.ideal_weight": "Faixa de Peso Ideal",
+                "tool.health_tips": "Dicas de Saúde",
+                "tool.tip1": "Insira suas medidas para obter dicas de saúde personalizadas",
+                "tool.bmi_chart": "Gráfico de IMC",
+                "tool.history": "Histórico de Cálculos",
+                "tool.clear_history": "Limpar Histórico",
+                "footer.follow": "SIGA-NOS",
+                "footer.categories": "Categorias Populares",
+                "footer.categories.pdf": "Ferramentas PDF",
+                "footer.categories.image": "Ferramentas de Imagem",
+                "footer.categories.text": "Ferramentas de Texto",
+                "footer.categories.av": "Ferramentas de Áudio/Video",
+                "footer.categories.web": "Ferramentas WebDesenvolvedor",
+                "footer.categories.calc": "Ferramentas de Calculadora",
+                "footer.categories.util": "Ferramentas de Utilidade",
+                "footer.categories.color": "Ferramentas de Cor",
+                "footer.quicklinks": "Links Rápidos",
+                "footer.links.tools": "Todas as Ferramentas",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Contato",
+                "footer.links.privacy": "Política de Privacidade",
+                "footer.links.disclaimer": "Aviso Legal",
+                "footer.links.terms": "Termos de Serviço",
+                "footer.copyright": "© 2025 LollyPoPDF. Todos os direitos reservados."
+            },
+            ja: {
+                "nav.home": "ホーム",
+                "nav.about": "私たちについて",
+                "nav.tools": "ツール",
+                "nav.contact": "お問い合わせ",
+                "hero.title": "BMI計算ツール",
+                "hero.description": "健康カテゴリ、理想体重範囲、個別のインサイトとともに、即座にボディマス指数を計算します。すべての処理は完全なプライバシーでローカルで行われます。",
+                "howto.title": "BMI計算機の使用方法",
+                "howto.step1.title": "単位系を選択",
+                "howto.step1.description": "メートル法（kg、cm）またはヤード・ポンド法（lbs、フィート/インチ）の単位を選択します。計算機は自動的に入力を調整します。",
+                "howto.step2.title": "測定値を入力",
+                "howto.step2.description": "適切なフィールドに体重と身長を入力します。ヤード・ポンド法の場合は、フィートとインチを別々に入力できます。",
+                "howto.step3.title": "BMIを計算",
+                "howto.step3.description": "「BMI計算」ボタンをクリックすると、BMI値、健康カテゴリ、個別のインサイトが即座に表示されます。",
+                "howto.step4.title": "結果を理解する",
+                "howto.step4.description": "BMIカテゴリ、理想体重範囲、健康のヒントを確認します。履歴機能で進捗を追跡します。",
+                "tool.title": "BMI計算機",
+                "tool.inputs": "あなたの測定値",
+                "tool.weight_kg": "体重（kg）",
+                "tool.height_cm": "身長（cm）",
+                "tool.weight_lbs": "体重（lbs）",
+                "tool.height_ft_in": "身長（フィート & インチ）",
+                "tool.calculate": "BMI計算",
+                "tool.underweight": "低体重",
+                "tool.normal": "普通体重",
+                "tool.overweight": "過体重",
+                "tool.obese": "肥満",
+                "tool.ideal_weight": "理想体重範囲",
+                "tool.health_tips": "健康のヒント",
+                "tool.tip1": "測定値を入力して個別の健康のヒントを取得",
+                "tool.bmi_chart": "BMIチャート",
+                "tool.history": "計算履歴",
+                "tool.clear_history": "履歴をクリア",
+                "footer.follow": "フォローする",
+                "footer.categories": "人気カテゴリ",
+                "footer.categories.pdf": "PDFツール",
+                "footer.categories.image": "画像ツール",
+                "footer.categories.text": "テキストツール",
+                "footer.categories.av": "オーディオ/ビデオツール",
+                "footer.categories.web": "Web開発者ツール",
+                "footer.categories.calc": "計算機ツール",
+                "footer.categories.util": "ユーティリティツール",
+                "footer.categories.color": "カラーツール",
+                "footer.quicklinks": "クイックリンク",
+                "footer.links.tools": "すべてのツール",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "お問い合わせ",
+                "footer.links.privacy": "プライバシーポリシー",
+                "footer.links.disclaimer": "免責事項",
+                "footer.links.terms": "利用規約",
+                "footer.copyright": "© 2025 LollyPoPDF. 全著作権所有。"
+            },
+            ru: {
+                "nav.home": "Главная",
+                "nav.about": "О нас",
+                "nav.tools": "Инструменты",
+                "nav.contact": "Контакты",
+                "hero.title": "Инструмент Калькулятора ИМТ",
+                "hero.description": "Рассчитайте свой индекс массы тела мгновенно с категорией здоровья, диапазоном идеального веса и персонализированными рекомендациями. Вся обработка происходит локально с полной конфиденциальностью.",
+                "howto.title": "Как использовать калькулятор ИМТ",
+                "howto.step1.title": "Выберите систему единиц",
+                "howto.step1.description": "Выберите между метрическими (кг, см) или имперскими (фунты, футы/дюймы) единицами в соответствии с вашими предпочтениями. Калькулятор автоматически настроит входные данные.",
+                "howto.step2.title": "Введите свои измерения",
+                "howto.step2.description": "Введите свой вес и рост в соответствующие поля. Для имперских единиц вы можете вводить футы и дюймы отдельно.",
+                "howto.step3.title": "Рассчитайте свой ИМТ",
+                "howto.step3.description": "Нажмите кнопку \"Рассчитать ИМТ\", чтобы мгновенно увидеть значение ИМТ, категорию здоровья и персонализированные рекомендации.",
+                "howto.step4.title": "Понять свои результаты",
+                "howto.step4.description": "Просмотрите свою категорию ИМТ, диапазон идеального веса и советы по здоровью. Отслеживайте свой прогресс с помощью функции истории.",
+                "tool.title": "Калькулятор ИМТ",
+                "tool.inputs": "Ваши измерения",
+                "tool.weight_kg": "Вес (кг)",
+                "tool.height_cm": "Рост (см)",
+                "tool.weight_lbs": "Вес (фунты)",
+                "tool.height_ft_in": "Рост (футы & дюймы)",
+                "tool.calculate": "Рассчитать ИМТ",
+                "tool.underweight": "Недостаточный вес",
+                "tool.normal": "Нормальный",
+                "tool.overweight": "Избыточный вес",
+                "tool.obese": "Ожирение",
+                "tool.ideal_weight": "Диапазон идеального веса",
+                "tool.health_tips": "Советы по здоровью",
+                "tool.tip1": "Введите свои измерения, чтобы получить персонализированные советы по здоровью",
+                "tool.bmi_chart": "График ИМТ",
+                "tool.history": "История расчетов",
+                "tool.clear_history": "Очистить историю",
+                "footer.follow": "СЛЕДУЙТЕ ЗА НАМИ",
+                "footer.categories": "Популярные категории",
+                "footer.categories.pdf": "PDF инструменты",
+                "footer.categories.image": "Инструменты для изображений",
+                "footer.categories.text": "Текстовые инструменты",
+                "footer.categories.av": "Аудио/Видео инструменты",
+                "footer.categories.web": "Инструменты веб-разработчика",
+                "footer.categories.calc": "Инструменты калькулятора",
+                "footer.categories.util": "Утилитарные инструменты",
+                "footer.categories.color": "Цветовые инструменты",
+                "footer.quicklinks": "Быстрые ссылки",
+                "footer.links.tools": "Все инструменты",
+                "footer.links.faq": "ЧаВо",
+                "footer.links.contact": "Контакты",
+                "footer.links.privacy": "Политика конфиденциальности",
+                "footer.links.disclaimer": "Отказ от ответственности",
+                "footer.links.terms": "Условия обслуживания",
+                "footer.copyright": "© 2025 LollyPoPDF. Все права защищены."
+            },
+            ko: {
+                "nav.home": "홈",
+                "nav.about": "회사 소개",
+                "nav.tools": "도구",
+                "nav.contact": "연락처",
+                "hero.title": "BMI 계산기 도구",
+                "hero.description": "건강 범주, 이상적인 체중 범위 및 맞춤형 인사이트와 함께 체질량 지수를 즉시 계산하세요. 모든 처리는 완전한 개인 정보 보호와 함께 로컬에서 이루어집니다.",
+                "howto.title": "BMI 계산기 사용 방법",
+                "howto.step1.title": "단위 시스템 선택",
+                "howto.step1.description": "선호도에 따라 미터법(kg, cm) 또는 영국식(lbs, ft/in) 단위 중에서 선택하세요. 계산기가 자동으로 입력을 조정합니다.",
+                "howto.step2.title": "측정값 입력",
+                "howto.step2.description": "적절한 필드에 체중과 키를 입력하세요. 영국식 단위의 경우 피트와 인치를 별도로 입력할 수 있습니다.",
+                "howto.step3.title": "BMI 계산",
+                "howto.step3.description": "BMI 계산 버튼을 클릭하면 BMI 값, 건강 범주 및 맞춤형 인사이트를 즉시 확인할 수 있습니다.",
+                "howto.step4.title": "결과 이해하기",
+                "howto.step4.description": "BMI 범주, 이상적인 체중 범위 및 건강 팁을 검토하세요. 기록 기능으로 진행 상황을 추적하세요.",
+                "tool.title": "BMI 계산기",
+                "tool.inputs": "측정값",
+                "tool.weight_kg": "체중 (kg)",
+                "tool.height_cm": "키 (cm)",
+                "tool.weight_lbs": "체중 (lbs)",
+                "tool.height_ft_in": "키 (피트 & 인치)",
+                "tool.calculate": "BMI 계산",
+                "tool.underweight": "저체중",
+                "tool.normal": "정상",
+                "tool.overweight": "과체중",
+                "tool.obese": "비만",
+                "tool.ideal_weight": "이상적인 체중 범위",
+                "tool.health_tips": "건강 팁",
+                "tool.tip1": "측정값을 입력하여 맞춤형 건강 팁 받기",
+                "tool.bmi_chart": "BMI 차트",
+                "tool.history": "계산 기록",
+                "tool.clear_history": "기록 지우기",
+                "footer.follow": "팔로우하기",
+                "footer.categories": "인기 카테고리",
+                "footer.categories.pdf": "PDF 도구",
+                "footer.categories.image": "이미지 도구",
+                "footer.categories.text": "텍스트 도구",
+                "footer.categories.av": "오디오/비디오 도구",
+                "footer.categories.web": "웹개발자 도구",
+                "footer.categories.calc": "계산기 도구",
+                "footer.categories.util": "유틸리티 도구",
+                "footer.categories.color": "색상 도구",
+                "footer.quicklinks": "빠른 링크",
+                "footer.links.tools": "모든 도구",
+                "footer.links.faq": "자주 묻는 질문",
+                "footer.links.contact": "연락처",
+                "footer.links.privacy": "개인정보 보호정책",
+                "footer.links.disclaimer": "면책 조항",
+                "footer.links.terms": "서비스 약관",
+                "footer.copyright": "© 2025 LollyPoPDF. 모든 권리 보유."
+            },
+            "zh-CN": {
+                "nav.home": "首页",
+                "nav.about": "关于我们",
+                "nav.tools": "工具",
+                "nav.contact": "联系",
+                "hero.title": "BMI计算器工具",
+                "hero.description": "立即计算您的身体质量指数，包括健康类别、理想体重范围和个性化见解。所有处理都在本地完成，完全保护隐私。",
+                "howto.title": "如何使用BMI计算器",
+                "howto.step1.title": "选择您的单位系统",
+                "howto.step1.description": "根据您的偏好选择公制（kg，cm）或英制（lbs，英尺/英寸）单位。计算器将自动调整输入。",
+                "howto.step2.title": "输入您的测量值",
+                "howto.step2.description": "在适当的字段中输入您的体重和身高。对于英制单位，您可以分别输入英尺和英寸。",
+                "howto.step3.title": "计算您的BMI",
+                "howto.step3.description": "点击\"计算BMI\"按钮，立即查看您的BMI值、健康类别和个性化见解。",
+                "howto.step4.title": "理解您的结果",
+                "howto.step4.description": "查看您的BMI类别、理想体重范围和健康提示。使用历史功能跟踪您的进展。",
+                "tool.title": "BMI计算器",
+                "tool.inputs": "您的测量值",
+                "tool.weight_kg": "体重（kg）",
+                "tool.height_cm": "身高（cm）",
+                "tool.weight_lbs": "体重（lbs）",
+                "tool.height_ft_in": "身高（英尺 & 英寸）",
+                "tool.calculate": "计算BMI",
+                "tool.underweight": "体重不足",
+                "tool.normal": "正常",
+                "tool.overweight": "超重",
+                "tool.obese": "肥胖",
+                "tool.ideal_weight": "理想体重范围",
+                "tool.health_tips": "健康提示",
+                "tool.tip1": "输入您的测量值以获取个性化健康提示",
+                "tool.bmi_chart": "BMI图表",
+                "tool.history": "计算历史",
+                "tool.clear_history": "清除历史",
+                "footer.follow": "关注我们",
+                "footer.categories": "热门类别",
+                "footer.categories.pdf": "PDF工具",
+                "footer.categories.image": "图像工具",
+                "footer.categories.text": "文本工具",
+                "footer.categories.av": "音频/视频工具",
+                "footer.categories.web": "Web开发工具",
+                "footer.categories.calc": "计算器工具",
+                "footer.categories.util": "实用工具",
+                "footer.categories.color": "颜色工具",
+                "footer.quicklinks": "快速链接",
+                "footer.links.tools": "所有工具",
+                "footer.links.faq": "常见问题",
+                "footer.links.contact": "联系",
+                "footer.links.privacy": "隐私政策",
+                "footer.links.disclaimer": "免责声明",
+                "footer.links.terms": "服务条款",
+                "footer.copyright": "© 2025 LollyPoPDF. 保留所有权利。"
+            },
+            "zh-TW": {
+                "nav.home": "首頁",
+                "nav.about": "關於我們",
+                "nav.tools": "工具",
+                "nav.contact": "聯絡",
+                "hero.title": "BMI計算機工具",
+                "hero.description": "立即計算您的身體質量指數，包括健康類別、理想體重範圍和個性化見解。所有處理都在本地完成，完全保護隱私。",
+                "howto.title": "如何使用BMI計算機",
+                "howto.step1.title": "選擇您的單位系統",
+                "howto.step1.description": "根據您的偏好選擇公制（kg，cm）或英制（lbs，英尺/英寸）單位。計算機將自動調整輸入。",
+                "howto.step2.title": "輸入您的測量值",
+                "howto.step2.description": "在適當的欄位中輸入您的體重和身高。對於英制單位，您可以分別輸入英尺和英寸。",
+                "howto.step3.title": "計算您的BMI",
+                "howto.step3.description": "點擊\"計算BMI\"按鈕，立即查看您的BMI值、健康類別和個性化見解。",
+                "howto.step4.title": "理解您的結果",
+                "howto.step4.description": "查看您的BMI類別、理想體重範圍和健康提示。使用歷史功能追蹤您的進展。",
+                "tool.title": "BMI計算機",
+                "tool.inputs": "您的測量值",
+                "tool.weight_kg": "體重（kg）",
+                "tool.height_cm": "身高（cm）",
+                "tool.weight_lbs": "體重（lbs）",
+                "tool.height_ft_in": "身高（英尺 & 英寸）",
+                "tool.calculate": "計算BMI",
+                "tool.underweight": "體重不足",
+                "tool.normal": "正常",
+                "tool.overweight": "超重",
+                "tool.obese": "肥胖",
+                "tool.ideal_weight": "理想體重範圍",
+                "tool.health_tips": "健康提示",
+                "tool.tip1": "輸入您的測量值以獲取個性化健康提示",
+                "tool.bmi_chart": "BMI圖表",
+                "tool.history": "計算歷史",
+                "tool.clear_history": "清除歷史",
+                "footer.follow": "關注我們",
+                "footer.categories": "熱門類別",
+                "footer.categories.pdf": "PDF工具",
+                "footer.categories.image": "圖像工具",
+                "footer.categories.text": "文字工具",
+                "footer.categories.av": "音頻/視頻工具",
+                "footer.categories.web": "Web開發工具",
+                "footer.categories.calc": "計算機工具",
+                "footer.categories.util": "實用工具",
+                "footer.categories.color": "顏色工具",
+                "footer.quicklinks": "快速連結",
+                "footer.links.tools": "所有工具",
+                "footer.links.faq": "常見問題",
+                "footer.links.contact": "聯絡",
+                "footer.links.privacy": "隱私政策",
+                "footer.links.disclaimer": "免責聲明",
+                "footer.links.terms": "服務條款",
+                "footer.copyright": "© 2025 LollyPoPDF. 保留所有權利。"
+            },
+            ar: {
+                "nav.home": "الصفحة الرئيسية",
+                "nav.about": "من نحن",
+                "nav.tools": "الأدوات",
+                "nav.contact": "اتصل بنا",
+                "hero.title": "أداة حاسبة مؤشر كتلة الجسم",
+                "hero.description": "احسب مؤشر كتلة جسمك على الفور مع فئة الصحة، نطاق الوزن المثالي، ورؤى مخصصة. كل المعالجة تتم محليًا مع خصوصية كاملة.",
+                "howto.title": "كيفية استخدام حاسبة مؤشر كتلة الجسم",
+                "howto.step1.title": "اختر نظام الوحدات الخاص بك",
+                "howto.step1.description": "اختر بين وحدات النظام المتري (كجم، سم) أو النظام الإمبراطوري (رطل، قدم/بوصة) بناءً على تفضيلك. ستقوم الآلة الحاسبة بتعديل المدخلات تلقائيًا.",
+                "howto.step2.title": "أدخل قياساتك",
+                "howto.step2.description": "أدخل وزنك وطولك في الحقول المناسبة. بالنسبة لوحدات النظام الإمبراطوري، يمكنك إدخال القدم والبوصة بشكل منفصل.",
+                "howto.step3.title": "احسب مؤشر كتلة جسمك",
+                "howto.step3.description": "انقر على زر \"احسب مؤشر كتلة الجسم\" لرؤية قيمة مؤشر كتلة جسمك، فئة الصحة، والرؤى المخصصة على الفور.",
+                "howto.step4.title": "افهم نتائجك",
+                "howto.step4.description": "راجع فئة مؤشر كتلة جسمك، نطاق الوزن المثالي، ونصائح الصحة. تتبع تقدمك مع ميزة السجل.",
+                "tool.title": "حاسبة مؤشر كتلة الجسم",
+                "tool.inputs": "قياساتك",
+                "tool.weight_kg": "الوزن (كجم)",
+                "tool.height_cm": "الطول (سم)",
+                "tool.weight_lbs": "الوزن (رطل)",
+                "tool.height_ft_in": "الطول (قدم & بوصة)",
+                "tool.calculate": "احسب مؤشر كتلة الجسم",
+                "tool.underweight": "نقص الوزن",
+                "tool.normal": "طبيعي",
+                "tool.overweight": "زيادة الوزن",
+                "tool.obese": "سمنة",
+                "tool.ideal_weight": "نطاق الوزن المثالي",
+                "tool.health_tips": "نصائح صحية",
+                "tool.tip1": "أدخل قياساتك للحصول على نصائح صحية مخصصة",
+                "tool.bmi_chart": "مخطط مؤشر كتلة الجسم",
+                "tool.history": "سجل الحسابات",
+                "tool.clear_history": "مسح السجل",
+                "footer.follow": "تابعنا",
+                "footer.categories": "الفئات الشائعة",
+                "footer.categories.pdf": "أدوات PDF",
+                "footer.categories.image": "أدوات الصور",
+                "footer.categories.text": "أدوات النص",
+                "footer.categories.av": "أدوات الصوت/الفيديو",
+                "footer.categories.web": "أدوات مطور الويب",
+                "footer.categories.calc": "أدوات الآلة الحاسبة",
+                "footer.categories.util": "أدوات المساعدة",
+                "footer.categories.color": "أدوات الألوان",
+                "footer.quicklinks": "روابط سريعة",
+                "footer.links.tools": "جميع الأدوات",
+                "footer.links.faq": "الأسئلة الشائعة",
+                "footer.links.contact": "اتصل بنا",
+                "footer.links.privacy": "سياسة الخصوصية",
+                "footer.links.disclaimer": "إخلاء المسؤولية",
+                "footer.links.terms": "شروط الخدمة",
+                "footer.copyright": "© 2025 LollyPoPDF. جميع الحقوق محفوظة."
+            },
+            fa: {
+                "nav.home": "خانه",
+                "nav.about": "درباره ما",
+                "nav.tools": "ابزارها",
+                "nav.contact": "تماس",
+                "hero.title": "ابزار محاسبه شاخص توده بدنی",
+                "hero.description": "شاخص توده بدنی خود را فوراً با دسته بندی سلامت، محدوده وزن ایده آل و بینش های شخصی شده محاسبه کنید. تمام پردازش ها به صورت محلی و با حفظ کامل حریم خصوصی انجام می شود.",
+                "howto.title": "نحوه استفاده از ماشین حساب BMI",
+                "howto.step1.title": "سیستم واحد خود را انتخاب کنید",
+                "howto.step1.description": "بین واحدهای متریک (کیلوگرم، سانتی متر) یا امپریال (پوند، فوت/اینچ) بر اساس ترجیح خود انتخاب کنید. ماشین حساب به طور خودکار ورودی ها را تنظیم می کند.",
+                "howto.step2.title": "اندازه های خود را وارد کنید",
+                "howto.step2.description": "وزن و قد خود را در فیلدهای مناسب وارد کنید. برای واحدهای امپریال، می توانید فوت و اینچ را جداگانه وارد کنید.",
+                "howto.step3.title": "BMI خود را محاسبه کنید",
+                "howto.step3.description": "روی دکمه \"محاسبه BMI\" کلیک کنید تا فوراً مقدار BMI، دسته بندی سلامت و بینش های شخصی شده خود را ببینید.",
+                "howto.step4.title": "نتایج خود را درک کنید",
+                "howto.step4.description": "دسته بندی BMI، محدوده وزن ایده آل و نکات سلامت خود را مرور کنید. پیشرفت خود را با ویژگی تاریخچه پیگیری کنید.",
+                "tool.title": "ماشین حساب BMI",
+                "tool.inputs": "اندازه های شما",
+                "tool.weight_kg": "وزن (کیلوگرم)",
+                "tool.height_cm": "قد (سانتی متر)",
+                "tool.weight_lbs": "وزن (پوند)",
+                "tool.height_ft_in": "قد (فوت & اینچ)",
+                "tool.calculate": "محاسبه BMI",
+                "tool.underweight": "کمبود وزن",
+                "tool.normal": "طبیعی",
+                "tool.overweight": "اضافه وزن",
+                "tool.obese": "چاق",
+                "tool.ideal_weight": "محدوده وزن ایده آل",
+                "tool.health_tips": "نکات سلامت",
+                "tool.tip1": "اندازه های خود را وارد کنید تا نکات سلامت شخصی شده دریافت کنید",
+                "tool.bmi_chart": "نمودار BMI",
+                "tool.history": "تاریخچه محاسبات",
+                "tool.clear_history": "پاک کردن تاریخچه",
+                "footer.follow": "ما را دنبال کنید",
+                "footer.categories": "دسته بندی های محبوب",
+                "footer.categories.pdf": "ابزارهای PDF",
+                "footer.categories.image": "ابزارهای تصویر",
+                "footer.categories.text": "ابزارهای متن",
+                "footer.categories.av": "ابزارهای صوتی/تصویری",
+                "footer.categories.web": "ابزارهای توسعه دهنده وب",
+                "footer.categories.calc": "ابزارهای ماشین حساب",
+                "footer.categories.util": "ابزارهای کمکی",
+                "footer.categories.color": "ابزارهای رنگ",
+                "footer.quicklinks": "لینک های سریع",
+                "footer.links.tools": "همه ابزارها",
+                "footer.links.faq": "سوالات متداول",
+                "footer.links.contact": "تماس",
+                "footer.links.privacy": "سیاست حفظ حریم خصوصی",
+                "footer.links.disclaimer": "سلب مسئولیت",
+                "footer.links.terms": "شرایط خدمات",
+                "footer.copyright": "© 2025 LollyPoPDF. تمامی حقوق محفوظ است."
+            },
+            bg: {
+                "nav.home": "Начало",
+                "nav.about": "За нас",
+                "nav.tools": "Инструменти",
+                "nav.contact": "Контакт",
+                "hero.title": "Инструмент за изчисляване на BMI",
+                "hero.description": "Изчислете индекса на телесната маса моментално с категория на здравето, диапазон на идеалното тегло и персонализирани прозрения. Цялата обработка се извършва локално с пълна поверителност.",
+                "howto.title": "Как да използвате BMI калкулатора",
+                "howto.step1.title": "Изберете вашата система от мерни единици",
+                "howto.step1.description": "Изберете между метрични (kg, cm) или имперски (lbs, ft/in) единици въз основа на вашите предпочитания. Калкулаторът автоматично ще коригира входните данни.",
+                "howto.step2.title": "Въведете вашите измервания",
+                "howto.step2.description": "Въведете теглото и височината си в съответните полета. За имперски единици можете да въвеждате фута и инча отделно.",
+                "howto.step3.title": "Изчислете вашия BMI",
+                "howto.step3.description": "Кликнете върху бутона \"Изчисли BMI\", за да видите моментално вашата BMI стойност, категория на здравето и персонализирани прозрения.",
+                "howto.step4.title": "Разберете вашите резултати",
+                "howto.step4.description": "Прегледайте вашата BMI категория, диапазон на идеалното тегло и здравни съвети. Проследявайте прогреса си с функцията за история.",
+                "tool.title": "BMI калкулатор",
+                "tool.inputs": "Вашите измервания",
+                "tool.weight_kg": "Тегло (kg)",
+                "tool.height_cm": "Височина (cm)",
+                "tool.weight_lbs": "Тегло (lbs)",
+                "tool.height_ft_in": "Височина (фута & инча)",
+                "tool.calculate": "Изчисли BMI",
+                "tool.underweight": "Поднормено тегло",
+                "tool.normal": "Нормално",
+                "tool.overweight": "Наднормено тегло",
+                "tool.obese": "Затлъстяване",
+                "tool.ideal_weight": "Диапазон на идеалното тегло",
+                "tool.health_tips": "Здравни съвети",
+                "tool.tip1": "Въведете вашите измервания, за да получите персонализирани здравни съвети",
+                "tool.bmi_chart": "BMI диаграма",
+                "tool.history": "История на изчисленията",
+                "tool.clear_history": "Изчисти история",
+                "footer.follow": "СЛЕДВАЙТЕ НИ",
+                "footer.categories": "Популярни категории",
+                "footer.categories.pdf": "PDF инструменти",
+                "footer.categories.image": "Инструменти за изображения",
+                "footer.categories.text": "Текстови инструменти",
+                "footer.categories.av": "Аудио/Видео инструменти",
+                "footer.categories.web": "Инструменти за уеб разработчици",
+                "footer.categories.calc": "Инструменти за калкулатори",
+                "footer.categories.util": "Помощни инструменти",
+                "footer.categories.color": "Цветови инструменти",
+                "footer.quicklinks": "Бързи връзки",
+                "footer.links.tools": "Всички инструменти",
+                "footer.links.faq": "ЧЗВ",
+                "footer.links.contact": "Контакт",
+                "footer.links.privacy": "Политика за поверителност",
+                "footer.links.disclaimer": "Отказ от отговорност",
+                "footer.links.terms": "Условия за ползване",
+                "footer.copyright": "© 2025 LollyPoPDF. Всички права запазени."
+            },
+            ca: {
+                "nav.home": "Inici",
+                "nav.about": "Sobre nosaltres",
+                "nav.tools": "Eines",
+                "nav.contact": "Contacte",
+                "hero.title": "Eina Calculadora IMC",
+                "hero.description": "Calcula el teu Índex de Massa Corporal instantàniament amb categoria de salut, rang de pes ideal i consells personalitzats. Tot el processament es realitza localment amb privacitat completa.",
+                "howto.title": "Com utilitzar la calculadora IMC",
+                "howto.step1.title": "Trieu el vostre sistema d'unitats",
+                "howto.step1.description": "Seleccioneu entre unitats Mètriques (kg, cm) o Imperials (lliures, peus/polzades) segons la vostra preferència. La calculadora ajustarà automàticament les entrades.",
+                "howto.step2.title": "Introduïu les vostres mesures",
+                "howto.step2.description": "Introduïu el vostre pes i alçada en els camps corresponents. Per a unitats imperials, podeu introduir peus i polzades per separat.",
+                "howto.step3.title": "Calculeu el vostre IMC",
+                "howto.step3.description": "Feu clic al botó \"Calcula IMC\" per veure instantàniament el vostre valor IMC, categoria de salut i consells personalitzats.",
+                "howto.step4.title": "Enteneu els vostres resultats",
+                "howto.step4.description": "Reviseu la vostra categoria IMC, rang de pes ideal i consells de salut. Seguiu el vostre progrés amb la funció d'historial.",
+                "tool.title": "Calculadora IMC",
+                "tool.inputs": "Les vostres mesures",
+                "tool.weight_kg": "Pes (kg)",
+                "tool.height_cm": "Alçada (cm)",
+                "tool.weight_lbs": "Pes (lliures)",
+                "tool.height_ft_in": "Alçada (peus & polzades)",
+                "tool.calculate": "Calcula IMC",
+                "tool.underweight": "Baix pes",
+                "tool.normal": "Normal",
+                "tool.overweight": "Sobrepès",
+                "tool.obese": "Obesitat",
+                "tool.ideal_weight": "Rang de Pes Ideal",
+                "tool.health_tips": "Consells de Salut",
+                "tool.tip1": "Introduïu les vostres mesures per obtenir consells de salut personalitzats",
+                "tool.bmi_chart": "Gràfic IMC",
+                "tool.history": "Historial de Càlculs",
+                "tool.clear_history": "Esborra Historial",
+                "footer.follow": "SEGUEIX-NOS",
+                "footer.categories": "Categories Populars",
+                "footer.categories.pdf": "Eines PDF",
+                "footer.categories.image": "Eines d'Imatge",
+                "footer.categories.text": "Eines de Text",
+                "footer.categories.av": "Eines d'Àudio/Video",
+                "footer.categories.web": "Eines WebDesenvolupador",
+                "footer.categories.calc": "Eines de Calculadora",
+                "footer.categories.util": "Eines d'Utilitat",
+                "footer.categories.color": "Eines de Color",
+                "footer.quicklinks": "Enllaços Ràpids",
+                "footer.links.tools": "Totes les Eines",
+                "footer.links.faq": "PMF",
+                "footer.links.contact": "Contacte",
+                "footer.links.privacy": "Política de Privacitat",
+                "footer.links.disclaimer": "Descàrrec de Responsabilitat",
+                "footer.links.terms": "Termes del Servei",
+                "footer.copyright": "© 2025 LollyPoPDF. Tots els drets reservats."
+            },
+            nl: {
+                "nav.home": "Home",
+                "nav.about": "Over Ons",
+                "nav.tools": "Tools",
+                "nav.contact": "Contact",
+                "hero.title": "BMI Calculator Tool",
+                "hero.description": "Bereken uw Body Mass Index direct met gezondheidscategorie, ideaal gewichtsbereik en gepersonaliseerde inzichten. Alle verwerking gebeurt lokaal met volledige privacy.",
+                "howto.title": "Hoe de BMI Calculator te gebruiken",
+                "howto.step1.title": "Kies uw Eenheidensysteem",
+                "howto.step1.description": "Selecteer tussen Metrische (kg, cm) of Imperiale (lbs, ft/in) eenheden op basis van uw voorkeur. De calculator past de invoer automatisch aan.",
+                "howto.step2.title": "Voer uw Metingen in",
+                "howto.step2.description": "Voer uw gewicht en lengte in de juiste velden in. Voor imperiale eenheden kunt u voeten en inches apart invoeren.",
+                "howto.step3.title": "Bereken uw BMI",
+                "howto.step3.description": "Klik op de knop \"Bereken BMI\" om direct uw BMI-waarde, gezondheidscategorie en gepersonaliseerde inzichten te zien.",
+                "howto.step4.title": "Begrijp uw Resultaten",
+                "howto.step4.description": "Bekijk uw BMI-categorie, ideaal gewichtsbereik en gezondheidstips. Volg uw voortgang met de geschiedenisfunctie.",
+                "tool.title": "BMI Calculator",
+                "tool.inputs": "Uw Metingen",
+                "tool.weight_kg": "Gewicht (kg)",
+                "tool.height_cm": "Lengte (cm)",
+                "tool.weight_lbs": "Gewicht (lbs)",
+                "tool.height_ft_in": "Lengte (voet & inch)",
+                "tool.calculate": "Bereken BMI",
+                "tool.underweight": "Ondergewicht",
+                "tool.normal": "Normaal",
+                "tool.overweight": "Overgewicht",
+                "tool.obese": "Obesitas",
+                "tool.ideal_weight": "Ideaal Gewichtsbereik",
+                "tool.health_tips": "Gezondheidstips",
+                "tool.tip1": "Voer uw metingen in om gepersonaliseerde gezondheidstips te krijgen",
+                "tool.bmi_chart": "BMI Grafiek",
+                "tool.history": "Berekeningsgeschiedenis",
+                "tool.clear_history": "Wis Geschiedenis",
+                "footer.follow": "VOLG ONS",
+                "footer.categories": "Populaire Categorieën",
+                "footer.categories.pdf": "PDF Tools",
+                "footer.categories.image": "Afbeelding Tools",
+                "footer.categories.text": "Tekst Tools",
+                "footer.categories.av": "Audio/Video Tools",
+                "footer.categories.web": "WebOntwikkelaar Tools",
+                "footer.categories.calc": "Rekenmachine Tools",
+                "footer.categories.util": "Hulpmiddelen",
+                "footer.categories.color": "Kleur Tools",
+                "footer.quicklinks": "Snelle Links",
+                "footer.links.tools": "Alle Tools",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Contact",
+                "footer.links.privacy": "Privacybeleid",
+                "footer.links.disclaimer": "Disclaimer",
+                "footer.links.terms": "Servicevoorwaarden",
+                "footer.copyright": "© 2025 LollyPoPDF. Alle rechten voorbehouden."
+            },
+            el: {
+                "nav.home": "Αρχική",
+                "nav.about": "Σχετικά με εμάς",
+                "nav.tools": "Εργαλεία",
+                "nav.contact": "Επικοινωνία",
+                "hero.title": "Εργαλείο Υπολογισμού ΔΜΣ",
+                "hero.description": "Υπολογίστε τον Δείκτη Μάζας Σώματός σας αμέσως με κατηγορία υγείας, εύρος ιδανικού βάρους και εξατομικευμένες πληροφορίες. Όλη η επεξεργασία γίνεται τοπικά με πλήρη ιδιωτικότητα.",
+                "howto.title": "Πώς να χρησιμοποιήσετε τον Υπολογιστή ΔΜΣ",
+                "howto.step1.title": "Επιλέξτε το Σύστημα Μονάδων σας",
+                "howto.step1.description": "Επιλέξτε μεταξύ Μετρικών (kg, cm) ή Αγγλικών (lbs, ft/in) μονάδων βάσει της προτίμησής σας. Ο υπολογιστής θα προσαρμόσει αυτόματα τις εισόδους.",
+                "howto.step2.title": "Εισαγάγετε τις Μετρήσεις σας",
+                "howto.step2.description": "Εισαγάγετε το βάρος και το ύψος σας στα κατάλληλα πεδία. Για αγγλικές μονάδες, μπορείτε να εισάγετε πόδια και ίντσες ξεχωριστά.",
+                "howto.step3.title": "Υπολογίστε τον ΔΜΣ σας",
+                "howto.step3.description": "Κάντε κλικ στο κουμπί \"Υπολογισμός ΔΜΣ\" για να δείτε αμέσως την τιμή ΔΜΣ, την κατηγορία υγείας και τις εξατομικευμένες πληροφορίες σας.",
+                "howto.step4.title": "Κατανοήστε τα Αποτελέσματά σας",
+                "howto.step4.description": "Εξετάστε την κατηγορία ΔΜΣ, το εύρος ιδανικού βάρους και τις συμβουλές υγείας σας. Παρακολουθήστε την πρόοδό σας με τη λειτουργία ιστορικού.",
+                "tool.title": "Υπολογιστής ΔΜΣ",
+                "tool.inputs": "Οι Μετρήσεις σας",
+                "tool.weight_kg": "Βάρος (kg)",
+                "tool.height_cm": "Ύψος (cm)",
+                "tool.weight_lbs": "Βάρος (lbs)",
+                "tool.height_ft_in": "Ύψος (πόδια & ίντσες)",
+                "tool.calculate": "Υπολογισμός ΔΜΣ",
+                "tool.underweight": "Υποβαρής",
+                "tool.normal": "Κανονικός",
+                "tool.overweight": "Υπέρβαρος",
+                "tool.obese": "Παχύσαρκος",
+                "tool.ideal_weight": "Εύρος Ιδανικού Βάρους",
+                "tool.health_tips": "Συμβουλές Υγείας",
+                "tool.tip1": "Εισαγάγετε τις μετρήσεις σας για να λάβετε εξατομικευμένες συμβουλές υγείας",
+                "tool.bmi_chart": "Διάγραμμα ΔΜΣ",
+                "tool.history": "Ιστορικό Υπολογισμών",
+                "tool.clear_history": "Καθαρισμός Ιστορικού",
+                "footer.follow": "ΑΚΟΛΟΥΘΗΣΤΕ ΜΑΣ",
+                "footer.categories": "Δημοφιλείς Κατηγορίες",
+                "footer.categories.pdf": "Εργαλεία PDF",
+                "footer.categories.image": "Εργαλεία Εικόνας",
+                "footer.categories.text": "Εργαλεία Κειμένου",
+                "footer.categories.av": "Εργαλεία Ήχου/Βίντεο",
+                "footer.categories.web": "Εργαλεία WebΠρογραμματιστή",
+                "footer.categories.calc": "Εργαλεία Αριθμομηχανής",
+                "footer.categories.util": "Εργαλεία Χρησιμότητας",
+                "footer.categories.color": "Εργαλεία Χρώματος",
+                "footer.quicklinks": "Γρήγοροι Σύνδεσμοι",
+                "footer.links.tools": "Όλα τα Εργαλεία",
+                "footer.links.faq": "Συχνές Ερωτήσεις",
+                "footer.links.contact": "Επικοινωνία",
+                "footer.links.privacy": "Πολιτική Απορρήτου",
+                "footer.links.disclaimer": "Αποποίηση Ευθυνών",
+                "footer.links.terms": "Όροι Χρήσης",
+                "footer.copyright": "© 2025 LollyPoPDF. Με επιφύλαξη παντός δικαιώματος."
+            },
+            hi: {
+                "nav.home": "होम",
+                "nav.about": "हमारे बारे में",
+                "nav.tools": "टूल्स",
+                "nav.contact": "संपर्क करें",
+                "hero.title": "बीएमआई कैलकुलेटर टूल",
+                "hero.description": "स्वास्थ्य श्रेणी, आदर्श वजन सीमा और व्यक्तिगत अंतर्दृष्टि के साथ अपना बॉडी मास इंडेक्स तुरंत गणना करें। सभी प्रसंस्करण पूर्ण गोपनीयता के साथ स्थानीय रूप से होता है।",
+                "howto.title": "बीएमआई कैलकुलेटर का उपयोग कैसे करें",
+                "howto.step1.title": "अपनी इकाई प्रणाली चुनें",
+                "howto.step1.description": "मीट्रिक (किलो, सेमी) या इंपीरियल (एलबीएस, फीट/इंच) इकाइयों के बीच अपनी पसंद के आधार पर चुनें। कैलकुलेटर स्वचालित रूप से इनपुट समायोजित करेगा।",
+                "howto.step2.title": "अपने माप दर्ज करें",
+                "howto.step2.description": "उचित फ़ील्ड में अपना वजन और ऊंचाई दर्ज करें। इंपीरियल इकाइयों के लिए, आप फीट और इंच अलग से दर्ज कर सकते हैं।",
+                "howto.step3.title": "अपना बीएमआई गणना करें",
+                "howto.step3.description": "अपना बीएमआई मान, स्वास्थ्य श्रेणी और व्यक्तिगत अंतर्दृष्टि तुरंत देखने के लिए \"बीएमआई गणना करें\" बटन पर क्लिक करें।",
+                "howto.step4.title": "अपने परिणाम समझें",
+                "howto.step4.description": "अपनी बीएमआई श्रेणी, आदर्श वजन सीमा और स्वास्थ्य युक्तियों की समीक्षा करें। इतिहास सुविधा के साथ अपनी प्रगति ट्रैक करें।",
+                "tool.title": "बीएमआई कैलकुलेटर",
+                "tool.inputs": "आपके माप",
+                "tool.weight_kg": "वजन (किलो)",
+                "tool.height_cm": "ऊंचाई (सेमी)",
+                "tool.weight_lbs": "वजन (एलबीएस)",
+                "tool.height_ft_in": "ऊंचाई (फीट & इंच)",
+                "tool.calculate": "बीएमआई गणना करें",
+                "tool.underweight": "कम वजन",
+                "tool.normal": "सामान्य",
+                "tool.overweight": "अधिक वजन",
+                "tool.obese": "मोटापा",
+                "tool.ideal_weight": "आदर्श वजन सीमा",
+                "tool.health_tips": "स्वास्थ्य युक्तियाँ",
+                "tool.tip1": "व्यक्तिगत स्वास्थ्य युक्तियाँ प्राप्त करने के लिए अपने माप दर्ज करें",
+                "tool.bmi_chart": "बीएमआई चार्ट",
+                "tool.history": "गणना इतिहास",
+                "tool.clear_history": "इतिहास साफ़ करें",
+                "footer.follow": "हमें फॉलो करें",
+                "footer.categories": "लोकप्रिय श्रेणियाँ",
+                "footer.categories.pdf": "पीडीएफ टूल्स",
+                "footer.categories.image": "इमेज टूल्स",
+                "footer.categories.text": "टेक्स्ट टूल्स",
+                "footer.categories.av": "ऑडियो/वीडियो टूल्स",
+                "footer.categories.web": "वेबडेवलपर टूल्स",
+                "footer.categories.calc": "कैलकुलेटर टूल्स",
+                "footer.categories.util": "यूटिलिटी टूल्स",
+                "footer.categories.color": "कलर टूल्स",
+                "footer.quicklinks": "त्वरित लिंक",
+                "footer.links.tools": "सभी टूल्स",
+                "footer.links.faq": "सामान्य प्रश्न",
+                "footer.links.contact": "संपर्क करें",
+                "footer.links.privacy": "गोपनीयता नीति",
+                "footer.links.disclaimer": "अस्वीकरण",
+                "footer.links.terms": "सेवा की शर्तें",
+                "footer.copyright": "© 2025 LollyPoPDF. सर्वाधिकार सुरक्षित।"
+            },
+            te: {
+                "nav.home": "హోమ్",
+                "nav.about": "మా గురించి",
+                "nav.tools": "టూల్స్",
+                "nav.contact": "సంప్రదించండి",
+                "hero.title": "BMI కాలిక్యులేటర్ టూల్",
+                "hero.description": "ఆరోగ్య వర్గం, ఆదర్శ బరువు పరిధి మరియు వ్యక్తిగత అంతర్దృష్టులతో మీ బాడీ మాస్ ఇండెక్స్ను తక్షణంగా లెక్కించండి. అన్ని ప్రాసెసింగ్ పూర్తి గోప్యతతో స్థానికంగా జరుగుతుంది.",
+                "howto.title": "BMI కాలిక్యులేటర్ను ఎలా ఉపయోగించాలి",
+                "howto.step1.title": "మీ యూనిట్ సిస్టమ్ను ఎంచుకోండి",
+                "howto.step1.description": "మీ ప్రాధాన్యత ఆధారంగా మెట్రిక్ (కిలో, సెం.మీ) లేదా ఇంపీరియల్ (పౌండ్లు, అడుగులు/అంగుళాలు) యూనిట్ల మధ్య ఎంచుకోండి. కాలిక్యులేటర్ ఇన్పుట్లను స్వయంచాలకంగా సర్దుబాటు చేస్తుంది.",
+                "howto.step2.title": "మీ కొలతలను నమోదు చేయండి",
+                "howto.step2.description": "మీ బరువు మరియు ఎత్తును తగిన ఫీల్డ్లలో నమోదు చేయండి. ఇంపీరియల్ యూనిట్ల కోసం, మీరు అడుగులు మరియు అంగుళాలను విడిగా నమోదు చేయవచ్చు.",
+                "howto.step3.title": "మీ BMIని లెక్కించండి",
+                "howto.step3.description": "మీ BMI విలువ, ఆరోగ్య వర్గం మరియు వ్యక్తిగత అంతర్దృష్టులను తక్షణంగా చూడటానికి \"BMI లెక్కించు\" బటన్పై క్లిక్ చేయండి.",
+                "howto.step4.title": "మీ ఫలితాలను అర్థం చేసుకోండి",
+                "howto.step4.description": "మీ BMI వర్గం, ఆదర్శ బరువు పరిధి మరియు ఆరోగ్య చిట్కాలను సమీక్షించండి. హిస్టరీ ఫీచర్తో మీ ప్రగతిని ట్రాక్ చేయండి.",
+                "tool.title": "BMI కాలిక్యులేటర్",
+                "tool.inputs": "మీ కొలతలు",
+                "tool.weight_kg": "బరువు (కిలో)",
+                "tool.height_cm": "ఎత్తు (సెం.మీ)",
+                "tool.weight_lbs": "బరువు (పౌండ్లు)",
+                "tool.height_ft_in": "ఎత్తు (అడుగులు & అంగుళాలు)",
+                "tool.calculate": "BMI లెక్కించు",
+                "tool.underweight": "తక్కువ బరువు",
+                "tool.normal": "సాధారణ",
+                "tool.overweight": "అధిక బరువు",
+                "tool.obese": "స్థూలకాయం",
+                "tool.ideal_weight": "ఆదర్శ బరువు పరిధి",
+                "tool.health_tips": "ఆరోగ్య చిట్కాలు",
+                "tool.tip1": "వ్యక్తిగత ఆరోగ్య చిట్కాలు పొందడానికి మీ కొలతలను నమోదు చేయండి",
+                "tool.bmi_chart": "BMI చార్ట్",
+                "tool.history": "లెక్కింపు చరిత్ర",
+                "tool.clear_history": "చరిత్ర తొలగించు",
+                "footer.follow": "మమ్మల్ని అనుసరించండి",
+                "footer.categories": "జనాదరణ పొందిన వర్గాలు",
+                "footer.categories.pdf": "PDF టూల్స్",
+                "footer.categories.image": "ఇమేజ్ టూల్స్",
+                "footer.categories.text": "టెక్స్ట్ టూల్స్",
+                "footer.categories.av": "ఆడియో/వీడియో టూల్స్",
+                "footer.categories.web": "వెబ్ డెవలపర్ టూల్స్",
+                "footer.categories.calc": "కాలిక్యులేటర్ టూల్స్",
+                "footer.categories.util": "యుటిలిటీ టూల్స్",
+                "footer.categories.color": "కలర్ టూల్స్",
+                "footer.quicklinks": "త్వరిత లింకులు",
+                "footer.links.tools": "అన్ని టూల్స్",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "సంప్రదించండి",
+                "footer.links.privacy": "గోప్యతా విధానం",
+                "footer.links.disclaimer": "డిస్క్లైమర్",
+                "footer.links.terms": "సేవా నిబంధనలు",
+                "footer.copyright": "© 2025 LollyPoPDF. అన్ని హక్కులు రిజర్వు."
+            },
+            kn: {
+                "nav.home": "ಹೋಮ್",
+                "nav.about": "ನಮ್ಮ ಬಗ್ಗೆ",
+                "nav.tools": "ಟೂಲ್ಸ್",
+                "nav.contact": "ಸಂಪರ್ಕಿಸಿ",
+                "hero.title": "BMI ಕ್ಯಾಲ್ಕುಲೇಟರ್ ಟೂಲ್",
+                "hero.description": "ಆರೋಗ್ಯ ವರ್ಗ, ಆದರ್ಶ ತೂಕ ಶ್ರೇಣಿ ಮತ್ತು ವೈಯಕ್ತಿಕ ಒಳನೋಟಗಳೊಂದಿಗೆ ನಿಮ್ಮ ಬಾಡಿ ಮಾಸ್ ಇಂಡೆಕ್ಸ್ ಅನ್ನು ತಕ್ಷಣ ಲೆಕ್ಕಾಚಾರ ಮಾಡಿ. ಎಲ್ಲಾ ಪ್ರಕ್ರಿಯೆಗಳು ಸಂಪೂರ್ಣ ಗೌಪ್ಯತೆಯೊಂದಿಗೆ ಸ್ಥಳೀಯವಾಗಿ ನಡೆಯುತ್ತದೆ.",
+                "howto.title": "BMI ಕ್ಯಾಲ್ಕುಲೇಟರ್ ಅನ್ನು ಹೇಗೆ ಬಳಸುವುದು",
+                "howto.step1.title": "ನಿಮ್ಮ ಘಟಕ ವ್ಯವಸ್ಥೆಯನ್ನು ಆರಿಸಿ",
+                "howto.step1.description": "ನಿಮ್ಮ ಆದ್ಯತೆಯ ಆಧಾರದ ಮೇಲೆ ಮೆಟ್ರಿಕ್ (ಕೆಜಿ, ಸೆಂ) ಅಥವಾ ಇಂಪೀರಿಯಲ್ (ಪೌಂಡ್ಗಳು, ಅಡಿ/ಇಂಚು) ಘಟಕಗಳ ನಡುವೆ ಆರಿಸಿ. ಕ್ಯಾಲ್ಕುಲೇಟರ್ ಇನ್ಪುಟ್ಗಳನ್ನು ಸ್ವಯಂಚಾಲಿತವಾಗಿ ಸರಿಹೊಂದಿಸುತ್ತದೆ.",
+                "howto.step2.title": "ನಿಮ್ಮ ಅಳತೆಗಳನ್ನು ನಮೂದಿಸಿ",
+                "howto.step2.description": "ನಿಮ್ಮ ತೂಕ ಮತ್ತು ಎತ್ತರವನ್ನು ಸೂಕ್ತ ಫೀಲ್ಡ್ಗಳಲ್ಲಿ ನಮೂದಿಸಿ. ಇಂಪೀರಿಯಲ್ ಘಟಕಗಳಿಗಾಗಿ, ನೀವು ಅಡಿ ಮತ್ತು ಇಂಚುಗಳನ್ನು ಪ್ರತ್ಯೇಕವಾಗಿ ನಮೂದಿಸಬಹುದು.",
+                "howto.step3.title": "ನಿಮ್ಮ BMI ಅನ್ನು ಲೆಕ್ಕಾಚಾರ ಮಾಡಿ",
+                "howto.step3.description": "ನಿಮ್ಮ BMI ಮೌಲ್ಯ, ಆರೋಗ್ಯ ವರ್ಗ ಮತ್ತು ವೈಯಕ್ತಿಕ ಒಳನೋಟಗಳನ್ನು ತಕ್ಷಣ ನೋಡಲು \"BMI ಲೆಕ್ಕಾಚಾರ ಮಾಡಿ\" ಬಟನ್ ಕ್ಲಿಕ್ ಮಾಡಿ.",
+                "howto.step4.title": "ನಿಮ್ಮ ಫಲಿತಾಂಶಗಳನ್ನು ಅರ್ಥಮಾಡಿಕೊಳ್ಳಿ",
+                "howto.step4.description": "ನಿಮ್ಮ BMI ವರ್ಗ, ಆದರ್ಶ ತೂಕ ಶ್ರೇಣಿ ಮತ್ತು ಆರೋಗ್ಯ ಸಲಹೆಗಳನ್ನು ಪರಿಶೀಲಿಸಿ. ಇತಿಹಾಸ ಫೀಚರ್ನೊಂದಿಗೆ ನಿಮ್ಮ ಪ್ರಗತಿಯನ್ನು ಟ್ರ್ಯಾಕ್ ಮಾಡಿ.",
+                "tool.title": "BMI ಕ್ಯಾಲ್ಕುಲೇಟರ್",
+                "tool.inputs": "ನಿಮ್ಮ ಅಳತೆಗಳು",
+                "tool.weight_kg": "ತೂಕ (ಕೆಜಿ)",
+                "tool.height_cm": "ಎತ್ತರ (ಸೆಂ)",
+                "tool.weight_lbs": "ತೂಕ (ಪೌಂಡ್ಗಳು)",
+                "tool.height_ft_in": "ಎತ್ತರ (ಅಡಿ & ಇಂಚು)",
+                "tool.calculate": "BMI ಲೆಕ್ಕಾಚಾರ ಮಾಡಿ",
+                "tool.underweight": "ಕಡಿಮೆ ತೂಕ",
+                "tool.normal": "ಸಾಮಾನ್ಯ",
+                "tool.overweight": "ಅಧಿಕ ತೂಕ",
+                "tool.obese": "ಸ್ಥೂಲಕಾಯ",
+                "tool.ideal_weight": "ಆದರ್ಶ ತೂಕ ಶ್ರೇಣಿ",
+                "tool.health_tips": "ಆರೋಗ್ಯ ಸಲಹೆಗಳು",
+                "tool.tip1": "ವೈಯಕ್ತಿಕ ಆರೋಗ್ಯ ಸಲಹೆಗಳನ್ನು ಪಡೆಯಲು ನಿಮ್ಮ ಅಳತೆಗಳನ್ನು ನಮೂದಿಸಿ",
+                "tool.bmi_chart": "BMI ಚಾರ್ಟ್",
+                "tool.history": "ಲೆಕ್ಕಾಚಾರ ಇತಿಹಾಸ",
+                "tool.clear_history": "ಇತಿಹಾಸ ತೆರವುಗೊಳಿಸಿ",
+                "footer.follow": "ನಮ್ಮನ್ನು ಅನುಸರಿಸಿ",
+                "footer.categories": "ಜನಪ್ರಿಯ ವರ್ಗಗಳು",
+                "footer.categories.pdf": "PDF ಟೂಲ್ಸ್",
+                "footer.categories.image": "ಇಮೇಜ್ ಟೂಲ್ಸ್",
+                "footer.categories.text": "ಟೆಕ್ಸ್ಟ್ ಟೂಲ್ಸ್",
+                "footer.categories.av": "ಆಡಿಯೋ/ವೀಡಿಯೋ ಟೂಲ್ಸ್",
+                "footer.categories.web": "ವೆಬ್ ಡೆವಲಪರ್ ಟೂಲ್ಸ್",
+                "footer.categories.calc": "ಕ್ಯಾಲ್ಕುಲೇಟರ್ ಟೂಲ್ಸ್",
+                "footer.categories.util": "ಯುಟಿಲಿಟಿ ಟೂಲ್ಸ್",
+                "footer.categories.color": "ಕಲರ್ ಟೂಲ್ಸ್",
+                "footer.quicklinks": "ತ್ವರಿತ ಲಿಂಕ್ಗಳು",
+                "footer.links.tools": "ಎಲ್ಲಾ ಟೂಲ್ಸ್",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "ಸಂಪರ್ಕಿಸಿ",
+                "footer.links.privacy": "ಗೌಪ್ಯತಾ ನೀತಿ",
+                "footer.links.disclaimer": "ಡಿಸ್ಕ್ಲೈಮರ್",
+                "footer.links.terms": "ಸೇವಾ ನಿಯಮಗಳು",
+                "footer.copyright": "© 2025 LollyPoPDF. ಎಲ್ಲಾ ಹಕ್ಕುಗಳು ಕಾಯ್ದಿರಿಸಿದೆ."
+            },
+            ta: {
+                "nav.home": "முகப்பு",
+                "nav.about": "எங்களைப் பற்றி",
+                "nav.tools": "கருவிகள்",
+                "nav.contact": "தொடர்பு கொள்ள",
+                "hero.title": "BMI கால்குலேட்டர் கருவி",
+                "hero.description": "உடல் நிறை குறியீட்டை உடனடியாக சுகாதார வகை, சிறந்த எடை வரம்பு மற்றும் தனிப்பட்ட நுண்ணறிவுகளுடன் கணக்கிடுங்கள். அனைத்து செயலாக்கமும் முழு தனியுரிமையுடன் உள்நாட்டில் நடைபெறுகிறது.",
+                "howto.title": "BMI கால்குலேட்டரை எவ்வாறு பயன்படுத்துவது",
+                "howto.step1.title": "உங்கள் அலகு முறையைத் தேர்ந்தெடுக்கவும்",
+                "howto.step1.description": "மெட்ரிக் (கிலோ, செமீ) அல்லது இம்பீரியல் (பவுண்ட், அடி/அங்குலம்) அலகுகளுக்கு இடையே உங்கள் விருப்பத்தின் அடிப்படையில் தேர்ந்தெடுக்கவும். கால்குலேட்டர் உள்ளீடுகளை தானாகவே சரிசெய்யும்.",
+                "howto.step2.title": "உங்கள் அளவீடுகளை உள்ளிடவும்",
+                "howto.step2.description": "உங்கள் எடை மற்றும் உயரத்தை பொருத்தமான புலங்களில் உள்ளிடவும். இம்பீரியல் அலகுகளுக்கு, அடி மற்றும் அங்குலங்களை தனித்தனியாக உள்ளிடலாம்.",
+                "howto.step3.title": "உங்கள் BMI ஐ கணக்கிடுங்கள்",
+                "howto.step3.description": "உங்கள் BMI மதிப்பு, சுகாதார வகை மற்றும் தனிப்பட்ட நுண்ணறிவுகளை உடனடியாகப் பார்க்க \"BMI கணக்கிடு\" பொத்தானைக் கிளிக் செய்யவும்.",
+                "howto.step4.title": "உங்கள் முடிவுகளைப் புரிந்து கொள்ளுங்கள்",
+                "howto.step4.description": "உங்கள் BMI வகை, சிறந்த எடை வரம்பு மற்றும் சுகாதார உதவிக்குறிப்புகளை மதிப்பாய்வு செய்யவும். வரலாறு அம்சத்துடன் உங்கள் முன்னேற்றத்தைக் கண்காணிக்கவும்.",
+                "tool.title": "BMI கால்குலேட்டர்",
+                "tool.inputs": "உங்கள் அளவீடுகள்",
+                "tool.weight_kg": "எடை (கிலோ)",
+                "tool.height_cm": "உயரம் (செமீ)",
+                "tool.weight_lbs": "எடை (பவுண்ட்)",
+                "tool.height_ft_in": "உயரம் (அடி & அங்குலம்)",
+                "tool.calculate": "BMI கணக்கிடு",
+                "tool.underweight": "குறைந்த எடை",
+                "tool.normal": "இயல்பான",
+                "tool.overweight": "அதிக எடை",
+                "tool.obese": "உடல்பருமன்",
+                "tool.ideal_weight": "சிறந்த எடை வரம்பு",
+                "tool.health_tips": "சுகாதார உதவிக்குறிப்புகள்",
+                "tool.tip1": "தனிப்பட்ட சுகாதார உதவிக்குறிப்புகளைப் பெற உங்கள் அளவீடுகளை உள்ளிடவும்",
+                "tool.bmi_chart": "BMI விளக்கப்படம்",
+                "tool.history": "கணக்கீட்டு வரலாறு",
+                "tool.clear_history": "வரலாற்றை அழி",
+                "footer.follow": "எங்களைப் பின்தொடரவும்",
+                "footer.categories": "பிரபலமான வகைகள்",
+                "footer.categories.pdf": "PDF கருவிகள்",
+                "footer.categories.image": "பட கருவிகள்",
+                "footer.categories.text": "உரை கருவிகள்",
+                "footer.categories.av": "ஆடியோ/வீடியோ கருவிகள்",
+                "footer.categories.web": "வெப்டெவலப்பர் கருவிகள்",
+                "footer.categories.calc": "கால்குலேட்டர் கருவிகள்",
+                "footer.categories.util": "பயன்பாட்டு கருவிகள்",
+                "footer.categories.color": "நிற கருவிகள்",
+                "footer.quicklinks": "விரைவு இணைப்புகள்",
+                "footer.links.tools": "அனைத்து கருவிகள்",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "தொடர்பு கொள்ள",
+                "footer.links.privacy": "தனியுரிமைக் கொள்கை",
+                "footer.links.disclaimer": "பொறுப்புத் துறப்பு",
+                "footer.links.terms": "சேவை விதிமுறைகள்",
+                "footer.copyright": "© 2025 LollyPoPDF. அனைத்து உரிமைகளும் பாதுகாக்கப்பட்டவை."
+            },
+            ml: {
+                "nav.home": "ഹോം",
+                "nav.about": "ഞങ്ങളെക്കുറിച്ച്",
+                "nav.tools": "ടൂളുകൾ",
+                "nav.contact": "ബന്ധപ്പെടുക",
+                "hero.title": "BMI കാൽക്കുലേറ്റർ ടൂൾ",
+                "hero.description": "ആരോഗ്യ വിഭാഗം, ആദർശ ഭാര ശ്രേണി, വ്യക്തിഗത ഉൾക്കാഴ്ചകൾ എന്നിവയോടൊപ്പം നിങ്ങളുടെ ബോഡി മാസ് ഇൻഡക്സ് തൽക്ഷണം കണക്കാക്കുക. എല്ലാ പ്രോസസ്സിംഗും പൂർണ്ണ സ്വകാര്യതയോടെ പ്രാദേശികമായി നടക്കുന്നു.",
+                "howto.title": "BMI കാൽക്കുലേറ്റർ എങ്ങനെ ഉപയോഗിക്കാം",
+                "howto.step1.title": "നിങ്ങളുടെ യൂണിറ്റ് സിസ്റ്റം തിരഞ്ഞെടുക്കുക",
+                "howto.step1.description": "നിങ്ങളുടെ മുൻഗണന അടിസ്ഥാനമാക്കി മെട്രിക് (കിലോ, സെ.മീ) അല്ലെങ്കിൽ ഇംപീരിയൽ (പൗണ്ട്, അടി/ഇഞ്ച്) യൂണിറ്റുകൾ തിരഞ്ഞെടുക്കുക. കാൽക്കുലേറ്റർ ഇൻപുട്ടുകൾ സ്വയമേവ ക്രമീകരിക്കും.",
+                "howto.step2.title": "നിങ്ങളുടെ അളവുകൾ നൽകുക",
+                "howto.step2.description": "നിങ്ങളുടെ ഭാരവും ഉയരവും ഉചിതമായ ഫീൽഡുകളിൽ നൽകുക. ഇംപീരിയൽ യൂണിറ്റുകൾക്ക്, നിങ്ങൾക്ക് അടിയും ഇഞ്ചും വെവ്വേറെ നൽകാം.",
+                "howto.step3.title": "നിങ്ങളുടെ BMI കണക്കാക്കുക",
+                "howto.step3.description": "നിങ്ങളുടെ BMI മൂല്യം, ആരോഗ്യ വിഭാഗം, വ്യക്തിഗത ഉൾക്കാഴ്ചകൾ എന്നിവ തൽക്ഷണം കാണാൻ \"BMI കണക്കാക്കുക\" ബട്ടൺ ക്ലിക്ക് ചെയ്യുക.",
+                "howto.step4.title": "നിങ്ങളുടെ ഫലങ്ങൾ മനസ്സിലാക്കുക",
+                "howto.step4.description": "നിങ്ങളുടെ BMI വിഭാഗം, ആദർശ ഭാര ശ്രേണി, ആരോഗ്യ ടിപ്പുകൾ എന്നിവ അവലോകനം ചെയ്യുക. ചരിത്ര ഫീച്ചർ ഉപയോഗിച്ച് നിങ്ങളുടെ പുരോഗതി ട്രാക്ക് ചെയ്യുക.",
+                "tool.title": "BMI കാൽക്കുലേറ്റർ",
+                "tool.inputs": "നിങ്ങളുടെ അളവുകൾ",
+                "tool.weight_kg": "ഭാരം (കിലോ)",
+                "tool.height_cm": "ഉയരം (സെ.മീ)",
+                "tool.weight_lbs": "ഭാരം (പൗണ്ട്)",
+                "tool.height_ft_in": "ഉയരം (അടി & ഇഞ്ച്)",
+                "tool.calculate": "BMI കണക്കാക്കുക",
+                "tool.underweight": "കുറഞ്ഞ ഭാരം",
+                "tool.normal": "സാധാരണ",
+                "tool.overweight": "കൂടിയ ഭാരം",
+                "tool.obese": "പൊണ്ണത്തടി",
+                "tool.ideal_weight": "ആദർശ ഭാര ശ്രേണി",
+                "tool.health_tips": "ആരോഗ്യ ടിപ്പുകൾ",
+                "tool.tip1": "വ്യക്തിഗത ആരോഗ്യ ടിപ്പുകൾ ലഭിക്കാൻ നിങ്ങളുടെ അളവുകൾ നൽകുക",
+                "tool.bmi_chart": "BMI ചാർട്ട്",
+                "tool.history": "കണക്കുകൂട്ടൽ ചരിത്രം",
+                "tool.clear_history": "ചരിത്രം മായ്ക്കുക",
+                "footer.follow": "ഞങ്ങളെ പിന്തുടരുക",
+                "footer.categories": "ജനപ്രിയ വിഭാഗങ്ങൾ",
+                "footer.categories.pdf": "PDF ടൂളുകൾ",
+                "footer.categories.image": "ഇമേജ് ടൂളുകൾ",
+                "footer.categories.text": "ടെക്സ്റ്റ് ടൂളുകൾ",
+                "footer.categories.av": "ഓഡിയോ/വീഡിയോ ടൂളുകൾ",
+                "footer.categories.web": "വെബ് ഡെവലപ്പർ ടൂളുകൾ",
+                "footer.categories.calc": "കാൽക്കുലേറ്റർ ടൂളുകൾ",
+                "footer.categories.util": "യൂട്ടിലിറ്റി ടൂളുകൾ",
+                "footer.categories.color": "കളർ ടൂളുകൾ",
+                "footer.quicklinks": "ദ്രുത ലിങ്കുകൾ",
+                "footer.links.tools": "എല്ലാ ടൂളുകളും",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "ബന്ധപ്പെടുക",
+                "footer.links.privacy": "സ്വകാര്യതാ നയം",
+                "footer.links.disclaimer": "ഡിസ്ക്ലെയിമർ",
+                "footer.links.terms": "സേവന നിബന്ധനകൾ",
+                "footer.copyright": "© 2025 LollyPoPDF. എല്ലാ അവകാശങ്ങളും നിക്ഷിപ്തം."
+            },
+            id: {
+                "nav.home": "Beranda",
+                "nav.about": "Tentang Kami",
+                "nav.tools": "Alat",
+                "nav.contact": "Kontak",
+                "hero.title": "Alat Kalkulator BMI",
+                "hero.description": "Hitung Indeks Massa Tubuh Anda secara instan dengan kategori kesehatan, rentang berat badan ideal, dan wawasan yang dipersonalisasi. Semua pemrosesan terjadi secara lokal dengan privasi lengkap.",
+                "howto.title": "Cara Menggunakan Kalkulator BMI",
+                "howto.step1.title": "Pilih Sistem Unit Anda",
+                "howto.step1.description": "Pilih antara unit Metrik (kg, cm) atau Imperial (lbs, ft/in) berdasarkan preferensi Anda. Kalkulator akan menyesuaikan input secara otomatis.",
+                "howto.step2.title": "Masukkan Pengukuran Anda",
+                "howto.step2.description": "Masukkan berat dan tinggi badan Anda di bidang yang sesuai. Untuk unit Imperial, Anda dapat memasukkan kaki dan inci secara terpisah.",
+                "howto.step3.title": "Hitung BMI Anda",
+                "howto.step3.description": "Klik tombol \"Hitung BMI\" untuk langsung melihat nilai BMI, kategori kesehatan, dan wawasan yang dipersonalisasi.",
+                "howto.step4.title": "Pahami Hasil Anda",
+                "howto.step4.description": "Tinjau kategori BMI, rentang berat badan ideal, dan tips kesehatan Anda. Lacak kemajuan Anda dengan fitur riwayat.",
+                "tool.title": "Kalkulator BMI",
+                "tool.inputs": "Pengukuran Anda",
+                "tool.weight_kg": "Berat (kg)",
+                "tool.height_cm": "Tinggi (cm)",
+                "tool.weight_lbs": "Berat (lbs)",
+                "tool.height_ft_in": "Tinggi (kaki & inci)",
+                "tool.calculate": "Hitung BMI",
+                "tool.underweight": "Kurus",
+                "tool.normal": "Normal",
+                "tool.overweight": "Kelebihan Berat Badan",
+                "tool.obese": "Obesitas",
+                "tool.ideal_weight": "Rentang Berat Badan Ideal",
+                "tool.health_tips": "Tips Kesehatan",
+                "tool.tip1": "Masukkan pengukuran Anda untuk mendapatkan tips kesehatan yang dipersonalisasi",
+                "tool.bmi_chart": "Grafik BMI",
+                "tool.history": "Riwayat Perhitungan",
+                "tool.clear_history": "Hapus Riwayat",
+                "footer.follow": "IKUTI KAMI",
+                "footer.categories": "Kategori Populer",
+                "footer.categories.pdf": "Alat PDF",
+                "footer.categories.image": "Alat Gambar",
+                "footer.categories.text": "Alat Teks",
+                "footer.categories.av": "Alat Audio/Video",
+                "footer.categories.web": "Alat WebDeveloper",
+                "footer.categories.calc": "Alat Kalkulator",
+                "footer.categories.util": "Alat Utilitas",
+                "footer.categories.color": "Alat Warna",
+                "footer.quicklinks": "Tautan Cepat",
+                "footer.links.tools": "Semua Alat",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Kontak",
+                "footer.links.privacy": "Kebijakan Privasi",
+                "footer.links.disclaimer": "Penafian",
+                "footer.links.terms": "Syarat Layanan",
+                "footer.copyright": "© 2025 LollyPoPDF. Hak cipta dilindungi undang-undang."
+            },
+            ms: {
+                "nav.home": "Laman Utama",
+                "nav.about": "Tentang Kami",
+                "nav.tools": "Alat",
+                "nav.contact": "Hubungi",
+                "hero.title": "Alat Kalkulator BMI",
+                "hero.description": "Kira Indeks Jisim Badan anda serta-merta dengan kategori kesihatan, julat berat ideal dan pandangan peribadi. Semua pemprosesan berlaku secara tempatan dengan privasi lengkap.",
+                "howto.title": "Cara Menggunakan Kalkulator BMI",
+                "howto.step1.title": "Pilih Sistem Unit Anda",
+                "howto.step1.description": "Pilih antara unit Metrik (kg, cm) atau Imperial (lbs, ft/in) berdasarkan keutamaan anda. Kalkulator akan melaraskan input secara automatik.",
+                "howto.step2.title": "Masukkan Ukuran Anda",
+                "howto.step2.description": "Masukkan berat dan ketinggian anda dalam medan yang sesuai. Untuk unit Imperial, anda boleh memasukkan kaki dan inci secara berasingan.",
+                "howto.step3.title": "Kira BMI Anda",
+                "howto.step3.description": "Klik butang \"Kira BMI\" untuk melihat nilai BMI, kategori kesihatan dan pandangan peribadi anda serta-merta.",
+                "howto.step4.title": "Fahami Keputusan Anda",
+                "howto.step4.description": "Semak kategori BMI, julat berat ideal dan tip kesihatan anda. Jejaki kemajuan anda dengan ciri sejarah.",
+                "tool.title": "Kalkulator BMI",
+                "tool.inputs": "Ukuran Anda",
+                "tool.weight_kg": "Berat (kg)",
+                "tool.height_cm": "Tinggi (cm)",
+                "tool.weight_lbs": "Berat (lbs)",
+                "tool.height_ft_in": "Tinggi (kaki & inci)",
+                "tool.calculate": "Kira BMI",
+                "tool.underweight": "Kurang Berat",
+                "tool.normal": "Normal",
+                "tool.overweight": "Berat Berlebihan",
+                "tool.obese": "Obesiti",
+                "tool.ideal_weight": "Julat Berat Ideal",
+                "tool.health_tips": "Tip Kesihatan",
+                "tool.tip1": "Masukkan ukuran anda untuk mendapatkan tip kesihatan yang diperibadikan",
+                "tool.bmi_chart": "Carta BMI",
+                "tool.history": "Sejarah Pengiraan",
+                "tool.clear_history": "Kosongkan Sejarah",
+                "footer.follow": "IKUTI KAMI",
+                "footer.categories": "Kategori Popular",
+                "footer.categories.pdf": "Alat PDF",
+                "footer.categories.image": "Alat Imej",
+                "footer.categories.text": "Alat Teks",
+                "footer.categories.av": "Alat Audio/Video",
+                "footer.categories.web": "Alat WebPembangun",
+                "footer.categories.calc": "Alat Kalkulator",
+                "footer.categories.util": "Alat Utiliti",
+                "footer.categories.color": "Alat Warna",
+                "footer.quicklinks": "Pautan Pantas",
+                "footer.links.tools": "Semua Alat",
+                "footer.links.faq": "Soalan Lazim",
+                "footer.links.contact": "Hubungi",
+                "footer.links.privacy": "Dasar Privasi",
+                "footer.links.disclaimer": "Penafian",
+                "footer.links.terms": "Syarat Perkhidmatan",
+                "footer.copyright": "© 2025 LollyPoPDF. Hak cipta terpelihara."
+            },
+            pl: {
+                "nav.home": "Strona główna",
+                "nav.about": "O nas",
+                "nav.tools": "Narzędzia",
+                "nav.contact": "Kontakt",
+                "hero.title": "Narzędzie Kalkulatora BMI",
+                "hero.description": "Oblicz swój Wskaźnik Masy Ciała natychmiast z kategorią zdrowia, zakresem idealnej wagi i spersonalizowanymi wskazówkami. Wszystkie przetwarzania odbywają się lokalnie z pełną prywatnością.",
+                "howto.title": "Jak korzystać z kalkulatora BMI",
+                "howto.step1.title": "Wybierz swój system jednostek",
+                "howto.step1.description": "Wybierz między jednostkami metrycznymi (kg, cm) lub imperialnymi (funty, stopy/cale) w zależności od swoich preferencji. Kalkulator automatycznie dostosuje dane wejściowe.",
+                "howto.step2.title": "Wprowadź swoje pomiary",
+                "howto.step2.description": "Wprowadź swoją wagę i wzrost w odpowiednie pola. Dla jednostek imperialnych możesz osobno wprowadzić stopy i cale.",
+                "howto.step3.title": "Oblicz swoje BMI",
+                "howto.step3.description": "Kliknij przycisk \"Oblicz BMI\", aby natychmiast zobaczyć swoją wartość BMI, kategorię zdrowia i spersonalizowane wskazówki.",
+                "howto.step4.title": "Zrozum swoje wyniki",
+                "howto.step4.description": "Przejrzyj swoją kategorię BMI, zakres idealnej wagi i wskazówki zdrowotne. Śledź swoje postępy za pomocą funkcji historii.",
+                "tool.title": "Kalkulator BMI",
+                "tool.inputs": "Twoje pomiary",
+                "tool.weight_kg": "Waga (kg)",
+                "tool.height_cm": "Wzrost (cm)",
+                "tool.weight_lbs": "Waga (funty)",
+                "tool.height_ft_in": "Wzrost (stopy & cale)",
+                "tool.calculate": "Oblicz BMI",
+                "tool.underweight": "Niedowaga",
+                "tool.normal": "Normalna",
+                "tool.overweight": "Nadwaga",
+                "tool.obese": "Otyłość",
+                "tool.ideal_weight": "Zakres idealnej wagi",
+                "tool.health_tips": "Wskazówki zdrowotne",
+                "tool.tip1": "Wprowadź swoje pomiary, aby otrzymać spersonalizowane wskazówki zdrowotne",
+                "tool.bmi_chart": "Wykres BMI",
+                "tool.history": "Historia obliczeń",
+                "tool.clear_history": "Wyczyść historię",
+                "footer.follow": "OBSERWUJ NAS",
+                "footer.categories": "Popularne kategorie",
+                "footer.categories.pdf": "Narzędzia PDF",
+                "footer.categories.image": "Narzędzia obrazów",
+                "footer.categories.text": "Narzędzia tekstowe",
+                "footer.categories.av": "Narzędzia audio/wideo",
+                "footer.categories.web": "Narzędzia WebDevelopera",
+                "footer.categories.calc": "Narzędzia kalkulatora",
+                "footer.categories.util": "Narzędzia użytkowe",
+                "footer.categories.color": "Narzędzia kolorów",
+                "footer.quicklinks": "Szybkie linki",
+                "footer.links.tools": "Wszystkie narzędzia",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Kontakt",
+                "footer.links.privacy": "Polityka prywatności",
+                "footer.links.disclaimer": "Zastrzeżenie",
+                "footer.links.terms": "Warunki usługi",
+                "footer.copyright": "© 2025 LollyPoPDF. Wszelkie prawa zastrzeżone."
+            },
+            th: {
+                "nav.home": "หน้าแรก",
+                "nav.about": "เกี่ยวกับเรา",
+                "nav.tools": "เครื่องมือ",
+                "nav.contact": "ติดต่อ",
+                "hero.title": "เครื่องมือคำนวณดัชนีมวลกาย",
+                "hero.description": "คำนวณดัชนีมวลกายของคุณทันทีพร้อมหมวดหมู่สุขภาพ ช่วงน้ำหนักในอุดมคติ และข้อมูลเชิงลึกส่วนบุคคล การประมวลผลทั้งหมดเกิดขึ้นในเครื่องด้วยความเป็นส่วนตัวเต็มรูปแบบ",
+                "howto.title": "วิธีใช้เครื่องคำนวณ BMI",
+                "howto.step1.title": "เลือกระบบหน่วยของคุณ",
+                "howto.step1.description": "เลือกระหว่างหน่วยเมตริก (กก., ซม.) หรืออิมพีเรียล (ปอนด์, ฟุต/นิ้ว) ตามความต้องการของคุณ เครื่องคิดเลขจะปรับค่าอินพุตโดยอัตโนมัติ",
+                "howto.step2.title": "ป้อนการวัดของคุณ",
+                "howto.step2.description": "ป้อนน้ำหนักและส่วนสูงของคุณในช่องที่เหมาะสม สำหรับหน่วยอิมพีเรียล คุณสามารถป้อนฟุตและนิ้วแยกกันได้",
+                "howto.step3.title": "คำนวณ BMI ของคุณ",
+                "howto.step3.description": "คลิกปุ่ม \"คำนวณ BMI\" เพื่อดูค่าดัชนีมวลกาย หมวดหมู่สุขภาพ และข้อมูลเชิงลึกส่วนบุคคลของคุณทันที",
+                "howto.step4.title": "เข้าใจผลลัพธ์ของคุณ",
+                "howto.step4.description": "ตรวจสอบหมวดหมู่ BMI ช่วงน้ำหนักในอุดมคติ และเคล็ดลับสุขภาพของคุณ ติดตามความคืบหน้าของคุณด้วยฟีเจอร์ประวัติ",
+                "tool.title": "เครื่องคำนวณ BMI",
+                "tool.inputs": "การวัดของคุณ",
+                "tool.weight_kg": "น้ำหนัก (กก.)",
+                "tool.height_cm": "ส่วนสูง (ซม.)",
+                "tool.weight_lbs": "น้ำหนัก (ปอนด์)",
+                "tool.height_ft_in": "ส่วนสูง (ฟุต & นิ้ว)",
+                "tool.calculate": "คำนวณ BMI",
+                "tool.underweight": "น้ำหนักน้อย",
+                "tool.normal": "ปกติ",
+                "tool.overweight": "น้ำหนักเกิน",
+                "tool.obese": "อ้วน",
+                "tool.ideal_weight": "ช่วงน้ำหนักในอุดมคติ",
+                "tool.health_tips": "เคล็ดลับสุขภาพ",
+                "tool.tip1": "ป้อนการวัดของคุณเพื่อรับเคล็ดลับสุขภาพส่วนบุคคล",
+                "tool.bmi_chart": "แผนภูมิ BMI",
+                "tool.history": "ประวัติการคำนวณ",
+                "tool.clear_history": "ล้างประวัติ",
+                "footer.follow": "ติดตามเรา",
+                "footer.categories": "หมวดหมู่ยอดนิยม",
+                "footer.categories.pdf": "เครื่องมือ PDF",
+                "footer.categories.image": "เครื่องมือรูปภาพ",
+                "footer.categories.text": "เครื่องมือข้อความ",
+                "footer.categories.av": "เครื่องมือเสียง/วิดีโอ",
+                "footer.categories.web": "เครื่องมือนักพัฒนาเว็บ",
+                "footer.categories.calc": "เครื่องมือเครื่องคิดเลข",
+                "footer.categories.util": "เครื่องมืออรรถประโยชน์",
+                "footer.categories.color": "เครื่องมือสี",
+                "footer.quicklinks": "ลิงก์ด่วน",
+                "footer.links.tools": "เครื่องมือทั้งหมด",
+                "footer.links.faq": "คำถามที่พบบ่อย",
+                "footer.links.contact": "ติดต่อ",
+                "footer.links.privacy": "นโยบายความเป็นส่วนตัว",
+                "footer.links.disclaimer": "ข้อจำกัดความรับผิดชอบ",
+                "footer.links.terms": "ข้อกำหนดการให้บริการ",
+                "footer.copyright": "© 2025 LollyPoPDF. สงวนลิขสิทธิ์."
+            },
+            tr: {
+                "nav.home": "Ana Sayfa",
+                "nav.about": "Hakkımızda",
+                "nav.tools": "Araçlar",
+                "nav.contact": "İletişim",
+                "hero.title": "BMI Hesaplayıcı Aracı",
+                "hero.description": "Vücut Kitle İndeksinizi sağlık kategorisi, ideal kilo aralığı ve kişiselleştirilmiş içgörülerle anında hesaplayın. Tüm işlemler tam gizlilikle yerel olarak gerçekleşir.",
+                "howto.title": "BMI Hesaplayıcı Nasıl Kullanılır",
+                "howto.step1.title": "Birim Sisteminizi Seçin",
+                "howto.step1.description": "Tercihinize göre Metrik (kg, cm) veya İmparatorluk (lbs, ft/in) birimleri arasından seçim yapın. Hesap makinesi girdileri otomatik olarak ayarlayacaktır.",
+                "howto.step2.title": "Ölçülerinizi Girin",
+                "howto.step2.description": "Kilonuzu ve boyunuzu uygun alanlara girin. İmparatorluk birimleri için, ayak ve inç'i ayrı ayrı girebilirsiniz.",
+                "howto.step3.title": "BMI'nizi Hesaplayın",
+                "howto.step3.description": "BMI değerinizi, sağlık kategorinizi ve kişiselleştirilmiş içgörülerinizi anında görmek için \"BMI Hesapla\" düğmesine tıklayın.",
+                "howto.step4.title": "Sonuçlarınızı Anlayın",
+                "howto.step4.description": "BMI kategorinizi, ideal kilo aralığınızı ve sağlık ipuçlarınızı gözden geçirin. Geçmiş özelliği ile ilerlemenizi takip edin.",
+                "tool.title": "BMI Hesaplayıcı",
+                "tool.inputs": "Ölçüleriniz",
+                "tool.weight_kg": "Kilo (kg)",
+                "tool.height_cm": "Boy (cm)",
+                "tool.weight_lbs": "Kilo (lbs)",
+                "tool.height_ft_in": "Boy (ft & inç)",
+                "tool.calculate": "BMI Hesapla",
+                "tool.underweight": "Zayıf",
+                "tool.normal": "Normal",
+                "tool.overweight": "Fazla Kilolu",
+                "tool.obese": "Obez",
+                "tool.ideal_weight": "İdeal Kilo Aralığı",
+                "tool.health_tips": "Sağlık İpuçları",
+                "tool.tip1": "Kişiselleştirilmiş sağlık ipuçları almak için ölçülerinizi girin",
+                "tool.bmi_chart": "BMI Grafiği",
+                "tool.history": "Hesaplama Geçmişi",
+                "tool.clear_history": "Geçmişi Temizle",
+                "footer.follow": "BİZİ TAKİP EDİN",
+                "footer.categories": "Popüler Kategoriler",
+                "footer.categories.pdf": "PDF Araçları",
+                "footer.categories.image": "Görsel Araçları",
+                "footer.categories.text": "Metin Araçları",
+                "footer.categories.av": "Ses/Video Araçları",
+                "footer.categories.web": "WebGeliştirici Araçları",
+                "footer.categories.calc": "Hesap Makinesi Araçları",
+                "footer.categories.util": "Yardımcı Araçlar",
+                "footer.categories.color": "Renk Araçları",
+                "footer.quicklinks": "Hızlı Bağlantılar",
+                "footer.links.tools": "Tüm Araçlar",
+                "footer.links.faq": "SSS",
+                "footer.links.contact": "İletişim",
+                "footer.links.privacy": "Gizlilik Politikası",
+                "footer.links.disclaimer": "Feragatname",
+                "footer.links.terms": "Hizmet Şartları",
+                "footer.copyright": "© 2025 LollyPoPDF. Tüm hakları saklıdır."
+            },
+            uk: {
+                "nav.home": "Головна",
+                "nav.about": "Про нас",
+                "nav.tools": "Інструменти",
+                "nav.contact": "Контакт",
+                "hero.title": "Інструмент Калькулятора ІМТ",
+                "hero.description": "Розрахуйте свій індекс маси тіла миттєво з категорією здоров'я, діапазоном ідеальної ваги та персоналізованими порадами. Вся обробка відбувається локально з повною конфіденційністю.",
+                "howto.title": "Як використовувати калькулятор ІМТ",
+                "howto.step1.title": "Виберіть свою систему одиниць",
+                "howto.step1.description": "Виберіть між метричними (кг, см) або імперськими (фунти, фути/дюйми) одиницями виходячи з ваших уподобань. Калькулятор автоматично налаштує вхідні дані.",
+                "howto.step2.title": "Введіть свої виміри",
+                "howto.step2.description": "Введіть свою вагу та зріст у відповідні поля. Для імперських одиниць ви можете вводити фути та дюйми окремо.",
+                "howto.step3.title": "Розрахуйте свій ІМТ",
+                "howto.step3.description": "Натисніть кнопку \"Розрахувати ІМТ\", щоб миттєво побачити значення ІМТ, категорію здоров'я та персоналізовані поради.",
+                "howto.step4.title": "Зрозумійте свої результати",
+                "howto.step4.description": "Перегляньте свою категорію ІМТ, діапазон ідеальної ваги та поради щодо здоров'я. Відстежуйте свій прогрес за допомогою функції історії.",
+                "tool.title": "Калькулятор ІМТ",
+                "tool.inputs": "Ваші виміри",
+                "tool.weight_kg": "Вага (кг)",
+                "tool.height_cm": "Зріст (см)",
+                "tool.weight_lbs": "Вага (фунти)",
+                "tool.height_ft_in": "Зріст (фути & дюйми)",
+                "tool.calculate": "Розрахувати ІМТ",
+                "tool.underweight": "Недостатня вага",
+                "tool.normal": "Нормальна",
+                "tool.overweight": "Надмірна вага",
+                "tool.obese": "Ожиріння",
+                "tool.ideal_weight": "Діапазон ідеальної ваги",
+                "tool.health_tips": "Поради щодо здоров'я",
+                "tool.tip1": "Введіть свої виміри, щоб отримати персоналізовані поради щодо здоров'я",
+                "tool.bmi_chart": "Графік ІМТ",
+                "tool.history": "Історія розрахунків",
+                "tool.clear_history": "Очистити історію",
+                "footer.follow": "СЛІДКУЙТЕ ЗА НАМИ",
+                "footer.categories": "Популярні категорії",
+                "footer.categories.pdf": "PDF Інструменти",
+                "footer.categories.image": "Інструменти зображень",
+                "footer.categories.text": "Текстові інструменти",
+                "footer.categories.av": "Аудіо/Відео інструменти",
+                "footer.categories.web": "Інструменти веброзробника",
+                "footer.categories.calc": "Інструменти калькулятора",
+                "footer.categories.util": "Утилітарні інструменти",
+                "footer.categories.color": "Кольорові інструменти",
+                "footer.quicklinks": "Швидкі посилання",
+                "footer.links.tools": "Всі інструменти",
+                "footer.links.faq": "ЧаПи",
+                "footer.links.contact": "Контакт",
+                "footer.links.privacy": "Політика конфіденційності",
+                "footer.links.disclaimer": "Відмова від відповідальності",
+                "footer.links.terms": "Умови використання",
+                "footer.copyright": "© 2025 LollyPoPDF. Всі права захищені."
+            },
+            vi: {
+                "nav.home": "Trang chủ",
+                "nav.about": "Về chúng tôi",
+                "nav.tools": "Công cụ",
+                "nav.contact": "Liên hệ",
+                "hero.title": "Công cụ Tính chỉ số BMI",
+                "hero.description": "Tính chỉ số khối cơ thể ngay lập tức với danh mục sức khỏe, phạm vi cân nặng lý tưởng và thông tin chi tiết được cá nhân hóa. Tất cả xử lý diễn ra cục bộ với quyền riêng tư hoàn toàn.",
+                "howto.title": "Cách sử dụng Máy tính BMI",
+                "howto.step1.title": "Chọn Hệ thống Đơn vị của bạn",
+                "howto.step1.description": "Chọn giữa các đơn vị Hệ mét (kg, cm) hoặc Hệ Anh (lbs, ft/in) dựa trên sở thích của bạn. Máy tính sẽ tự động điều chỉnh đầu vào.",
+                "howto.step2.title": "Nhập số đo của bạn",
+                "howto.step2.description": "Nhập cân nặng và chiều cao của bạn vào các trường thích hợp. Đối với đơn vị Hệ Anh, bạn có thể nhập feet và inch riêng biệt.",
+                "howto.step3.title": "Tính chỉ số BMI của bạn",
+                "howto.step3.description": "Nhấp vào nút \"Tính BMI\" để xem ngay giá trị BMI, danh mục sức khỏe và thông tin chi tiết được cá nhân hóa của bạn.",
+                "howto.step4.title": "Hiểu Kết quả của bạn",
+                "howto.step4.description": "Xem lại danh mục BMI, phạm vi cân nặng lý tưởng và mẹo sức khỏe của bạn. Theo dõi tiến trình của bạn với tính năng lịch sử.",
+                "tool.title": "Máy tính BMI",
+                "tool.inputs": "Số đo của bạn",
+                "tool.weight_kg": "Cân nặng (kg)",
+                "tool.height_cm": "Chiều cao (cm)",
+                "tool.weight_lbs": "Cân nặng (lbs)",
+                "tool.height_ft_in": "Chiều cao (ft & in)",
+                "tool.calculate": "Tính BMI",
+                "tool.underweight": "Thiếu cân",
+                "tool.normal": "Bình thường",
+                "tool.overweight": "Thừa cân",
+                "tool.obese": "Béo phì",
+                "tool.ideal_weight": "Phạm vi Cân nặng Lý tưởng",
+                "tool.health_tips": "Mẹo Sức khỏe",
+                "tool.tip1": "Nhập số đo của bạn để nhận mẹo sức khỏe được cá nhân hóa",
+                "tool.bmi_chart": "Biểu đồ BMI",
+                "tool.history": "Lịch sử Tính toán",
+                "tool.clear_history": "Xóa Lịch sử",
+                "footer.follow": "THEO DÕI CHÚNG TÔI",
+                "footer.categories": "Danh mục Phổ biến",
+                "footer.categories.pdf": "Công cụ PDF",
+                "footer.categories.image": "Công cụ Hình ảnh",
+                "footer.categories.text": "Công cụ Văn bản",
+                "footer.categories.av": "Công cụ Âm thanh/Video",
+                "footer.categories.web": "Công cụ WebNhà phát triển",
+                "footer.categories.calc": "Công cụ Máy tính",
+                "footer.categories.util": "Công cụ Tiện ích",
+                "footer.categories.color": "Công cụ Màu sắc",
+                "footer.quicklinks": "Liên kết Nhanh",
+                "footer.links.tools": "Tất cả Công cụ",
+                "footer.links.faq": "Câu hỏi Thường gặp",
+                "footer.links.contact": "Liên hệ",
+                "footer.links.privacy": "Chính sách Riêng tư",
+                "footer.links.disclaimer": "Tuyên bố Miễn trừ Trách nhiệm",
+                "footer.links.terms": "Điều khoản Dịch vụ",
+                "footer.copyright": "© 2025 LollyPoPDF. Mọi quyền được bảo lưu."
+            },
+            is: {
+                "nav.home": "Heim",
+                "nav.about": "Um okkur",
+                "nav.tools": "Verkfæri",
+                "nav.contact": "Hafa samband",
+                "hero.title": "BMI Reiknivél Tól",
+                "hero.description": "Reiknaðu líkamsþyngdarstuðul þinn samstundis með heilsuflokki, fullkomnu þyngdarbili og persónulegum innsýn. Öll vinnsla á sér stað staðbundið með fullri næði.",
+                "howto.title": "Hvernig á að nota BMI reiknivélina",
+                "howto.step1.title": "Veldu einingakerfið þitt",
+                "howto.step1.description": "Veldu á milli Metra (kg, cm) eða Imperial (lbs, fet/tommur) eininga byggt á þínum kjörnum. Reiknivélin mun stilla inntakið sjálfkrafa.",
+                "howto.step2.title": "Sláðu inn mælingar þínar",
+                "howto.step2.description": "Sláðu inn þyngd og hæð þína í viðeigandi reiti. Fyrir Imperial einingar geturðu slegið inn fet og tommur fyrir sig.",
+                "howto.step3.title": "Reiknaðu BMI þinn",
+                "howto.step3.description": "Smelltu á \"Reikna BMI\" hnappinn til að sjá BMI gildi, heilsuflokk og persónulegar innsýnir þínar samstundis.",
+                "howto.step4.title": "Skildu niðurstöður þínar",
+                "howto.step4.description": "Skoðaðu BMI flokk, fullkomna þyngdarbilið og heilsuráð þín. Fylgstu með framvindu þinni með sögueiginleikanum.",
+                "tool.title": "BMI Reiknivél",
+                "tool.inputs": "Mælingar þínar",
+                "tool.weight_kg": "Þyngd (kg)",
+                "tool.height_cm": "Hæð (cm)",
+                "tool.weight_lbs": "Þyngd (lbs)",
+                "tool.height_ft_in": "Hæð (fet & tommur)",
+                "tool.calculate": "Reikna BMI",
+                "tool.underweight": "Vanþyngd",
+                "tool.normal": "Eðlileg",
+                "tool.overweight": "Ofþyngd",
+                "tool.obese": "Offita",
+                "tool.ideal_weight": "Fullkomið þyngdarbil",
+                "tool.health_tips": "Heilsuráð",
+                "tool.tip1": "Sláðu inn mælingar þínar til að fá persónuleg heilsuráð",
+                "tool.bmi_chart": "BMI Töflurit",
+                "tool.history": "Reikningssaga",
+                "tool.clear_history": "Hreinsa saga",
+                "footer.follow": "FYLGDU OKKUR",
+                "footer.categories": "Vinsælar flokkar",
+                "footer.categories.pdf": "PDF Verkfæri",
+                "footer.categories.image": "Myndverkfæri",
+                "footer.categories.text": "Textaverkfæri",
+                "footer.categories.av": "Hljóð/Myndband verkfæri",
+                "footer.categories.web": "Vefþróunaraðila verkfæri",
+                "footer.categories.calc": "Reiknivélarverkfæri",
+                "footer.categories.util": "Gagnleg verkfæri",
+                "footer.categories.color": "Litverkfæri",
+                "footer.quicklinks": "Flýtileiðir",
+                "footer.links.tools": "Öll verkfæri",
+                "footer.links.faq": "Algengar spurningar",
+                "footer.links.contact": "Hafa samband",
+                "footer.links.privacy": "Meðferðarreglur",
+                "footer.links.disclaimer": "Fyrirvari",
+                "footer.links.terms": "Þjónustuskilmálar",
+                "footer.copyright": "© 2025 LollyPoPDF. Öll réttindi áskilin."
+            },
+            no: {
+                "nav.home": "Hjem",
+                "nav.about": "Om oss",
+                "nav.tools": "Verktøy",
+                "nav.contact": "Kontakt",
+                "hero.title": "BMI Kalkulator Verktøy",
+                "hero.description": "Beregn kroppsmasseindeksen din umiddelbart med helsekategori, ideelt vektområde og personlige innsikter. All behandling skjer lokalt med fullstendig personvern.",
+                "howto.title": "Hvordan bruke BMI-kalkulatoren",
+                "howto.step1.title": "Velg ditt enhetssystem",
+                "howto.step1.description": "Velg mellom metriske (kg, cm) eller imperiale (lbs, ft/in) enheter basert på dine preferanser. Kalkulatoren vil justere inndataene automatisk.",
+                "howto.step2.title": "Skriv inn målene dine",
+                "howto.step2.description": "Skriv inn vekt og høyde i de aktuelle feltene. For imperiale enheter kan du skrive inn fot og tommer separat.",
+                "howto.step3.title": "Beregn BMI-en din",
+                "howto.step3.description": "Klikk på \"Beregn BMI\"-knappen for umiddelbart å se BMI-verdien, helsekategorien og personlige innsikter.",
+                "howto.step4.title": "Forstå resultatene dine",
+                "howto.step4.description": "Gjennomgå BMI-kategorien, det ideelle vektområdet og helsetipsene dine. Spor fremgangen din med historikkfunksjonen.",
+                "tool.title": "BMI Kalkulator",
+                "tool.inputs": "Dine mål",
+                "tool.weight_kg": "Vekt (kg)",
+                "tool.height_cm": "Høyde (cm)",
+                "tool.weight_lbs": "Vekt (lbs)",
+                "tool.height_ft_in": "Høyde (fot & tommer)",
+                "tool.calculate": "Beregn BMI",
+                "tool.underweight": "Undervekt",
+                "tool.normal": "Normal",
+                "tool.overweight": "Overvekt",
+                "tool.obese": "Fedme",
+                "tool.ideal_weight": "Ideelt vektområde",
+                "tool.health_tips": "Helsetips",
+                "tool.tip1": "Skriv inn målene dine for å få personlige helsetips",
+                "tool.bmi_chart": "BMI-diagram",
+                "tool.history": "Beregningshistorikk",
+                "tool.clear_history": "Tøm historikk",
+                "footer.follow": "FØLG OSS",
+                "footer.categories": "Populære kategorier",
+                "footer.categories.pdf": "PDF-verktøy",
+                "footer.categories.image": "Bildeverktøy",
+                "footer.categories.text": "Tekstverktøy",
+                "footer.categories.av": "Lyd/Video verktøy",
+                "footer.categories.web": "WebUtvikler verktøy",
+                "footer.categories.calc": "Kalkulatorverktøy",
+                "footer.categories.util": "Nytteverktøy",
+                "footer.categories.color": "Fargeverktøy",
+                "footer.quicklinks": "Hurtiglenker",
+                "footer.links.tools": "Alle verktøy",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Kontakt",
+                "footer.links.privacy": "Personvernerklæring",
+                "footer.links.disclaimer": "Ansvarsfraskrivelse",
+                "footer.links.terms": "Tjenestevilkår",
+                "footer.copyright": "© 2025 LollyPoPDF. Alle rettigheter forbeholdt."
+            },
+            sv: {
+                "nav.home": "Hem",
+                "nav.about": "Om oss",
+                "nav.tools": "Verktyg",
+                "nav.contact": "Kontakt",
+                "hero.title": "BMI Kalkulator Verktyg",
+                "hero.description": "Beräkna ditt kroppsmassaindex direkt med hälso kategori, idealisk viktomfång och personliga insikter. All bearbetning sker lokalt med fullständig integritet.",
+                "howto.title": "Hur man använder BMI-kalkylatorn",
+                "howto.step1.title": "Välj ditt enhetssystem",
+                "howto.step1.description": "Välj mellan metriska (kg, cm) eller imperiala (lbs, ft/in) enheter baserat på dina preferenser. Kalkylatorn kommer automatiskt att justera indata.",
+                "howto.step2.title": "Ange dina mått",
+                "howto.step2.description": "Ange din vikt och längd i lämpliga fält. För imperiala enheter kan du ange fötter och tum separat.",
+                "howto.step3.title": "Beräkna ditt BMI",
+                "howto.step3.description": "Klicka på knappen \"Beräkna BMI\" för att omedelbart se ditt BMI-värde, hälso kategori och personliga insikter.",
+                "howto.step4.title": "Förstå dina resultat",
+                "howto.step4.description": "Granska din BMI-kategori, idealiska viktomfång och hälsotips. Spåra din framsteg med historikfunktionen.",
+                "tool.title": "BMI Kalkylator",
+                "tool.inputs": "Dina mått",
+                "tool.weight_kg": "Vikt (kg)",
+                "tool.height_cm": "Längd (cm)",
+                "tool.weight_lbs": "Vikt (lbs)",
+                "tool.height_ft_in": "Längd (fot & tum)",
+                "tool.calculate": "Beräkna BMI",
+                "tool.underweight": "Undervikt",
+                "tool.normal": "Normal",
+                "tool.overweight": "Övervikt",
+                "tool.obese": "Fetma",
+                "tool.ideal_weight": "Idealisk viktomfång",
+                "tool.health_tips": "Hälsotips",
+                "tool.tip1": "Ange dina mått för att få personliga hälsotips",
+                "tool.bmi_chart": "BMI-diagram",
+                "tool.history": "Beräkningshistorik",
+                "tool.clear_history": "Rensa historik",
+                "footer.follow": "FÖLJ OSS",
+                "footer.categories": "Populära kategorier",
+                "footer.categories.pdf": "PDF-verktyg",
+                "footer.categories.image": "Bildverktyg",
+                "footer.categories.text": "Textverktyg",
+                "footer.categories.av": "Ljud/Video verktyg",
+                "footer.categories.web": "WebbUtvecklare verktyg",
+                "footer.categories.calc": "Kalkylatorverktyg",
+                "footer.categories.util": "Verktyg för verktyg",
+                "footer.categories.color": "Färgverktyg",
+                "footer.quicklinks": "Snabblänkar",
+                "footer.links.tools": "Alla verktyg",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Kontakt",
+                "footer.links.privacy": "Integritetspolicy",
+                "footer.links.disclaimer": "Ansvarsfriskrivning",
+                "footer.links.terms": "Användarvillkor",
+                "footer.copyright": "© 2025 LollyPoPDF. Alla rättigheter förbehållna."
+            },
+            fi: {
+                "nav.home": "Koti",
+                "nav.about": "Meistä",
+                "nav.tools": "Työkalut",
+                "nav.contact": "Ota yhteyttä",
+                "hero.title": "BMI Laskin Työkalu",
+                "hero.description": "Laske painoindeksisi välittömästi terveysluokalla, ihanteellisella painoalueella ja henkilökohtaisilla oivalluksilla. Kaikki käsittely tapahtuu paikallisesti täydellisen yksityisyyden kanssa.",
+                "howto.title": "Kuinka käyttää BMI-laskinta",
+                "howto.step1.title": "Valitse yksikköjärjestelmäsi",
+                "howto.step1.description": "Valitse metristen (kg, cm) tai imperiaalien (lbs, ft/in) yksiköiden välillä mieltymystesi perusteella. Laskin säätää syötteet automaattisesti.",
+                "howto.step2.title": "Syötä mittasi",
+                "howto.step2.description": "Syötä painosi ja pituutesi asianmukaisiin kenttiin. Imperiaaleja yksiköitä varten voit syöttää jalat ja tuumat erikseen.",
+                "howto.step3.title": "Laske BMI:si",
+                "howto.step3.description": "Napsauta \"Laske BMI\" -painiketta nähdäksesi BMI-arvosi, terveysluokkasi ja henkilökohtaiset oivalluksesi välittömästi.",
+                "howto.step4.title": "Ymmärrä tuloksesi",
+                "howto.step4.description": "Tarkastele BMI-luokkaasi, ihanteellista painoaluettasi ja terveysvinkkejäsi. Seuraa edistymistäsi historia-toiminnolla.",
+                "tool.title": "BMI Laskin",
+                "tool.inputs": "Mittasi",
+                "tool.weight_kg": "Paino (kg)",
+                "tool.height_cm": "Pituus (cm)",
+                "tool.weight_lbs": "Paino (lbs)",
+                "tool.height_ft_in": "Pituus (jalka & tuuma)",
+                "tool.calculate": "Laske BMI",
+                "tool.underweight": "Alipaino",
+                "tool.normal": "Normaali",
+                "tool.overweight": "Ylipaino",
+                "tool.obese": "Lihavuus",
+                "tool.ideal_weight": "Ihanteellinen painoalue",
+                "tool.health_tips": "Terveysvinkit",
+                "tool.tip1": "Syötä mittasi saadaksesi henkilökohtaisia terveysvinkkejä",
+                "tool.bmi_chart": "BMI-kaavio",
+                "tool.history": "Laskentahistoria",
+                "tool.clear_history": "Tyhjennä historia",
+                "footer.follow": "SEURA MEITÄ",
+                "footer.categories": "Suositut kategoriat",
+                "footer.categories.pdf": "PDF-työkalut",
+                "footer.categories.image": "Kuvatyökalut",
+                "footer.categories.text": "Tekstityökalut",
+                "footer.categories.av": "Ääni/Video-työkalut",
+                "footer.categories.web": "WebKehittäjä-työkalut",
+                "footer.categories.calc": "Laskinityökalut",
+                "footer.categories.util": "Aputyökalut",
+                "footer.categories.color": "Värityökalut",
+                "footer.quicklinks": "Pikalinkit",
+                "footer.links.tools": "Kaikki työkalut",
+                "footer.links.faq": "Usein Kysytyt Kysymykset",
+                "footer.links.contact": "Ota yhteyttä",
+                "footer.links.privacy": "Tietosuojakäytäntö",
+                "footer.links.disclaimer": "Vastuuvapauslauseke",
+                "footer.links.terms": "Käyttöehdot",
+                "footer.copyright": "© 2025 LollyPoPDF. Kaikki oikeudet pidätetään."
+            },
+            cs: {
+                "nav.home": "Domů",
+                "nav.about": "O nás",
+                "nav.tools": "Nástroje",
+                "nav.contact": "Kontakt",
+                "hero.title": "Nástroj kalkulačky BMI",
+                "hero.description": "Vypočítejte si index tělesné hmotnosti okamžitě s kategorií zdraví, rozsahem ideální hmotnosti a personalizovanými poznatky. Veškeré zpracování probíhá lokálně s úplným soukromím.",
+                "howto.title": "Jak používat kalkulačku BMI",
+                "howto.step1.title": "Zvolte svůj systém jednotek",
+                "howto.step1.description": "Vyberte mezi metrickými (kg, cm) nebo imperiálními (lbs, stopy/palce) jednotkami na základě vašich preferencí. Kalkulačka automaticky upraví vstupy.",
+                "howto.step2.title": "Zadejte své míry",
+                "howto.step2.description": "Zadejte svou váhu a výšku do příslušných polí. Pro imperiální jednotky můžete zadat stopy a palce samostatně.",
+                "howto.step3.title": "Vypočítejte své BMI",
+                "howto.step3.description": "Klikněte na tlačítko \"Vypočítat BMI\" a okamžitě uvidíte svou hodnotu BMI, kategorii zdraví a personalizované poznatky.",
+                "howto.step4.title": "Pochopte své výsledky",
+                "howto.step4.description": "Prohlédněte si svou kategorii BMI, rozsah ideální hmotnosti a zdravotní tipy. Sledujte svůj pokrok pomocí funkce historie.",
+                "tool.title": "Kalkulačka BMI",
+                "tool.inputs": "Vaše míry",
+                "tool.weight_kg": "Hmotnost (kg)",
+                "tool.height_cm": "Výška (cm)",
+                "tool.weight_lbs": "Hmotnost (lbs)",
+                "tool.height_ft_in": "Výška (stopy & palce)",
+                "tool.calculate": "Vypočítat BMI",
+                "tool.underweight": "Podváha",
+                "tool.normal": "Normální",
+                "tool.overweight": "Nadváha",
+                "tool.obese": "Obezita",
+                "tool.ideal_weight": "Rozsah ideální hmotnosti",
+                "tool.health_tips": "Zdravotní tipy",
+                "tool.tip1": "Zadejte své míry, abyste získali personalizované zdravotní tipy",
+                "tool.bmi_chart": "Graf BMI",
+                "tool.history": "Historie výpočtů",
+                "tool.clear_history": "Vymazat historii",
+                "footer.follow": "SLEDUJTE NÁS",
+                "footer.categories": "Populární kategorie",
+                "footer.categories.pdf": "PDF nástroje",
+                "footer.categories.image": "Obrazové nástroje",
+                "footer.categories.text": "Textové nástroje",
+                "footer.categories.av": "Audio/Video nástroje",
+                "footer.categories.web": "WebVývojářské nástroje",
+                "footer.categories.calc": "Kalkulačkové nástroje",
+                "footer.categories.util": "Užitečné nástroje",
+                "footer.categories.color": "Barevné nástroje",
+                "footer.quicklinks": "Rychlé odkazy",
+                "footer.links.tools": "Všechny nástroje",
+                "footer.links.faq": "Často kladené otázky",
+                "footer.links.contact": "Kontakt",
+                "footer.links.privacy": "Zásady ochrany osobních údajů",
+                "footer.links.disclaimer": "Odmítnutí odpovědnosti",
+                "footer.links.terms": "Podmínky služby",
+                "footer.copyright": "© 2025 LollyPoPDF. Všechna práva vyhrazena."
+            }
+        };
+
+        // Function to change language
+        function changeLanguage(langCode) {
+            const langData = translations[langCode];
+            if (!langData) return;
+            
+            // Update all elements with data-i18n attribute
+            document.querySelectorAll('[data-i18n]').forEach(element => {
+                const key = element.getAttribute('data-i18n');
+                if (langData[key]) {
+                    element.textContent = langData[key];
+                }
+            });
+            
+            // Update current language display
+            currentLanguageElement.textContent = languages.find(lang => lang.code === langCode)?.name || 'English';
+            
+            // Save language preference
+            localStorage.setItem('language', langCode);
+        }
+
+        // Initialize language
+        const savedLanguage = localStorage.getItem('language') || 'en';
+        changeLanguage(savedLanguage);
+        
+        // Language selection handler
+        languageDropdown.addEventListener('click', (e) => {
+            if (e.target.classList.contains('language-option')) {
+                const langCode = e.target.getAttribute('data-lang');
+                changeLanguage(langCode);
+            }
+        });
+
+        // Initialize with a calculation
+        calculateBMI();
+    </script>
+</body>
+</html>

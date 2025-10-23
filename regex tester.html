@@ -1,0 +1,2853 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Regex Tester Tool | LollyPoPdf</title>
+    <meta name="description" content="Free online regex tester tool. Test your regular expressions in real-time with full match highlighting, groups, and error detection.">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #9370db;
+            --primary-dark: #8a2be2;
+            --secondary-color: #f0ebff;
+            --text-color: #333333;
+            --text-light: #6b7280;
+            --bg-color: #ffffff;
+            --bg-secondary: #f9f9f9;
+            --border-radius: 12px;
+            --transition: all 0.3s ease;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --header-height: 80px;
+            --white: #ffffff;
+            --header-text: #6b7280;
+            --accent-color: #9370db;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --error-color: #ef4444;
+            --match-color: #ffeb3b;
+            --group-color: #4caf50;
+        }
+
+        .dark-mode {
+            --primary-color: #a391f2;
+            --primary-dark: #8a2be2;
+            --secondary-color: #2d2d2d;
+            --text-color: #f0f0f0;
+            --text-light: #a0a0a0;
+            --bg-color: #1a1a1a;
+            --bg-secondary: #2d2d2d;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+            --white: #1a1a1a;
+            --header-text: #a0a0a0;
+            --match-color: #ff9800;
+            --group-color: #8bc34a;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            transition: var(--transition);
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        ul {
+            list-style: none;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header Styles */
+        header {
+            background-color: var(--white);
+            color: var(--header-text);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+        }
+
+        .logo-icon {
+            position: relative;
+            width: 40px;
+            height: 40px;
+        }
+
+        .logo-circle {
+            width: 40px;
+            height: 40px;
+            border-radius: 40%;
+            background: linear-gradient(to bottom right, #9370db, #8a2be2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .logo-stem {
+            position: absolute;
+            bottom: -17px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 6px;
+            height: 17px;
+            background-color: #8a2be2;
+            border-radius: 0 0 3px 3px;
+        }
+
+        .logo-text {
+            font-size: 24px;
+            font-weight: bold;
+            color: #9370db;
+        }
+
+        nav ul {
+            display: flex;
+            gap: 30px;
+            list-style: none;
+        }
+
+        nav a {
+            font-weight: 500;
+            position: relative;
+            color: var(--header-text);
+            padding: 8px 0;
+            border-radius: 0;
+            transition: var(--transition);
+            text-decoration: none;
+        }
+
+        nav a:hover {
+            color: var(--accent-color);
+        }
+
+        nav a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: var(--accent-color);
+            transition: width 0.3s ease;
+        }
+
+        nav a:hover::after {
+            width: 100%;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .email {
+            font-size: 14px;
+            color: var(--header-text);
+        }
+
+        .theme-toggle {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 20px;
+            color: var(--header-text);
+            padding: 8px;
+            border-radius: 50%;
+            transition: var(--transition);
+        }
+
+        .theme-toggle:hover {
+            background-color: #f0ebff;
+            color: var(--accent-color);
+        }
+
+        .dark-mode .theme-toggle:hover {
+            background-color: #2d3748;
+            color: var(--accent-color);
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--header-text);
+        }
+
+        /* Mobile Menu */
+        .mobile-menu {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            width: 100%;
+            background-color: var(--white);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            z-index: 999;
+        }
+
+        .dark-mode .mobile-menu {
+            background-color: var(--bg-secondary);
+        }
+
+        .mobile-menu.active {
+            display: block;
+        }
+
+        .mobile-menu ul {
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .mobile-menu a {
+            display: block;
+            padding: 10px 0;
+            font-weight: 500;
+            color: var(--header-text);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .dark-mode .mobile-menu a {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .mobile-menu a:hover {
+            color: var(--accent-color);
+        }
+
+        /* Hero Section */
+        .hero {
+            background-color: var(--secondary-color);
+            padding: 60px 0;
+            text-align: center;
+        }
+
+        .dark-mode .hero {
+            background: linear-gradient(135deg, #2a1a4a, #3d2a6d);
+        }
+
+        .hero h1 {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            color: #000;
+        }
+
+        .dark-mode .hero h1 {
+            color: var(--text-color);
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            color: var(--text-color);
+            max-width: 700px;
+            margin: 0 auto 30px;
+        }
+
+        /* How to Use Section */
+        .how-to-section {
+            padding: 80px 0;
+            background-color: var(--bg-color);
+        }
+
+        .dark-mode .how-to-section {
+            background-color: var(--bg-secondary);
+        }
+
+        .section-title {
+            font-size: 2rem;
+            text-align: center;
+            margin-bottom: 40px;
+            color: #000000;
+        }
+
+        .dark-mode .section-title {
+            color: var(--text-color);
+        }
+
+        .steps-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 40px;
+        }
+
+        .step-box {
+            background-color: var(--bg-secondary);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            padding: 30px;
+            min-height: 200px;
+            position: relative;
+        }
+
+        .step-number {
+            width: 40px;
+            height: 40px;
+            background-color: var(--primary-color);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 16px;
+            margin-bottom: 15px;
+        }
+
+        .step-title {
+            font-size: 18px;
+            color: #000000;
+            margin-bottom: 10px;
+        }
+
+        .dark-mode .step-title {
+            color: var(--text-color);
+        }
+
+        .step-description {
+            font-size: 14px;
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        /* Tool Section */
+        .tool-section {
+            padding: 80px 0;
+            background-color: var(--secondary-color);
+        }
+
+        .dark-mode .tool-section {
+            background: linear-gradient(135deg, #2a1a4a, #3d2a6d);
+        }
+
+        .tool-title {
+            font-size: 2.5rem;
+            text-align: center;
+            margin-bottom: 40px;
+            color: #a391f2;
+        }
+
+        .dark-mode .tool-title {
+            color: #a391f2;
+        }
+
+        .tool-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background-color: var(--bg-color);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            padding: 40px;
+        }
+
+        /* Regex Input Section */
+        .regex-input-container {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .regex-input {
+            padding: 12px 15px;
+            border-radius: var(--border-radius);
+            border: 1px solid var(--primary-color);
+            background-color: var(--bg-secondary);
+            color: var(--text-color);
+            font-family: monospace;
+            font-size: 16px;
+        }
+
+        .regex-flags {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .flag-checkbox {
+            display: none;
+        }
+
+        .flag-label {
+            padding: 8px 12px;
+            background-color: var(--bg-secondary);
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .flag-checkbox:checked + .flag-label {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        /* Test Text Area */
+        .test-text-container {
+            margin-bottom: 20px;
+        }
+
+        .test-text-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+
+        .test-textarea {
+            width: 100%;
+            min-height: 200px;
+            padding: 15px;
+            border-radius: var(--border-radius);
+            border: 1px solid var(--primary-color);
+            background-color: var(--bg-secondary);
+            color: var(--text-color);
+            font-family: monospace;
+            resize: vertical;
+        }
+
+        .highlighted-text {
+            padding: 15px;
+            border-radius: var(--border-radius);
+            border: 1px solid var(--primary-color);
+            background-color: var(--bg-secondary);
+            min-height: 200px;
+            font-family: monospace;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            position: relative;
+        }
+
+        .match {
+            background-color: var(--match-color);
+            padding: 2px 0;
+            border-radius: 3px;
+        }
+
+        .group {
+            background-color: var(--group-color);
+            padding: 2px 0;
+            border-radius: 3px;
+            margin: 1px;
+        }
+
+        /* Results Section */
+        .results-container {
+            margin-top: 30px;
+        }
+
+        .results-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .results-title {
+            font-size: 18px;
+            color: var(--primary-color);
+        }
+
+        .results-info {
+            display: flex;
+            gap: 15px;
+            font-size: 14px;
+            color: var(--text-light);
+        }
+
+        .results-content {
+            background-color: var(--bg-secondary);
+            border-radius: var(--border-radius);
+            padding: 20px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .match-item {
+            padding: 10px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+            margin-bottom: 10px;
+        }
+
+        .dark-mode .match-item {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .match-index {
+            font-weight: bold;
+            color: var(--primary-color);
+            margin-bottom: 5px;
+        }
+
+        .match-value {
+            font-family: monospace;
+            background-color: rgba(0, 0, 0, 0.05);
+            padding: 5px;
+            border-radius: 4px;
+            margin-bottom: 5px;
+        }
+
+        .dark-mode .match-value {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .groups-container {
+            margin-top: 10px;
+        }
+
+        .group-item {
+            display: flex;
+            margin-bottom: 5px;
+        }
+
+        .group-index {
+            min-width: 50px;
+            font-weight: bold;
+            color: var(--group-color);
+        }
+
+        .group-value {
+            font-family: monospace;
+        }
+
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+
+        .action-btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: var(--transition);
+            flex: 1;
+            min-width: 150px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .test-btn {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .test-btn:hover {
+            background-color: var(--primary-dark);
+        }
+
+        .clear-btn {
+            background-color: white;
+            color: var(--primary-color);
+            border: 2px solid var(--primary-color);
+        }
+
+        .clear-btn:hover {
+            background-color: var(--secondary-color);
+        }
+
+        .copy-btn {
+            background-color: var(--success-color);
+            color: white;
+        }
+
+        .copy-btn:hover {
+            background-color: #0da271;
+        }
+
+        /* Status Message */
+        .status-message {
+            padding: 15px;
+            border-radius: var(--border-radius);
+            margin-bottom: 20px;
+            text-align: center;
+            display: none;
+        }
+
+        .status-success {
+            background-color: rgba(16, 185, 129, 0.1);
+            color: var(--success-color);
+            border: 1px solid var(--success-color);
+        }
+
+        .status-error {
+            background-color: rgba(239, 68, 68, 0.1);
+            color: var(--error-color);
+            border: 1px solid var(--error-color);
+        }
+
+        /* Footer */
+        footer {
+            background-color: #000000;
+            color: white;
+            padding: 60px 0 80px;
+            position: relative;
+        }
+
+        .footer-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 60px;
+        }
+
+        .footer-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            text-decoration: none;
+        }
+
+        .footer-logo .logo-icon {
+            width: 40px;
+            height: 40px;
+        }
+
+        .footer-logo .logo-text {
+            color: #9370db;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .footer-section h3 {
+            color: white;
+            font-weight: 600;
+            font-size: 20px;
+            margin-bottom: 20px;
+        }
+
+        .footer-section h4 {
+            color: #9370db;
+            font-size: 18px;
+            margin-bottom: 15px;
+        }
+
+        .footer-links li {
+            margin-bottom: 10px;
+        }
+
+        .footer-links a {
+            color: white;
+        }
+
+        .footer-links a:hover {
+            color: #9370db;
+        }
+
+        .social-icons {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .social-icon {
+            width: 40px;
+            height: 40px;
+            background-color: #9370db;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+        }
+
+        .social-icon:hover {
+            background-color: #8a2be2;
+            transform: translateY(-3px);
+        }
+
+        .copyright {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            color: #f9f7ff;
+            font-size: 12px;
+        }
+
+        .footer-line {
+            position: absolute;
+            bottom: 50px;
+            left: 0;
+            width: 100%;
+            height: 1px;
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        /* Language Switcher */
+        .language-switcher {
+            position: fixed;
+            bottom: 10px;
+            right: 10px;
+            z-index: 1000;
+        }
+
+        .language-btn {
+            background-color: #9370db;
+            color: white;
+            border: none;
+            border-radius: 30px;
+            padding: 5px 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .language-dropdown {
+            position: absolute;
+            bottom: 100%;
+            right: 0;
+            width: 300px;
+            background-color: white;
+            border-radius: var(--border-radius);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            display: none;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .dark-mode .language-dropdown {
+            background-color: var(--bg-secondary);
+        }
+
+        .language-switcher:hover .language-dropdown {
+            display: grid;
+        }
+
+        .language-option {
+            padding: 8px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            text-align: center;
+            font-size: 14px;
+        }
+
+        .language-option:hover {
+            background-color: white;
+            color: #9370db;
+        }
+
+        .dark-mode .language-option:hover {
+            background-color: var(--bg-color);
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 992px) {
+            .steps-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .footer-container {
+                grid-template-columns: 1fr 1fr;
+            }
+            
+            .regex-input-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            nav ul, .email {
+                display: none;
+            }
+            
+            .mobile-menu-btn {
+                display: block;
+            }
+            
+            .hero h1, .tool-title {
+                font-size: 2rem;
+            }
+            
+            .hero p {
+                font-size: 1rem;
+            }
+            
+            .language-dropdown {
+                width: 250px;
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .footer-container {
+                grid-template-columns: 1fr;
+                gap: 40px;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+            
+            .action-btn {
+                width: 100%;
+            }
+            
+            .regex-flags {
+                flex-wrap: wrap;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .tool-container {
+                padding: 20px;
+            }
+            
+            .results-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+            
+            .results-info {
+                flex-wrap: wrap;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container header-container">
+            <a href="https://lollypopdf.com" class="logo">
+                <div class="logo-icon">
+                    <div class="logo-circle">LPdf</div>
+                    <div class="logo-stem"></div>
+                </div>
+                <span class="logo-text">LollyPoPdf</span>
+            </a>
+            
+            <nav>
+                <ul>
+                    <li><a href="https://lollypopdf.github.io/LollyPoPdf#home" class="nav-link" data-i18n="nav.home">Home</a></li>
+                    <li><a href="https://lollypopdf.github.io/LollyPoPdf#about" class="nav-link" data-i18n="nav.about">About Us</a></li>
+                    <li><a href="https://lollypopdf.github.io/LollyPoPdf#tools" class="nav-link" data-i18n="nav.tools">Tools</a></li>
+                    <li><a href="contact.html" class="nav-link" data-i18n="nav.contact">Contact</a></li>
+                </ul>
+            </nav>
+            
+            <div class="header-right">
+                <span class="email">lollypoppdf@gmail.com</span>
+                <button class="theme-toggle" id="themeToggle">
+                    <i class="fas fa-moon"></i>
+                </button>
+                <button class="mobile-menu-btn" id="mobileMenuBtn">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </div>
+        
+        <!-- Mobile Menu -->
+        <div class="mobile-menu" id="mobileMenu">
+            <ul>
+                <li><a href="https://lollypopdf.github.io/LollyPoPdf#home" class="nav-link" data-i18n="nav.home">Home</a></li>
+                <li><a href="https://lollypopdf.github.io/LollyPoPdf#about" class="nav-link" data-i18n="nav.about">About Us</a></li>
+                <li><a href="https://lollypopdf.github.io/LollyPoPdf#tools" class="nav-link" data-i18n="nav.tools">Tools</a></li>
+                <li><a href="contact.html" class="nav-link" data-i18n="nav.contact">Contact</a></li>
+            </ul>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <h1 data-i18n="hero.title">Regex Tester Tool</h1>
+            <p data-i18n="hero.description">Test your regular expressions in real-time with full match highlighting, groups, and error detection. All processing happens locally with complete privacy.</p>
+        </div>
+    </section>
+
+    <!-- How to Use Section -->
+    <section class="how-to-section">
+        <div class="container">
+            <h2 class="section-title" data-i18n="howto.title">How to Use the Regex Tester</h2>
+            <div class="steps-container">
+                <div class="step-box">
+                    <div class="step-number">1</div>
+                    <h3 class="step-title" data-i18n="howto.step1.title">Enter Your Regex</h3>
+                    <p class="step-description" data-i18n="howto.step1.description">Type your regular expression pattern in the input field. Use flags like 'g' (global), 'i' (case-insensitive), 'm' (multiline), etc. to modify matching behavior.</p>
+                </div>
+                <div class="step-box">
+                    <div class="step-number">2</div>
+                    <h3 class="step-title" data-i18n="howto.step2.title">Provide Test Text</h3>
+                    <p class="step-description" data-i18n="howto.step2.description">Enter or paste the text you want to test your regex against. You'll see real-time highlighting of matches as you type.</p>
+                </div>
+                <div class="step-box">
+                    <div class="step-number">3</div>
+                    <h3 class="step-title" data-i18n="howto.step3.title">Analyze Results</h3>
+                    <p class="step-description" data-i18n="howto.step3.description">View detailed match information including positions, groups, and full match values. All processing happens instantly in your browser.</p>
+                </div>
+                <div class="step-box">
+                    <div class="step-number">4</div>
+                    <h3 class="step-title" data-i18n="howto.step4.title">Copy or Clear</h3>
+                    <p class="step-description" data-i18n="howto.step4.description">Copy your results to clipboard or clear all inputs to start fresh. Your data never leaves your browser.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Tool Section -->
+    <section class="tool-section">
+        <div class="container">
+            <h2 class="tool-title" data-i18n="tool.title">Regex Tester</h2>
+            <div class="tool-container">
+                <!-- Status Message -->
+                <div class="status-message" id="statusMessage"></div>
+
+                <!-- Regex Input Section -->
+                <div class="regex-input-container">
+                    <input type="text" id="regexInput" class="regex-input" placeholder="Enter your regular expression (e.g., [a-z]+)" value="[a-z]+">
+                    <div class="regex-flags">
+                        <input type="checkbox" id="flagG" class="flag-checkbox" checked>
+                        <label for="flagG" class="flag-label">g (global)</label>
+                        
+                        <input type="checkbox" id="flagI" class="flag-checkbox">
+                        <label for="flagI" class="flag-label">i (ignore case)</label>
+                        
+                        <input type="checkbox" id="flagM" class="flag-checkbox">
+                        <label for="flagM" class="flag-label">m (multiline)</label>
+                        
+                        <input type="checkbox" id="flagS" class="flag-checkbox">
+                        <label for="flagS" class="flag-label">s (dotall)</label>
+                        
+                        <input type="checkbox" id="flagU" class="flag-checkbox">
+                        <label for="flagU" class="flag-label">u (unicode)</label>
+                    </div>
+                </div>
+
+                <!-- Test Text Area -->
+                <div class="test-text-container">
+                    <label for="testTextarea" class="test-text-label" data-i18n="tool.testText">Test Text</label>
+                    <textarea id="testTextarea" class="test-textarea" placeholder="Enter text to test your regex against">The quick brown fox jumps over the lazy dog. Email: test@example.com, Phone: (123) 456-7890.</textarea>
+                </div>
+
+                <!-- Highlighted Text Display -->
+                <div class="highlighted-text" id="highlightedText"></div>
+
+                <!-- Results Section -->
+                <div class="results-container">
+                    <div class="results-header">
+                        <h3 class="results-title" data-i18n="tool.results">Match Results</h3>
+                        <div class="results-info">
+                            <span id="matchesCount">0 matches</span>
+                            <span id="executionTime">0ms</span>
+                        </div>
+                    </div>
+                    <div class="results-content" id="resultsContent">
+                        <!-- Results will be populated by JavaScript -->
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="action-buttons">
+                    <button class="action-btn test-btn" id="testBtn">
+                        <i class="fas fa-play"></i> <span data-i18n="tool.test">Test Regex</span>
+                    </button>
+                    <button class="action-btn clear-btn" id="clearBtn">
+                        <i class="fas fa-redo"></i> <span data-i18n="tool.clear">Clear All</span>
+                    </button>
+                    <button class="action-btn copy-btn" id="copyBtn">
+                        <i class="fas fa-copy"></i> <span data-i18n="tool.copy">Copy Results</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container footer-container">
+            <!-- Left Section -->
+            <div class="footer-section">
+                <a href="https://lollypopdf.com" class="footer-logo">
+                    <div class="logo-icon">
+                        <div class="logo-circle">LPdf</div>
+                        <div class="logo-stem"></div>
+                    </div>
+                    <span class="logo-text">LollyPoPdf</span>
+                </a>
+                <h3 data-i18n="footer.follow">FOLLOW US</h3>
+                <div class="social-icons">
+                    <a href="https://facebook.com/lollypopdf" class="social-icon"><i class="fab fa-facebook-f"></i></a>
+                    <a href="https://linkedin.com/company/lollypopdf" class="social-icon"><i class="fab fa-linkedin-in"></i></a>
+                    <a href="https://twitter.com/lollypopdf" class="social-icon"><i class="fab fa-twitter"></i></a>
+                    <a href="https://instagram.com/lollypopdf" class="social-icon"><i class="fab fa-instagram"></i></a>
+                    <a href="https://pinterest.com/lollypopdf" class="social-icon"><i class="fab fa-pinterest-p"></i></a>
+                </div>
+            </div>
+            
+            <!-- Middle Section - Popular Categories -->
+            <div class="footer-section">
+                <h4 data-i18n="footer.categories">Popular Categories</h4>
+                <ul class="footer-links">
+                    <li><a href="https://lollypopdf.com#pdf-tools" data-i18n="footer.categories.pdf">PDF Tools</a></li>
+                    <li><a href="https://lollypopdf.com#image-tools" data-i18n="footer.categories.image">Image Tools</a></li>
+                    <li><a href="https://lollypopdf.com#text-tools" data-i18n="footer.categories.text">Text Tools</a></li>
+                    <li><a href="https://lollypopdf.com#audio-video-tools" data-i18n="footer.categories.av">Audio/Video Tools</a></li>
+                    <li><a href="https://lollypopdf.com#web-developer-tools" data-i18n="footer.categories.web">WebDeveloper Tools</a></li>
+                    <li><a href="https://lollypopdf.com#calculator-tools" data-i18n="footer.categories.calc">Calculator Tools</a></li>
+                    <li><a href="https://lollypopdf.com#utility-tools" data-i18n="footer.categories.util">Utility Tools</a></li>
+                    <li><a href="https://lollypopdf.com#color-tools" data-i18n="footer.categories.color">Color Tools</a></li>
+                </ul>
+            </div>
+            
+            <!-- Right Section - Quick Links -->
+            <div class="footer-section">
+                <h4 data-i18n="footer.quicklinks">Quick Links</h4>
+                <ul class="footer-links">
+                    <li><a href="https://lollypopdf.github.io/LollyPoPdf#home" data-i18n="nav.home">Home</a></li>
+                    <li><a href="https://lollypopdf.github.io/LollyPoPdf#tools" data-i18n="footer.links.tools">All Tools</a></li>
+                    <li><a href="faq.html" data-i18n="footer.links.faq">FAQ</a></li>
+                    <li><a href="contact.html" data-i18n="footer.links.contact">Contact</a></li>
+                    <li><a href="privacy-policy.html" data-i18n="footer.links.privacy">Privacy Policy</a></li>
+                    <li><a href="disclaimer.html" data-i18n="footer.links.disclaimer">Disclaimer</a></li>
+                    <li><a href="terms.html" data-i18n="footer.links.terms">Terms of Service</a></li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="footer-line"></div>
+        <div class="copyright" data-i18n="footer.copyright">© 2025 LollyPoPDF. All rights reserved.</div>
+    </footer>
+
+    <!-- Language Switcher -->
+    <div class="language-switcher">
+        <button class="language-btn">
+            <i class="fas fa-globe"></i>
+            <span id="currentLanguage">English</span>
+        </button>
+        <div class="language-dropdown">
+            <div class="language-option" data-lang="en">English</div>
+            <div class="language-option" data-lang="es">Español</div>
+            <div class="language-option" data-lang="fr">Français</div>
+            <div class="language-option" data-lang="de">Deutsch</div>
+            <div class="language-option" data-lang="it">Italiano</div>
+            <div class="language-option" data-lang="pt">Português</div>
+            <div class="language-option" data-lang="ja">日本語</div>
+            <div class="language-option" data-lang="ru">Pусский</div>
+            <div class="language-option" data-lang="ko">한국어</div>
+            <div class="language-option" data-lang="zh-CN">中文 (简体)</div>
+            <div class="language-option" data-lang="zh-TW">中文 (繁體)</div>
+            <div class="language-option" data-lang="ar">العربية</div>
+            <div class="language-option" data-lang="fa">فارسی</div>
+            <div class="language-option" data-lang="bg">Български</div>
+            <div class="language-option" data-lang="ca">Català</div>
+            <div class="language-option" data-lang="nl">Nederlands</div>
+            <div class="language-option" data-lang="el">Ελληνικά</div>
+            <div class="language-option" data-lang="hi">हिन्दी</div>
+            <div class="language-option" data-lang="te">తెలుగు</div>
+            <div class="language-option" data-lang="kn">ಕನ್ನಡ</div>
+            <div class="language-option" data-lang="ta">தமிழ்</div>
+            <div class="language-option" data-lang="ml">മലയാളം</div>
+            <div class="language-option" data-lang="id">Bahasa Indonesia</div>
+            <div class="language-option" data-lang="ms">Bahasa Melayu</div>
+            <div class="language-option" data-lang="pl">Polski</div>
+            <div class="language-option" data-lang="th">ภาษาไทย</div>
+            <div class="language-option" data-lang="tr">Türkçe</div>
+            <div class="language-option" data-lang="uk">Українська</div>
+            <div class="language-option" data-lang="vi">Tiếng Việt</div>
+            <div class="language-option" data-lang="is">Íslenska</div>
+            <div class="language-option" data-lang="no">Norsk</div>
+            <div class="language-option" data-lang="sv">Svenska</div>
+            <div class="language-option" data-lang="fi">Suomi</div>
+            <div class="language-option" data-lang="cs">Čeština</div>
+        </div>
+    </div>
+
+    <script>
+        // Theme Toggle
+        const themeToggle = document.getElementById('themeToggle');
+        const body = document.body;
+        
+        // Check for saved theme preference or respect OS preference
+        const savedTheme = localStorage.getItem('theme') || 
+            (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        
+        if (savedTheme === 'dark') {
+            body.classList.add('dark-mode');
+            themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+        }
+        
+        themeToggle.addEventListener('click', () => {
+            body.classList.toggle('dark-mode');
+            const isDarkMode = body.classList.contains('dark-mode');
+            
+            if (isDarkMode) {
+                themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+                localStorage.setItem('theme', 'dark');
+            } else {
+                themeToggle.innerHTML = '<i class="fas fa-moon"></i>';
+                localStorage.setItem('theme', 'light');
+            }
+        });
+
+        // Mobile Menu Toggle
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const mobileMenu = document.getElementById('mobileMenu');
+        
+        mobileMenuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('active');
+            
+            // Change icon based on menu state
+            if (mobileMenu.classList.contains('active')) {
+                mobileMenuBtn.innerHTML = '<i class="fas fa-times"></i>';
+            } else {
+                mobileMenuBtn.innerHTML = '<i class="fas fa-bars"></i>';
+            }
+        });
+
+        // Close mobile menu when clicking on a link
+        const mobileMenuLinks = mobileMenu.querySelectorAll('a');
+        mobileMenuLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                mobileMenu.classList.remove('active');
+                mobileMenuBtn.innerHTML = '<i class="fas fa-bars"></i>';
+            });
+        });
+
+        // Regex Tester Functionality
+        const regexInput = document.getElementById('regexInput');
+        const testTextarea = document.getElementById('testTextarea');
+        const highlightedText = document.getElementById('highlightedText');
+        const resultsContent = document.getElementById('resultsContent');
+        const matchesCount = document.getElementById('matchesCount');
+        const executionTime = document.getElementById('executionTime');
+        const testBtn = document.getElementById('testBtn');
+        const clearBtn = document.getElementById('clearBtn');
+        const copyBtn = document.getElementById('copyBtn');
+        const statusMessage = document.getElementById('statusMessage');
+        const flagCheckboxes = document.querySelectorAll('.flag-checkbox');
+
+        // Initialize with default test
+        testRegex();
+
+        // Test button click event
+        testBtn.addEventListener('click', testRegex);
+
+        // Clear button click event
+        clearBtn.addEventListener('click', () => {
+            regexInput.value = '';
+            testTextarea.value = '';
+            highlightedText.innerHTML = '';
+            resultsContent.innerHTML = '';
+            matchesCount.textContent = '0 matches';
+            executionTime.textContent = '0ms';
+            showStatus('All inputs cleared.', 'success');
+        });
+
+        // Copy button click event
+        copyBtn.addEventListener('click', () => {
+            const resultsText = getResultsText();
+            copyToClipboard(resultsText);
+            showStatus('Results copied to clipboard!', 'success');
+        });
+
+        // Real-time testing on input change
+        regexInput.addEventListener('input', testRegex);
+        testTextarea.addEventListener('input', testRegex);
+        flagCheckboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', testRegex);
+        });
+
+        // Main regex testing function
+        function testRegex() {
+            const startTime = performance.now();
+            
+            try {
+                const regexPattern = regexInput.value;
+                const testText = testTextarea.value;
+                
+                // Get selected flags
+                const flags = getSelectedFlags();
+                
+                // Create regex with selected flags
+                const regex = new RegExp(regexPattern, flags);
+                
+                // Test the regex
+                const matches = [...testText.matchAll(regex)];
+                
+                // Update highlighted text
+                updateHighlightedText(testText, matches);
+                
+                // Update results
+                updateResults(matches);
+                
+                // Update execution time
+                const endTime = performance.now();
+                executionTime.textContent = `${Math.round(endTime - startTime)}ms`;
+                
+                // Update matches count
+                matchesCount.textContent = `${matches.length} ${matches.length === 1 ? 'match' : 'matches'}`;
+                
+                // Clear any error status
+                statusMessage.style.display = 'none';
+                
+            } catch (error) {
+                // Handle regex errors
+                highlightedText.textContent = testTextarea.value;
+                resultsContent.innerHTML = `<div class="status-error" style="padding: 10px; border-radius: 6px;">Regex Error: ${error.message}</div>`;
+                matchesCount.textContent = '0 matches';
+                executionTime.textContent = '0ms';
+            }
+        }
+
+        // Get selected regex flags
+        function getSelectedFlags() {
+            let flags = '';
+            if (document.getElementById('flagG').checked) flags += 'g';
+            if (document.getElementById('flagI').checked) flags += 'i';
+            if (document.getElementById('flagM').checked) flags += 'm';
+            if (document.getElementById('flagS').checked) flags += 's';
+            if (document.getElementById('flagU').checked) flags += 'u';
+            return flags;
+        }
+
+        // Update highlighted text with matches
+        function updateHighlightedText(text, matches) {
+            if (!text) {
+                highlightedText.innerHTML = '';
+                return;
+            }
+            
+            let highlightedHTML = '';
+            let lastIndex = 0;
+            
+            matches.forEach(match => {
+                // Add text before the match
+                highlightedHTML += escapeHtml(text.substring(lastIndex, match.index));
+                
+                // Add the match with highlighting
+                highlightedHTML += `<span class="match">${escapeHtml(match[0])}</span>`;
+                
+                lastIndex = match.index + match[0].length;
+            });
+            
+            // Add remaining text after last match
+            highlightedHTML += escapeHtml(text.substring(lastIndex));
+            
+            highlightedText.innerHTML = highlightedHTML;
+        }
+
+        // Update results display
+        function updateResults(matches) {
+            if (matches.length === 0) {
+                resultsContent.innerHTML = '<p>No matches found.</p>';
+                return;
+            }
+            
+            let resultsHTML = '';
+            
+            matches.forEach((match, index) => {
+                resultsHTML += `
+                    <div class="match-item">
+                        <div class="match-index">Match ${index + 1} (index: ${match.index})</div>
+                        <div class="match-value">${escapeHtml(match[0])}</div>
+                `;
+                
+                // Add groups if any
+                if (match.length > 1) {
+                    resultsHTML += `<div class="groups-container">`;
+                    for (let i = 1; i < match.length; i++) {
+                        resultsHTML += `
+                            <div class="group-item">
+                                <div class="group-index">Group ${i}:</div>
+                                <div class="group-value">${escapeHtml(match[i] || 'undefined')}</div>
+                            </div>
+                        `;
+                    }
+                    resultsHTML += `</div>`;
+                }
+                
+                resultsHTML += `</div>`;
+            });
+            
+            resultsContent.innerHTML = resultsHTML;
+        }
+
+        // Get results as text for copying
+        function getResultsText() {
+            const regexPattern = regexInput.value;
+            const flags = getSelectedFlags();
+            const testText = testTextarea.value;
+            
+            let resultsText = `Regex: /${regexPattern}/${flags}\n`;
+            resultsText += `Test Text: ${testText}\n\n`;
+            resultsText += `Results:\n`;
+            
+            try {
+                const regex = new RegExp(regexPattern, flags);
+                const matches = [...testText.matchAll(regex)];
+                
+                if (matches.length === 0) {
+                    resultsText += 'No matches found.';
+                } else {
+                    matches.forEach((match, index) => {
+                        resultsText += `Match ${index + 1} (index: ${match.index}): ${match[0]}\n`;
+                        
+                        if (match.length > 1) {
+                            for (let i = 1; i < match.length; i++) {
+                                resultsText += `  Group ${i}: ${match[i] || 'undefined'}\n`;
+                            }
+                        }
+                        
+                        resultsText += '\n';
+                    });
+                }
+            } catch (error) {
+                resultsText += `Regex Error: ${error.message}`;
+            }
+            
+            return resultsText;
+        }
+
+        // Utility functions
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).catch(err => {
+                console.error('Failed to copy: ', err);
+            });
+        }
+
+        function showStatus(message, type) {
+            statusMessage.textContent = message;
+            statusMessage.className = 'status-message';
+            
+            if (type === 'success') {
+                statusMessage.classList.add('status-success');
+            } else if (type === 'error') {
+                statusMessage.classList.add('status-error');
+            }
+            
+            statusMessage.style.display = 'block';
+            
+            // Auto-hide after 3 seconds
+            setTimeout(() => {
+                statusMessage.style.display = 'none';
+            }, 3000);
+        }
+
+        // Language Switcher
+        const languageBtn = document.querySelector('.language-btn');
+        const currentLanguageElement = document.getElementById('currentLanguage');
+        const languageDropdown = document.querySelector('.language-dropdown');
+        
+        const languages = [
+            { code: 'en', name: 'English' },
+            { code: 'es', name: 'Español' },
+            { code: 'fr', name: 'Français' },
+            { code: 'de', name: 'Deutsch' },
+            { code: 'it', name: 'Italiano' },
+            { code: 'pt', name: 'Português' },
+            { code: 'ja', name: '日本語' },
+            { code: 'ru', name: 'Pусский' },
+            { code: 'ko', name: '한국어' },
+            { code: 'zh-CN', name: '中文 (简体)' },
+            { code: 'zh-TW', name: '中文 (繁體)' },
+            { code: 'ar', name: 'العربية' },
+            { code: 'fa', name: 'فارسی' },
+            { code: 'bg', name: 'Български' },
+            { code: 'ca', name: 'Català' },
+            { code: 'nl', name: 'Nederlands' },
+            { code: 'el', name: 'Ελληνικά' },
+            { code: 'hi', name: 'हिन्दी' },
+            { code: 'te', name: 'తెలుగు' },
+            { code: 'kn', name: 'ಕನ್ನಡ' },
+            { code: 'ta', name: 'தமிழ்' },
+            { code: 'ml', name: 'മലയാളം' },
+            { code: 'id', name: 'Bahasa Indonesia' },
+            { code: 'ms', name: 'Bahasa Melayu' },
+            { code: 'pl', name: 'Polski' },
+            { code: 'th', name: 'ภาษาไทย' },
+            { code: 'tr', name: 'Türkçe' },
+            { code: 'uk', name: 'Українська' },
+            { code: 'vi', name: 'Tiếng Việt' },
+            { code: 'is', name: 'Íslenska' },
+            { code: 'no', name: 'Norsk' },
+            { code: 'sv', name: 'Svenska' },
+            { code: 'fi', name: 'Suomi' },
+            { code: 'cs', name: 'Čeština' }
+        ];
+
+        // Translation data
+        const translations = {
+            en: {
+                "nav.home": "Home",
+                "nav.about": "About Us",
+                "nav.tools": "Tools",
+                "nav.contact": "Contact",
+                "hero.title": "Regex Tester Tool",
+                "hero.description": "Test your regular expressions in real-time with full match highlighting, groups, and error detection. All processing happens locally with complete privacy.",
+                "howto.title": "How to Use the Regex Tester",
+                "howto.step1.title": "Enter Your Regex",
+                "howto.step1.description": "Type your regular expression pattern in the input field. Use flags like 'g' (global), 'i' (case-insensitive), 'm' (multiline), etc. to modify matching behavior.",
+                "howto.step2.title": "Provide Test Text",
+                "howto.step2.description": "Enter or paste the text you want to test your regex against. You'll see real-time highlighting of matches as you type.",
+                "howto.step3.title": "Analyze Results",
+                "howto.step3.description": "View detailed match information including positions, groups, and full match values. All processing happens instantly in your browser.",
+                "howto.step4.title": "Copy or Clear",
+                "howto.step4.description": "Copy your results to clipboard or clear all inputs to start fresh. Your data never leaves your browser.",
+                "tool.title": "Regex Tester",
+                "tool.testText": "Test Text",
+                "tool.results": "Match Results",
+                "tool.test": "Test Regex",
+                "tool.clear": "Clear All",
+                "tool.copy": "Copy Results",
+                "footer.follow": "FOLLOW US",
+                "footer.categories": "Popular Categories",
+                "footer.categories.pdf": "PDF Tools",
+                "footer.categories.image": "Image Tools",
+                "footer.categories.text": "Text Tools",
+                "footer.categories.av": "Audio/Video Tools",
+                "footer.categories.web": "WebDeveloper Tools",
+                "footer.categories.calc": "Calculator Tools",
+                "footer.categories.util": "Utility Tools",
+                "footer.categories.color": "Color Tools",
+                "footer.quicklinks": "Quick Links",
+                "footer.links.tools": "All Tools",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Contact",
+                "footer.links.privacy": "Privacy Policy",
+                "footer.links.disclaimer": "Disclaimer",
+                "footer.links.terms": "Terms of Service",
+                "footer.copyright": "© 2025 LollyPoPDF. All rights reserved."
+            },
+            es: {
+                "nav.home": "Inicio",
+                "nav.about": "Sobre Nosotros",
+                "nav.tools": "Herramientas",
+                "nav.contact": "Contacto",
+                "hero.title": "Herramienta Probador de Expresiones Regulares",
+                "hero.description": "Prueba tus expresiones regulares en tiempo real con resaltado de coincidencias, grupos y detección de errores. Todo el procesamiento ocurre localmente con privacidad completa.",
+                "howto.title": "Cómo Usar el Probador de Expresiones Regulares",
+                "howto.step1.title": "Ingresa Tu Expresión Regular",
+                "howto.step1.description": "Escribe tu patrón de expresión regular en el campo de entrada. Usa banderas como 'g' (global), 'i' (insensible a mayúsculas/minúsculas), 'm' (multilínea), etc. para modificar el comportamiento de coincidencia.",
+                "howto.step2.title": "Proporciona Texto de Prueba",
+                "howto.step2.description": "Ingresa o pega el texto contra el que quieres probar tu expresión regular. Verás el resaltado de coincidencias en tiempo real mientras escribes.",
+                "howto.step3.title": "Analiza los Resultados",
+                "howto.step3.description": "Visualiza información detallada de coincidencias incluyendo posiciones, grupos y valores completos. Todo el procesamiento ocurre instantáneamente en tu navegador.",
+                "howto.step4.title": "Copia o Limpia",
+                "howto.step4.description": "Copia tus resultados al portapapeles o limpia todas las entradas para comenzar de nuevo. Tus datos nunca salen de tu navegador.",
+                "tool.title": "Probador de Expresiones Regulares",
+                "tool.testText": "Texto de Prueba",
+                "tool.results": "Resultados de Coincidencias",
+                "tool.test": "Probar Expresión Regular",
+                "tool.clear": "Limpiar Todo",
+                "tool.copy": "Copiar Resultados",
+                "footer.follow": "SÍGUENOS",
+                "footer.categories": "Categorías Populares",
+                "footer.categories.pdf": "Herramientas PDF",
+                "footer.categories.image": "Herramientas de Imagen",
+                "footer.categories.text": "Herramientas de Texto",
+                "footer.categories.av": "Herramientas de Audio/Video",
+                "footer.categories.web": "Herramientas WebDesarrollador",
+                "footer.categories.calc": "Herramientas de Calculadora",
+                "footer.categories.util": "Herramientas de Utilidad",
+                "footer.categories.color": "Herramientas de Color",
+                "footer.quicklinks": "Enlaces Rápidos",
+                "footer.links.tools": "Todas las Herramientas",
+                "footer.links.faq": "Preguntas Frecuentes",
+                "footer.links.contact": "Contacto",
+                "footer.links.privacy": "Política de Privacidad",
+                "footer.links.disclaimer": "Descargo de Responsabilidad",
+                "footer.links.terms": "Términos de Servicio",
+                "footer.copyright": "© 2025 LollyPoPDF. Todos los derechos reservados."
+            },
+            fr: {
+                "nav.home": "Accueil",
+                "nav.about": "À propos de nous",
+                "nav.tools": "Outils",
+                "nav.contact": "Contact",
+                "hero.title": "Outil de Test d'Expressions Régulières",
+                "hero.description": "Testez vos expressions régulières en temps réel avec mise en évidence des correspondances, groupes et détection d'erreurs. Tout le traitement se fait localement avec une confidentialité totale.",
+                "howto.title": "Comment Utiliser le Testeur d'Expressions Régulières",
+                "howto.step1.title": "Entrez Votre Expression Régulière",
+                "howto.step1.description": "Tapez votre motif d'expression régulière dans le champ de saisie. Utilisez des drapeaux comme 'g' (global), 'i' (insensible à la casse), 'm' (multiligne), etc. pour modifier le comportement de correspondance.",
+                "howto.step2.title": "Fournissez le Texte de Test",
+                "howto.step2.description": "Entrez ou collez le texte sur lequel vous voulez tester votre expression régulière. Vous verrez la mise en évidence des correspondances en temps réel pendant que vous tapez.",
+                "howto.step3.title": "Analysez les Résultats",
+                "howto.step3.description": "Consultez des informations détaillées sur les correspondances, y compris les positions, groupes et valeurs complètes. Tout le traitement se fait instantanément dans votre navigateur.",
+                "howto.step4.title": "Copiez ou Effacez",
+                "howto.step4.description": "Copiez vos résultats dans le presse-papiers ou effacez toutes les entrées pour recommencer. Vos données ne quittent jamais votre navigateur.",
+                "tool.title": "Testeur d'Expressions Régulières",
+                "tool.testText": "Texte de Test",
+                "tool.results": "Résultats des Correspondances",
+                "tool.test": "Tester l'Expression Régulière",
+                "tool.clear": "Tout Effacer",
+                "tool.copy": "Copier les Résultats",
+                "footer.follow": "SUIVEZ-NOUS",
+                "footer.categories": "Catégories Populaires",
+                "footer.categories.pdf": "Outils PDF",
+                "footer.categories.image": "Outils d'Image",
+                "footer.categories.text": "Outils de Texte",
+                "footer.categories.av": "Outils Audio/Vidéo",
+                "footer.categories.web": "Outils WebDéveloppeur",
+                "footer.categories.calc": "Outils de Calculatrice",
+                "footer.categories.util": "Outils Utilitaires",
+                "footer.categories.color": "Outils de Couleur",
+                "footer.quicklinks": "Liens Rapides",
+                "footer.links.tools": "Tous les Outils",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Contact",
+                "footer.links.privacy": "Politique de Confidentialité",
+                "footer.links.disclaimer": "Avertissement",
+                "footer.links.terms": "Conditions d'Utilisation",
+                "footer.copyright": "© 2025 LollyPoPDF. Tous droits réservés."
+            },
+            de: {
+                "nav.home": "Startseite",
+                "nav.about": "Über uns",
+                "nav.tools": "Werkzeuge",
+                "nav.contact": "Kontakt",
+                "hero.title": "Regex-Testwerkzeug",
+                "hero.description": "Testen Sie Ihre regulären Ausdrücke in Echtzeit mit vollständiger Trefferhervorhebung, Gruppen und Fehlererkennung. Die gesamte Verarbeitung erfolgt lokal mit vollständiger Privatsphäre.",
+                "howto.title": "So verwenden Sie den Regex-Tester",
+                "howto.step1.title": "Geben Sie Ihren Regex ein",
+                "howto.step1.description": "Geben Sie Ihr reguläres Ausdrucksmuster in das Eingabefeld ein. Verwenden Sie Flags wie 'g' (global), 'i' (groß-/kleinschreibungsunabhängig), 'm' (mehrzeilig) usw., um das Übereinstimmungsverhalten zu ändern.",
+                "howto.step2.title": "Geben Sie Testtext an",
+                "howto.step2.description": "Geben Sie den Text ein oder fügen Sie ihn ein, gegen den Sie Ihren regulären Ausdruck testen möchten. Sie sehen in Echtzeit die Hervorhebung von Übereinstimmungen während der Eingabe.",
+                "howto.step3.title": "Ergebnisse analysieren",
+                "howto.step3.description": "Zeigen Sie detaillierte Übereinstimmungsinformationen an, einschließlich Positionen, Gruppen und vollständigen Übereinstimmungswerten. Die gesamte Verarbeitung erfolgt sofort in Ihrem Browser.",
+                "howto.step4.title": "Kopieren oder Löschen",
+                "howto.step4.description": "Kopieren Sie Ihre Ergebnisse in die Zwischenablage oder löschen Sie alle Eingaben, um neu zu beginnen. Ihre Daten verlassen niemals Ihren Browser.",
+                "tool.title": "Regex-Tester",
+                "tool.testText": "Testtext",
+                "tool.results": "Übereinstimmungsergebnisse",
+                "tool.test": "Regex testen",
+                "tool.clear": "Alles löschen",
+                "tool.copy": "Ergebnisse kopieren",
+                "footer.follow": "FOLGEN SIE UNS",
+                "footer.categories": "Beliebte Kategorien",
+                "footer.categories.pdf": "PDF-Werkzeuge",
+                "footer.categories.image": "Bildwerkzeuge",
+                "footer.categories.text": "Textwerkzeuge",
+                "footer.categories.av": "Audio/Video-Werkzeuge",
+                "footer.categories.web": "WebEntwickler-Werkzeuge",
+                "footer.categories.calc": "Rechnerwerkzeuge",
+                "footer.categories.util": "Hilfsprogramme",
+                "footer.categories.color": "Farbwerkzeuge",
+                "footer.quicklinks": "Schnelllinks",
+                "footer.links.tools": "Alle Werkzeuge",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Kontakt",
+                "footer.links.privacy": "Datenschutzrichtlinie",
+                "footer.links.disclaimer": "Haftungsausschluss",
+                "footer.links.terms": "Nutzungsbedingungen",
+                "footer.copyright": "© 2025 LollyPoPDF. Alle Rechte vorbehalten."
+            },
+            it: {
+                "nav.home": "Home",
+                "nav.about": "Chi siamo",
+                "nav.tools": "Strumenti",
+                "nav.contact": "Contatto",
+                "hero.title": "Strumento di Test delle Espressioni Regolari",
+                "hero.description": "Testa le tue espressioni regolari in tempo reale con evidenziazione completa delle corrispondenze, gruppi e rilevamento errori. Tutta l'elaborazione avviene localmente con completa privacy.",
+                "howto.title": "Come Utilizzare il Tester di Espressioni Regolari",
+                "howto.step1.title": "Inserisci la Tua Espressione Regolare",
+                "howto.step1.description": "Digita il tuo modello di espressione regolare nel campo di input. Usa flag come 'g' (globale), 'i' (insensibile alle maiuscole/minuscole), 'm' (multiriga), ecc. per modificare il comportamento di corrispondenza.",
+                "howto.step2.title": "Fornisci il Testo di Prova",
+                "howto.step2.description": "Inserisci o incolla il testo su cui vuoi testare la tua espressione regolare. Vedrai l'evidenziazione delle corrispondenze in tempo reale mentre digiti.",
+                "howto.step3.title": "Analizza i Risultati",
+                "howto.step3.description": "Visualizza informazioni dettagliate sulle corrispondenze, incluse posizioni, gruppi e valori completi. Tutta l'elaborazione avviene istantaneamente nel tuo browser.",
+                "howto.step4.title": "Copia o Cancella",
+                "howto.step4.description": "Copia i tuoi risultati negli appunti o cancella tutti gli input per ricominciare. I tuoi dati non lasciano mai il tuo browser.",
+                "tool.title": "Tester di Espressioni Regolari",
+                "tool.testText": "Testo di Prova",
+                "tool.results": "Risultati Corrispondenze",
+                "tool.test": "Testa Espressione Regolare",
+                "tool.clear": "Cancella Tutto",
+                "tool.copy": "Copia Risultati",
+                "footer.follow": "SEGUICI",
+                "footer.categories": "Categorie Popolari",
+                "footer.categories.pdf": "Strumenti PDF",
+                "footer.categories.image": "Strumenti Immagine",
+                "footer.categories.text": "Strumenti Testo",
+                "footer.categories.av": "Strumenti Audio/Video",
+                "footer.categories.web": "Strumenti Sviluppatore Web",
+                "footer.categories.calc": "Strumenti Calcolatrice",
+                "footer.categories.util": "Strumenti Utilità",
+                "footer.categories.color": "Strumenti Colore",
+                "footer.quicklinks": "Link Rapidi",
+                "footer.links.tools": "Tutti gli Strumenti",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Contatto",
+                "footer.links.privacy": "Informativa sulla Privacy",
+                "footer.links.disclaimer": "Disclaimer",
+                "footer.links.terms": "Termini di Servizio",
+                "footer.copyright": "© 2025 LollyPoPDF. Tutti i diritti riservati."
+            },
+            pt: {
+                "nav.home": "Início",
+                "nav.about": "Sobre Nós",
+                "nav.tools": "Ferramentas",
+                "nav.contact": "Contato",
+                "hero.title": "Ferramenta de Teste de Expressões Regulares",
+                "hero.description": "Teste suas expressões regulares em tempo real com destaque completo de correspondências, grupos e detecção de erros. Todo o processamento acontece localmente com privacidade total.",
+                "howto.title": "Como Usar o Testador de Expressões Regulares",
+                "howto.step1.title": "Digite Sua Expressão Regular",
+                "howto.step1.description": "Digite seu padrão de expressão regular no campo de entrada. Use flags como 'g' (global), 'i' (ignorar maiúsculas/minúsculas), 'm' (multilinha), etc. para modificar o comportamento de correspondência.",
+                "howto.step2.title": "Forneça o Texto de Teste",
+                "howto.step2.description": "Digite ou cole o texto no qual você deseja testar sua expressão regular. Você verá o destaque das correspondências em tempo real enquanto digita.",
+                "howto.step3.title": "Analise os Resultados",
+                "howto.step3.description": "Visualize informações detalhadas de correspondências, incluindo posições, grupos e valores completos. Todo o processamento acontece instantaneamente no seu navegador.",
+                "howto.step4.title": "Copie ou Limpe",
+                "howto.step4.description": "Copie seus resultados para a área de transferência ou limpe todas as entradas para começar de novo. Seus dados nunca saem do seu navegador.",
+                "tool.title": "Testador de Expressões Regulares",
+                "tool.testText": "Texto de Teste",
+                "tool.results": "Resultados de Correspondências",
+                "tool.test": "Testar Expressão Regular",
+                "tool.clear": "Limpar Tudo",
+                "tool.copy": "Copiar Resultados",
+                "footer.follow": "SIGA-NOS",
+                "footer.categories": "Categorias Populares",
+                "footer.categories.pdf": "Ferramentas PDF",
+                "footer.categories.image": "Ferramentas de Imagem",
+                "footer.categories.text": "Ferramentas de Texto",
+                "footer.categories.av": "Ferramentas de Áudio/Vídeo",
+                "footer.categories.web": "Ferramentas WebDesenvolvedor",
+                "footer.categories.calc": "Ferramentas de Calculadora",
+                "footer.categories.util": "Ferramentas de Utilidade",
+                "footer.categories.color": "Ferramentas de Cor",
+                "footer.quicklinks": "Links Rápidos",
+                "footer.links.tools": "Todas as Ferramentas",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Contato",
+                "footer.links.privacy": "Política de Privacidade",
+                "footer.links.disclaimer": "Aviso Legal",
+                "footer.links.terms": "Termos de Serviço",
+                "footer.copyright": "© 2025 LollyPoPDF. Todos os direitos reservados."
+            },
+            ja: {
+                "nav.home": "ホーム",
+                "nav.about": "会社概要",
+                "nav.tools": "ツール",
+                "nav.contact": "お問い合わせ",
+                "hero.title": "正規表現テスター",
+                "hero.description": "完全なプライバシーでローカルに処理される、マッチのハイライト、グループ、エラー検出を備えたリアルタイムの正規表現テストツールです。",
+                "howto.title": "正規表現テスターの使い方",
+                "howto.step1.title": "正規表現を入力",
+                "howto.step1.description": "入力フィールドに正規表現パターンを入力します。'g'（グローバル）、'i'（大文字小文字を区別しない）、'm'（複数行）などのフラグを使用してマッチング動作を変更します。",
+                "howto.step2.title": "テストテキストを提供",
+                "howto.step2.description": "正規表現をテストしたいテキストを入力または貼り付けます。入力するとリアルタイムでマッチがハイライト表示されます。",
+                "howto.step3.title": "結果を分析",
+                "howto.step3.description": "位置、グループ、完全なマッチ値を含む詳細なマッチ情報を表示します。すべての処理はブラウザ内で瞬時に行われます。",
+                "howto.step4.title": "コピーまたはクリア",
+                "howto.step4.description": "結果をクリップボードにコピーするか、すべての入力をクリアして最初からやり直します。データはブラウザから送信されません。",
+                "tool.title": "正規表現テスター",
+                "tool.testText": "テストテキスト",
+                "tool.results": "マッチ結果",
+                "tool.test": "正規表現をテスト",
+                "tool.clear": "すべてクリア",
+                "tool.copy": "結果をコピー",
+                "footer.follow": "フォローする",
+                "footer.categories": "人気カテゴリ",
+                "footer.categories.pdf": "PDFツール",
+                "footer.categories.image": "画像ツール",
+                "footer.categories.text": "テキストツール",
+                "footer.categories.av": "オーディオ/ビデオツール",
+                "footer.categories.web": "Web開発者ツール",
+                "footer.categories.calc": "計算機ツール",
+                "footer.categories.util": "ユーティリティツール",
+                "footer.categories.color": "カラーツール",
+                "footer.quicklinks": "クイックリンク",
+                "footer.links.tools": "すべてのツール",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "お問い合わせ",
+                "footer.links.privacy": "プライバシーポリシー",
+                "footer.links.disclaimer": "免責事項",
+                "footer.links.terms": "利用規約",
+                "footer.copyright": "© 2025 LollyPoPDF. 無断転載を禁じます."
+            },
+            ru: {
+                "nav.home": "Главная",
+                "nav.about": "О нас",
+                "nav.tools": "Инструменты",
+                "nav.contact": "Контакты",
+                "hero.title": "Инструмент тестирования регулярных выражений",
+                "hero.description": "Тестируйте свои регулярные выражения в реальном времени с полным выделением совпадений, групп и обнаружением ошибок. Вся обработка происходит локально с полной конфиденциальностью.",
+                "howto.title": "Как использовать тестер регулярных выражений",
+                "howto.step1.title": "Введите ваше регулярное выражение",
+                "howto.step1.description": "Введите шаблон регулярного выражения в поле ввода. Используйте флаги, такие как 'g' (глобальный), 'i' (без учета регистра), 'm' (многострочный) и т.д., чтобы изменить поведение сопоставления.",
+                "howto.step2.title": "Предоставьте тестовый текст",
+                "howto.step2.description": "Введите или вставьте текст, для которого вы хотите протестировать регулярное выражение. Вы увидите выделение совпадений в реальном времени по мере ввода.",
+                "howto.step3.title": "Анализируйте результаты",
+                "howto.step3.description": "Просматривайте подробную информацию о совпадениях, включая позиции, группы и полные значения совпадений. Вся обработка происходит мгновенно в вашем браузере.",
+                "howto.step4.title": "Копируйте или очищайте",
+                "howto.step4.description": "Скопируйте результаты в буфер обмена или очистите все вводы, чтобы начать заново. Ваши данные никогда не покидают ваш браузер.",
+                "tool.title": "Тестер регулярных выражений",
+                "tool.testText": "Тестовый текст",
+                "tool.results": "Результаты совпадений",
+                "tool.test": "Тестировать регулярное выражение",
+                "tool.clear": "Очистить все",
+                "tool.copy": "Копировать результаты",
+                "footer.follow": "СЛЕДУЙТЕ ЗА НАМИ",
+                "footer.categories": "Популярные категории",
+                "footer.categories.pdf": "PDF-инструменты",
+                "footer.categories.image": "Инструменты для изображений",
+                "footer.categories.text": "Текстовые инструменты",
+                "footer.categories.av": "Аудио/Видео инструменты",
+                "footer.categories.web": "Инструменты веб-разработчика",
+                "footer.categories.calc": "Инструменты калькулятора",
+                "footer.categories.util": "Утилиты",
+                "footer.categories.color": "Цветовые инструменты",
+                "footer.quicklinks": "Быстрые ссылки",
+                "footer.links.tools": "Все инструменты",
+                "footer.links.faq": "ЧаВо",
+                "footer.links.contact": "Контакты",
+                "footer.links.privacy": "Политика конфиденциальности",
+                "footer.links.disclaimer": "Отказ от ответственности",
+                "footer.links.terms": "Условия использования",
+                "footer.copyright": "© 2025 LollyPoPDF. Все права защищены."
+            },
+            ko: {
+                "nav.home": "홈",
+                "nav.about": "회사 소개",
+                "nav.tools": "도구",
+                "nav.contact": "연락처",
+                "hero.title": "정규식 테스터 도구",
+                "hero.description": "완전한 개인 정보 보호와 함께 로컬에서 처리되는 실시간 일치 강조, 그룹 및 오류 감지 기능을 갖춘 정규식을 테스트하세요.",
+                "howto.title": "정규식 테스터 사용 방법",
+                "howto.step1.title": "정규식 입력",
+                "howto.step1.description": "입력 필드에 정규식 패턴을 입력하세요. 'g'(전역), 'i'(대소문자 구분 안 함), 'm'(다중 행) 등의 플래그를 사용하여 일치 동작을 수정하세요.",
+                "howto.step2.title": "테스트 텍스트 제공",
+                "howto.step2.description": "정규식을 테스트할 텍스트를 입력하거나 붙여넣으세요. 입력하는 동안 실시간으로 일치 항목이 강조 표시됩니다.",
+                "howto.step3.title": "결과 분석",
+                "howto.step3.description": "위치, 그룹 및 전체 일치 값을 포함한 상세한 일치 정보를 확인하세요. 모든 처리는 브라우저에서 즉시 이루어집니다.",
+                "howto.step4.title": "복사 또는 지우기",
+                "howto.step4.description": "결과를 클립보드에 복사하거나 모든 입력을 지워 새로 시작하세요. 데이터는 브라우저를 떠나지 않습니다.",
+                "tool.title": "정규식 테스터",
+                "tool.testText": "테스트 텍스트",
+                "tool.results": "일치 결과",
+                "tool.test": "정규식 테스트",
+                "tool.clear": "모두 지우기",
+                "tool.copy": "결과 복사",
+                "footer.follow": "팔로우하기",
+                "footer.categories": "인기 카테고리",
+                "footer.categories.pdf": "PDF 도구",
+                "footer.categories.image": "이미지 도구",
+                "footer.categories.text": "텍스트 도구",
+                "footer.categories.av": "오디오/비디오 도구",
+                "footer.categories.web": "웹개발자 도구",
+                "footer.categories.calc": "계산기 도구",
+                "footer.categories.util": "유틸리티 도구",
+                "footer.categories.color": "색상 도구",
+                "footer.quicklinks": "빠른 링크",
+                "footer.links.tools": "모든 도구",
+                "footer.links.faq": "자주 묻는 질문",
+                "footer.links.contact": "연락처",
+                "footer.links.privacy": "개인정보 보호정책",
+                "footer.links.disclaimer": "면책 조항",
+                "footer.links.terms": "서비스 약관",
+                "footer.copyright": "© 2025 LollyPoPDF. 모든 권리 보유."
+            },
+            "zh-CN": {
+                "nav.home": "首页",
+                "nav.about": "关于我们",
+                "nav.tools": "工具",
+                "nav.contact": "联系我们",
+                "hero.title": "正则表达式测试工具",
+                "hero.description": "实时测试您的正则表达式，具有完整的匹配高亮、分组和错误检测功能。所有处理都在本地完成，完全保护隐私。",
+                "howto.title": "如何使用正则表达式测试器",
+                "howto.step1.title": "输入您的正则表达式",
+                "howto.step1.description": "在输入字段中输入您的正则表达式模式。使用如'g'(全局)、'i'(不区分大小写)、'm'(多行)等标志来修改匹配行为。",
+                "howto.step2.title": "提供测试文本",
+                "howto.step2.description": "输入或粘贴您想要测试正则表达式的文本。您将在输入时实时看到匹配项的高亮显示。",
+                "howto.step3.title": "分析结果",
+                "howto.step3.description": "查看详细的匹配信息，包括位置、分组和完整匹配值。所有处理都在您的浏览器中即时完成。",
+                "howto.step4.title": "复制或清除",
+                "howto.step4.description": "将结果复制到剪贴板或清除所有输入以重新开始。您的数据永远不会离开您的浏览器。",
+                "tool.title": "正则表达式测试器",
+                "tool.testText": "测试文本",
+                "tool.results": "匹配结果",
+                "tool.test": "测试正则表达式",
+                "tool.clear": "全部清除",
+                "tool.copy": "复制结果",
+                "footer.follow": "关注我们",
+                "footer.categories": "热门分类",
+                "footer.categories.pdf": "PDF工具",
+                "footer.categories.image": "图片工具",
+                "footer.categories.text": "文本工具",
+                "footer.categories.av": "音频/视频工具",
+                "footer.categories.web": "Web开发工具",
+                "footer.categories.calc": "计算器工具",
+                "footer.categories.util": "实用工具",
+                "footer.categories.color": "颜色工具",
+                "footer.quicklinks": "快速链接",
+                "footer.links.tools": "所有工具",
+                "footer.links.faq": "常见问题",
+                "footer.links.contact": "联系我们",
+                "footer.links.privacy": "隐私政策",
+                "footer.links.disclaimer": "免责声明",
+                "footer.links.terms": "服务条款",
+                "footer.copyright": "© 2025 LollyPoPDF. 保留所有权利。"
+            },
+            "zh-TW": {
+                "nav.home": "首頁",
+                "nav.about": "關於我們",
+                "nav.tools": "工具",
+                "nav.contact": "聯絡我們",
+                "hero.title": "正則表達式測試工具",
+                "hero.description": "實時測試您的正則表達式，具有完整的匹配高亮、分組和錯誤檢測功能。所有處理都在本地完成，完全保護隱私。",
+                "howto.title": "如何使用正則表達式測試器",
+                "howto.step1.title": "輸入您的正則表達式",
+                "howto.step1.description": "在輸入字段中輸入您的正則表達式模式。使用如'g'(全域)、'i'(不區分大小寫)、'm'(多行)等標誌來修改匹配行為。",
+                "howto.step2.title": "提供測試文本",
+                "howto.step2.description": "輸入或貼上您想要測試正則表達式的文本。您將在輸入時實時看到匹配項的高亮顯示。",
+                "howto.step3.title": "分析結果",
+                "howto.step3.description": "查看詳細的匹配信息，包括位置、分組和完整匹配值。所有處理都在您的瀏覽器中即時完成。",
+                "howto.step4.title": "複製或清除",
+                "howto.step4.description": "將結果複製到剪貼簿或清除所有輸入以重新開始。您的數據永遠不會離開您的瀏覽器。",
+                "tool.title": "正則表達式測試器",
+                "tool.testText": "測試文本",
+                "tool.results": "匹配結果",
+                "tool.test": "測試正則表達式",
+                "tool.clear": "全部清除",
+                "tool.copy": "複製結果",
+                "footer.follow": "關注我們",
+                "footer.categories": "熱門分類",
+                "footer.categories.pdf": "PDF工具",
+                "footer.categories.image": "圖片工具",
+                "footer.categories.text": "文字工具",
+                "footer.categories.av": "音訊/視訊工具",
+                "footer.categories.web": "網頁開發工具",
+                "footer.categories.calc": "計算機工具",
+                "footer.categories.util": "實用工具",
+                "footer.categories.color": "顏色工具",
+                "footer.quicklinks": "快速連結",
+                "footer.links.tools": "所有工具",
+                "footer.links.faq": "常見問題",
+                "footer.links.contact": "聯絡我們",
+                "footer.links.privacy": "隱私政策",
+                "footer.links.disclaimer": "免責聲明",
+                "footer.links.terms": "服務條款",
+                "footer.copyright": "© 2025 LollyPoPDF. 版權所有。"
+            },
+            ar: {
+                "nav.home": "الرئيسية",
+                "nav.about": "من نحن",
+                "nav.tools": "الأدوات",
+                "nav.contact": "اتصل بنا",
+                "hero.title": "أداة اختبار التعبيرات النمطية",
+                "hero.description": "اختبر تعبيراتك النمطية في الوقت الفعلي مع إبراز كامل للمطابقات والمجموعات واكتشاف الأخطاء. كل المعالجة تتم محليًا مع خصوصية كاملة.",
+                "howto.title": "كيفية استخدام أداة اختبار التعبيرات النمطية",
+                "howto.step1.title": "أدخل تعبيرك النمطي",
+                "howto.step1.description": "اكتب نمط التعبير النمطي في حقل الإدخال. استخدم الأعلام مثل 'g' (عام)، 'i' (غير حساس لحالة الأحرف)، 'm' (متعدد الأسطر) إلخ لتعديل سلوك المطابقة.",
+                "howto.step2.title": "قدم نص الاختبار",
+                "howto.step2.description": "أدخل أو الصق النص الذي تريد اختبار تعبيرك النمطي عليه. سترى إبراز المطابقات في الوقت الفعلي أثناء الكتابة.",
+                "howto.step3.title": "حلل النتائج",
+                "howto.step3.description": "اعرض معلومات مفصلة عن المطابقات بما في ذلك المواقع والمجموعات وقيم المطابقة الكاملة. كل المعالجة تتم فورًا في متصفحك.",
+                "howto.step4.title": "انسخ أو امسح",
+                "howto.step4.description": "انسخ نتائجك إلى الحافظة أو امسح جميع المدخلات للبدء من جديد. بياناتك لا تغادر متصفحك أبدًا.",
+                "tool.title": "أداة اختبار التعبيرات النمطية",
+                "tool.testText": "نص الاختبار",
+                "tool.results": "نتائج المطابقة",
+                "tool.test": "اختبر التعبير النمطي",
+                "tool.clear": "امسح الكل",
+                "tool.copy": "انسخ النتائج",
+                "footer.follow": "تابعنا",
+                "footer.categories": "الفئات الشائعة",
+                "footer.categories.pdf": "أدوات PDF",
+                "footer.categories.image": "أدوات الصور",
+                "footer.categories.text": "أدوات النص",
+                "footer.categories.av": "أدوات الصوت/الفيديو",
+                "footer.categories.web": "أدوات مطور الويب",
+                "footer.categories.calc": "أدوات الآلة الحاسبة",
+                "footer.categories.util": "أدوات المساعدة",
+                "footer.categories.color": "أدوات الألوان",
+                "footer.quicklinks": "روابط سريعة",
+                "footer.links.tools": "جميع الأدوات",
+                "footer.links.faq": "الأسئلة الشائعة",
+                "footer.links.contact": "اتصل بنا",
+                "footer.links.privacy": "سياسة الخصوصية",
+                "footer.links.disclaimer": "إخلاء المسؤولية",
+                "footer.links.terms": "شروط الخدمة",
+                "footer.copyright": "© 2025 LollyPoPDF. جميع الحقوق محفوظة."
+            },
+            fa: {
+                "nav.home": "خانه",
+                "nav.about": "درباره ما",
+                "nav.tools": "ابزارها",
+                "nav.contact": "تماس با ما",
+                "hero.title": "ابزار تست عبارت‌های منظم",
+                "hero.description": "عبارت‌های منظم خود را به صورت زنده با هایلایت کامل تطابق‌ها، گروه‌ها و تشخیص خطا آزمایش کنید. تمام پردازش به صورت محلی و با حفظ حریم خصوصی کامل انجام می‌شود.",
+                "howto.title": "نحوه استفاده از تستر عبارت‌های منظم",
+                "howto.step1.title": "عبارت منظم خود را وارد کنید",
+                "howto.step1.description": "الگوی عبارت منظم خود را در فیلد ورودی تایپ کنید. از پرچم‌هایی مانند 'g' (سراسری)، 'i' (حساس نبودن به بزرگی و کوچکی حروف)، 'm' (چند خطی) و غیره برای تغییر رفتار تطابق استفاده کنید.",
+                "howto.step2.title": "متن تست را ارائه دهید",
+                "howto.step2.description": "متنی که می‌خواهید عبارت منظم خود را روی آن آزمایش کنید، وارد یا پیست کنید. در حین تایپ، هایلایت تطابق‌ها را به صورت زنده مشاهده خواهید کرد.",
+                "howto.step3.title": "نتایج را تحلیل کنید",
+                "howto.step3.description": "اطلاعات دقیق تطابق‌ها شامل موقعیت‌ها، گروه‌ها و مقادیر کامل تطابق را مشاهده کنید. تمام پردازش به صورت آنی در مرورگر شما انجام می‌شود.",
+                "howto.step4.title": "کپی یا پاک کردن",
+                "howto.step4.description": "نتایج خود را در کلیپ‌بورد کپی کنید یا تمام ورودی‌ها را پاک کنید تا از نو شروع کنید. داده‌های شما هرگز مرورگر شما را ترک نمی‌کنند.",
+                "tool.title": "تستر عبارت‌های منظم",
+                "tool.testText": "متن تست",
+                "tool.results": "نتایج تطابق",
+                "tool.test": "تست عبارت منظم",
+                "tool.clear": "پاک کردن همه",
+                "tool.copy": "کپی نتایج",
+                "footer.follow": "ما را دنبال کنید",
+                "footer.categories": "دسته‌بندی‌های محبوب",
+                "footer.categories.pdf": "ابزارهای PDF",
+                "footer.categories.image": "ابزارهای تصویر",
+                "footer.categories.text": "ابزارهای متن",
+                "footer.categories.av": "ابزارهای صدا/ویدیو",
+                "footer.categories.web": "ابزارهای توسعه دهنده وب",
+                "footer.categories.calc": "ابزارهای ماشین حساب",
+                "footer.categories.util": "ابزارهای کمکی",
+                "footer.categories.color": "ابزارهای رنگ",
+                "footer.quicklinks": "لینک‌های سریع",
+                "footer.links.tools": "همه ابزارها",
+                "footer.links.faq": "سوالات متداول",
+                "footer.links.contact": "تماس با ما",
+                "footer.links.privacy": "سیاست حفظ حریم خصوصی",
+                "footer.links.disclaimer": "سلب مسئولیت",
+                "footer.links.terms": "شرایط استفاده",
+                "footer.copyright": "© 2025 LollyPoPDF. تمامی حقوق محفوظ است."
+            },
+            bg: {
+                "nav.home": "Начало",
+                "nav.about": "За нас",
+                "nav.tools": "Инструменти",
+                "nav.contact": "Контакт",
+                "hero.title": "Инструмент за тестване на регулярни изрази",
+                "hero.description": "Тествайте вашите регулярни изрази в реално време с пълно осветяване на съвпаденията, групи и откриване на грешки. Цялата обработка се извършва локално с пълна поверителност.",
+                "howto.title": "Как да използвате тестера за регулярни изрази",
+                "howto.step1.title": "Въведете вашия регулярен израз",
+                "howto.step1.description": "Въведете вашия шаблон за регулярен израз в полето за въвеждане. Използвайте флагове като 'g' (глобален), 'i' (нечувствителен към регистъра), 'm' (многоредов) и т.н., за да промените поведението на съвпадение.",
+                "howto.step2.title": "Предоставете тестов текст",
+                "howto.step2.description": "Въведете или поставете текста, срещу който искате да тествате вашия регулярен израз. Ще виждате осветяване на съвпаденията в реално време, докато пишете.",
+                "howto.step3.title": "Анализирайте резултатите",
+                "howto.step3.description": "Прегледайте подробна информация за съвпаденията, включително позиции, групи и пълни стойности на съвпаденията. Цялата обработка се извършва мигновено във вашия браузър.",
+                "howto.step4.title": "Копирайте или изчистете",
+                "howto.step4.description": "Копирайте резултатите си в клипборда или изчистете всички входни данни, за да започнете наново. Вашите данни никога не напускат вашия браузър.",
+                "tool.title": "Тестер за регулярни изрази",
+                "tool.testText": "Тестов текст",
+                "tool.results": "Резултати от съвпаденията",
+                "tool.test": "Тествай регулярен израз",
+                "tool.clear": "Изчисти всичко",
+                "tool.copy": "Копирай резултати",
+                "footer.follow": "СЛЕДВАЙТЕ НИ",
+                "footer.categories": "Популярни категории",
+                "footer.categories.pdf": "PDF инструменти",
+                "footer.categories.image": "Инструменти за изображения",
+                "footer.categories.text": "Текстови инструменти",
+                "footer.categories.av": "Аудио/Видео инструменти",
+                "footer.categories.web": "Инструменти за уеб разработчици",
+                "footer.categories.calc": "Инструменти за калкулатор",
+                "footer.categories.util": "Помощни инструменти",
+                "footer.categories.color": "Цветови инструменти",
+                "footer.quicklinks": "Бързи връзки",
+                "footer.links.tools": "Всички инструменти",
+                "footer.links.faq": "ЧЗВ",
+                "footer.links.contact": "Контакт",
+                "footer.links.privacy": "Политика за поверителност",
+                "footer.links.disclaimer": "Отказ от отговорност",
+                "footer.links.terms": "Условия за ползване",
+                "footer.copyright": "© 2025 LollyPoPDF. Всички права запазени."
+            },
+            ca: {
+                "nav.home": "Inici",
+                "nav.about": "Sobre nosaltres",
+                "nav.tools": "Eines",
+                "nav.contact": "Contacte",
+                "hero.title": "Eina de prova d'expressions regulars",
+                "hero.description": "Proveu les vostres expressions regulars en temps real amb ressaltat complet de coincidències, grups i detecció d'errors. Tot el processament es realitza localment amb privacitat completa.",
+                "howto.title": "Com utilitzar el provador d'expressions regulars",
+                "howto.step1.title": "Introduïu la vostra expressió regular",
+                "howto.step1.description": "Escriviu el vostre patró d'expressió regular al camp d'entrada. Utilitzeu indicadors com 'g' (global), 'i' (no distingeix entre majúscules i minúscules), 'm' (multilínia), etc. per modificar el comportament de coincidència.",
+                "howto.step2.title": "Proporcioneu text de prova",
+                "howto.step2.description": "Introduïu o enganxeu el text amb el qual voleu provar la vostra expressió regular. Veureu el ressaltat de coincidències en temps real mentre escriviu.",
+                "howto.step3.title": "Analitzeu els resultats",
+                "howto.step3.description": "Visualitzeu informació detallada de coincidències, incloent posicions, grups i valors complets de coincidència. Tot el processament es realitza instantàniament al vostre navegador.",
+                "howto.step4.title": "Copieu o esborreu",
+                "howto.step4.description": "Copieu els vostres resultats al porta-retalls o esborreu totes les entrades per començar de nou. Les vostres dades mai surten del vostre navegador.",
+                "tool.title": "Provador d'expressions regulars",
+                "tool.testText": "Text de prova",
+                "tool.results": "Resultats de coincidències",
+                "tool.test": "Provar expressió regular",
+                "tool.clear": "Esborrar tot",
+                "tool.copy": "Copiar resultats",
+                "footer.follow": "SEGUEIX-NOS",
+                "footer.categories": "Categories populars",
+                "footer.categories.pdf": "Eines PDF",
+                "footer.categories.image": "Eines d'imatge",
+                "footer.categories.text": "Eines de text",
+                "footer.categories.av": "Eines d'àudio/vídeo",
+                "footer.categories.web": "Eines de desenvolupador web",
+                "footer.categories.calc": "Eines de calculadora",
+                "footer.categories.util": "Eines d'utilitat",
+                "footer.categories.color": "Eines de color",
+                "footer.quicklinks": "Enllaços ràpids",
+                "footer.links.tools": "Totes les eines",
+                "footer.links.faq": "PMF",
+                "footer.links.contact": "Contacte",
+                "footer.links.privacy": "Política de privadesa",
+                "footer.links.disclaimer": "Avís legal",
+                "footer.links.terms": "Termes del servei",
+                "footer.copyright": "© 2025 LollyPoPDF. Tots els drets reservats."
+            },
+            nl: {
+                "nav.home": "Home",
+                "nav.about": "Over ons",
+                "nav.tools": "Tools",
+                "nav.contact": "Contact",
+                "hero.title": "Regex-testtool",
+                "hero.description": "Test uw reguliere expressies in realtime met volledige markering van overeenkomsten, groepen en foutdetectie. Alle verwerking gebeurt lokaal met volledige privacy.",
+                "howto.title": "Hoe de regex-tester te gebruiken",
+                "howto.step1.title": "Voer uw regex in",
+                "howto.step1.description": "Typ uw patroon voor reguliere expressies in het invoerveld. Gebruik vlaggen zoals 'g' (globaal), 'i' (hoofdletterongevoelig), 'm' (meerdere regels), enz. om het overeenkomstgedrag te wijzigen.",
+                "howto.step2.title": "Geef testtekst op",
+                "howto.step2.description": "Voer de tekst in of plak deze waarop u uw regex wilt testen. U ziet in realtime markering van overeenkomsten tijdens het typen.",
+                "howto.step3.title": "Analyseer resultaten",
+                "howto.step3.description": "Bekijk gedetailleerde overeenkomstinformatie, inclusief posities, groepen en volledige overeenkomstwaarden. Alle verwerking gebeurt onmiddellijk in uw browser.",
+                "howto.step4.title": "Kopieer of wis",
+                "howto.step4.description": "Kopieer uw resultaten naar het klembord of wis alle invoer om opnieuw te beginnen. Uw gegevens verlaten nooit uw browser.",
+                "tool.title": "Regex-tester",
+                "tool.testText": "Testtekst",
+                "tool.results": "Overeenkomstresultaten",
+                "tool.test": "Test regex",
+                "tool.clear": "Alles wissen",
+                "tool.copy": "Kopieer resultaten",
+                "footer.follow": "VOLG ONS",
+                "footer.categories": "Populaire categorieën",
+                "footer.categories.pdf": "PDF-tools",
+                "footer.categories.image": "Afbeeldingstools",
+                "footer.categories.text": "Teksttools",
+                "footer.categories.av": "Audio/Video-tools",
+                "footer.categories.web": "Webontwikkelaarstools",
+                "footer.categories.calc": "Rekenmachinetools",
+                "footer.categories.util": "Hulpprogramma's",
+                "footer.categories.color": "Kleurtools",
+                "footer.quicklinks": "Snelle links",
+                "footer.links.tools": "Alle tools",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Contact",
+                "footer.links.privacy": "Privacybeleid",
+                "footer.links.disclaimer": "Disclaimer",
+                "footer.links.terms": "Servicevoorwaarden",
+                "footer.copyright": "© 2025 LollyPoPDF. Alle rechten voorbehouden."
+            },
+            el: {
+                "nav.home": "Αρχική",
+                "nav.about": "Σχετικά με εμάς",
+                "nav.tools": "Εργαλεία",
+                "nav.contact": "Επικοινωνία",
+                "hero.title": "Εργαλείο δοκιμής κανονικών εκφράσεων",
+                "hero.description": "Δοκιμάστε τις κανονικές σας εκφράσεις σε πραγματικό χρόνο με πλήρη επισήμανση αντιστοιχιών, ομάδων και ανίχνευσης σφαλμάτων. Όλη η επεξεργασία γίνεται τοπικά με πλήρη απόρρητο.",
+                "howto.title": "Πώς να χρησιμοποιήσετε το δοκιμαστή κανονικών εκφράσεων",
+                "howto.step1.title": "Εισάγετε την κανονική σας έκφραση",
+                "howto.step1.description": "Πληκτρολογήστε το μοτίβο κανονικής έκφρασής σας στο πεδίο εισαγωγής. Χρησιμοποιήστε σημαίες όπως 'g' (καθολική), 'i' (διάκριση πεζών-κεφαλαίων), 'm' (πολλαπλών γραμμών) κ.λπ. για να τροποποιήσετε τη συμπεριφορά αντιστοίχισης.",
+                "howto.step2.title": "Παρασχετε κείμενο δοκιμής",
+                "howto.step2.description": "Εισάγετε ή επικολλήστε το κείμενο στο οποίο θέλετε να δοκιμάσετε την κανονική σας έκφραση. Θα βλέπετε επισήμανση αντιστοιχιών σε πραγματικό χρόνο καθώς πληκτρολογείτε.",
+                "howto.step3.title": "Αναλύστε τα αποτελέσματα",
+                "howto.step3.description": "Προβάλετε λεπτομερείς πληροφορίες αντιστοίχισης, συμπεριλαμβανομένων θέσεων, ομάδων και πλήρων τιμών αντιστοίχισης. Όλη η επεξεργασία γίνεται αμέσως στο πρόγραμμα περιήγησής σας.",
+                "howto.step4.title": "Αντιγραφή ή εκκαθάριση",
+                "howto.step4.description": "Αντιγράψτε τα αποτελέσματά σας στο πρόχειρο ή εκκαθαρίστε όλες τις εισόδους για να ξεκινήσετε από την αρχή. Τα δεδομένα σας δεν φεύγουν ποτέ από το πρόγραμμα περιήγησής σας.",
+                "tool.title": "Δοκιμαστής κανονικών εκφράσεων",
+                "tool.testText": "Κείμενο δοκιμής",
+                "tool.results": "Αποτελέσματα αντιστοίχισης",
+                "tool.test": "Δοκιμή κανονικής έκφρασης",
+                "tool.clear": "Εκκαθάριση όλων",
+                "tool.copy": "Αντιγραφή αποτελεσμάτων",
+                "footer.follow": "ΑΚΟΛΟΥΘΗΣΤΕ ΜΑΣ",
+                "footer.categories": "Δημοφιλείς κατηγορίες",
+                "footer.categories.pdf": "Εργαλεία PDF",
+                "footer.categories.image": "Εργαλεία εικόνας",
+                "footer.categories.text": "Εργαλεία κειμένου",
+                "footer.categories.av": "Εργαλεία ήχου/βίντεο",
+                "footer.categories.web": "Εργαλεία προγραμματιστή ιστού",
+                "footer.categories.calc": "Εργαλεία αριθμομηχανής",
+                "footer.categories.util": "Βοηθητικά εργαλεία",
+                "footer.categories.color": "Εργαλεία χρώματος",
+                "footer.quicklinks": "Γρήγοροι σύνδεσμοι",
+                "footer.links.tools": "Όλα τα εργαλεία",
+                "footer.links.faq": "Συχνές ερωτήσεις",
+                "footer.links.contact": "Επικοινωνία",
+                "footer.links.privacy": "Πολιτική απορρήτου",
+                "footer.links.disclaimer": "Αποποίηση ευθυνών",
+                "footer.links.terms": "Όροι χρήσης",
+                "footer.copyright": "© 2025 LollyPoPDF. Με επιφύλαξη παντός δικαιώματος."
+            },
+            hi: {
+                "nav.home": "होम",
+                "nav.about": "हमारे बारे में",
+                "nav.tools": "टूल्स",
+                "nav.contact": "संपर्क करें",
+                "hero.title": "रेगेक्स टेस्टर टूल",
+                "hero.description": "पूर्ण मैच हाइलाइटिंग, समूह और त्रुटि पहचान के साथ अपने नियमित अभिव्यक्तियों को रीयल-टाइम में परीक्षण करें। सभी प्रसंस्करण पूर्ण गोपनीयता के साथ स्थानीय रूप से होता है।",
+                "howto.title": "रेगेक्स टेस्टर का उपयोग कैसे करें",
+                "howto.step1.title": "अपना रेगेक्स दर्ज करें",
+                "howto.step1.description": "इनपुट फ़ील्ड में अपना नियमित अभिव्यक्ति पैटर्न टाइप करें। मिलान व्यवहार को संशोधित करने के लिए 'g' (वैश्विक), 'i' (केस-असंवेदनशील), 'm' (मल्टीलाइन) आदि जैसे फ्लैग्स का उपयोग करें।",
+                "howto.step2.title": "टेस्ट टेक्स्ट प्रदान करें",
+                "howto.step2.description": "वह टेक्स्ट दर्ज करें या पेस्ट करें जिस पर आप अपना रेगेक्स परीक्षण करना चाहते हैं। टाइप करते समय आपको रीयल-टाइम में मैचों की हाइलाइटिंग दिखाई देगी।",
+                "howto.step3.title": "परिणामों का विश्लेषण करें",
+                "howto.step3.description": "स्थितियों, समूहों और पूर्ण मिलान मानों सहित विस्तृत मिलान जानकारी देखें। सभी प्रसंस्करण आपके ब्राउज़र में तुरंत होता है।",
+                "howto.step4.title": "कॉपी या क्लियर करें",
+                "howto.step4.description": "अपने परिणामों को क्लिपबोर्ड पर कॉपी करें या नए सिरे से शुरू करने के लिए सभी इनपुट्स को क्लियर करें। आपका डेटा कभी भी आपके ब्राउज़र को नहीं छोड़ता।",
+                "tool.title": "रेगेक्स टेस्टर",
+                "tool.testText": "टेस्ट टेक्स्ट",
+                "tool.results": "मैच परिणाम",
+                "tool.test": "रेगेक्स टेस्ट करें",
+                "tool.clear": "सब क्लियर करें",
+                "tool.copy": "परिणाम कॉपी करें",
+                "footer.follow": "हमें फॉलो करें",
+                "footer.categories": "लोकप्रिय श्रेणियाँ",
+                "footer.categories.pdf": "PDF टूल्स",
+                "footer.categories.image": "इमेज टूल्स",
+                "footer.categories.text": "टेक्स्ट टूल्स",
+                "footer.categories.av": "ऑडियो/वीडियो टूल्स",
+                "footer.categories.web": "वेबडेवलपर टूल्स",
+                "footer.categories.calc": "कैलकुलेटर टूल्स",
+                "footer.categories.util": "यूटिलिटी टूल्स",
+                "footer.categories.color": "कलर टूल्स",
+                "footer.quicklinks": "त्वरित लिंक",
+                "footer.links.tools": "सभी टूल्स",
+                "footer.links.faq": "सामान्य प्रश्न",
+                "footer.links.contact": "संपर्क करें",
+                "footer.links.privacy": "गोपनीयता नीति",
+                "footer.links.disclaimer": "अस्वीकरण",
+                "footer.links.terms": "सेवा की शर्तें",
+                "footer.copyright": "© 2025 LollyPoPDF. सर्वाधिकार सुरक्षित।"
+            },
+            te: {
+                "nav.home": "హోమ్",
+                "nav.about": "మా గురించి",
+                "nav.tools": "టూల్స్",
+                "nav.contact": "సంప్రదించండి",
+                "hero.title": "రెగెక్స్ టెస్టర్ టూల్",
+                "hero.description": "పూర్తి మ్యాచ్ హైలైటింగ్, గ్రూపులు మరియు ఎర్రర్ డిటెక్షన్తో మీ రెగ్యులర్ ఎక్స్ప్రెషన్లను రియల్-టైమ్లో టెస్ట్ చేయండి. అన్ని ప్రాసెసింగ్ పూర్తి గోప్యతతో స్థానికంగా జరుగుతుంది.",
+                "howto.title": "రెగెక్స్ టెస్టర్ను ఎలా ఉపయోగించాలి",
+                "howto.step1.title": "మీ రెగెక్స్ను నమోదు చేయండి",
+                "howto.step1.description": "ఇన్పుట్ ఫీల్డ్లో మీ రెగ్యులర్ ఎక్స్ప్రెషన్ పాటర్న్ టైప్ చేయండి. మ్యాచింగ్ ప్రవర్తనను మార్చడానికి 'g' (గ్లోబల్), 'i' (కేస్-ఇన్సెన్సిటివ్), 'm' (మల్టీలైన్) మొదలైన ఫ్లాగ్లను ఉపయోగించండి.",
+                "howto.step2.title": "టెస్ట్ టెక్స్ట్ను అందించండి",
+                "howto.step2.description": "మీరు మీ రెగెక్స్ను టెస్ట్ చేయాలనుకునే టెక్స్ట్ను నమోదు చేయండి లేదా పేస్ట్ చేయండి. మీరు టైప్ చేస్తున్నప్పుడు రియల్-టైమ్లో మ్యాచ్ల హైలైటింగ్ను చూస్తారు.",
+                "howto.step3.title": "ఫలితాలను విశ్లేషించండి",
+                "howto.step3.description": "స్థానాలు, గ్రూపులు మరియు పూర్తి మ్యాచ్ విలువలతో సహా వివరణాత్మక మ్యాచ్ సమాచారాన్ని వీక్షించండి. అన్ని ప్రాసెసింగ్ మీ బ్రౌజర్లో తక్షణమే జరుగుతుంది.",
+                "howto.step4.title": "కాపీ చేయండి లేదా క్లియర్ చేయండి",
+                "howto.step4.description": "మీ ఫలితాలను క్లిప్బోర్డ్కు కాపీ చేయండి లేదా కొత్తగా ప్రారంభించడానికి అన్ని ఇన్పుట్లను క్లియర్ చేయండి. మీ డేటా ఎప్పుడూ మీ బ్రౌజర్ను విడిచిపెట్టదు.",
+                "tool.title": "రెగెక్స్ టెస్టర్",
+                "tool.testText": "టెస్ట్ టెక్స్ట్",
+                "tool.results": "మ్యాచ్ ఫలితాలు",
+                "tool.test": "రెగెక్స్ టెస్ట్ చేయండి",
+                "tool.clear": "అన్నీ క్లియర్ చేయండి",
+                "tool.copy": "ఫలితాలను కాపీ చేయండి",
+                "footer.follow": "మమ్మల్ని అనుసరించండి",
+                "footer.categories": "జనాదరణ పొందిన వర్గాలు",
+                "footer.categories.pdf": "PDF టూల్స్",
+                "footer.categories.image": "ఇమేజ్ టూల్స్",
+                "footer.categories.text": "టెక్స్ట్ టూల్స్",
+                "footer.categories.av": "ఆడియో/వీడియో టూల్స్",
+                "footer.categories.web": "వెబ్ డెవలపర్ టూల్స్",
+                "footer.categories.calc": "కాలిక్యులేటర్ టూల్స్",
+                "footer.categories.util": "యుటిలిటీ టూల్స్",
+                "footer.categories.color": "కలర్ టూల్స్",
+                "footer.quicklinks": "త్వరిత లింకులు",
+                "footer.links.tools": "అన్ని టూల్స్",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "సంప్రదించండి",
+                "footer.links.privacy": "గోప్యతా విధానం",
+                "footer.links.disclaimer": "డిస్క్లైమర్",
+                "footer.links.terms": "సేవా నిబంధనలు",
+                "footer.copyright": "© 2025 LollyPoPDF. అన్ని హక్కులు ప్రత్యేకించబడినవి."
+            },
+            kn: {
+                "nav.home": "ಹೋಮ್",
+                "nav.about": "ನಮ್ಮ ಬಗ್ಗೆ",
+                "nav.tools": "ಟೂಲ್ಸ್",
+                "nav.contact": "ಸಂಪರ್ಕಿಸಿ",
+                "hero.title": "ರೆಜೆಕ್ಸ್ ಟೆಸ್ಟರ್ ಟೂಲ್",
+                "hero.description": "ಪೂರ್ಣ ಮ್ಯಾಚ್ ಹೈಲೈಟಿಂಗ್, ಗುಂಪುಗಳು ಮತ್ತು ದೋಷ ಪತ್ತೆಹಚ್ಚುವಿಕೆಯೊಂದಿಗೆ ನಿಮ್ಮ ರೆಗ್ಯುಲರ್ ಎಕ್ಸ್ಪ್ರೆಷನ್ಗಳನ್ನು ರಿಯಲ್-ಟೈಮ್ನಲ್ಲಿ ಪರೀಕ್ಷಿಸಿ. ಎಲ್ಲಾ ಪ್ರಕ್ರಿಯೆ ಪೂರ್ಣ ಗೌಪ್ಯತೆಯೊಂದಿಗೆ ಸ್ಥಳೀಯವಾಗಿ ನಡೆಯುತ್ತದೆ.",
+                "howto.title": "ರೆಜೆಕ್ಸ್ ಟೆಸ್ಟರ್ ಅನ್ನು ಹೇಗೆ ಬಳಸುವುದು",
+                "howto.step1.title": "ನಿಮ್ಮ ರೆಜೆಕ್ಸ್ ಅನ್ನು ನಮೂದಿಸಿ",
+                "howto.step1.description": "ಇನ್ಪುಟ್ ಫೀಲ್ಡ್ನಲ್ಲಿ ನಿಮ್ಮ ರೆಗ್ಯುಲರ್ ಎಕ್ಸ್ಪ್ರೆಷನ್ ಪ್ಯಾಟರ್ನ್ ಟೈಪ್ ಮಾಡಿ. ಮ್ಯಾಚಿಂಗ್ ವರ್ತನೆಯನ್ನು ಮಾರ್ಪಡಿಸಲು 'g' (ಗ್ಲೋಬಲ್), 'i' (ಕೇಸ್-ಇನ್ಸೆನ್ಸಿಟಿವ್), 'm' (ಮಲ್ಟಿಲೈನ್) ಮುಂತಾದ ಫ್ಲಾಗ್ಗಳನ್ನು ಬಳಸಿ.",
+                "howto.step2.title": "ಪರೀಕ್ಷಾ ಪಠ್ಯವನ್ನು ಒದಗಿಸಿ",
+                "howto.step2.description": "ನಿಮ್ಮ ರೆಜೆಕ್ಸ್ ಅನ್ನು ಪರೀಕ್ಷಿಸಲು ಬಯಸುವ ಪಠ್ಯವನ್ನು ನಮೂದಿಸಿ ಅಥವಾ ಪೇಸ್ಟ್ ಮಾಡಿ. ನೀವು ಟೈಪ್ ಮಾಡುವಾಗ ರಿಯಲ್-ಟೈಮ್ನಲ್ಲಿ ಮ್ಯಾಚ್ಗಳ ಹೈಲೈಟಿಂಗ್ ಅನ್ನು ನೋಡುತ್ತೀರಿ.",
+                "howto.step3.title": "ಫಲಿತಾಂಶಗಳನ್ನು ವಿಶ್ಲೇಷಿಸಿ",
+                "howto.step3.description": "ಸ್ಥಾನಗಳು, ಗುಂಪುಗಳು ಮತ್ತು ಪೂರ್ಣ ಮ್ಯಾಚ್ ಮೌಲ್ಯಗಳನ್ನು ಒಳಗೊಂಡಂತೆ ವಿವರವಾದ ಮ್ಯಾಚ್ ಮಾಹಿತಿಯನ್ನು ವೀಕ್ಷಿಸಿ. ಎಲ್ಲಾ ಪ್ರಕ್ರಿಯೆ ನಿಮ್ಮ ಬ್ರೌಸರ್ನಲ್ಲಿ ತಕ್ಷಣವೇ ನಡೆಯುತ್ತದೆ.",
+                "howto.step4.title": "ಕಾಪಿ ಅಥವಾ ಕ್ಲಿಯರ್ ಮಾಡಿ",
+                "howto.step4.description": "ನಿಮ್ಮ ಫಲಿತಾಂಶಗಳನ್ನು ಕ್ಲಿಪ್ಬೋರ್ಡ್ಗೆ ಕಾಪಿ ಮಾಡಿ ಅಥವಾ ಮರುಪ್ರಾರಂಭಿಸಲು ಎಲ್ಲಾ ಇನ್ಪುಟ್ಗಳನ್ನು ಕ್ಲಿಯರ್ ಮಾಡಿ. ನಿಮ್ಮ ಡೇಟಾ ಎಂದಿಗೂ ನಿಮ್ಮ ಬ್ರೌಸರ್ ಅನ್ನು ಬಿಡುವುದಿಲ್ಲ.",
+                "tool.title": "ರೆಜೆಕ್ಸ್ ಟೆಸ್ಟರ್",
+                "tool.testText": "ಪರೀಕ್ಷಾ ಪಠ್ಯ",
+                "tool.results": "ಮ್ಯಾಚ್ ಫಲಿತಾಂಶಗಳು",
+                "tool.test": "ರೆಜೆಕ್ಸ್ ಪರೀಕ್ಷಿಸಿ",
+                "tool.clear": "ಎಲ್ಲಾ ಕ್ಲಿಯರ್ ಮಾಡಿ",
+                "tool.copy": "ಫಲಿತಾಂಶಗಳನ್ನು ಕಾಪಿ ಮಾಡಿ",
+                "footer.follow": "ನಮ್ಮನ್ನು ಅನುಸರಿಸಿ",
+                "footer.categories": "ಜನಪ್ರಿಯ ವರ್ಗಗಳು",
+                "footer.categories.pdf": "PDF ಟೂಲ್ಸ್",
+                "footer.categories.image": "ಇಮೇಜ್ ಟೂಲ್ಸ್",
+                "footer.categories.text": "ಟೆಕ್ಸ್ಟ್ ಟೂಲ್ಸ್",
+                "footer.categories.av": "ಆಡಿಯೋ/ವೀಡಿಯೋ ಟೂಲ್ಸ್",
+                "footer.categories.web": "ವೆಬ್ ಡೆವಲಪರ್ ಟೂಲ್ಸ್",
+                "footer.categories.calc": "ಕ್ಯಾಲ್ಕುಲೇಟರ್ ಟೂಲ್ಸ್",
+                "footer.categories.util": "ಯುಟಿಲಿಟಿ ಟೂಲ್ಸ್",
+                "footer.categories.color": "ಕಲರ್ ಟೂಲ್ಸ್",
+                "footer.quicklinks": "ತ್ವರಿತ ಲಿಂಕ್ಗಳು",
+                "footer.links.tools": "ಎಲ್ಲಾ ಟೂಲ್ಸ್",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "ಸಂಪರ್ಕಿಸಿ",
+                "footer.links.privacy": "ಗೌಪ್ಯತಾ ನೀತಿ",
+                "footer.links.disclaimer": "ಡಿಸ್ಕ್ಲೈಮರ್",
+                "footer.links.terms": "ಸೇವಾ ನಿಬಂಧನೆಗಳು",
+                "footer.copyright": "© 2025 LollyPoPDF. ಎಲ್ಲಾ ಹಕ್ಕುಗಳು ಕಾಯ್ದಿರಿಸಿದೆ."
+            },
+            ta: {
+                "nav.home": "முகப்பு",
+                "nav.about": "எங்களைப் பற்றி",
+                "nav.tools": "கருவிகள்",
+                "nav.contact": "தொடர்பு கொள்ள",
+                "hero.title": "ரெஜெக்ஸ் டெஸ்டர் கருவி",
+                "hero.description": "முழுமையான பொருத்தம் ஹைலைடிங், குழுக்கள் மற்றும் பிழை கண்டறிதல் ஆகியவற்றுடன் உங்கள் வழக்கமான வெளிப்பாடுகளை உண்மையான நேரத்தில் சோதிக்கவும். அனைத்து செயலாக்கமும் முழுமையான தனியுரிமையுடன் உள்நாட்டில் நடைபெறுகிறது.",
+                "howto.title": "ரெஜெக்ஸ் டெஸ்டரை எவ்வாறு பயன்படுத்துவது",
+                "howto.step1.title": "உங்கள் ரெஜெக்ஸை உள்ளிடவும்",
+                "howto.step1.description": "உள்ளீட்டு புலத்தில் உங்கள் வழக்கமான வெளிப்பாடு முறையை தட்டச்சு செய்யவும். பொருத்துதல் நடத்தையை மாற்ற 'g' (குளோபல்), 'i' (வழக்கு-உணர்வற்ற), 'm' (மல்டிலைன்) போன்ற கொடிகளைப் பயன்படுத்தவும்.",
+                "howto.step2.title": "சோதனை உரையை வழங்கவும்",
+                "howto.step2.description": "உங்கள் ரெஜெக்ஸை சோதிக்க விரும்பும் உரையை உள்ளிடவும் அல்லது ஒட்டவும். நீங்கள் தட்டச்சு செய்யும் போது உண்மையான நேரத்தில் பொருத்தங்களின் ஹைலைட்டைக் காண்பீர்கள்.",
+                "howto.step3.title": "முடிவுகளை பகுப்பாய்வு செய்யவும்",
+                "howto.step3.description": "நிலைகள், குழுக்கள் மற்றும் முழுமையான பொருத்த மதிப்புகள் உட்பட விரிவான பொருத்த தகவல்களைக் காண்க. அனைத்து செயலாக்கமும் உங்கள் உலாவியில் உடனடியாக நடைபெறுகிறது.",
+                "howto.step4.title": "நகலெடு அல்லது அழி",
+                "howto.step4.description": "உங்கள் முடிவுகளை கிளிப்போர்டுக்கு நகலெடுக்கவும் அல்லது மீண்டும் தொடங்க அனைத்து உள்ளீடுகளையும் அழிக்கவும். உங்கள் தரவு உங்கள் உலாவியை விட்டு வெளியேறாது.",
+                "tool.title": "ரெஜெக்ஸ் டெஸ்டர்",
+                "tool.testText": "சோதனை உரை",
+                "tool.results": "பொருத்த முடிவுகள்",
+                "tool.test": "ரெஜெக்ஸை சோதிக்கவும்",
+                "tool.clear": "அனைத்தையும் அழி",
+                "tool.copy": "முடிவுகளை நகலெடுக்கவும்",
+                "footer.follow": "எங்களை பின்தொடரவும்",
+                "footer.categories": "பிரபலமான வகைகள்",
+                "footer.categories.pdf": "PDF கருவிகள்",
+                "footer.categories.image": "பட கருவிகள்",
+                "footer.categories.text": "உரை கருவிகள்",
+                "footer.categories.av": "ஆடியோ/வீடியோ கருவிகள்",
+                "footer.categories.web": "வெப்டெவலப்பர் கருவிகள்",
+                "footer.categories.calc": "கால்குலேட்டர் கருவிகள்",
+                "footer.categories.util": "பயன்பாட்டு கருவிகள்",
+                "footer.categories.color": "வண்ண கருவிகள்",
+                "footer.quicklinks": "விரைவு இணைப்புகள்",
+                "footer.links.tools": "அனைத்து கருவிகள்",
+                "footer.links.faq": "அடிக்கடி கேட்கப்படும் கேள்விகள்",
+                "footer.links.contact": "தொடர்பு கொள்ள",
+                "footer.links.privacy": "தனியுரிமைக் கொள்கை",
+                "footer.links.disclaimer": "மறுப்பு",
+                "footer.links.terms": "சேவை விதிமுறைகள்",
+                "footer.copyright": "© 2025 LollyPoPDF. அனைத்து உரிமைகளும் பாதுகாக்கப்பட்டவை."
+            },
+            ml: {
+                "nav.home": "ഹോം",
+                "nav.about": "ഞങ്ങളെക്കുറിച്ച്",
+                "nav.tools": "ടൂളുകൾ",
+                "nav.contact": "ബന്ധപ്പെടുക",
+                "hero.title": "റെജെക്സ് ടെസ്റ്റർ ടൂൾ",
+                "hero.description": "പൂർണ്ണ മാച്ച് ഹൈലൈറ്റിംഗ്, ഗ്രൂപ്പുകൾ, പിശക് കണ്ടെത്തൽ എന്നിവയോടെ നിങ്ങളുടെ റെഗുലർ എക്സ്പ്രഷനുകൾ റിയൽ-ടൈമിൽ പരീക്ഷിക്കുക. എല്ലാ പ്രോസസ്സിംഗും പൂർണ്ണ സ്വകാര്യതയോടെ പ്രാദേശികമായി നടക്കുന്നു.",
+                "howto.title": "റെജെക്സ് ടെസ്റ്റർ എങ്ങനെ ഉപയോഗിക്കാം",
+                "howto.step1.title": "നിങ്ങളുടെ റെജെക്സ് നൽകുക",
+                "howto.step1.description": "ഇൻപുട്ട് ഫീൽഡിൽ നിങ്ങളുടെ റെഗുലർ എക്സ്പ്രഷൻ പാറ്റേൺ ടൈപ്പ് ചെയ്യുക. മാച്ചിംഗ് പെരുമാറ്റം പരിഷ്കരിക്കാൻ 'g' (ഗ്ലോബൽ), 'i' (കേസ്-ഇൻസെൻസിറ്റീവ്), 'm' (മൾട്ടിലൈൻ) തുടങ്ങിയ ഫ്ലാഗുകൾ ഉപയോഗിക്കുക.",
+                "howto.step2.title": "ടെസ്റ്റ് ടെക്സ്റ്റ് നൽകുക",
+                "howto.step2.description": "നിങ്ങളുടെ റെജെക്സ് പരീക്ഷിക്കാൻ ആഗ്രഹിക്കുന്ന ടെക്സ്റ്റ് നൽകുക അല്ലെങ്കിൽ പേസ്റ്റ് ചെയ്യുക. നിങ്ങൾ ടൈപ്പ് ചെയ്യുമ്പോൾ റിയൽ-ടൈമിൽ മാച്ചുകളുടെ ഹൈലൈറ്റിംഗ് കാണും.",
+                "howto.step3.title": "ഫലങ്ങൾ വിശകലനം ചെയ്യുക",
+                "howto.step3.description": "സ്ഥാനങ്ങൾ, ഗ്രൂപ്പുകൾ, പൂർണ്ണ മാച്ച് മൂല്യങ്ങൾ എന്നിവ ഉൾപ്പെടെ വിശദമായ മാച്ച് വിവരങ്ങൾ കാണുക. എല്ലാ പ്രോസസ്സിംഗും നിങ്ങളുടെ ബ്രൗസറിൽ തൽക്ഷണം നടക്കുന്നു.",
+                "howto.step4.title": "കോപ്പി അല്ലെങ്കിൽ ക്ലിയർ ചെയ്യുക",
+                "howto.step4.description": "നിങ്ങളുടെ ഫലങ്ങൾ ക്ലിപ്പ്ബോർഡിലേക്ക് കോപ്പി ചെയ്യുക അല്ലെങ്കിൽ പുതുതായി ആരംഭിക്കാൻ എല്ലാ ഇൻപുട്ടുകളും ക്ലിയർ ചെയ്യുക. നിങ്ങളുടെ ഡാറ്റ ഒരിക്കലും നിങ്ങളുടെ ബ്രൗസർ വിടുന്നില്ല.",
+                "tool.title": "റെജെക്സ് ടെസ്റ്റർ",
+                "tool.testText": "ടെസ്റ്റ് ടെക്സ്റ്റ്",
+                "tool.results": "മാച്ച് ഫലങ്ങൾ",
+                "tool.test": "റെജെക്സ് പരീക്ഷിക്കുക",
+                "tool.clear": "എല്ലാം ക്ലിയർ ചെയ്യുക",
+                "tool.copy": "ഫലങ്ങൾ കോപ്പി ചെയ്യുക",
+                "footer.follow": "ഞങ്ങളെ പിന്തുടരുക",
+                "footer.categories": "ജനപ്രിയ വിഭാഗങ്ങൾ",
+                "footer.categories.pdf": "PDF ടൂളുകൾ",
+                "footer.categories.image": "ഇമേജ് ടൂളുകൾ",
+                "footer.categories.text": "ടെക്സ്റ്റ് ടൂളുകൾ",
+                "footer.categories.av": "ഓഡിയോ/വീഡിയോ ടൂളുകൾ",
+                "footer.categories.web": "വെബ് ഡെവലപ്പർ ടൂളുകൾ",
+                "footer.categories.calc": "കാൽക്കുലേറ്റർ ടൂളുകൾ",
+                "footer.categories.util": "യൂട്ടിലിറ്റി ടൂളുകൾ",
+                "footer.categories.color": "കളർ ടൂളുകൾ",
+                "footer.quicklinks": "ദ്രുത ലിങ്കുകൾ",
+                "footer.links.tools": "എല്ലാ ടൂളുകളും",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "ബന്ധപ്പെടുക",
+                "footer.links.privacy": "സ്വകാര്യതാ നയം",
+                "footer.links.disclaimer": "അസാധുതാ നിരാകരണം",
+                "footer.links.terms": "സേവന നിബന്ധനകൾ",
+                "footer.copyright": "© 2025 LollyPoPDF. എല്ലാ അവകാശങ്ങളും നിക്ഷിപ്തം."
+            },
+            id: {
+                "nav.home": "Beranda",
+                "nav.about": "Tentang Kami",
+                "nav.tools": "Alat",
+                "nav.contact": "Kontak",
+                "hero.title": "Alat Penguji Regex",
+                "hero.description": "Uji ekspresi reguler Anda secara real-time dengan penyorotan kecocokan lengkap, grup, dan deteksi kesalahan. Semua pemrosesan terjadi secara lokal dengan privasi lengkap.",
+                "howto.title": "Cara Menggunakan Penguji Regex",
+                "howto.step1.title": "Masukkan Regex Anda",
+                "howto.step1.description": "Ketik pola ekspresi reguler Anda di bidang input. Gunakan flag seperti 'g' (global), 'i' (case-insensitive), 'm' (multiline), dll. untuk mengubah perilaku pencocokan.",
+                "howto.step2.title": "Berikan Teks Uji",
+                "howto.step2.description": "Masukkan atau tempel teks yang ingin Anda uji regex Anda. Anda akan melihat penyorotan kecocokan secara real-time saat mengetik.",
+                "howto.step3.title": "Analisis Hasil",
+                "howto.step3.description": "Lihat informasi kecocokan terperinci termasuk posisi, grup, dan nilai kecocokan lengkap. Semua pemrosesan terjadi secara instan di browser Anda.",
+                "howto.step4.title": "Salin atau Hapus",
+                "howto.step4.description": "Salin hasil Anda ke clipboard atau hapus semua input untuk memulai dari awal. Data Anda tidak pernah meninggalkan browser Anda.",
+                "tool.title": "Penguji Regex",
+                "tool.testText": "Teks Uji",
+                "tool.results": "Hasil Kecocokan",
+                "tool.test": "Uji Regex",
+                "tool.clear": "Hapus Semua",
+                "tool.copy": "Salin Hasil",
+                "footer.follow": "IKUTI KAMI",
+                "footer.categories": "Kategori Populer",
+                "footer.categories.pdf": "Alat PDF",
+                "footer.categories.image": "Alat Gambar",
+                "footer.categories.text": "Alat Teks",
+                "footer.categories.av": "Alat Audio/Video",
+                "footer.categories.web": "Alat WebDeveloper",
+                "footer.categories.calc": "Alat Kalkulator",
+                "footer.categories.util": "Alat Utilitas",
+                "footer.categories.color": "Alat Warna",
+                "footer.quicklinks": "Tautan Cepat",
+                "footer.links.tools": "Semua Alat",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Kontak",
+                "footer.links.privacy": "Kebijakan Privasi",
+                "footer.links.disclaimer": "Penafian",
+                "footer.links.terms": "Syarat Layanan",
+                "footer.copyright": "© 2025 LollyPoPDF. Hak cipta dilindungi undang-undang."
+            },
+            ms: {
+                "nav.home": "Laman Utama",
+                "nav.about": "Tentang Kami",
+                "nav.tools": "Alat",
+                "nav.contact": "Hubungi",
+                "hero.title": "Alat Penguji Regex",
+                "hero.description": "Uji ungkapan biasa anda secara masa nyata dengan penyerlahan padanan penuh, kumpulan dan pengesanan ralat. Semua pemprosesan berlaku secara tempatan dengan privasi lengkap.",
+                "howto.title": "Cara Menggunakan Penguji Regex",
+                "howto.step1.title": "Masukkan Regex Anda",
+                "howto.step1.description": "Taip corak ungkapan biasa anda dalam medan input. Gunakan bendera seperti 'g' (global), 'i' (tidak peka huruf), 'm' (berbilang baris) dll. untuk mengubah tingkah laku pemadanan.",
+                "howto.step2.title": "Sediakan Teks Ujian",
+                "howto.step2.description": "Masukkan atau tampal teks yang anda ingin uji regex anda. Anda akan melihat penyerlahan padanan secara masa nyata semasa menaip.",
+                "howto.step3.title": "Analisis Keputusan",
+                "howto.step3.description": "Lihat maklumat padanan terperinci termasuk kedudukan, kumpulan dan nilai padanan penuh. Semua pemprosesan berlaku serta-merta dalam pelayar anda.",
+                "howto.step4.title": "Salin atau Kosongkan",
+                "howto.step4.description": "Salin keputusan anda ke papan keratan atau kosongkan semua input untuk bermula semula. Data anda tidak pernah meninggalkan pelayar anda.",
+                "tool.title": "Penguji Regex",
+                "tool.testText": "Teks Ujian",
+                "tool.results": "Keputusan Padanan",
+                "tool.test": "Uji Regex",
+                "tool.clear": "Kosongkan Semua",
+                "tool.copy": "Salin Keputusan",
+                "footer.follow": "IKUTI KAMI",
+                "footer.categories": "Kategori Popular",
+                "footer.categories.pdf": "Alat PDF",
+                "footer.categories.image": "Alat Imej",
+                "footer.categories.text": "Alat Teks",
+                "footer.categories.av": "Alat Audio/Video",
+                "footer.categories.web": "Alat WebPembangun",
+                "footer.categories.calc": "Alat Kalkulator",
+                "footer.categories.util": "Alat Utiliti",
+                "footer.categories.color": "Alat Warna",
+                "footer.quicklinks": "Pautan Pantas",
+                "footer.links.tools": "Semua Alat",
+                "footer.links.faq": "Soalan Lazim",
+                "footer.links.contact": "Hubungi",
+                "footer.links.privacy": "Dasar Privasi",
+                "footer.links.disclaimer": "Penafian",
+                "footer.links.terms": "Syarat Perkhidmatan",
+                "footer.copyright": "© 2025 LollyPoPDF. Hak cipta terpelihara."
+            },
+            pl: {
+                "nav.home": "Strona główna",
+                "nav.about": "O nas",
+                "nav.tools": "Narzędzia",
+                "nav.contact": "Kontakt",
+                "hero.title": "Narzędzie testujące wyrażenia regularne",
+                "hero.description": "Testuj swoje wyrażenia regularne w czasie rzeczywistym z pełnym podświetlaniem dopasowań, grupami i wykrywaniem błędów. Wszystkie przetwarzanie odbywa się lokalnie z pełną prywatnością.",
+                "howto.title": "Jak korzystać z testera wyrażeń regularnych",
+                "howto.step1.title": "Wprowadź swoje wyrażenie regularne",
+                "howto.step1.description": "Wpisz swój wzorzec wyrażenia regularnego w polu wejściowym. Użyj flag takich jak 'g' (globalna), 'i' (bez uwzględniania wielkości liter), 'm' (wielowierszowa) itp., aby zmodyfikować zachowanie dopasowania.",
+                "howto.step2.title": "Podaj tekst testowy",
+                "howto.step2.description": "Wprowadź lub wklej tekst, na którym chcesz przetestować swoje wyrażenie regularne. Zobaczysz podświetlanie dopasowań w czasie rzeczywistym podczas pisania.",
+                "howto.step3.title": "Przeanalizuj wyniki",
+                "howto.step3.description": "Zobacz szczegółowe informacje o dopasowaniach, w tym pozycje, grupy i pełne wartości dopasowań. Wszystkie przetwarzanie odbywa się natychmiast w Twojej przeglądarce.",
+                "howto.step4.title": "Kopiuj lub wyczyść",
+                "howto.step4.description": "Skopiuj wyniki do schowka lub wyczyść wszystkie dane wejściowe, aby rozpocząć od nowa. Twoje dane nigdy nie opuszczają Twojej przeglądarki.",
+                "tool.title": "Tester wyrażeń regularnych",
+                "tool.testText": "Tekst testowy",
+                "tool.results": "Wyniki dopasowań",
+                "tool.test": "Testuj wyrażenie regularne",
+                "tool.clear": "Wyczyść wszystko",
+                "tool.copy": "Kopiuj wyniki",
+                "footer.follow": "OBSERWUJ NAS",
+                "footer.categories": "Popularne kategorie",
+                "footer.categories.pdf": "Narzędzia PDF",
+                "footer.categories.image": "Narzędzia obrazów",
+                "footer.categories.text": "Narzędzia tekstowe",
+                "footer.categories.av": "Narzędzia audio/wideo",
+                "footer.categories.web": "Narzędzia webdevelopera",
+                "footer.categories.calc": "Narzędzia kalkulatora",
+                "footer.categories.util": "Narzędzia użytkowe",
+                "footer.categories.color": "Narzędzia kolorów",
+                "footer.quicklinks": "Szybkie linki",
+                "footer.links.tools": "Wszystkie narzędzia",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Kontakt",
+                "footer.links.privacy": "Polityka prywatności",
+                "footer.links.disclaimer": "Zastrzeżenie",
+                "footer.links.terms": "Warunki usługi",
+                "footer.copyright": "© 2025 LollyPoPDF. Wszelkie prawa zastrzeżone."
+            },
+            th: {
+                "nav.home": "หน้าแรก",
+                "nav.about": "เกี่ยวกับเรา",
+                "nav.tools": "เครื่องมือ",
+                "nav.contact": "ติดต่อ",
+                "hero.title": "เครื่องมือทดสอบนิพจน์ทั่วไป",
+                "hero.description": "ทดสอบนิพจน์ทั่วไปของคุณแบบเรียลไทม์พร้อมการไฮไลต์การจับคู่แบบเต็ม กลุ่ม และการตรวจจับข้อผิดพลาด การประมวลผลทั้งหมดเกิดขึ้นในเครื่องด้วยความเป็นส่วนตัวแบบเต็ม",
+                "howto.title": "วิธีใช้เครื่องมือทดสอบนิพจน์ทั่วไป",
+                "howto.step1.title": "ป้อนนิพจน์ทั่วไปของคุณ",
+                "howto.step1.description": "พิมพ์รูปแบบนิพจน์ทั่วไปของคุณในช่องป้อนข้อมูล ใช้แฟล็กเช่น 'g' (ทั่วโลก), 'i' (ไม่สนใจตัวพิมพ์), 'm' (หลายบรรทัด) เป็นต้น เพื่อปรับเปลี่ยนพฤติกรรมการจับคู่",
+                "howto.step2.title": "ระบุข้อความทดสอบ",
+                "howto.step2.description": "ป้อนหรือวางข้อความที่คุณต้องการทดสอบนิพจน์ทั่วไปของคุณ คุณจะเห็นการไฮไลต์การจับคู่แบบเรียลไทม์ขณะพิมพ์",
+                "howto.step3.title": "วิเคราะห์ผลลัพธ์",
+                "howto.step3.description": "ดูข้อมูลการจับคู่โดยละเอียดรวมถึงตำแหน่ง กลุ่ม และค่าการจับคู่แบบเต็ม การประมวลผลทั้งหมดเกิดขึ้นทันทีในเบราว์เซอร์ของคุณ",
+                "howto.step4.title": "คัดลอกหรือล้าง",
+                "howto.step4.description": "คัดลอกผลลัพธ์ของคุณไปยังคลิปบอร์ดหรือล้างข้อมูลที่ป้อนทั้งหมดเพื่อเริ่มต้นใหม่ ข้อมูลของคุณจะไม่ถูกส่งออกจากเบราว์เซอร์ของคุณ",
+                "tool.title": "เครื่องมือทดสอบนิพจน์ทั่วไป",
+                "tool.testText": "ข้อความทดสอบ",
+                "tool.results": "ผลการจับคู่",
+                "tool.test": "ทดสอบนิพจน์ทั่วไป",
+                "tool.clear": "ล้างทั้งหมด",
+                "tool.copy": "คัดลอกผลลัพธ์",
+                "footer.follow": "ติดตามเรา",
+                "footer.categories": "หมวดหมู่ยอดนิยม",
+                "footer.categories.pdf": "เครื่องมือ PDF",
+                "footer.categories.image": "เครื่องมือรูปภาพ",
+                "footer.categories.text": "เครื่องมือข้อความ",
+                "footer.categories.av": "เครื่องมือเสียง/วิดีโอ",
+                "footer.categories.web": "เครื่องมือนักพัฒนาเว็บ",
+                "footer.categories.calc": "เครื่องมือเครื่องคิดเลข",
+                "footer.categories.util": "เครื่องมืออรรถประโยชน์",
+                "footer.categories.color": "เครื่องมือสี",
+                "footer.quicklinks": "ลิงก์ด่วน",
+                "footer.links.tools": "เครื่องมือทั้งหมด",
+                "footer.links.faq": "คำถามที่พบบ่อย",
+                "footer.links.contact": "ติดต่อ",
+                "footer.links.privacy": "นโยบายความเป็นส่วนตัว",
+                "footer.links.disclaimer": "ข้อจำกัดความรับผิดชอบ",
+                "footer.links.terms": "ข้อกำหนดการให้บริการ",
+                "footer.copyright": "© 2025 LollyPoPDF. สงวนลิขสิทธิ์"
+            },
+            tr: {
+                "nav.home": "Ana Sayfa",
+                "nav.about": "Hakkımızda",
+                "nav.tools": "Araçlar",
+                "nav.contact": "İletişim",
+                "hero.title": "Regex Test Aracı",
+                "hero.description": "Düzenli ifadelerinizi tam eşleşme vurgulama, gruplar ve hata tespiti ile gerçek zamanlı olarak test edin. Tüm işlemler tam gizlilikle yerel olarak gerçekleşir.",
+                "howto.title": "Regex Test Aracı Nasıl Kullanılır",
+                "howto.step1.title": "Regex'inizi Girin",
+                "howto.step1.description": "Giriş alanına düzenli ifade deseninizi yazın. Eşleşme davranışını değiştirmek için 'g' (global), 'i' (büyük/küçük harf duyarsız), 'm' (çok satırlı) vb. bayrakları kullanın.",
+                "howto.step2.title": "Test Metnini Sağlayın",
+                "howto.step2.description": "Regex'inizi test etmek istediğiniz metni girin veya yapıştırın. Yazarken gerçek zamanlı olarak eşleşmelerin vurgulanmasını göreceksiniz.",
+                "howto.step3.title": "Sonuçları Analiz Edin",
+                "howto.step3.description": "Pozisyonlar, gruplar ve tam eşleşme değerleri dahil olmak üzere ayrıntılı eşleşme bilgilerini görüntüleyin. Tüm işlemler tarayıcınızda anında gerçekleşir.",
+                "howto.step4.title": "Kopyala veya Temizle",
+                "howto.step4.description": "Sonuçlarınızı panoya kopyalayın veya yeniden başlamak için tüm girişleri temizleyin. Verileriniz asla tarayıcınızdan ayrılmaz.",
+                "tool.title": "Regex Test Aracı",
+                "tool.testText": "Test Metni",
+                "tool.results": "Eşleşme Sonuçları",
+                "tool.test": "Regex Test Et",
+                "tool.clear": "Tümünü Temizle",
+                "tool.copy": "Sonuçları Kopyala",
+                "footer.follow": "BİZİ TAKİP EDİN",
+                "footer.categories": "Popüler Kategoriler",
+                "footer.categories.pdf": "PDF Araçları",
+                "footer.categories.image": "Resim Araçları",
+                "footer.categories.text": "Metin Araçları",
+                "footer.categories.av": "Ses/Video Araçları",
+                "footer.categories.web": "Web Geliştirici Araçları",
+                "footer.categories.calc": "Hesap Makinesi Araçları",
+                "footer.categories.util": "Yardımcı Araçlar",
+                "footer.categories.color": "Renk Araçları",
+                "footer.quicklinks": "Hızlı Bağlantılar",
+                "footer.links.tools": "Tüm Araçlar",
+                "footer.links.faq": "SSS",
+                "footer.links.contact": "İletişim",
+                "footer.links.privacy": "Gizlilik Politikası",
+                "footer.links.disclaimer": "Feragatname",
+                "footer.links.terms": "Hizmet Şartları",
+                "footer.copyright": "© 2025 LollyPoPDF. Tüm hakları saklıdır."
+            },
+            uk: {
+                "nav.home": "Головна",
+                "nav.about": "Про нас",
+                "nav.tools": "Інструменти",
+                "nav.contact": "Контакти",
+                "hero.title": "Інструмент тестування регулярних виразів",
+                "hero.description": "Тестуйте свої регулярні вирази в реальному часі з повним підсвічуванням збігів, групами та виявленням помилок. Вся обробка відбувається локально з повною конфіденційністю.",
+                "howto.title": "Як використовувати тестер регулярних виразів",
+                "howto.step1.title": "Введіть свій регулярний вираз",
+                "howto.step1.description": "Введіть свій шаблон регулярного виразу в поле введення. Використовуйте прапорці, такі як 'g' (глобальний), 'i' (нечутливий до регістру), 'm' (багаторядковий) тощо, щоб змінити поведінку збігу.",
+                "howto.step2.title": "Надайте тестовий текст",
+                "howto.step2.description": "Введіть або вставте текст, для якого ви хочете протестувати свій регулярний вираз. Ви побачите підсвічування збігів у реальному часі під час введення.",
+                "howto.step3.title": "Проаналізуйте результати",
+                "howto.step3.description": "Переглядайте детальну інформацію про збіги, включаючи позиції, групи та повні значення збігів. Вся обробка відбувається миттєво у вашому браузері.",
+                "howto.step4.title": "Копіювати або очистити",
+                "howto.step4.description": "Скопіюйте свої результати в буфер обміну або очистіть усі введення, щоб почати спочатку. Ваші дані ніколи не залишають ваш браузер.",
+                "tool.title": "Тестер регулярних виразів",
+                "tool.testText": "Тестовий текст",
+                "tool.results": "Результати збігів",
+                "tool.test": "Тестувати регулярний вираз",
+                "tool.clear": "Очистити все",
+                "tool.copy": "Копіювати результати",
+                "footer.follow": "СЛІДКУЙТЕ ЗА НАМИ",
+                "footer.categories": "Популярні категорії",
+                "footer.categories.pdf": "PDF інструменти",
+                "footer.categories.image": "Інструменти для зображень",
+                "footer.categories.text": "Текстовий інструменти",
+                "footer.categories.av": "Аудіо/Відео інструменти",
+                "footer.categories.web": "Інструменти веб-розробника",
+                "footer.categories.calc": "Інструменти калькулятора",
+                "footer.categories.util": "Утиліти",
+                "footer.categories.color": "Кольорові інструменти",
+                "footer.quicklinks": "Швидкі посилання",
+                "footer.links.tools": "Всі інструменти",
+                "footer.links.faq": "ЧаПи",
+                "footer.links.contact": "Контакти",
+                "footer.links.privacy": "Політика конфіденційності",
+                "footer.links.disclaimer": "Відмова від відповідальності",
+                "footer.links.terms": "Умови використання",
+                "footer.copyright": "© 2025 LollyPoPDF. Всі права захищені."
+            },
+            vi: {
+                "nav.home": "Trang chủ",
+                "nav.about": "Về chúng tôi",
+                "nav.tools": "Công cụ",
+                "nav.contact": "Liên hệ",
+                "hero.title": "Công cụ kiểm tra biểu thức chính quy",
+                "hero.description": "Kiểm tra biểu thức chính quy của bạn trong thời gian thực với đánh dấu khớp đầy đủ, nhóm và phát hiện lỗi. Tất cả xử lý diễn ra cục bộ với quyền riêng tư hoàn toàn.",
+                "howto.title": "Cách sử dụng trình kiểm tra biểu thức chính quy",
+                "howto.step1.title": "Nhập biểu thức chính quy của bạn",
+                "howto.step1.description": "Nhập mẫu biểu thức chính quy của bạn vào trường nhập liệu. Sử dụng các cờ như 'g' (toàn cục), 'i' (không phân biệt chữ hoa chữ thường), 'm' (đa dòng) v.v. để sửa đổi hành vi khớp.",
+                "howto.step2.title": "Cung cấp văn bản kiểm tra",
+                "howto.step2.description": "Nhập hoặc dán văn bản mà bạn muốn kiểm tra biểu thức chính quy của mình. Bạn sẽ thấy đánh dấu các kết quả khớp trong thời gian thực khi bạn nhập.",
+                "howto.step3.title": "Phân tích kết quả",
+                "howto.step3.description": "Xem thông tin khớp chi tiết bao gồm vị trí, nhóm và giá trị khớp đầy đủ. Tất cả xử lý diễn ra ngay lập tức trong trình duyệt của bạn.",
+                "howto.step4.title": "Sao chép hoặc xóa",
+                "howto.step4.description": "Sao chép kết quả của bạn vào clipboard hoặc xóa tất cả đầu vào để bắt đầu lại. Dữ liệu của bạn không bao giờ rời khỏi trình duyệt của bạn.",
+                "tool.title": "Trình kiểm tra biểu thức chính quy",
+                "tool.testText": "Văn bản kiểm tra",
+                "tool.results": "Kết quả khớp",
+                "tool.test": "Kiểm tra biểu thức chính quy",
+                "tool.clear": "Xóa tất cả",
+                "tool.copy": "Sao chép kết quả",
+                "footer.follow": "THEO DÕI CHÚNG TÔI",
+                "footer.categories": "Danh mục phổ biến",
+                "footer.categories.pdf": "Công cụ PDF",
+                "footer.categories.image": "Công cụ hình ảnh",
+                "footer.categories.text": "Công cụ văn bản",
+                "footer.categories.av": "Công cụ âm thanh/video",
+                "footer.categories.web": "Công cụ nhà phát triển web",
+                "footer.categories.calc": "Công cụ máy tính",
+                "footer.categories.util": "Công cụ tiện ích",
+                "footer.categories.color": "Công cụ màu sắc",
+                "footer.quicklinks": "Liên kết nhanh",
+                "footer.links.tools": "Tất cả công cụ",
+                "footer.links.faq": "Câu hỏi thường gặp",
+                "footer.links.contact": "Liên hệ",
+                "footer.links.privacy": "Chính sách bảo mật",
+                "footer.links.disclaimer": "Tuyên bố miễn trừ trách nhiệm",
+                "footer.links.terms": "Điều khoản dịch vụ",
+                "footer.copyright": "© 2025 LollyPoPDF. Đã đăng ký bản quyền."
+            },
+            is: {
+                "nav.home": "Heim",
+                "nav.about": "Um okkur",
+                "nav.tools": "Verkfæri",
+                "nav.contact": "Hafa samband",
+                "hero.title": "Regluleg segð prófunartól",
+                "hero.description": "Prófaðu reglulegar segðir þínar í rauntíma með fullri samsvörunarupplýsingu, hópum og villugreiningu. Öll vinnsla á sér stað staðbundin með fullri næði.",
+                "howto.title": "Hvernig á að nota reglulega segðaprófarann",
+                "howto.step1.title": "Sláðu inn reglulega segðina þína",
+                "howto.step1.description": "Sláðu inn reglulega segðarmynstrið þitt í inntaksreitinn. Notaðu merki eins og 'g' (almennt), 'i' (há- og lágstafir ónæmt), 'm' (fjöl-lína) osfrv. til að breyta samsvörunarhegðun.",
+                "howto.step2.title": "Gefðu prófunartexta",
+                "howto.step2.description": "Sláðu inn eða líma textann sem þú vilt prófa reglulegu segðina þína á. Þú munt sjá samsvörunarupplýsingu í rauntíma á meðan þú skrifar.",
+                "howto.step3.title": "Greindu niðurstöður",
+                "howto.step3.description": "Skoðaðu ítarlegar samsvörunarupplýsingar, þar á meðal stöður, hópa og fullar samsvörunar gildi. Öll vinnsla á sér stað samstundis í vafranum þínum.",
+                "howto.step4.title": "Afrita eða hreinsa",
+                "howto.step4.description": "Afritaðu niðurstöðurnar þínar á klippiborðið eða hreinsaðu öll inntök til að byrja upp á nýtt. Gögnin þín fara aldrei út úr vafranum þínum.",
+                "tool.title": "Regluleg segðaprófari",
+                "tool.testText": "Prófunartexti",
+                "tool.results": "Samsvörunar niðurstöður",
+                "tool.test": "Prófa reglulega segð",
+                "tool.clear": "Hreinsa allt",
+                "tool.copy": "Afrita niðurstöður",
+                "footer.follow": "FYLGDU OKKUR",
+                "footer.categories": "Vinsælar flokkar",
+                "footer.categories.pdf": "PDF verkfæri",
+                "footer.categories.image": "Myndverkfæri",
+                "footer.categories.text": "Textaverkfæri",
+                "footer.categories.av": "Hljóð-/myndbandaverkfæri",
+                "footer.categories.web": "Vefþróunaraðila verkfæri",
+                "footer.categories.calc": "Reiknivélarverkfæri",
+                "footer.categories.util": "Nytjaverkfæri",
+                "footer.categories.color": "Litverkfæri",
+                "footer.quicklinks": "Flýtileiðir",
+                "footer.links.tools": "Öll verkfæri",
+                "footer.links.faq": "Algengar spurningar",
+                "footer.links.contact": "Hafa samband",
+                "footer.links.privacy": "Meðferðarstefna",
+                "footer.links.disclaimer": "Fyrirvari",
+                "footer.links.terms": "Þjónustuskilmálar",
+                "footer.copyright": "© 2025 LollyPoPDF. Öll réttindi áskilin."
+            },
+            no: {
+                "nav.home": "Hjem",
+                "nav.about": "Om oss",
+                "nav.tools": "Verktøy",
+                "nav.contact": "Kontakt",
+                "hero.title": "Regex-testverktøy",
+                "hero.description": "Test regulære uttrykk i sanntid med full treffmarkering, grupper og feiloppdaging. All behandling skjer lokalt med fullstendig personvern.",
+                "howto.title": "Hvordan bruke regex-testverktøyet",
+                "howto.step1.title": "Skriv inn ditt regex",
+                "howto.step1.description": "Skriv inn mønsteret for det regulære uttrykket ditt i inntastingsfeltet. Bruk flagg som 'g' (global), 'i' (store/små bokstaver), 'm' (flerlinje) osv. for å endre matcheatferd.",
+                "howto.step2.title": "Oppgi testtekst",
+                "howto.step2.description": "Skriv inn eller lim inn teksten du vil teste regex-en din mot. Du vil se treffmarkering i sanntid mens du skriver.",
+                "howto.step3.title": "Analyser resultater",
+                "howto.step3.description": "Se detaljert treffinformasjon inkludert posisjoner, grupper og fulle treffverdier. All behandling skjer umiddelbart i nettleseren din.",
+                "howto.step4.title": "Kopier eller tøm",
+                "howto.step4.description": "Kopier resultatene dine til utklippstavlen eller tøm alle inndata for å starte på nytt. Dataene dine forlater aldri nettleseren din.",
+                "tool.title": "Regex-testverktøy",
+                "tool.testText": "Testtekst",
+                "tool.results": "Treffresultater",
+                "tool.test": "Test regex",
+                "tool.clear": "Tøm alt",
+                "tool.copy": "Kopier resultater",
+                "footer.follow": "FØLG OSS",
+                "footer.categories": "Populære kategorier",
+                "footer.categories.pdf": "PDF-verktøy",
+                "footer.categories.image": "Bildeverktøy",
+                "footer.categories.text": "Tekstverktøy",
+                "footer.categories.av": "Lyd/Video-verktøy",
+                "footer.categories.web": "Nettutviklerverktøy",
+                "footer.categories.calc": "Kalkulatorverktøy",
+                "footer.categories.util": "Hjelpeverktøy",
+                "footer.categories.color": "Fargeverktøy",
+                "footer.quicklinks": "Hurtiglenker",
+                "footer.links.tools": "Alle verktøy",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Kontakt",
+                "footer.links.privacy": "Personvernpolitikk",
+                "footer.links.disclaimer": "Ansvarsfraskrivelse",
+                "footer.links.terms": "Tjenestevilkår",
+                "footer.copyright": "© 2025 LollyPoPDF. Alle rettigheter forbeholdt."
+            },
+            sv: {
+                "nav.home": "Hem",
+                "nav.about": "Om oss",
+                "nav.tools": "Verktyg",
+                "nav.contact": "Kontakt",
+                "hero.title": "Regex-testverktyg",
+                "hero.description": "Testa dina reguljära uttryck i realtid med full matchmarkering, grupper och feldetektering. All bearbetning sker lokalt med fullständigt sekretess.",
+                "howto.title": "Hur man använder regex-testverktyget",
+                "howto.step1.title": "Ange ditt regex",
+                "howto.step1.description": "Skriv in ditt reguljära uttrycksmönster i inmatningsfältet. Använd flaggor som 'g' (global), 'i' (skiftlägesokänslig), 'm' (flerradig) etc. för att ändra matchningsbeteende.",
+                "howto.step2.title": "Ange testtext",
+                "howto.step2.description": "Skriv in eller klistra in texten du vill testa ditt regex mot. Du kommer att se matchmarkering i realtid när du skriver.",
+                "howto.step3.title": "Analysera resultat",
+                "howto.step3.description": "Visa detaljerad matchinformation inklusive positioner, grupper och fullständiga matchvärden. All bearbetning sker omedelbart i din webbläsare.",
+                "howto.step4.title": "Kopiera eller rensa",
+                "howto.step4.description": "Kopiera dina resultat till urklipp eller rensa alla inmatningar för att börja om. Dina data lämnar aldrig din webbläsare.",
+                "tool.title": "Regex-testverktyg",
+                "tool.testText": "Testtext",
+                "tool.results": "Matchresultat",
+                "tool.test": "Testa regex",
+                "tool.clear": "Rensa allt",
+                "tool.copy": "Kopiera resultat",
+                "footer.follow": "FÖLJ OSS",
+                "footer.categories": "Populära kategorier",
+                "footer.categories.pdf": "PDF-verktyg",
+                "footer.categories.image": "Bildverktyg",
+                "footer.categories.text": "Textverktyg",
+                "footer.categories.av": "Ljud/Video-verktyg",
+                "footer.categories.web": "Webbutvecklarverktyg",
+                "footer.categories.calc": "Kalkylatorverktyg",
+                "footer.categories.util": "Verktyg för verktyg",
+                "footer.categories.color": "Färgverktyg",
+                "footer.quicklinks": "Snabblänkar",
+                "footer.links.tools": "Alla verktyg",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Kontakt",
+                "footer.links.privacy": "Integritetspolicy",
+                "footer.links.disclaimer": "Ansvarsfriskrivning",
+                "footer.links.terms": "Användarvillkor",
+                "footer.copyright": "© 2025 LollyPoPDF. Alla rättigheter förbehållna."
+            },
+            fi: {
+                "nav.home": "Koti",
+                "nav.about": "Tietoa meistä",
+                "nav.tools": "Työkalut",
+                "nav.contact": "Ota yhteyttä",
+                "hero.title": "Säännöllisten lausekkeiden testityökalu",
+                "hero.description": "Testaa säännöllisiä lausekkeitasi reaaliaikaisesti täydellisellä osumien korostuksella, ryhmillä ja virheentunnistuksella. Kaikki käsittely tapahtuu paikallisesti täydellisen yksityisyyden kanssa.",
+                "howto.title": "Kuinka käyttää säännöllisten lausekkeiden testaajaa",
+                "howto.step1.title": "Syötä säännöllinen lausekkeesi",
+                "howto.step1.description": "Kirjoita säännöllisen lausekkeen mallisi syöttökenttään. Käytä lippuja kuten 'g' (globaali), 'i' (kirjainkoosta riippumaton), 'm' (monirivinen) jne. muuttaaksesi vastaavuuskäyttäytymistä.",
+                "howto.step2.title": "Anna testoteksti",
+                "howto.step2.description": "Kirjoita tai liitä teksti, jota vastaan haluat testata säännöllistä lausekettasi. Näet osumien korostuksen reaaliaikaisesti kirjoittaessasi.",
+                "howto.step3.title": "Analysoi tulokset",
+                "howto.step3.description": "Näytä yksityiskohtainen osumatieto, mukaan lukien sijainnit, ryhmät ja täydelliset osuma-arvot. Kaikki käsittely tapahtuu välittömästi selaimessasi.",
+                "howto.step4.title": "Kopioi tai tyhjennä",
+                "howto.step4.description": "Kopioi tuloksesi leikepöydälle tai tyhjennä kaikki syötteet aloittaaksesi alusta. Tietosi eivät koskaan poistu selaimestasi.",
+                "tool.title": "Säännöllisten lausekkeiden testaaja",
+                "tool.testText": "Testoteksti",
+                "tool.results": "Osumatulokset",
+                "tool.test": "Testaa säännöllinen lauseke",
+                "tool.clear": "Tyhjennä kaikki",
+                "tool.copy": "Kopioi tulokset",
+                "footer.follow": "SEURA MEITÄ",
+                "footer.categories": "Suositut luokat",
+                "footer.categories.pdf": "PDF-työkalut",
+                "footer.categories.image": "Kuvatyökalut",
+                "footer.categories.text": "Tekstityökalut",
+                "footer.categories.av": "Ääni/Video-työkalut",
+                "footer.categories.web": "Web-kehittäjätyökalut",
+                "footer.categories.calc": "Laskintyökalut",
+                "footer.categories.util": "Aputyökalut",
+                "footer.categories.color": "Värityökalut",
+                "footer.quicklinks": "Pikalinkit",
+                "footer.links.tools": "Kaikki työkalut",
+                "footer.links.faq": "UKK",
+                "footer.links.contact": "Ota yhteyttä",
+                "footer.links.privacy": "Tietosuojakäytäntö",
+                "footer.links.disclaimer": "Vastuuvapauslauseke",
+                "footer.links.terms": "Käyttöehdot",
+                "footer.copyright": "© 2025 LollyPoPDF. Kaikki oikeudet pidätetään."
+            },
+            cs: {
+                "nav.home": "Domů",
+                "nav.about": "O nás",
+                "nav.tools": "Nástroje",
+                "nav.contact": "Kontakt",
+                "hero.title": "Nástroj pro testování regulárních výrazů",
+                "hero.description": "Testujte své regulární výrazy v reálném čase s plným zvýrazněním shod, skupinami a detekcí chyb. Veškeré zpracování probíhá lokálně s úplným soukromím.",
+                "howto.title": "Jak používat tester regulárních výrazů",
+                "howto.step1.title": "Zadejte svůj regulární výraz",
+                "howto.step1.description": "Zadejte svůj vzor regulárního výrazu do vstupního pole. Použijte příznaky jako 'g' (globální), 'i' (nerozlišující velikost písmen), 'm' (víceřádkový) atd. pro úpravu chování shody.",
+                "howto.step2.title": "Poskytněte testovací text",
+                "howto.step2.description": "Zadejte nebo vložte text, na kterém chcete testovat svůj regulární výraz. Uvidíte zvýraznění shod v reálném čase při psaní.",
+                "howto.step3.title": "Analyzujte výsledky",
+                "howto.step3.description": "Zobrazte podrobné informace o shodách včetně pozic, skupin a úplných hodnot shod. Veškeré zpracování probíhá okamžitě ve vašem prohlížeči.",
+                "howto.step4.title": "Kopírovat nebo vymazat",
+                "howto.step4.description": "Zkopírujte své výsledky do schránky nebo vymažte všechny vstupy a začněte znovu. Vaše data nikdy neopouštějí váš prohlížeč.",
+                "tool.title": "Tester regulárních výrazů",
+                "tool.testText": "Testovací text",
+                "tool.results": "Výsledky shod",
+                "tool.test": "Testovat regulární výraz",
+                "tool.clear": "Vymazat vše",
+                "tool.copy": "Kopírovat výsledky",
+                "footer.follow": "SLEDUJTE NÁS",
+                "footer.categories": "Populární kategorie",
+                "footer.categories.pdf": "PDF nástroje",
+                "footer.categories.image": "Obrázkové nástroje",
+                "footer.categories.text": "Textové nástroje",
+                "footer.categories.av": "Audio/Video nástroje",
+                "footer.categories.web": "WebVývojářské nástroje",
+                "footer.categories.calc": "Kalkulační nástroje",
+                "footer.categories.util": "Pomocné nástroje",
+                "footer.categories.color": "Barevné nástroje",
+                "footer.quicklinks": "Rychlé odkazy",
+                "footer.links.tools": "Všechny nástroje",
+                "footer.links.faq": "Často kladené otázky",
+                "footer.links.contact": "Kontakt",
+                "footer.links.privacy": "Zásady ochrany osobních údajů",
+                "footer.links.disclaimer": "Odmítnutí odpovědnosti",
+                "footer.links.terms": "Podmínky služby",
+                "footer.copyright": "© 2025 LollyPoPDF. Všechna práva vyhrazena."
+            }
+        };
+
+        // Function to change language
+        function changeLanguage(langCode) {
+            const langData = translations[langCode];
+            if (!langData) return;
+            
+            // Update all elements with data-i18n attribute
+            document.querySelectorAll('[data-i18n]').forEach(element => {
+                const key = element.getAttribute('data-i18n');
+                if (langData[key]) {
+                    element.textContent = langData[key];
+                }
+            });
+            
+            // Update current language display
+            currentLanguageElement.textContent = languages.find(lang => lang.code === langCode)?.name || 'English';
+            
+            // Save language preference
+            localStorage.setItem('language', langCode);
+        }
+
+        // Initialize language
+        const savedLanguage = localStorage.getItem('language') || 'en';
+        changeLanguage(savedLanguage);
+        
+        // Language selection handler
+        languageDropdown.addEventListener('click', (e) => {
+            if (e.target.classList.contains('language-option')) {
+                const langCode = e.target.getAttribute('data-lang');
+                changeLanguage(langCode);
+            }
+        });
+    </script>
+</body>
+</html>

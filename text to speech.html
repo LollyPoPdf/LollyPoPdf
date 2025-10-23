@@ -559,21 +559,32 @@
             cursor: not-allowed;
         }
 
-        .pause-resume-btn {
+        .pause-btn {
             background-color: var(--warning-color);
             color: white;
         }
 
-        .pause-resume-btn:hover {
+        .pause-btn:hover {
             background-color: #e69008;
         }
 
-        .pause-resume-btn.resume-mode {
-            background-color: var(--success-color);
+        .pause-btn:disabled {
+            background-color: var(--text-light);
+            cursor: not-allowed;
         }
 
-        .pause-resume-btn.resume-mode:hover {
+        .resume-btn {
+            background-color: var(--success-color);
+            color: white;
+        }
+
+        .resume-btn:hover {
             background-color: #0da271;
+        }
+
+        .resume-btn:disabled {
+            background-color: var(--text-light);
+            cursor: not-allowed;
         }
 
         .clear-btn {
@@ -1000,8 +1011,11 @@
                     <button class="action-btn speak-btn" id="speakBtn" data-i18n="tool.buttons.speak">
                         <i class="fas fa-play"></i> Speak
                     </button>
-                    <button class="action-btn pause-resume-btn" id="pauseResumeBtn" disabled data-i18n="tool.buttons.pause">
+                    <button class="action-btn pause-btn" id="pauseBtn" disabled data-i18n="tool.buttons.pause">
                         <i class="fas fa-pause"></i> Pause
+                    </button>
+                    <button class="action-btn resume-btn" id="resumeBtn" disabled data-i18n="tool.buttons.resume">
+                        <i class="fas fa-play"></i> Resume
                     </button>
                     <button class="action-btn clear-btn" id="clearBtn" data-i18n="tool.buttons.clear">
                         <i class="fas fa-trash"></i> Clear
@@ -1174,7 +1188,8 @@
         const pitchValue = document.getElementById('pitchValue');
         const volumeValue = document.getElementById('volumeValue');
         const speakBtn = document.getElementById('speakBtn');
-        const pauseResumeBtn = document.getElementById('pauseResumeBtn');
+        const pauseBtn = document.getElementById('pauseBtn');
+        const resumeBtn = document.getElementById('resumeBtn');
         const clearBtn = document.getElementById('clearBtn');
         const statusDot = document.getElementById('statusDot');
         const statusText = document.getElementById('statusText');
@@ -1184,7 +1199,6 @@
         let synth = window.speechSynthesis;
         let voices = [];
         let currentUtterance = null;
-        let isPaused = false;
         let voicesLoaded = false;
         
         // Update character count
@@ -1196,26 +1210,88 @@
         rateControl.addEventListener('input', () => {
             rateValue.textContent = rateControl.value;
             // Apply changes in real-time if currently speaking
-            if (currentUtterance && synth.speaking) {
-                currentUtterance.rate = parseFloat(rateControl.value);
+            if (currentUtterance && synth.speaking && !synth.paused) {
+                updateUtteranceParameters();
             }
         });
         
         pitchControl.addEventListener('input', () => {
             pitchValue.textContent = pitchControl.value;
             // Apply changes in real-time if currently speaking
-            if (currentUtterance && synth.speaking) {
-                currentUtterance.pitch = parseFloat(pitchControl.value);
+            if (currentUtterance && synth.speaking && !synth.paused) {
+                updateUtteranceParameters();
             }
         });
         
         volumeControl.addEventListener('input', () => {
             volumeValue.textContent = volumeControl.value;
             // Apply changes in real-time if currently speaking
-            if (currentUtterance && synth.speaking) {
-                currentUtterance.volume = parseFloat(volumeControl.value);
+            if (currentUtterance && synth.speaking && !synth.paused) {
+                updateUtteranceParameters();
             }
         });
+        
+        // Update utterance parameters in real-time
+        function updateUtteranceParameters() {
+            if (!currentUtterance) return;
+            
+            // Store current position
+            const text = currentUtterance.text;
+            const currentCharIndex = getCurrentCharIndex();
+            
+            // Cancel current speech
+            synth.cancel();
+            
+            // Create new utterance with updated parameters
+            currentUtterance = new SpeechSynthesisUtterance(text);
+            currentUtterance.lang = languageSelect.value;
+            
+            // Set voice
+            const bestVoice = getBestVoice();
+            if (bestVoice) {
+                currentUtterance.voice = bestVoice;
+            }
+            
+            // Set updated parameters
+            currentUtterance.rate = parseFloat(rateControl.value);
+            currentUtterance.pitch = parseFloat(pitchControl.value);
+            currentUtterance.volume = parseFloat(volumeControl.value);
+            
+            // Set up event listeners
+            setupUtteranceEvents(currentUtterance);
+            
+            // Calculate remaining text
+            const remainingText = text.substring(currentCharIndex);
+            currentUtterance.text = remainingText;
+            
+            // Resume speaking
+            try {
+                synth.speak(currentUtterance);
+                updateStatus('speaking', 'Speaking');
+            } catch (error) {
+                console.error('Error updating speech parameters:', error);
+            }
+        }
+        
+        // Get current character index (approximate)
+        function getCurrentCharIndex() {
+            if (!currentUtterance) return 0;
+            
+            // This is an approximation since the Web Speech API doesn't provide
+            // exact character position. We'll estimate based on time elapsed.
+            const totalChars = currentUtterance.text.length;
+            const estimatedCharsPerSecond = 15; // Average speaking rate
+            
+            // Calculate elapsed time (in seconds)
+            const startTime = currentUtterance.startTime || Date.now();
+            const elapsedSeconds = (Date.now() - startTime) / 1000;
+            
+            // Estimate characters spoken
+            const estimatedChars = Math.floor(elapsedSeconds * estimatedCharsPerSecond);
+            
+            // Return the minimum of estimated chars and total chars
+            return Math.min(estimatedChars, totalChars);
+        }
         
         // Load available voices with Google voice preference
         function loadVoices() {
@@ -1359,27 +1435,23 @@
             switch(state) {
                 case 'ready':
                     speakBtn.disabled = false;
-                    pauseResumeBtn.disabled = true;
-                    pauseResumeBtn.classList.remove('resume-mode');
-                    pauseResumeBtn.innerHTML = '<i class="fas fa-pause"></i> Pause';
+                    pauseBtn.disabled = true;
+                    resumeBtn.disabled = true;
                     break;
                 case 'speaking':
                     speakBtn.disabled = true;
-                    pauseResumeBtn.disabled = false;
-                    pauseResumeBtn.classList.remove('resume-mode');
-                    pauseResumeBtn.innerHTML = '<i class="fas fa-pause"></i> Pause';
+                    pauseBtn.disabled = false;
+                    resumeBtn.disabled = true;
                     break;
                 case 'paused':
                     speakBtn.disabled = true;
-                    pauseResumeBtn.disabled = false;
-                    pauseResumeBtn.classList.add('resume-mode');
-                    pauseResumeBtn.innerHTML = '<i class="fas fa-play"></i> Resume';
+                    pauseBtn.disabled = true;
+                    resumeBtn.disabled = false;
                     break;
                 case 'error':
                     speakBtn.disabled = false;
-                    pauseResumeBtn.disabled = true;
-                    pauseResumeBtn.classList.remove('resume-mode');
-                    pauseResumeBtn.innerHTML = '<i class="fas fa-pause"></i> Pause';
+                    pauseBtn.disabled = true;
+                    resumeBtn.disabled = true;
                     break;
             }
         }
@@ -1433,6 +1505,31 @@
             return voices.length > 0 ? voices[0] : null;
         }
         
+        // Set up utterance event listeners
+        function setupUtteranceEvents(utterance) {
+            utterance.onstart = () => {
+                utterance.startTime = Date.now();
+                updateStatus('speaking', 'Speaking');
+            };
+            
+            utterance.onend = () => {
+                updateStatus('ready', 'Ready');
+            };
+            
+            utterance.onerror = (event) => {
+                console.error('Speech synthesis error:', event);
+                updateStatus('error', 'Error occurred');
+            };
+            
+            utterance.onpause = () => {
+                updateStatus('paused', 'Paused');
+            };
+            
+            utterance.onresume = () => {
+                updateStatus('speaking', 'Speaking');
+            };
+        }
+        
         // Speak text with enhanced compatibility
         speakBtn.addEventListener('click', () => {
             if (textInput.value.trim() === '') {
@@ -1462,60 +1559,8 @@
             currentUtterance.pitch = parseFloat(pitchControl.value);
             currentUtterance.volume = parseFloat(volumeControl.value);
             
-            // Event listeners for utterance
-            currentUtterance.onstart = () => {
-                updateStatus('speaking', 'Speaking');
-            };
-            
-            currentUtterance.onend = () => {
-                updateStatus('ready', 'Ready');
-            };
-            
-            currentUtterance.onerror = (event) => {
-                console.error('Speech synthesis error:', event);
-                updateStatus('error', 'Error occurred');
-                
-                // Show helpful error messages
-                switch(event.error) {
-                    case 'interrupted':
-                        alert('Speech was interrupted. Please try again.');
-                        break;
-                    case 'audio-busy':
-                        alert('Audio device is busy. Please close other audio applications and try again.');
-                        break;
-                    case 'audio-hardware':
-                        alert('Audio hardware error. Please check your audio devices.');
-                        break;
-                    case 'network':
-                        alert('Network error occurred. Please check your internet connection.');
-                        break;
-                    case 'synthesis-unavailable':
-                        alert('Speech synthesis is unavailable. Please try a different browser.');
-                        break;
-                    case 'synthesis-failed':
-                        alert('Speech synthesis failed. Please try again with different text or settings.');
-                        break;
-                    case 'language-unavailable':
-                        alert('Selected language is not available. Please try a different language.');
-                        break;
-                    case 'voice-unavailable':
-                        alert('Selected voice is not available. Please choose a different voice.');
-                        break;
-                    case 'text-too-long':
-                        alert('Text is too long. Please shorten your text and try again.');
-                        break;
-                    default:
-                        alert('An error occurred during speech synthesis. Please try again.');
-                }
-            };
-            
-            currentUtterance.onpause = () => {
-                updateStatus('paused', 'Paused');
-            };
-            
-            currentUtterance.onresume = () => {
-                updateStatus('speaking', 'Speaking');
-            };
+            // Set up event listeners
+            setupUtteranceEvents(currentUtterance);
             
             // Start speaking
             try {
@@ -1524,27 +1569,30 @@
             } catch (error) {
                 console.error('Error starting speech synthesis:', error);
                 updateStatus('error', 'Error starting speech');
-                alert('Unable to start speech synthesis. Please check your browser settings and try again.');
             }
         });
         
-        // Pause/Resume speech - single click toggle
-        pauseResumeBtn.addEventListener('click', () => {
+        // Pause speech
+        pauseBtn.addEventListener('click', () => {
             if (!synth.speaking) return;
             
             try {
-                if (synth.paused) {
-                    // Resume speech
-                    synth.resume();
-                    updateStatus('speaking', 'Speaking');
-                } else {
-                    // Pause speech
-                    synth.pause();
-                    updateStatus('paused', 'Paused');
-                }
+                synth.pause();
+                updateStatus('paused', 'Paused');
             } catch (error) {
-                console.error('Error controlling speech:', error);
-                alert('Unable to control speech playback. This feature may not be supported in your browser.');
+                console.error('Error pausing speech:', error);
+            }
+        });
+        
+        // Resume speech
+        resumeBtn.addEventListener('click', () => {
+            if (!synth.speaking || !synth.paused) return;
+            
+            try {
+                synth.resume();
+                updateStatus('speaking', 'Speaking');
+            } catch (error) {
+                console.error('Error resuming speech:', error);
             }
         });
         
@@ -1672,7 +1720,7 @@
                 "nav.tools": "Herramientas",
                 "nav.contact": "Contacto",
                 "hero.title": "Herramienta de Texto a Voz",
-                "hero.description": "Convierte texto a voz instantáneamente usando la síntesis de voz integrada de tu navegador. Sin descargas, sin registro y completamente gratis. Todo el procesamiento ocurre localmente en tu navegador.",
+                "hero.description": "Convierte texto a voz instantáneamente usando la síntesis de voz integrada de tu navegador. Sin descargas, sin registro y completamente gratis. Todo el procesamiento ocurse localmente en tu navegador.",
                 "howto.title": "Cómo Usar la Herramienta de Texto a Voz",
                 "howto.step1.title": "Ingresa Tu Texto",
                 "howto.step1.description": "Escribe o pega el texto que quieres convertir a voz en el área de texto. No hay límite de caracteres, pero textos muy largos pueden tomar más tiempo en procesarse.",

@@ -586,8 +586,8 @@
             background-color: var(--secondary-color);
         }
 
-        /* Mobile Compatibility Notice */
-        .mobile-notice {
+        /* Browser Compatibility Notice */
+        .browser-notice {
             background-color: rgba(147, 112, 219, 0.1);
             border: 1px solid var(--primary-color);
             border-radius: var(--border-radius);
@@ -598,7 +598,7 @@
             color: var(--text-color);
         }
 
-        .mobile-notice i {
+        .browser-notice i {
             color: var(--primary-color);
             margin-right: 8px;
         }
@@ -905,10 +905,10 @@
         <div class="container">
             <h2 class="tool-title" data-i18n="tool.title">Text to Speech</h2>
             <div class="tool-container">
-                <!-- Mobile Compatibility Notice -->
-                <div class="mobile-notice" id="mobileNotice" style="display: none;">
+                <!-- Browser Compatibility Notice -->
+                <div class="browser-notice" id="browserNotice">
                     <i class="fas fa-info-circle"></i>
-                    <span data-i18n="tool.mobile.notice">Note: Some languages and voices may not be available on mobile devices due to browser limitations.</span>
+                    <span data-i18n="tool.browser.notice">For best results, use Chrome, Edge, or Safari. Some features may be limited in Firefox.</span>
                 </div>
 
                 <!-- Text Input Section -->
@@ -1178,7 +1178,7 @@
         const clearBtn = document.getElementById('clearBtn');
         const statusDot = document.getElementById('statusDot');
         const statusText = document.getElementById('statusText');
-        const mobileNotice = document.getElementById('mobileNotice');
+        const browserNotice = document.getElementById('browserNotice');
         
         // Speech synthesis
         let synth = window.speechSynthesis;
@@ -1186,14 +1186,6 @@
         let currentUtterance = null;
         let isPaused = false;
         let voicesLoaded = false;
-        
-        // Check if mobile device
-        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-        
-        // Show mobile notice if on mobile
-        if (isMobile) {
-            mobileNotice.style.display = 'block';
-        }
         
         // Update character count
         textInput.addEventListener('input', () => {
@@ -1203,82 +1195,17 @@
         // Update range value displays
         rateControl.addEventListener('input', () => {
             rateValue.textContent = rateControl.value;
-            // Apply changes in real-time if speaking
-            if (currentUtterance && synth.speaking && !synth.paused) {
-                // Create new utterance with updated parameters
-                updateUtteranceParameters();
-            }
         });
         
         pitchControl.addEventListener('input', () => {
             pitchValue.textContent = pitchControl.value;
-            // Apply changes in real-time if speaking
-            if (currentUtterance && synth.speaking && !synth.paused) {
-                // Create new utterance with updated parameters
-                updateUtteranceParameters();
-            }
         });
         
         volumeControl.addEventListener('input', () => {
             volumeValue.textContent = volumeControl.value;
-            // Apply changes in real-time if speaking
-            if (currentUtterance && synth.speaking && !synth.paused) {
-                // Create new utterance with updated parameters
-                updateUtteranceParameters();
-            }
         });
         
-        // Update utterance parameters in real-time
-        function updateUtteranceParameters() {
-            if (currentUtterance && synth.speaking) {
-                // Store current position
-                const wasPaused = synth.paused;
-                
-                // Cancel current utterance
-                synth.cancel();
-                
-                // Create new utterance with updated parameters
-                const newUtterance = new SpeechSynthesisUtterance(textInput.value);
-                
-                // Set voice
-                const selectedVoice = voices.find(voice => voice.name === voiceSelect.value);
-                if (selectedVoice) {
-                    newUtterance.voice = selectedVoice;
-                }
-                
-                // Set parameters
-                newUtterance.rate = parseFloat(rateControl.value);
-                newUtterance.pitch = parseFloat(pitchControl.value);
-                newUtterance.volume = parseFloat(volumeControl.value);
-                
-                // Set event listeners
-                newUtterance.onstart = () => {
-                    updateStatus('speaking', 'Speaking');
-                };
-                
-                newUtterance.onend = () => {
-                    updateStatus('ready', 'Ready');
-                };
-                
-                newUtterance.onerror = (event) => {
-                    console.error('Speech synthesis error:', event);
-                    updateStatus('error', 'Error occurred');
-                };
-                
-                // Set current utterance
-                currentUtterance = newUtterance;
-                
-                // Resume speaking
-                synth.speak(currentUtterance);
-                
-                if (wasPaused) {
-                    synth.pause();
-                    updateStatus('paused', 'Paused');
-                }
-            }
-        }
-        
-        // Load available voices with better mobile support
+        // Load available voices with Google voice preference
         function loadVoices() {
             // Clear existing voices
             voices = [];
@@ -1289,35 +1216,66 @@
             
             if (availableVoices.length === 0) {
                 // If no voices available, try again after a short delay
-                setTimeout(loadVoices, 100);
+                setTimeout(loadVoices, 500);
                 return;
             }
             
             voices = availableVoices;
             voicesLoaded = true;
             
-            // Filter voices by selected language
+            // Get selected language
             const selectedLang = languageSelect.value;
-            let filteredVoices = voices.filter(voice => voice.lang.startsWith(selectedLang));
+            
+            // Filter and prioritize Google voices
+            let filteredVoices = voices.filter(voice => {
+                // Filter by selected language
+                const voiceLang = voice.lang.toLowerCase();
+                const selectedLangLower = selectedLang.toLowerCase();
+                
+                // Exact match or language family match
+                return voiceLang === selectedLangLower || 
+                       voiceLang.startsWith(selectedLangLower.split('-')[0]);
+            });
             
             // If no voices for selected language, show all available voices
             if (filteredVoices.length === 0) {
                 filteredVoices = voices;
                 
-                // Show notice for mobile devices
-                if (isMobile) {
-                    const option = document.createElement('option');
-                    option.textContent = 'Using available voice (language may differ)';
-                    option.disabled = true;
-                    voiceSelect.appendChild(option);
-                }
+                // Show notice
+                const option = document.createElement('option');
+                option.textContent = 'Using available voice (language may differ)';
+                option.disabled = true;
+                voiceSelect.appendChild(option);
             }
+            
+            // Prioritize Google voices
+            filteredVoices.sort((a, b) => {
+                const aIsGoogle = a.name.toLowerCase().includes('google') || a.name.toLowerCase().includes('chrome');
+                const bIsGoogle = b.name.toLowerCase().includes('google') || b.name.toLowerCase().includes('chrome');
+                
+                if (aIsGoogle && !bIsGoogle) return -1;
+                if (!aIsGoogle && bIsGoogle) return 1;
+                return 0;
+            });
             
             // Populate voice select
             filteredVoices.forEach(voice => {
                 const option = document.createElement('option');
                 option.value = voice.name;
-                option.textContent = `${voice.name} (${voice.lang})`;
+                
+                // Mark Google voices
+                let voiceName = voice.name;
+                if (voice.name.toLowerCase().includes('google') || voice.name.toLowerCase().includes('chrome')) {
+                    voiceName += ' (Google)';
+                }
+                
+                option.textContent = `${voiceName} (${voice.lang})`;
+                
+                // Mark default voice
+                if (voice.default) {
+                    option.textContent += ' [Default]';
+                }
+                
                 voiceSelect.appendChild(option);
             });
             
@@ -1332,8 +1290,17 @@
             }
         });
         
-        // Initialize voices with better mobile support
+        // Initialize voices with comprehensive support
         function initializeVoices() {
+            // Check if speech synthesis is supported
+            if (!('speechSynthesis' in window)) {
+                updateStatus('error', 'Text-to-speech not supported');
+                browserNotice.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Text-to-speech is not supported in your browser. Please use Chrome, Edge, or Safari.';
+                speakBtn.disabled = true;
+                return;
+            }
+            
+            // Set up voices changed event
             if (synth.onvoiceschanged !== undefined) {
                 synth.onvoiceschanged = loadVoices;
             }
@@ -1341,28 +1308,34 @@
             // Try to load voices immediately
             loadVoices();
             
-            // If still no voices after 1 second, try again (for mobile devices)
-            setTimeout(() => {
+            // Multiple fallback attempts
+            let attempts = 0;
+            const maxAttempts = 10;
+            
+            const voiceLoader = setInterval(() => {
+                if (voices.length > 0 || attempts >= maxAttempts) {
+                    clearInterval(voiceLoader);
+                    if (voices.length === 0) {
+                        updateStatus('error', 'No voices available');
+                        browserNotice.innerHTML = '<i class="fas fa-exclamation-triangle"></i> No voices available. Please check your browser settings.';
+                    }
+                    return;
+                }
+                
+                loadVoices();
+                attempts++;
+            }, 500);
+            
+            // Final fallback - load voices on user interaction
+            document.addEventListener('click', () => {
                 if (voices.length === 0) {
                     loadVoices();
                 }
-            }, 1000);
-            
-            // Additional fallback for mobile
-            if (isMobile) {
-                setTimeout(loadVoices, 2000);
-            }
+            }, { once: true });
         }
         
         // Initialize voices when page loads
         window.addEventListener('load', initializeVoices);
-        
-        // Also try to load voices when user interacts (helps on some mobile browsers)
-        document.addEventListener('click', () => {
-            if (!voicesLoaded) {
-                initializeVoices();
-            }
-        }, { once: true });
         
         // Update status indicator
         function updateStatus(state, text) {
@@ -1399,7 +1372,56 @@
             }
         }
         
-        // Speak text
+        // Get the best available voice for the selected language
+        function getBestVoice() {
+            const selectedLang = languageSelect.value;
+            const selectedVoiceName = voiceSelect.value;
+            
+            // Try to find the selected voice
+            if (selectedVoiceName) {
+                const voice = voices.find(v => v.name === selectedVoiceName);
+                if (voice) return voice;
+            }
+            
+            // Find best matching voice for the language
+            let bestVoice = null;
+            
+            // First priority: Google voices for exact language match
+            bestVoice = voices.find(voice => 
+                (voice.name.toLowerCase().includes('google') || voice.name.toLowerCase().includes('chrome')) &&
+                voice.lang.toLowerCase() === selectedLang.toLowerCase()
+            );
+            
+            if (bestVoice) return bestVoice;
+            
+            // Second priority: Any voice for exact language match
+            bestVoice = voices.find(voice => 
+                voice.lang.toLowerCase() === selectedLang.toLowerCase()
+            );
+            
+            if (bestVoice) return bestVoice;
+            
+            // Third priority: Google voices for language family match
+            const langBase = selectedLang.split('-')[0].toLowerCase();
+            bestVoice = voices.find(voice => 
+                (voice.name.toLowerCase().includes('google') || voice.name.toLowerCase().includes('chrome')) &&
+                voice.lang.toLowerCase().startsWith(langBase)
+            );
+            
+            if (bestVoice) return bestVoice;
+            
+            // Fourth priority: Any voice for language family match
+            bestVoice = voices.find(voice => 
+                voice.lang.toLowerCase().startsWith(langBase)
+            );
+            
+            if (bestVoice) return bestVoice;
+            
+            // Final fallback: First available voice
+            return voices.length > 0 ? voices[0] : null;
+        }
+        
+        // Speak text with enhanced compatibility
         speakBtn.addEventListener('click', () => {
             if (textInput.value.trim() === '') {
                 alert('Please enter some text to convert to speech.');
@@ -1414,13 +1436,13 @@
             // Create new utterance
             currentUtterance = new SpeechSynthesisUtterance(textInput.value);
             
+            // Set language
+            currentUtterance.lang = languageSelect.value;
+            
             // Set voice
-            const selectedVoice = voices.find(voice => voice.name === voiceSelect.value);
-            if (selectedVoice) {
-                currentUtterance.voice = selectedVoice;
-            } else if (voices.length > 0) {
-                // Fallback to first available voice
-                currentUtterance.voice = voices[0];
+            const bestVoice = getBestVoice();
+            if (bestVoice) {
+                currentUtterance.voice = bestVoice;
             }
             
             // Set parameters
@@ -1441,9 +1463,37 @@
                 console.error('Speech synthesis error:', event);
                 updateStatus('error', 'Error occurred');
                 
-                // Show specific error message for mobile devices
-                if (isMobile && event.error === 'not-allowed') {
-                    alert('Speech synthesis not supported or blocked on this device. Please try a different browser.');
+                // Show helpful error messages
+                switch(event.error) {
+                    case 'interrupted':
+                        alert('Speech was interrupted. Please try again.');
+                        break;
+                    case 'audio-busy':
+                        alert('Audio device is busy. Please close other audio applications and try again.');
+                        break;
+                    case 'audio-hardware':
+                        alert('Audio hardware error. Please check your audio devices.');
+                        break;
+                    case 'network':
+                        alert('Network error occurred. Please check your internet connection.');
+                        break;
+                    case 'synthesis-unavailable':
+                        alert('Speech synthesis is unavailable. Please try a different browser.');
+                        break;
+                    case 'synthesis-failed':
+                        alert('Speech synthesis failed. Please try again with different text or settings.');
+                        break;
+                    case 'language-unavailable':
+                        alert('Selected language is not available. Please try a different language.');
+                        break;
+                    case 'voice-unavailable':
+                        alert('Selected voice is not available. Please choose a different voice.');
+                        break;
+                    case 'text-too-long':
+                        alert('Text is too long. Please shorten your text and try again.');
+                        break;
+                    default:
+                        alert('An error occurred during speech synthesis. Please try again.');
                 }
             };
             
@@ -1462,23 +1512,27 @@
             } catch (error) {
                 console.error('Error starting speech synthesis:', error);
                 updateStatus('error', 'Error starting speech');
-                
-                if (isMobile) {
-                    alert('Speech synthesis not supported on this device. Please try a different browser or device.');
-                }
+                alert('Unable to start speech synthesis. Please check your browser settings and try again.');
             }
         });
         
-        // Pause/Resume speech
+        // Pause/Resume speech - single click toggle
         pauseResumeBtn.addEventListener('click', () => {
-            if (synth.speaking && !synth.paused) {
-                // Pause speech
-                synth.pause();
-                updateStatus('paused', 'Paused');
-            } else if (synth.speaking && synth.paused) {
-                // Resume speech
-                synth.resume();
-                updateStatus('speaking', 'Speaking');
+            if (!synth.speaking) return;
+            
+            try {
+                if (synth.paused) {
+                    // Resume speech
+                    synth.resume();
+                    updateStatus('speaking', 'Speaking');
+                } else {
+                    // Pause speech
+                    synth.pause();
+                    updateStatus('paused', 'Paused');
+                }
+            } catch (error) {
+                console.error('Error controlling speech:', error);
+                alert('Unable to control speech playback. This feature may not be supported in your browser.');
             }
         });
         
@@ -1580,7 +1634,7 @@
                 "tool.buttons.pause": "Pause",
                 "tool.buttons.resume": "Resume",
                 "tool.buttons.clear": "Clear",
-                "tool.mobile.notice": "Note: Some languages and voices may not be available on mobile devices due to browser limitations.",
+                "tool.browser.notice": "For best results, use Chrome, Edge, or Safari. Some features may be limited in Firefox.",
                 "footer.follow": "FOLLOW US",
                 "footer.categories": "Popular Categories",
                 "footer.categories.pdf": "PDF Tools",
@@ -1633,7 +1687,7 @@
                 "tool.buttons.pause": "Pausar",
                 "tool.buttons.resume": "Reanudar",
                 "tool.buttons.clear": "Limpiar",
-                "tool.mobile.notice": "Nota: Algunos idiomas y voces pueden no estar disponibles en dispositivos móviles debido a limitaciones del navegador.",
+                "tool.browser.notice": "Para mejores resultados, usa Chrome, Edge o Safari. Algunas funciones pueden ser limitadas en Firefox.",
                 "footer.follow": "SÍGUENOS",
                 "footer.categories": "Categorías Populares",
                 "footer.categories.pdf": "Herramientas PDF",

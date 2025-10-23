@@ -1195,14 +1195,26 @@
         // Update range value displays
         rateControl.addEventListener('input', () => {
             rateValue.textContent = rateControl.value;
+            // Apply changes in real-time if currently speaking
+            if (currentUtterance && synth.speaking) {
+                currentUtterance.rate = parseFloat(rateControl.value);
+            }
         });
         
         pitchControl.addEventListener('input', () => {
             pitchValue.textContent = pitchControl.value;
+            // Apply changes in real-time if currently speaking
+            if (currentUtterance && synth.speaking) {
+                currentUtterance.pitch = parseFloat(pitchControl.value);
+            }
         });
         
         volumeControl.addEventListener('input', () => {
             volumeValue.textContent = volumeControl.value;
+            // Apply changes in real-time if currently speaking
+            if (currentUtterance && synth.speaking) {
+                currentUtterance.volume = parseFloat(volumeControl.value);
+            }
         });
         
         // Load available voices with Google voice preference

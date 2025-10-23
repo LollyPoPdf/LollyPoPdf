@@ -1,0 +1,3231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>URL Encoder/Decoder | LollyPoPdf</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #9370db;
+            --primary-dark: #8a2be2;
+            --secondary-color: #f0ebff;
+            --text-color: #333333;
+            --text-light: #6b7280;
+            --bg-color: #ffffff;
+            --bg-secondary: #f9f9f9;
+            --border-radius: 12px;
+            --transition: all 0.3s ease;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --header-height: 80px;
+            --white: #ffffff;
+            --header-text: #6b7280;
+            --accent-color: #9370db;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --error-color: #ef4444;
+        }
+
+        .dark-mode {
+            --primary-color: #a391f2;
+            --primary-dark: #8a2be2;
+            --secondary-color: #2d2d2d;
+            --text-color: #f0f0f0;
+            --text-light: #a0a0a0;
+            --bg-color: #1a1a1a;
+            --bg-secondary: #2d2d2d;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+            --white: #1a1a1a;
+            --header-text: #a0a0a0;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            transition: var(--transition);
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        ul {
+            list-style: none;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header Styles */
+        header {
+            background-color: var(--white);
+            color: var(--header-text);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+        }
+
+        .logo-icon {
+            position: relative;
+            width: 40px;
+            height: 40px;
+        }
+
+        .logo-circle {
+            width: 40px;
+            height: 40px;
+            border-radius: 40%;
+            background: linear-gradient(to bottom right, #9370db, #8a2be2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .logo-stem {
+            position: absolute;
+            bottom: -17px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 6px;
+            height: 17px;
+            background-color: #8a2be2;
+            border-radius: 0 0 3px 3px;
+        }
+
+        .logo-text {
+            font-size: 24px;
+            font-weight: bold;
+            color: #9370db;
+        }
+
+        nav ul {
+            display: flex;
+            gap: 30px;
+            list-style: none;
+        }
+
+        nav a {
+            font-weight: 500;
+            position: relative;
+            color: var(--header-text);
+            padding: 8px 0;
+            border-radius: 0;
+            transition: var(--transition);
+            text-decoration: none;
+        }
+
+        nav a:hover {
+            color: var(--accent-color);
+        }
+
+        nav a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: var(--accent-color);
+            transition: width 0.3s ease;
+        }
+
+        nav a:hover::after {
+            width: 100%;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .email {
+            font-size: 14px;
+            color: var(--header-text);
+        }
+
+        .theme-toggle {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 20px;
+            color: var(--header-text);
+            padding: 8px;
+            border-radius: 50%;
+            transition: var(--transition);
+        }
+
+        .theme-toggle:hover {
+            background-color: #f0ebff;
+            color: var(--accent-color);
+        }
+
+        .dark-mode .theme-toggle:hover {
+            background-color: #2d3748;
+            color: var(--accent-color);
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--header-text);
+        }
+
+        /* Mobile Menu */
+        .mobile-menu {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            width: 100%;
+            background-color: var(--white);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            z-index: 999;
+        }
+
+        .dark-mode .mobile-menu {
+            background-color: var(--bg-secondary);
+        }
+
+        .mobile-menu.active {
+            display: block;
+        }
+
+        .mobile-menu ul {
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .mobile-menu a {
+            display: block;
+            padding: 10px 0;
+            font-weight: 500;
+            color: var(--header-text);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .dark-mode .mobile-menu a {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .mobile-menu a:hover {
+            color: var(--accent-color);
+        }
+
+        /* Hero Section */
+        .hero {
+            background-color: var(--secondary-color);
+            padding: 60px 0;
+            text-align: center;
+        }
+
+        .dark-mode .hero {
+            background: linear-gradient(135deg, #2a1a4a, #3d2a6d);
+        }
+
+        .hero h1 {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            color: #000;
+        }
+
+        .dark-mode .hero h1 {
+            color: var(--text-color);
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            color: var(--text-color);
+            max-width: 700px;
+            margin: 0 auto 30px;
+        }
+
+        /* How to Use Section */
+        .how-to-section {
+            padding: 80px 0;
+            background-color: var(--bg-color);
+        }
+
+        .dark-mode .how-to-section {
+            background-color: var(--bg-secondary);
+        }
+
+        .section-title {
+            font-size: 2rem;
+            text-align: center;
+            margin-bottom: 40px;
+            color: #000000;
+        }
+
+        .dark-mode .section-title {
+            color: var(--text-color);
+        }
+
+        .steps-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 40px;
+        }
+
+        .step-box {
+            background-color: var(--bg-secondary);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            padding: 30px;
+            min-height: 200px;
+            position: relative;
+        }
+
+        .step-number {
+            width: 40px;
+            height: 40px;
+            background-color: var(--primary-color);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 16px;
+            margin-bottom: 15px;
+        }
+
+        .step-title {
+            font-size: 18px;
+            color: #000000;
+            margin-bottom: 10px;
+        }
+
+        .dark-mode .step-title {
+            color: var(--text-color);
+        }
+
+        .step-description {
+            font-size: 14px;
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        /* Tool Section */
+        .tool-section {
+            padding: 80px 0;
+            background-color: var(--secondary-color);
+        }
+
+        .dark-mode .tool-section {
+            background: linear-gradient(135deg, #2a1a4a, #3d2a6d);
+        }
+
+        .tool-title {
+            font-size: 2.5rem;
+            text-align: center;
+            margin-bottom: 40px;
+            color: #a391f2;
+        }
+
+        .dark-mode .tool-title {
+            color: #a391f2;
+        }
+
+        .tool-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background-color: var(--bg-color);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            padding: 40px;
+        }
+
+        /* Input/Output Containers */
+        .input-container, .output-container {
+            margin-bottom: 30px;
+        }
+
+        .input-header, .output-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .input-title, .output-title {
+            font-size: 18px;
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+
+        .input-actions, .output-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .action-btn {
+            padding: 8px 15px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 14px;
+        }
+
+        .action-btn:hover {
+            background-color: var(--primary-dark);
+        }
+
+        .action-btn:disabled {
+            background-color: var(--text-light);
+            cursor: not-allowed;
+        }
+
+        .action-btn.secondary {
+            background-color: transparent;
+            color: var(--primary-color);
+            border: 1px solid var(--primary-color);
+        }
+
+        .action-btn.secondary:hover {
+            background-color: var(--secondary-color);
+        }
+
+        .text-area {
+            width: 100%;
+            min-height: 200px;
+            padding: 15px;
+            border-radius: var(--border-radius);
+            border: 1px solid var(--primary-color);
+            background-color: var(--bg-secondary);
+            color: var(--text-color);
+            font-family: monospace;
+            font-size: 14px;
+            resize: vertical;
+        }
+
+        /* File Upload */
+        .upload-container {
+            border: 2px dashed var(--primary-color);
+            border-radius: var(--border-radius);
+            padding: 40px;
+            text-align: center;
+            margin-bottom: 30px;
+            background-color: var(--bg-secondary);
+            transition: var(--transition);
+        }
+
+        .upload-container:hover {
+            border-color: var(--primary-dark);
+            background-color: rgba(147, 112, 219, 0.05);
+        }
+
+        .upload-container.drag-over {
+            border-color: var(--primary-dark);
+            background-color: rgba(147, 112, 219, 0.1);
+        }
+
+        .upload-icon {
+            font-size: 48px;
+            color: var(--primary-color);
+            margin-bottom: 15px;
+        }
+
+        .upload-text {
+            margin-bottom: 20px;
+            font-size: 18px;
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        .file-label {
+            display: inline-block;
+            padding: 12px 25px;
+            background-color: var(--primary-color);
+            color: white;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: var(--transition);
+            font-weight: bold;
+        }
+
+        .file-label:hover {
+            background-color: var(--primary-dark);
+        }
+
+        .file-name {
+            margin-top: 15px;
+            font-size: 14px;
+            color: var(--text-light);
+        }
+
+        .supported-formats {
+            margin-top: 10px;
+            font-size: 12px;
+            color: var(--text-light);
+        }
+
+        /* Operation Buttons */
+        .operation-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .operation-btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: var(--transition);
+            flex: 1;
+            min-width: 150px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .encode-btn {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .encode-btn:hover {
+            background-color: var(--primary-dark);
+        }
+
+        .decode-btn {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .decode-btn:hover {
+            background-color: var(--primary-dark);
+        }
+
+        .clear-btn {
+            background-color: white;
+            color: var(--primary-color);
+            border: 2px solid var(--primary-color);
+        }
+
+        .clear-btn:hover {
+            background-color: var(--secondary-color);
+        }
+
+        /* Status Message */
+        .status-message {
+            padding: 15px;
+            border-radius: var(--border-radius);
+            margin-bottom: 20px;
+            text-align: center;
+            display: none;
+        }
+
+        .status-success {
+            background-color: rgba(16, 185, 129, 0.1);
+            color: var(--success-color);
+            border: 1px solid var(--success-color);
+        }
+
+        .status-error {
+            background-color: rgba(239, 68, 68, 0.1);
+            color: var(--error-color);
+            border: 1px solid var(--error-color);
+        }
+
+        /* Statistics */
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .stat-box {
+            background-color: var(--bg-secondary);
+            border-radius: var(--border-radius);
+            padding: 20px;
+            text-align: center;
+            box-shadow: var(--shadow);
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--primary-color);
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            color: var(--text-light);
+        }
+
+        /* Footer */
+        footer {
+            background-color: #000000;
+            color: white;
+            padding: 60px 0 80px;
+            position: relative;
+        }
+
+        .footer-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 60px;
+        }
+
+        .footer-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            text-decoration: none;
+        }
+
+        .footer-logo .logo-icon {
+            width: 40px;
+            height: 40px;
+        }
+
+        .footer-logo .logo-text {
+            color: #9370db;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .footer-section h3 {
+            color: white;
+            font-weight: 600;
+            font-size: 20px;
+            margin-bottom: 20px;
+        }
+
+        .footer-section h4 {
+            color: #9370db;
+            font-size: 18px;
+            margin-bottom: 15px;
+        }
+
+        .footer-links li {
+            margin-bottom: 10px;
+        }
+
+        .footer-links a {
+            color: white;
+        }
+
+        .footer-links a:hover {
+            color: #9370db;
+        }
+
+        .social-icons {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .social-icon {
+            width: 40px;
+            height: 40px;
+            background-color: #9370db;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+        }
+
+        .social-icon:hover {
+            background-color: #8a2be2;
+            transform: translateY(-3px);
+        }
+
+        .copyright {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            color: #f9f7ff;
+            font-size: 12px;
+        }
+
+        .footer-line {
+            position: absolute;
+            bottom: 50px;
+            left: 0;
+            width: 100%;
+            height: 1px;
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        /* Language Switcher */
+        .language-switcher {
+            position: fixed;
+            bottom: 10px;
+            right: 10px;
+            z-index: 1000;
+        }
+
+        .language-btn {
+            background-color: #9370db;
+            color: white;
+            border: none;
+            border-radius: 30px;
+            padding: 5px 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .language-dropdown {
+            position: absolute;
+            bottom: 100%;
+            right: 0;
+            width: 300px;
+            background-color: white;
+            border-radius: var(--border-radius);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            display: none;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .dark-mode .language-dropdown {
+            background-color: var(--bg-secondary);
+        }
+
+        .language-switcher:hover .language-dropdown {
+            display: grid;
+        }
+
+        .language-option {
+            padding: 8px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            text-align: center;
+            font-size: 14px;
+        }
+
+        .language-option:hover {
+            background-color: white;
+            color: #9370db;
+        }
+
+        .dark-mode .language-option:hover {
+            background-color: var(--bg-color);
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 992px) {
+            .steps-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .footer-container {
+                grid-template-columns: 1fr 1fr;
+            }
+            
+            .stats-container {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            }
+        }
+
+        @media (max-width: 768px) {
+            nav ul, .email {
+                display: none;
+            }
+            
+            .mobile-menu-btn {
+                display: block;
+            }
+            
+            .hero h1, .tool-title {
+                font-size: 2rem;
+            }
+            
+            .hero p {
+                font-size: 1rem;
+            }
+            
+            .language-dropdown {
+                width: 250px;
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .footer-container {
+                grid-template-columns: 1fr;
+                gap: 40px;
+            }
+            
+            .stats-container {
+                grid-template-columns: 1fr 1fr;
+            }
+            
+            .operation-buttons {
+                flex-direction: column;
+            }
+            
+            .operation-btn {
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .tool-container {
+                padding: 20px;
+            }
+            
+            .stats-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .input-actions, .output-actions {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container header-container">
+            <a href="https://lollypopdf.com" class="logo">
+                <div class="logo-icon">
+                    <div class="logo-circle">LPdf</div>
+                    <div class="logo-stem"></div>
+                </div>
+                <span class="logo-text">LollyPoPdf</span>
+            </a>
+            
+            <nav>
+                <ul>
+                    <li><a href="https://lollypopdf.github.io/LollyPoPdf#home" class="nav-link" data-i18n="nav.home">Home</a></li>
+                    <li><a href="https://lollypopdf.github.io/LollyPoPdf#about" class="nav-link" data-i18n="nav.about">About Us</a></li>
+                    <li><a href="https://lollypopdf.github.io/LollyPoPdf#tools" class="nav-link" data-i18n="nav.tools">Tools</a></li>
+                    <li><a href="contact.html" class="nav-link" data-i18n="nav.contact">Contact</a></li>
+                </ul>
+            </nav>
+            
+            <div class="header-right">
+                <span class="email">lollypoppdf@gmail.com</span>
+                <button class="theme-toggle" id="themeToggle">
+                    <i class="fas fa-moon"></i>
+                </button>
+                <button class="mobile-menu-btn" id="mobileMenuBtn">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </div>
+        
+        <!-- Mobile Menu -->
+        <div class="mobile-menu" id="mobileMenu">
+            <ul>
+                <li><a href="https://lollypopdf.github.io/LollyPoPdf#home" class="nav-link" data-i18n="nav.home">Home</a></li>
+                <li><a href="https://lollypopdf.github.io/LollyPoPdf#about" class="nav-link" data-i18n="nav.about">About Us</a></li>
+                <li><a href="https://lollypopdf.github.io/LollyPoPdf#tools" class="nav-link" data-i18n="nav.tools">Tools</a></li>
+                <li><a href="contact.html" class="nav-link" data-i18n="nav.contact">Contact</a></li>
+            </ul>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <h1 data-i18n="hero.title">URL Encoder/Decoder Tool</h1>
+            <p data-i18n="hero.description">Encode and decode URL strings securely and instantly – no servers, 100% client-side. All processing happens locally with complete privacy.</p>
+        </div>
+    </section>
+
+    <!-- How to Use Section -->
+    <section class="how-to-section">
+        <div class="container">
+            <h2 class="section-title" data-i18n="howto.title">How to Use the URL Encoder/Decoder</h2>
+            <div class="steps-container">
+                <div class="step-box">
+                    <div class="step-number">1</div>
+                    <h3 class="step-title" data-i18n="howto.step1.title">Enter URL or Upload File</h3>
+                    <p class="step-description" data-i18n="howto.step1.description">Type or paste your URL string in the input area, or upload a text file containing URLs. The tool supports all common URL formats and special characters.</p>
+                </div>
+                <div class="step-box">
+                    <div class="step-number">2</div>
+                    <h3 class="step-title" data-i18n="howto.step2.title">Choose Operation</h3>
+                    <p class="step-description" data-i18n="howto.step2.description">Select whether you want to encode (convert special characters to URL-safe format) or decode (convert URL-encoded characters back to normal).</p>
+                </div>
+                <div class="step-box">
+                    <div class="step-number">3</div>
+                    <h3 class="step-title" data-i18n="howto.step3.title">Process & Preview</h3>
+                    <p class="step-description" data-i18n="howto.step3.description">Click the "Encode" or "Decode" button to process your URL. The result will appear in the output area with real-time statistics.</p>
+                </div>
+                <div class="step-box">
+                    <div class="step-number">4</div>
+                    <h3 class="step-title" data-i18n="howto.step4.title">Copy or Download</h3>
+                    <p class="step-description" data-i18n="howto.step4.description">Copy the processed URL to clipboard with one click or download it as a text file. All processing happens locally in your browser - your data never leaves your device.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Tool Section -->
+    <section class="tool-section">
+        <div class="container">
+            <h2 class="tool-title" data-i18n="tool.title">URL Encoder/Decoder</h2>
+            <div class="tool-container">
+                <!-- File Upload Section -->
+                <div class="upload-container" id="uploadContainer">
+                    <div class="upload-icon">
+                        <i class="fas fa-file-alt"></i>
+                    </div>
+                    <div class="upload-text" data-i18n="tool.upload.text">Drag & drop your text file here or click to browse</div>
+                    <input type="file" id="fileInput" class="file-input" accept=".txt">
+                    <label for="fileInput" class="file-label">
+                        <i class="fas fa-upload"></i> <span data-i18n="tool.upload.button">Choose Text File</span>
+                    </label>
+                    <div id="fileName" class="file-name"></div>
+                    <div class="supported-formats" data-i18n="tool.supported">Supported format: TXT</div>
+                </div>
+
+                <!-- Status Message -->
+                <div class="status-message" id="statusMessage"></div>
+
+                <!-- Input Section -->
+                <div class="input-container">
+                    <div class="input-header">
+                        <h3 class="input-title" data-i18n="tool.input.title">Input URL</h3>
+                        <div class="input-actions">
+                            <button class="action-btn secondary" id="clearInputBtn">
+                                <i class="fas fa-eraser"></i> <span data-i18n="tool.clear">Clear</span>
+                            </button>
+                            <button class="action-btn secondary" id="pasteInputBtn">
+                                <i class="fas fa-paste"></i> <span data-i18n="tool.paste">Paste</span>
+                            </button>
+                        </div>
+                    </div>
+                    <textarea class="text-area" id="inputText" placeholder="Enter URL to encode or decode..."></textarea>
+                </div>
+
+                <!-- Operation Buttons -->
+                <div class="operation-buttons">
+                    <button class="operation-btn encode-btn" id="encodeBtn">
+                        <i class="fas fa-lock"></i> <span data-i18n="tool.encode">Encode URL</span>
+                    </button>
+                    <button class="operation-btn decode-btn" id="decodeBtn">
+                        <i class="fas fa-unlock"></i> <span data-i18n="tool.decode">Decode URL</span>
+                    </button>
+                    <button class="operation-btn clear-btn" id="clearAllBtn">
+                        <i class="fas fa-trash"></i> <span data-i18n="tool.clearAll">Clear All</span>
+                    </button>
+                </div>
+
+                <!-- Output Section -->
+                <div class="output-container">
+                    <div class="output-header">
+                        <h3 class="output-title" data-i18n="tool.output.title">Output URL</h3>
+                        <div class="output-actions">
+                            <button class="action-btn" id="copyOutputBtn" disabled>
+                                <i class="fas fa-copy"></i> <span data-i18n="tool.copy">Copy</span>
+                            </button>
+                            <button class="action-btn" id="downloadOutputBtn" disabled>
+                                <i class="fas fa-download"></i> <span data-i18n="tool.download">Download</span>
+                            </button>
+                        </div>
+                    </div>
+                    <textarea class="text-area" id="outputText" placeholder="Encoded or decoded URL will appear here..." readonly></textarea>
+                </div>
+
+                <!-- Statistics -->
+                <div class="stats-container">
+                    <div class="stat-box">
+                        <div class="stat-value" id="inputLength">0</div>
+                        <div class="stat-label" data-i18n="tool.stats.input">Input Length</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-value" id="outputLength">0</div>
+                        <div class="stat-label" data-i18n="tool.stats.output">Output Length</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-value" id="changePercent">0%</div>
+                        <div class="stat-label" data-i18n="tool.stats.change">Size Change</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-value" id="processingTime">0ms</div>
+                        <div class="stat-label" data-i18n="tool.stats.time">Processing Time</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container footer-container">
+            <!-- Left Section -->
+            <div class="footer-section">
+                <a href="https://lollypopdf.com" class="footer-logo">
+                    <div class="logo-icon">
+                        <div class="logo-circle">LPdf</div>
+                        <div class="logo-stem"></div>
+                    </div>
+                    <span class="logo-text">LollyPoPdf</span>
+                </a>
+                <h3 data-i18n="footer.follow">FOLLOW US</h3>
+                <div class="social-icons">
+                    <a href="https://facebook.com/lollypopdf" class="social-icon"><i class="fab fa-facebook-f"></i></a>
+                    <a href="https://linkedin.com/company/lollypopdf" class="social-icon"><i class="fab fa-linkedin-in"></i></a>
+                    <a href="https://twitter.com/lollypopdf" class="social-icon"><i class="fab fa-twitter"></i></a>
+                    <a href="https://instagram.com/lollypopdf" class="social-icon"><i class="fab fa-instagram"></i></a>
+                    <a href="https://pinterest.com/lollypopdf" class="social-icon"><i class="fab fa-pinterest-p"></i></a>
+                </div>
+            </div>
+            
+            <!-- Middle Section - Popular Categories -->
+            <div class="footer-section">
+                <h4 data-i18n="footer.categories">Popular Categories</h4>
+                <ul class="footer-links">
+                    <li><a href="https://lollypopdf.com#pdf-tools" data-i18n="footer.categories.pdf">PDF Tools</a></li>
+                    <li><a href="https://lollypopdf.com#image-tools" data-i18n="footer.categories.image">Image Tools</a></li>
+                    <li><a href="https://lollypopdf.com#text-tools" data-i18n="footer.categories.text">Text Tools</a></li>
+                    <li><a href="https://lollypopdf.com#audio-video-tools" data-i18n="footer.categories.av">Audio/Video Tools</a></li>
+                    <li><a href="https://lollypopdf.com#web-developer-tools" data-i18n="footer.categories.web">WebDeveloper Tools</a></li>
+                    <li><a href="https://lollypopdf.com#calculator-tools" data-i18n="footer.categories.calc">Calculator Tools</a></li>
+                    <li><a href="https://lollypopdf.com#utility-tools" data-i18n="footer.categories.util">Utility Tools</a></li>
+                    <li><a href="https://lollypopdf.com#color-tools" data-i18n="footer.categories.color">Color Tools</a></li>
+                </ul>
+            </div>
+            
+            <!-- Right Section - Quick Links -->
+            <div class="footer-section">
+                <h4 data-i18n="footer.quicklinks">Quick Links</h4>
+                <ul class="footer-links">
+                    <li><a href="https://lollypopdf.github.io/LollyPoPdf#home" data-i18n="nav.home">Home</a></li>
+                    <li><a href="https://lollypopdf.github.io/LollyPoPdf#tools" data-i18n="footer.links.tools">All Tools</a></li>
+                    <li><a href="faq.html" data-i18n="footer.links.faq">FAQ</a></li>
+                    <li><a href="contact.html" data-i18n="footer.links.contact">Contact</a></li>
+                    <li><a href="privacy-policy.html" data-i18n="footer.links.privacy">Privacy Policy</a></li>
+                    <li><a href="disclaimer.html" data-i18n="footer.links.disclaimer">Disclaimer</a></li>
+                    <li><a href="terms.html" data-i18n="footer.links.terms">Terms of Service</a></li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="footer-line"></div>
+        <div class="copyright" data-i18n="footer.copyright">© 2025 LollyPoPDF. All rights reserved.</div>
+    </footer>
+
+    <!-- Language Switcher -->
+    <div class="language-switcher">
+        <button class="language-btn">
+            <i class="fas fa-globe"></i>
+            <span id="currentLanguage">English</span>
+        </button>
+        <div class="language-dropdown">
+            <div class="language-option" data-lang="en">English</div>
+            <div class="language-option" data-lang="es">Español</div>
+            <div class="language-option" data-lang="fr">Français</div>
+            <div class="language-option" data-lang="de">Deutsch</div>
+            <div class="language-option" data-lang="it">Italiano</div>
+            <div class="language-option" data-lang="pt">Português</div>
+            <div class="language-option" data-lang="ja">日本語</div>
+            <div class="language-option" data-lang="ru">Pусский</div>
+            <div class="language-option" data-lang="ko">한국어</div>
+            <div class="language-option" data-lang="zh-CN">中文 (简体)</div>
+            <div class="language-option" data-lang="zh-TW">中文 (繁體)</div>
+            <div class="language-option" data-lang="ar">العربية</div>
+            <div class="language-option" data-lang="fa">فارسی</div>
+            <div class="language-option" data-lang="bg">Български</div>
+            <div class="language-option" data-lang="ca">Català</div>
+            <div class="language-option" data-lang="nl">Nederlands</div>
+            <div class="language-option" data-lang="el">Ελληνικά</div>
+            <div class="language-option" data-lang="hi">हिन्दी</div>
+            <div class="language-option" data-lang="te">తెలుగు</div>
+            <div class="language-option" data-lang="kn">ಕನ್ನಡ</div>
+            <div class="language-option" data-lang="ta">தமிழ்</div>
+            <div class="language-option" data-lang="ml">മലയാളം</div>
+            <div class="language-option" data-lang="id">Bahasa Indonesia</div>
+            <div class="language-option" data-lang="ms">Bahasa Melayu</div>
+            <div class="language-option" data-lang="pl">Polski</div>
+            <div class="language-option" data-lang="th">ภาษาไทย</div>
+            <div class="language-option" data-lang="tr">Türkçe</div>
+            <div class="language-option" data-lang="uk">Українська</div>
+            <div class="language-option" data-lang="vi">Tiếng Việt</div>
+            <div class="language-option" data-lang="is">Íslenska</div>
+            <div class="language-option" data-lang="no">Norsk</div>
+            <div class="language-option" data-lang="sv">Svenska</div>
+            <div class="language-option" data-lang="fi">Suomi</div>
+            <div class="language-option" data-lang="cs">Čeština</div>
+        </div>
+    </div>
+
+    <script>
+        // Theme Toggle
+        const themeToggle = document.getElementById('themeToggle');
+        const body = document.body;
+        
+        // Check for saved theme preference or respect OS preference
+        const savedTheme = localStorage.getItem('theme') || 
+            (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        
+        if (savedTheme === 'dark') {
+            body.classList.add('dark-mode');
+            themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+        }
+        
+        themeToggle.addEventListener('click', () => {
+            body.classList.toggle('dark-mode');
+            const isDarkMode = body.classList.contains('dark-mode');
+            
+            if (isDarkMode) {
+                themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+                localStorage.setItem('theme', 'dark');
+            } else {
+                themeToggle.innerHTML = '<i class="fas fa-moon"></i>';
+                localStorage.setItem('theme', 'light');
+            }
+        });
+
+        // Mobile Menu Toggle
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const mobileMenu = document.getElementById('mobileMenu');
+        
+        mobileMenuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('active');
+            
+            // Change icon based on menu state
+            if (mobileMenu.classList.contains('active')) {
+                mobileMenuBtn.innerHTML = '<i class="fas fa-times"></i>';
+            } else {
+                mobileMenuBtn.innerHTML = '<i class="fas fa-bars"></i>';
+            }
+        });
+
+        // Close mobile menu when clicking on a link
+        const mobileMenuLinks = mobileMenu.querySelectorAll('a');
+        mobileMenuLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                mobileMenu.classList.remove('active');
+                mobileMenuBtn.innerHTML = '<i class="fas fa-bars"></i>';
+            });
+        });
+
+        // URL Encoder/Decoder Functionality
+        const fileInput = document.getElementById('fileInput');
+        const fileName = document.getElementById('fileName');
+        const uploadContainer = document.getElementById('uploadContainer');
+        const inputText = document.getElementById('inputText');
+        const outputText = document.getElementById('outputText');
+        const encodeBtn = document.getElementById('encodeBtn');
+        const decodeBtn = document.getElementById('decodeBtn');
+        const clearAllBtn = document.getElementById('clearAllBtn');
+        const clearInputBtn = document.getElementById('clearInputBtn');
+        const pasteInputBtn = document.getElementById('pasteInputBtn');
+        const copyOutputBtn = document.getElementById('copyOutputBtn');
+        const downloadOutputBtn = document.getElementById('downloadOutputBtn');
+        const statusMessage = document.getElementById('statusMessage');
+        
+        // Stats elements
+        const inputLengthEl = document.getElementById('inputLength');
+        const outputLengthEl = document.getElementById('outputLength');
+        const changePercentEl = document.getElementById('changePercent');
+        const processingTimeEl = document.getElementById('processingTime');
+        
+        // File upload handler
+        fileInput.addEventListener('change', handleFileSelect);
+        
+        // Drag and drop functionality
+        uploadContainer.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadContainer.classList.add('drag-over');
+        });
+        
+        uploadContainer.addEventListener('dragleave', () => {
+            uploadContainer.classList.remove('drag-over');
+        });
+        
+        uploadContainer.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadContainer.classList.remove('drag-over');
+            
+            if (e.dataTransfer.files.length > 0) {
+                fileInput.files = e.dataTransfer.files;
+                handleFileSelect();
+            }
+        });
+        
+        // Handle file selection
+        function handleFileSelect() {
+            const file = fileInput.files[0];
+            if (!file) return;
+            
+            // Check if file is a text file
+            if (!file.type.includes('text/') && !file.name.endsWith('.txt')) {
+                showStatus('Please select a valid text file (.txt).', 'error');
+                return;
+            }
+            
+            fileName.textContent = file.name;
+            
+            // Read file content
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                inputText.value = e.target.result;
+                updateStats();
+            };
+            reader.readAsText(file);
+            
+            showStatus('File loaded successfully!', 'success');
+        }
+        
+        // Encode URL
+        encodeBtn.addEventListener('click', () => {
+            if (!inputText.value.trim()) {
+                showStatus('Please enter a URL to encode.', 'error');
+                return;
+            }
+            
+            const startTime = performance.now();
+            
+            try {
+                const encoded = encodeURIComponent(inputText.value);
+                outputText.value = encoded;
+                
+                const endTime = performance.now();
+                updateStats(endTime - startTime);
+                
+                enableOutputButtons();
+                showStatus('URL encoded successfully!', 'success');
+            } catch (error) {
+                showStatus('Error encoding URL. Please check your input.', 'error');
+                console.error('Encoding error:', error);
+            }
+        });
+        
+        // Decode URL
+        decodeBtn.addEventListener('click', () => {
+            if (!inputText.value.trim()) {
+                showStatus('Please enter a URL to decode.', 'error');
+                return;
+            }
+            
+            const startTime = performance.now();
+            
+            try {
+                const decoded = decodeURIComponent(inputText.value);
+                outputText.value = decoded;
+                
+                const endTime = performance.now();
+                updateStats(endTime - startTime);
+                
+                enableOutputButtons();
+                showStatus('URL decoded successfully!', 'success');
+            } catch (error) {
+                showStatus('Error decoding URL. Please check if the input is properly encoded.', 'error');
+                console.error('Decoding error:', error);
+            }
+        });
+        
+        // Clear input
+        clearInputBtn.addEventListener('click', () => {
+            inputText.value = '';
+            updateStats();
+            showStatus('Input cleared.', 'success');
+        });
+        
+        // Paste to input
+        pasteInputBtn.addEventListener('click', async () => {
+            try {
+                const text = await navigator.clipboard.readText();
+                inputText.value = text;
+                updateStats();
+                showStatus('Text pasted from clipboard!', 'success');
+            } catch (error) {
+                showStatus('Failed to read from clipboard. Please paste manually.', 'error');
+                console.error('Clipboard error:', error);
+            }
+        });
+        
+        // Copy output
+        copyOutputBtn.addEventListener('click', async () => {
+            try {
+                await navigator.clipboard.writeText(outputText.value);
+                showStatus('Output copied to clipboard!', 'success');
+            } catch (error) {
+                showStatus('Failed to copy to clipboard. Please copy manually.', 'error');
+                console.error('Clipboard error:', error);
+            }
+        });
+        
+        // Download output
+        downloadOutputBtn.addEventListener('click', () => {
+            const blob = new Blob([outputText.value], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'url-encoded-decoded.txt';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            showStatus('Output downloaded!', 'success');
+        });
+        
+        // Clear all
+        clearAllBtn.addEventListener('click', () => {
+            inputText.value = '';
+            outputText.value = '';
+            fileInput.value = '';
+            fileName.textContent = '';
+            updateStats();
+            disableOutputButtons();
+            showStatus('All cleared.', 'success');
+        });
+        
+        // Update statistics
+        function updateStats(processingTime = 0) {
+            const inputLength = inputText.value.length;
+            const outputLength = outputText.value.length;
+            
+            inputLengthEl.textContent = inputLength;
+            outputLengthEl.textContent = outputLength;
+            
+            if (inputLength > 0) {
+                const change = ((outputLength - inputLength) / inputLength * 100).toFixed(1);
+                changePercentEl.textContent = `${change > 0 ? '+' : ''}${change}%`;
+            } else {
+                changePercentEl.textContent = '0%';
+            }
+            
+            processingTimeEl.textContent = `${processingTime.toFixed(2)}ms`;
+        }
+        
+        // Enable output buttons
+        function enableOutputButtons() {
+            copyOutputBtn.disabled = false;
+            downloadOutputBtn.disabled = false;
+        }
+        
+        // Disable output buttons
+        function disableOutputButtons() {
+            copyOutputBtn.disabled = true;
+            downloadOutputBtn.disabled = true;
+        }
+        
+        // Show status message
+        function showStatus(message, type) {
+            statusMessage.textContent = message;
+            statusMessage.className = 'status-message';
+            
+            if (type === 'success') {
+                statusMessage.classList.add('status-success');
+            } else if (type === 'error') {
+                statusMessage.classList.add('status-error');
+            }
+            
+            statusMessage.style.display = 'block';
+            
+            // Auto-hide after 5 seconds
+            setTimeout(() => {
+                statusMessage.style.display = 'none';
+            }, 5000);
+        }
+        
+        // Initialize stats
+        updateStats();
+        
+        // Language Switcher
+        const languageBtn = document.querySelector('.language-btn');
+        const currentLanguageElement = document.getElementById('currentLanguage');
+        const languageDropdown = document.querySelector('.language-dropdown');
+        
+        const languages = [
+            { code: 'en', name: 'English' },
+            { code: 'es', name: 'Español' },
+            { code: 'fr', name: 'Français' },
+            { code: 'de', name: 'Deutsch' },
+            { code: 'it', name: 'Italiano' },
+            { code: 'pt', name: 'Português' },
+            { code: 'ja', name: '日本語' },
+            { code: 'ru', name: 'Pусский' },
+            { code: 'ko', name: '한국어' },
+            { code: 'zh-CN', name: '中文 (简体)' },
+            { code: 'zh-TW', name: '中文 (繁體)' },
+            { code: 'ar', name: 'العربية' },
+            { code: 'fa', name: 'فارسی' },
+            { code: 'bg', name: 'Български' },
+            { code: 'ca', name: 'Català' },
+            { code: 'nl', name: 'Nederlands' },
+            { code: 'el', name: 'Ελληνικά' },
+            { code: 'hi', name: 'हिन्दी' },
+            { code: 'te', name: 'తెలుగు' },
+            { code: 'kn', name: 'ಕನ್ನಡ' },
+            { code: 'ta', name: 'தமிழ்' },
+            { code: 'ml', name: 'മലയാളം' },
+            { code: 'id', name: 'Bahasa Indonesia' },
+            { code: 'ms', name: 'Bahasa Melayu' },
+            { code: 'pl', name: 'Polski' },
+            { code: 'th', name: 'ภาษาไทย' },
+            { code: 'tr', name: 'Türkçe' },
+            { code: 'uk', name: 'Українська' },
+            { code: 'vi', name: 'Tiếng Việt' },
+            { code: 'is', name: 'Íslenska' },
+            { code: 'no', name: 'Norsk' },
+            { code: 'sv', name: 'Svenska' },
+            { code: 'fi', name: 'Suomi' },
+            { code: 'cs', name: 'Čeština' }
+        ];
+
+        // Translation data
+        const translations = {
+            en: {
+                "nav.home": "Home",
+                "nav.about": "About Us",
+                "nav.tools": "Tools",
+                "nav.contact": "Contact",
+                "hero.title": "URL Encoder/Decoder Tool",
+                "hero.description": "Encode and decode URL strings securely and instantly – no servers, 100% client-side. All processing happens locally with complete privacy.",
+                "howto.title": "How to Use the URL Encoder/Decoder",
+                "howto.step1.title": "Enter URL or Upload File",
+                "howto.step1.description": "Type or paste your URL string in the input area, or upload a text file containing URLs. The tool supports all common URL formats and special characters.",
+                "howto.step2.title": "Choose Operation",
+                "howto.step2.description": "Select whether you want to encode (convert special characters to URL-safe format) or decode (convert URL-encoded characters back to normal).",
+                "howto.step3.title": "Process & Preview",
+                "howto.step3.description": "Click the \"Encode\" or \"Decode\" button to process your URL. The result will appear in the output area with real-time statistics.",
+                "howto.step4.title": "Copy or Download",
+                "howto.step4.description": "Copy the processed URL to clipboard with one click or download it as a text file. All processing happens locally in your browser - your data never leaves your device.",
+                "tool.title": "URL Encoder/Decoder",
+                "tool.upload.text": "Drag & drop your text file here or click to browse",
+                "tool.upload.button": "Choose Text File",
+                "tool.supported": "Supported format: TXT",
+                "tool.input.title": "Input URL",
+                "tool.output.title": "Output URL",
+                "tool.encode": "Encode URL",
+                "tool.decode": "Decode URL",
+                "tool.clear": "Clear",
+                "tool.clearAll": "Clear All",
+                "tool.paste": "Paste",
+                "tool.copy": "Copy",
+                "tool.download": "Download",
+                "tool.stats.input": "Input Length",
+                "tool.stats.output": "Output Length",
+                "tool.stats.change": "Size Change",
+                "tool.stats.time": "Processing Time",
+                "footer.follow": "FOLLOW US",
+                "footer.categories": "Popular Categories",
+                "footer.categories.pdf": "PDF Tools",
+                "footer.categories.image": "Image Tools",
+                "footer.categories.text": "Text Tools",
+                "footer.categories.av": "Audio/Video Tools",
+                "footer.categories.web": "WebDeveloper Tools",
+                "footer.categories.calc": "Calculator Tools",
+                "footer.categories.util": "Utility Tools",
+                "footer.categories.color": "Color Tools",
+                "footer.quicklinks": "Quick Links",
+                "footer.links.tools": "All Tools",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Contact",
+                "footer.links.privacy": "Privacy Policy",
+                "footer.links.disclaimer": "Disclaimer",
+                "footer.links.terms": "Terms of Service",
+                "footer.copyright": "© 2025 LollyPoPDF. All rights reserved."
+            },
+            es: {
+                "nav.home": "Inicio",
+                "nav.about": "Sobre Nosotros",
+                "nav.tools": "Herramientas",
+                "nav.contact": "Contacto",
+                "hero.title": "Herramienta Codificadora/Decodificadora de URL",
+                "hero.description": "Codifica y decodifica cadenas de URL de forma segura e instantánea – sin servidores, 100% en el cliente. Todo el procesamiento ocurre localmente con privacidad completa.",
+                "howto.title": "Cómo Usar el Codificador/Decodificador de URL",
+                "howto.step1.title": "Ingresa URL o Sube Archivo",
+                "howto.step1.description": "Escribe o pega tu cadena de URL en el área de entrada, o sube un archivo de texto que contenga URLs. La herramienta soporta todos los formatos de URL comunes y caracteres especiales.",
+                "howto.step2.title": "Elige Operación",
+                "howto.step2.description": "Selecciona si quieres codificar (convertir caracteres especiales a formato seguro para URL) o decodificar (convertir caracteres codificados en URL a su forma normal).",
+                "howto.step3.title": "Procesa y Previsualiza",
+                "howto.step3.description": "Haz clic en el botón \"Codificar\" o \"Decodificar\" para procesar tu URL. El resultado aparecerá en el área de salida con estadísticas en tiempo real.",
+                "howto.step4.title": "Copia o Descarga",
+                "howto.step4.description": "Copia la URL procesada al portapapeles con un clic o descárgala como archivo de texto. Todo el procesamiento ocurre localmente en tu navegador - tus datos nunca salen de tu dispositivo.",
+                "tool.title": "Codificador/Decodificador de URL",
+                "tool.upload.text": "Arrastra y suelta tu archivo de texto aquí o haz clic para buscar",
+                "tool.upload.button": "Elegir Archivo de Texto",
+                "tool.supported": "Formato soportado: TXT",
+                "tool.input.title": "URL de Entrada",
+                "tool.output.title": "URL de Salida",
+                "tool.encode": "Codificar URL",
+                "tool.decode": "Decodificar URL",
+                "tool.clear": "Limpiar",
+                "tool.clearAll": "Limpiar Todo",
+                "tool.paste": "Pegar",
+                "tool.copy": "Copiar",
+                "tool.download": "Descargar",
+                "tool.stats.input": "Longitud de Entrada",
+                "tool.stats.output": "Longitud de Salida",
+                "tool.stats.change": "Cambio de Tamaño",
+                "tool.stats.time": "Tiempo de Procesamiento",
+                "footer.follow": "SÍGUENOS",
+                "footer.categories": "Categorías Populares",
+                "footer.categories.pdf": "Herramientas PDF",
+                "footer.categories.image": "Herramientas de Imagen",
+                "footer.categories.text": "Herramientas de Texto",
+                "footer.categories.av": "Herramientas de Audio/Video",
+                "footer.categories.web": "Herramientas WebDesarrollador",
+                "footer.categories.calc": "Herramientas de Calculadora",
+                "footer.categories.util": "Herramientas de Utilidad",
+                "footer.categories.color": "Herramientas de Color",
+                "footer.quicklinks": "Enlaces Rápidos",
+                "footer.links.tools": "Todas las Herramientas",
+                "footer.links.faq": "Preguntas Frecuentes",
+                "footer.links.contact": "Contacto",
+                "footer.links.privacy": "Política de Privacidad",
+                "footer.links.disclaimer": "Descargo de Responsabilidad",
+                "footer.links.terms": "Términos de Servicio",
+                "footer.copyright": "© 2025 LollyPoPDF. Todos los derechos reservados."
+            },
+            fr: {
+                "nav.home": "Accueil",
+                "nav.about": "À propos de nous",
+                "nav.tools": "Outils",
+                "nav.contact": "Contact",
+                "hero.title": "Outil Encodeur/Décodeur d'URL",
+                "hero.description": "Encodez et décodez les chaînes d'URL en toute sécurité et instantanément – sans serveurs, 100% côté client. Tout le traitement se fait localement avec une confidentialité totale.",
+                "howto.title": "Comment utiliser l'Encodeur/Décodeur d'URL",
+                "howto.step1.title": "Entrez l'URL ou téléchargez un fichier",
+                "howto.step1.description": "Tapez ou collez votre chaîne d'URL dans la zone de saisie, ou téléchargez un fichier texte contenant des URL. L'outil prend en charge tous les formats d'URL courants et les caractères spéciaux.",
+                "howto.step2.title": "Choisissez l'opération",
+                "howto.step2.description": "Sélectionnez si vous souhaitez encoder (convertir les caractères spéciaux en format sécurisé pour les URL) ou décoder (convertir les caractères encodés en URL en leur forme normale).",
+                "howto.step3.title": "Traitez et prévisualisez",
+                "howto.step3.description": "Cliquez sur le bouton \"Encoder\" ou \"Décoder\" pour traiter votre URL. Le résultat apparaîtra dans la zone de sortie avec des statistiques en temps réel.",
+                "howto.step4.title": "Copiez ou téléchargez",
+                "howto.step4.description": "Copiez l'URL traitée dans le presse-papiers en un clic ou téléchargez-la sous forme de fichier texte. Tout le traitement se fait localement dans votre navigateur - vos données ne quittent jamais votre appareil.",
+                "tool.title": "Encodeur/Décodeur d'URL",
+                "tool.upload.text": "Glissez-déposez votre fichier texte ici ou cliquez pour parcourir",
+                "tool.upload.button": "Choisir un fichier texte",
+                "tool.supported": "Format pris en charge : TXT",
+                "tool.input.title": "URL d'entrée",
+                "tool.output.title": "URL de sortie",
+                "tool.encode": "Encoder l'URL",
+                "tool.decode": "Décoder l'URL",
+                "tool.clear": "Effacer",
+                "tool.clearAll": "Tout effacer",
+                "tool.paste": "Coller",
+                "tool.copy": "Copier",
+                "tool.download": "Télécharger",
+                "tool.stats.input": "Longueur d'entrée",
+                "tool.stats.output": "Longueur de sortie",
+                "tool.stats.change": "Changement de taille",
+                "tool.stats.time": "Temps de traitement",
+                "footer.follow": "SUIVEZ-NOUS",
+                "footer.categories": "Catégories populaires",
+                "footer.categories.pdf": "Outils PDF",
+                "footer.categories.image": "Outils d'image",
+                "footer.categories.text": "Outils de texte",
+                "footer.categories.av": "Outils audio/vidéo",
+                "footer.categories.web": "Outils WebDeveloper",
+                "footer.categories.calc": "Outils de calculatrice",
+                "footer.categories.util": "Outils utilitaires",
+                "footer.categories.color": "Outils de couleur",
+                "footer.quicklinks": "Liens rapides",
+                "footer.links.tools": "Tous les outils",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Contact",
+                "footer.links.privacy": "Politique de confidentialité",
+                "footer.links.disclaimer": "Avertissement",
+                "footer.links.terms": "Conditions d'utilisation",
+                "footer.copyright": "© 2025 LollyPoPDF. Tous droits réservés."
+            },
+            de: {
+                "nav.home": "Startseite",
+                "nav.about": "Über uns",
+                "nav.tools": "Werkzeuge",
+                "nav.contact": "Kontakt",
+                "hero.title": "URL-Encoder/Decoder-Tool",
+                "hero.description": "Codieren und decodieren Sie URL-Strings sicher und sofort – ohne Server, 100% clientseitig. Die gesamte Verarbeitung erfolgt lokal mit vollständiger Privatsphäre.",
+                "howto.title": "So verwenden Sie den URL-Encoder/Decoder",
+                "howto.step1.title": "URL eingeben oder Datei hochladen",
+                "howto.step1.description": "Geben Sie Ihre URL-Zeichenkette in den Eingabebereich ein oder laden Sie eine Textdatei mit URLs hoch. Das Tool unterstützt alle gängigen URL-Formate und Sonderzeichen.",
+                "howto.step2.title": "Vorgang auswählen",
+                "howto.step2.description": "Wählen Sie aus, ob Sie codieren (Sonderzeichen in URL-sicheres Format umwandeln) oder decodieren (URL-codierte Zeichen zurück in normale Form umwandeln) möchten.",
+                "howto.step3.title": "Verarbeiten und Vorschau",
+                "howto.step3.description": "Klicken Sie auf die Schaltfläche \"Codieren\" oder \"Decodieren\", um Ihre URL zu verarbeiten. Das Ergebnis wird im Ausgabebereich mit Echtzeit-Statistiken angezeigt.",
+                "howto.step4.title": "Kopieren oder herunterladen",
+                "howto.step4.description": "Kopieren Sie die verarbeitete URL mit einem Klick in die Zwischenablage oder laden Sie sie als Textdatei herunter. Die gesamte Verarbeitung erfolgt lokal in Ihrem Browser - Ihre Daten verlassen niemals Ihr Gerät.",
+                "tool.title": "URL-Encoder/Decoder",
+                "tool.upload.text": "Ziehen Sie Ihre Textdatei hierher oder klicken Sie zum Durchsuchen",
+                "tool.upload.button": "Textdatei auswählen",
+                "tool.supported": "Unterstütztes Format: TXT",
+                "tool.input.title": "Eingabe-URL",
+                "tool.output.title": "Ausgabe-URL",
+                "tool.encode": "URL codieren",
+                "tool.decode": "URL decodieren",
+                "tool.clear": "Löschen",
+                "tool.clearAll": "Alles löschen",
+                "tool.paste": "Einfügen",
+                "tool.copy": "Kopieren",
+                "tool.download": "Herunterladen",
+                "tool.stats.input": "Eingabelänge",
+                "tool.stats.output": "Ausgabelänge",
+                "tool.stats.change": "Größenänderung",
+                "tool.stats.time": "Verarbeitungszeit",
+                "footer.follow": "FOLGEN SIE UNS",
+                "footer.categories": "Beliebte Kategorien",
+                "footer.categories.pdf": "PDF-Tools",
+                "footer.categories.image": "Bild-Tools",
+                "footer.categories.text": "Text-Tools",
+                "footer.categories.av": "Audio/Video-Tools",
+                "footer.categories.web": "WebDeveloper-Tools",
+                "footer.categories.calc": "Rechner-Tools",
+                "footer.categories.util": "Dienstprogramme",
+                "footer.categories.color": "Farb-Tools",
+                "footer.quicklinks": "Schnelllinks",
+                "footer.links.tools": "Alle Tools",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Kontakt",
+                "footer.links.privacy": "Datenschutzrichtlinie",
+                "footer.links.disclaimer": "Haftungsausschluss",
+                "footer.links.terms": "Nutzungsbedingungen",
+                "footer.copyright": "© 2025 LollyPoPDF. Alle Rechte vorbehalten."
+            },
+            it: {
+                "nav.home": "Home",
+                "nav.about": "Chi siamo",
+                "nav.tools": "Strumenti",
+                "nav.contact": "Contatto",
+                "hero.title": "Strumento Codificatore/Decodificatore URL",
+                "hero.description": "Codifica e decodifica stringhe URL in modo sicuro e istantaneo – senza server, 100% lato client. Tutta l'elaborazione avviene localmente con completa privacy.",
+                "howto.title": "Come utilizzare il Codificatore/Decodificatore URL",
+                "howto.step1.title": "Inserisci URL o carica file",
+                "howto.step1.description": "Digita o incolla la tua stringa URL nell'area di input, o carica un file di testo contenente URL. Lo strumento supporta tutti i formati URL comuni e i caratteri speciali.",
+                "howto.step2.title": "Scegli l'operazione",
+                "howto.step2.description": "Seleziona se vuoi codificare (convertire caratteri speciali in formato sicuro per URL) o decodificare (convertire caratteri codificati in URL alla forma normale).",
+                "howto.step3.title": "Elabora e anteprima",
+                "howto.step3.description": "Clicca sul pulsante \"Codifica\" o \"Decodifica\" per elaborare il tuo URL. Il risultato apparirà nell'area di output con statistiche in tempo reale.",
+                "howto.step4.title": "Copia o scarica",
+                "howto.step4.description": "Copia l'URL elaborato negli appunti con un clic o scaricalo come file di testo. Tutta l'elaborazione avviene localmente nel tuo browser - i tuoi dati non lasciano mai il tuo dispositivo.",
+                "tool.title": "Codificatore/Decodificatore URL",
+                "tool.upload.text": "Trascina e rilascia il tuo file di testo qui o clicca per sfogliare",
+                "tool.upload.button": "Scegli file di testo",
+                "tool.supported": "Formato supportato: TXT",
+                "tool.input.title": "URL di input",
+                "tool.output.title": "URL di output",
+                "tool.encode": "Codifica URL",
+                "tool.decode": "Decodifica URL",
+                "tool.clear": "Cancella",
+                "tool.clearAll": "Cancella tutto",
+                "tool.paste": "Incolla",
+                "tool.copy": "Copia",
+                "tool.download": "Scarica",
+                "tool.stats.input": "Lunghezza input",
+                "tool.stats.output": "Lunghezza output",
+                "tool.stats.change": "Variazione dimensione",
+                "tool.stats.time": "Tempo di elaborazione",
+                "footer.follow": "SEGUICI",
+                "footer.categories": "Categorie popolari",
+                "footer.categories.pdf": "Strumenti PDF",
+                "footer.categories.image": "Strumenti immagine",
+                "footer.categories.text": "Strumenti testo",
+                "footer.categories.av": "Strumenti audio/video",
+                "footer.categories.web": "Strumenti WebDeveloper",
+                "footer.categories.calc": "Strumenti calcolatrice",
+                "footer.categories.util": "Strumenti utilità",
+                "footer.categories.color": "Strumenti colore",
+                "footer.quicklinks": "Link rapidi",
+                "footer.links.tools": "Tutti gli strumenti",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Contatto",
+                "footer.links.privacy": "Informativa sulla privacy",
+                "footer.links.disclaimer": "Disclaimer",
+                "footer.links.terms": "Termini di servizio",
+                "footer.copyright": "© 2025 LollyPoPDF. Tutti i diritti riservati."
+            },
+            pt: {
+                "nav.home": "Início",
+                "nav.about": "Sobre nós",
+                "nav.tools": "Ferramentas",
+                "nav.contact": "Contato",
+                "hero.title": "Ferramenta Codificadora/Decodificadora de URL",
+                "hero.description": "Codifique e decodifique strings de URL com segurança e instantaneamente – sem servidores, 100% no lado do cliente. Todo o processamento acontece localmente com privacidade completa.",
+                "howto.title": "Como usar o Codificador/Decodificador de URL",
+                "howto.step1.title": "Insira URL ou carregue arquivo",
+                "howto.step1.description": "Digite ou cole sua string de URL na área de entrada, ou carregue um arquivo de texto contendo URLs. A ferramenta suporta todos os formatos de URL comuns e caracteres especiais.",
+                "howto.step2.title": "Escolha a operação",
+                "howto.step2.description": "Selecione se deseja codificar (converter caracteres especiais para formato seguro para URL) ou decodificar (converter caracteres codificados em URL de volta ao normal).",
+                "howto.step3.title": "Processe e visualize",
+                "howto.step3.description": "Clique no botão \"Codificar\" ou \"Decodificar\" para processar sua URL. O resultado aparecerá na área de saída com estatísticas em tempo real.",
+                "howto.step4.title": "Copie ou baixe",
+                "howto.step4.description": "Copie a URL processada para a área de transferência com um clique ou baixe-a como arquivo de texto. Todo o processamento acontece localmente no seu navegador - seus dados nunca saem do seu dispositivo.",
+                "tool.title": "Codificador/Decodificador de URL",
+                "tool.upload.text": "Arraste e solte seu arquivo de texto aqui ou clique para procurar",
+                "tool.upload.button": "Escolher arquivo de texto",
+                "tool.supported": "Formato suportado: TXT",
+                "tool.input.title": "URL de entrada",
+                "tool.output.title": "URL de saída",
+                "tool.encode": "Codificar URL",
+                "tool.decode": "Decodificar URL",
+                "tool.clear": "Limpar",
+                "tool.clearAll": "Limpar tudo",
+                "tool.paste": "Colar",
+                "tool.copy": "Copiar",
+                "tool.download": "Baixar",
+                "tool.stats.input": "Comprimento de entrada",
+                "tool.stats.output": "Comprimento de saída",
+                "tool.stats.change": "Mudança de tamanho",
+                "tool.stats.time": "Tempo de processamento",
+                "footer.follow": "SIGA-NOS",
+                "footer.categories": "Categorias populares",
+                "footer.categories.pdf": "Ferramentas PDF",
+                "footer.categories.image": "Ferramentas de imagem",
+                "footer.categories.text": "Ferramentas de texto",
+                "footer.categories.av": "Ferramentas de áudio/vídeo",
+                "footer.categories.web": "Ferramentas WebDeveloper",
+                "footer.categories.calc": "Ferramentas de calculadora",
+                "footer.categories.util": "Ferramentas de utilidade",
+                "footer.categories.color": "Ferramentas de cor",
+                "footer.quicklinks": "Links rápidos",
+                "footer.links.tools": "Todas as ferramentas",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Contato",
+                "footer.links.privacy": "Política de privacidade",
+                "footer.links.disclaimer": "Aviso legal",
+                "footer.links.terms": "Termos de serviço",
+                "footer.copyright": "© 2025 LollyPoPDF. Todos os direitos reservados."
+            },
+            ja: {
+                "nav.home": "ホーム",
+                "nav.about": "会社概要",
+                "nav.tools": "ツール",
+                "nav.contact": "お問い合わせ",
+                "hero.title": "URLエンコーダー/デコーダーツール",
+                "hero.description": "URL文字列を安全かつ瞬時にエンコードおよびデコード – サーバー不要、100%クライアントサイド。すべての処理はローカルで行われ、完全なプライバシーが保たれます。",
+                "howto.title": "URLエンコーダー/デコーダーの使用方法",
+                "howto.step1.title": "URLを入力またはファイルをアップロード",
+                "howto.step1.description": "入力エリアにURL文字列を入力または貼り付けるか、URLを含むテキストファイルをアップロードします。このツールはすべての一般的なURL形式と特殊文字をサポートしています。",
+                "howto.step2.title": "操作を選択",
+                "howto.step2.description": "エンコード（特殊文字をURLセーフ形式に変換）またはデコード（URLエンコードされた文字を通常の形式に戻す）を選択します。",
+                "howto.step3.title": "処理とプレビュー",
+                "howto.step3.description": "「エンコード」または「デコード」ボタンをクリックしてURLを処理します。結果はリアルタイム統計とともに出力エリアに表示されます。",
+                "howto.step4.title": "コピーまたはダウンロード",
+                "howto.step4.description": "ワンクリックで処理されたURLをクリップボードにコピーするか、テキストファイルとしてダウンロードします。すべての処理はブラウザ内でローカルに行われます - データがデバイスから流出することはありません。",
+                "tool.title": "URLエンコーダー/デコーダー",
+                "tool.upload.text": "テキストファイルをここにドラッグ＆ドロップするか、クリックして参照",
+                "tool.upload.button": "テキストファイルを選択",
+                "tool.supported": "サポート形式: TXT",
+                "tool.input.title": "入力URL",
+                "tool.output.title": "出力URL",
+                "tool.encode": "URLをエンコード",
+                "tool.decode": "URLをデコード",
+                "tool.clear": "クリア",
+                "tool.clearAll": "すべてクリア",
+                "tool.paste": "貼り付け",
+                "tool.copy": "コピー",
+                "tool.download": "ダウンロード",
+                "tool.stats.input": "入力長",
+                "tool.stats.output": "出力長",
+                "tool.stats.change": "サイズ変更",
+                "tool.stats.time": "処理時間",
+                "footer.follow": "フォローする",
+                "footer.categories": "人気カテゴリ",
+                "footer.categories.pdf": "PDFツール",
+                "footer.categories.image": "画像ツール",
+                "footer.categories.text": "テキストツール",
+                "footer.categories.av": "音声/動画ツール",
+                "footer.categories.web": "Web開発者ツール",
+                "footer.categories.calc": "計算機ツール",
+                "footer.categories.util": "ユーティリティツール",
+                "footer.categories.color": "カラーツール",
+                "footer.quicklinks": "クイックリンク",
+                "footer.links.tools": "すべてのツール",
+                "footer.links.faq": "よくある質問",
+                "footer.links.contact": "お問い合わせ",
+                "footer.links.privacy": "プライバシーポリシー",
+                "footer.links.disclaimer": "免責事項",
+                "footer.links.terms": "利用規約",
+                "footer.copyright": "© 2025 LollyPoPDF. 全著作権所有。"
+            },
+            ru: {
+                "nav.home": "Главная",
+                "nav.about": "О нас",
+                "nav.tools": "Инструменты",
+                "nav.contact": "Контакты",
+                "hero.title": "Инструмент кодирования/декодирования URL",
+                "hero.description": "Кодируйте и декодируйте строки URL безопасно и мгновенно – без серверов, 100% на стороне клиента. Вся обработка происходит локально с полной конфиденциальностью.",
+                "howto.title": "Как использовать кодировщик/декодировщик URL",
+                "howto.step1.title": "Введите URL или загрузите файл",
+                "howto.step1.description": "Введите или вставьте вашу строку URL в область ввода или загрузите текстовый файл, содержащий URL. Инструмент поддерживает все распространенные форматы URL и специальные символы.",
+                "howto.step2.title": "Выберите операцию",
+                "howto.step2.description": "Выберите, хотите ли вы кодировать (преобразовать специальные символы в безопасный для URL формат) или декодировать (преобразовать закодированные в URL символы обратно в нормальную форму).",
+                "howto.step3.title": "Обработайте и просмотрите",
+                "howto.step3.description": "Нажмите кнопку \"Кодировать\" или \"Декодировать\" для обработки вашего URL. Результат появится в области вывода со статистикой в реальном времени.",
+                "howto.step4.title": "Скопируйте или скачайте",
+                "howto.step4.description": "Скопируйте обработанный URL в буфер обмена одним щелчком или скачайте его как текстовый файл. Вся обработка происходит локально в вашем браузере - ваши данные никогда не покидают ваше устройство.",
+                "tool.title": "Кодировщик/декодировщик URL",
+                "tool.upload.text": "Перетащите текстовый файл сюда или щелкните для просмотра",
+                "tool.upload.button": "Выбрать текстовый файл",
+                "tool.supported": "Поддерживаемый формат: TXT",
+                "tool.input.title": "Входной URL",
+                "tool.output.title": "Выходной URL",
+                "tool.encode": "Кодировать URL",
+                "tool.decode": "Декодировать URL",
+                "tool.clear": "Очистить",
+                "tool.clearAll": "Очистить все",
+                "tool.paste": "Вставить",
+                "tool.copy": "Копировать",
+                "tool.download": "Скачать",
+                "tool.stats.input": "Длина ввода",
+                "tool.stats.output": "Длина вывода",
+                "tool.stats.change": "Изменение размера",
+                "tool.stats.time": "Время обработки",
+                "footer.follow": "СЛЕДУЙТЕ ЗА НАМИ",
+                "footer.categories": "Популярные категории",
+                "footer.categories.pdf": "PDF-инструменты",
+                "footer.categories.image": "Инструменты для изображений",
+                "footer.categories.text": "Текстовые инструменты",
+                "footer.categories.av": "Аудио/видео инструменты",
+                "footer.categories.web": "Инструменты веб-разработчика",
+                "footer.categories.calc": "Инструменты калькулятора",
+                "footer.categories.util": "Утилиты",
+                "footer.categories.color": "Инструменты цвета",
+                "footer.quicklinks": "Быстрые ссылки",
+                "footer.links.tools": "Все инструменты",
+                "footer.links.faq": "Часто задаваемые вопросы",
+                "footer.links.contact": "Контакты",
+                "footer.links.privacy": "Политика конфиденциальности",
+                "footer.links.disclaimer": "Отказ от ответственности",
+                "footer.links.terms": "Условия использования",
+                "footer.copyright": "© 2025 LollyPoPDF. Все права защищены."
+            },
+            ko: {
+                "nav.home": "홈",
+                "nav.about": "회사 소개",
+                "nav.tools": "도구",
+                "nav.contact": "연락처",
+                "hero.title": "URL 인코더/디코더 도구",
+                "hero.description": "URL 문자열을 안전하고 즉시 인코딩 및 디코딩하세요 – 서버 없이 100% 클라이언트 측에서 처리됩니다. 모든 처리는 완전한 개인 정보 보호와 함께 로컬에서 이루어집니다.",
+                "howto.title": "URL 인코더/디코더 사용 방법",
+                "howto.step1.title": "URL 입력 또는 파일 업로드",
+                "howto.step1.description": "입력 영역에 URL 문자열을 입력하거나 붙여넣거나, URL이 포함된 텍스트 파일을 업로드하세요. 이 도구는 모든 일반적인 URL 형식과 특수 문자를 지원합니다.",
+                "howto.step2.title": "작업 선택",
+                "howto.step2.description": "인코딩(특수 문자를 URL 안전 형식으로 변환) 또는 디코딩(URL 인코딩된 문자를 일반 형식으로 변환)을 선택하세요.",
+                "howto.step3.title": "처리 및 미리보기",
+                "howto.step3.description": "\"인코딩\" 또는 \"디코딩\" 버튼을 클릭하여 URL을 처리하세요. 결과가 실시간 통계와 함께 출력 영역에 나타납니다.",
+                "howto.step4.title": "복사 또는 다운로드",
+                "howto.step4.description": "한 번의 클릭으로 처리된 URL을 클립보드에 복사하거나 텍스트 파일로 다운로드하세요. 모든 처리는 브라우저에서 로컬로 이루어집니다 - 데이터가 기기를 떠나지 않습니다.",
+                "tool.title": "URL 인코더/디코더",
+                "tool.upload.text": "텍스트 파일을 여기로 끌어다 놓거나 클릭하여 찾아보기",
+                "tool.upload.button": "텍스트 파일 선택",
+                "tool.supported": "지원 형식: TXT",
+                "tool.input.title": "입력 URL",
+                "tool.output.title": "출력 URL",
+                "tool.encode": "URL 인코딩",
+                "tool.decode": "URL 디코딩",
+                "tool.clear": "지우기",
+                "tool.clearAll": "모두 지우기",
+                "tool.paste": "붙여넣기",
+                "tool.copy": "복사",
+                "tool.download": "다운로드",
+                "tool.stats.input": "입력 길이",
+                "tool.stats.output": "출력 길이",
+                "tool.stats.change": "크기 변경",
+                "tool.stats.time": "처리 시간",
+                "footer.follow": "팔로우하기",
+                "footer.categories": "인기 카테고리",
+                "footer.categories.pdf": "PDF 도구",
+                "footer.categories.image": "이미지 도구",
+                "footer.categories.text": "텍스트 도구",
+                "footer.categories.av": "오디오/비디오 도구",
+                "footer.categories.web": "웹 개발자 도구",
+                "footer.categories.calc": "계산기 도구",
+                "footer.categories.util": "유틸리티 도구",
+                "footer.categories.color": "색상 도구",
+                "footer.quicklinks": "빠른 링크",
+                "footer.links.tools": "모든 도구",
+                "footer.links.faq": "자주 묻는 질문",
+                "footer.links.contact": "연락처",
+                "footer.links.privacy": "개인정보 보호정책",
+                "footer.links.disclaimer": "면책 조항",
+                "footer.links.terms": "서비스 약관",
+                "footer.copyright": "© 2025 LollyPoPDF. 모든 권리 보유."
+            },
+            "zh-CN": {
+                "nav.home": "首页",
+                "nav.about": "关于我们",
+                "nav.tools": "工具",
+                "nav.contact": "联系我们",
+                "hero.title": "URL编码器/解码器工具",
+                "hero.description": "安全即时地编码和解码URL字符串 – 无需服务器，100%客户端处理。所有处理都在本地完成，完全保护隐私。",
+                "howto.title": "如何使用URL编码器/解码器",
+                "howto.step1.title": "输入URL或上传文件",
+                "howto.step1.description": "在输入区域输入或粘贴您的URL字符串，或上传包含URL的文本文件。该工具支持所有常见URL格式和特殊字符。",
+                "howto.step2.title": "选择操作",
+                "howto.step2.description": "选择是要编码（将特殊字符转换为URL安全格式）还是解码（将URL编码的字符转换回正常形式）。",
+                "howto.step3.title": "处理和预览",
+                "howto.step3.description": "点击\"编码\"或\"解码\"按钮处理您的URL。结果将显示在输出区域，并附带实时统计信息。",
+                "howto.step4.title": "复制或下载",
+                "howto.step4.description": "一键将处理后的URL复制到剪贴板或下载为文本文件。所有处理都在您的浏览器本地进行 - 您的数据永远不会离开您的设备。",
+                "tool.title": "URL编码器/解码器",
+                "tool.upload.text": "将文本文件拖放到此处或点击浏览",
+                "tool.upload.button": "选择文本文件",
+                "tool.supported": "支持格式: TXT",
+                "tool.input.title": "输入URL",
+                "tool.output.title": "输出URL",
+                "tool.encode": "编码URL",
+                "tool.decode": "解码URL",
+                "tool.clear": "清除",
+                "tool.clearAll": "全部清除",
+                "tool.paste": "粘贴",
+                "tool.copy": "复制",
+                "tool.download": "下载",
+                "tool.stats.input": "输入长度",
+                "tool.stats.output": "输出长度",
+                "tool.stats.change": "大小变化",
+                "tool.stats.time": "处理时间",
+                "footer.follow": "关注我们",
+                "footer.categories": "热门类别",
+                "footer.categories.pdf": "PDF工具",
+                "footer.categories.image": "图像工具",
+                "footer.categories.text": "文本工具",
+                "footer.categories.av": "音频/视频工具",
+                "footer.categories.web": "Web开发工具",
+                "footer.categories.calc": "计算器工具",
+                "footer.categories.util": "实用工具",
+                "footer.categories.color": "颜色工具",
+                "footer.quicklinks": "快速链接",
+                "footer.links.tools": "所有工具",
+                "footer.links.faq": "常见问题",
+                "footer.links.contact": "联系我们",
+                "footer.links.privacy": "隐私政策",
+                "footer.links.disclaimer": "免责声明",
+                "footer.links.terms": "服务条款",
+                "footer.copyright": "© 2025 LollyPoPDF. 保留所有权利。"
+            },
+            "zh-TW": {
+                "nav.home": "首頁",
+                "nav.about": "關於我們",
+                "nav.tools": "工具",
+                "nav.contact": "聯絡我們",
+                "hero.title": "URL編碼器/解碼器工具",
+                "hero.description": "安全即時地編碼和解碼URL字串 – 無需伺服器，100%客戶端處理。所有處理都在本地完成，完全保護隱私。",
+                "howto.title": "如何使用URL編碼器/解碼器",
+                "howto.step1.title": "輸入URL或上傳檔案",
+                "howto.step1.description": "在輸入區域輸入或貼上您的URL字串，或上傳包含URL的文字檔案。該工具支援所有常見URL格式和特殊字元。",
+                "howto.step2.title": "選擇操作",
+                "howto.step2.description": "選擇是要編碼（將特殊字元轉換為URL安全格式）還是解碼（將URL編碼的字元轉換回正常形式）。",
+                "howto.step3.title": "處理和預覽",
+                "howto.step3.description": "點擊\"編碼\"或\"解碼\"按鈕處理您的URL。結果將顯示在輸出區域，並附帶即時統計資訊。",
+                "howto.step4.title": "複製或下載",
+                "howto.step4.description": "一鍵將處理後的URL複製到剪貼簿或下載為文字檔案。所有處理都在您的瀏覽器本地進行 - 您的資料永遠不會離開您的裝置。",
+                "tool.title": "URL編碼器/解碼器",
+                "tool.upload.text": "將文字檔案拖放到此處或點擊瀏覽",
+                "tool.upload.button": "選擇文字檔案",
+                "tool.supported": "支援格式: TXT",
+                "tool.input.title": "輸入URL",
+                "tool.output.title": "輸出URL",
+                "tool.encode": "編碼URL",
+                "tool.decode": "解碼URL",
+                "tool.clear": "清除",
+                "tool.clearAll": "全部清除",
+                "tool.paste": "貼上",
+                "tool.copy": "複製",
+                "tool.download": "下載",
+                "tool.stats.input": "輸入長度",
+                "tool.stats.output": "輸出長度",
+                "tool.stats.change": "大小變化",
+                "tool.stats.time": "處理時間",
+                "footer.follow": "追蹤我們",
+                "footer.categories": "熱門類別",
+                "footer.categories.pdf": "PDF工具",
+                "footer.categories.image": "影像工具",
+                "footer.categories.text": "文字工具",
+                "footer.categories.av": "音訊/視訊工具",
+                "footer.categories.web": "網頁開發工具",
+                "footer.categories.calc": "計算機工具",
+                "footer.categories.util": "實用工具",
+                "footer.categories.color": "色彩工具",
+                "footer.quicklinks": "快速連結",
+                "footer.links.tools": "所有工具",
+                "footer.links.faq": "常見問題",
+                "footer.links.contact": "聯絡我們",
+                "footer.links.privacy": "隱私權政策",
+                "footer.links.disclaimer": "免責聲明",
+                "footer.links.terms": "服務條款",
+                "footer.copyright": "© 2025 LollyPoPDF. 保留所有權利。"
+            },
+            ar: {
+                "nav.home": "الرئيسية",
+                "nav.about": "من نحن",
+                "nav.tools": "الأدوات",
+                "nav.contact": "اتصل بنا",
+                "hero.title": "أداة ترميز/فك ترميز URL",
+                "hero.description": "قم بترميز وفك ترميز سلاسل URL بأمان وفورية – بدون خوادم، 100% على جانب العميل. كل المعالجة تتم محليًا مع خصوصية كاملة.",
+                "howto.title": "كيفية استخدام أداة ترميز/فك ترميز URL",
+                "howto.step1.title": "أدخل URL أو ارفع ملف",
+                "howto.step1.description": "اكتب أو الصق سلسلة URL الخاصة بك في منطقة الإدخال، أو ارفع ملف نصي يحتوي على عناوين URL. الأداة تدعم جميع تنسيقات URL الشائعة والأحرف الخاصة.",
+                "howto.step2.title": "اختر العملية",
+                "howto.step2.description": "حدد ما إذا كنت تريد الترميز (تحويل الأحرف الخاصة إلى تنسيق آمن لـ URL) أو فك الترميز (تحويل الأحرف المشفرة في URL إلى شكلها الطبيعي).",
+                "howto.step3.title": "معالجة ومعاينة",
+                "howto.step3.description": "انقر على زر \"ترميز\" أو \"فك ترميز\" لمعالجة URL الخاص بك. ستظهر النتيجة في منطقة الإخراج مع إحصائيات في الوقت الفعلي.",
+                "howto.step4.title": "نسخ أو تنزيل",
+                "howto.step4.description": "انسخ URL المعالج إلى الحافظة بنقرة واحدة أو قم بتنزيله كملف نصي. كل المعالجة تتم محليًا في متصفحك - بياناتك لا تترك جهازك أبدًا.",
+                "tool.title": "أداة ترميز/فك ترميز URL",
+                "tool.upload.text": "اسحب وأفلت ملف النص الخاص بك هنا أو انقر للتصفح",
+                "tool.upload.button": "اختر ملف نصي",
+                "tool.supported": "التنسيق المدعوم: TXT",
+                "tool.input.title": "URL الإدخال",
+                "tool.output.title": "URL الإخراج",
+                "tool.encode": "ترميز URL",
+                "tool.decode": "فك ترميز URL",
+                "tool.clear": "مسح",
+                "tool.clearAll": "مسح الكل",
+                "tool.paste": "لصق",
+                "tool.copy": "نسخ",
+                "tool.download": "تنزيل",
+                "tool.stats.input": "طول الإدخال",
+                "tool.stats.output": "طول الإخراج",
+                "tool.stats.change": "تغيير الحجم",
+                "tool.stats.time": "وقت المعالجة",
+                "footer.follow": "تابعنا",
+                "footer.categories": "الفئات الشائعة",
+                "footer.categories.pdf": "أدوات PDF",
+                "footer.categories.image": "أدوات الصور",
+                "footer.categories.text": "أدوات النص",
+                "footer.categories.av": "أدوات الصوت/الفيديو",
+                "footer.categories.web": "أدوات مطور الويب",
+                "footer.categories.calc": "أدوات الآلة الحاسبة",
+                "footer.categories.util": "أدوات المساعدة",
+                "footer.categories.color": "أدوات الألوان",
+                "footer.quicklinks": "روابط سريعة",
+                "footer.links.tools": "جميع الأدوات",
+                "footer.links.faq": "الأسئلة الشائعة",
+                "footer.links.contact": "اتصل بنا",
+                "footer.links.privacy": "سياسة الخصوصية",
+                "footer.links.disclaimer": "إخلاء المسؤولية",
+                "footer.links.terms": "شروط الخدمة",
+                "footer.copyright": "© 2025 LollyPoPDF. جميع الحقوق محفوظة."
+            },
+            fa: {
+                "nav.home": "خانه",
+                "nav.about": "درباره ما",
+                "nav.tools": "ابزارها",
+                "nav.contact": "تماس با ما",
+                "hero.title": "ابزار کدگذار/کدگشای URL",
+                "hero.description": "رشته‌های URL را به صورت امن و فوری کدگذاری و کدگشایی کنید – بدون سرور، 100% سمت کلاینت. تمام پردازش به صورت محلی با حفظ حریم خصوصی کامل انجام می‌شود.",
+                "howto.title": "نحوه استفاده از کدگذار/کدگشای URL",
+                "howto.step1.title": "URL را وارد کنید یا فایل آپلود کنید",
+                "howto.step1.description": "رشته URL خود را در ناحیه ورودی تایپ یا پیست کنید، یا یک فایل متنی حاوی URLها آپلود کنید. این ابزار از تمام فرمت‌های رایج URL و کاراکترهای ویژه پشتیبانی می‌کند.",
+                "howto.step2.title": "عملیات را انتخاب کنید",
+                "howto.step2.description": "انتخاب کنید که می‌خواهید کدگذاری (تبدیل کاراکترهای ویژه به فرمت امن برای URL) یا کدگشایی (تبدیل کاراکترهای کدگذاری شده در URL به حالت عادی) انجام دهید.",
+                "howto.step3.title": "پردازش و پیش‌نمایش",
+                "howto.step3.description": "روی دکمه \"کدگذاری\" یا \"کدگشایی\" کلیک کنید تا URL شما پردازش شود. نتیجه در ناحیه خروجی با آمار لحظه‌ای نمایش داده می‌شود.",
+                "howto.step4.title": "کپی یا دانلود",
+                "howto.step4.description": "URL پردازش شده را با یک کلیک در کلیپ‌بورد کپی کنید یا آن را به عنوان فایل متنی دانلود کنید. تمام پردازش به صورت محلی در مرورگر شما انجام می‌شود - داده‌های شما هرگز دستگاه شما را ترک نمی‌کنند.",
+                "tool.title": "کدگذار/کدگشای URL",
+                "tool.upload.text": "فایل متنی خود را اینجا بکشید و رها کنید یا برای جستجو کلیک کنید",
+                "tool.upload.button": "انتخاب فایل متنی",
+                "tool.supported": "فرمت پشتیبانی شده: TXT",
+                "tool.input.title": "URL ورودی",
+                "tool.output.title": "URL خروجی",
+                "tool.encode": "کدگذاری URL",
+                "tool.decode": "کدگشایی URL",
+                "tool.clear": "پاک کردن",
+                "tool.clearAll": "پاک کردن همه",
+                "tool.paste": "چسباندن",
+                "tool.copy": "کپی",
+                "tool.download": "دانلود",
+                "tool.stats.input": "طول ورودی",
+                "tool.stats.output": "طول خروجی",
+                "tool.stats.change": "تغییر اندازه",
+                "tool.stats.time": "زمان پردازش",
+                "footer.follow": "ما را دنبال کنید",
+                "footer.categories": "دسته‌بندی‌های محبوب",
+                "footer.categories.pdf": "ابزارهای PDF",
+                "footer.categories.image": "ابزارهای تصویر",
+                "footer.categories.text": "ابزارهای متن",
+                "footer.categories.av": "ابزارهای صوتی/تصویری",
+                "footer.categories.web": "ابزارهای توسعه دهنده وب",
+                "footer.categories.calc": "ابزارهای ماشین حساب",
+                "footer.categories.util": "ابزارهای کمکی",
+                "footer.categories.color": "ابزارهای رنگ",
+                "footer.quicklinks": "لینک‌های سریع",
+                "footer.links.tools": "همه ابزارها",
+                "footer.links.faq": "سوالات متداول",
+                "footer.links.contact": "تماس با ما",
+                "footer.links.privacy": "سیاست حفظ حریم خصوصی",
+                "footer.links.disclaimer": "سلب مسئولیت",
+                "footer.links.terms": "شرایط استفاده از خدمات",
+                "footer.copyright": "© 2025 LollyPoPDF. تمامی حقوق محفوظ است."
+            },
+            bg: {
+                "nav.home": "Начало",
+                "nav.about": "За нас",
+                "nav.tools": "Инструменти",
+                "nav.contact": "Контакт",
+                "hero.title": "Инструмент за кодиране/декодиране на URL",
+                "hero.description": "Кодирайте и декодирайте URL низове сигурно и мигновено – без сървъри, 100% от клиентска страна. Цялата обработка се извършва локално с пълна поверителност.",
+                "howto.title": "Как да използвате кодиращия/декодиращия инструмент за URL",
+                "howto.step1.title": "Въведете URL или качете файл",
+                "howto.step1.description": "Въведете или поставете вашия URL низ в областта за въвеждане, или качете текстов файл, съдържащ URL адреси. Инструментът поддържа всички често срещани URL формати и специални символи.",
+                "howto.step2.title": "Изберете операция",
+                "howto.step2.description": "Изберете дали искате да кодирате (преобразувате специални символи в безопасен за URL формат) или декодирате (преобразувате кодирани в URL символи обратно в нормална форма).",
+                "howto.step3.title": "Обработете и визуализирайте",
+                "howto.step3.description": "Щракнете върху бутона \"Кодиране\" или \"Декодиране\", за да обработите вашия URL. Резултатът ще се появи в зоната за изход с реално времева статистика.",
+                "howto.step4.title": "Копирайте или изтеглете",
+                "howto.step4.description": "Копирайте обработения URL в клипборда с едно щракване или го изтеглете като текстов файл. Цялата обработка се извършва локално във вашия браузър - вашите данни никога не напускат вашето устройство.",
+                "tool.title": "Кодиране/декодиране на URL",
+                "tool.upload.text": "Плъзнете и пуснете вашия текстов файл тук или щракнете за разглеждане",
+                "tool.upload.button": "Изберете текстов файл",
+                "tool.supported": "Поддържан формат: TXT",
+                "tool.input.title": "Входен URL",
+                "tool.output.title": "Изходен URL",
+                "tool.encode": "Кодиране на URL",
+                "tool.decode": "Декодиране на URL",
+                "tool.clear": "Изчисти",
+                "tool.clearAll": "Изчисти всичко",
+                "tool.paste": "Постави",
+                "tool.copy": "Копирай",
+                "tool.download": "Изтегли",
+                "tool.stats.input": "Дължина на входа",
+                "tool.stats.output": "Дължина на изхода",
+                "tool.stats.change": "Промяна в размера",
+                "tool.stats.time": "Време за обработка",
+                "footer.follow": "СЛЕДВАЙТЕ НИ",
+                "footer.categories": "Популярни категории",
+                "footer.categories.pdf": "PDF инструменти",
+                "footer.categories.image": "Инструменти за изображения",
+                "footer.categories.text": "Текстови инструменти",
+                "footer.categories.av": "Аудио/видео инструменти",
+                "footer.categories.web": "Инструменти за уеб разработчици",
+                "footer.categories.calc": "Инструменти за калкулатор",
+                "footer.categories.util": "Помощни инструменти",
+                "footer.categories.color": "Инструменти за цвят",
+                "footer.quicklinks": "Бързи връзки",
+                "footer.links.tools": "Всички инструменти",
+                "footer.links.faq": "Често задавани въпроси",
+                "footer.links.contact": "Контакт",
+                "footer.links.privacy": "Политика за поверителност",
+                "footer.links.disclaimer": "Отказ от отговорност",
+                "footer.links.terms": "Условия за ползване",
+                "footer.copyright": "© 2025 LollyPoPDF. Всички права запазени."
+            },
+            ca: {
+                "nav.home": "Inici",
+                "nav.about": "Sobre nosaltres",
+                "nav.tools": "Eines",
+                "nav.contact": "Contacte",
+                "hero.title": "Eina Codificadora/Descodificadora d'URL",
+                "hero.description": "Codifiqueu i descodifiqueu cadenes d'URL de forma segura i instantània – sense servidors, 100% al costat del client. Tot el processament es realitza localment amb privacitat completa.",
+                "howto.title": "Com utilitzar el Codificador/Descodificador d'URL",
+                "howto.step1.title": "Introduïu URL o carregueu fitxer",
+                "howto.step1.description": "Escriviu o enganxeu la vostra cadena d'URL a l'àrea d'entrada, o carregueu un fitxer de text que contingui URL. L'eina admet tots els formats d'URL comuns i caràcters especials.",
+                "howto.step2.title": "Trieu l'operació",
+                "howto.step2.description": "Seleccioneu si voleu codificar (convertir caràcters especials a format segur per a URL) o descodificar (convertir caràcters codificats en URL a la seva forma normal).",
+                "howto.step3.title": "Processeu i visualitzeu",
+                "howto.step3.description": "Feu clic al botó \"Codificar\" o \"Descodificar\" per processar la vostra URL. El resultat apareixerà a l'àrea de sortida amb estadístiques en temps real.",
+                "howto.step4.title": "Copieu o baixeu",
+                "howto.step4.description": "Copieu l'URL processat al porta-retalls amb un clic o baixeu-lo com a fitxer de text. Tot el processament es realitza localment al vostre navegador - les vostres dades mai surten del vostre dispositiu.",
+                "tool.title": "Codificador/Descodificador d'URL",
+                "tool.upload.text": "Arrossegueu i deixeu anar el vostre fitxer de text aquí o feu clic per navegar",
+                "tool.upload.button": "Trieu fitxer de text",
+                "tool.supported": "Format admes: TXT",
+                "tool.input.title": "URL d'entrada",
+                "tool.output.title": "URL de sortida",
+                "tool.encode": "Codificar URL",
+                "tool.decode": "Descodificar URL",
+                "tool.clear": "Netejar",
+                "tool.clearAll": "Netejar tot",
+                "tool.paste": "Enganxar",
+                "tool.copy": "Copiar",
+                "tool.download": "Baixar",
+                "tool.stats.input": "Longitud d'entrada",
+                "tool.stats.output": "Longitud de sortida",
+                "tool.stats.change": "Canvi de mida",
+                "tool.stats.time": "Temps de processament",
+                "footer.follow": "SEGUEIX-NOS",
+                "footer.categories": "Categories populars",
+                "footer.categories.pdf": "Eines PDF",
+                "footer.categories.image": "Eines d'imatge",
+                "footer.categories.text": "Eines de text",
+                "footer.categories.av": "Eines d'àudio/vídeo",
+                "footer.categories.web": "Eines WebDeveloper",
+                "footer.categories.calc": "Eines de calculadora",
+                "footer.categories.util": "Eines d'utilitat",
+                "footer.categories.color": "Eines de color",
+                "footer.quicklinks": "Enllaços ràpids",
+                "footer.links.tools": "Totes les eines",
+                "footer.links.faq": "PMF",
+                "footer.links.contact": "Contacte",
+                "footer.links.privacy": "Política de privadesa",
+                "footer.links.disclaimer": "Avís legal",
+                "footer.links.terms": "Termes del servei",
+                "footer.copyright": "© 2025 LollyPoPDF. Tots els drets reservats."
+            },
+            nl: {
+                "nav.home": "Home",
+                "nav.about": "Over ons",
+                "nav.tools": "Tools",
+                "nav.contact": "Contact",
+                "hero.title": "URL Encoder/Decoder Tool",
+                "hero.description": "Codeer en decodeer URL-strings veilig en direct – zonder servers, 100% client-side. Alle verwerking gebeurt lokaal met volledige privacy.",
+                "howto.title": "Hoe de URL Encoder/Decoder te gebruiken",
+                "howto.step1.title": "Voer URL in of upload bestand",
+                "howto.step1.description": "Typ of plak uw URL-string in het invoergebied, of upload een tekstbestand met URL's. De tool ondersteunt alle veelvoorkomende URL-formaten en speciale tekens.",
+                "howto.step2.title": "Kies bewerking",
+                "howto.step2.description": "Selecteer of u wilt coderen (speciale tekens converteren naar URL-veilig formaat) of decoderen (URL-gecodeerde tekens terug converteren naar normale vorm).",
+                "howto.step3.title": "Verwerk en bekijk",
+                "howto.step3.description": "Klik op de knop \"Coderen\" of \"Decoderen\" om uw URL te verwerken. Het resultaat verschijnt in het uitvoergebied met realtime statistieken.",
+                "howto.step4.title": "Kopieer of download",
+                "howto.step4.description": "Kopieer de verwerkte URL met één klik naar het klembord of download deze als tekstbestand. Alle verwerking gebeurt lokaal in uw browser - uw gegevens verlaten nooit uw apparaat.",
+                "tool.title": "URL Encoder/Decoder",
+                "tool.upload.text": "Sleep uw tekstbestand hierheen of klik om te bladeren",
+                "tool.upload.button": "Kies tekstbestand",
+                "tool.supported": "Ondersteund formaat: TXT",
+                "tool.input.title": "Invoer-URL",
+                "tool.output.title": "Uitvoer-URL",
+                "tool.encode": "URL coderen",
+                "tool.decode": "URL decoderen",
+                "tool.clear": "Wissen",
+                "tool.clearAll": "Alles wissen",
+                "tool.paste": "Plakken",
+                "tool.copy": "Kopiëren",
+                "tool.download": "Downloaden",
+                "tool.stats.input": "Invoerlengte",
+                "tool.stats.output": "Uitvoerlengte",
+                "tool.stats.change": "Groottewijziging",
+                "tool.stats.time": "Verwerkingstijd",
+                "footer.follow": "VOLG ONS",
+                "footer.categories": "Populaire categorieën",
+                "footer.categories.pdf": "PDF-tools",
+                "footer.categories.image": "Afbeeldingstools",
+                "footer.categories.text": "Teksttools",
+                "footer.categories.av": "Audio/video-tools",
+                "footer.categories.web": "WebDeveloper-tools",
+                "footer.categories.calc": "Rekenmachinetools",
+                "footer.categories.util": "Hulpprogramma's",
+                "footer.categories.color": "Kleurtools",
+                "footer.quicklinks": "Snelle links",
+                "footer.links.tools": "Alle tools",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Contact",
+                "footer.links.privacy": "Privacybeleid",
+                "footer.links.disclaimer": "Disclaimer",
+                "footer.links.terms": "Servicevoorwaarden",
+                "footer.copyright": "© 2025 LollyPoPDF. Alle rechten voorbehouden."
+            },
+            el: {
+                "nav.home": "Αρχική",
+                "nav.about": "Σχετικά με εμάς",
+                "nav.tools": "Εργαλεία",
+                "nav.contact": "Επικοινωνία",
+                "hero.title": "Εργαλείο Κωδικοποιητή/Αποκωδικοποιητή URL",
+                "hero.description": "Κωδικοποιήστε και αποκωδικοποιήστε συμβολοσειρές URL με ασφάλεια και αμέσως – χωρίς διακομιστές, 100% από την πλευρά του πελάτη. Όλη η επεξεργασία γίνεται τοπικά με πλήρη ιδιωτικότητα.",
+                "howto.title": "Πώς να χρησιμοποιήσετε τον Κωδικοποιητή/Αποκωδικοποιητή URL",
+                "howto.step1.title": "Εισαγάγετε URL ή ανεβάστε αρχείο",
+                "howto.step1.description": "Πληκτρολογήστε ή επικολλήστε τη συμβολοσειρά URL σας στην περιοχή εισαγωγής, ή ανεβάστε ένα αρχείο κειμένου που περιέχει URL. Το εργαλείο υποστηρίζει όλες τις κοινές μορφές URL και ειδικούς χαρακτήρες.",
+                "howto.step2.title": "Επιλέξτε λειτουργία",
+                "howto.step2.description": "Επιλέξτε αν θέλετε να κωδικοποιήσετε (μετατρέψετε ειδικούς χαρακτήρες σε ασφαλή μορφή URL) ή να αποκωδικοποιήσετε (μετατρέψετε χαρακτήρες κωδικοποιημένους σε URL πίσω στην κανονική τους μορφή).",
+                "howto.step3.title": "Επεξεργαστείτε και προεπισκοπήστε",
+                "howto.step3.description": "Κάντε κλικ στο κουμπί \"Κωδικοποίηση\" ή \"Αποκωδικοποίηση\" για να επεξεργαστείτε το URL σας. Το αποτέλεσμα θα εμφανιστεί στην περιοχή εξόδου με στατιστικά σε πραγματικό χρόνο.",
+                "howto.step4.title": "Αντιγράψτε ή κατεβάστε",
+                "howto.step4.description": "Αντιγράψτε το επεξεργασμένο URL στο πρόχειρο με ένα κλικ ή κατεβάστε το ως αρχείο κειμένου. Όλη η επεξεργασία γίνεται τοπικά στο πρόγραμμα περιήγησής σας - τα δεδομένα σας δεν εγκαταλείπουν ποτέ τη συσκευή σας.",
+                "tool.title": "Κωδικοποιητής/Αποκωδικοποιητής URL",
+                "tool.upload.text": "Σύρετε και αποθέστε το αρχείο κειμένου σας εδώ ή κάντε κλικ για περιήγηση",
+                "tool.upload.button": "Επιλέξτε αρχείο κειμένου",
+                "tool.supported": "Υποστηριζόμενη μορφή: TXT",
+                "tool.input.title": "URL εισόδου",
+                "tool.output.title": "URL εξόδου",
+                "tool.encode": "Κωδικοποίηση URL",
+                "tool.decode": "Αποκωδικοποίηση URL",
+                "tool.clear": "Καθαρισμός",
+                "tool.clearAll": "Καθαρισμός όλων",
+                "tool.paste": "Επικόλληση",
+                "tool.copy": "Αντιγραφή",
+                "tool.download": "Λήψη",
+                "tool.stats.input": "Μήκος εισόδου",
+                "tool.stats.output": "Μήκος εξόδου",
+                "tool.stats.change": "Αλλαγή μεγέθους",
+                "tool.stats.time": "Χρόνος επεξεργασίας",
+                "footer.follow": "ΑΚΟΛΟΥΘΗΣΤΕ ΜΑΣ",
+                "footer.categories": "Δημοφιλείς κατηγορίες",
+                "footer.categories.pdf": "Εργαλεία PDF",
+                "footer.categories.image": "Εργαλεία εικόνας",
+                "footer.categories.text": "Εργαλεία κειμένου",
+                "footer.categories.av": "Εργαλεία ήχου/βίντεο",
+                "footer.categories.web": "Εργαλεία WebDeveloper",
+                "footer.categories.calc": "Εργαλεία αριθμομηχανής",
+                "footer.categories.util": "Βοηθητικά εργαλεία",
+                "footer.categories.color": "Εργαλεία χρώματος",
+                "footer.quicklinks": "Γρήγοροι σύνδεσμοι",
+                "footer.links.tools": "Όλα τα εργαλεία",
+                "footer.links.faq": "Συχνές ερωτήσεις",
+                "footer.links.contact": "Επικοινωνία",
+                "footer.links.privacy": "Πολιτική απορρήτου",
+                "footer.links.disclaimer": "Αποποίηση ευθυνών",
+                "footer.links.terms": "Όροι χρήσης",
+                "footer.copyright": "© 2025 LollyPoPDF. Με επιφύλαξη παντός δικαιώματος."
+            },
+            hi: {
+                "nav.home": "होम",
+                "nav.about": "हमारे बारे में",
+                "nav.tools": "टूल्स",
+                "nav.contact": "संपर्क करें",
+                "hero.title": "URL एनकोडर/डिकोडर टूल",
+                "hero.description": "URL स्ट्रिंग्स को सुरक्षित रूप से और तुरंत एनकोड और डिकोड करें – बिना सर्वर के, 100% क्लाइंट-साइड। सभी प्रोसेसिंग स्थानीय रूप से पूर्ण गोपनीयता के साथ होती है।",
+                "howto.title": "URL एनकोडर/डिकोडर का उपयोग कैसे करें",
+                "howto.step1.title": "URL दर्ज करें या फ़ाइल अपलोड करें",
+                "howto.step1.description": "इनपुट एरिया में अपनी URL स्ट्रिंग टाइप या पेस्ट करें, या URL युक्त टेक्स्ट फ़ाइल अपलोड करें। यह टूल सभी सामान्य URL फॉर्मेट और विशेष वर्णों का समर्थन करता है।",
+                "howto.step2.title": "ऑपरेशन चुनें",
+                "howto.step2.description": "चुनें कि आप एनकोड (विशेष वर्णों को URL-सुरक्षित फॉर्मेट में बदलना) या डिकोड (URL-एनकोडेड वर्णों को सामान्य रूप में वापस बदलना) करना चाहते हैं।",
+                "howto.step3.title": "प्रोसेस और प्रीव्यू",
+                "howto.step3.description": "अपने URL को प्रोसेस करने के लिए \"एनकोड\" या \"डिकोड\" बटन पर क्लिक करें। परिणाम आउटपुट एरिया में रियल-टाइम सांख्यिकी के साथ दिखाई देगा।",
+                "howto.step4.title": "कॉपी या डाउनलोड",
+                "howto.step4.description": "एक क्लिक में प्रोसेस किए गए URL को क्लिपबोर्ड पर कॉपी करें या इसे टेक्स्ट फ़ाइल के रूप में डाउनलोड करें। सभी प्रोसेसिंग आपके ब्राउज़र में स्थानीय रूप से होती है - आपका डेटा कभी भी आपके डिवाइस को नहीं छोड़ता।",
+                "tool.title": "URL एनकोडर/डिकोडर",
+                "tool.upload.text": "अपनी टेक्स्ट फ़ाइल को यहां ड्रैग और ड्रॉप करें या ब्राउज़ करने के लिए क्लिक करें",
+                "tool.upload.button": "टेक्स्ट फ़ाइल चुनें",
+                "tool.supported": "समर्थित प्रारूप: TXT",
+                "tool.input.title": "इनपुट URL",
+                "tool.output.title": "आउटपुट URL",
+                "tool.encode": "URL एनकोड करें",
+                "tool.decode": "URL डिकोड करें",
+                "tool.clear": "साफ़ करें",
+                "tool.clearAll": "सब कुछ साफ़ करें",
+                "tool.paste": "पेस्ट करें",
+                "tool.copy": "कॉपी करें",
+                "tool.download": "डाउनलोड करें",
+                "tool.stats.input": "इनपुट लंबाई",
+                "tool.stats.output": "आउटपुट लंबाई",
+                "tool.stats.change": "आकार परिवर्तन",
+                "tool.stats.time": "प्रोसेसिंग समय",
+                "footer.follow": "हमें फॉलो करें",
+                "footer.categories": "लोकप्रिय श्रेणियां",
+                "footer.categories.pdf": "PDF टूल्स",
+                "footer.categories.image": "इमेज टूल्स",
+                "footer.categories.text": "टेक्स्ट टूल्स",
+                "footer.categories.av": "ऑडियो/वीडियो टूल्स",
+                "footer.categories.web": "वेबडेवलपर टूल्स",
+                "footer.categories.calc": "कैलकुलेटर टूल्स",
+                "footer.categories.util": "यूटिलिटी टूल्स",
+                "footer.categories.color": "कलर टूल्स",
+                "footer.quicklinks": "त्वरित लिंक",
+                "footer.links.tools": "सभी टूल्स",
+                "footer.links.faq": "सामान्य प्रश्न",
+                "footer.links.contact": "संपर्क करें",
+                "footer.links.privacy": "गोपनीयता नीति",
+                "footer.links.disclaimer": "अस्वीकरण",
+                "footer.links.terms": "सेवा की शर्तें",
+                "footer.copyright": "© 2025 LollyPoPDF. सर्वाधिकार सुरक्षित।"
+            },
+            te: {
+                "nav.home": "హోమ్",
+                "nav.about": "మా గురించి",
+                "nav.tools": "టూల్స్",
+                "nav.contact": "సంప్రదించండి",
+                "hero.title": "URL ఎన్కోడర్/డీకోడర్ టూల్",
+                "hero.description": "URL స్ట్రింగ్లను సురక్షితంగా మరియు తక్షణంగా ఎన్కోడ్ మరియు డీకోడ్ చేయండి – సర్వర్లు లేకుండా, 100% క్లయింట్-సైడ్. అన్ని ప్రాసెసింగ్ పూర్తి గోప్యతతో స్థానికంగా జరుగుతుంది.",
+                "howto.title": "URL ఎన్కోడర్/డీకోడర్ ఎలా ఉపయోగించాలి",
+                "howto.step1.title": "URL నమోదు చేయండి లేదా ఫైల్ అప్లోడ్ చేయండి",
+                "howto.step1.description": "మీ URL స్ట్రింగ్ను ఇన్పుట్ ఏరియాలో టైప్ చేయండి లేదా పేస్ట్ చేయండి, లేదా URLలను కలిగి ఉన్న టెక్స్ట్ ఫైల్ను అప్లోడ్ చేయండి. ఈ టూల్ అన్ని సాధారణ URL ఫార్మాట్లు మరియు ప్రత్యేక అక్షరాలను మద్దతు ఇస్తుంది.",
+                "howto.step2.title": "ఆపరేషన్ ఎంచుకోండి",
+                "howto.step2.description": "మీరు ఎన్కోడ్ (ప్రత్యేక అక్షరాలను URL-సేఫ్ ఫార్మాట్కు మార్చడం) లేదా డీకోడ్ (URL-ఎన్కోడెడ్ అక్షరాలను సాధారణ రూపానికి మార్చడం) చేయాలనుకుంటున్నారో ఎంచుకోండి.",
+                "howto.step3.title": "ప్రాసెస్ మరియు ప్రివ్యూ",
+                "howto.step3.description": "మీ URLని ప్రాసెస్ చేయడానికి \"ఎన్కోడ్\" లేదా \"డీకోడ్\" బటన్పై క్లిక్ చేయండి. ఫలితం రియల్-టైమ్ గణాంకాలతో అవుట్పుట్ ఏరియాలో కనిపిస్తుంది.",
+                "howto.step4.title": "కాపీ చేయండి లేదా డౌన్లోడ్ చేయండి",
+                "howto.step4.description": "ప్రాసెస్ చేసిన URLని ఒక క్లిక్తో క్లిప్బోర్డ్కు కాపీ చేయండి లేదా దాన్ని టెక్స్ట్ ఫైల్గా డౌన్లోడ్ చేయండి. అన్ని ప్రాసెసింగ్ మీ బ్రౌజర్లో స్థానికంగా జరుగుతుంది - మీ డేటా ఎప్పుడూ మీ పరికరాన్ని విడిచిపెట్టదు.",
+                "tool.title": "URL ఎన్కోడర్/డీకోడర్",
+                "tool.upload.text": "మీ టెక్స్ట్ ఫైల్ను ఇక్కడ డ్రాగ్ మరియు డ్రాప్ చేయండి లేదా బ్రౌజ్ చేయడానికి క్లిక్ చేయండి",
+                "tool.upload.button": "టెక్స్ట్ ఫైల్ను ఎంచుకోండి",
+                "tool.supported": "మద్దతు ఉన్న ఫార్మాట్: TXT",
+                "tool.input.title": "ఇన్పుట్ URL",
+                "tool.output.title": "అవుట్పుట్ URL",
+                "tool.encode": "URL ఎన్కోడ్ చేయండి",
+                "tool.decode": "URL డీకోడ్ చేయండి",
+                "tool.clear": "క్లియర్",
+                "tool.clearAll": "అన్నీ క్లియర్ చేయండి",
+                "tool.paste": "పేస్ట్ చేయండి",
+                "tool.copy": "కాపీ చేయండి",
+                "tool.download": "డౌన్లోడ్ చేయండి",
+                "tool.stats.input": "ఇన్పుట్ పొడవు",
+                "tool.stats.output": "అవుట్పుట్ పొడవు",
+                "tool.stats.change": "సైజ్ మార్పు",
+                "tool.stats.time": "ప్రాసెసింగ్ సమయం",
+                "footer.follow": "మమ్మల్ని అనుసరించండి",
+                "footer.categories": "జనాదరణ పొందిన వర్గాలు",
+                "footer.categories.pdf": "PDF టూల్స్",
+                "footer.categories.image": "ఇమేజ్ టూల్స్",
+                "footer.categories.text": "టెక్స్ట్ టూల్స్",
+                "footer.categories.av": "ఆడియో/వీడియో టూల్స్",
+                "footer.categories.web": "వెబ్ డెవలపర్ టూల్స్",
+                "footer.categories.calc": "కాలిక్యులేటర్ టూల్స్",
+                "footer.categories.util": "యుటిలిటీ టూల్స్",
+                "footer.categories.color": "కలర్ టూల్స్",
+                "footer.quicklinks": "త్వరిత లింకులు",
+                "footer.links.tools": "అన్ని టూల్స్",
+                "footer.links.faq": "తరచుగా అడిగే ప్రశ్నలు",
+                "footer.links.contact": "సంప్రదించండి",
+                "footer.links.privacy": "గోప్యతా విధానం",
+                "footer.links.disclaimer": "డిస్క్లైమర్",
+                "footer.links.terms": "సేవా నిబంధనలు",
+                "footer.copyright": "© 2025 LollyPoPDF. అన్ని హక్కులు ప్రత్యేకించబడినవి."
+            },
+            kn: {
+                "nav.home": "ಹೋಮ್",
+                "nav.about": "ನಮ್ಮ ಬಗ್ಗೆ",
+                "nav.tools": "ಟೂಲ್ಸ್",
+                "nav.contact": "ಸಂಪರ್ಕಿಸಿ",
+                "hero.title": "URL ಎನ್ಕೋಡರ್/ಡೀಕೋಡರ್ ಟೂಲ್",
+                "hero.description": "URL ಸ್ಟ್ರಿಂಗ್ಗಳನ್ನು ಸುರಕ್ಷಿತವಾಗಿ ಮತ್ತು ತಕ್ಷಣ ಎನ್ಕೋಡ್ ಮತ್ತು ಡೀಕೋಡ್ ಮಾಡಿ – ಸರ್ವರ್ ಇಲ್ಲದೆ, 100% ಕ್ಲೈಂಟ್-ಸೈಡ್. ಎಲ್ಲಾ ಪ್ರೊಸೆಸಿಂಗ್ ಪೂರ್ಣ ಗೌಪ್ಯತೆಯೊಂದಿಗೆ ಸ್ಥಳೀಯವಾಗಿ ನಡೆಯುತ್ತದೆ.",
+                "howto.title": "URL ಎನ್ಕೋಡರ್/ಡೀಕೋಡರ್ ಅನ್ನು ಹೇಗೆ ಬಳಸುವುದು",
+                "howto.step1.title": "URL ನಮೂದಿಸಿ ಅಥವಾ ಫೈಲ್ ಅಪ್ಲೋಡ್ ಮಾಡಿ",
+                "howto.step1.description": "ನಿಮ್ಮ URL ಸ್ಟ್ರಿಂಗ್ ಅನ್ನು ಇನ್ಪುಟ್ ಏರಿಯಾದಲ್ಲಿ ಟೈಪ್ ಮಾಡಿ ಅಥವಾ ಪೇಸ್ಟ್ ಮಾಡಿ, ಅಥವಾ URL ಗಳನ್ನು ಒಳಗೊಂಡಿರುವ ಟೆಕ್ಸ್ಟ್ ಫೈಲ್ ಅನ್ನು ಅಪ್ಲೋಡ್ ಮಾಡಿ. ಈ ಟೂಲ್ ಎಲ್ಲಾ ಸಾಮಾನ್ಯ URL ಫಾರ್ಮ್ಯಾಟ್ಗಳು ಮತ್ತು ವಿಶೇಷ ಅಕ್ಷರಗಳನ್ನು ಬೆಂಬಲಿಸುತ್ತದೆ.",
+                "howto.step2.title": "ಆಪರೇಶನ್ ಆಯ್ಕೆಮಾಡಿ",
+                "howto.step2.description": "ನೀವು ಎನ್ಕೋಡ್ (ವಿಶೇಷ ಅಕ್ಷರಗಳನ್ನು URL-ಸುರಕ್ಷಿತ ಫಾರ್ಮ್ಯಾಟ್ಗೆ ಪರಿವರ್ತಿಸುವುದು) ಅಥವಾ ಡೀಕೋಡ್ (URL-ಎನ್ಕೋಡೆಡ್ ಅಕ್ಷರಗಳನ್ನು ಸಾಮಾನ್ಯ ರೂಪಕ್ಕೆ ಪರಿವರ್ತಿಸುವುದು) ಮಾಡಲು ಬಯಸುವಿರಾ ಎಂಬುದನ್ನು ಆಯ್ಕೆಮಾಡಿ.",
+                "howto.step3.title": "ಪ್ರೊಸೆಸ್ ಮತ್ತು ಪ್ರಿವ್ಯೂ",
+                "howto.step3.description": "ನಿಮ್ಮ URL ಅನ್ನು ಪ್ರೊಸೆಸ್ ಮಾಡಲು \"ಎನ್ಕೋಡ್\" ಅಥವಾ \"ಡೀಕೋಡ್\" ಬಟನ್ ಅನ್ನು ಕ್ಲಿಕ್ ಮಾಡಿ. ಫಲಿತಾಂಶವು ರಿಯಲ್-ಟೈಮ್ ಅಂಕಿಅಂಶಗಳೊಂದಿಗೆ ಔಟ್ಪುಟ್ ಏರಿಯಾದಲ್ಲಿ ಕಾಣಿಸುತ್ತದೆ.",
+                "howto.step4.title": "ಕಾಪಿ ಅಥವಾ ಡೌನ್ಲೋಡ್ ಮಾಡಿ",
+                "howto.step4.description": "ಪ್ರೊಸೆಸ್ ಮಾಡಿದ URL ಅನ್ನು ಒಂದು ಕ್ಲಿಕ್ನಲ್ಲಿ ಕ್ಲಿಪ್ಬೋರ್ಡ್ಗೆ ಕಾಪಿ ಮಾಡಿ ಅಥವಾ ಅದನ್ನು ಟೆಕ್ಸ್ಟ್ ಫೈಲ್ ಆಗಿ ಡೌನ್ಲೋಡ್ ಮಾಡಿ. ಎಲ್ಲಾ ಪ್ರೊಸೆಸಿಂಗ್ ನಿಮ್ಮ ಬ್ರೌಸರ್ನಲ್ಲಿ ಸ್ಥಳೀಯವಾಗಿ ನಡೆಯುತ್ತದೆ - ನಿಮ್ಮ ಡೇಟಾ ಎಂದಿಗೂ ನಿಮ್ಮ ಸಾಧನವನ್ನು ಬಿಡುವುದಿಲ್ಲ.",
+                "tool.title": "URL ಎನ್ಕೋಡರ್/ಡೀಕೋಡರ್",
+                "tool.upload.text": "ನಿಮ್ಮ ಟೆಕ್ಸ್ಟ್ ಫೈಲ್ ಅನ್ನು ಇಲ್ಲಿ ಡ್ರ್ಯಾಗ್ ಮತ್ತು ಡ್ರಾಪ್ ಮಾಡಿ ಅಥವಾ ಬ್ರೌಸ್ ಮಾಡಲು ಕ್ಲಿಕ್ ಮಾಡಿ",
+                "tool.upload.button": "ಟೆಕ್ಸ್ಟ್ ಫೈಲ್ ಆಯ್ಕೆಮಾಡಿ",
+                "tool.supported": "ಬೆಂಬಲಿತ ಫಾರ್ಮ್ಯಾಟ್: TXT",
+                "tool.input.title": "ಇನ್ಪುಟ್ URL",
+                "tool.output.title": "ಔಟ್ಪುಟ್ URL",
+                "tool.encode": "URL ಎನ್ಕೋಡ್ ಮಾಡಿ",
+                "tool.decode": "URL ಡೀಕೋಡ್ ಮಾಡಿ",
+                "tool.clear": "ಕ್ಲಿಯರ್",
+                "tool.clearAll": "ಎಲ್ಲಾ ಕ್ಲಿಯರ್ ಮಾಡಿ",
+                "tool.paste": "ಪೇಸ್ಟ್ ಮಾಡಿ",
+                "tool.copy": "ಕಾಪಿ ಮಾಡಿ",
+                "tool.download": "ಡೌನ್ಲೋಡ್ ಮಾಡಿ",
+                "tool.stats.input": "ಇನ್ಪುಟ್ ಉದ್ದ",
+                "tool.stats.output": "ಔಟ್ಪುಟ್ ಉದ್ದ",
+                "tool.stats.change": "ಸೈಜ್ ಬದಲಾವಣೆ",
+                "tool.stats.time": "ಪ್ರೊಸೆಸಿಂಗ್ ಸಮಯ",
+                "footer.follow": "ನಮ್ಮನ್ನು ಅನುಸರಿಸಿ",
+                "footer.categories": "ಜನಪ್ರಿಯ ವರ್ಗಗಳು",
+                "footer.categories.pdf": "PDF ಟೂಲ್ಸ್",
+                "footer.categories.image": "ಇಮೇಜ್ ಟೂಲ್ಸ್",
+                "footer.categories.text": "ಟೆಕ್ಸ್ಟ್ ಟೂಲ್ಸ್",
+                "footer.categories.av": "ಆಡಿಯೋ/ವೀಡಿಯೋ ಟೂಲ್ಸ್",
+                "footer.categories.web": "ವೆಬ್ ಡೆವಲಪರ್ ಟೂಲ್ಸ್",
+                "footer.categories.calc": "ಕ್ಯಾಲ್ಕುಲೇಟರ್ ಟೂಲ್ಸ್",
+                "footer.categories.util": "ಯುಟಿಲಿಟಿ ಟೂಲ್ಸ್",
+                "footer.categories.color": "ಕಲರ್ ಟೂಲ್ಸ್",
+                "footer.quicklinks": "ತ್ವರಿತ ಲಿಂಕ್ಗಳು",
+                "footer.links.tools": "ಎಲ್ಲಾ ಟೂಲ್ಸ್",
+                "footer.links.faq": "ಸಾಮಾನ್ಯ ಪ್ರಶ್ನೆಗಳು",
+                "footer.links.contact": "ಸಂಪರ್ಕಿಸಿ",
+                "footer.links.privacy": "ಗೌಪ್ಯತಾ ನೀತಿ",
+                "footer.links.disclaimer": "ಡಿಸ್ಕ್ಲೈಮರ್",
+                "footer.links.terms": "ಸೇವಾ ನಿಯಮಗಳು",
+                "footer.copyright": "© 2025 LollyPoPDF. ಎಲ್ಲಾ ಹಕ್ಕುಗಳು ಕಾಯ್ದಿರಿಸಿವೆ."
+            },
+            ta: {
+                "nav.home": "முகப்பு",
+                "nav.about": "எங்களைப் பற்றி",
+                "nav.tools": "கருவிகள்",
+                "nav.contact": "தொடர்பு கொள்ள",
+                "hero.title": "URL என்கோடர்/டிகோடர் கருவி",
+                "hero.description": "URL சரங்களை பாதுகாப்பாகவும் உடனடியாகவும் என்கோட் மற்றும் டிகோட் செய்யவும் – சர்வர்கள் இல்லாமல், 100% கிளையண்ட்-சைட். அனைத்து செயலாக்கமும் முழுமையான தனியுரிமையுடன் உள்நாட்டில் நடக்கிறது.",
+                "howto.title": "URL என்கோடர்/டிகோடரை எவ்வாறு பயன்படுத்துவது",
+                "howto.step1.title": "URL உள்ளிடவும் அல்லது கோப்பை பதிவேற்றவும்",
+                "howto.step1.description": "உங்கள் URL சரத்தை உள்ளீட்டுப் பகுதியில் தட்டச்சு செய்யவும் அல்லது ஒட்டவும், அல்லது URLகளைக் கொண்ட உரை கோப்பை பதிவேற்றவும். இந்த கருவி அனைத்து பொதுவான URL வடிவங்களையும் சிறப்பு எழுத்துகளையும் ஆதரிக்கிறது.",
+                "howto.step2.title": "செயல்பாட்டைத் தேர்ந்தெடுக்கவும்",
+                "howto.step2.description": "நீங்கள் என்கோட் (சிறப்பு எழுத்துகளை URL-பாதுகாப்பான வடிவத்திற்கு மாற்றுதல்) அல்லது டிகோட் (URL-என்கோடட் எழுத்துகளை சாதாரண வடிவத்திற்கு மாற்றுதல்) செய்ய விரும்புகிறீர்களா என்பதைத் தேர்ந்தெடுக்கவும்.",
+                "howto.step3.title": "செயலாக்கம் மற்றும் முன்னோட்டம்",
+                "howto.step3.description": "உங்கள் URLஐ செயலாக்க \"என்கோட்\" அல்லது \"டிகோட்\" பொத்தானைக் கிளிக் செய்யவும். முடிவு உண்மையான நேர புள்ளிவிவரங்களுடன் வெளியீட்டுப் பகுதியில் தோன்றும்.",
+                "howto.step4.title": "நகலெடுக்கவும் அல்லது பதிவிறக்கவும்",
+                "howto.step4.description": "செயலாக்கப்பட்ட URLஐ ஒரே கிளிக்கில் கிளிப்போர்டுக்கு நகலெடுக்கவும் அல்லது அதை உரை கோப்பாக பதிவிறக்கவும். அனைத்து செயலாக்கமும் உங்கள் உலாவியில் உள்நாட்டில் நடக்கிறது - உங்கள் தரவு எப்போதும் உங்கள் சாதனத்தை விட்டு வெளியேறாது.",
+                "tool.title": "URL என்கோடர்/டிகோடர்",
+                "tool.upload.text": "உங்கள் உரை கோப்பை இங்கே இழுத்து விடவும் அல்லது உலாவ கிளிக் செய்யவும்",
+                "tool.upload.button": "உரை கோப்பைத் தேர்ந்தெடுக்கவும்",
+                "tool.supported": "ஆதரிக்கப்படும் வடிவம்: TXT",
+                "tool.input.title": "உள்ளீட்டு URL",
+                "tool.output.title": "வெளியீட்டு URL",
+                "tool.encode": "URLஐ என்கோட் செய்க",
+                "tool.decode": "URLஐ டிகோட் செய்க",
+                "tool.clear": "அழி",
+                "tool.clearAll": "அனைத்தையும் அழி",
+                "tool.paste": "ஒட்டவும்",
+                "tool.copy": "நகலெடுக்கவும்",
+                "tool.download": "பதிவிறக்கவும்",
+                "tool.stats.input": "உள்ளீட்டு நீளம்",
+                "tool.stats.output": "வெளியீட்டு நீளம்",
+                "tool.stats.change": "அளவு மாற்றம்",
+                "tool.stats.time": "செயலாக்க நேரம்",
+                "footer.follow": "எங்களைப் பின்தொடரவும்",
+                "footer.categories": "பிரபலமான வகைகள்",
+                "footer.categories.pdf": "PDF கருவிகள்",
+                "footer.categories.image": "பட கருவிகள்",
+                "footer.categories.text": "உரை கருவிகள்",
+                "footer.categories.av": "ஆடியோ/வீடியோ கருவிகள்",
+                "footer.categories.web": "வெப்டெவலப்பர் கருவிகள்",
+                "footer.categories.calc": "கால்குலேட்டர் கருவிகள்",
+                "footer.categories.util": "பயன்பாட்டு கருவிகள்",
+                "footer.categories.color": "நிற கருவிகள்",
+                "footer.quicklinks": "விரைவு இணைப்புகள்",
+                "footer.links.tools": "அனைத்து கருவிகள்",
+                "footer.links.faq": "அடிக்கடி கேட்கப்படும் கேள்விகள்",
+                "footer.links.contact": "தொடர்பு கொள்ள",
+                "footer.links.privacy": "தனியுரிமைக் கொள்கை",
+                "footer.links.disclaimer": "மறுப்பறிக்கை",
+                "footer.links.terms": "சேவை விதிமுறைகள்",
+                "footer.copyright": "© 2025 LollyPoPDF. அனைத்து உரிமைகளும் பாதுகாக்கப்பட்டவை."
+            },
+            ml: {
+                "nav.home": "ഹോം",
+                "nav.about": "ഞങ്ങളെക്കുറിച്ച്",
+                "nav.tools": "ടൂളുകൾ",
+                "nav.contact": "ബന്ധപ്പെടുക",
+                "hero.title": "URL എൻകോഡർ/ഡീകോഡർ ടൂൾ",
+                "hero.description": "URL സ്ട്രിംഗുകൾ സുരക്ഷിതമായും തൽക്ഷണവുമായി എൻകോഡ് ചെയ്യുകയും ഡീകോഡ് ചെയ്യുകയും ചെയ്യുക – സെർവറുകളില്ലാതെ, 100% ക്ലയന്റ്-സൈഡ്. എല്ലാ പ്രോസസ്സിംഗും പൂർണ്ണ സ്വകാര്യതയോടെ പ്രാദേശികമായി നടക്കുന്നു.",
+                "howto.title": "URL എൻകോഡർ/ഡീകോഡർ എങ്ങനെ ഉപയോഗിക്കാം",
+                "howto.step1.title": "URL നൽകുക അല്ലെങ്കിൽ ഫയൽ അപ്ലോഡ് ചെയ്യുക",
+                "howto.step1.description": "നിങ്ങളുടെ URL സ്ട്രിംഗ് ഇൻപുട്ട് ഏരിയയിൽ ടൈപ്പ് ചെയ്യുക അല്ലെങ്കിൽ പേസ്റ്റ് ചെയ്യുക, അല്ലെങ്കിൽ URL-കൾ അടങ്ങിയ ടെക്സ്റ്റ് ഫയൽ അപ്ലോഡ് ചെയ്യുക. ഈ ടൂൾ എല്ലാ സാധാരണ URL ഫോർമാറ്റുകളും പ്രത്യേക അക്ഷരങ്ങളും പിന്തുണയ്ക്കുന്നു.",
+                "howto.step2.title": "ഓപറേഷൻ തിരഞ്ഞെടുക്കുക",
+                "howto.step2.description": "നിങ്ങൾക്ക് എൻകോഡ് (പ്രത്യേക അക്ഷരങ്ങൾ URL-സുരക്ഷിത ഫോർമാറ്റിലേക്ക് പരിവർത്തനം ചെയ്യൽ) അല്ലെങ്കിൽ ഡീകോഡ് (URL-എൻകോഡഡ് അക്ഷരങ്ങൾ സാധാരണ രൂപത്തിലേക്ക് പരിവർത്തനം ചെയ്യൽ) ചെയ്യണമോ എന്ന് തിരഞ്ഞെടുക്കുക.",
+                "howto.step3.title": "പ്രോസസ്സ് ചെയ്യുകയും പ്രിവ്യൂ ചെയ്യുകയും ചെയ്യുക",
+                "howto.step3.description": "നിങ്ങളുടെ URL പ്രോസസ്സ് ചെയ്യാൻ \"എൻകോഡ്\" അല്ലെങ്കിൽ \"ഡീകോഡ്\" ബട്ടൺ ക്ലിക്ക് ചെയ്യുക. ഫലം റിയൽ-ടൈം സ്ഥിതിവിവരക്കണക്കുകളോടെ ഔട്ട്പുട്ട് ഏരിയയിൽ പ്രത്യക്ഷപ്പെടും.",
+                "howto.step4.title": "കോപ്പി ചെയ്യുക അല്ലെങ്കിൽ ഡൗൺലോഡ് ചെയ്യുക",
+                "howto.step4.description": "പ്രോസസ്സ് ചെയ്ത URL ഒരു ക്ലിക്കിൽ ക്ലിപ്പ്ബോർഡിലേക്ക് കോപ്പി ചെയ്യുക അല്ലെങ്കിൽ അത് ടെക്സ്റ്റ് ഫയലായി ഡൗൺലോഡ് ചെയ്യുക. എല്ലാ പ്രോസസ്സിംഗും നിങ്ങളുടെ ബ്രൗസറിൽ പ്രാദേശികമായി നടക്കുന്നു - നിങ്ങളുടെ ഡാറ്റ ഒരിക്കലും നിങ്ങളുടെ ഉപകരണം വിടുന്നില്ല.",
+                "tool.title": "URL എൻകോഡർ/ഡീകോഡർ",
+                "tool.upload.text": "നിങ്ങളുടെ ടെക്സ്റ്റ് ഫയൽ ഇവിടെ വലിച്ചിടുക അല്ലെങ്കിൽ ബ്രൗസ് ചെയ്യാൻ ക്ലിക്ക് ചെയ്യുക",
+                "tool.upload.button": "ടെക്സ്റ്റ് ഫയൽ തിരഞ്ഞെടുക്കുക",
+                "tool.supported": "പിന്തുണയ്ക്കുന്ന ഫോർമാറ്റ്: TXT",
+                "tool.input.title": "ഇൻപുട്ട് URL",
+                "tool.output.title": "ഔട്ട്പുട്ട് URL",
+                "tool.encode": "URL എൻകോഡ് ചെയ്യുക",
+                "tool.decode": "URL ഡീകോഡ് ചെയ്യുക",
+                "tool.clear": "ക്ലിയർ",
+                "tool.clearAll": "എല്ലാം ക്ലിയർ ചെയ്യുക",
+                "tool.paste": "പേസ്റ്റ് ചെയ്യുക",
+                "tool.copy": "കോപ്പി ചെയ്യുക",
+                "tool.download": "ഡൗൺലോഡ് ചെയ്യുക",
+                "tool.stats.input": "ഇൻപുട്ട് ദൈർഘ്യം",
+                "tool.stats.output": "ഔട്ട്പുട്ട് ദൈർഘ്യം",
+                "tool.stats.change": "വലുപ്പ മാറ്റം",
+                "tool.stats.time": "പ്രോസസ്സിംഗ് സമയം",
+                "footer.follow": "ഞങ്ങളെ പിന്തുടരുക",
+                "footer.categories": "ജനപ്രിയ വിഭാഗങ്ങൾ",
+                "footer.categories.pdf": "PDF ടൂളുകൾ",
+                "footer.categories.image": "ഇമേജ് ടൂളുകൾ",
+                "footer.categories.text": "ടെക്സ്റ്റ് ടൂളുകൾ",
+                "footer.categories.av": "ഓഡിയോ/വീഡിയോ ടൂളുകൾ",
+                "footer.categories.web": "വെബ് ഡെവലപ്പർ ടൂളുകൾ",
+                "footer.categories.calc": "കാൽക്കുലേറ്റർ ടൂളുകൾ",
+                "footer.categories.util": "യൂട്ടിലിറ്റി ടൂളുകൾ",
+                "footer.categories.color": "കളർ ടൂളുകൾ",
+                "footer.quicklinks": "ദ്രുത ലിങ്കുകൾ",
+                "footer.links.tools": "എല്ലാ ടൂളുകളും",
+                "footer.links.faq": "പതിവുചോദ്യങ്ങൾ",
+                "footer.links.contact": "ബന്ധപ്പെടുക",
+                "footer.links.privacy": "സ്വകാര്യതാ നയം",
+                "footer.links.disclaimer": "അസ്വീകാര്യത",
+                "footer.links.terms": "സേവന നിബന്ധനകൾ",
+                "footer.copyright": "© 2025 LollyPoPDF. എല്ലാ അവകാശങ്ങളും നിക്ഷിപ്തം."
+            },
+             id: {
+                "nav.home": "Beranda",
+                "nav.about": "Tentang Kami",
+                "nav.tools": "Alat",
+                "nav.contact": "Kontak",
+                "hero.title": "Alat Pengkode/Pengurai URL",
+                "hero.description": "Enkode dan dekode string URL dengan aman dan instan – tanpa server, 100% sisi klien. Semua pemrosesan terjadi secara lokal dengan privasi lengkap.",
+                "howto.title": "Cara Menggunakan Pengkode/Pengurai URL",
+                "howto.step1.title": "Masukkan URL atau Unggah File",
+                "howto.step1.description": "Ketik atau tempel string URL Anda di area input, atau unggah file teks yang berisi URL. Alat ini mendukung semua format URL umum dan karakter khusus.",
+                "howto.step2.title": "Pilih Operasi",
+                "howto.step2.description": "Pilih apakah Anda ingin mengkode (mengubah karakter khusus ke format aman URL) atau mendekode (mengubah karakter yang dikodekan URL kembali ke bentuk normal).",
+                "howto.step3.title": "Proses & Pratinjau",
+                "howto.step3.description": "Klik tombol \"Enkode\" atau \"Dekode\" untuk memproses URL Anda. Hasil akan muncul di area output dengan statistik real-time.",
+                "howto.step4.title": "Salin atau Unduh",
+                "howto.step4.description": "Salin URL yang diproses ke clipboard dengan satu klik atau unduh sebagai file teks. Semua pemrosesan terjadi secara lokal di browser Anda - data Anda tidak pernah meninggalkan perangkat Anda.",
+                "tool.title": "Pengkode/Pengurai URL",
+                "tool.upload.text": "Seret dan lepas file teks Anda di sini atau klik untuk menjelajah",
+                "tool.upload.button": "Pilih File Teks",
+                "tool.supported": "Format yang didukung: TXT",
+                "tool.input.title": "URL Input",
+                "tool.output.title": "URL Output",
+                "tool.encode": "Enkode URL",
+                "tool.decode": "Dekode URL",
+                "tool.clear": "Hapus",
+                "tool.clearAll": "Hapus Semua",
+                "tool.paste": "Tempel",
+                "tool.copy": "Salin",
+                "tool.download": "Unduh",
+                "tool.stats.input": "Panjang Input",
+                "tool.stats.output": "Panjang Output",
+                "tool.stats.change": "Perubahan Ukuran",
+                "tool.stats.time": "Waktu Pemrosesan",
+                "footer.follow": "IKUTI KAMI",
+                "footer.categories": "Kategori Populer",
+                "footer.categories.pdf": "Alat PDF",
+                "footer.categories.image": "Alat Gambar",
+                "footer.categories.text": "Alat Teks",
+                "footer.categories.av": "Alat Audio/Video",
+                "footer.categories.web": "Alat WebDeveloper",
+                "footer.categories.calc": "Alat Kalkulator",
+                "footer.categories.util": "Alat Utilitas",
+                "footer.categories.color": "Alat Warna",
+                "footer.quicklinks": "Tautan Cepat",
+                "footer.links.tools": "Semua Alat",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Kontak",
+                "footer.links.privacy": "Kebijakan Privasi",
+                "footer.links.disclaimer": "Penafian",
+                "footer.links.terms": "Syarat Layanan",
+                "footer.copyright": "© 2025 LollyPoPDF. Semua hak dilindungi undang-undang."
+            },
+            ms: {
+                "nav.home": "Laman Utama",
+                "nav.about": "Tentang Kami",
+                "nav.tools": "Alat",
+                "nav.contact": "Hubungi",
+                "hero.title": "Alat Pengekod/Penyahkod URL",
+                "hero.description": "Kodkan dan nyahkod rentetan URL dengan selamat serta serta-merta – tanpa pelayan, 100% sebelah pelanggan. Semua pemprosesan berlaku secara tempatan dengan privasi lengkap.",
+                "howto.title": "Cara Menggunakan Pengekod/Penyahkod URL",
+                "howto.step1.title": "Masukkan URL atau Muat Naik Fail",
+                "howto.step1.description": "Taip atau tampal rentetan URL anda di kawasan input, atau muat naik fail teks yang mengandungi URL. Alat ini menyokong semua format URL biasa dan aksara khas.",
+                "howto.step2.title": "Pilih Operasi",
+                "howto.step2.description": "Pilih sama ada anda ingin mengekod (menukar aksara khas kepada format selamat URL) atau menyahkod (menukar aksara terkod URL kembali kepada bentuk normal).",
+                "howto.step3.title": "Proses & Pratonton",
+                "howto.step3.description": "Klik butang \"Kodkan\" atau \"Nyahkod\" untuk memproses URL anda. Hasil akan muncul di kawasan output dengan statistik masa nyata.",
+                "howto.step4.title": "Salin atau Muat Turun",
+                "howto.step4.description": "Salin URL yang diproses ke papan keratan dengan satu klik atau muat turun sebagai fail teks. Semua pemprosesan berlaku secara tempatan dalam pelayar anda - data anda tidak pernah meninggalkan peranti anda.",
+                "tool.title": "Pengekod/Penyahkod URL",
+                "tool.upload.text": "Seret dan lepaskan fail teks anda di sini atau klik untuk melayari",
+                "tool.upload.button": "Pilih Fail Teks",
+                "tool.supported": "Format yang disokong: TXT",
+                "tool.input.title": "URL Input",
+                "tool.output.title": "URL Output",
+                "tool.encode": "Kodkan URL",
+                "tool.decode": "Nyahkod URL",
+                "tool.clear": "Kosongkan",
+                "tool.clearAll": "Kosongkan Semua",
+                "tool.paste": "Tampal",
+                "tool.copy": "Salin",
+                "tool.download": "Muat Turun",
+                "tool.stats.input": "Panjang Input",
+                "tool.stats.output": "Panjang Output",
+                "tool.stats.change": "Perubahan Saiz",
+                "tool.stats.time": "Masa Pemprosesan",
+                "footer.follow": "IKUTI KAMI",
+                "footer.categories": "Kategori Popular",
+                "footer.categories.pdf": "Alat PDF",
+                "footer.categories.image": "Alat Imej",
+                "footer.categories.text": "Alat Teks",
+                "footer.categories.av": "Alat Audio/Video",
+                "footer.categories.web": "Alat WebDeveloper",
+                "footer.categories.calc": "Alat Kalkulator",
+                "footer.categories.util": "Alat Utiliti",
+                "footer.categories.color": "Alat Warna",
+                "footer.quicklinks": "Pautan Pantas",
+                "footer.links.tools": "Semua Alat",
+                "footer.links.faq": "Soalan Lazim",
+                "footer.links.contact": "Hubungi",
+                "footer.links.privacy": "Dasar Privasi",
+                "footer.links.disclaimer": "Penafian",
+                "footer.links.terms": "Syarat Perkhidmatan",
+                "footer.copyright": "© 2025 LollyPoPDF. Hak cipta terpelihara."
+            },
+            pl: {
+                "nav.home": "Strona główna",
+                "nav.about": "O nas",
+                "nav.tools": "Narzędzia",
+                "nav.contact": "Kontakt",
+                "hero.title": "Narzędzie do kodowania/odkodowywania URL",
+                "hero.description": "Koduj i odkodowuj ciągi URL bezpiecznie i natychmiast – bez serwerów, 100% po stronie klienta. Wszystkie przetwarzania odbywają się lokalnie z pełną prywatnością.",
+                "howto.title": "Jak używać koderka/dekoderka URL",
+                "howto.step1.title": "Wprowadź URL lub prześlij plik",
+                "howto.step1.description": "Wpisz lub wklej swój ciąg URL w obszarze wejściowym lub prześlij plik tekstowy zawierający adresy URL. Narzędzie obsługuje wszystkie popularne formaty URL i znaki specjalne.",
+                "howto.step2.title": "Wybierz operację",
+                "howto.step2.description": "Wybierz, czy chcesz zakodować (przekonwertować znaki specjalne na format bezpieczny dla URL) czy odkodować (przekonwertować zakodowane w URL znaki z powrotem do normalnej postaci).",
+                "howto.step3.title": "Przetwórz i podgląd",
+                "howto.step3.description": "Kliknij przycisk \"Zakoduj\" lub \"Odkoduj\", aby przetworzyć swój URL. Wynik pojawi się w obszarze wyjściowym ze statystykami w czasie rzeczywistym.",
+                "howto.step4.title": "Kopiuj lub pobierz",
+                "howto.step4.description": "Skopiuj przetworzony URL do schowka jednym kliknięciem lub pobierz go jako plik tekstowy. Wszystkie przetwarzania odbywają się lokalnie w Twojej przeglądarce - Twoje dane nigdy nie opuszczają Twojego urządzenia.",
+                "tool.title": "Koder/Dekoder URL",
+                "tool.upload.text": "Przeciągnij i upuść swój plik tekstowy tutaj lub kliknij, aby przeglądać",
+                "tool.upload.button": "Wybierz plik tekstowy",
+                "tool.supported": "Obsługiwany format: TXT",
+                "tool.input.title": "URL wejściowy",
+                "tool.output.title": "URL wyjściowy",
+                "tool.encode": "Zakoduj URL",
+                "tool.decode": "Odkoduj URL",
+                "tool.clear": "Wyczyść",
+                "tool.clearAll": "Wyczyść wszystko",
+                "tool.paste": "Wklej",
+                "tool.copy": "Kopiuj",
+                "tool.download": "Pobierz",
+                "tool.stats.input": "Długość wejścia",
+                "tool.stats.output": "Długość wyjścia",
+                "tool.stats.change": "Zmiana rozmiaru",
+                "tool.stats.time": "Czas przetwarzania",
+                "footer.follow": "OBSERWUJ NAS",
+                "footer.categories": "Popularne kategorie",
+                "footer.categories.pdf": "Narzędzia PDF",
+                "footer.categories.image": "Narzędzia obrazów",
+                "footer.categories.text": "Narzędzia tekstu",
+                "footer.categories.av": "Narzędzia audio/wideo",
+                "footer.categories.web": "Narzędzia WebDevelopera",
+                "footer.categories.calc": "Narzędzia kalkulatora",
+                "footer.categories.util": "Narzędzia użytkowe",
+                "footer.categories.color": "Narzędzia kolorów",
+                "footer.quicklinks": "Szybkie linki",
+                "footer.links.tools": "Wszystkie narzędzia",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Kontakt",
+                "footer.links.privacy": "Polityka prywatności",
+                "footer.links.disclaimer": "Zastrzeżenie",
+                "footer.links.terms": "Warunki usługi",
+                "footer.copyright": "© 2025 LollyPoPDF. Wszelkie prawa zastrzeżone."
+            },
+            th: {
+                "nav.home": "หน้าแรก",
+                "nav.about": "เกี่ยวกับเรา",
+                "nav.tools": "เครื่องมือ",
+                "nav.contact": "ติดต่อ",
+                "hero.title": "เครื่องมือเข้ารหัส/ถอดรหัส URL",
+                "hero.description": "เข้ารหัสและถอดรหัสสตริง URL อย่างปลอดภัยและทันที – ไม่มีเซิร์ฟเวอร์, 100% ฝั่งไคลเอ็นต์ การประมวลผลทั้งหมดเกิดขึ้นในเครื่องด้วยความเป็นส่วนตัวสมบูรณ์",
+                "howto.title": "วิธีใช้เครื่องมือเข้ารหัส/ถอดรหัส URL",
+                "howto.step1.title": "ป้อน URL หรืออัปโหลดไฟล์",
+                "howto.step1.description": "พิมพ์หรือวางสตริง URL ของคุณในพื้นที่ป้อนข้อมูล หรืออัปโหลดไฟล์ข้อความที่มี URL เครื่องมือนี้รองรับรูปแบบ URL ทั่วไปทั้งหมดและอักขระพิเศษ",
+                "howto.step2.title": "เลือกการดำเนินการ",
+                "howto.step2.description": "เลือกว่าคุณต้องการเข้ารหัส (แปลงอักขระพิเศษเป็นรูปแบบที่ปลอดภัยสำหรับ URL) หรือถอดรหัส (แปลงอักขระที่เข้ารหัสใน URL กลับเป็นรูปแบบปกติ)",
+                "howto.step3.title": "ประมวลผลและดูตัวอย่าง",
+                "howto.step3.description": "คลิกปุ่ม \"เข้ารหัส\" หรือ \"ถอดรหัส\" เพื่อประมวลผล URL ของคุณ ผลลัพธ์จะปรากฏในพื้นที่ผลลัพธ์พร้อมสถิติแบบเรียลไทม์",
+                "howto.step4.title": "คัดลอกหรือดาวน์โหลด",
+                "howto.step4.description": "คัดลอก URL ที่ประมวลผลแล้วไปยังคลิปบอร์ดด้วยคลิกเดียว หรือดาวน์โหลดเป็นไฟล์ข้อความ การประมวลผลทั้งหมดเกิดขึ้นในเบราว์เซอร์ของคุณในเครื่อง - ข้อมูลของคุณไม่เคยออกจากอุปกรณ์ของคุณ",
+                "tool.title": "เครื่องมือเข้ารหัส/ถอดรหัส URL",
+                "tool.upload.text": "ลากและวางไฟล์ข้อความของคุณที่นี่ หรือคลิกเพื่อเรียกดู",
+                "tool.upload.button": "เลือกไฟล์ข้อความ",
+                "tool.supported": "รูปแบบที่รองรับ: TXT",
+                "tool.input.title": "URL อินพุต",
+                "tool.output.title": "URL เอาต์พุต",
+                "tool.encode": "เข้ารหัส URL",
+                "tool.decode": "ถอดรหัส URL",
+                "tool.clear": "ล้าง",
+                "tool.clearAll": "ล้างทั้งหมด",
+                "tool.paste": "วาง",
+                "tool.copy": "คัดลอก",
+                "tool.download": "ดาวน์โหลด",
+                "tool.stats.input": "ความยาวอินพุต",
+                "tool.stats.output": "ความยาวเอาต์พุต",
+                "tool.stats.change": "การเปลี่ยนแปลงขนาด",
+                "tool.stats.time": "เวลาในการประมวลผล",
+                "footer.follow": "ติดตามเรา",
+                "footer.categories": "หมวดหมู่ยอดนิยม",
+                "footer.categories.pdf": "เครื่องมือ PDF",
+                "footer.categories.image": "เครื่องมือรูปภาพ",
+                "footer.categories.text": "เครื่องมือข้อความ",
+                "footer.categories.av": "เครื่องมือเสียง/วิดีโอ",
+                "footer.categories.web": "เครื่องมือนักพัฒนาเว็บ",
+                "footer.categories.calc": "เครื่องมือเครื่องคิดเลข",
+                "footer.categories.util": "เครื่องมืออรรถประโยชน์",
+                "footer.categories.color": "เครื่องมือสี",
+                "footer.quicklinks": "ลิงก์ด่วน",
+                "footer.links.tools": "เครื่องมือทั้งหมด",
+                "footer.links.faq": "คำถามที่พบบ่อย",
+                "footer.links.contact": "ติดต่อ",
+                "footer.links.privacy": "นโยบายความเป็นส่วนตัว",
+                "footer.links.disclaimer": "ข้อปฏิเสธความรับผิดชอบ",
+                "footer.links.terms": "เงื่อนไขการให้บริการ",
+                "footer.copyright": "© 2025 LollyPoPDF. สงวนลิขสิทธิ์"
+            },
+            tr: {
+                "nav.home": "Ana Sayfa",
+                "nav.about": "Hakkımızda",
+                "nav.tools": "Araçlar",
+                "nav.contact": "İletişim",
+                "hero.title": "URL Kodlayıcı/Kod Çözücü Aracı",
+                "hero.description": "URL dizilerini güvenli ve anında kodlayın ve çözün – sunucu yok, %100 istemci tarafı. Tüm işlemler tam gizlilikle yerel olarak gerçekleşir.",
+                "howto.title": "URL Kodlayıcı/Kod Çözücü Nasıl Kullanılır",
+                "howto.step1.title": "URL Girin veya Dosya Yükleyin",
+                "howto.step1.description": "URL dizinizi giriş alanına yazın veya yapıştırın veya URL içeren bir metin dosyası yükleyin. Araç tüm yaygın URL formatlarını ve özel karakterleri destekler.",
+                "howto.step2.title": "İşlemi Seçin",
+                "howto.step2.description": "Kodlama (özel karakterleri URL-güvenli formata dönüştürme) veya kod çözme (URL'de kodlanmış karakterleri normal forma dönüştürme) yapmak isteyip istemediğinizi seçin.",
+                "howto.step3.title": "İşle ve Önizle",
+                "howto.step3.description": "URL'nizi işlemek için \"Kodla\" veya \"Kodunu Çöz\" düğmesini tıklayın. Sonuç gerçek zamanlı istatistiklerle çıkış alanında görünecektir.",
+                "howto.step4.title": "Kopyala veya İndir",
+                "howto.step4.description": "İşlenmiş URL'yi tek tıkla panoya kopyalayın veya metin dosyası olarak indirin. Tüm işlemler tarayıcınızda yerel olarak gerçekleşir - verileriniz cihazınızdan asla ayrılmaz.",
+                "tool.title": "URL Kodlayıcı/Kod Çözücü",
+                "tool.upload.text": "Metin dosyanızı buraya sürükleyip bırakın veya göz atmak için tıklayın",
+                "tool.upload.button": "Metin Dosyası Seç",
+                "tool.supported": "Desteklenen format: TXT",
+                "tool.input.title": "Giriş URL'si",
+                "tool.output.title": "Çıkış URL'si",
+                "tool.encode": "URL Kodla",
+                "tool.decode": "URL Kodunu Çöz",
+                "tool.clear": "Temizle",
+                "tool.clearAll": "Tümünü Temizle",
+                "tool.paste": "Yapıştır",
+                "tool.copy": "Kopyala",
+                "tool.download": "İndir",
+                "tool.stats.input": "Giriş Uzunluğu",
+                "tool.stats.output": "Çıkış Uzunluğu",
+                "tool.stats.change": "Boyut Değişimi",
+                "tool.stats.time": "İşlem Süresi",
+                "footer.follow": "BİZİ TAKİP EDİN",
+                "footer.categories": "Popüler Kategoriler",
+                "footer.categories.pdf": "PDF Araçları",
+                "footer.categories.image": "Görsel Araçları",
+                "footer.categories.text": "Metin Araçları",
+                "footer.categories.av": "Ses/Video Araçları",
+                "footer.categories.web": "Web Geliştirici Araçları",
+                "footer.categories.calc": "Hesap Makinesi Araçları",
+                "footer.categories.util": "Yardımcı Araçlar",
+                "footer.categories.color": "Renk Araçları",
+                "footer.quicklinks": "Hızlı Bağlantılar",
+                "footer.links.tools": "Tüm Araçlar",
+                "footer.links.faq": "SSS",
+                "footer.links.contact": "İletişim",
+                "footer.links.privacy": "Gizlilik Politikası",
+                "footer.links.disclaimer": "Feragatname",
+                "footer.links.terms": "Hizmet Şartları",
+                "footer.copyright": "© 2025 LollyPoPDF. Tüm hakları saklıdır."
+            },
+            uk: {
+                "nav.home": "Головна",
+                "nav.about": "Про нас",
+                "nav.tools": "Інструменти",
+                "nav.contact": "Контакти",
+                "hero.title": "Інструмент кодування/декодування URL",
+                "hero.description": "Кодуйте та декодуйте URL-рядки безпечно та миттєво – без серверів, 100% на стороні клієнта. Вся обробка відбувається локально з повною конфіденційністю.",
+                "howto.title": "Як використовувати кодувальник/декодувальник URL",
+                "howto.step1.title": "Введіть URL або завантажте файл",
+                "howto.step1.description": "Введіть або вставте свій URL-рядок у область введення або завантажте текстовий файл, що містить URL. Інструмент підтримує всі поширені формати URL та спеціальні символи.",
+                "howto.step2.title": "Виберіть операцію",
+                "howto.step2.description": "Виберіть, чи хочете ви кодувати (перетворити спеціальні символи на безпечний для URL формат) чи декодувати (перетворити закодовані в URL символи назад у нормальну форму).",
+                "howto.step3.title": "Обробіть та перегляньте",
+                "howto.step3.description": "Натисніть кнопку \"Закодувати\" або \"Розкодувати\", щоб обробити ваш URL. Результат з'явиться в області виведення зі статистикою в реальному часі.",
+                "howto.step4.title": "Скопіюйте або завантажте",
+                "howto.step4.description": "Скопіюйте оброблений URL в буфер обміну одним клацанням або завантажте його як текстовий файл. Вся обробка відбувається локально у вашому браузері - ваші дані ніколи не залишають ваш пристрій.",
+                "tool.title": "Кодувальник/декодувальник URL",
+                "tool.upload.text": "Перетягніть ваш текстовий файл сюди або клацніть для перегляду",
+                "tool.upload.button": "Вибрати текстовий файл",
+                "tool.supported": "Підтримуваний формат: TXT",
+                "tool.input.title": "Вхідний URL",
+                "tool.output.title": "Вихідний URL",
+                "tool.encode": "Закодувати URL",
+                "tool.decode": "Розкодувати URL",
+                "tool.clear": "Очистити",
+                "tool.clearAll": "Очистити все",
+                "tool.paste": "Вставити",
+                "tool.copy": "Копіювати",
+                "tool.download": "Завантажити",
+                "tool.stats.input": "Довжина введення",
+                "tool.stats.output": "Довжина виведення",
+                "tool.stats.change": "Зміна розміру",
+                "tool.stats.time": "Час обробки",
+                "footer.follow": "СЛІДКУЙТЕ ЗА НАМИ",
+                "footer.categories": "Популярні категорії",
+                "footer.categories.pdf": "PDF-інструменти",
+                "footer.categories.image": "Інструменти для зображень",
+                "footer.categories.text": "Текстові інструменти",
+                "footer.categories.av": "Аудіо/відео інструменти",
+                "footer.categories.web": "Інструменти веб-розробника",
+                "footer.categories.calc": "Інструменти калькулятора",
+                "footer.categories.util": "Утиліти",
+                "footer.categories.color": "Інструменти кольору",
+                "footer.quicklinks": "Швидкі посилання",
+                "footer.links.tools": "Всі інструменти",
+                "footer.links.faq": "Часті запитання",
+                "footer.links.contact": "Контакти",
+                "footer.links.privacy": "Політика конфіденційності",
+                "footer.links.disclaimer": "Відмова від відповідальності",
+                "footer.links.terms": "Умови використання",
+                "footer.copyright": "© 2025 LollyPoPDF. Всі права захищені."
+            },
+            vi: {
+                "nav.home": "Trang chủ",
+                "nav.about": "Về chúng tôi",
+                "nav.tools": "Công cụ",
+                "nav.contact": "Liên hệ",
+                "hero.title": "Công cụ Mã hóa/Giải mã URL",
+                "hero.description": "Mã hóa và giải mã chuỗi URL một cách an toàn và tức thì – không có máy chủ, 100% phía máy khách. Tất cả xử lý diễn ra cục bộ với quyền riêng tư hoàn toàn.",
+                "howto.title": "Cách sử dụng Bộ Mã hóa/Giải mã URL",
+                "howto.step1.title": "Nhập URL hoặc Tải lên Tệp",
+                "howto.step1.description": "Nhập hoặc dán chuỗi URL của bạn vào khu vực đầu vào, hoặc tải lên tệp văn bản chứa URL. Công cụ hỗ trợ tất cả các định dạng URL phổ biến và ký tự đặc biệt.",
+                "howto.step2.title": "Chọn Thao tác",
+                "howto.step2.description": "Chọn xem bạn muốn mã hóa (chuyển đổi ký tự đặc biệt sang định dạng an toàn cho URL) hay giải mã (chuyển đổi ký tự được mã hóa trong URL trở lại dạng bình thường).",
+                "howto.step3.title": "Xử lý & Xem trước",
+                "howto.step3.description": "Nhấp vào nút \"Mã hóa\" hoặc \"Giải mã\" để xử lý URL của bạn. Kết quả sẽ xuất hiện trong khu vực đầu ra với thống kê thời gian thực.",
+                "howto.step4.title": "Sao chép hoặc Tải xuống",
+                "howto.step4.description": "Sao chép URL đã xử lý vào clipboard bằng một cú nhấp chuột hoặc tải xuống dưới dạng tệp văn bản. Tất cả xử lý diễn ra cục bộ trong trình duyệt của bạn - dữ liệu của bạn không bao giờ rời khỏi thiết bị của bạn.",
+                "tool.title": "Bộ Mã hóa/Giải mã URL",
+                "tool.upload.text": "Kéo và thả tệp văn bản của bạn vào đây hoặc nhấp để duyệt",
+                "tool.upload.button": "Chọn Tệp Văn bản",
+                "tool.supported": "Định dạng được hỗ trợ: TXT",
+                "tool.input.title": "URL Đầu vào",
+                "tool.output.title": "URL Đầu ra",
+                "tool.encode": "Mã hóa URL",
+                "tool.decode": "Giải mã URL",
+                "tool.clear": "Xóa",
+                "tool.clearAll": "Xóa Tất cả",
+                "tool.paste": "Dán",
+                "tool.copy": "Sao chép",
+                "tool.download": "Tải xuống",
+                "tool.stats.input": "Độ dài Đầu vào",
+                "tool.stats.output": "Độ dài Đầu ra",
+                "tool.stats.change": "Thay đổi Kích thước",
+                "tool.stats.time": "Thời gian Xử lý",
+                "footer.follow": "THEO DÕI CHÚNG TÔI",
+                "footer.categories": "Danh mục Phổ biến",
+                "footer.categories.pdf": "Công cụ PDF",
+                "footer.categories.image": "Công cụ Hình ảnh",
+                "footer.categories.text": "Công cụ Văn bản",
+                "footer.categories.av": "Công cụ Âm thanh/Video",
+                "footer.categories.web": "Công cụ WebDeveloper",
+                "footer.categories.calc": "Công cụ Máy tính",
+                "footer.categories.util": "Công cụ Tiện ích",
+                "footer.categories.color": "Công cụ Màu sắc",
+                "footer.quicklinks": "Liên kết Nhanh",
+                "footer.links.tools": "Tất cả Công cụ",
+                "footer.links.faq": "Câu hỏi Thường gặp",
+                "footer.links.contact": "Liên hệ",
+                "footer.links.privacy": "Chính sách Riêng tư",
+                "footer.links.disclaimer": "Từ chối Trách nhiệm",
+                "footer.links.terms": "Điều khoản Dịch vụ",
+                "footer.copyright": "© 2025 LollyPoPDF. Mọi quyền được bảo lưu."
+            },
+            is: {
+                "nav.home": "Heim",
+                "nav.about": "Um okkur",
+                "nav.tools": "Verkfæri",
+                "nav.contact": "Hafa samband",
+                "hero.title": "URL kóðun/afkóðun verkfæri",
+                "hero.description": "Kóðaðu og afkóðaðu URL strengi örugglega og augnabliks – án netþjóna, 100% hjá viðskiptavininum. Öll vinnsla á sér stað staðbundið með fullri næði.",
+                "howto.title": "Hvernig á að nota URL kóðara/afkóðara",
+                "howto.step1.title": "Sláðu inn URL eða hladdu upp skrá",
+                "howto.step1.description": "Sláðu inn eða límdu URL strenginn þinn í inntakssvæðið, eða hladdu upp textaskrá sem inniheldur URL. Verkfærið styður allar algengar URL snið og sérstafi.",
+                "howto.step2.title": "Veldu aðgerð",
+                "howto.step2.description": "Veldu hvort þú viljir kóða (breyta sérstöfum í URL-öruggt snið) eða afkóða (breyta URL-kóðuðum stöfum aftur í eðlilegt form).",
+                "howto.step3.title": "Vinnsla og forskoðun",
+                "howto.step3.description": "Smelltu á \"Kóða\" eða \"Afkóða\" hnappinn til að vinna úr URL þínu. Niðurstaðan birtist í úttakssvæðinu með tölfræði í rauntíma.",
+                "howto.step4.title": "Afrita eða sækja",
+                "howto.step4.description": "Afritaðu unnið URL á klippiborðið með einum smelli eða sæktu það sem textaskrá. Öll vinnsla á sér stað staðbundið í vafranum þínum - gögnin þín yfirgefa aldrei tækið þitt.",
+                "tool.title": "URL kóðari/afkóðari",
+                "tool.upload.text": "Dragðu og slepptu textaskránni þinni hér eða smelltu til að skoða",
+                "tool.upload.button": "Veldu textaskrá",
+                "tool.supported": "Studd snið: TXT",
+                "tool.input.title": "Inntak URL",
+                "tool.output.title": "Úttak URL",
+                "tool.encode": "Kóða URL",
+                "tool.decode": "Afkóða URL",
+                "tool.clear": "Hreinsa",
+                "tool.clearAll": "Hreinsa allt",
+                "tool.paste": "Líma",
+                "tool.copy": "Afrita",
+                "tool.download": "Sækja",
+                "tool.stats.input": "Inntakslengd",
+                "tool.stats.output": "Úttakslengd",
+                "tool.stats.change": "Stærðarbreyting",
+                "tool.stats.time": "Vinnslutími",
+                "footer.follow": "FYLGDU OKKUR",
+                "footer.categories": "Vinsælar flokkar",
+                "footer.categories.pdf": "PDF verkfæri",
+                "footer.categories.image": "Myndverkfæri",
+                "footer.categories.text": "Textaverkfæri",
+                "footer.categories.av": "Hljóð/myndband verkfæri",
+                "footer.categories.web": "Vefþróunaraðila verkfæri",
+                "footer.categories.calc": "Reiknivélarverkfæri",
+                "footer.categories.util": "Gagnleg verkfæri",
+                "footer.categories.color": "Litverkfæri",
+                "footer.quicklinks": "Flýtileiðir",
+                "footer.links.tools": "Öll verkfæri",
+                "footer.links.faq": "Algengar spurningar",
+                "footer.links.contact": "Hafa samband",
+                "footer.links.privacy": "Meðferð persónuupplýsinga",
+                "footer.links.disclaimer": "Fyrirvari",
+                "footer.links.terms": "Þjónustuskilmálar",
+                "footer.copyright": "© 2025 LollyPoPDF. Öll réttindi áskilin."
+            },
+            no: {
+                "nav.home": "Hjem",
+                "nav.about": "Om oss",
+                "nav.tools": "Verktøy",
+                "nav.contact": "Kontakt",
+                "hero.title": "URL-koder/avkoder verktøy",
+                "hero.description": "Koder og avkoder URL-strenger sikkert og umiddelbart – uten servere, 100% klientside. All behandling skjer lokalt med fullstendig personvern.",
+                "howto.title": "Hvordan bruke URL-koderen/avkoderen",
+                "howto.step1.title": "Skriv inn URL eller last opp fil",
+                "howto.step1.description": "Skriv eller lim inn URL-strengen din i inndataområdet, eller last opp en tekstfil som inneholder URL-er. Verktøyet støtter alle vanlige URL-formater og spesialtegn.",
+                "howto.step2.title": "Velg operasjon",
+                "howto.step2.description": "Velg om du vil kode (konvertere spesialtegn til URL-sikkert format) eller avkode (konvertere URL-kodede tegn tilbake til normal form).",
+                "howto.step3.title": "Behandle og forhåndsvis",
+                "howto.step3.description": "Klikk på \"Koder\" eller \"Avkoder\"-knappen for å behandle URL-en din. Resultatet vises i utdataområdet med sanntidsstatistikk.",
+                "howto.step4.title": "Kopier eller last ned",
+                "howto.step4.description": "Kopier den behandlede URL-en til utklippstavlen med ett klikk eller last den ned som en tekstfil. All behandling skjer lokalt i nettleseren din - dataene dine forlater aldri enheten din.",
+                "tool.title": "URL-koder/avkoder",
+                "tool.upload.text": "Dra og slipp tekstfilen din her eller klikk for å bla",
+                "tool.upload.button": "Velg tekstfil",
+                "tool.supported": "Støttet format: TXT",
+                "tool.input.title": "Inndata-URL",
+                "tool.output.title": "Utdata-URL",
+                "tool.encode": "Koder URL",
+                "tool.decode": "Avkoder URL",
+                "tool.clear": "Tøm",
+                "tool.clearAll": "Tøm alt",
+                "tool.paste": "Lim inn",
+                "tool.copy": "Kopier",
+                "tool.download": "Last ned",
+                "tool.stats.input": "Inndatalengde",
+                "tool.stats.output": "Utdatalengde",
+                "tool.stats.change": "Størrelsesendring",
+                "tool.stats.time": "Behandlingstid",
+                "footer.follow": "FØLG OSS",
+                "footer.categories": "Populære kategorier",
+                "footer.categories.pdf": "PDF-verktøy",
+                "footer.categories.image": "Bildeverktøy",
+                "footer.categories.text": "Tekstverktøy",
+                "footer.categories.av": "Lyd/videoverktøy",
+                "footer.categories.web": "Webutviklerverktøy",
+                "footer.categories.calc": "Kalkulatorverktøy",
+                "footer.categories.util": "Nytteverktøy",
+                "footer.categories.color": "Fargeverktøy",
+                "footer.quicklinks": "Hurtiglenker",
+                "footer.links.tools": "Alle verktøy",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Kontakt",
+                "footer.links.privacy": "Personvernregler",
+                "footer.links.disclaimer": "Ansvarsfraskrivelse",
+                "footer.links.terms": "Tjenestevilkår",
+                "footer.copyright": "© 2025 LollyPoPDF. Alle rettigheter forbeholdt."
+            },
+            sv: {
+                "nav.home": "Hem",
+                "nav.about": "Om oss",
+                "nav.tools": "Verktyg",
+                "nav.contact": "Kontakt",
+                "hero.title": "URL-kodare/avkodare verktyg",
+                "hero.description": "Koda och avkoda URL-strängar säkert och omedelbart – utan servrar, 100% klientsidan. All bearbetning sker lokalt med fullständig integritet.",
+                "howto.title": "Hur man använder URL-kodaren/avkodaren",
+                "howto.step1.title": "Ange URL eller ladda upp fil",
+                "howto.step1.description": "Skriv eller klistra in din URL-sträng i inmatningsområdet, eller ladda upp en textfil som innehåller URL:er. Verktyget stöder alla vanliga URL-format och specialtecken.",
+                "howto.step2.title": "Välj operation",
+                "howto.step2.description": "Välj om du vill koda (konvertera specialtecken till URL-säkert format) eller avkoda (konvertera URL-kodade tecken tillbaka till normal form).",
+                "howto.step3.title": "Bearbeta och förhandsgranska",
+                "howto.step3.description": "Klicka på \"Koda\" eller \"Avkoda\"-knappen för att bearbeta din URL. Resultatet visas i utdataområdet med realtidsstatistik.",
+                "howto.step4.title": "Kopiera eller ladda ner",
+                "howto.step4.description": "Kopiera den bearbetade URL:en till urklipp med ett klick eller ladda ner den som en textfil. All bearbetning sker lokalt i din webbläsare - dina data lämnar aldrig din enhet.",
+                "tool.title": "URL-kodare/avkodare",
+                "tool.upload.text": "Dra och släpp din textfil här eller klicka för att bläddra",
+                "tool.upload.button": "Välj textfil",
+                "tool.supported": "Format som stöds: TXT",
+                "tool.input.title": "Inmatnings-URL",
+                "tool.output.title": "Utmatnings-URL",
+                "tool.encode": "Koda URL",
+                "tool.decode": "Avkoda URL",
+                "tool.clear": "Rensa",
+                "tool.clearAll": "Rensa allt",
+                "tool.paste": "Klistra in",
+                "tool.copy": "Kopiera",
+                "tool.download": "Ladda ner",
+                "tool.stats.input": "Inmatningslängd",
+                "tool.stats.output": "Utmatningslängd",
+                "tool.stats.change": "Storleksförändring",
+                "tool.stats.time": "Bearbetningstid",
+                "footer.follow": "FÖLJ OSS",
+                "footer.categories": "Populära kategorier",
+                "footer.categories.pdf": "PDF-verktyg",
+                "footer.categories.image": "Bildverktyg",
+                "footer.categories.text": "Textverktyg",
+                "footer.categories.av": "Ljud/videoverktyg",
+                "footer.categories.web": "Webbutvecklarverktyg",
+                "footer.categories.calc": "Kalkylatorverktyg",
+                "footer.categories.util": "Verktyg för verktyg",
+                "footer.categories.color": "Färgverktyg",
+                "footer.quicklinks": "Snabblänkar",
+                "footer.links.tools": "Alla verktyg",
+                "footer.links.faq": "Vanliga frågor",
+                "footer.links.contact": "Kontakt",
+                "footer.links.privacy": "Integritetspolicy",
+                "footer.links.disclaimer": "Ansvarsfriskrivning",
+                "footer.links.terms": "Användarvillkor",
+                "footer.copyright": "© 2025 LollyPoPDF. Alla rättigheter förbehållna."
+            },
+            fi: {
+                "nav.home": "Koti",
+                "nav.about": "Meistä",
+                "nav.tools": "Työkalut",
+                "nav.contact": "Yhteystiedot",
+                "hero.title": "URL-kooderi/purkaja työkalu",
+                "hero.description": "Koodaa ja purka URL-merkkijonoja turvallisesti ja välittömästi – ilman palvelimia, 100% asiakaspuolella. Kaikki käsittely tapahtuu paikallisesti täydellisen yksityisyyden kanssa.",
+                "howto.title": "Kuinka käyttää URL-kooderia/purkaajaa",
+                "howto.step1.title": "Syötä URL tai lataa tiedosto",
+                "howto.step1.description": "Kirjoita tai liitä URL-merkkijonosi syöttöalueelle, tai lataa tekst tiedosto, joka sisältää URL-osoitteita. Työkalu tukee kaikkia yleisiä URL-muotoja ja erikoismerkkejä.",
+                "howto.step2.title": "Valitse toiminto",
+                "howto.step2.description": "Valitse, haluatko koodata (muuntaa erikoismerkit URL-turvalliseen muotoon) vai purkaa (muuntaa URL-koodatut merkit takaisin normaaliin muotoon).",
+                "howto.step3.title": "Käsittele ja esikatsele",
+                "howto.step3.description": "Napsauta \"Koodaa\" tai \"Pura\"-painiketta käsitelläksesi URL-osoitteesi. Tulos näkyy tulostusalueella reaaliaikaisilla tilastoilla.",
+                "howto.step4.title": "Kopioi tai lataa",
+                "howto.step4.description": "Kopioi käsitelty URL leikepöydälle yhdellä napsautuksella tai lataa se tekst tiedostona. Kaikki käsittely tapahtuu paikallisesti selaimeesi - tietosi eivät koskaan poistu laitteestasi.",
+                "tool.title": "URL-kooderi/purkaja",
+                "tool.upload.text": "Vedä ja pudota tekst tiedostosi tähän tai napsauta selataksesi",
+                "tool.upload.button": "Valitse tekst tiedosto",
+                "tool.supported": "Tuetut formaatit: TXT",
+                "tool.input.title": "Syöttö-URL",
+                "tool.output.title": "Tulostus-URL",
+                "tool.encode": "Koodaa URL",
+                "tool.decode": "Pura URL",
+                "tool.clear": "Tyhjennä",
+                "tool.clearAll": "Tyhjennä kaikki",
+                "tool.paste": "Liitä",
+                "tool.copy": "Kopioi",
+                "tool.download": "Lataa",
+                "tool.stats.input": "Syötön pituus",
+                "tool.stats.output": "Tulostuksen pituus",
+                "tool.stats.change": "Koon muutos",
+                "tool.stats.time": "Käsittelyaika",
+                "footer.follow": "SEURA MEITÄ",
+                "footer.categories": "Suositut kategoriat",
+                "footer.categories.pdf": "PDF-työkalut",
+                "footer.categories.image": "Kuvatyökalut",
+                "footer.categories.text": "Tekstityökalut",
+                "footer.categories.av": "Ääni/videotyökalut",
+                "footer.categories.web": "Web-kehittäjätyökalut",
+                "footer.categories.calc": "Laskurityökalut",
+                "footer.categories.util": "Aputyökalut",
+                "footer.categories.color": "Värityökalut",
+                "footer.quicklinks": "Pikalinkit",
+                "footer.links.tools": "Kaikki työkalut",
+                "footer.links.faq": "Usein kysytyt kysymykset",
+                "footer.links.contact": "Yhteystiedot",
+                "footer.links.privacy": "Tietosuojakäytäntö",
+                "footer.links.disclaimer": "Vastuuvapauslauseke",
+                "footer.links.terms": "Käyttöehdot",
+                "footer.copyright": "© 2025 LollyPoPDF. Kaikki oikeudet pidätetään."
+            },
+            cs: {
+                "nav.home": "Domů",
+                "nav.about": "O nás",
+                "nav.tools": "Nástroje",
+                "nav.contact": "Kontakt",
+                "hero.title": "Nástroj pro kódování/dekódování URL",
+                "hero.description": "Kódujte a dekódujte řetězce URL bezpečně a okamžitě – bez serverů, 100% na straně klienta. Veškeré zpracování probíhá lokálně s úplným soukromím.",
+                "howto.title": "Jak používat kodér/dekodér URL",
+                "howto.step1.title": "Zadejte URL nebo nahrajte soubor",
+                "howto.step1.description": "Napište nebo vložte svůj řetězec URL do vstupní oblasti, nebo nahrajte textový soubor obsahující URL. Nástroj podporuje všechny běžné formáty URL a speciální znaky.",
+                "howto.step2.title": "Vyberte operaci",
+                "howto.step2.description": "Vyberte, zda chcete kódovat (převést speciální znaky na bezpečný formát URL) nebo dekódovat (převést kódované znaky URL zpět do normální podoby).",
+                "howto.step3.title": "Zpracujte a zobrazte náhled",
+                "howto.step3.description": "Klikněte na tlačítko \"Zakódovat\" nebo \"Dekódovat\" pro zpracování vaší URL. Výsledek se objeví ve výstupní oblasti s statistikami v reálném čase.",
+                "howto.step4.title": "Kopírovat nebo stáhnout",
+                "howto.step4.description": "Zkopírujte zpracovanou URL do schránky jedním kliknutím nebo si ji stáhněte jako textový soubor. Veškeré zpracování probíhá lokálně ve vašem prohlížeči - vaše data nikdy neopustí vaše zařízení.",
+                "tool.title": "Kodér/dekodér URL",
+                "tool.upload.text": "Přetáhněte sem svůj textový soubor nebo klikněte pro procházení",
+                "tool.upload.button": "Vybrat textový soubor",
+                "tool.supported": "Podporovaný formát: TXT",
+                "tool.input.title": "Vstupní URL",
+                "tool.output.title": "Výstupní URL",
+                "tool.encode": "Zakódovat URL",
+                "tool.decode": "Dekódovat URL",
+                "tool.clear": "Vymazat",
+                "tool.clearAll": "Vymazat vše",
+                "tool.paste": "Vložit",
+                "tool.copy": "Kopírovat",
+                "tool.download": "Stáhnout",
+                "tool.stats.input": "Délka vstupu",
+                "tool.stats.output": "Délka výstupu",
+                "tool.stats.change": "Změna velikosti",
+                "tool.stats.time": "Doba zpracování",
+                "footer.follow": "SLEDUJTE NÁS",
+                "footer.categories": "Populární kategorie",
+                "footer.categories.pdf": "PDF nástroje",
+                "footer.categories.image": "Obrázkové nástroje",
+                "footer.categories.text": "Textové nástroje",
+                "footer.categories.av": "Audio/video nástroje",
+                "footer.categories.web": "WebDeveloper nástroje",
+                "footer.categories.calc": "Kalkulační nástroje",
+                "footer.categories.util": "Užitečné nástroje",
+                "footer.categories.color": "Barevné nástroje",
+                "footer.quicklinks": "Rychlé odkazy",
+                "footer.links.tools": "Všechny nástroje",
+                "footer.links.faq": "Často kladené otázky",
+                "footer.links.contact": "Kontakt",
+                "footer.links.privacy": "Zásady ochrany osobních údajů",
+                "footer.links.disclaimer": "Odmítnutí odpovědnosti",
+                "footer.links.terms": "Podmínky služby",
+                "footer.copyright": "© 2025 LollyPoPDF. Všechna práva vyhrazena."
+            }
+
+        };
+
+        // Function to change language
+        function changeLanguage(langCode) {
+            const langData = translations[langCode];
+            if (!langData) return;
+            
+            // Update all elements with data-i18n attribute
+            document.querySelectorAll('[data-i18n]').forEach(element => {
+                const key = element.getAttribute('data-i18n');
+                if (langData[key]) {
+                    element.textContent = langData[key];
+                }
+            });
+            
+            // Update current language display
+            currentLanguageElement.textContent = languages.find(lang => lang.code === langCode)?.name || 'English';
+            
+            // Save language preference
+            localStorage.setItem('language', langCode);
+        }
+
+        // Initialize language
+        const savedLanguage = localStorage.getItem('language') || 'en';
+        changeLanguage(savedLanguage);
+        
+        // Language selection handler
+        languageDropdown.addEventListener('click', (e) => {
+            if (e.target.classList.contains('language-option')) {
+                const langCode = e.target.getAttribute('data-lang');
+                changeLanguage(langCode);
+            }
+        });
+    </script>
+</body>
+</html>

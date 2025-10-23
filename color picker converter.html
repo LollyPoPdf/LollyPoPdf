@@ -1,0 +1,2907 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Color Picker & Converter | LollyPoPdf</title>
+    <meta name="description" content="Free online color picker and converter tool. Convert between HEX, RGB, HSL color formats instantly. 100% client-side processing.">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #9370db;
+            --primary-dark: #8a2be2;
+            --secondary-color: #f0ebff;
+            --text-color: #333333;
+            --text-light: #6b7280;
+            --bg-color: #ffffff;
+            --bg-secondary: #f9f9f9;
+            --border-radius: 12px;
+            --transition: all 0.3s ease;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --header-height: 80px;
+            --white: #ffffff;
+            --header-text: #6b7280;
+            --accent-color: #9370db;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --error-color: #ef4444;
+        }
+
+        .dark-mode {
+            --primary-color: #a391f2;
+            --primary-dark: #8a2be2;
+            --secondary-color: #2d2d2d;
+            --text-color: #f0f0f0;
+            --text-light: #a0a0a0;
+            --bg-color: #1a1a1a;
+            --bg-secondary: #2d2d2d;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+            --white: #1a1a1a;
+            --header-text: #a0a0a0;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            transition: var(--transition);
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        ul {
+            list-style: none;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header Styles */
+        header {
+            background-color: var(--white);
+            color: var(--header-text);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+        }
+
+        .logo-icon {
+            position: relative;
+            width: 40px;
+            height: 40px;
+        }
+
+        .logo-circle {
+            width: 40px;
+            height: 40px;
+            border-radius: 40%;
+            background: linear-gradient(to bottom right, #9370db, #8a2be2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .logo-stem {
+            position: absolute;
+            bottom: -17px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 6px;
+            height: 17px;
+            background-color: #8a2be2;
+            border-radius: 0 0 3px 3px;
+        }
+
+        .logo-text {
+            font-size: 24px;
+            font-weight: bold;
+            color: #9370db;
+        }
+
+        nav ul {
+            display: flex;
+            gap: 30px;
+            list-style: none;
+        }
+
+        nav a {
+            font-weight: 500;
+            position: relative;
+            color: var(--header-text);
+            padding: 8px 0;
+            border-radius: 0;
+            transition: var(--transition);
+            text-decoration: none;
+        }
+
+        nav a:hover {
+            color: var(--accent-color);
+        }
+
+        nav a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: var(--accent-color);
+            transition: width 0.3s ease;
+        }
+
+        nav a:hover::after {
+            width: 100%;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .email {
+            font-size: 14px;
+            color: var(--header-text);
+        }
+
+        .theme-toggle {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 20px;
+            color: var(--header-text);
+            padding: 8px;
+            border-radius: 50%;
+            transition: var(--transition);
+        }
+
+        .theme-toggle:hover {
+            background-color: #f0ebff;
+            color: var(--accent-color);
+        }
+
+        .dark-mode .theme-toggle:hover {
+            background-color: #2d3748;
+            color: var(--accent-color);
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--header-text);
+        }
+
+        /* Mobile Menu */
+        .mobile-menu {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            width: 100%;
+            background-color: var(--white);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            z-index: 999;
+        }
+
+        .dark-mode .mobile-menu {
+            background-color: var(--bg-secondary);
+        }
+
+        .mobile-menu.active {
+            display: block;
+        }
+
+        .mobile-menu ul {
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .mobile-menu a {
+            display: block;
+            padding: 10px 0;
+            font-weight: 500;
+            color: var(--header-text);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .dark-mode .mobile-menu a {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .mobile-menu a:hover {
+            color: var(--accent-color);
+        }
+
+        /* Hero Section */
+        .hero {
+            background-color: var(--secondary-color);
+            padding: 60px 0;
+            text-align: center;
+        }
+
+        .dark-mode .hero {
+            background: linear-gradient(135deg, #2a1a4a, #3d2a6d);
+        }
+
+        .hero h1 {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            color: #000;
+        }
+
+        .dark-mode .hero h1 {
+            color: var(--text-color);
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            color: var(--text-color);
+            max-width: 700px;
+            margin: 0 auto 30px;
+        }
+
+        /* How to Use Section */
+        .how-to-section {
+            padding: 80px 0;
+            background-color: var(--bg-color);
+        }
+
+        .dark-mode .how-to-section {
+            background-color: var(--bg-secondary);
+        }
+
+        .section-title {
+            font-size: 2rem;
+            text-align: center;
+            margin-bottom: 40px;
+            color: #000000;
+        }
+
+        .dark-mode .section-title {
+            color: var(--text-color);
+        }
+
+        .steps-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 40px;
+        }
+
+        .step-box {
+            background-color: var(--bg-secondary);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            padding: 30px;
+            min-height: 200px;
+            position: relative;
+        }
+
+        .step-number {
+            width: 40px;
+            height: 40px;
+            background-color: var(--primary-color);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 16px;
+            margin-bottom: 15px;
+        }
+
+        .step-title {
+            font-size: 18px;
+            color: #000000;
+            margin-bottom: 10px;
+        }
+
+        .dark-mode .step-title {
+            color: var(--text-color);
+        }
+
+        .step-description {
+            font-size: 14px;
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        /* Tool Section */
+        .tool-section {
+            padding: 80px 0;
+            background-color: var(--secondary-color);
+        }
+
+        .dark-mode .tool-section {
+            background: linear-gradient(135deg, #2a1a4a, #3d2a6d);
+        }
+
+        .tool-title {
+            font-size: 2.5rem;
+            text-align: center;
+            margin-bottom: 40px;
+            color: #a391f2;
+        }
+
+        .dark-mode .tool-title {
+            color: #a391f2;
+        }
+
+        .tool-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background-color: var(--bg-color);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            padding: 40px;
+        }
+
+        /* Color Picker Section */
+        .color-picker-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .color-preview {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .color-display {
+            width: 100%;
+            height: 200px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            border: 1px solid var(--text-light);
+        }
+
+        .color-picker-input {
+            width: 100%;
+            height: 50px;
+            border: none;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+        }
+
+        .color-formats {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .format-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .format-label {
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+
+        .format-input-container {
+            display: flex;
+            gap: 10px;
+        }
+
+        .format-input {
+            flex: 1;
+            padding: 12px 15px;
+            border-radius: var(--border-radius);
+            border: 1px solid var(--primary-color);
+            background-color: var(--bg-secondary);
+            color: var(--text-color);
+            font-family: monospace;
+        }
+
+        .copy-btn {
+            padding: 12px 15px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+        }
+
+        .copy-btn:hover {
+            background-color: var(--primary-dark);
+        }
+
+        .copy-btn:disabled {
+            background-color: var(--text-light);
+            cursor: not-allowed;
+        }
+
+        /* Color Palettes */
+        .color-palettes {
+            margin-top: 30px;
+        }
+
+        .palette-title {
+            font-size: 18px;
+            color: var(--primary-color);
+            margin-bottom: 15px;
+        }
+
+        .palettes-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 15px;
+        }
+
+        .palette-item {
+            height: 80px;
+            border-radius: var(--border-radius);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+        }
+
+        .palette-item:hover {
+            transform: translateY(-5px);
+        }
+
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+
+        .action-btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: var(--transition);
+            flex: 1;
+            min-width: 150px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .export-btn {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .export-btn:hover {
+            background-color: var(--primary-dark);
+        }
+
+        .reset-btn {
+            background-color: white;
+            color: var(--primary-color);
+            border: 2px solid var(--primary-color);
+        }
+
+        .reset-btn:hover {
+            background-color: var(--secondary-color);
+        }
+
+        /* Status Message */
+        .status-message {
+            padding: 15px;
+            border-radius: var(--border-radius);
+            margin-bottom: 20px;
+            text-align: center;
+            display: none;
+        }
+
+        .status-success {
+            background-color: rgba(16, 185, 129, 0.1);
+            color: var(--success-color);
+            border: 1px solid var(--success-color);
+        }
+
+        .status-error {
+            background-color: rgba(239, 68, 68, 0.1);
+            color: var(--error-color);
+            border: 1px solid var(--error-color);
+        }
+
+        /* Footer */
+        footer {
+            background-color: #000000;
+            color: white;
+            padding: 60px 0 80px;
+            position: relative;
+        }
+
+        .footer-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 60px;
+        }
+
+        .footer-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            text-decoration: none;
+        }
+
+        .footer-logo .logo-icon {
+            width: 40px;
+            height: 40px;
+        }
+
+        .footer-logo .logo-text {
+            color: #9370db;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .footer-section h3 {
+            color: white;
+            font-weight: 600;
+            font-size: 20px;
+            margin-bottom: 20px;
+        }
+
+        .footer-section h4 {
+            color: #9370db;
+            font-size: 18px;
+            margin-bottom: 15px;
+        }
+
+        .footer-links li {
+            margin-bottom: 10px;
+        }
+
+        .footer-links a {
+            color: white;
+        }
+
+        .footer-links a:hover {
+            color: #9370db;
+        }
+
+        .social-icons {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .social-icon {
+            width: 40px;
+            height: 40px;
+            background-color: #9370db;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+        }
+
+        .social-icon:hover {
+            background-color: #8a2be2;
+            transform: translateY(-3px);
+        }
+
+        .copyright {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            color: #f9f7ff;
+            font-size: 12px;
+        }
+
+        .footer-line {
+            position: absolute;
+            bottom: 50px;
+            left: 0;
+            width: 100%;
+            height: 1px;
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        /* Language Switcher */
+        .language-switcher {
+            position: fixed;
+            bottom: 10px;
+            right: 10px;
+            z-index: 1000;
+        }
+
+        .language-btn {
+            background-color: #9370db;
+            color: white;
+            border: none;
+            border-radius: 30px;
+            padding: 5px 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .language-dropdown {
+            position: absolute;
+            bottom: 100%;
+            right: 0;
+            width: 300px;
+            background-color: white;
+            border-radius: var(--border-radius);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            display: none;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .dark-mode .language-dropdown {
+            background-color: var(--bg-secondary);
+        }
+
+        .language-switcher:hover .language-dropdown {
+            display: grid;
+        }
+
+        .language-option {
+            padding: 8px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            text-align: center;
+            font-size: 14px;
+        }
+
+        .language-option:hover {
+            background-color: white;
+            color: #9370db;
+        }
+
+        .dark-mode .language-option:hover {
+            background-color: var(--bg-color);
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 992px) {
+            .steps-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .footer-container {
+                grid-template-columns: 1fr 1fr;
+            }
+            
+            .color-picker-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .palettes-container {
+                grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            }
+        }
+
+        @media (max-width: 768px) {
+            nav ul, .email {
+                display: none;
+            }
+            
+            .mobile-menu-btn {
+                display: block;
+            }
+            
+            .hero h1, .tool-title {
+                font-size: 2rem;
+            }
+            
+            .hero p {
+                font-size: 1rem;
+            }
+            
+            .language-dropdown {
+                width: 250px;
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .footer-container {
+                grid-template-columns: 1fr;
+                gap: 40px;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+            
+            .action-btn {
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .tool-container {
+                padding: 20px;
+            }
+            
+            .format-input-container {
+                flex-direction: column;
+            }
+            
+            .copy-btn {
+                width: 100%;
+            }
+            
+            .palettes-container {
+                grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container header-container">
+            <a href="https://lollypopdf.com" class="logo">
+                <div class="logo-icon">
+                    <div class="logo-circle">LPdf</div>
+                    <div class="logo-stem"></div>
+                </div>
+                <span class="logo-text">LollyPoPdf</span>
+            </a>
+            
+            <nav>
+                <ul>
+                    <li><a href="https://lollypopdf.github.io/LollyPoPdf#home" class="nav-link" data-i18n="nav.home">Home</a></li>
+                    <li><a href="https://lollypopdf.github.io/LollyPoPdf#about" class="nav-link" data-i18n="nav.about">About Us</a></li>
+                    <li><a href="https://lollypopdf.github.io/LollyPoPdf#tools" class="nav-link" data-i18n="nav.tools">Tools</a></li>
+                    <li><a href="contact.html" class="nav-link" data-i18n="nav.contact">Contact</a></li>
+                </ul>
+            </nav>
+            
+            <div class="header-right">
+                <span class="email">lollypoppdf@gmail.com</span>
+                <button class="theme-toggle" id="themeToggle">
+                    <i class="fas fa-moon"></i>
+                </button>
+                <button class="mobile-menu-btn" id="mobileMenuBtn">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </div>
+        
+        <!-- Mobile Menu -->
+        <div class="mobile-menu" id="mobileMenu">
+            <ul>
+                <li><a href="https://lollypopdf.github.io/LollyPoPdf#home" class="nav-link" data-i18n="nav.home">Home</a></li>
+                <li><a href="https://lollypopdf.github.io/LollyPoPdf#about" class="nav-link" data-i18n="nav.about">About Us</a></li>
+                <li><a href="https://lollypopdf.github.io/LollyPoPdf#tools" class="nav-link" data-i18n="nav.tools">Tools</a></li>
+                <li><a href="contact.html" class="nav-link" data-i18n="nav.contact">Contact</a></li>
+            </ul>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <h1 data-i18n="hero.title">Color Picker & Converter Tool</h1>
+            <p data-i18n="hero.description">Pick colors and convert between HEX, RGB, and HSL formats instantly – no servers, 100% client-side. All processing happens locally with complete privacy.</p>
+        </div>
+    </section>
+
+    <!-- How to Use Section -->
+    <section class="how-to-section">
+        <div class="container">
+            <h2 class="section-title" data-i18n="howto.title">How to Use the Color Picker & Converter</h2>
+            <div class="steps-container">
+                <div class="step-box">
+                    <div class="step-number">1</div>
+                    <h3 class="step-title" data-i18n="howto.step1.title">Pick a Color</h3>
+                    <p class="step-description" data-i18n="howto.step1.description">Use the color picker to select a color visually, or enter a color value in HEX, RGB, or HSL format. The color preview will update in real-time.</p>
+                </div>
+                <div class="step-box">
+                    <div class="step-number">2</div>
+                    <h3 class="step-title" data-i18n="howto.step2.title">Convert Formats</h3>
+                    <p class="step-description" data-i18n="howto.step2.description">The tool automatically converts your selected color between HEX, RGB, and HSL formats. All values update instantly as you change the color.</p>
+                </div>
+                <div class="step-box">
+                    <div class="step-number">3</div>
+                    <h3 class="step-title" data-i18n="howto.step3.title">Copy or Export</h3>
+                    <p class="step-description" data-i18n="howto.step3.description">Copy any color format to clipboard with one click, or export all color values as a text file for later use.</p>
+                </div>
+                <div class="step-box">
+                    <div class="step-number">4</div>
+                    <h3 class="step-title" data-i18n="howto.step4.title">Explore Palettes</h3>
+                    <p class="step-description" data-i18n="howto.step4.description">Discover complementary color palettes based on your selected color. Click on any palette color to apply it.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Tool Section -->
+    <section class="tool-section">
+        <div class="container">
+            <h2 class="tool-title" data-i18n="tool.title">Color Picker & Converter</h2>
+            <div class="tool-container">
+                <!-- Status Message -->
+                <div class="status-message" id="statusMessage"></div>
+
+                <!-- Color Picker Section -->
+                <div class="color-picker-container">
+                    <div class="color-preview">
+                        <div class="color-display" id="colorDisplay"></div>
+                        <input type="color" id="colorPicker" class="color-picker-input" value="#9370db">
+                    </div>
+                    
+                    <div class="color-formats">
+                        <div class="format-group">
+                            <label class="format-label" data-i18n="tool.hex">HEX</label>
+                            <div class="format-input-container">
+                                <input type="text" id="hexInput" class="format-input" value="#9370db">
+                                <button class="copy-btn" data-format="hex">
+                                    <i class="fas fa-copy"></i>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="format-group">
+                            <label class="format-label" data-i18n="tool.rgb">RGB</label>
+                            <div class="format-input-container">
+                                <input type="text" id="rgbInput" class="format-input" value="rgb(147, 112, 219)">
+                                <button class="copy-btn" data-format="rgb">
+                                    <i class="fas fa-copy"></i>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="format-group">
+                            <label class="format-label" data-i18n="tool.hsl">HSL</label>
+                            <div class="format-input-container">
+                                <input type="text" id="hslInput" class="format-input" value="hsl(260, 60%, 65%)">
+                                <button class="copy-btn" data-format="hsl">
+                                    <i class="fas fa-copy"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Color Palettes -->
+                <div class="color-palettes">
+                    <h3 class="palette-title" data-i18n="tool.palettes">Color Palettes</h3>
+                    <div class="palettes-container" id="palettesContainer">
+                        <!-- Palette items will be generated by JavaScript -->
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="action-buttons">
+                    <button class="action-btn export-btn" id="exportBtn">
+                        <i class="fas fa-download"></i> <span data-i18n="tool.export">Export Colors</span>
+                    </button>
+                    <button class="action-btn reset-btn" id="resetBtn">
+                        <i class="fas fa-redo"></i> <span data-i18n="tool.reset">Reset</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container footer-container">
+            <!-- Left Section -->
+            <div class="footer-section">
+                <a href="https://lollypopdf.com" class="footer-logo">
+                    <div class="logo-icon">
+                        <div class="logo-circle">LPdf</div>
+                        <div class="logo-stem"></div>
+                    </div>
+                    <span class="logo-text">LollyPoPdf</span>
+                </a>
+                <h3 data-i18n="footer.follow">FOLLOW US</h3>
+                <div class="social-icons">
+                    <a href="https://facebook.com/lollypopdf" class="social-icon"><i class="fab fa-facebook-f"></i></a>
+                    <a href="https://linkedin.com/company/lollypopdf" class="social-icon"><i class="fab fa-linkedin-in"></i></a>
+                    <a href="https://twitter.com/lollypopdf" class="social-icon"><i class="fab fa-twitter"></i></a>
+                    <a href="https://instagram.com/lollypopdf" class="social-icon"><i class="fab fa-instagram"></i></a>
+                    <a href="https://pinterest.com/lollypopdf" class="social-icon"><i class="fab fa-pinterest-p"></i></a>
+                </div>
+            </div>
+            
+            <!-- Middle Section - Popular Categories -->
+            <div class="footer-section">
+                <h4 data-i18n="footer.categories">Popular Categories</h4>
+                <ul class="footer-links">
+                    <li><a href="https://lollypopdf.com#pdf-tools" data-i18n="footer.categories.pdf">PDF Tools</a></li>
+                    <li><a href="https://lollypopdf.com#image-tools" data-i18n="footer.categories.image">Image Tools</a></li>
+                    <li><a href="https://lollypopdf.com#text-tools" data-i18n="footer.categories.text">Text Tools</a></li>
+                    <li><a href="https://lollypopdf.com#audio-video-tools" data-i18n="footer.categories.av">Audio/Video Tools</a></li>
+                    <li><a href="https://lollypopdf.com#web-developer-tools" data-i18n="footer.categories.web">WebDeveloper Tools</a></li>
+                    <li><a href="https://lollypopdf.com#calculator-tools" data-i18n="footer.categories.calc">Calculator Tools</a></li>
+                    <li><a href="https://lollypopdf.com#utility-tools" data-i18n="footer.categories.util">Utility Tools</a></li>
+                    <li><a href="https://lollypopdf.com#color-tools" data-i18n="footer.categories.color">Color Tools</a></li>
+                </ul>
+            </div>
+            
+            <!-- Right Section - Quick Links -->
+            <div class="footer-section">
+                <h4 data-i18n="footer.quicklinks">Quick Links</h4>
+                <ul class="footer-links">
+                    <li><a href="https://lollypopdf.github.io/LollyPoPdf#home" data-i18n="nav.home">Home</a></li>
+                    <li><a href="https://lollypopdf.github.io/LollyPoPdf#tools" data-i18n="footer.links.tools">All Tools</a></li>
+                    <li><a href="faq.html" data-i18n="footer.links.faq">FAQ</a></li>
+                    <li><a href="contact.html" data-i18n="footer.links.contact">Contact</a></li>
+                    <li><a href="privacy-policy.html" data-i18n="footer.links.privacy">Privacy Policy</a></li>
+                    <li><a href="disclaimer.html" data-i18n="footer.links.disclaimer">Disclaimer</a></li>
+                    <li><a href="terms.html" data-i18n="footer.links.terms">Terms of Service</a></li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="footer-line"></div>
+        <div class="copyright" data-i18n="footer.copyright">© 2025 LollyPoPDF. All rights reserved.</div>
+    </footer>
+
+    <!-- Language Switcher -->
+    <div class="language-switcher">
+        <button class="language-btn">
+            <i class="fas fa-globe"></i>
+            <span id="currentLanguage">English</span>
+        </button>
+        <div class="language-dropdown">
+            <div class="language-option" data-lang="en">English</div>
+            <div class="language-option" data-lang="es">Español</div>
+            <div class="language-option" data-lang="fr">Français</div>
+            <div class="language-option" data-lang="de">Deutsch</div>
+            <div class="language-option" data-lang="it">Italiano</div>
+            <div class="language-option" data-lang="pt">Português</div>
+            <div class="language-option" data-lang="ja">日本語</div>
+            <div class="language-option" data-lang="ru">Pусский</div>
+            <div class="language-option" data-lang="ko">한국어</div>
+            <div class="language-option" data-lang="zh-CN">中文 (简体)</div>
+            <div class="language-option" data-lang="zh-TW">中文 (繁體)</div>
+            <div class="language-option" data-lang="ar">العربية</div>
+            <div class="language-option" data-lang="fa">فارسی</div>
+            <div class="language-option" data-lang="bg">Български</div>
+            <div class="language-option" data-lang="ca">Català</div>
+            <div class="language-option" data-lang="nl">Nederlands</div>
+            <div class="language-option" data-lang="el">Ελληνικά</div>
+            <div class="language-option" data-lang="hi">हिन्दी</div>
+            <div class="language-option" data-lang="te">తెలుగు</div>
+            <div class="language-option" data-lang="kn">ಕನ್ನಡ</div>
+            <div class="language-option" data-lang="ta">தமிழ்</div>
+            <div class="language-option" data-lang="ml">മലയാളം</div>
+            <div class="language-option" data-lang="id">Bahasa Indonesia</div>
+            <div class="language-option" data-lang="ms">Bahasa Melayu</div>
+            <div class="language-option" data-lang="pl">Polski</div>
+            <div class="language-option" data-lang="th">ภาษาไทย</div>
+            <div class="language-option" data-lang="tr">Türkçe</div>
+            <div class="language-option" data-lang="uk">Українська</div>
+            <div class="language-option" data-lang="vi">Tiếng Việt</div>
+            <div class="language-option" data-lang="is">Íslenska</div>
+            <div class="language-option" data-lang="no">Norsk</div>
+            <div class="language-option" data-lang="sv">Svenska</div>
+            <div class="language-option" data-lang="fi">Suomi</div>
+            <div class="language-option" data-lang="cs">Čeština</div>
+        </div>
+    </div>
+
+    <script>
+        // Theme Toggle
+        const themeToggle = document.getElementById('themeToggle');
+        const body = document.body;
+        
+        // Check for saved theme preference or respect OS preference
+        const savedTheme = localStorage.getItem('theme') || 
+            (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        
+        if (savedTheme === 'dark') {
+            body.classList.add('dark-mode');
+            themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+        }
+        
+        themeToggle.addEventListener('click', () => {
+            body.classList.toggle('dark-mode');
+            const isDarkMode = body.classList.contains('dark-mode');
+            
+            if (isDarkMode) {
+                themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+                localStorage.setItem('theme', 'dark');
+            } else {
+                themeToggle.innerHTML = '<i class="fas fa-moon"></i>';
+                localStorage.setItem('theme', 'light');
+            }
+        });
+
+        // Mobile Menu Toggle
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const mobileMenu = document.getElementById('mobileMenu');
+        
+        mobileMenuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('active');
+            
+            // Change icon based on menu state
+            if (mobileMenu.classList.contains('active')) {
+                mobileMenuBtn.innerHTML = '<i class="fas fa-times"></i>';
+            } else {
+                mobileMenuBtn.innerHTML = '<i class="fas fa-bars"></i>';
+            }
+        });
+
+        // Close mobile menu when clicking on a link
+        const mobileMenuLinks = mobileMenu.querySelectorAll('a');
+        mobileMenuLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                mobileMenu.classList.remove('active');
+                mobileMenuBtn.innerHTML = '<i class="fas fa-bars"></i>';
+            });
+        });
+
+        // Color Picker & Converter Functionality
+        const colorPicker = document.getElementById('colorPicker');
+        const colorDisplay = document.getElementById('colorDisplay');
+        const hexInput = document.getElementById('hexInput');
+        const rgbInput = document.getElementById('rgbInput');
+        const hslInput = document.getElementById('hslInput');
+        const copyButtons = document.querySelectorAll('.copy-btn');
+        const exportBtn = document.getElementById('exportBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        const statusMessage = document.getElementById('statusMessage');
+        const palettesContainer = document.getElementById('palettesContainer');
+
+        // Initialize with default color
+        updateColorDisplay(colorPicker.value);
+
+        // Color picker change event
+        colorPicker.addEventListener('input', () => {
+            updateColorDisplay(colorPicker.value);
+        });
+
+        // HEX input change event
+        hexInput.addEventListener('input', () => {
+            const hexValue = hexInput.value;
+            if (isValidHex(hexValue)) {
+                updateColorFromHex(hexValue);
+            }
+        });
+
+        // RGB input change event
+        rgbInput.addEventListener('input', () => {
+            const rgbValue = rgbInput.value;
+            if (isValidRgb(rgbValue)) {
+                updateColorFromRgb(rgbValue);
+            }
+        });
+
+        // HSL input change event
+        hslInput.addEventListener('input', () => {
+            const hslValue = hslInput.value;
+            if (isValidHsl(hslValue)) {
+                updateColorFromHsl(hslValue);
+            }
+        });
+
+        // Copy buttons
+        copyButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const format = button.getAttribute('data-format');
+                let textToCopy = '';
+                
+                switch(format) {
+                    case 'hex':
+                        textToCopy = hexInput.value;
+                        break;
+                    case 'rgb':
+                        textToCopy = rgbInput.value;
+                        break;
+                    case 'hsl':
+                        textToCopy = hslInput.value;
+                        break;
+                }
+                
+                copyToClipboard(textToCopy);
+                showStatus(`${format.toUpperCase()} value copied to clipboard!`, 'success');
+            });
+        });
+
+        // Export button
+        exportBtn.addEventListener('click', () => {
+            const colorData = {
+                hex: hexInput.value,
+                rgb: rgbInput.value,
+                hsl: hslInput.value
+            };
+            
+            const blob = new Blob([JSON.stringify(colorData, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'color-values.json';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            showStatus('Color values exported!', 'success');
+        });
+
+        // Reset button
+        resetBtn.addEventListener('click', () => {
+            colorPicker.value = '#9370db';
+            updateColorDisplay('#9370db');
+            showStatus('Color reset to default.', 'success');
+        });
+
+        // Update color display and all inputs
+        function updateColorDisplay(hexColor) {
+            colorDisplay.style.backgroundColor = hexColor;
+            
+            // Update HEX input
+            hexInput.value = hexColor;
+            
+            // Convert to RGB and update RGB input
+            const rgb = hexToRgb(hexColor);
+            rgbInput.value = `rgb(${rgb.r}, ${rgb.g}, ${rgb.b})`;
+            
+            // Convert to HSL and update HSL input
+            const hsl = rgbToHsl(rgb.r, rgb.g, rgb.b);
+            hslInput.value = `hsl(${hsl.h}, ${hsl.s}%, ${hsl.l}%)`;
+            
+            // Update color picker
+            colorPicker.value = hexColor;
+            
+            // Generate color palettes
+            generateColorPalettes(hexColor);
+        }
+
+        // Update color from HEX value
+        function updateColorFromHex(hexColor) {
+            colorPicker.value = hexColor;
+            updateColorDisplay(hexColor);
+        }
+
+        // Update color from RGB value
+        function updateColorFromRgb(rgbString) {
+            const rgbValues = rgbString.match(/\d+/g);
+            if (rgbValues && rgbValues.length === 3) {
+                const hex = rgbToHex(parseInt(rgbValues[0]), parseInt(rgbValues[1]), parseInt(rgbValues[2]));
+                colorPicker.value = hex;
+                updateColorDisplay(hex);
+            }
+        }
+
+        // Update color from HSL value
+        function updateColorFromHsl(hslString) {
+            const hslValues = hslString.match(/\d+/g);
+            if (hslValues && hslValues.length === 3) {
+                const rgb = hslToRgb(parseInt(hslValues[0]), parseInt(hslValues[1]), parseInt(hslValues[2]));
+                const hex = rgbToHex(rgb.r, rgb.g, rgb.b);
+                colorPicker.value = hex;
+                updateColorDisplay(hex);
+            }
+        }
+
+        // Generate color palettes
+        function generateColorPalettes(baseColor) {
+            palettesContainer.innerHTML = '';
+            
+            const baseRgb = hexToRgb(baseColor);
+            const baseHsl = rgbToHsl(baseRgb.r, baseRgb.g, baseRgb.b);
+            
+            // Complementary palette
+            const complementaryHue = (baseHsl.h + 180) % 360;
+            const complementaryColor = hslToHex(complementaryHue, baseHsl.s, baseHsl.l);
+            
+            // Analogous palette (colors adjacent on the color wheel)
+            const analogous1 = hslToHex((baseHsl.h + 30) % 360, baseHsl.s, baseHsl.l);
+            const analogous2 = hslToHex((baseHsl.h - 30 + 360) % 360, baseHsl.s, baseHsl.l);
+            
+            // Triadic palette (colors evenly spaced around the color wheel)
+            const triadic1 = hslToHex((baseHsl.h + 120) % 360, baseHsl.s, baseHsl.l);
+            const triadic2 = hslToHex((baseHsl.h + 240) % 360, baseHsl.s, baseHsl.l);
+            
+            // Monochromatic palette (variations in lightness)
+            const monochromatic1 = hslToHex(baseHsl.h, baseHsl.s, Math.min(baseHsl.l + 20, 100));
+            const monochromatic2 = hslToHex(baseHsl.h, baseHsl.s, Math.max(baseHsl.l - 20, 0));
+            
+            const palettes = [
+                { name: 'Base', color: baseColor },
+                { name: 'Complementary', color: complementaryColor },
+                { name: 'Analogous 1', color: analogous1 },
+                { name: 'Analogous 2', color: analogous2 },
+                { name: 'Triadic 1', color: triadic1 },
+                { name: 'Triadic 2', color: triadic2 },
+                { name: 'Light', color: monochromatic1 },
+                { name: 'Dark', color: monochromatic2 }
+            ];
+            
+            palettes.forEach(palette => {
+                const paletteItem = document.createElement('div');
+                paletteItem.className = 'palette-item';
+                paletteItem.style.backgroundColor = palette.color;
+                paletteItem.textContent = palette.name;
+                paletteItem.title = `${palette.name}: ${palette.color}`;
+                
+                // Add click event to apply the palette color
+                paletteItem.addEventListener('click', () => {
+                    updateColorDisplay(palette.color);
+                    showStatus(`Applied ${palette.name} color`, 'success');
+                });
+                
+                palettesContainer.appendChild(paletteItem);
+            });
+        }
+
+        // Color conversion functions
+        function hexToRgb(hex) {
+            const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+            return result ? {
+                r: parseInt(result[1], 16),
+                g: parseInt(result[2], 16),
+                b: parseInt(result[3], 16)
+            } : { r: 0, g: 0, b: 0 };
+        }
+
+        function rgbToHex(r, g, b) {
+            return "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
+        }
+
+        function rgbToHsl(r, g, b) {
+            r /= 255;
+            g /= 255;
+            b /= 255;
+            
+            const max = Math.max(r, g, b);
+            const min = Math.min(r, g, b);
+            let h, s, l = (max + min) / 2;
+            
+            if (max === min) {
+                h = s = 0; // achromatic
+            } else {
+                const d = max - min;
+                s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+                
+                switch (max) {
+                    case r: h = (g - b) / d + (g < b ? 6 : 0); break;
+                    case g: h = (b - r) / d + 2; break;
+                    case b: h = (r - g) / d + 4; break;
+                }
+                
+                h /= 6;
+            }
+            
+            return {
+                h: Math.round(h * 360),
+                s: Math.round(s * 100),
+                l: Math.round(l * 100)
+            };
+        }
+
+        function hslToRgb(h, s, l) {
+            h /= 360;
+            s /= 100;
+            l /= 100;
+            
+            let r, g, b;
+            
+            if (s === 0) {
+                r = g = b = l; // achromatic
+            } else {
+                const hue2rgb = (p, q, t) => {
+                    if (t < 0) t += 1;
+                    if (t > 1) t -= 1;
+                    if (t < 1/6) return p + (q - p) * 6 * t;
+                    if (t < 1/2) return q;
+                    if (t < 2/3) return p + (q - p) * (2/3 - t) * 6;
+                    return p;
+                };
+                
+                const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+                const p = 2 * l - q;
+                
+                r = hue2rgb(p, q, h + 1/3);
+                g = hue2rgb(p, q, h);
+                b = hue2rgb(p, q, h - 1/3);
+            }
+            
+            return {
+                r: Math.round(r * 255),
+                g: Math.round(g * 255),
+                b: Math.round(b * 255)
+            };
+        }
+
+        function hslToHex(h, s, l) {
+            const rgb = hslToRgb(h, s, l);
+            return rgbToHex(rgb.r, rgb.g, rgb.b);
+        }
+
+        // Validation functions
+        function isValidHex(hex) {
+            return /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/.test(hex);
+        }
+
+        function isValidRgb(rgb) {
+            return /^rgb\(\s*\d{1,3}\s*,\s*\d{1,3}\s*,\s*\d{1,3}\s*\)$/.test(rgb);
+        }
+
+        function isValidHsl(hsl) {
+            return /^hsl\(\s*\d{1,3}\s*,\s*\d{1,3}%\s*,\s*\d{1,3}%\s*\)$/.test(hsl);
+        }
+
+        // Utility functions
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).catch(err => {
+                console.error('Failed to copy: ', err);
+            });
+        }
+
+        function showStatus(message, type) {
+            statusMessage.textContent = message;
+            statusMessage.className = 'status-message';
+            
+            if (type === 'success') {
+                statusMessage.classList.add('status-success');
+            } else if (type === 'error') {
+                statusMessage.classList.add('status-error');
+            }
+            
+            statusMessage.style.display = 'block';
+            
+            // Auto-hide after 3 seconds
+            setTimeout(() => {
+                statusMessage.style.display = 'none';
+            }, 3000);
+        }
+
+        // Language Switcher
+        const languageBtn = document.querySelector('.language-btn');
+        const currentLanguageElement = document.getElementById('currentLanguage');
+        const languageDropdown = document.querySelector('.language-dropdown');
+        
+        const languages = [
+            { code: 'en', name: 'English' },
+            { code: 'es', name: 'Español' },
+            { code: 'fr', name: 'Français' },
+            { code: 'de', name: 'Deutsch' },
+            { code: 'it', name: 'Italiano' },
+            { code: 'pt', name: 'Português' },
+            { code: 'ja', name: '日本語' },
+            { code: 'ru', name: 'Pусский' },
+            { code: 'ko', name: '한국어' },
+            { code: 'zh-CN', name: '中文 (简体)' },
+            { code: 'zh-TW', name: '中文 (繁體)' },
+            { code: 'ar', name: 'العربية' },
+            { code: 'fa', name: 'فارسی' },
+            { code: 'bg', name: 'Български' },
+            { code: 'ca', name: 'Català' },
+            { code: 'nl', name: 'Nederlands' },
+            { code: 'el', name: 'Ελληνικά' },
+            { code: 'hi', name: 'हिन्दी' },
+            { code: 'te', name: 'తెలుగు' },
+            { code: 'kn', name: 'ಕನ್ನಡ' },
+            { code: 'ta', name: 'தமிழ்' },
+            { code: 'ml', name: 'മലയാളം' }
+        ];
+
+        // Translation data
+        const translations = {
+            en: {
+                "nav.home": "Home",
+                "nav.about": "About Us",
+                "nav.tools": "Tools",
+                "nav.contact": "Contact",
+                "hero.title": "Color Picker & Converter Tool",
+                "hero.description": "Pick colors and convert between HEX, RGB, and HSL formats instantly – no servers, 100% client-side. All processing happens locally with complete privacy.",
+                "howto.title": "How to Use the Color Picker & Converter",
+                "howto.step1.title": "Pick a Color",
+                "howto.step1.description": "Use the color picker to select a color visually, or enter a color value in HEX, RGB, or HSL format. The color preview will update in real-time.",
+                "howto.step2.title": "Convert Formats",
+                "howto.step2.description": "The tool automatically converts your selected color between HEX, RGB, and HSL formats. All values update instantly as you change the color.",
+                "howto.step3.title": "Copy or Export",
+                "howto.step3.description": "Copy any color format to clipboard with one click, or export all color values as a text file for later use.",
+                "howto.step4.title": "Explore Palettes",
+                "howto.step4.description": "Discover complementary color palettes based on your selected color. Click on any palette color to apply it.",
+                "tool.title": "Color Picker & Converter",
+                "tool.hex": "HEX",
+                "tool.rgb": "RGB",
+                "tool.hsl": "HSL",
+                "tool.palettes": "Color Palettes",
+                "tool.export": "Export Colors",
+                "tool.reset": "Reset",
+                "footer.follow": "FOLLOW US",
+                "footer.categories": "Popular Categories",
+                "footer.categories.pdf": "PDF Tools",
+                "footer.categories.image": "Image Tools",
+                "footer.categories.text": "Text Tools",
+                "footer.categories.av": "Audio/Video Tools",
+                "footer.categories.web": "WebDeveloper Tools",
+                "footer.categories.calc": "Calculator Tools",
+                "footer.categories.util": "Utility Tools",
+                "footer.categories.color": "Color Tools",
+                "footer.quicklinks": "Quick Links",
+                "footer.links.tools": "All Tools",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Contact",
+                "footer.links.privacy": "Privacy Policy",
+                "footer.links.disclaimer": "Disclaimer",
+                "footer.links.terms": "Terms of Service",
+                "footer.copyright": "© 2025 LollyPoPDF. All rights reserved."
+            },
+            es: {
+                "nav.home": "Inicio",
+                "nav.about": "Sobre Nosotros",
+                "nav.tools": "Herramientas",
+                "nav.contact": "Contacto",
+                "hero.title": "Herramienta Selector y Convertidor de Colores",
+                "hero.description": "Selecciona colores y convierte entre formatos HEX, RGB y HSL instantáneamente – sin servidores, 100% en el cliente. Todo el procesamiento ocurre localmente con privacidad completa.",
+                "howto.title": "Cómo Usar el Selector y Convertidor de Colores",
+                "howto.step1.title": "Selecciona un Color",
+                "howto.step1.description": "Usa el selector de color para elegir un color visualmente, o ingresa un valor de color en formato HEX, RGB o HSL. La vista previa del color se actualizará en tiempo real.",
+                "howto.step2.title": "Convierte Formatos",
+                "howto.step2.description": "La herramienta convierte automáticamente tu color seleccionado entre formatos HEX, RGB y HSL. Todos los valores se actualizan instantáneamente al cambiar el color.",
+                "howto.step3.title": "Copia o Exporta",
+                "howto.step3.description": "Copia cualquier formato de color al portapapeles con un clic, o exporta todos los valores de color como un archivo de texto para uso posterior.",
+                "howto.step4.title": "Explora Paletas",
+                "howto.step4.description": "Descubre paletas de colores complementarias basadas en tu color seleccionado. Haz clic en cualquier color de la paleta para aplicarlo.",
+                "tool.title": "Selector y Convertidor de Colores",
+                "tool.hex": "HEX",
+                "tool.rgb": "RGB",
+                "tool.hsl": "HSL",
+                "tool.palettes": "Paletas de Colores",
+                "tool.export": "Exportar Colores",
+                "tool.reset": "Restablecer",
+                "footer.follow": "SÍGUENOS",
+                "footer.categories": "Categorías Populares",
+                "footer.categories.pdf": "Herramientas PDF",
+                "footer.categories.image": "Herramientas de Imagen",
+                "footer.categories.text": "Herramientas de Texto",
+                "footer.categories.av": "Herramientas de Audio/Video",
+                "footer.categories.web": "Herramientas WebDesarrollador",
+                "footer.categories.calc": "Herramientas de Calculadora",
+                "footer.categories.util": "Herramientas de Utilidad",
+                "footer.categories.color": "Herramientas de Color",
+                "footer.quicklinks": "Enlaces Rápidos",
+                "footer.links.tools": "Todas las Herramientas",
+                "footer.links.faq": "Preguntas Frecuentes",
+                "footer.links.contact": "Contacto",
+                "footer.links.privacy": "Política de Privacidad",
+                "footer.links.disclaimer": "Descargo de Responsabilidad",
+                "footer.links.terms": "Términos de Servicio",
+                "footer.copyright": "© 2025 LollyPoPDF. Todos los derechos reservados."
+            },
+            fr: {
+                "nav.home": "Accueil",
+                "nav.about": "À propos de nous",
+                "nav.tools": "Outils",
+                "nav.contact": "Contact",
+                "hero.title": "Outil de Sélection et Conversion de Couleurs",
+                "hero.description": "Sélectionnez des couleurs et convertissez entre les formats HEX, RGB et HSL instantanément – sans serveurs, 100% côté client. Tout le traitement se fait localement avec une confidentialité totale.",
+                "howto.title": "Comment Utiliser le Sélecteur et Convertisseur de Couleurs",
+                "howto.step1.title": "Choisir une Couleur",
+                "howto.step1.description": "Utilisez le sélecteur de couleur pour choisir une couleur visuellement, ou entrez une valeur de couleur au format HEX, RGB ou HSL. L'aperçu de la couleur se met à jour en temps réel.",
+                "howto.step2.title": "Convertir les Formats",
+                "howto.step2.description": "L'outil convertit automatiquement votre couleur sélectionnée entre les formats HEX, RGB et HSL. Toutes les valeurs se mettent à jour instantanément lorsque vous changez la couleur.",
+                "howto.step3.title": "Copier ou Exporter",
+                "howto.step3.description": "Copiez n'importe quel format de couleur dans le presse-papiers en un clic, ou exportez toutes les valeurs de couleur dans un fichier texte pour une utilisation ultérieure.",
+                "howto.step4.title": "Explorer les Palettes",
+                "howto.step4.description": "Découvrez des palettes de couleurs complémentaires basées sur votre couleur sélectionnée. Cliquez sur n'importe quelle couleur de la palette pour l'appliquer.",
+                "tool.title": "Sélecteur et Convertisseur de Couleurs",
+                "tool.hex": "HEX",
+                "tool.rgb": "RGB",
+                "tool.hsl": "HSL",
+                "tool.palettes": "Palettes de Couleurs",
+                "tool.export": "Exporter les Couleurs",
+                "tool.reset": "Réinitialiser",
+                "footer.follow": "SUIVEZ-NOUS",
+                "footer.categories": "Catégories Populaires",
+                "footer.categories.pdf": "Outils PDF",
+                "footer.categories.image": "Outils d'Image",
+                "footer.categories.text": "Outils de Texte",
+                "footer.categories.av": "Outils Audio/Video",
+                "footer.categories.web": "Outils WebDéveloppeur",
+                "footer.categories.calc": "Outils de Calculatrice",
+                "footer.categories.util": "Outils d'Utilité",
+                "footer.categories.color": "Outils de Couleur",
+                "footer.quicklinks": "Liens Rapides",
+                "footer.links.tools": "Tous les Outils",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Contact",
+                "footer.links.privacy": "Politique de Confidentialité",
+                "footer.links.disclaimer": "Avertissement",
+                "footer.links.terms": "Conditions d'Utilisation",
+                "footer.copyright": "© 2025 LollyPoPDF. Tous droits réservés."
+            },
+            de: {
+                "nav.home": "Startseite",
+                "nav.about": "Über uns",
+                "nav.tools": "Werkzeuge",
+                "nav.contact": "Kontakt",
+                "hero.title": "Farbauswahl- und Konvertierungswerkzeug",
+                "hero.description": "Wählen Sie Farben aus und konvertieren Sie zwischen HEX-, RGB- und HSL-Formaten sofort – ohne Server, 100% clientseitig. Die gesamte Verarbeitung erfolgt lokal mit vollständiger Privatsphäre.",
+                "howto.title": "So verwenden Sie den Farbauswahl- und Konverter",
+                "howto.step1.title": "Farbe auswählen",
+                "howto.step1.description": "Verwenden Sie die Farbauswahl, um visuell eine Farbe auszuwählen, oder geben Sie einen Farbwert im HEX-, RGB- oder HSL-Format ein. Die Farbvorschau wird in Echtzeit aktualisiert.",
+                "howto.step2.title": "Formate konvertieren",
+                "howto.step2.description": "Das Tool konvertiert Ihre ausgewählte Farbe automatisch zwischen HEX-, RGB- und HSL-Formaten. Alle Werte werden sofort aktualisiert, wenn Sie die Farbe ändern.",
+                "howto.step3.title": "Kopieren oder Exportieren",
+                "howto.step3.description": "Kopieren Sie jedes Farbformat mit einem Klick in die Zwischenablage oder exportieren Sie alle Farbwerte als Textdatei zur späteren Verwendung.",
+                "howto.step4.title": "Paletten erkunden",
+                "howto.step4.description": "Entdecken Sie komplementäre Farbpaletten basierend auf Ihrer ausgewählten Farbe. Klicken Sie auf eine beliebige Palettenfarbe, um sie anzuwenden.",
+                "tool.title": "Farbauswahl- und Konverter",
+                "tool.hex": "HEX",
+                "tool.rgb": "RGB",
+                "tool.hsl": "HSL",
+                "tool.palettes": "Farbpaletten",
+                "tool.export": "Farben exportieren",
+                "tool.reset": "Zurücksetzen",
+                "footer.follow": "FOLGE UNS",
+                "footer.categories": "Beliebte Kategorien",
+                "footer.categories.pdf": "PDF-Werkzeuge",
+                "footer.categories.image": "Bildwerkzeuge",
+                "footer.categories.text": "Textwerkzeuge",
+                "footer.categories.av": "Audio/Video-Werkzeuge",
+                "footer.categories.web": "WebEntwickler-Werkzeuge",
+                "footer.categories.calc": "Rechnerwerkzeuge",
+                "footer.categories.util": "Hilfsprogramme",
+                "footer.categories.color": "Farbwerkzeuge",
+                "footer.quicklinks": "Schnelllinks",
+                "footer.links.tools": "Alle Werkzeuge",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Kontakt",
+                "footer.links.privacy": "Datenschutzrichtlinie",
+                "footer.links.disclaimer": "Haftungsausschluss",
+                "footer.links.terms": "Nutzungsbedingungen",
+                "footer.copyright": "© 2025 LollyPoPDF. Alle Rechte vorbehalten."
+            },
+            it: {
+                "nav.home": "Home",
+                "nav.about": "Chi siamo",
+                "nav.tools": "Strumenti",
+                "nav.contact": "Contatto",
+                "hero.title": "Strumento Selettore e Convertitore Colori",
+                "hero.description": "Seleziona colori e converti tra formati HEX, RGB e HSL all'istante – senza server, 100% lato client. Tutta l'elaborazione avviene localmente con completa privacy.",
+                "howto.title": "Come Utilizzare il Selettore e Convertitore Colori",
+                "howto.step1.title": "Seleziona un Colore",
+                "howto.step1.description": "Usa il selettore colori per scegliere un colore visivamente, o inserisci un valore colore in formato HEX, RGB o HSL. L'anteprima del colore si aggiorna in tempo reale.",
+                "howto.step2.title": "Converti Formati",
+                "howto.step2.description": "Lo strumento converte automaticamente il colore selezionato tra formati HEX, RGB e HSL. Tutti i valori si aggiornano istantaneamente quando cambi il colore.",
+                "howto.step3.title": "Copia o Esporta",
+                "howto.step3.description": "Copia qualsiasi formato colore negli appunti con un clic, o esporta tutti i valori colore come file di testo per un uso successivo.",
+                "howto.step4.title": "Esplora Palette",
+                "howto.step4.description": "Scopri palette di colori complementari basate sul colore selezionato. Clicca su qualsiasi colore della palette per applicarlo.",
+                "tool.title": "Selettore e Convertitore Colori",
+                "tool.hex": "HEX",
+                "tool.rgb": "RGB",
+                "tool.hsl": "HSL",
+                "tool.palettes": "Palette Colori",
+                "tool.export": "Esporta Colori",
+                "tool.reset": "Ripristina",
+                "footer.follow": "SEGUICI",
+                "footer.categories": "Categorie Popolari",
+                "footer.categories.pdf": "Strumenti PDF",
+                "footer.categories.image": "Strumenti Immagine",
+                "footer.categories.text": "Strumenti Testo",
+                "footer.categories.av": "Strumenti Audio/Video",
+                "footer.categories.web": "Strumenti Sviluppatore Web",
+                "footer.categories.calc": "Strumenti Calcolatrice",
+                "footer.categories.util": "Strumenti Utilità",
+                "footer.categories.color": "Strumenti Colore",
+                "footer.quicklinks": "Link Rapidi",
+                "footer.links.tools": "Tutti gli Strumenti",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Contatto",
+                "footer.links.privacy": "Informativa sulla Privacy",
+                "footer.links.disclaimer": "Disclaimer",
+                "footer.links.terms": "Termini di Servizio",
+                "footer.copyright": "© 2025 LollyPoPDF. Tutti i diritti riservati."
+            },
+            pt: {
+                "nav.home": "Início",
+                "nav.about": "Sobre Nós",
+                "nav.tools": "Ferramentas",
+                "nav.contact": "Contato",
+                "hero.title": "Ferramenta Seletor e Conversor de Cores",
+                "hero.description": "Selecione cores e converta entre formatos HEX, RGB e HSL instantaneamente – sem servidores, 100% no cliente. Todo o processamento acontece localmente com privacidade completa.",
+                "howto.title": "Como Usar o Seletor e Conversor de Cores",
+                "howto.step1.title": "Selecione uma Cor",
+                "howto.step1.description": "Use o seletor de cores para escolher uma cor visualmente, ou insira um valor de cor em formato HEX, RGB ou HSL. A pré-visualização da cor será atualizada em tempo real.",
+                "howto.step2.title": "Converter Formatos",
+                "howto.step2.description": "A ferramenta converte automaticamente sua cor selecionada entre formatos HEX, RGB e HSL. Todos os valores são atualizados instantaneamente conforme você altera a cor.",
+                "howto.step3.title": "Copiar ou Exportar",
+                "howto.step3.description": "Copie qualquer formato de cor para a área de transferência com um clique, ou exporte todos os valores de cor como um arquivo de texto para uso posterior.",
+                "howto.step4.title": "Explorar Paletas",
+                "howto.step4.description": "Descubra paletas de cores complementares baseadas na sua cor selecionada. Clique em qualquer cor da paleta para aplicá-la.",
+                "tool.title": "Seletor e Conversor de Cores",
+                "tool.hex": "HEX",
+                "tool.rgb": "RGB",
+                "tool.hsl": "HSL",
+                "tool.palettes": "Paletas de Cores",
+                "tool.export": "Exportar Cores",
+                "tool.reset": "Redefinir",
+                "footer.follow": "SIGA-NOS",
+                "footer.categories": "Categorias Populares",
+                "footer.categories.pdf": "Ferramentas PDF",
+                "footer.categories.image": "Ferramentas de Imagem",
+                "footer.categories.text": "Ferramentas de Texto",
+                "footer.categories.av": "Ferramentas de Áudio/Video",
+                "footer.categories.web": "Ferramentas WebDesenvolvedor",
+                "footer.categories.calc": "Ferramentas de Calculadora",
+                "footer.categories.util": "Ferramentas de Utilidade",
+                "footer.categories.color": "Ferramentas de Cor",
+                "footer.quicklinks": "Links Rápidos",
+                "footer.links.tools": "Todas as Ferramentas",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Contato",
+                "footer.links.privacy": "Política de Privacidade",
+                "footer.links.disclaimer": "Aviso Legal",
+                "footer.links.terms": "Termos de Serviço",
+                "footer.copyright": "© 2025 LollyPoPDF. Todos os direitos reservados."
+            },
+            ja: {
+                "nav.home": "ホーム",
+                "nav.about": "会社概要",
+                "nav.tools": "ツール",
+                "nav.contact": "お問い合わせ",
+                "hero.title": "カラーピッカー＆コンバーターツール",
+                "hero.description": "色を選択し、HEX、RGB、HSL形式間で瞬時に変換 – サーバー不要、100%クライアントサイド。すべての処理は完全なプライバシーでローカルで行われます。",
+                "howto.title": "カラーピッカー＆コンバーターの使い方",
+                "howto.step1.title": "色を選択",
+                "howto.step1.description": "カラーピッカーを使用して視覚的に色を選択するか、HEX、RGB、またはHSL形式で色の値を入力します。色のプレビューはリアルタイムで更新されます。",
+                "howto.step2.title": "形式を変換",
+                "howto.step2.description": "ツールは選択した色をHEX、RGB、HSL形式間で自動的に変換します。すべての値は色を変更すると瞬時に更新されます。",
+                "howto.step3.title": "コピーまたはエクスポート",
+                "howto.step3.description": "ワンクリックで任意の色形式をクリップボードにコピーするか、後で使用するためにすべての色の値をテキストファイルとしてエクスポートします。",
+                "howto.step4.title": "パレットを探索",
+                "howto.step4.description": "選択した色に基づいて補色のカラーパレットを発見します。パレットの任意の色をクリックして適用します。",
+                "tool.title": "カラーピッカー＆コンバーター",
+                "tool.hex": "HEX",
+                "tool.rgb": "RGB",
+                "tool.hsl": "HSL",
+                "tool.palettes": "カラーパレット",
+                "tool.export": "色をエクスポート",
+                "tool.reset": "リセット",
+                "footer.follow": "フォローする",
+                "footer.categories": "人気カテゴリー",
+                "footer.categories.pdf": "PDFツール",
+                "footer.categories.image": "画像ツール",
+                "footer.categories.text": "テキストツール",
+                "footer.categories.av": "オーディオ/ビデオツール",
+                "footer.categories.web": "ウェブ開発者ツール",
+                "footer.categories.calc": "電卓ツール",
+                "footer.categories.util": "ユーティリティツール",
+                "footer.categories.color": "カラーツール",
+                "footer.quicklinks": "クイックリンク",
+                "footer.links.tools": "すべてのツール",
+                "footer.links.faq": "よくある質問",
+                "footer.links.contact": "お問い合わせ",
+                "footer.links.privacy": "プライバシーポリシー",
+                "footer.links.disclaimer": "免責事項",
+                "footer.links.terms": "利用規約",
+                "footer.copyright": "© 2025 LollyPoPDF. 全著作権所有。"
+            },
+            ru: {
+                "nav.home": "Главная",
+                "nav.about": "О нас",
+                "nav.tools": "Инструменты",
+                "nav.contact": "Контакты",
+                "hero.title": "Инструмент выбора и конвертации цветов",
+                "hero.description": "Выбирайте цвета и конвертируйте между форматами HEX, RGB и HSL мгновенно – без серверов, 100% на стороне клиента. Вся обработка происходит локально с полной конфиденциальностью.",
+                "howto.title": "Как использовать инструмент выбора и конвертации цветов",
+                "howto.step1.title": "Выберите цвет",
+                "howto.step1.description": "Используйте палитру цветов для визуального выбора цвета или введите значение цвета в формате HEX, RGB или HSL. Предварительный просмотр цвета обновляется в реальном времени.",
+                "howto.step2.title": "Конвертируйте форматы",
+                "howto.step2.description": "Инструмент автоматически конвертирует выбранный цвет между форматами HEX, RGB и HSL. Все значения обновляются мгновенно при изменении цвета.",
+                "howto.step3.title": "Копируйте или экспортируйте",
+                "howto.step3.description": "Скопируйте любой цветовой формат в буфер обмена одним щелчком или экспортируйте все цветовые значения в текстовый файл для последующего использования.",
+                "howto.step4.title": "Исследуйте палитры",
+                "howto.step4.description": "Откройте для себя дополнительные цветовые палитры на основе выбранного вами цвета. Щелкните любой цвет палитры, чтобы применить его.",
+                "tool.title": "Выбор и конвертация цветов",
+                "tool.hex": "HEX",
+                "tool.rgb": "RGB",
+                "tool.hsl": "HSL",
+                "tool.palettes": "Цветовые палитры",
+                "tool.export": "Экспорт цветов",
+                "tool.reset": "Сброс",
+                "footer.follow": "СЛЕДУЙТЕ ЗА НАМИ",
+                "footer.categories": "Популярные категории",
+                "footer.categories.pdf": "PDF инструменты",
+                "footer.categories.image": "Инструменты для изображений",
+                "footer.categories.text": "Текстовые инструменты",
+                "footer.categories.av": "Аудио/Видео инструменты",
+                "footer.categories.web": "Инструменты веб-разработчика",
+                "footer.categories.calc": "Инструменты калькулятора",
+                "footer.categories.util": "Утилиты",
+                "footer.categories.color": "Цветовые инструменты",
+                "footer.quicklinks": "Быстрые ссылки",
+                "footer.links.tools": "Все инструменты",
+                "footer.links.faq": "ЧаВо",
+                "footer.links.contact": "Контакты",
+                "footer.links.privacy": "Политика конфиденциальности",
+                "footer.links.disclaimer": "Отказ от ответственности",
+                "footer.links.terms": "Условия использования",
+                "footer.copyright": "© 2025 LollyPoPDF. Все права защищены."
+            },
+            ko: {
+                "nav.home": "홈",
+                "nav.about": "회사 소개",
+                "nav.tools": "도구",
+                "nav.contact": "연락처",
+                "hero.title": "색상 선택 및 변환 도구",
+                "hero.description": "색상을 선택하고 HEX, RGB, HSL 형식 간에 즉시 변환 – 서버 없이 100% 클라이언트 측. 모든 처리는 완전한 개인 정보 보호와 함께 로컬에서 이루어집니다.",
+                "howto.title": "색상 선택 및 변환기 사용 방법",
+                "howto.step1.title": "색상 선택",
+                "howto.step1.description": "색상 선택기를 사용하여 시각적으로 색상을 선택하거나 HEX, RGB 또는 HSL 형식으로 색상 값을 입력합니다. 색상 미리보기가 실시간으로 업데이트됩니다.",
+                "howto.step2.title": "형식 변환",
+                "howto.step2.description": "도구는 선택한 색상을 HEX, RGB, HSL 형식 간에 자동으로 변환합니다. 모든 값은 색상을 변경할 때 즉시 업데이트됩니다.",
+                "howto.step3.title": "복사 또는 내보내기",
+                "howto.step3.description": "한 번의 클릭으로 모든 색상 형식을 클립보드에 복사하거나 나중에 사용할 수 있도록 모든 색상 값을 텍스트 파일로 내보냅니다.",
+                "howto.step4.title": "팔레트 탐색",
+                "howto.step4.description": "선택한 색상을 기반으로 보색 색상 팔레트를 발견하세요. 팔레트의 모든 색상을 클릭하여 적용합니다.",
+                "tool.title": "색상 선택 및 변환기",
+                "tool.hex": "HEX",
+                "tool.rgb": "RGB",
+                "tool.hsl": "HSL",
+                "tool.palettes": "색상 팔레트",
+                "tool.export": "색상 내보내기",
+                "tool.reset": "재설정",
+                "footer.follow": "팔로우하기",
+                "footer.categories": "인기 카테고리",
+                "footer.categories.pdf": "PDF 도구",
+                "footer.categories.image": "이미지 도구",
+                "footer.categories.text": "텍스트 도구",
+                "footer.categories.av": "오디오/비디오 도구",
+                "footer.categories.web": "웹개발자 도구",
+                "footer.categories.calc": "계산기 도구",
+                "footer.categories.util": "유틸리티 도구",
+                "footer.categories.color": "색상 도구",
+                "footer.quicklinks": "빠른 링크",
+                "footer.links.tools": "모든 도구",
+                "footer.links.faq": "자주 묻는 질문",
+                "footer.links.contact": "연락처",
+                "footer.links.privacy": "개인정보 보호정책",
+                "footer.links.disclaimer": "면책 조항",
+                "footer.links.terms": "이용 약관",
+                "footer.copyright": "© 2025 LollyPoPDF. 모든 권리 보유."
+            },
+            "zh-CN": {
+                "nav.home": "首页",
+                "nav.about": "关于我们",
+                "nav.tools": "工具",
+                "nav.contact": "联系我们",
+                "hero.title": "颜色选择器和转换器工具",
+                "hero.description": "选择颜色并在HEX、RGB和HSL格式之间即时转换 – 无需服务器，100%客户端处理。所有处理都在本地完成，完全保护隐私。",
+                "howto.title": "如何使用颜色选择器和转换器",
+                "howto.step1.title": "选择颜色",
+                "howto.step1.description": "使用颜色选择器直观地选择颜色，或以HEX、RGB或HSL格式输入颜色值。颜色预览将实时更新。",
+                "howto.step2.title": "转换格式",
+                "howto.step2.description": "该工具自动将您选择的颜色在HEX、RGB和HSL格式之间转换。所有值在您更改颜色时即时更新。",
+                "howto.step3.title": "复制或导出",
+                "howto.step3.description": "一键复制任何颜色格式到剪贴板，或将所有颜色值导出为文本文件以供以后使用。",
+                "howto.step4.title": "探索调色板",
+                "howto.step4.description": "基于您选择的颜色发现互补色板。点击调色板中的任何颜色即可应用。",
+                "tool.title": "颜色选择器和转换器",
+                "tool.hex": "HEX",
+                "tool.rgb": "RGB",
+                "tool.hsl": "HSL",
+                "tool.palettes": "颜色调色板",
+                "tool.export": "导出颜色",
+                "tool.reset": "重置",
+                "footer.follow": "关注我们",
+                "footer.categories": "热门类别",
+                "footer.categories.pdf": "PDF工具",
+                "footer.categories.image": "图像工具",
+                "footer.categories.text": "文本工具",
+                "footer.categories.av": "音频/视频工具",
+                "footer.categories.web": "Web开发工具",
+                "footer.categories.calc": "计算器工具",
+                "footer.categories.util": "实用工具",
+                "footer.categories.color": "颜色工具",
+                "footer.quicklinks": "快速链接",
+                "footer.links.tools": "所有工具",
+                "footer.links.faq": "常见问题",
+                "footer.links.contact": "联系我们",
+                "footer.links.privacy": "隐私政策",
+                "footer.links.disclaimer": "免责声明",
+                "footer.links.terms": "服务条款",
+                "footer.copyright": "© 2025 LollyPoPDF. 保留所有权利。"
+            },
+            "zh-TW": {
+                "nav.home": "首頁",
+                "nav.about": "關於我們",
+                "nav.tools": "工具",
+                "nav.contact": "聯絡我們",
+                "hero.title": "顏色選擇器和轉換器工具",
+                "hero.description": "選擇顏色並在HEX、RGB和HSL格式之間即時轉換 – 無需服務器，100%客戶端處理。所有處理都在本地完成，完全保護隱私。",
+                "howto.title": "如何使用顏色選擇器和轉換器",
+                "howto.step1.title": "選擇顏色",
+                "howto.step1.description": "使用顏色選擇器直觀地選擇顏色，或以HEX、RGB或HSL格式輸入顏色值。顏色預覽將實時更新。",
+                "howto.step2.title": "轉換格式",
+                "howto.step2.description": "該工具自動將您選擇的顏色在HEX、RGB和HSL格式之間轉換。所有值在您更改顏色時即時更新。",
+                "howto.step3.title": "複製或導出",
+                "howto.step3.description": "一鍵複製任何顏色格式到剪貼簿，或將所有顏色值導出為文本文件以供以後使用。",
+                "howto.step4.title": "探索調色板",
+                "howto.step4.description": "基於您選擇的顏色發現互補色板。點擊調色板中的任何顏色即可應用。",
+                "tool.title": "顏色選擇器和轉換器",
+                "tool.hex": "HEX",
+                "tool.rgb": "RGB",
+                "tool.hsl": "HSL",
+                "tool.palettes": "顏色調色板",
+                "tool.export": "導出顏色",
+                "tool.reset": "重置",
+                "footer.follow": "關注我們",
+                "footer.categories": "熱門類別",
+                "footer.categories.pdf": "PDF工具",
+                "footer.categories.image": "圖像工具",
+                "footer.categories.text": "文本工具",
+                "footer.categories.av": "音頻/視頻工具",
+                "footer.categories.web": "Web開發工具",
+                "footer.categories.calc": "計算器工具",
+                "footer.categories.util": "實用工具",
+                "footer.categories.color": "顏色工具",
+                "footer.quicklinks": "快速連結",
+                "footer.links.tools": "所有工具",
+                "footer.links.faq": "常見問題",
+                "footer.links.contact": "聯絡我們",
+                "footer.links.privacy": "隱私政策",
+                "footer.links.disclaimer": "免責聲明",
+                "footer.links.terms": "服務條款",
+                "footer.copyright": "© 2025 LollyPoPDF. 保留所有權利。"
+            },
+            ar: {
+                "nav.home": "الصفحة الرئيسية",
+                "nav.about": "من نحن",
+                "nav.tools": "الأدوات",
+                "nav.contact": "اتصل بنا",
+                "hero.title": "أداة منتقي الألوان والمحول",
+                "hero.description": "اختر الألوان وتحويل بين تنسيقات HEX وRGB وHSL على الفور – بدون خوادم، 100% من جانب العميل. كل المعالجة تتم محليًا مع خصوصية كاملة.",
+                "howto.title": "كيفية استخدام منتقي الألوان والمحول",
+                "howto.step1.title": "اختر لونًا",
+                "howto.step1.description": "استخدم منتقي الألوان لاختيار لون بصريًا، أو أدخل قيمة لون بتنسيق HEX أو RGB أو HSL. سيتم تحديث معاينة اللون في الوقت الفعلي.",
+                "howto.step2.title": "تحويل التنسيقات",
+                "howto.step2.description": "تقوم الأداة تلقائيًا بتحويل اللون المحدد بين تنسيقات HEX وRGB وHSL. يتم تحديث جميع القيم على الفور عند تغيير اللون.",
+                "howto.step3.title": "نسخ أو تصدير",
+                "howto.step3.description": "انسخ أي تنسيق لون إلى الحافظة بنقرة واحدة، أو قم بتصدير جميع قيم الألوان كملف نصي لاستخدامها لاحقًا.",
+                "howto.step4.title": "استكشف الألوان التكميلية",
+                "howto.step4.description": "اكتشف لوحات الألوان التكميلية بناءً على اللون المحدد. انقر على أي لون في اللوحة لتطبيقه.",
+                "tool.title": "منتقي الألوان والمحول",
+                "tool.hex": "HEX",
+                "tool.rgb": "RGB",
+                "tool.hsl": "HSL",
+                "tool.palettes": "لوحات الألوان",
+                "tool.export": "تصدير الألوان",
+                "tool.reset": "إعادة تعيين",
+                "footer.follow": "تابعنا",
+                "footer.categories": "الفئات الشائعة",
+                "footer.categories.pdf": "أدوات PDF",
+                "footer.categories.image": "أدوات الصور",
+                "footer.categories.text": "أدوات النص",
+                "footer.categories.av": "أدوات الصوت/الفيديو",
+                "footer.categories.web": "أدوات مطور الويب",
+                "footer.categories.calc": "أدوات الآلة الحاسبة",
+                "footer.categories.util": "أدوات المساعدة",
+                "footer.categories.color": "أدوات الألوان",
+                "footer.quicklinks": "روابط سريعة",
+                "footer.links.tools": "جميع الأدوات",
+                "footer.links.faq": "الأسئلة الشائعة",
+                "footer.links.contact": "اتصل بنا",
+                "footer.links.privacy": "سياسة الخصوصية",
+                "footer.links.disclaimer": "إخلاء المسؤولية",
+                "footer.links.terms": "شروط الخدمة",
+                "footer.copyright": "© 2025 LollyPoPDF. جميع الحقوق محفوظة."
+            },
+            fa: {
+                "nav.home": "خانه",
+                "nav.about": "درباره ما",
+                "nav.tools": "ابزارها",
+                "nav.contact": "تماس با ما",
+                "hero.title": "ابزار انتخابگر و مبدل رنگ",
+                "hero.description": "رنگ‌ها را انتخاب کنید و بین فرمت‌های HEX، RGB و HSL بلافاصله تبدیل کنید – بدون سرور، 100% سمت کلاینت. تمام پردازش به صورت محلی و با حفظ حریم خصوصی کامل انجام می‌شود.",
+                "howto.title": "نحوه استفاده از انتخابگر و مبدل رنگ",
+                "howto.step1.title": "یک رنگ انتخاب کنید",
+                "howto.step1.description": "از انتخابگر رنگ برای انتخاب بصری یک رنگ استفاده کنید، یا یک مقدار رنگ در فرمت HEX، RGB یا HSL وارد کنید. پیش‌نمایش رنگ به صورت بلادرنگ به‌روزرسانی می‌شود.",
+                "howto.step2.title": "تبدیل فرمت‌ها",
+                "howto.step2.description": "ابزار به طور خودکار رنگ انتخاب شده شما را بین فرمت‌های HEX، RGB و HSL تبدیل می‌کند. همه مقادیر با تغییر رنگ بلافاصله به‌روزرسانی می‌شوند.",
+                "howto.step3.title": "کپی یا صادر کردن",
+                "howto.step3.description": "هر فرمت رنگی را با یک کلیک در کلیپ‌بورد کپی کنید، یا تمام مقادیر رنگ را به عنوان یک فایل متنی برای استفاده بعدی صادر کنید.",
+                "howto.step4.title": "کاوش در پالت‌ها",
+                "howto.step4.description": "پالت‌های رنگ مکمل را بر اساس رنگ انتخاب شده خود کشف کنید. روی هر رنگ پالت کلیک کنید تا اعمال شود.",
+                "tool.title": "انتخابگر و مبدل رنگ",
+                "tool.hex": "HEX",
+                "tool.rgb": "RGB",
+                "tool.hsl": "HSL",
+                "tool.palettes": "پالت‌های رنگ",
+                "tool.export": "صادر کردن رنگ‌ها",
+                "tool.reset": "بازنشانی",
+                "footer.follow": "ما را دنبال کنید",
+                "footer.categories": "دسته‌بندی‌های محبوب",
+                "footer.categories.pdf": "ابزارهای PDF",
+                "footer.categories.image": "ابزارهای تصویر",
+                "footer.categories.text": "ابزارهای متن",
+                "footer.categories.av": "ابزارهای صدا/ویدیو",
+                "footer.categories.web": "ابزارهای توسعه‌دهنده وب",
+                "footer.categories.calc": "ابزارهای ماشین حساب",
+                "footer.categories.util": "ابزارهای کمکی",
+                "footer.categories.color": "ابزارهای رنگ",
+                "footer.quicklinks": "لینک‌های سریع",
+                "footer.links.tools": "همه ابزارها",
+                "footer.links.faq": "سوالات متداول",
+                "footer.links.contact": "تماس با ما",
+                "footer.links.privacy": "سیاست حفظ حریم خصوصی",
+                "footer.links.disclaimer": "سلب مسئولیت",
+                "footer.links.terms": "شرایط استفاده از خدمات",
+                "footer.copyright": "© 2025 LollyPoPDF. تمامی حقوق محفوظ است."
+            },
+            bg: {
+                "nav.home": "Начало",
+                "nav.about": "За нас",
+                "nav.tools": "Инструменти",
+                "nav.contact": "Контакт",
+                "hero.title": "Инструмент за избор и конвертиране на цветове",
+                "hero.description": "Избирайте цветове и конвертирайте между формати HEX, RGB и HSL мигновено – без сървъри, 100% клиентска страна. Цялата обработка се извършва локално с пълна поверителност.",
+                "howto.title": "Как да използвате инструмента за избор и конвертиране на цветове",
+                "howto.step1.title": "Изберете цвят",
+                "howto.step1.description": "Използвайте селектора за цветове, за да изберете цвят визуално, или въведете стойност на цвят във формат HEX, RGB или HSL. Визуализацията на цвета ще се актуализира в реално време.",
+                "howto.step2.title": "Конвертиране на формати",
+                "howto.step2.description": "Инструментът автоматично конвертира избрания от вас цвят между формати HEX, RGB и HSL. Всички стойности се актуализират мигновено, когато промените цвета.",
+                "howto.step3.title": "Копиране или експортиране",
+                "howto.step3.description": "Копирайте всеки цветов формат в клипборда с едно щракване, или експортирайте всички цветови стойности като текстов файл за по-нататъшна употреба.",
+                "howto.step4.title": "Изследвайте палитри",
+                "howto.step4.description": "Открийте допълнителни цветови палитри въз основа на избрания от вас цвят. Щракнете върху който и да е цвят от палитрата, за да го приложите.",
+                "tool.title": "Избор и конвертиране на цветове",
+                "tool.hex": "HEX",
+                "tool.rgb": "RGB",
+                "tool.hsl": "HSL",
+                "tool.palettes": "Цветови палитри",
+                "tool.export": "Експортиране на цветове",
+                "tool.reset": "Нулиране",
+                "footer.follow": "СЛЕДВАЙТЕ НИ",
+                "footer.categories": "Популярни категории",
+                "footer.categories.pdf": "PDF инструменти",
+                "footer.categories.image": "Инструменти за изображения",
+                "footer.categories.text": "Текстови инструменти",
+                "footer.categories.av": "Аудио/Видео инструменти",
+                "footer.categories.web": "Инструменти за уеб разработчици",
+                "footer.categories.calc": "Инструменти за калкулатор",
+                "footer.categories.util": "Помощни инструменти",
+                "footer.categories.color": "Цветови инструменти",
+                "footer.quicklinks": "Бързи връзки",
+                "footer.links.tools": "Всички инструменти",
+                "footer.links.faq": "ЧЗВ",
+                "footer.links.contact": "Контакт",
+                "footer.links.privacy": "Политика за поверителност",
+                "footer.links.disclaimer": "Отказ от отговорност",
+                "footer.links.terms": "Условия за ползване",
+                "footer.copyright": "© 2025 LollyPoPDF. Всички права запазени."
+            },
+            ca: {
+                "nav.home": "Inici",
+                "nav.about": "Sobre nosaltres",
+                "nav.tools": "Eines",
+                "nav.contact": "Contacte",
+                "hero.title": "Eina Selector i Convertidor de Colors",
+                "hero.description": "Seleccioneu colors i convertiu entre formats HEX, RGB i HSL instantàniament – sense servidors, 100% al costat del client. Tot el processament es realitza localment amb privacitat completa.",
+                "howto.title": "Com Utilitzar el Selector i Convertidor de Colors",
+                "howto.step1.title": "Seleccioneu un Color",
+                "howto.step1.description": "Utilitzeu el selector de colors per triar un color visualment, o introduïu un valor de color en format HEX, RGB o HSL. La previsualització del color s'actualitzarà en temps real.",
+                "howto.step2.title": "Convertiu Formats",
+                "howto.step2.description": "L'eina converteix automàticament el color seleccionat entre formats HEX, RGB i HSL. Tots els valors s'actualitzen instantàniament quan canvieu el color.",
+                "howto.step3.title": "Copieu o Exporteu",
+                "howto.step3.description": "Copieu qualsevol format de color al porta-retalls amb un sol clic, o exporteu tots els valors de color com a fitxer de text per a un ús posterior.",
+                "howto.step4.title": "Exploreu Paletes",
+                "howto.step4.description": "Descobriu paletes de colors complementàries basades en el color seleccionat. Feu clic a qualsevol color de la paleta per aplicar-lo.",
+                "tool.title": "Selector i Convertidor de Colors",
+                "tool.hex": "HEX",
+                "tool.rgb": "RGB",
+                "tool.hsl": "HSL",
+                "tool.palettes": "Paletes de Colors",
+                "tool.export": "Exportar Colors",
+                "tool.reset": "Restablir",
+                "footer.follow": "SEGUEIX-NOS",
+                "footer.categories": "Categories Populars",
+                "footer.categories.pdf": "Eines PDF",
+                "footer.categories.image": "Eines d'Imatge",
+                "footer.categories.text": "Eines de Text",
+                "footer.categories.av": "Eines d'Àudio/Video",
+                "footer.categories.web": "Eines WebDesenvolupador",
+                "footer.categories.calc": "Eines de Calculadora",
+                "footer.categories.util": "Eines d'Utilitat",
+                "footer.categories.color": "Eines de Color",
+                "footer.quicklinks": "Enllaços Ràpids",
+                "footer.links.tools": "Totes les Eines",
+                "footer.links.faq": "PMF",
+                "footer.links.contact": "Contacte",
+                "footer.links.privacy": "Política de Privadesa",
+                "footer.links.disclaimer": "Descàrrec de Responsabilitat",
+                "footer.links.terms": "Termes del Servei",
+                "footer.copyright": "© 2025 LollyPoPDF. Tots els drets reservats."
+            },
+            nl: {
+                "nav.home": "Home",
+                "nav.about": "Over ons",
+                "nav.tools": "Tools",
+                "nav.contact": "Contact",
+                "hero.title": "Kleurkiezer en Converter Tool",
+                "hero.description": "Kies kleuren en converteer direct tussen HEX-, RGB- en HSL-formaten – zonder servers, 100% client-side. Alle verwerking gebeurt lokaal met volledige privacy.",
+                "howto.title": "Hoe de Kleurkiezer en Converter te Gebruiken",
+                "howto.step1.title": "Kies een Kleur",
+                "howto.step1.description": "Gebruik de kleurkiezer om visueel een kleur te selecteren, of voer een kleurwaarde in HEX-, RGB- of HSL-formaat in. De kleurvoorbeeld wordt in realtime bijgewerkt.",
+                "howto.step2.title": "Converteer Formaten",
+                "howto.step2.description": "De tool converteert automatisch uw geselecteerde kleur tussen HEX-, RGB- en HSL-formaten. Alle waarden worden onmiddellijk bijgewerkt wanneer u de kleur wijzigt.",
+                "howto.step3.title": "Kopieer of Exporteer",
+                "howto.step3.description": "Kopieer elk kleurformaat naar het klembord met één klik, of exporteer alle kleurwaarden als een tekstbestand voor later gebruik.",
+                "howto.step4.title": "Verken Paletten",
+                "howto.step4.description": "Ontdek complementaire kleurpaletten op basis van uw geselecteerde kleur. Klik op een willekeurige kleur in het palet om deze toe te passen.",
+                "tool.title": "Kleurkiezer en Converter",
+                "tool.hex": "HEX",
+                "tool.rgb": "RGB",
+                "tool.hsl": "HSL",
+                "tool.palettes": "Kleurpaletten",
+                "tool.export": "Kleuren Exporteren",
+                "tool.reset": "Resetten",
+                "footer.follow": "VOLG ONS",
+                "footer.categories": "Populaire Categorieën",
+                "footer.categories.pdf": "PDF Tools",
+                "footer.categories.image": "Afbeelding Tools",
+                "footer.categories.text": "Tekst Tools",
+                "footer.categories.av": "Audio/Video Tools",
+                "footer.categories.web": "WebDeveloper Tools",
+                "footer.categories.calc": "Rekenmachine Tools",
+                "footer.categories.util": "Hulpprogramma's",
+                "footer.categories.color": "Kleur Tools",
+                "footer.quicklinks": "Snelle Links",
+                "footer.links.tools": "Alle Tools",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Contact",
+                "footer.links.privacy": "Privacybeleid",
+                "footer.links.disclaimer": "Disclaimer",
+                "footer.links.terms": "Servicevoorwaarden",
+                "footer.copyright": "© 2025 LollyPoPDF. Alle rechten voorbehouden."
+            },
+            el: {
+                "nav.home": "Αρχική",
+                "nav.about": "Σχετικά με εμάς",
+                "nav.tools": "Εργαλεία",
+                "nav.contact": "Επικοινωνία",
+                "hero.title": "Εργαλείο Επιλογής και Μετατροπής Χρωμάτων",
+                "hero.description": "Επιλέξτε χρώματα και μετατρέψτε μεταξύ μορφών HEX, RGB και HSL αμέσως – χωρίς διακομιστές, 100% από την πλευρά του πελάτη. Όλη η επεξεργασία γίνεται τοπικά με πλήρη απόρρητο.",
+                "howto.title": "Πώς να Χρησιμοποιήσετε το Εργαλείο Επιλογής και Μετατροπής Χρωμάτων",
+                "howto.step1.title": "Επιλέξτε ένα Χρώμα",
+                "howto.step1.description": "Χρησιμοποιήστε τον επιλογέα χρωμάτων για να επιλέξετε ένα χρώμα οπτικά, ή εισαγάγετε μια τιμή χρώματος σε μορφή HEX, RGB ή HSL. Η προεπισκόπηση του χρώματος θα ενημερωθεί σε πραγματικό χρόνο.",
+                "howto.step2.title": "Μετατροπή Μορφών",
+                "howto.step2.description": "Το εργαλείο μετατρέπει αυτόματα το επιλεγμένο χρώμα μεταξύ μορφών HEX, RGB και HSL. Όλες οι τιμές ενημερώνονται αμέσως όταν αλλάζετε το χρώμα.",
+                "howto.step3.title": "Αντιγραφή ή Εξαγωγή",
+                "howto.step3.description": "Αντιγράψτε οποιαδήποτε μορφή χρώματος στο πρόχειρο με ένα κλικ, ή εξάγετε όλες τις τιμές χρωμάτων ως αρχείο κειμένου για μελλοντική χρήση.",
+                "howto.step4.title": "Εξερεύνηση Παλετών",
+                "howto.step4.description": "Ανακαλύψτε συμπληρωματικές παλέτες χρωμάτων με βάση το επιλεγμένο χρώμα. Κάντε κλικ σε οποιοδήποτε χρώμα της παλέτας για να το εφαρμόσετε.",
+                "tool.title": "Επιλογέας και Μετατροπέας Χρωμάτων",
+                "tool.hex": "HEX",
+                "tool.rgb": "RGB",
+                "tool.hsl": "HSL",
+                "tool.palettes": "Παλέτες Χρωμάτων",
+                "tool.export": "Εξαγωγή Χρωμάτων",
+                "tool.reset": "Επαναφορά",
+                "footer.follow": "ΑΚΟΛΟΥΘΗΣΤΕ ΜΑΣ",
+                "footer.categories": "Δημοφιλείς Κατηγορίες",
+                "footer.categories.pdf": "Εργαλεία PDF",
+                "footer.categories.image": "Εργαλεία Εικόνας",
+                "footer.categories.text": "Εργαλεία Κειμένου",
+                "footer.categories.av": "Εργαλεία Ήχου/Βίντεο",
+                "footer.categories.web": "Εργαλεία WebDeveloper",
+                "footer.categories.calc": "Εργαλεία Αριθμομηχανής",
+                "footer.categories.util": "Εργαλεία Χρησιμότητας",
+                "footer.categories.color": "Εργαλεία Χρώματος",
+                "footer.quicklinks": "Γρήγοροι Σύνδεσμοι",
+                "footer.links.tools": "Όλα τα Εργαλεία",
+                "footer.links.faq": "Συχνές Ερωτήσεις",
+                "footer.links.contact": "Επικοινωνία",
+                "footer.links.privacy": "Πολιτική Απορρήτου",
+                "footer.links.disclaimer": "Αποποίηση Ευθυνών",
+                "footer.links.terms": "Όροι Χρήσης",
+                "footer.copyright": "© 2025 LollyPoPDF. Με επιφύλαξη παντός δικαιώματος."
+            },
+            hi: {
+                "nav.home": "होम",
+                "nav.about": "हमारे बारे में",
+                "nav.tools": "टूल्स",
+                "nav.contact": "संपर्क करें",
+                "hero.title": "कलर पिकर और कन्वर्टर टूल",
+                "hero.description": "रंग चुनें और HEX, RGB, और HSL फॉर्मेट के बीच तुरंत कन्वर्ट करें – बिना सर्वर के, 100% क्लाइंट-साइड। सभी प्रोसेसिंग पूरी गोपनीयता के साथ स्थानीय रूप से होती है।",
+                "howto.title": "कलर पिकर और कन्वर्टर का उपयोग कैसे करें",
+                "howto.step1.title": "एक रंग चुनें",
+                "howto.step1.description": "रंग पिकर का उपयोग करके दृश्य रूप से एक रंग चुनें, या HEX, RGB, या HSL फॉर्मेट में रंग मान दर्ज करें। रंग प्रीव्यू रियल-टाइम में अपडेट होगा।",
+                "howto.step2.title": "फॉर्मेट कन्वर्ट करें",
+                "howto.step2.description": "टूल आपके चयनित रंग को HEX, RGB, और HSL फॉर्मेट के बीच स्वचालित रूप से कन्वर्ट करता है। सभी मान तुरंत अपडेट होते हैं जब आप रंग बदलते हैं।",
+                "howto.step3.title": "कॉपी या एक्सपोर्ट करें",
+                "howto.step3.description": "एक क्लिक में किसी भी रंग फॉर्मेट को क्लिपबोर्ड पर कॉपी करें, या बाद में उपयोग के लिए सभी रंग मानों को टेक्स्ट फाइल के रूप में एक्सपोर्ट करें।",
+                "howto.step4.title": "पैलेट एक्सप्लोर करें",
+                "howto.step4.description": "आपके चयनित रंग के आधार पर पूरक रंग पैलेट खोजें। किसी भी पैलेट रंग पर क्लिक करके उसे लागू करें।",
+                "tool.title": "कलर पिकर और कन्वर्टर",
+                "tool.hex": "HEX",
+                "tool.rgb": "RGB",
+                "tool.hsl": "HSL",
+                "tool.palettes": "रंग पैलेट",
+                "tool.export": "रंग एक्सपोर्ट करें",
+                "tool.reset": "रीसेट",
+                "footer.follow": "हमें फॉलो करें",
+                "footer.categories": "लोकप्रिय श्रेणियाँ",
+                "footer.categories.pdf": "PDF टूल्स",
+                "footer.categories.image": "इमेज टूल्स",
+                "footer.categories.text": "टेक्स्ट टूल्स",
+                "footer.categories.av": "ऑडियो/वीडियो टूल्स",
+                "footer.categories.web": "वेबडेवलपर टूल्स",
+                "footer.categories.calc": "कैलकुलेटर टूल्स",
+                "footer.categories.util": "यूटिलिटी टूल्स",
+                "footer.categories.color": "कलर टूल्स",
+                "footer.quicklinks": "त्वरित लिंक",
+                "footer.links.tools": "सभी टूल्स",
+                "footer.links.faq": "सामान्य प्रश्न",
+                "footer.links.contact": "संपर्क करें",
+                "footer.links.privacy": "गोपनीयता नीति",
+                "footer.links.disclaimer": "अस्वीकरण",
+                "footer.links.terms": "सेवा की शर्तें",
+                "footer.copyright": "© 2025 LollyPoPDF. सभी अधिकार सुरक्षित।"
+            },
+            te: {
+                "nav.home": "హోమ్",
+                "nav.about": "మా గురించి",
+                "nav.tools": "టూల్స్",
+                "nav.contact": "సంప్రదించండి",
+                "hero.title": "కలర్ పికర్ మరియు కన్వర్టర్ టూల్",
+                "hero.description": "రంగులను ఎంచుకుని HEX, RGB, మరియు HSL ఫార్మాట్ల మధ్య తక్షణంగా మార్చండి – సర్వర్లు లేకుండా, 100% క్లయింట్-సైడ్. అన్ని ప్రాసెసింగ్ పూర్తి గోప్యతతో స్థానికంగా జరుగుతుంది.",
+                "howto.title": "కలర్ పికర్ మరియు కన్వర్టర్ ఎలా ఉపయోగించాలి",
+                "howto.step1.title": "ఒక రంగును ఎంచుకోండి",
+                "howto.step1.description": "రంగు పికర్ ఉపయోగించి దృశ్యమానంగా ఒక రంగును ఎంచుకోండి, లేదా HEX, RGB, లేదా HSL ఫార్మాట్లో రంగు విలువను నమోదు చేయండి. రంగు ప్రివ్యూ రియల్-టైమ్లో నవీకరించబడుతుంది.",
+                "howto.step2.title": "ఫార్మాట్లను మార్చండి",
+                "howto.step2.description": "టూల్ మీరు ఎంచుకున్న రంగును HEX, RGB, మరియు HSL ఫార్మాట్ల మధ్య స్వయంచాలకంగా మారుస్తుంది. మీరు రంగును మార్చినప్పుడు అన్ని విలువలు తక్షణంగా నవీకరించబడతాయి.",
+                "howto.step3.title": "కాపీ చేయండి లేదా ఎక్స్పోర్ట్ చేయండి",
+                "howto.step3.description": "ఏదైనా రంగు ఫార్మాట్ను ఒక క్లిక్తో క్లిప్బోర్డ్కు కాపీ చేయండి, లేదా తరువాతి ఉపయోగం కోసం అన్ని రంగు విలువలను టెక్స్ట్ ఫైల్గా ఎక్స్పోర్ట్ చేయండి.",
+                "howto.step4.title": "ప్యాలెట్లను అన్వేషించండి",
+                "howto.step4.description": "మీరు ఎంచుకున్న రంగుపై ఆధారపడిన పూరక రంగు ప్యాలెట్లను కనుగొనండి. ఏదైనా ప్యాలెట్ రంగుపై క్లిక్ చేసి దాన్ని వర్తింపజేయండి.",
+                "tool.title": "కలర్ పికర్ మరియు కన్వర్టర్",
+                "tool.hex": "HEX",
+                "tool.rgb": "RGB",
+                "tool.hsl": "HSL",
+                "tool.palettes": "రంగు ప్యాలెట్లు",
+                "tool.export": "రంగులను ఎక్స్పోర్ట్ చేయండి",
+                "tool.reset": "రీసెట్",
+                "footer.follow": "మమ్మల్ని అనుసరించండి",
+                "footer.categories": "జనాదరణ పొందిన వర్గాలు",
+                "footer.categories.pdf": "PDF టూల్స్",
+                "footer.categories.image": "ఇమేజ్ టూల్స్",
+                "footer.categories.text": "టెక్స్ట్ టూల్స్",
+                "footer.categories.av": "ఆడియో/వీడియో టూల్స్",
+                "footer.categories.web": "వెబ్ డెవలపర్ టూల్స్",
+                "footer.categories.calc": "కాలిక్యులేటర్ టూల్స్",
+                "footer.categories.util": "యుటిలిటీ టూల్స్",
+                "footer.categories.color": "కలర్ టూల్స్",
+                "footer.quicklinks": "త్వరిత లింకులు",
+                "footer.links.tools": "అన్ని టూల్స్",
+                "footer.links.faq": "తరచుగా ఎదురయ్యే ప్రశ్నలు",
+                "footer.links.contact": "సంప్రదించండి",
+                "footer.links.privacy": "గోప్యతా విధానం",
+                "footer.links.disclaimer": "డిస్క్లైమర్",
+                "footer.links.terms": "సేవా నిబంధనలు",
+                "footer.copyright": "© 2025 LollyPoPDF. అన్ని హక్కులు ప్రత్యేకించబడినవి."
+            },
+            kn: {
+                "nav.home": "ಮುಖಪುಟ",
+                "nav.about": "ನಮ್ಮ ಬಗ್ಗೆ",
+                "nav.tools": "ಉಪಕರಣಗಳು",
+                "nav.contact": "ಸಂಪರ್ಕಿಸಿ",
+                "hero.title": "ಬಣ್ಣ ಆಯ್ಕೆ ಮತ್ತು ಪರಿವರ್ತಕ ಉಪಕರಣ",
+                "hero.description": "ಬಣ್ಣಗಳನ್ನು ಆರಿಸಿ ಮತ್ತು HEX, RGB, ಮತ್ತು HSL ಸ್ವರೂಪಗಳ ನಡುವೆ ತಕ್ಷಣವೇ ಪರಿವರ್ತಿಸಿ – ಸರ್ವರ್ ಇಲ್ಲದೆ, 100% ಕ್ಲೈಂಟ್-ಸೈಡ್. ಎಲ್ಲಾ ಪ್ರಕ್ರಿಯೆಗಳು ಸಂಪೂರ್ಣ ಗೌಪ್ಯತೆಯೊಂದಿಗೆ ಸ್ಥಳೀಯವಾಗಿ ನಡೆಯುತ್ತದೆ.",
+                "howto.title": "ಬಣ್ಣ ಆಯ್ಕೆ ಮತ್ತು ಪರಿವರ್ತಕವನ್ನು ಹೇಗೆ ಬಳಸುವುದು",
+                "howto.step1.title": "ಬಣ್ಣವನ್ನು ಆರಿಸಿ",
+                "howto.step1.description": "ದೃಶ್ಯವಾಗಿ ಬಣ್ಣವನ್ನು ಆರಿಸಲು ಬಣ್ಣ ಆಯ್ಕೆಗಾರವನ್ನು ಬಳಸಿ, ಅಥವಾ HEX, RGB, ಅಥವಾ HSL ಸ್ವರೂಪದಲ್ಲಿ ಬಣ್ಣದ ಮೌಲ್ಯವನ್ನು ನಮೂದಿಸಿ. ಬಣ್ಣದ ಪೂರ್ವವೀಕ್ಷಣೆಯು ರಿಯಲ್-ಟೈಮ್ನಲ್ಲಿ ನವೀಕರಿಸಲ್ಪಡುತ್ತದೆ.",
+                "howto.step2.title": "ಸ್ವರೂಪಗಳನ್ನು ಪರಿವರ್ತಿಸಿ",
+                "howto.step2.description": "ಉಪಕರಣವು ನಿಮ್ಮ ಆಯ್ಕೆ ಮಾಡಿದ ಬಣ್ಣವನ್ನು HEX, RGB, ಮತ್ತು HSL ಸ್ವರೂಪಗಳ ನಡುವೆ ಸ್ವಯಂಚಾಲಿತವಾಗಿ ಪರಿವರ್ತಿಸುತ್ತದೆ. ನೀವು ಬಣ್ಣವನ್ನು ಬದಲಾಯಿಸಿದಾಗ ಎಲ್ಲಾ ಮೌಲ್ಯಗಳು ತಕ್ಷಣವೇ ನವೀಕರಿಸಲ್ಪಡುತ್ತವೆ.",
+                "howto.step3.title": "ನಕಲಿಸಿ ಅಥವಾ ರಫ್ತು ಮಾಡಿ",
+                "howto.step3.description": "ಯಾವುದೇ ಬಣ್ಣ ಸ್ವರೂಪವನ್ನು ಒಂದು ಕ್ಲಿಕ್ನಲ್ಲಿ ಕ್ಲಿಪ್ಬೋರ್ಡ್ಗೆ ನಕಲಿಸಿ, ಅಥವಾ ನಂತರದ ಬಳಕೆಗಾಗಿ ಎಲ್ಲಾ ಬಣ್ಣ ಮೌಲ್ಯಗಳನ್ನು ಪಠ್ಯ ಫೈಲ್ ಆಗಿ ರಫ್ತು ಮಾಡಿ.",
+                "howto.step4.title": "ಪ್ಯಾಲೆಟ್ಗಳನ್ನು ಅನ್ವೇಷಿಸಿ",
+                "howto.step4.description": "ನಿಮ್ಮ ಆಯ್ಕೆ ಮಾಡಿದ ಬಣ್ಣವನ್ನು ಆಧರಿಸಿ ಪೂರಕ ಬಣ್ಣ ಪ್ಯಾಲೆಟ್ಗಳನ್ನು ಕಂಡುಹಿಡಿಯಿರಿ. ಯಾವುದೇ ಪ್ಯಾಲೆಟ್ ಬಣ್ಣದ ಮೇಲೆ ಕ್ಲಿಕ್ ಮಾಡಿ ಅದನ್ನು ಅನ್ವಯಿಸಿ.",
+                "tool.title": "ಬಣ್ಣ ಆಯ್ಕೆ ಮತ್ತು ಪರಿವರ್ತಕ",
+                "tool.hex": "HEX",
+                "tool.rgb": "RGB",
+                "tool.hsl": "HSL",
+                "tool.palettes": "ಬಣ್ಣ ಪ್ಯಾಲೆಟ್ಗಳು",
+                "tool.export": "ಬಣ್ಣಗಳನ್ನು ರಫ್ತು ಮಾಡಿ",
+                "tool.reset": "ಮರುಹೊಂದಿಸಿ",
+                "footer.follow": "ನಮ್ಮನ್ನು ಅನುಸರಿಸಿ",
+                "footer.categories": "ಜನಪ್ರಿಯ ವರ್ಗಗಳು",
+                "footer.categories.pdf": "PDF ಉಪಕರಣಗಳು",
+                "footer.categories.image": "ಚಿತ್ರ ಉಪಕರಣಗಳು",
+                "footer.categories.text": "ಪಠ್ಯ ಉಪಕರಣಗಳು",
+                "footer.categories.av": "ಆಡಿಯೋ/ವೀಡಿಯೋ ಉಪಕರಣಗಳು",
+                "footer.categories.web": "ವೆಬ್ ಡೆವಲಪರ್ ಉಪಕರಣಗಳು",
+                "footer.categories.calc": "ಕ್ಯಾಲ್ಕುಲೇಟರ್ ಉಪಕರಣಗಳು",
+                "footer.categories.util": "ಯುಟಿಲಿಟಿ ಉಪಕರಣಗಳು",
+                "footer.categories.color": "ಬಣ್ಣ ಉಪಕರಣಗಳು",
+                "footer.quicklinks": "ತ್ವರಿತ ಲಿಂಕ್ಗಳು",
+                "footer.links.tools": "ಎಲ್ಲಾ ಉಪಕರಣಗಳು",
+                "footer.links.faq": "ಸಾಮಾನ್ಯ ಪ್ರಶ್ನೆಗಳು",
+                "footer.links.contact": "ಸಂಪರ್ಕಿಸಿ",
+                "footer.links.privacy": "ಗೌಪ್ಯತಾ ನೀತಿ",
+                "footer.links.disclaimer": "ಮುನ್ಸೂಚನೆ",
+                "footer.links.terms": "ಸೇವಾ ನಿಯಮಗಳು",
+                "footer.copyright": "© 2025 LollyPoPDF. ಎಲ್ಲಾ ಹಕ್ಕುಗಳು ಕಾಯ್ದಿರಿಸಲ್ಪಟ್ಟಿವೆ."
+            },
+            ta: {
+                "nav.home": "முகப்பு",
+                "nav.about": "எங்களைப் பற்றி",
+                "nav.tools": "கருவிகள்",
+                "nav.contact": "தொடர்பு கொள்ள",
+                "hero.title": "நிறம் தேர்ந்தெடுப்பான் மற்றும் மாற்றி கருவி",
+                "hero.description": "நிறங்களைத் தேர்ந்தெடுத்து HEX, RGB, மற்றும் HSL வடிவங்களுக்கு இடையே உடனடியாக மாற்றவும் – சேவையகங்கள் இல்லாமல், 100% கிளையன்ட்-சைட். அனைத்து செயலாக்கமும் முழுமையான தனியுரிமையுடன் உள்ளூரில் நடைபெறுகிறது.",
+                "howto.title": "நிறம் தேர்ந்தெடுப்பான் மற்றும் மாற்றியை எவ்வாறு பயன்படுத்துவது",
+                "howto.step1.title": "ஒரு நிறத்தைத் தேர்ந்தெடுக்கவும்",
+                "howto.step1.description": "காட்சி ரீதியாக ஒரு நிறத்தைத் தேர்ந்தெடுக்க நிறம் தேர்ந்தெடுப்பானைப் பயன்படுத்தவும், அல்லது HEX, RGB, அல்லது HSL வடிவத்தில் நிற மதிப்பை உள்ளிடவும். நிறம் முன்னோட்டம் நிகழ்நேரத்தில் புதுப்பிக்கப்படும்.",
+                "howto.step2.title": "வடிவங்களை மாற்றவும்",
+                "howto.step2.description": "கருவி உங்கள் தேர்ந்தெடுக்கப்பட்ட நிறத்தை HEX, RGB, மற்றும் HSL வடிவங்களுக்கு இடையே தானாக மாற்றுகிறது. நீங்கள் நிறத்தை மாற்றும்போது அனைத்து மதிப்புகளும் உடனடியாக புதுப்பிக்கப்படும்.",
+                "howto.step3.title": "நகலெடுக்கவும் அல்லது ஏற்றுமதி செய்யவும்",
+                "howto.step3.description": "எந்தவொரு நிற வடிவத்தையும் ஒரு கிளிக்கில் கிளிப்போர்டுக்கு நகலெடுக்கவும், அல்லது பின்னர் பயன்படுத்துவதற்காக அனைத்து நிற மதிப்புகளையும் உரை கோப்பாக ஏற்றுமதி செய்யவும்.",
+                "howto.step4.title": "வண்ணத் தொகுப்புகளை ஆராயவும்",
+                "howto.step4.description": "உங்கள் தேர்ந்தெடுக்கப்பட்ட நிறத்தின் அடிப்படையில் நிரப்பு நிறத் தொகுப்புகளைக் கண்டறியவும். எந்தவொரு தொகுப்பு நிறத்திலும் கிளிக் செய்து அதைப் பயன்படுத்தவும்.",
+                "tool.title": "நிறம் தேர்ந்தெடுப்பான் மற்றும் மாற்றி",
+                "tool.hex": "HEX",
+                "tool.rgb": "RGB",
+                "tool.hsl": "HSL",
+                "tool.palettes": "நிறத் தொகுப்புகள்",
+                "tool.export": "நிறங்களை ஏற்றுமதி செய்யவும்",
+                "tool.reset": "மீட்டமைக்கவும்",
+                "footer.follow": "எங்களைப் பின்தொடரவும்",
+                "footer.categories": "பிரபலமான வகைகள்",
+                "footer.categories.pdf": "PDF கருவிகள்",
+                "footer.categories.image": "பட கருவிகள்",
+                "footer.categories.text": "உரை கருவிகள்",
+                "footer.categories.av": "ஒலி/வீடியோ கருவிகள்",
+                "footer.categories.web": "வலை உருவாக்குநர் கருவிகள்",
+                "footer.categories.calc": "கணிப்பான் கருவிகள்",
+                "footer.categories.util": "பயன்பாட்டு கருவிகள்",
+                "footer.categories.color": "நிற கருவிகள்",
+                "footer.quicklinks": "விரைவு இணைப்புகள்",
+                "footer.links.tools": "அனைத்து கருவிகள்",
+                "footer.links.faq": "அடிக்கடி கேட்கப்படும் கேள்விகள்",
+                "footer.links.contact": "தொடர்பு கொள்ள",
+                "footer.links.privacy": "தனியுரிமைக் கொள்கை",
+                "footer.links.disclaimer": "பொறுப்புத் துறப்பு",
+                "footer.links.terms": "சேவை விதிமுறைகள்",
+                "footer.copyright": "© 2025 LollyPoPDF. அனைத்து உரிமைகளும் பாதுகாக்கப்பட்டவை."
+            },
+            ml: {
+                "nav.home": "ഹോം",
+                "nav.about": "ഞങ്ങളെക്കുറിച്ച്",
+                "nav.tools": "ഉപകരണങ്ങൾ",
+                "nav.contact": "ബന്ധപ്പെടുക",
+                "hero.title": "കളർ പിക്കർ ആൻഡ് കൺവെർട്ടർ ടൂൾ",
+                "hero.description": "നിറങ്ങൾ തിരഞ്ഞെടുത്ത് HEX, RGB, HSL ഫോർമാറ്റുകൾക്കിടയിൽ തൽക്ഷണം പരിവർത്തനം ചെയ്യുക – സെർവറുകളില്ലാതെ, 100% ക്ലയന്റ്-സൈഡ്. എല്ലാ പ്രോസസ്സിംഗും പൂർണ്ണ സ്വകാര്യതയോടെ പ്രാദേശികമായി നടക്കുന്നു.",
+                "howto.title": "കളർ പിക്കർ ആൻഡ് കൺവെർട്ടർ എങ്ങനെ ഉപയോഗിക്കാം",
+                "howto.step1.title": "ഒരു നിറം തിരഞ്ഞെടുക്കുക",
+                "howto.step1.description": "ദൃശ്യപരമായി ഒരു നിറം തിരഞ്ഞെടുക്കാൻ കളർ പിക്കർ ഉപയോഗിക്കുക, അല്ലെങ്കിൽ HEX, RGB, അല്ലെങ്കിൽ HSL ഫോർമാറ്റിൽ ഒരു നിറ മൂല്യം നൽകുക. നിറ പ്രിവ്യൂ റിയൽ-ടൈമിൽ അപ്ഡേറ്റ് ചെയ്യപ്പെടും.",
+                "howto.step2.title": "ഫോർമാറ്റുകൾ പരിവർത്തനം ചെയ്യുക",
+                "howto.step2.description": "ടൂൾ നിങ്ങൾ തിരഞ്ഞെടുത്ത നിറം HEX, RGB, HSL ഫോർമാറ്റുകൾക്കിടയിൽ സ്വയമേവ പരിവർത്തനം ചെയ്യുന്നു. നിങ്ങൾ നിറം മാറ്റുമ്പോൾ എല്ലാ മൂല്യങ്ങളും തൽക്ഷണം അപ്ഡേറ്റ് ചെയ്യപ്പെടുന്നു.",
+                "howto.step3.title": "കോപ്പി അല്ലെങ്കിൽ എക്സ്പോർട്ട് ചെയ്യുക",
+                "howto.step3.description": "ഏതെങ്കിലും നിറ ഫോർമാറ്റ് ഒരു ക്ലിക്കിൽ ക്ലിപ്പ്ബോർഡിലേക്ക് കോപ്പി ചെയ്യുക, അല്ലെങ്കിൽ പിന്നീടുള്ള ഉപയോഗത്തിനായി എല്ലാ നിറ മൂല്യങ്ങളും ടെക്സ്റ്റ് ഫയലായി എക്സ്പോർട്ട് ചെയ്യുക.",
+                "howto.step4.title": "പാലറ്റുകൾ പര്യവേക്ഷണം ചെയ്യുക",
+                "howto.step4.description": "നിങ്ങൾ തിരഞ്ഞെടുത്ത നിറത്തെ അടിസ്ഥാനമാക്കി പൂരക നിറ പാലറ്റുകൾ കണ്ടെത്തുക. ഏതെങ്കിലും പാലറ്റ് നിറത്തിൽ ക്ലിക്ക് ചെയ്ത് അത് പ്രയോഗിക്കുക.",
+                "tool.title": "കളർ പിക്കർ ആൻഡ് കൺവെർട്ടർ",
+                "tool.hex": "HEX",
+                "tool.rgb": "RGB",
+                "tool.hsl": "HSL",
+                "tool.palettes": "നിറ പാലറ്റുകൾ",
+                "tool.export": "നിറങ്ങൾ എക്സ്പോർട്ട് ചെയ്യുക",
+                "tool.reset": "റീസെറ്റ്",
+                "footer.follow": "ഞങ്ങളെ പിന്തുടരുക",
+                "footer.categories": "ജനപ്രിയ വിഭാഗങ്ങൾ",
+                "footer.categories.pdf": "PDF ഉപകരണങ്ങൾ",
+                "footer.categories.image": "ഇമേജ് ഉപകരണങ്ങൾ",
+                "footer.categories.text": "ടെക്സ്റ്റ് ഉപകരണങ്ങൾ",
+                "footer.categories.av": "ഓഡിയോ/വീഡിയോ ഉപകരണങ്ങൾ",
+                "footer.categories.web": "വെബ് ഡെവലപ്പർ ഉപകരണങ്ങൾ",
+                "footer.categories.calc": "കാൽക്കുലേറ്റർ ഉപകരണങ്ങൾ",
+                "footer.categories.util": "യൂട്ടിലിറ്റി ഉപകരണങ്ങൾ",
+                "footer.categories.color": "കളർ ഉപകരണങ്ങൾ",
+                "footer.quicklinks": "ദ്രുത ലിങ്കുകൾ",
+                "footer.links.tools": "എല്ലാ ഉപകരണങ്ങളും",
+                "footer.links.faq": "പതിവ് ചോദ്യങ്ങൾ",
+                "footer.links.contact": "ബന്ധപ്പെടുക",
+                "footer.links.privacy": "സ്വകാര്യതാ നയം",
+                "footer.links.disclaimer": "ഡിസ്ക്ലെയിമർ",
+                "footer.links.terms": "സേവന നിബന്ധനകൾ",
+                "footer.copyright": "© 2025 LollyPoPDF. എല്ലാ അവകാശങ്ങളും നിക്ഷിപ്തം."
+            },
+            id: {
+                "nav.home": "Beranda",
+                "nav.about": "Tentang Kami",
+                "nav.tools": "Alat",
+                "nav.contact": "Kontak",
+                "hero.title": "Alat Pemilih dan Konverter Warna",
+                "hero.description": "Pilih warna dan konversi antara format HEX, RGB, dan HSL secara instan – tanpa server, 100% sisi klien. Semua pemrosesan terjadi secara lokal dengan privasi lengkap.",
+                "howto.title": "Cara Menggunakan Pemilih dan Konverter Warna",
+                "howto.step1.title": "Pilih Warna",
+                "howto.step1.description": "Gunakan pemilih warna untuk memilih warna secara visual, atau masukkan nilai warna dalam format HEX, RGB, atau HSL. Pratinjau warna akan diperbarui secara real-time.",
+                "howto.step2.title": "Konversi Format",
+                "howto.step2.description": "Alat secara otomatis mengonversi warna yang Anda pilih antara format HEX, RGB, dan HSL. Semua nilai diperbarui secara instan saat Anda mengubah warna.",
+                "howto.step3.title": "Salin atau Ekspor",
+                "howto.step3.description": "Salin format warna apa pun ke clipboard dengan satu klik, atau ekspor semua nilai warna sebagai file teks untuk digunakan nanti.",
+                "howto.step4.title": "Jelajahi Palet",
+                "howto.step4.description": "Temukan palet warna komplementer berdasarkan warna yang Anda pilih. Klik warna palet apa pun untuk menerapkannya.",
+                "tool.title": "Pemilih dan Konverter Warna",
+                "tool.hex": "HEX",
+                "tool.rgb": "RGB",
+                "tool.hsl": "HSL",
+                "tool.palettes": "Palet Warna",
+                "tool.export": "Ekspor Warna",
+                "tool.reset": "Reset",
+                "footer.follow": "IKUTI KAMI",
+                "footer.categories": "Kategori Populer",
+                "footer.categories.pdf": "Alat PDF",
+                "footer.categories.image": "Alat Gambar",
+                "footer.categories.text": "Alat Teks",
+                "footer.categories.av": "Alat Audio/Video",
+                "footer.categories.web": "Alat WebDeveloper",
+                "footer.categories.calc": "Alat Kalkulator",
+                "footer.categories.util": "Alat Utilitas",
+                "footer.categories.color": "Alat Warna",
+                "footer.quicklinks": "Tautan Cepat",
+                "footer.links.tools": "Semua Alat",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Kontak",
+                "footer.links.privacy": "Kebijakan Privasi",
+                "footer.links.disclaimer": "Penafian",
+                "footer.links.terms": "Syarat Layanan",
+                "footer.copyright": "© 2025 LollyPoPDF. Semua hak dilindungi."
+            },
+            ms: {
+                "nav.home": "Laman Utama",
+                "nav.about": "Tentang Kami",
+                "nav.tools": "Alat",
+                "nav.contact": "Hubungi",
+                "hero.title": "Alat Pemilih dan Penukar Warna",
+                "hero.description": "Pilih warna dan tukar antara format HEX, RGB, dan HSL serta-merta – tanpa pelayan, 100% sebelah pelanggan. Semua pemprosesan berlaku secara tempatan dengan privasi lengkap.",
+                "howto.title": "Cara Menggunakan Pemilih dan Penukar Warna",
+                "howto.step1.title": "Pilih Warna",
+                "howto.step1.description": "Gunakan pemilih warna untuk memilih warna secara visual, atau masukkan nilai warna dalam format HEX, RGB, atau HSL. Pratonton warna akan dikemas kini secara masa nyata.",
+                "howto.step2.title": "Tukar Format",
+                "howto.step2.description": "Alat secara automatik menukar warna yang anda pilih antara format HEX, RGB, dan HSL. Semua nilai dikemas kini serta-merta apabila anda menukar warna.",
+                "howto.step3.title": "Salin atau Eksport",
+                "howto.step3.description": "Salin sebarang format warna ke papan keratan dengan satu klik, atau eksport semua nilai warna sebagai fail teks untuk kegunaan kemudian.",
+                "howto.step4.title": "Terokai Palet",
+                "howto.step4.description": "Temui palet warna pelengkap berdasarkan warna yang anda pilih. Klik sebarang warna palet untuk menggunakannya.",
+                "tool.title": "Pemilih dan Penukar Warna",
+                "tool.hex": "HEX",
+                "tool.rgb": "RGB",
+                "tool.hsl": "HSL",
+                "tool.palettes": "Palet Warna",
+                "tool.export": "Eksport Warna",
+                "tool.reset": "Set Semula",
+                "footer.follow": "IKUTI KAMI",
+                "footer.categories": "Kategori Popular",
+                "footer.categories.pdf": "Alat PDF",
+                "footer.categories.image": "Alat Imej",
+                "footer.categories.text": "Alat Teks",
+                "footer.categories.av": "Alat Audio/Video",
+                "footer.categories.web": "Alat WebDeveloper",
+                "footer.categories.calc": "Alat Kalkulator",
+                "footer.categories.util": "Alat Utiliti",
+                "footer.categories.color": "Alat Warna",
+                "footer.quicklinks": "Pautan Pantas",
+                "footer.links.tools": "Semua Alat",
+                "footer.links.faq": "Soalan Lazim",
+                "footer.links.contact": "Hubungi",
+                "footer.links.privacy": "Dasar Privasi",
+                "footer.links.disclaimer": "Penafian",
+                "footer.links.terms": "Syarat Perkhidmatan",
+                "footer.copyright": "© 2025 LollyPoPDF. Hak cipta terpelihara."
+            },
+            pl: {
+                "nav.home": "Strona główna",
+                "nav.about": "O nas",
+                "nav.tools": "Narzędzia",
+                "nav.contact": "Kontakt",
+                "hero.title": "Narzędzie do wyboru i konwersji kolorów",
+                "hero.description": "Wybieraj kolory i konwertuj między formatami HEX, RGB i HSL natychmiast – bez serwerów, 100% po stronie klienta. Wszystkie przetwarzanie odbywa się lokalnie z pełną prywatnością.",
+                "howto.title": "Jak korzystać z narzędzia do wyboru i konwersji kolorów",
+                "howto.step1.title": "Wybierz kolor",
+                "howto.step1.description": "Użyj selektora kolorów, aby wizualnie wybrać kolor lub wprowadź wartość koloru w formacie HEX, RGB lub HSL. Podgląd koloru będzie aktualizowany w czasie rzeczywistym.",
+                "howto.step2.title": "Konwertuj formaty",
+                "howto.step2.description": "Narzędzie automatycznie konwertuje wybrany kolor między formatami HEX, RGB i HSL. Wszystkie wartości są aktualizowane natychmiast po zmianie koloru.",
+                "howto.step3.title": "Kopiuj lub eksportuj",
+                "howto.step3.description": "Skopiuj dowolny format koloru do schowka jednym kliknięciem lub wyeksportuj wszystkie wartości kolorów jako plik tekstowy do późniejszego użycia.",
+                "howto.step4.title": "Eksploruj palety",
+                "howto.step4.description": "Odkryj komplementarne palety kolorów na podstawie wybranego koloru. Kliknij dowolny kolor palety, aby go zastosować.",
+                "tool.title": "Selektor i konwerter kolorów",
+                "tool.hex": "HEX",
+                "tool.rgb": "RGB",
+                "tool.hsl": "HSL",
+                "tool.palettes": "Palety kolorów",
+                "tool.export": "Eksportuj kolory",
+                "tool.reset": "Resetuj",
+                "footer.follow": "OBSERWUJ NAS",
+                "footer.categories": "Popularne kategorie",
+                "footer.categories.pdf": "Narzędzia PDF",
+                "footer.categories.image": "Narzędzia obrazów",
+                "footer.categories.text": "Narzędzia tekstu",
+                "footer.categories.av": "Narzędzia audio/wideo",
+                "footer.categories.web": "Narzędzia WebDevelopera",
+                "footer.categories.calc": "Narzędzia kalkulatora",
+                "footer.categories.util": "Narzędzia użytkowe",
+                "footer.categories.color": "Narzędzia kolorów",
+                "footer.quicklinks": "Szybkie linki",
+                "footer.links.tools": "Wszystkie narzędzia",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Kontakt",
+                "footer.links.privacy": "Polityka prywatności",
+                "footer.links.disclaimer": "Zastrzeżenie",
+                "footer.links.terms": "Warunki usługi",
+                "footer.copyright": "© 2025 LollyPoPDF. Wszelkie prawa zastrzeżone."
+            },
+            th: {
+                "nav.home": "หน้าหลัก",
+                "nav.about": "เกี่ยวกับเรา",
+                "nav.tools": "เครื่องมือ",
+                "nav.contact": "ติดต่อ",
+                "hero.title": "เครื่องมือเลือกสีและแปลงค่า",
+                "hero.description": "เลือกสีและแปลงระหว่างรูปแบบ HEX, RGB และ HSL ทันที – ไม่มีเซิร์ฟเวอร์, 100% ฝั่งไคลเอ็นต์ การประมวลผลทั้งหมดเกิดขึ้นในเครื่องด้วยความเป็นส่วนตัวสมบูรณ์",
+                "howto.title": "วิธีการใช้เครื่องมือเลือกสีและแปลงค่า",
+                "howto.step1.title": "เลือกสี",
+                "howto.step1.description": "ใช้ตัวเลือกสีเพื่อเลือกสีด้วยภาพ หรือป้อนค่าสีในรูปแบบ HEX, RGB หรือ HSL ตัวอย่างสีจะอัปเดตแบบเรียลไทม์",
+                "howto.step2.title": "แปลงรูปแบบ",
+                "howto.step2.description": "เครื่องมือจะแปลงสีที่คุณเลือกระหว่างรูปแบบ HEX, RGB และ HSL โดยอัตโนมัติ ค่าทั้งหมดจะอัปเดตทันทีเมื่อคุณเปลี่ยนสี",
+                "howto.step3.title": "คัดลอกหรือส่งออก",
+                "howto.step3.description": "คัดลอกรูปแบบสีใดๆ ไปยังคลิปบอร์ดด้วยคลิกเดียว หรือส่งออกค่าสีทั้งหมดเป็นไฟล์ข้อความเพื่อใช้ในภายหลัง",
+                "howto.step4.title": "สำรวจพาเลต",
+                "howto.step4.description": "ค้นพบพาเลตสีเสริมตามสีที่คุณเลือก คลิกสีใดๆ ในพาเลตเพื่อนำไปใช้",
+                "tool.title": "ตัวเลือกสีและแปลงค่า",
+                "tool.hex": "HEX",
+                "tool.rgb": "RGB",
+                "tool.hsl": "HSL",
+                "tool.palettes": "พาเลตสี",
+                "tool.export": "ส่งออกสี",
+                "tool.reset": "รีเซ็ต",
+                "footer.follow": "ติดตามเรา",
+                "footer.categories": "หมวดหมู่ยอดนิยม",
+                "footer.categories.pdf": "เครื่องมือ PDF",
+                "footer.categories.image": "เครื่องมือรูปภาพ",
+                "footer.categories.text": "เครื่องมือข้อความ",
+                "footer.categories.av": "เครื่องมือเสียง/วิดีโอ",
+                "footer.categories.web": "เครื่องมือนักพัฒนาเว็บ",
+                "footer.categories.calc": "เครื่องมือเครื่องคิดเลข",
+                "footer.categories.util": "เครื่องมืออรรถประโยชน์",
+                "footer.categories.color": "เครื่องมือสี",
+                "footer.quicklinks": "ลิงก์ด่วน",
+                "footer.links.tools": "เครื่องมือทั้งหมด",
+                "footer.links.faq": "คำถามที่พบบ่อย",
+                "footer.links.contact": "ติดต่อ",
+                "footer.links.privacy": "นโยบายความเป็นส่วนตัว",
+                "footer.links.disclaimer": "ข้อจำกัดความรับผิดชอบ",
+                "footer.links.terms": "ข้อกำหนดการให้บริการ",
+                "footer.copyright": "© 2025 LollyPoPDF. สงวนลิขสิทธิ์ทั้งหมด"
+            },
+            tr: {
+                "nav.home": "Ana Sayfa",
+                "nav.about": "Hakkımızda",
+                "nav.tools": "Araçlar",
+                "nav.contact": "İletişim",
+                "hero.title": "Renk Seçici ve Dönüştürücü Aracı",
+                "hero.description": "Renkleri seçin ve HEX, RGB ve HSL formatları arasında anında dönüştürün – sunucu yok, %100 istemci tarafı. Tüm işlemler tam gizlilikle yerel olarak gerçekleşir.",
+                "howto.title": "Renk Seçici ve Dönüştürücü Nasıl Kullanılır",
+                "howto.step1.title": "Bir Renk Seçin",
+                "howto.step1.description": "Görsel olarak bir renk seçmek için renk seçiciyi kullanın veya HEX, RGB veya HSL formatında bir renk değeri girin. Renk önizlemesi gerçek zamanlı olarak güncellenecektir.",
+                "howto.step2.title": "Formatları Dönüştürün",
+                "howto.step2.description": "Araç, seçtiğiniz rengi HEX, RGB ve HSL formatları arasında otomatik olarak dönüştürür. Rengi değiştirdiğinizde tüm değerler anında güncellenir.",
+                "howto.step3.title": "Kopyala veya Dışa Aktar",
+                "howto.step3.description": "Herhangi bir renk formatını tek tıkla panoya kopyalayın veya tüm renk değerlerini daha sonra kullanmak üzere metin dosyası olarak dışa aktarın.",
+                "howto.step4.title": "Paletleri Keşfedin",
+                "howto.step4.description": "Seçtiğiniz renge dayalı tamamlayıcı renk paletlerini keşfedin. Herhangi bir palet rengine tıklayarak uygulayın.",
+                "tool.title": "Renk Seçici ve Dönüştürücü",
+                "tool.hex": "HEX",
+                "tool.rgb": "RGB",
+                "tool.hsl": "HSL",
+                "tool.palettes": "Renk Paletleri",
+                "tool.export": "Renkleri Dışa Aktar",
+                "tool.reset": "Sıfırla",
+                "footer.follow": "BİZİ TAKİP EDİN",
+                "footer.categories": "Popüler Kategoriler",
+                "footer.categories.pdf": "PDF Araçları",
+                "footer.categories.image": "Görsel Araçları",
+                "footer.categories.text": "Metin Araçları",
+                "footer.categories.av": "Ses/Video Araçları",
+                "footer.categories.web": "WebGeliştirici Araçları",
+                "footer.categories.calc": "Hesap Makinesi Araçları",
+                "footer.categories.util": "Yardımcı Araçlar",
+                "footer.categories.color": "Renk Araçları",
+                "footer.quicklinks": "Hızlı Bağlantılar",
+                "footer.links.tools": "Tüm Araçlar",
+                "footer.links.faq": "SSS",
+                "footer.links.contact": "İletişim",
+                "footer.links.privacy": "Gizlilik Politikası",
+                "footer.links.disclaimer": "Feragatname",
+                "footer.links.terms": "Hizmet Şartları",
+                "footer.copyright": "© 2025 LollyPoPDF. Tüm hakları saklıdır."
+            },
+            uk: {
+                "nav.home": "Головна",
+                "nav.about": "Про нас",
+                "nav.tools": "Інструменти",
+                "nav.contact": "Контакти",
+                "hero.title": "Інструмент вибору та конвертації кольорів",
+                "hero.description": "Виберіть кольори та конвертуйте між форматами HEX, RGB та HSL миттєво – без серверів, 100% на стороні клієнта. Вся обробка відбувається локально з повною конфіденційністю.",
+                "howto.title": "Як використовувати інструмент вибору та конвертації кольорів",
+                "howto.step1.title": "Виберіть колір",
+                "howto.step1.description": "Використовуйте селектор кольорів, щоб візуально вибрати колір, або введіть значення кольору у форматі HEX, RGB або HSL. Попередній перегляд кольору оновлюватиметься в реальному часі.",
+                "howto.step2.title": "Конвертуйте формати",
+                "howto.step2.description": "Інструмент автоматично конвертує вибраний вами колір між форматами HEX, RGB та HSL. Усі значення оновлюються миттєво при зміні кольору.",
+                "howto.step3.title": "Копіюйте або експортуйте",
+                "howto.step3.description": "Скопіюйте будь-який формат кольору в буфер обміну одним клацанням або експортуйте всі значення кольорів у текстовому файлі для подальшого використання.",
+                "howto.step4.title": "Досліджуйте палітри",
+                "howto.step4.description": "Відкрийте додаткові кольорові палітри на основі вибраного вами кольору. Клацніть на будь-який колір палітри, щоб застосувати його.",
+                "tool.title": "Вибір та конвертація кольорів",
+                "tool.hex": "HEX",
+                "tool.rgb": "RGB",
+                "tool.hsl": "HSL",
+                "tool.palettes": "Кольорові палітри",
+                "tool.export": "Експортувати кольори",
+                "tool.reset": "Скинути",
+                "footer.follow": "СЛІДКУЙТЕ ЗА НАМИ",
+                "footer.categories": "Популярні категорії",
+                "footer.categories.pdf": "PDF інструменти",
+                "footer.categories.image": "Інструменти для зображень",
+                "footer.categories.text": "Текстові інструменти",
+                "footer.categories.av": "Аудіо/Відео інструменти",
+                "footer.categories.web": "Інструменти веб-розробника",
+                "footer.categories.calc": "Інструменти калькулятора",
+                "footer.categories.util": "Утиліти",
+                "footer.categories.color": "Кольорові інструменти",
+                "footer.quicklinks": "Швидкі посилання",
+                "footer.links.tools": "Всі інструменти",
+                "footer.links.faq": "ЧаПи",
+                "footer.links.contact": "Контакти",
+                "footer.links.privacy": "Політика конфіденційності",
+                "footer.links.disclaimer": "Відмова від відповідальності",
+                "footer.links.terms": "Умови використання",
+                "footer.copyright": "© 2025 LollyPoPDF. Всі права захищені."
+            },
+            vi: {
+                "nav.home": "Trang chủ",
+                "nav.about": "Về chúng tôi",
+                "nav.tools": "Công cụ",
+                "nav.contact": "Liên hệ",
+                "hero.title": "Công cụ Chọn và Chuyển đổi Màu",
+                "hero.description": "Chọn màu và chuyển đổi giữa các định dạng HEX, RGB và HSL ngay lập tức – không máy chủ, 100% phía máy khách. Tất cả xử lý diễn ra cục bộ với quyền riêng tư hoàn toàn.",
+                "howto.title": "Cách Sử dụng Công cụ Chọn và Chuyển đổi Màu",
+                "howto.step1.title": "Chọn một Màu",
+                "howto.step1.description": "Sử dụng bộ chọn màu để chọn màu trực quan hoặc nhập giá trị màu ở định dạng HEX, RGB hoặc HSL. Bản xem trước màu sẽ cập nhật theo thời gian thực.",
+                "howto.step2.title": "Chuyển đổi Định dạng",
+                "howto.step2.description": "Công cụ tự động chuyển đổi màu bạn đã chọn giữa các định dạng HEX, RGB và HSL. Tất cả giá trị cập nhật ngay lập tức khi bạn thay đổi màu.",
+                "howto.step3.title": "Sao chép hoặc Xuất",
+                "howto.step3.description": "Sao chép bất kỳ định dạng màu nào vào clipboard bằng một cú nhấp chuột hoặc xuất tất cả giá trị màu dưới dạng tệp văn bản để sử dụng sau.",
+                "howto.step4.title": "Khám phá Bảng màu",
+                "howto.step4.description": "Khám phá bảng màu bổ sung dựa trên màu bạn đã chọn. Nhấp vào bất kỳ màu nào trong bảng màu để áp dụng.",
+                "tool.title": "Bộ chọn và Chuyển đổi Màu",
+                "tool.hex": "HEX",
+                "tool.rgb": "RGB",
+                "tool.hsl": "HSL",
+                "tool.palettes": "Bảng màu",
+                "tool.export": "Xuất Màu",
+                "tool.reset": "Đặt lại",
+                "footer.follow": "THEO DÕI CHÚNG TÔI",
+                "footer.categories": "Danh mục Phổ biến",
+                "footer.categories.pdf": "Công cụ PDF",
+                "footer.categories.image": "Công cụ Hình ảnh",
+                "footer.categories.text": "Công cụ Văn bản",
+                "footer.categories.av": "Công cụ Âm thanh/Video",
+                "footer.categories.web": "Công cụ WebDeveloper",
+                "footer.categories.calc": "Công cụ Máy tính",
+                "footer.categories.util": "Công cụ Tiện ích",
+                "footer.categories.color": "Công cụ Màu sắc",
+                "footer.quicklinks": "Liên kết Nhanh",
+                "footer.links.tools": "Tất cả Công cụ",
+                "footer.links.faq": "Câu hỏi Thường gặp",
+                "footer.links.contact": "Liên hệ",
+                "footer.links.privacy": "Chính sách Quyền riêng tư",
+                "footer.links.disclaimer": "Tuyên bố Miễn trừ Trách nhiệm",
+                "footer.links.terms": "Điều khoản Dịch vụ",
+                "footer.copyright": "© 2025 LollyPoPDF. Tất cả quyền được bảo lưu."
+            },
+            is: {
+                "nav.home": "Heim",
+                "nav.about": "Um okkur",
+                "nav.tools": "Verkfæri",
+                "nav.contact": "Hafa samband",
+                "hero.title": "Litaval og Umbreytingartól",
+                "hero.description": "Veldu liti og breyttu á milli HEX, RGB og HSL sniða augnablikslega – án netþjóna, 100% hjá viðskiptavininum. Öll vinnsla á sér stað staðbundin með fullri næði.",
+                "howto.title": "Hvernig á að nota Litaval og Umbreytingartólið",
+                "howto.step1.title": "Veldu lit",
+                "howto.step1.description": "Notaðu litavalinn til að velja lit sjónrænt eða sláðu inn litagildi í HEX, RGB eða HSL sniði. Forskoðun litarins verður uppfærð í rauntíma.",
+                "howto.step2.title": "Breyttu sniðum",
+                "howto.step2.description": "Tólið breytir sjálfkrafa völdum lit þínum á milli HEX, RGB og HSL sniða. Öll gildi eru uppfærð samstundis þegar þú breytir litnum.",
+                "howto.step3.title": "Afritaðu eða flytja út",
+                "howto.step3.description": "Afritaðu hvaða litasnið sem er á klippiborðið með einum smelli eða flyttu öll litagildi út sem textaskrá til notkunar síðar.",
+                "howto.step4.title": "Kannaðu litatöflur",
+                "howto.step4.description": "Uppgötvaðu viðbótarlitatöflur byggðar á völdum lit þínum. Smelltu á hvaða lit sem er í litatöflunni til að nota hann.",
+                "tool.title": "Litaval og Umbreytingartól",
+                "tool.hex": "HEX",
+                "tool.rgb": "RGB",
+                "tool.hsl": "HSL",
+                "tool.palettes": "Litatöflur",
+                "tool.export": "Flytja út liti",
+                "tool.reset": "Endurstilla",
+                "footer.follow": "FYLGDU OKKUR",
+                "footer.categories": "Vinsælar flokkar",
+                "footer.categories.pdf": "PDF verkfæri",
+                "footer.categories.image": "Myndverkfæri",
+                "footer.categories.text": "Textaverkfæri",
+                "footer.categories.av": "Hljóð/Myndband verkfæri",
+                "footer.categories.web": "Vefþróunaraðili verkfæri",
+                "footer.categories.calc": "Reiknivél verkfæri",
+                "footer.categories.util": "Gagnleg verkfæri",
+                "footer.categories.color": "Litverkfæri",
+                "footer.quicklinks": "Flýtihlekkir",
+                "footer.links.tools": "Öll verkfæri",
+                "footer.links.faq": "Algengar spurningar",
+                "footer.links.contact": "Hafa samband",
+                "footer.links.privacy": "Meðferðarreglur",
+                "footer.links.disclaimer": "Fyrirvari",
+                "footer.links.terms": "Þjónustuskilmálar",
+                "footer.copyright": "© 2025 LollyPoPDF. Öll réttindi áskilin."
+            },
+            no: {
+                "nav.home": "Hjem",
+                "nav.about": "Om oss",
+                "nav.tools": "Verktøy",
+                "nav.contact": "Kontakt",
+                "hero.title": "Fargevelger og Konverteringsverktøy",
+                "hero.description": "Velg farger og konverter mellom HEX, RGB og HSL formater umiddelbart – ingen servere, 100% klientside. All behandling skjer lokalt med fullstendig personvern.",
+                "howto.title": "Hvordan bruke Fargevelgeren og Konverteringsverktøyet",
+                "howto.step1.title": "Velg en farge",
+                "howto.step1.description": "Bruk fargevelgeren for å velge en farge visuelt, eller skriv inn en fargeverdi i HEX, RGB eller HSL format. Forhåndsvisningen av fargen vil oppdateres i sanntid.",
+                "howto.step2.title": "Konverter formater",
+                "howto.step2.description": "Verktøyet konverterer automatisk din valgte farge mellom HEX, RGB og HSL formater. Alle verdier oppdateres umiddelbart når du endrer fargen.",
+                "howto.step3.title": "Kopier eller eksporter",
+                "howto.step3.description": "Kopier ethvert fargeformat til utklippstavlen med ett klikk, eller eksporter alle fargeverdier som en tekstfil for senere bruk.",
+                "howto.step4.title": "Utforsk paletter",
+                "howto.step4.description": "Oppdag komplementære fargepaletter basert på din valgte farge. Klikk på en hvilken som helst farge i paletten for å bruke den.",
+                "tool.title": "Fargevelger og Konverteringsverktøy",
+                "tool.hex": "HEX",
+                "tool.rgb": "RGB",
+                "tool.hsl": "HSL",
+                "tool.palettes": "Fargepaletter",
+                "tool.export": "Eksporter farger",
+                "tool.reset": "Tilbakestill",
+                "footer.follow": "FØLG OSS",
+                "footer.categories": "Populære kategorier",
+                "footer.categories.pdf": "PDF verktøy",
+                "footer.categories.image": "Bildeverktøy",
+                "footer.categories.text": "Tekstverktøy",
+                "footer.categories.av": "Lyd/Video verktøy",
+                "footer.categories.web": "WebUtvikler verktøy",
+                "footer.categories.calc": "Kalkulator verktøy",
+                "footer.categories.util": "Nytteverktøy",
+                "footer.categories.color": "Fargeverktøy",
+                "footer.quicklinks": "Hurtiglenker",
+                "footer.links.tools": "Alle verktøy",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Kontakt",
+                "footer.links.privacy": "Personvernregler",
+                "footer.links.disclaimer": "Ansvarsfraskrivelse",
+                "footer.links.terms": "Tjenestevilkår",
+                "footer.copyright": "© 2025 LollyPoPDF. Alle rettigheter forbeholdt."
+            },
+            sv: {
+                "nav.home": "Hem",
+                "nav.about": "Om oss",
+                "nav.tools": "Verktyg",
+                "nav.contact": "Kontakt",
+                "hero.title": "Färgväljare och Konverteringsverktyg",
+                "hero.description": "Välj färger och konvertera mellan HEX, RGB och HSL format omedelbart – inga servrar, 100% klientsida. All bearbetning sker lokalt med fullständig integritet.",
+                "howto.title": "Hur man använder Färgväljaren och Konverteringsverktyget",
+                "howto.step1.title": "Välj en färg",
+                "howto.step1.description": "Använd färgväljaren för att visuellt välja en färg, eller ange ett färgvärde i HEX, RGB eller HSL format. Förhandsvisningen av färgen uppdateras i realtid.",
+                "howto.step2.title": "Konvertera format",
+                "howto.step2.description": "Verktyget konverterar automatiskt din valda färg mellan HEX, RGB och HSL format. Alla värden uppdateras omedelbart när du ändrar färgen.",
+                "howto.step3.title": "Kopiera eller exportera",
+                "howto.step3.description": "Kopiera valfritt färgformat till urklipp med ett klick, eller exportera alla färgvärden som en textfil för senare användning.",
+                "howto.step4.title": "Utforska paletter",
+                "howto.step4.description": "Upptäck komplementära färgpaletter baserade på din valda färg. Klicka på valfri färg i paletten för att applicera den.",
+                "tool.title": "Färgväljare och Konverteringsverktyg",
+                "tool.hex": "HEX",
+                "tool.rgb": "RGB",
+                "tool.hsl": "HSL",
+                "tool.palettes": "Färgpaletter",
+                "tool.export": "Exportera färger",
+                "tool.reset": "Återställ",
+                "footer.follow": "FÖLJ OSS",
+                "footer.categories": "Populära kategorier",
+                "footer.categories.pdf": "PDF verktyg",
+                "footer.categories.image": "Bildverktyg",
+                "footer.categories.text": "Textverktyg",
+                "footer.categories.av": "Ljud/Video verktyg",
+                "footer.categories.web": "WebbUtvecklare verktyg",
+                "footer.categories.calc": "Kalkylator verktyg",
+                "footer.categories.util": "Verktyg för nytta",
+                "footer.categories.color": "Färgverktyg",
+                "footer.quicklinks": "Snabblänkar",
+                "footer.links.tools": "Alla verktyg",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Kontakt",
+                "footer.links.privacy": "Integritetspolicy",
+                "footer.links.disclaimer": "Ansvarsfriskrivning",
+                "footer.links.terms": "Användarvillkor",
+                "footer.copyright": "© 2025 LollyPoPDF. Alla rättigheter förbehållna."
+            },
+            fi: {
+                "nav.home": "Koti",
+                "nav.about": "Meistä",
+                "nav.tools": "Työkalut",
+                "nav.contact": "Yhteystiedot",
+                "hero.title": "Värinvalitsin ja Muunnostyökalu",
+                "hero.description": "Valitse värejä ja muunna HEX, RGB ja HSL muotojen välillä välittömästi – ei palvelimia, 100% asiakaspuoli. Kaikki käsittely tapahtuu paikallisesti täydellisen yksityisyyden kanssa.",
+                "howto.title": "Kuinka käyttää Värinvalitsinta ja Muunnostyökalua",
+                "howto.step1.title": "Valitse väri",
+                "howto.step1.description": "Käytä värinvalitsinta valitaksesi värin visuaalisesti tai syötä värinarvo HEX, RGB tai HSL muodossa. Värin esikatselu päivittyy reaaliaikaisesti.",
+                "howto.step2.title": "Muunna muotoja",
+                "howto.step2.description": "Työkalu muuntaa automaattisesti valitsemasi värin HEX, RGB ja HSL muotojen välillä. Kaikki arvot päivittyvät välittömästi kun vaihdat väriä.",
+                "howto.step3.title": "Kopioi tai vie",
+                "howto.step3.description": "Kopioi mikä tahansa värimuoto leikepöydälle yhdellä napsautuksella tai vie kaikki väriarvot tekstitiedostona myöhempää käyttöä varten.",
+                "howto.step4.title": "Tutki paletteja",
+                "howto.step4.description": "Löydä täydentäviä väripaletteja valitsemasi värin perusteella. Napsauta mitä tahansa paletin väriä soveltaaksesi sitä.",
+                "tool.title": "Värinvalitsin ja Muunnostyökalu",
+                "tool.hex": "HEX",
+                "tool.rgb": "RGB",
+                "tool.hsl": "HSL",
+                "tool.palettes": "Väripaletit",
+                "tool.export": "Vie värit",
+                "tool.reset": "Nollaa",
+                "footer.follow": "SEURA MEITÄ",
+                "footer.categories": "Suositut kategoriat",
+                "footer.categories.pdf": "PDF työkalut",
+                "footer.categories.image": "Kuvatyökalut",
+                "footer.categories.text": "Tekstityökalut",
+                "footer.categories.av": "Ääni/Video työkalut",
+                "footer.categories.web": "WebKehittäjä työkalut",
+                "footer.categories.calc": "Laskin työkalut",
+                "footer.categories.util": "Aputyökalut",
+                "footer.categories.color": "Värityökalut",
+                "footer.quicklinks": "Pikalinkit",
+                "footer.links.tools": "Kaikki työkalut",
+                "footer.links.faq": "UKK",
+                "footer.links.contact": "Yhteystiedot",
+                "footer.links.privacy": "Tietosuojakäytäntö",
+                "footer.links.disclaimer": "Vastuuvapauslauseke",
+                "footer.links.terms": "Käyttöehdot",
+                "footer.copyright": "© 2025 LollyPoPDF. Kaikki oikeudet pidätetään."
+            },
+            cs: {
+                "nav.home": "Domů",
+                "nav.about": "O nás",
+                "nav.tools": "Nástroje",
+                "nav.contact": "Kontakt",
+                "hero.title": "Nástroj pro výběr a převod barev",
+                "hero.description": "Vyberte barvy a převádějte mezi formáty HEX, RGB a HSL okamžitě – žádné servery, 100% na straně klienta. Veškeré zpracování probíhá lokálně s úplným soukromím.",
+                "howto.title": "Jak používat nástroj pro výběr a převod barev",
+                "howto.step1.title": "Vyberte barvu",
+                "howto.step1.description": "Použijte výběr barev k vizuálnímu výběru barvy nebo zadejte hodnotu barvy ve formátu HEX, RGB nebo HSL. Náhled barvy se bude aktualizovat v reálném čase.",
+                "howto.step2.title": "Převádějte formáty",
+                "howto.step2.description": "Nástroj automaticky převádí vaši vybranou barvu mezi formáty HEX, RGB a HSL. Všechny hodnoty se aktualizují okamžitě při změně barvy.",
+                "howto.step3.title": "Kopírujte nebo exportujte",
+                "howto.step3.description": "Zkopírujte jakýkoli formát barvy do schránky jedním kliknutím nebo exportujte všechny hodnoty barev jako textový soubor pro pozdější použití.",
+                "howto.step4.title": "Prozkoumejte palety",
+                "howto.step4.description": "Objevte doplňkové barevné palety na základě vaší vybrané barvy. Kliknutím na libovolnou barvu v paletě ji aplikujte.",
+                "tool.title": "Výběr a převod barev",
+                "tool.hex": "HEX",
+                "tool.rgb": "RGB",
+                "tool.hsl": "HSL",
+                "tool.palettes": "Barevné palety",
+                "tool.export": "Exportovat barvy",
+                "tool.reset": "Resetovat",
+                "footer.follow": "SLEDUJTE NÁS",
+                "footer.categories": "Populární kategorie",
+                "footer.categories.pdf": "PDF nástroje",
+                "footer.categories.image": "Obrázkové nástroje",
+                "footer.categories.text": "Textové nástroje",
+                "footer.categories.av": "Audio/Video nástroje",
+                "footer.categories.web": "WebVývojářské nástroje",
+                "footer.categories.calc": "Kalkulačkové nástroje",
+                "footer.categories.util": "Užitečné nástroje",
+                "footer.categories.color": "Barevné nástroje",
+                "footer.quicklinks": "Rychlé odkazy",
+                "footer.links.tools": "Všechny nástroje",
+                "footer.links.faq": "Často kladené otázky",
+                "footer.links.contact": "Kontakt",
+                "footer.links.privacy": "Zásady ochrany osobních údajů",
+                "footer.links.disclaimer": "Odmítnutí odpovědnosti",
+                "footer.links.terms": "Podmínky služby",
+                "footer.copyright": "© 2025 LollyPoPDF. Všechna práva vyhrazena."
+            }
+
+
+        };
+
+        // Function to change language
+        function changeLanguage(langCode) {
+            const langData = translations[langCode];
+            if (!langData) return;
+            
+            // Update all elements with data-i18n attribute
+            document.querySelectorAll('[data-i18n]').forEach(element => {
+                const key = element.getAttribute('data-i18n');
+                if (langData[key]) {
+                    element.textContent = langData[key];
+                }
+            });
+            
+            // Update current language display
+            currentLanguageElement.textContent = languages.find(lang => lang.code === langCode)?.name || 'English';
+            
+            // Save language preference
+            localStorage.setItem('language', langCode);
+        }
+
+        // Initialize language
+        const savedLanguage = localStorage.getItem('language') || 'en';
+        changeLanguage(savedLanguage);
+        
+        // Language selection handler
+        languageDropdown.addEventListener('click', (e) => {
+            if (e.target.classList.contains('language-option')) {
+                const langCode = e.target.getAttribute('data-lang');
+                changeLanguage(langCode);
+            }
+        });
+    </script>
+</body>
+</html>

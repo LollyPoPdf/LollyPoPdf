@@ -586,6 +586,23 @@
             background-color: var(--secondary-color);
         }
 
+        /* Mobile Compatibility Notice */
+        .mobile-notice {
+            background-color: rgba(147, 112, 219, 0.1);
+            border: 1px solid var(--primary-color);
+            border-radius: var(--border-radius);
+            padding: 15px;
+            margin-bottom: 20px;
+            text-align: center;
+            font-size: 14px;
+            color: var(--text-color);
+        }
+
+        .mobile-notice i {
+            color: var(--primary-color);
+            margin-right: 8px;
+        }
+
         /* Footer */
         footer {
             background-color: #000000;
@@ -888,6 +905,12 @@
         <div class="container">
             <h2 class="tool-title" data-i18n="tool.title">Text to Speech</h2>
             <div class="tool-container">
+                <!-- Mobile Compatibility Notice -->
+                <div class="mobile-notice" id="mobileNotice" style="display: none;">
+                    <i class="fas fa-info-circle"></i>
+                    <span data-i18n="tool.mobile.notice">Note: Some languages and voices may not be available on mobile devices due to browser limitations.</span>
+                </div>
+
                 <!-- Text Input Section -->
                 <div class="text-input-container">
                     <h3 class="text-input-title" data-i18n="tool.text.title">Enter Text to Convert</h3>
@@ -1155,12 +1178,22 @@
         const clearBtn = document.getElementById('clearBtn');
         const statusDot = document.getElementById('statusDot');
         const statusText = document.getElementById('statusText');
+        const mobileNotice = document.getElementById('mobileNotice');
         
         // Speech synthesis
         let synth = window.speechSynthesis;
         let voices = [];
         let currentUtterance = null;
         let isPaused = false;
+        let voicesLoaded = false;
+        
+        // Check if mobile device
+        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        
+        // Show mobile notice if on mobile
+        if (isMobile) {
+            mobileNotice.style.display = 'block';
+        }
         
         // Update character count
         textInput.addEventListener('input', () => {
@@ -1171,66 +1204,165 @@
         rateControl.addEventListener('input', () => {
             rateValue.textContent = rateControl.value;
             // Apply changes in real-time if speaking
-            if (currentUtterance && synth.speaking) {
-                currentUtterance.rate = parseFloat(rateControl.value);
+            if (currentUtterance && synth.speaking && !synth.paused) {
+                // Create new utterance with updated parameters
+                updateUtteranceParameters();
             }
         });
         
         pitchControl.addEventListener('input', () => {
             pitchValue.textContent = pitchControl.value;
             // Apply changes in real-time if speaking
-            if (currentUtterance && synth.speaking) {
-                currentUtterance.pitch = parseFloat(pitchControl.value);
+            if (currentUtterance && synth.speaking && !synth.paused) {
+                // Create new utterance with updated parameters
+                updateUtteranceParameters();
             }
         });
         
         volumeControl.addEventListener('input', () => {
             volumeValue.textContent = volumeControl.value;
             // Apply changes in real-time if speaking
-            if (currentUtterance && synth.speaking) {
-                currentUtterance.volume = parseFloat(volumeControl.value);
+            if (currentUtterance && synth.speaking && !synth.paused) {
+                // Create new utterance with updated parameters
+                updateUtteranceParameters();
             }
         });
         
-        // Load available voices
+        // Update utterance parameters in real-time
+        function updateUtteranceParameters() {
+            if (currentUtterance && synth.speaking) {
+                // Store current position
+                const wasPaused = synth.paused;
+                
+                // Cancel current utterance
+                synth.cancel();
+                
+                // Create new utterance with updated parameters
+                const newUtterance = new SpeechSynthesisUtterance(textInput.value);
+                
+                // Set voice
+                const selectedVoice = voices.find(voice => voice.name === voiceSelect.value);
+                if (selectedVoice) {
+                    newUtterance.voice = selectedVoice;
+                }
+                
+                // Set parameters
+                newUtterance.rate = parseFloat(rateControl.value);
+                newUtterance.pitch = parseFloat(pitchControl.value);
+                newUtterance.volume = parseFloat(volumeControl.value);
+                
+                // Set event listeners
+                newUtterance.onstart = () => {
+                    updateStatus('speaking', 'Speaking');
+                };
+                
+                newUtterance.onend = () => {
+                    updateStatus('ready', 'Ready');
+                };
+                
+                newUtterance.onerror = (event) => {
+                    console.error('Speech synthesis error:', event);
+                    updateStatus('error', 'Error occurred');
+                };
+                
+                // Set current utterance
+                currentUtterance = newUtterance;
+                
+                // Resume speaking
+                synth.speak(currentUtterance);
+                
+                if (wasPaused) {
+                    synth.pause();
+                    updateStatus('paused', 'Paused');
+                }
+            }
+        }
+        
+        // Load available voices with better mobile support
         function loadVoices() {
-            voices = synth.getVoices();
-            
-            // Clear voice select
+            // Clear existing voices
+            voices = [];
             voiceSelect.innerHTML = '';
+            
+            // Get voices from speech synthesis
+            const availableVoices = synth.getVoices();
+            
+            if (availableVoices.length === 0) {
+                // If no voices available, try again after a short delay
+                setTimeout(loadVoices, 100);
+                return;
+            }
+            
+            voices = availableVoices;
+            voicesLoaded = true;
             
             // Filter voices by selected language
             const selectedLang = languageSelect.value;
-            const filteredVoices = voices.filter(voice => voice.lang === selectedLang);
+            let filteredVoices = voices.filter(voice => voice.lang.startsWith(selectedLang));
             
+            // If no voices for selected language, show all available voices
             if (filteredVoices.length === 0) {
-                const option = document.createElement('option');
-                option.textContent = 'No voices available for this language';
-                option.disabled = true;
-                voiceSelect.appendChild(option);
-            } else {
-                filteredVoices.forEach(voice => {
+                filteredVoices = voices;
+                
+                // Show notice for mobile devices
+                if (isMobile) {
                     const option = document.createElement('option');
-                    option.value = voice.name;
-                    option.textContent = `${voice.name} (${voice.lang})`;
+                    option.textContent = 'Using available voice (language may differ)';
+                    option.disabled = true;
                     voiceSelect.appendChild(option);
-                });
+                }
             }
+            
+            // Populate voice select
+            filteredVoices.forEach(voice => {
+                const option = document.createElement('option');
+                option.value = voice.name;
+                option.textContent = `${voice.name} (${voice.lang})`;
+                voiceSelect.appendChild(option);
+            });
             
             // Update status
             updateStatus('ready', 'Ready');
         }
         
         // Update voices when language changes
-        languageSelect.addEventListener('change', loadVoices);
+        languageSelect.addEventListener('change', () => {
+            if (voicesLoaded) {
+                loadVoices();
+            }
+        });
         
-        // Initialize voices
-        if (synth.onvoiceschanged !== undefined) {
-            synth.onvoiceschanged = loadVoices;
-        } else {
-            // Fallback for browsers that don't support onvoiceschanged
-            setTimeout(loadVoices, 1000);
+        // Initialize voices with better mobile support
+        function initializeVoices() {
+            if (synth.onvoiceschanged !== undefined) {
+                synth.onvoiceschanged = loadVoices;
+            }
+            
+            // Try to load voices immediately
+            loadVoices();
+            
+            // If still no voices after 1 second, try again (for mobile devices)
+            setTimeout(() => {
+                if (voices.length === 0) {
+                    loadVoices();
+                }
+            }, 1000);
+            
+            // Additional fallback for mobile
+            if (isMobile) {
+                setTimeout(loadVoices, 2000);
+            }
         }
+        
+        // Initialize voices when page loads
+        window.addEventListener('load', initializeVoices);
+        
+        // Also try to load voices when user interacts (helps on some mobile browsers)
+        document.addEventListener('click', () => {
+            if (!voicesLoaded) {
+                initializeVoices();
+            }
+        }, { once: true });
         
         // Update status indicator
         function updateStatus(state, text) {
@@ -1286,6 +1418,9 @@
             const selectedVoice = voices.find(voice => voice.name === voiceSelect.value);
             if (selectedVoice) {
                 currentUtterance.voice = selectedVoice;
+            } else if (voices.length > 0) {
+                // Fallback to first available voice
+                currentUtterance.voice = voices[0];
             }
             
             // Set parameters
@@ -1305,6 +1440,11 @@
             currentUtterance.onerror = (event) => {
                 console.error('Speech synthesis error:', event);
                 updateStatus('error', 'Error occurred');
+                
+                // Show specific error message for mobile devices
+                if (isMobile && event.error === 'not-allowed') {
+                    alert('Speech synthesis not supported or blocked on this device. Please try a different browser.');
+                }
             };
             
             currentUtterance.onpause = () => {
@@ -1316,8 +1456,17 @@
             };
             
             // Start speaking
-            synth.speak(currentUtterance);
-            updateStatus('speaking', 'Speaking');
+            try {
+                synth.speak(currentUtterance);
+                updateStatus('speaking', 'Speaking');
+            } catch (error) {
+                console.error('Error starting speech synthesis:', error);
+                updateStatus('error', 'Error starting speech');
+                
+                if (isMobile) {
+                    alert('Speech synthesis not supported on this device. Please try a different browser or device.');
+                }
+            }
         });
         
         // Pause/Resume speech
@@ -1431,6 +1580,7 @@
                 "tool.buttons.pause": "Pause",
                 "tool.buttons.resume": "Resume",
                 "tool.buttons.clear": "Clear",
+                "tool.mobile.notice": "Note: Some languages and voices may not be available on mobile devices due to browser limitations.",
                 "footer.follow": "FOLLOW US",
                 "footer.categories": "Popular Categories",
                 "footer.categories.pdf": "PDF Tools",
@@ -1483,6 +1633,7 @@
                 "tool.buttons.pause": "Pausar",
                 "tool.buttons.resume": "Reanudar",
                 "tool.buttons.clear": "Limpiar",
+                "tool.mobile.notice": "Nota: Algunos idiomas y voces pueden no estar disponibles en dispositivos móviles debido a limitaciones del navegador.",
                 "footer.follow": "SÍGUENOS",
                 "footer.categories": "Categorías Populares",
                 "footer.categories.pdf": "Herramientas PDF",

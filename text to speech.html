@@ -374,9 +374,6 @@
 
         /* Text Input Section */
         .text-input-container {
-            background-color: var(--bg-secondary);
-            border-radius: var(--border-radius);
-            padding: 30px;
             margin-bottom: 30px;
         }
 
@@ -388,215 +385,163 @@
 
         .text-input {
             width: 100%;
-            min-height: 200px;
+            min-height: 150px;
             padding: 15px;
             border-radius: var(--border-radius);
             border: 1px solid var(--primary-color);
-            background-color: var(--bg-color);
+            background-color: var(--bg-secondary);
             color: var(--text-color);
             font-size: 16px;
-            line-height: 1.6;
             resize: vertical;
-            margin-bottom: 15px;
+            font-family: inherit;
         }
 
-        .text-input-actions {
-            display: flex;
-            gap: 15px;
-            flex-wrap: wrap;
-        }
-
-        .file-input-btn, .copy-btn, .clear-text-btn {
-            padding: 8px 15px;
-            border: none;
-            border-radius: var(--border-radius);
-            cursor: pointer;
-            transition: var(--transition);
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-
-        .file-input-btn {
-            background-color: var(--primary-color);
-            color: white;
-        }
-
-        .file-input-btn:hover {
-            background-color: var(--primary-dark);
-        }
-
-        .copy-btn {
-            background-color: var(--primary-color);
-            color: white;
-        }
-
-        .copy-btn:hover {
-            background-color: var(--primary-dark);
-        }
-
-        .clear-text-btn {
-            background-color: white;
-            color: var(--error-color);
-            border: 2px solid var(--error-color);
-        }
-
-        .clear-text-btn:hover {
-            background-color: var(--error-color);
-            color: white;
-        }
-
-        /* Voice Selection */
-        .voice-container {
-            background-color: var(--bg-secondary);
-            border-radius: var(--border-radius);
-            padding: 20px;
-            margin-bottom: 30px;
-        }
-
-        .voice-title {
-            font-size: 18px;
-            margin-bottom: 15px;
-            color: var(--primary-color);
-        }
-
-        .voice-controls {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-        }
-
-        .voice-select, .language-select {
-            width: 100%;
-            padding: 12px;
-            border-radius: var(--border-radius);
-            border: 1px solid var(--primary-color);
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            font-size: 16px;
-        }
-
-        .voice-options {
-            display: flex;
-            gap: 15px;
-            margin-top: 15px;
-            flex-wrap: wrap;
-        }
-
-        .voice-option {
-            padding: 8px 15px;
-            border-radius: var(--border-radius);
-            background-color: var(--bg-color);
-            border: 1px solid var(--primary-color);
-            cursor: pointer;
-            transition: var(--transition);
-        }
-
-        .voice-option:hover, .voice-option.active {
-            background-color: var(--primary-color);
-            color: white;
-        }
-
-        /* Audio Settings */
-        .settings-container {
-            background-color: var(--bg-secondary);
-            border-radius: var(--border-radius);
-            padding: 20px;
-            margin-bottom: 30px;
-        }
-
-        .settings-title {
-            font-size: 18px;
-            margin-bottom: 15px;
-            color: var(--primary-color);
-        }
-
-        .settings-controls {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-        }
-
-        .setting-group {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .setting-label {
-            font-size: 14px;
-            color: var(--text-color);
-        }
-
-        .setting-input {
-            width: 100%;
-            padding: 8px;
-            border-radius: var(--border-radius);
-            border: 1px solid var(--primary-color);
-            background-color: var(--bg-color);
-            color: var(--text-color);
-        }
-
-        .range-input {
-            -webkit-appearance: none;
-            width: 100%;
-            height: 8px;
-            border-radius: 5px;
-            background: var(--bg-color);
+        .text-input:focus {
             outline: none;
+            border-color: var(--primary-dark);
+            box-shadow: 0 0 0 3px rgba(147, 112, 219, 0.2);
         }
 
-        .range-input::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            appearance: none;
-            width: 18px;
-            height: 18px;
-            border-radius: 50%;
-            background: var(--primary-color);
-            cursor: pointer;
-        }
-
-        .range-input::-moz-range-thumb {
-            width: 18px;
-            height: 18px;
-            border-radius: 50%;
-            background: var(--primary-color);
-            cursor: pointer;
-            border: none;
+        .char-count {
+            text-align: right;
+            margin-top: 5px;
+            font-size: 14px;
+            color: var(--text-light);
         }
 
         /* Controls Section */
         .controls-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .control-group {
             background-color: var(--bg-secondary);
             border-radius: var(--border-radius);
-            padding: 30px;
+            padding: 20px;
+            box-shadow: var(--shadow);
+        }
+
+        .control-title {
+            font-size: 16px;
+            margin-bottom: 15px;
+            color: var(--primary-color);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .control-row {
+            margin-bottom: 15px;
+        }
+
+        .control-label {
+            display: block;
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 8px;
+        }
+
+        .select-control {
+            width: 100%;
+            padding: 10px;
+            border-radius: var(--border-radius);
+            border: 1px solid var(--primary-color);
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-size: 14px;
+        }
+
+        .range-control {
+            width: 100%;
+            margin-top: 5px;
+        }
+
+        .range-value {
+            font-size: 12px;
+            color: var(--text-light);
+            text-align: center;
+            margin-top: 5px;
+        }
+
+        /* Status Section */
+        .status-container {
+            background-color: var(--bg-secondary);
+            border-radius: var(--border-radius);
+            padding: 20px;
             margin-bottom: 30px;
             text-align: center;
         }
 
-        .controls-title {
+        .status-title {
             font-size: 18px;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
             color: var(--primary-color);
         }
 
-        .controls-buttons {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
+        .status-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 20px;
+            border-radius: 30px;
+            background-color: var(--bg-color);
+            box-shadow: var(--shadow);
         }
 
-        .control-btn {
+        .status-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background-color: var(--text-light);
+        }
+
+        .status-dot.ready {
+            background-color: var(--success-color);
+        }
+
+        .status-dot.speaking {
+            background-color: var(--primary-color);
+            animation: pulse 1.5s infinite;
+        }
+
+        .status-dot.paused {
+            background-color: var(--warning-color);
+        }
+
+        .status-dot.error {
+            background-color: var(--error-color);
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 30px;
+        }
+
+        .action-btn {
             padding: 12px 25px;
             border: none;
             border-radius: 30px;
             cursor: pointer;
             font-weight: bold;
             transition: var(--transition);
+            flex: 1;
+            min-width: 150px;
             display: flex;
             align-items: center;
+            justify-content: center;
             gap: 8px;
         }
 
@@ -609,90 +554,36 @@
             background-color: var(--primary-dark);
         }
 
-        .pause-btn {
+        .speak-btn:disabled {
+            background-color: var(--text-light);
+            cursor: not-allowed;
+        }
+
+        .pause-resume-btn {
             background-color: var(--warning-color);
             color: white;
-            display: none;
         }
 
-        .pause-btn:hover {
-            background-color: #e69c0a;
+        .pause-resume-btn:hover {
+            background-color: #e69008;
         }
 
-        .resume-btn {
+        .pause-resume-btn.resume-mode {
             background-color: var(--success-color);
-            color: white;
-            display: none;
         }
 
-        .resume-btn:hover {
+        .pause-resume-btn.resume-mode:hover {
             background-color: #0da271;
         }
 
-        .stop-btn {
-            background-color: var(--error-color);
-            color: white;
-            display: none;
-        }
-
-        .stop-btn:hover {
-            background-color: #dc2626;
-        }
-
-        .speaking-indicator {
-            display: none;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            margin-top: 15px;
-        }
-
-        .speaking-dot {
-            width: 10px;
-            height: 10px;
-            background-color: var(--primary-color);
-            border-radius: 50%;
-            animation: pulse 1.5s infinite;
-        }
-
-        @keyframes pulse {
-            0% { opacity: 1; }
-            50% { opacity: 0.5; }
-            100% { opacity: 1; }
-        }
-
-        .speaking-text {
-            font-size: 16px;
-            font-weight: bold;
+        .clear-btn {
+            background-color: white;
             color: var(--primary-color);
+            border: 2px solid var(--primary-color);
         }
 
-        /* Statistics */
-        .stats-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 15px;
-            margin-bottom: 30px;
-        }
-
-        .stat-box {
-            background-color: var(--bg-secondary);
-            border-radius: var(--border-radius);
-            padding: 20px;
-            text-align: center;
-            box-shadow: var(--shadow);
-        }
-
-        .stat-value {
-            font-size: 2rem;
-            font-weight: bold;
-            color: var(--primary-color);
-            margin-bottom: 5px;
-        }
-
-        .stat-label {
-            font-size: 14px;
-            color: var(--text-light);
+        .clear-btn:hover {
+            background-color: var(--secondary-color);
         }
 
         /* Footer */
@@ -854,24 +745,6 @@
             background-color: var(--bg-color);
         }
 
-        /* Browser Compatibility Warning */
-        .browser-warning {
-            display: none;
-            background-color: #fff3cd;
-            border: 1px solid #ffeaa7;
-            color: #856404;
-            padding: 12px 20px;
-            border-radius: var(--border-radius);
-            margin-bottom: 20px;
-            text-align: center;
-        }
-
-        .dark-mode .browser-warning {
-            background-color: #332701;
-            border-color: #665600;
-            color: #ffd351;
-        }
-
         /* Responsive Styles */
         @media (max-width: 992px) {
             .steps-container {
@@ -882,11 +755,7 @@
                 grid-template-columns: 1fr 1fr;
             }
             
-            .stats-container {
-                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-            }
-            
-            .voice-controls, .settings-controls {
+            .controls-container {
                 grid-template-columns: 1fr;
             }
         }
@@ -918,27 +787,18 @@
                 gap: 40px;
             }
             
-            .stats-container {
-                grid-template-columns: 1fr 1fr;
+            .action-buttons {
+                flex-direction: column;
             }
             
-            .controls-buttons {
-                flex-direction: column;
-                align-items: center;
+            .action-btn {
+                width: 100%;
             }
         }
 
         @media (max-width: 576px) {
             .tool-container {
                 padding: 20px;
-            }
-            
-            .stats-container {
-                grid-template-columns: 1fr;
-            }
-            
-            .text-input-actions {
-                flex-direction: column;
             }
         }
     </style>
@@ -990,7 +850,7 @@
     <section class="hero">
         <div class="container">
             <h1 data-i18n="hero.title">Text to Speech Tool</h1>
-            <p data-i18n="hero.description">Convert text to natural-sounding speech with multiple voices and languages. Customize speed and pitch, and enjoy unlimited usage - all client-side with complete privacy.</p>
+            <p data-i18n="hero.description">Convert text to speech instantly using your browser's built-in speech synthesis. No downloads, no registration, and completely free. All processing happens locally in your browser.</p>
         </div>
     </section>
 
@@ -1002,22 +862,22 @@
                 <div class="step-box">
                     <div class="step-number">1</div>
                     <h3 class="step-title" data-i18n="howto.step1.title">Enter Your Text</h3>
-                    <p class="step-description" data-i18n="howto.step1.description">Type or paste your text into the input box. You can also upload a text file or use the copy button to copy text to clipboard.</p>
+                    <p class="step-description" data-i18n="howto.step1.description">Type or paste the text you want to convert to speech in the text area. There's no character limit, but very long texts may take longer to process.</p>
                 </div>
                 <div class="step-box">
                     <div class="step-number">2</div>
-                    <h3 class="step-title" data-i18n="howto.step2.title">Select Voice & Language</h3>
-                    <p class="step-description" data-i18n="howto.step2.description">Choose from multiple voices (male/female) and languages. Preview voices before generating the full audio.</p>
+                    <h3 class="step-title" data-i18n="howto.step2.title">Customize Settings</h3>
+                    <p class="step-description" data-i18n="howto.step2.description">Select your preferred language, voice, and adjust the speech parameters like rate, pitch, and volume to your liking.</p>
                 </div>
                 <div class="step-box">
                     <div class="step-number">3</div>
-                    <h3 class="step-title" data-i18n="howto.step3.title">Customize Settings</h3>
-                    <p class="step-description" data-i18n="howto.step3.description">Adjust speech rate, pitch, and volume to your preference.</p>
+                    <h3 class="step-title" data-i18n="howto.step3.title">Listen to Speech</h3>
+                    <p class="step-description" data-i18n="howto.step3.description">Click "Speak" to start the text-to-speech conversion. You can pause or resume the speech at any time using the control buttons.</p>
                 </div>
                 <div class="step-box">
                     <div class="step-number">4</div>
-                    <h3 class="step-title" data-i18n="howto.step4.title">Generate Audio</h3>
-                    <p class="step-description" data-i18n="howto.step4.description">Click 'Speak' to generate the audio. Listen to the result using the play, pause and stop controls.</p>
+                    <h3 class="step-title" data-i18n="howto.step4.title">Clear and Start Over</h3>
+                    <p class="step-description" data-i18n="howto.step4.description">Use the "Clear" button to reset the text and settings, or simply enter new text to generate more speech.</p>
                 </div>
             </div>
         </div>
@@ -1028,118 +888,101 @@
         <div class="container">
             <h2 class="tool-title" data-i18n="tool.title">Text to Speech</h2>
             <div class="tool-container">
-                <!-- Browser Compatibility Warning -->
-                <div class="browser-warning" id="browserWarning">
-                    <i class="fas fa-exclamation-triangle"></i>
-                    <span id="warningText">Your browser may have limited text-to-speech support. For best results, use Chrome, Firefox, or Edge.</span>
-                </div>
-
                 <!-- Text Input Section -->
                 <div class="text-input-container">
-                    <h3 class="text-input-title" data-i18n="tool.text.title">Enter Text</h3>
-                    <textarea class="text-input" id="textInput" placeholder="Type or paste your text here..." data-i18n="tool.text.placeholder"></textarea>
-                    <div class="text-input-actions">
-                        <button class="file-input-btn" id="fileInputBtn">
-                            <i class="fas fa-file-upload"></i> <span data-i18n="tool.text.upload">Upload Text File</span>
-                        </button>
-                        <button class="copy-btn" id="copyBtn">
-                            <i class="fas fa-copy"></i> <span data-i18n="tool.text.copy">Copy Text</span>
-                        </button>
-                        <button class="clear-text-btn" id="clearTextBtn">
-                            <i class="fas fa-trash"></i> <span data-i18n="tool.text.clear">Clear Text</span>
-                        </button>
-                    </div>
-                    <input type="file" id="fileInput" accept=".txt,.text,.doc,.docx,.pdf" style="display: none;">
-                </div>
-
-                <!-- Voice Selection -->
-                <div class="voice-container">
-                    <h3 class="voice-title" data-i18n="tool.voice.title">Voice Selection</h3>
-                    <div class="voice-controls">
-                        <div class="setting-group">
-                            <label class="setting-label" data-i18n="tool.voice.language">Language</label>
-                            <select id="languageSelect" class="language-select">
-                                <!-- Languages will be populated by JavaScript -->
-                            </select>
-                        </div>
-                        <div class="setting-group">
-                            <label class="setting-label" data-i18n="tool.voice.voice">Voice</label>
-                            <select id="voiceSelect" class="voice-select">
-                                <!-- Voices will be populated by JavaScript -->
-                            </select>
-                        </div>
-                    </div>
-                    <div class="voice-options">
-                        <div class="voice-option" data-gender="all" data-i18n="tool.voice.all">All Voices</div>
-                        <div class="voice-option" data-gender="male" data-i18n="tool.voice.male">Male Voices</div>
-                        <div class="voice-option" data-gender="female" data-i18n="tool.voice.female">Female Voices</div>
-                        <div class="voice-option" data-gender="preview" id="previewVoiceBtn" data-i18n="tool.voice.preview">Preview Voice</div>
-                    </div>
-                </div>
-
-                <!-- Audio Settings -->
-                <div class="settings-container">
-                    <h3 class="settings-title" data-i18n="tool.settings.title">Audio Settings</h3>
-                    <div class="settings-controls">
-                        <div class="setting-group">
-                            <label class="setting-label" data-i18n="tool.settings.rate">Speech Rate</label>
-                            <input type="range" id="rateInput" class="range-input" min="0.5" max="2" step="0.1" value="1">
-                            <span id="rateValue">1.0</span>
-                        </div>
-                        <div class="setting-group">
-                            <label class="setting-label" data-i18n="tool.settings.pitch">Pitch</label>
-                            <input type="range" id="pitchInput" class="range-input" min="0.5" max="2" step="0.1" value="1">
-                            <span id="pitchValue">1.0</span>
-                        </div>
-                        <div class="setting-group">
-                            <label class="setting-label" data-i18n="tool.settings.volume">Volume</label>
-                            <input type="range" id="volumeInput" class="range-input" min="0" max="1" step="0.1" value="1">
-                            <span id="volumeValue">1.0</span>
-                        </div>
+                    <h3 class="text-input-title" data-i18n="tool.text.title">Enter Text to Convert</h3>
+                    <textarea id="textInput" class="text-input" placeholder="Type or paste your text here..." data-i18n="tool.text.placeholder"></textarea>
+                    <div class="char-count">
+                        <span id="charCount">0</span> <span data-i18n="tool.text.chars">characters</span>
                     </div>
                 </div>
 
                 <!-- Controls Section -->
                 <div class="controls-container">
-                    <h3 class="controls-title" data-i18n="tool.controls.title">Controls</h3>
-                    <div class="controls-buttons">
-                        <button class="control-btn speak-btn" id="speakBtn">
-                            <i class="fas fa-play"></i> <span data-i18n="tool.controls.speak">Speak</span>
-                        </button>
-                        <button class="control-btn pause-btn" id="pauseBtn">
-                            <i class="fas fa-pause"></i> <span data-i18n="tool.controls.pause">Pause</span>
-                        </button>
-                        <button class="control-btn resume-btn" id="resumeBtn">
-                            <i class="fas fa-play"></i> <span data-i18n="tool.controls.resume">Resume</span>
-                        </button>
-                        <button class="control-btn stop-btn" id="stopBtn">
-                            <i class="fas fa-stop"></i> <span data-i18n="tool.controls.stop">Stop</span>
-                        </button>
+                    <!-- Language and Voice Controls -->
+                    <div class="control-group">
+                        <h3 class="control-title">
+                            <i class="fas fa-globe"></i>
+                            <span data-i18n="tool.controls.language">Language & Voice</span>
+                        </h3>
+                        
+                        <div class="control-row">
+                            <label for="languageSelect" class="control-label" data-i18n="tool.controls.language">Language:</label>
+                            <select id="languageSelect" class="select-control">
+                                <option value="en-US">English (United States)</option>
+                                <option value="en-GB">English (UK)</option>
+                                <option value="es-ES">Spanish (Spain)</option>
+                                <option value="fr-FR">French (France)</option>
+                                <option value="de-DE">German (Germany)</option>
+                                <option value="it-IT">Italian (Italy)</option>
+                                <option value="pt-BR">Portuguese (Brazil)</option>
+                                <option value="ru-RU">Russian (Russia)</option>
+                                <option value="ja-JP">Japanese (Japan)</option>
+                                <option value="ko-KR">Korean (South Korea)</option>
+                                <option value="zh-CN">Chinese (Simplified, China)</option>
+                                <option value="zh-TW">Chinese (Traditional, Taiwan)</option>
+                                <option value="hi-IN">Hindi (India)</option>
+                                <option value="ar-SA">Arabic (Saudi Arabia)</option>
+                                <option value="nl-NL">Dutch (Netherlands)</option>
+                                <option value="pl-PL">Polish (Poland)</option>
+                            </select>
+                        </div>
+                        
+                        <div class="control-row">
+                            <label for="voiceSelect" class="control-label" data-i18n="tool.controls.voice">Voice:</label>
+                            <select id="voiceSelect" class="select-control">
+                                <option value="" data-i18n="tool.controls.loading">Loading voices...</option>
+                            </select>
+                        </div>
                     </div>
-                    <div class="speaking-indicator" id="speakingIndicator">
-                        <div class="speaking-dot"></div>
-                        <div class="speaking-text" data-i18n="tool.controls.speaking">Speaking...</div>
+
+                    <!-- Speech Parameters -->
+                    <div class="control-group">
+                        <h3 class="control-title">
+                            <i class="fas fa-sliders-h"></i>
+                            <span data-i18n="tool.controls.settings">Speech Settings</span>
+                        </h3>
+                        
+                        <div class="control-row">
+                            <label for="rateControl" class="control-label" data-i18n="tool.controls.rate">Rate:</label>
+                            <input type="range" id="rateControl" class="range-control" min="0.5" max="2" step="0.1" value="1">
+                            <div class="range-value" id="rateValue">1.0</div>
+                        </div>
+                        
+                        <div class="control-row">
+                            <label for="pitchControl" class="control-label" data-i18n="tool.controls.pitch">Pitch:</label>
+                            <input type="range" id="pitchControl" class="range-control" min="0.5" max="2" step="0.1" value="1">
+                            <div class="range-value" id="pitchValue">1.0</div>
+                        </div>
+                        
+                        <div class="control-row">
+                            <label for="volumeControl" class="control-label" data-i18n="tool.controls.volume">Volume:</label>
+                            <input type="range" id="volumeControl" class="range-control" min="0" max="1" step="0.1" value="1">
+                            <div class="range-value" id="volumeValue">1.0</div>
+                        </div>
                     </div>
                 </div>
 
-                <!-- Statistics -->
-                <div class="stats-container">
-                    <div class="stat-box">
-                        <div class="stat-value" id="textLength">0</div>
-                        <div class="stat-label" data-i18n="tool.stats.characters">Characters</div>
+                <!-- Status Section -->
+                <div class="status-container">
+                    <h3 class="status-title" data-i18n="tool.status.title">Status</h3>
+                    <div class="status-indicator">
+                        <div class="status-dot" id="statusDot"></div>
+                        <span id="statusText" data-i18n="tool.status.ready">Ready</span>
                     </div>
-                    <div class="stat-box">
-                        <div class="stat-value" id="wordCount">0</div>
-                        <div class="stat-label" data-i18n="tool.stats.words">Words</div>
-                    </div>
-                    <div class="stat-box">
-                        <div class="stat-value" id="estimatedTime">0s</div>
-                        <div class="stat-label" data-i18n="tool.stats.time">Estimated Time</div>
-                    </div>
-                    <div class="stat-box">
-                        <div class="stat-value" id="voiceCount">0</div>
-                        <div class="stat-label" data-i18n="tool.stats.voices">Available Voices</div>
-                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="action-buttons">
+                    <button class="action-btn speak-btn" id="speakBtn" data-i18n="tool.buttons.speak">
+                        <i class="fas fa-play"></i> Speak
+                    </button>
+                    <button class="action-btn pause-resume-btn" id="pauseResumeBtn" disabled data-i18n="tool.buttons.pause">
+                        <i class="fas fa-pause"></i> Pause
+                    </button>
+                    <button class="action-btn clear-btn" id="clearBtn" data-i18n="tool.buttons.clear">
+                        <i class="fas fa-trash"></i> Clear
+                    </button>
                 </div>
             </div>
         </div>
@@ -1298,538 +1141,260 @@
 
         // Text to Speech Functionality
         const textInput = document.getElementById('textInput');
-        const fileInputBtn = document.getElementById('fileInputBtn');
-        const fileInput = document.getElementById('fileInput');
-        const copyBtn = document.getElementById('copyBtn');
-        const clearTextBtn = document.getElementById('clearTextBtn');
+        const charCount = document.getElementById('charCount');
         const languageSelect = document.getElementById('languageSelect');
         const voiceSelect = document.getElementById('voiceSelect');
-        const previewVoiceBtn = document.getElementById('previewVoiceBtn');
-        const rateInput = document.getElementById('rateInput');
-        const pitchInput = document.getElementById('pitchInput');
-        const volumeInput = document.getElementById('volumeInput');
+        const rateControl = document.getElementById('rateControl');
+        const pitchControl = document.getElementById('pitchControl');
+        const volumeControl = document.getElementById('volumeControl');
         const rateValue = document.getElementById('rateValue');
         const pitchValue = document.getElementById('pitchValue');
         const volumeValue = document.getElementById('volumeValue');
         const speakBtn = document.getElementById('speakBtn');
-        const pauseBtn = document.getElementById('pauseBtn');
-        const resumeBtn = document.getElementById('resumeBtn');
-        const stopBtn = document.getElementById('stopBtn');
-        const speakingIndicator = document.getElementById('speakingIndicator');
-        const browserWarning = document.getElementById('browserWarning');
-        const warningText = document.getElementById('warningText');
+        const pauseResumeBtn = document.getElementById('pauseResumeBtn');
+        const clearBtn = document.getElementById('clearBtn');
+        const statusDot = document.getElementById('statusDot');
+        const statusText = document.getElementById('statusText');
         
-        // Stats elements
-        const textLengthEl = document.getElementById('textLength');
-        const wordCountEl = document.getElementById('wordCount');
-        const estimatedTimeEl = document.getElementById('estimatedTime');
-        const voiceCountEl = document.getElementById('voiceCount');
-        
-        // Speech synthesis variables
+        // Speech synthesis
         let synth = window.speechSynthesis;
         let voices = [];
         let currentUtterance = null;
-        let isSpeaking = false;
         let isPaused = false;
-        let userInteracted = false;
         
-        // Check browser compatibility
-        function checkBrowserCompatibility() {
-            if (!('speechSynthesis' in window)) {
-                browserWarning.style.display = 'block';
-                warningText.textContent = 'Your browser does not support text-to-speech. Please use Chrome, Firefox, Edge, or Safari.';
-                return false;
-            }
-            
-            // Check for specific browser limitations
-            const ua = navigator.userAgent.toLowerCase();
-            if (ua.indexOf('safari') !== -1 && ua.indexOf('chrome') === -1) {
-                // Safari has limited TTS support
-                browserWarning.style.display = 'block';
-                warningText.textContent = 'Safari has limited text-to-speech support. For best results, use Chrome, Firefox, or Edge.';
-            } else if (ua.indexOf('firefox') !== -1) {
-                // Firefox may have some limitations
-                browserWarning.style.display = 'block';
-                warningText.textContent = 'Firefox may have limited voice options. For best results, use Chrome or Edge.';
-            }
-            
-            return true;
-        }
-        
-        // Update range values display
-        rateInput.addEventListener('input', () => {
-            rateValue.textContent = rateInput.value;
+        // Update character count
+        textInput.addEventListener('input', () => {
+            charCount.textContent = textInput.value.length;
         });
         
-        pitchInput.addEventListener('input', () => {
-            pitchValue.textContent = pitchInput.value;
-        });
-        
-        volumeInput.addEventListener('input', () => {
-            volumeValue.textContent = volumeInput.value;
-        });
-        
-        // Update text statistics
-        function updateTextStats() {
-            const text = textInput.value;
-            const textLength = text.length;
-            const wordCount = text.trim() ? text.trim().split(/\s+/).length : 0;
-            
-            textLengthEl.textContent = textLength;
-            wordCountEl.textContent = wordCount;
-            
-            // Estimate speaking time (average 150 words per minute)
-            const estimatedSeconds = Math.ceil(wordCount / 2.5);
-            estimatedTimeEl.textContent = `${estimatedSeconds}s`;
-        }
-        
-        textInput.addEventListener('input', updateTextStats);
-        
-        // File upload functionality
-        fileInputBtn.addEventListener('click', () => {
-            fileInput.click();
-        });
-        
-        fileInput.addEventListener('change', (e) => {
-            const file = e.target.files[0];
-            if (!file) return;
-            
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                textInput.value = e.target.result;
-                updateTextStats();
-            };
-            reader.readAsText(file);
-        });
-        
-        // Copy text to clipboard
-        copyBtn.addEventListener('click', async () => {
-            try {
-                await navigator.clipboard.writeText(textInput.value);
-                
-                // Show success feedback
-                const originalText = copyBtn.innerHTML;
-                copyBtn.innerHTML = '<i class="fas fa-check"></i> Copied!';
-                setTimeout(() => {
-                    copyBtn.innerHTML = originalText;
-                }, 2000);
-            } catch (err) {
-                console.error('Failed to copy text: ', err);
-                alert('Failed to copy text to clipboard.');
+        // Update range value displays
+        rateControl.addEventListener('input', () => {
+            rateValue.textContent = rateControl.value;
+            // Apply changes in real-time if speaking
+            if (currentUtterance && synth.speaking) {
+                currentUtterance.rate = parseFloat(rateControl.value);
             }
         });
         
-        // Clear text
-        clearTextBtn.addEventListener('click', () => {
-            textInput.value = '';
-            updateTextStats();
+        pitchControl.addEventListener('input', () => {
+            pitchValue.textContent = pitchControl.value;
+            // Apply changes in real-time if speaking
+            if (currentUtterance && synth.speaking) {
+                currentUtterance.pitch = parseFloat(pitchControl.value);
+            }
         });
         
-        // Language code to full name mapping
-        const languageMap = {
-            'en-US': 'English (United States)',
-            'en-GB': 'English (Great Britain)',
-            'en-IN': 'English (India)',
-            'en-AU': 'English (Australia)',
-            'en-CA': 'English (Canada)',
-            'es-ES': 'Spanish (Spain)',
-            'es-MX': 'Spanish (Mexico)',
-            'es-CO': 'Spanish (Colombia)',
-            'fr-FR': 'French (France)',
-            'fr-CA': 'French (Canada)',
-            'de-DE': 'German (Germany)',
-            'it-IT': 'Italian (Italy)',
-            'ja-JP': 'Japanese (Japan)',
-            'ko-KR': 'Korean (South Korea)',
-            'pt-BR': 'Portuguese (Brazil)',
-            'pt-PT': 'Portuguese (Portugal)',
-            'ru-RU': 'Russian (Russia)',
-            'zh-CN': 'Chinese (Simplified, China)',
-            'zh-TW': 'Chinese (Traditional, Taiwan)',
-            'zh-HK': 'Chinese (Traditional, Hong Kong)',
-            'ar-SA': 'Arabic (Saudi Arabia)',
-            'ar-EG': 'Arabic (Egypt)',
-            'hi-IN': 'Hindi (India)',
-            'pl-PL': 'Polish (Poland)',
-            'nl-NL': 'Dutch (Netherlands)',
-            'sv-SE': 'Swedish (Sweden)',
-            'da-DK': 'Danish (Denmark)',
-            'fi-FI': 'Finnish (Finland)',
-            'no-NO': 'Norwegian (Norway)',
-            'tr-TR': 'Turkish (Turkey)',
-            'el-GR': 'Greek (Greece)',
-            'cs-CZ': 'Czech (Czech Republic)',
-            'ro-RO': 'Romanian (Romania)',
-            'hu-HU': 'Hungarian (Hungary)',
-            'th-TH': 'Thai (Thailand)',
-            'id-ID': 'Indonesian (Indonesia)',
-            'vi-VN': 'Vietnamese (Vietnam)',
-            'fil-PH': 'Filipino (Philippines)',
-            'ur-PK': 'Urdu (Pakistan)',
-            'ga-IE': 'Irish (Ireland)',
-            'en-IE': 'English (Ireland)',
-            'nb-NO': 'Norwegian Bokmål (Norway)',
-            'te-IN': 'Telugu (India)',
-            'ta-IN': 'Tamil (India)',
-            'ml-IN': 'Malayalam (India)',
-            'kn-IN': 'Kannada (India)',
-            'bn-IN': 'Bengali (India)',
-            'gu-IN': 'Gujarati (India)',
-            'mr-IN': 'Marathi (India)',
-            'as-IN': 'Assamese (India)',
-            'pa-IN': 'Punjabi (India)'
-        };
+        volumeControl.addEventListener('input', () => {
+            volumeValue.textContent = volumeControl.value;
+            // Apply changes in real-time if speaking
+            if (currentUtterance && synth.speaking) {
+                currentUtterance.volume = parseFloat(volumeControl.value);
+            }
+        });
         
         // Load available voices
         function loadVoices() {
-            // Get voices from the API
             voices = synth.getVoices();
             
-            // If no voices are available, try again after a short delay
-            if (voices.length === 0) {
-                setTimeout(loadVoices, 100);
-                return;
-            }
-            
-            voiceCountEl.textContent = voices.length;
-            
-            // Clear previous options
+            // Clear voice select
             voiceSelect.innerHTML = '';
-            languageSelect.innerHTML = '';
             
-            // Create a set to track unique languages
-            const languages = new Set();
+            // Filter voices by selected language
+            const selectedLang = languageSelect.value;
+            const filteredVoices = voices.filter(voice => voice.lang === selectedLang);
             
-            // Add voices to the select
-            voices.forEach((voice, index) => {
+            if (filteredVoices.length === 0) {
                 const option = document.createElement('option');
-                option.value = index;
-                const langName = languageMap[voice.lang] || voice.lang;
-                option.textContent = `${voice.name} (${langName})`;
+                option.textContent = 'No voices available for this language';
+                option.disabled = true;
                 voiceSelect.appendChild(option);
-                
-                // Add language to set
-                languages.add(voice.lang);
-            });
-            
-            // Add languages to the language select
-            languages.forEach(lang => {
-                const option = document.createElement('option');
-                option.value = lang;
-                option.textContent = languageMap[lang] || lang;
-                languageSelect.appendChild(option);
-            });
-            
-            // Filter voices when language changes
-            languageSelect.addEventListener('change', filterVoicesByLanguage);
-            
-            // Filter voices by gender
-            const voiceOptions = document.querySelectorAll('.voice-option');
-            voiceOptions.forEach(option => {
-                option.addEventListener('click', () => {
-                    // Remove active class from all options
-                    voiceOptions.forEach(opt => opt.classList.remove('active'));
-                    // Add active class to clicked option
-                    option.classList.add('active');
-                    
-                    const gender = option.getAttribute('data-gender');
-                    filterVoicesByGender(gender);
-                });
-            });
-            
-            // Set "All Voices" as active by default
-            document.querySelector('.voice-option[data-gender="all"]').classList.add('active');
-        }
-        
-        // Filter voices by language
-        function filterVoicesByLanguage() {
-            const selectedLanguage = languageSelect.value;
-            voiceSelect.innerHTML = '';
-            
-            voices.forEach((voice, index) => {
-                if (voice.lang === selectedLanguage) {
+            } else {
+                filteredVoices.forEach(voice => {
                     const option = document.createElement('option');
-                    option.value = index;
-                    const langName = languageMap[voice.lang] || voice.lang;
-                    option.textContent = `${voice.name} (${langName})`;
-                    voiceSelect.appendChild(option);
-                }
-            });
-            
-            // If no voices for selected language, show all voices
-            if (voiceSelect.options.length === 0) {
-                voices.forEach((voice, index) => {
-                    const option = document.createElement('option');
-                    option.value = index;
-                    const langName = languageMap[voice.lang] || voice.lang;
-                    option.textContent = `${voice.name} (${langName})`;
+                    option.value = voice.name;
+                    option.textContent = `${voice.name} (${voice.lang})`;
                     voiceSelect.appendChild(option);
                 });
             }
+            
+            // Update status
+            updateStatus('ready', 'Ready');
         }
         
-        // Filter voices by gender
-        function filterVoicesByGender(gender) {
-            if (gender === 'all') {
-                filterVoicesByLanguage();
-                return;
-            }
-            
-            const selectedLanguage = languageSelect.value;
-            voiceSelect.innerHTML = '';
-            
-            voices.forEach((voice, index) => {
-                // Check if voice matches the selected language and gender
-                const matchesLanguage = selectedLanguage ? voice.lang === selectedLanguage : true;
-                const voiceName = voice.name.toLowerCase();
-                
-                // Simple gender detection based on voice name
-                let matchesGender = false;
-                if (gender === 'male') {
-                    matchesGender = voiceName.includes('male') || 
-                                   voiceName.includes('man') || 
-                                   voiceName.includes('guy') ||
-                                   voiceName.includes('david') ||
-                                   voiceName.includes('alex') ||
-                                   voiceName.includes('daniel') ||
-                                   voiceName.includes('mark') ||
-                                   voiceName.includes('ravi') ||
-                                   voiceName.includes('heera') ||
-                                   voiceName.includes('pablo') ||
-                                   voiceName.includes('raul') ||
-                                   voiceName.includes('hemant') ||
-                                   voiceName.includes('kangkang') ||
-                                   voiceName.includes('claude') ||
-                                   voiceName.includes('stefan') ||
-                                   voiceName.includes('cosimo') ||
-                                   voiceName.includes('matej') ||
-                                   voiceName.includes('jakub') ||
-                                   voiceName.includes('andrei') ||
-                                   voiceName.includes('pavel') ||
-                                   voiceName.includes('ivan') ||
-                                   voiceName.includes('rizwan') ||
-                                   voiceName.includes('naayf') ||
-                                   voiceName.includes('adam') ||
-                                   voiceName.includes('sean') ||
-                                   voiceName.includes('henrik') ||
-                                   voiceName.includes('nils') ||
-                                   voiceName.includes('madhur') ||
-                                   voiceName.includes('valluvar') ||
-                                   voiceName.includes('hemavathi') ||
-                                   voiceName.includes('bashkar') ||
-                                   voiceName.includes('niranjan') ||
-                                   voiceName.includes('manohar') ||
-                                   voiceName.includes('shubhendu');
-                } else if (gender === 'female') {
-                    matchesGender = voiceName.includes('female') || 
-                                   voiceName.includes('woman') || 
-                                   voiceName.includes('lady') ||
-                                   voiceName.includes('karen') ||
-                                   voiceName.includes('samantha') ||
-                                   voiceName.includes('victoria') ||
-                                   voiceName.includes('hazel') ||
-                                   voiceName.includes('zira') ||
-                                   voiceName.includes('susan') ||
-                                   voiceName.includes('ayumi') ||
-                                   voiceName.includes('haruka') ||
-                                   voiceName.includes('nanami') ||
-                                   voiceName.includes('paulina') ||
-                                   voiceName.includes('helena') ||
-                                   voiceName.includes('laura') ||
-                                   voiceName.includes('sabina') ||
-                                   voiceName.includes('kalpana') ||
-                                   voiceName.includes('huihui') ||
-                                   voiceName.includes('yaoyao') ||
-                                   voiceName.includes('tracy') ||
-                                   voiceName.includes('hanhan') ||
-                                   voiceName.includes('caroline') ||
-                                   voiceName.includes('hortense') ||
-                                   voiceName.includes('julie') ||
-                                   voiceName.includes('helga') ||
-                                   voiceName.includes('hedda') ||
-                                   voiceName.includes('elsa') ||
-                                   voiceName.includes('irina') ||
-                                   voiceName.includes('jessa') ||
-                                   voiceName.includes('hoda') ||
-                                   voiceName.includes('salma') ||
-                                   voiceName.includes('paulina') ||
-                                   voiceName.includes('elsa') ||
-                                   voiceName.includes('daliya') ||
-                                   voiceName.includes('tanishaa') ||
-                                   voiceName.includes('dhwani') ||
-                                   voiceName.includes('aarohi') ||
-                                   voiceName.includes('yashica');
-                }
-                
-                if (matchesLanguage && matchesGender) {
-                    const option = document.createElement('option');
-                    option.value = index;
-                    const langName = languageMap[voice.lang] || voice.lang;
-                    option.textContent = `${voice.name} (${langName})`;
-                    voiceSelect.appendChild(option);
-                }
-            });
-            
-            // If no voices match, show all voices for the language
-            if (voiceSelect.options.length === 0) {
-                filterVoicesByLanguage();
-            }
+        // Update voices when language changes
+        languageSelect.addEventListener('change', loadVoices);
+        
+        // Initialize voices
+        if (synth.onvoiceschanged !== undefined) {
+            synth.onvoiceschanged = loadVoices;
+        } else {
+            // Fallback for browsers that don't support onvoiceschanged
+            setTimeout(loadVoices, 1000);
         }
         
-        // Stop speech function
-        function stopSpeech() {
-            if (synth.speaking) {
-                synth.cancel();
-                isSpeaking = false;
-                isPaused = false;
-                speakBtn.style.display = 'flex';
-                pauseBtn.style.display = 'none';
-                resumeBtn.style.display = 'none';
-                stopBtn.style.display = 'none';
-                speakingIndicator.style.display = 'none';
+        // Update status indicator
+        function updateStatus(state, text) {
+            statusDot.className = 'status-dot';
+            statusDot.classList.add(state);
+            statusText.textContent = text;
+            
+            // Update button states
+            switch(state) {
+                case 'ready':
+                    speakBtn.disabled = false;
+                    pauseResumeBtn.disabled = true;
+                    pauseResumeBtn.classList.remove('resume-mode');
+                    pauseResumeBtn.innerHTML = '<i class="fas fa-pause"></i> Pause';
+                    break;
+                case 'speaking':
+                    speakBtn.disabled = true;
+                    pauseResumeBtn.disabled = false;
+                    pauseResumeBtn.classList.remove('resume-mode');
+                    pauseResumeBtn.innerHTML = '<i class="fas fa-pause"></i> Pause';
+                    break;
+                case 'paused':
+                    speakBtn.disabled = true;
+                    pauseResumeBtn.disabled = false;
+                    pauseResumeBtn.classList.add('resume-mode');
+                    pauseResumeBtn.innerHTML = '<i class="fas fa-play"></i> Resume';
+                    break;
+                case 'error':
+                    speakBtn.disabled = false;
+                    pauseResumeBtn.disabled = true;
+                    pauseResumeBtn.classList.remove('resume-mode');
+                    pauseResumeBtn.innerHTML = '<i class="fas fa-pause"></i> Pause';
+                    break;
             }
         }
-        
-        // Preview voice
-        previewVoiceBtn.addEventListener('click', () => {
-            const text = "This is a preview of the selected voice.";
-            speakText(text, true);
-        });
         
         // Speak text
-        function speakText(text, isPreview = false) {
-            if (!text.trim()) {
-                alert('Please enter some text to speak.');
+        speakBtn.addEventListener('click', () => {
+            if (textInput.value.trim() === '') {
+                alert('Please enter some text to convert to speech.');
                 return;
             }
             
-            // Chrome requires user interaction before allowing speech
-            if (!userInteracted) {
-                alert('Please click the Speak button again to start speech synthesis.');
-                userInteracted = true;
-                return;
+            // Cancel any ongoing speech
+            if (synth.speaking) {
+                synth.cancel();
             }
             
-            if (isSpeaking && !isPreview) {
-                stopSpeech();
-            }
+            // Create new utterance
+            currentUtterance = new SpeechSynthesisUtterance(textInput.value);
             
-            const selectedVoiceIndex = parseInt(voiceSelect.value);
-            const selectedVoice = voices[selectedVoiceIndex];
-            
-            currentUtterance = new SpeechSynthesisUtterance(text);
-            
-            // Set voice properties
+            // Set voice
+            const selectedVoice = voices.find(voice => voice.name === voiceSelect.value);
             if (selectedVoice) {
                 currentUtterance.voice = selectedVoice;
             }
             
-            currentUtterance.rate = parseFloat(rateInput.value);
-            currentUtterance.pitch = parseFloat(pitchInput.value);
-            currentUtterance.volume = parseFloat(volumeInput.value);
+            // Set parameters
+            currentUtterance.rate = parseFloat(rateControl.value);
+            currentUtterance.pitch = parseFloat(pitchControl.value);
+            currentUtterance.volume = parseFloat(volumeControl.value);
             
-            // Event handlers
+            // Event listeners for utterance
             currentUtterance.onstart = () => {
-                if (!isPreview) {
-                    isSpeaking = true;
-                    speakBtn.style.display = 'none';
-                    pauseBtn.style.display = 'flex';
-                    stopBtn.style.display = 'flex';
-                    speakingIndicator.style.display = 'flex';
-                }
+                updateStatus('speaking', 'Speaking');
             };
             
             currentUtterance.onend = () => {
-                if (!isPreview) {
-                    isSpeaking = false;
-                    isPaused = false;
-                    speakBtn.style.display = 'flex';
-                    pauseBtn.style.display = 'none';
-                    resumeBtn.style.display = 'none';
-                    stopBtn.style.display = 'none';
-                    speakingIndicator.style.display = 'none';
-                }
+                updateStatus('ready', 'Ready');
             };
             
             currentUtterance.onerror = (event) => {
                 console.error('Speech synthesis error:', event);
-                if (!isPreview) {
-                    isSpeaking = false;
-                    isPaused = false;
-                    speakBtn.style.display = 'flex';
-                    pauseBtn.style.display = 'none';
-                    resumeBtn.style.display = 'none';
-                    stopBtn.style.display = 'none';
-                    speakingIndicator.style.display = 'none';
-                    
-                    alert('An error occurred during speech synthesis. Please try again.');
-                }
+                updateStatus('error', 'Error occurred');
             };
             
-            // Speak the text
+            currentUtterance.onpause = () => {
+                updateStatus('paused', 'Paused');
+            };
+            
+            currentUtterance.onresume = () => {
+                updateStatus('speaking', 'Speaking');
+            };
+            
+            // Start speaking
             synth.speak(currentUtterance);
-        }
-        
-        // Control buttons
-        speakBtn.addEventListener('click', () => {
-            const text = textInput.value;
-            if (!text.trim()) {
-                alert('Please enter some text to speak.');
-                return;
-            }
-            
-            speakText(text);
+            updateStatus('speaking', 'Speaking');
         });
         
-        pauseBtn.addEventListener('click', () => {
-            if (isSpeaking && !isPaused) {
+        // Pause/Resume speech
+        pauseResumeBtn.addEventListener('click', () => {
+            if (synth.speaking && !synth.paused) {
+                // Pause speech
                 synth.pause();
-                isPaused = true;
-                pauseBtn.style.display = 'none';
-                resumeBtn.style.display = 'flex';
-            }
-        });
-        
-        resumeBtn.addEventListener('click', () => {
-            if (isSpeaking && isPaused) {
+                updateStatus('paused', 'Paused');
+            } else if (synth.speaking && synth.paused) {
+                // Resume speech
                 synth.resume();
-                isPaused = false;
-                resumeBtn.style.display = 'none';
-                pauseBtn.style.display = 'flex';
+                updateStatus('speaking', 'Speaking');
             }
         });
         
-        stopBtn.addEventListener('click', () => {
-            stopSpeech();
-        });
-        
-        // Initialize the page
-        function init() {
-            // Check browser compatibility
-            const isCompatible = checkBrowserCompatibility();
+        // Clear text
+        clearBtn.addEventListener('click', () => {
+            textInput.value = '';
+            charCount.textContent = '0';
             
-            if (isCompatible) {
-                // Load voices when they become available
-                if (synth.onvoiceschanged !== undefined) {
-                    synth.onvoiceschanged = loadVoices;
-                }
-                
-                // Initial load of voices
-                loadVoices();
+            // Reset parameters to defaults
+            rateControl.value = 1;
+            pitchControl.value = 1;
+            volumeControl.value = 1;
+            rateValue.textContent = '1.0';
+            pitchValue.textContent = '1.0';
+            volumeValue.textContent = '1.0';
+            
+            // Cancel any ongoing speech
+            if (synth.speaking) {
+                synth.cancel();
             }
             
-            updateTextStats();
-            
-            // Mark user interaction for Chrome compatibility
-            document.addEventListener('click', () => {
-                userInteracted = true;
-            }, { once: true });
-        }
+            updateStatus('ready', 'Ready');
+        });
         
         // Language Switcher
         const languageBtn = document.querySelector('.language-btn');
         const currentLanguageElement = document.getElementById('currentLanguage');
         const languageDropdown = document.querySelector('.language-dropdown');
+        
+        const languages = [
+            { code: 'en', name: 'English' },
+            { code: 'es', name: 'Español' },
+            { code: 'fr', name: 'Français' },
+            { code: 'de', name: 'Deutsch' },
+            { code: 'it', name: 'Italiano' },
+            { code: 'pt', name: 'Português' },
+            { code: 'ja', name: '日本語' },
+            { code: 'ru', name: 'Pусский' },
+            { code: 'ko', name: '한국어' },
+            { code: 'zh-CN', name: '中文 (简体)' },
+            { code: 'zh-TW', name: '中文 (繁體)' },
+            { code: 'ar', name: 'العربية' },
+            { code: 'fa', name: 'فارسی' },
+            { code: 'bg', name: 'Български' },
+            { code: 'ca', name: 'Català' },
+            { code: 'nl', name: 'Nederlands' },
+            { code: 'el', name: 'Ελληνικά' },
+            { code: 'hi', name: 'हिन्दी' },
+            { code: 'te', name: 'తెలుగు' },
+            { code: 'kn', name: 'ಕನ್ನಡ' },
+            { code: 'ta', name: 'தமிழ்' },
+            { code: 'ml', name: 'മലയാളം' },
+            { code: 'id', name: 'Bahasa Indonesia' },
+            { code: 'ms', name: 'Bahasa Melayu' },
+            { code: 'pl', name: 'Polski' },
+            { code: 'th', name: 'ภาษาไทย' },
+            { code: 'tr', name: 'Türkçe' },
+            { code: 'uk', name: 'Українська' },
+            { code: 'vi', name: 'Tiếng Việt' },
+            { code: 'is', name: 'Íslenska' },
+            { code: 'no', name: 'Norsk' },
+            { code: 'sv', name: 'Svenska' },
+            { code: 'fi', name: 'Suomi' },
+            { code: 'cs', name: 'Čeština' }
+        ];
 
         // Translation data
         const translations = {
@@ -1839,43 +1404,33 @@
                 "nav.tools": "Tools",
                 "nav.contact": "Contact",
                 "hero.title": "Text to Speech Tool",
-                "hero.description": "Convert text to natural-sounding speech with multiple voices and languages. Customize speed and pitch, and enjoy unlimited usage - all client-side with complete privacy.",
+                "hero.description": "Convert text to speech instantly using your browser's built-in speech synthesis. No downloads, no registration, and completely free. All processing happens locally in your browser.",
                 "howto.title": "How to Use the Text to Speech Tool",
                 "howto.step1.title": "Enter Your Text",
-                "howto.step1.description": "Type or paste your text into the input box. You can also upload a text file or use the copy button to copy text to clipboard.",
-                "howto.step2.title": "Select Voice & Language",
-                "howto.step2.description": "Choose from multiple voices (male/female) and languages. Preview voices before generating the full audio.",
-                "howto.step3.title": "Customize Settings",
-                "howto.step3.description": "Adjust speech rate, pitch, and volume to your preference.",
-                "howto.step4.title": "Generate Audio",
-                "howto.step4.description": "Click 'Speak' to generate the audio. Listen to the result using the play, pause and stop controls.",
+                "howto.step1.description": "Type or paste the text you want to convert to speech in the text area. There's no character limit, but very long texts may take longer to process.",
+                "howto.step2.title": "Customize Settings",
+                "howto.step2.description": "Select your preferred language, voice, and adjust the speech parameters like rate, pitch, and volume to your liking.",
+                "howto.step3.title": "Listen to Speech",
+                "howto.step3.description": "Click \"Speak\" to start the text-to-speech conversion. You can pause or resume the speech at any time using the control buttons.",
+                "howto.step4.title": "Clear and Start Over",
+                "howto.step4.description": "Use the \"Clear\" button to reset the text and settings, or simply enter new text to generate more speech.",
                 "tool.title": "Text to Speech",
-                "tool.text.title": "Enter Text",
+                "tool.text.title": "Enter Text to Convert",
                 "tool.text.placeholder": "Type or paste your text here...",
-                "tool.text.upload": "Upload Text File",
-                "tool.text.copy": "Copy Text",
-                "tool.text.clear": "Clear Text",
-                "tool.voice.title": "Voice Selection",
-                "tool.voice.language": "Language",
-                "tool.voice.voice": "Voice",
-                "tool.voice.all": "All Voices",
-                "tool.voice.male": "Male Voices",
-                "tool.voice.female": "Female Voices",
-                "tool.voice.preview": "Preview Voice",
-                "tool.settings.title": "Audio Settings",
-                "tool.settings.rate": "Speech Rate",
-                "tool.settings.pitch": "Pitch",
-                "tool.settings.volume": "Volume",
-                "tool.controls.title": "Controls",
-                "tool.controls.speak": "Speak",
-                "tool.controls.pause": "Pause",
-                "tool.controls.resume": "Resume",
-                "tool.controls.stop": "Stop",
-                "tool.controls.speaking": "Speaking...",
-                "tool.stats.characters": "Characters",
-                "tool.stats.words": "Words",
-                "tool.stats.time": "Estimated Time",
-                "tool.stats.voices": "Available Voices",
+                "tool.text.chars": "characters",
+                "tool.controls.language": "Language & Voice",
+                "tool.controls.voice": "Voice:",
+                "tool.controls.loading": "Loading voices...",
+                "tool.controls.settings": "Speech Settings",
+                "tool.controls.rate": "Rate:",
+                "tool.controls.pitch": "Pitch:",
+                "tool.controls.volume": "Volume:",
+                "tool.status.title": "Status",
+                "tool.status.ready": "Ready",
+                "tool.buttons.speak": "Speak",
+                "tool.buttons.pause": "Pause",
+                "tool.buttons.resume": "Resume",
+                "tool.buttons.clear": "Clear",
                 "footer.follow": "FOLLOW US",
                 "footer.categories": "Popular Categories",
                 "footer.categories.pdf": "PDF Tools",
@@ -1897,54 +1452,44 @@
             },
             es: {
                 "nav.home": "Inicio",
-                "nav.about": "Acerca de Nosotros",
+                "nav.about": "Sobre Nosotros",
                 "nav.tools": "Herramientas",
                 "nav.contact": "Contacto",
                 "hero.title": "Herramienta de Texto a Voz",
-                "hero.description": "Convierte texto a voz natural con múltiples voces e idiomas. Personaliza velocidad y tono, y disfruta de uso ilimitado - todo en el lado del cliente con privacidad completa.",
+                "hero.description": "Convierte texto a voz instantáneamente usando la síntesis de voz integrada de tu navegador. Sin descargas, sin registro y completamente gratis. Todo el procesamiento ocurre localmente en tu navegador.",
                 "howto.title": "Cómo Usar la Herramienta de Texto a Voz",
                 "howto.step1.title": "Ingresa Tu Texto",
-                "howto.step1.description": "Escribe o pega tu texto en el cuadro de entrada. También puedes subir un archivo de texto o usar el botón copiar para copiar texto al portapapeles.",
-                "howto.step2.title": "Selecciona Voz e Idioma",
-                "howto.step2.description": "Elige entre múltiples voces (masculino/femenino) e idiomas. Previsualiza las voces antes de generar el audio completo.",
-                "howto.step3.title": "Personaliza Configuración",
-                "howto.step3.description": "Ajusta la velocidad del habla, el tono y el volumen a tu preferencia.",
-                "howto.step4.title": "Genera Audio",
-                "howto.step4.description": "Haz clic en 'Hablar' para generar el audio. Escucha el resultado usando los controles de reproducción, pausa y parada.",
+                "howto.step1.description": "Escribe o pega el texto que quieres convertir a voz en el área de texto. No hay límite de caracteres, pero textos muy largos pueden tomar más tiempo en procesarse.",
+                "howto.step2.title": "Personaliza la Configuración",
+                "howto.step2.description": "Selecciona tu idioma preferido, voz y ajusta los parámetros de habla como velocidad, tono y volumen a tu gusto.",
+                "howto.step3.title": "Escucha el Habla",
+                "howto.step3.description": "Haz clic en \"Hablar\" para comenzar la conversión de texto a voz. Puedes pausar o reanudar el habla en cualquier momento usando los botones de control.",
+                "howto.step4.title": "Limpiar y Comenzar de Nuevo",
+                "howto.step4.description": "Usa el botón \"Limpiar\" para restablecer el texto y la configuración, o simplemente ingresa nuevo texto para generar más habla.",
                 "tool.title": "Texto a Voz",
-                "tool.text.title": "Ingresar Texto",
+                "tool.text.title": "Ingresa Texto para Convertir",
                 "tool.text.placeholder": "Escribe o pega tu texto aquí...",
-                "tool.text.upload": "Subir Archivo de Texto",
-                "tool.text.copy": "Copiar Texto",
-                "tool.text.clear": "Limpiar Texto",
-                "tool.voice.title": "Selección de Voz",
-                "tool.voice.language": "Idioma",
-                "tool.voice.voice": "Voz",
-                "tool.voice.all": "Todas las Voces",
-                "tool.voice.male": "Voces Masculinas",
-                "tool.voice.female": "Voces Femeninas",
-                "tool.voice.preview": "Previsualizar Voz",
-                "tool.settings.title": "Configuración de Audio",
-                "tool.settings.rate": "Velocidad del Habla",
-                "tool.settings.pitch": "Tono",
-                "tool.settings.volume": "Volumen",
-                "tool.controls.title": "Controles",
-                "tool.controls.speak": "Hablar",
-                "tool.controls.pause": "Pausar",
-                "tool.controls.resume": "Reanudar",
-                "tool.controls.stop": "Detener",
-                "tool.controls.speaking": "Hablando...",
-                "tool.stats.characters": "Caracteres",
-                "tool.stats.words": "Palabras",
-                "tool.stats.time": "Tiempo Estimado",
-                "tool.stats.voices": "Voces Disponibles",
+                "tool.text.chars": "caracteres",
+                "tool.controls.language": "Idioma y Voz",
+                "tool.controls.voice": "Voz:",
+                "tool.controls.loading": "Cargando voces...",
+                "tool.controls.settings": "Configuración de Habla",
+                "tool.controls.rate": "Velocidad:",
+                "tool.controls.pitch": "Tono:",
+                "tool.controls.volume": "Volumen:",
+                "tool.status.title": "Estado",
+                "tool.status.ready": "Listo",
+                "tool.buttons.speak": "Hablar",
+                "tool.buttons.pause": "Pausar",
+                "tool.buttons.resume": "Reanudar",
+                "tool.buttons.clear": "Limpiar",
                 "footer.follow": "SÍGUENOS",
                 "footer.categories": "Categorías Populares",
                 "footer.categories.pdf": "Herramientas PDF",
                 "footer.categories.image": "Herramientas de Imagen",
                 "footer.categories.text": "Herramientas de Texto",
                 "footer.categories.av": "Herramientas de Audio/Video",
-                "footer.categories.web": "Herramientas para Desarrolladores Web",
+                "footer.categories.web": "Herramientas WebDesarrollador",
                 "footer.categories.calc": "Herramientas de Calculadora",
                 "footer.categories.util": "Herramientas de Utilidad",
                 "footer.categories.color": "Herramientas de Color",
@@ -1973,7 +1518,7 @@
             });
             
             // Update current language display
-            currentLanguageElement.textContent = document.querySelector(`.language-option[data-lang="${langCode}"]`).textContent;
+            currentLanguageElement.textContent = languages.find(lang => lang.code === langCode)?.name || 'English';
             
             // Save language preference
             localStorage.setItem('language', langCode);
@@ -1990,9 +1535,6 @@
                 changeLanguage(langCode);
             }
         });
-
-        // Initialize the application
-        init();
     </script>
 </body>
 </html>

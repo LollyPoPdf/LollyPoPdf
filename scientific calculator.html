@@ -1,0 +1,3245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Engineering & Scientific Calculator | LollyPoPdf</title>
+    <meta name="description" content="Free online engineering and scientific calculator with advanced functions, graphing, conversions, and offline support.">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/mathjs@11.8.0/lib/browser/math.js"></script>
+    <script src="https://cdn.plot.ly/plotly-2.24.1.min.js"></script>
+    <style>
+        :root {
+            --primary-color: #9370db;
+            --primary-dark: #8a2be2;
+            --secondary-color: #f0ebff;
+            --text-color: #333333;
+            --text-light: #6b7280;
+            --bg-color: #ffffff;
+            --bg-secondary: #f9f9f9;
+            --border-radius: 8px;
+            --transition: all 0.2s ease;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --header-height: 80px;
+            --white: #ffffff;
+            --header-text: #6b7280;
+            --accent-color: #9370db;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --error-color: #ef4444;
+            --calc-bg: #2c2c2c;
+            --calc-display-bg: #1a1a1a;
+            --calc-display-text: #ffffff;
+            --calc-btn-bg: #4a4a4a;
+            --calc-btn-text: #ffffff;
+            --calc-btn-hover: #5a5a5a;
+            --calc-func-bg: #616161;
+            --calc-func-hover: #717171;
+            --calc-op-bg: #ff9500;
+            --calc-op-text: #ffffff;
+            --calc-op-hover: #ffaa33;
+            --calc-sci-bg: #3a3a3a;
+            --calc-sci-hover: #4a4a4a;
+            --hero-bg: #f0ebff;
+        }
+
+        .dark-mode {
+            --primary-color: #a391f2;
+            --primary-dark: #8a2be2;
+            --secondary-color: #2d2d2d;
+            --text-color: #f0f0f0;
+            --text-light: #a0a0a0;
+            --bg-color: #1a1a1a;
+            --bg-secondary: #2d2d2d;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+            --white: #1a1a1a;
+            --header-text: #a0a0a0;
+            --calc-bg: #2c2c2c;
+            --calc-display-bg: #1a1a1a;
+            --calc-display-text: #ffffff;
+            --calc-btn-bg: #4a4a4a;
+            --calc-btn-text: #ffffff;
+            --calc-btn-hover: #5a5a5a;
+            --calc-func-bg: #616161;
+            --calc-func-hover: #717171;
+            --calc-op-bg: #ff9500;
+            --calc-op-text: #ffffff;
+            --calc-op-hover: #ffaa33;
+            --calc-sci-bg: #3a3a3a;
+            --calc-sci-hover: #4a4a4a;
+            --hero-bg: #2a1a4a;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            transition: var(--transition);
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        ul {
+            list-style: none;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header Styles */
+        header {
+            background-color: var(--white);
+            color: var(--header-text);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+        }
+
+        .logo-icon {
+            position: relative;
+            width: 40px;
+            height: 40px;
+        }
+
+        .logo-circle {
+            width: 40px;
+            height: 40px;
+            border-radius: 40%;
+            background: linear-gradient(to bottom right, #9370db, #8a2be2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .logo-stem {
+            position: absolute;
+            bottom: -17px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 6px;
+            height: 17px;
+            background-color: #8a2be2;
+            border-radius: 0 0 3px 3px;
+        }
+
+        .logo-text {
+            font-size: 24px;
+            font-weight: bold;
+            color: #9370db;
+        }
+
+        nav ul {
+            display: flex;
+            gap: 30px;
+            list-style: none;
+        }
+
+        nav a {
+            font-weight: 500;
+            position: relative;
+            color: var(--header-text);
+            padding: 8px 0;
+            border-radius: 0;
+            transition: var(--transition);
+            text-decoration: none;
+        }
+
+        nav a:hover {
+            color: var(--accent-color);
+        }
+
+        nav a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: var(--accent-color);
+            transition: width 0.3s ease;
+        }
+
+        nav a:hover::after {
+            width: 100%;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .email {
+            font-size: 14px;
+            color: var(--header-text);
+        }
+
+        .theme-toggle {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 20px;
+            color: var(--header-text);
+            padding: 8px;
+            border-radius: 50%;
+            transition: var(--transition);
+        }
+
+        .theme-toggle:hover {
+            background-color: #f0ebff;
+            color: var(--accent-color);
+        }
+
+        .dark-mode .theme-toggle:hover {
+            background-color: #2d3748;
+            color: var(--accent-color);
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--header-text);
+        }
+
+        /* Mobile Menu */
+        .mobile-menu {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            width: 100%;
+            background-color: var(--white);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            z-index: 999;
+        }
+
+        .dark-mode .mobile-menu {
+            background-color: var(--bg-secondary);
+        }
+
+        .mobile-menu.active {
+            display: block;
+        }
+
+        .mobile-menu ul {
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .mobile-menu a {
+            display: block;
+            padding: 10px 0;
+            font-weight: 500;
+            color: var(--header-text);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .dark-mode .mobile-menu a {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .mobile-menu a:hover {
+            color: var(--accent-color);
+        }
+
+        /* Hero Section */
+        .hero {
+            background-color: var(--hero-bg);
+            padding: 60px 0;
+            text-align: center;
+        }
+
+        .dark-mode .hero {
+            background: linear-gradient(135deg, #2a1a4a, #3d2a6d);
+        }
+
+        .hero h1 {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            color: #000;
+        }
+
+        .dark-mode .hero h1 {
+            color: var(--text-color);
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            color: var(--text-color);
+            max-width: 700px;
+            margin: 0 auto 30px;
+        }
+
+        /* Calculator Section */
+        .calculator-section {
+            padding: 80px 0;
+            background-color: var(--bg-color);
+        }
+
+        .dark-mode .calculator-section {
+            background-color: var(--bg-secondary);
+        }
+
+        .section-title {
+            font-size: 2rem;
+            text-align: center;
+            margin-bottom: 40px;
+            color: #000000;
+        }
+
+        .dark-mode .section-title {
+            color: var(--text-color);
+        }
+
+        .calculator-container {
+            max-width: 900px;
+            margin: 0 auto;
+            background-color: var(--calc-bg);
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            padding: 20px;
+            border: 1px solid #444;
+        }
+
+        .calculator-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .calculator-tab {
+            padding: 10px 20px;
+            background-color: var(--bg-secondary);
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            transition: var(--transition);
+            font-weight: 500;
+        }
+
+        .calculator-tab.active {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        /* Calculator Display */
+        .calculator-display {
+            background-color: var(--calc-display-bg);
+            border-radius: var(--border-radius);
+            padding: 20px;
+            margin-bottom: 20px;
+            min-height: 120px;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            align-items: flex-end;
+            overflow: hidden;
+            border: 1px solid #555;
+        }
+
+        .calculator-expression {
+            color: var(--text-light);
+            font-size: 16px;
+            margin-bottom: 10px;
+            min-height: 20px;
+            text-align: right;
+            width: 100%;
+            word-break: break-all;
+        }
+
+        .calculator-result {
+            color: var(--calc-display-text);
+            font-size: 32px;
+            font-weight: bold;
+            text-align: right;
+            width: 100%;
+            word-break: break-all;
+        }
+
+        /* Calculator Keypad */
+        .calculator-keypad {
+            display: grid;
+            grid-template-columns: repeat(10, 1fr);
+            gap: 8px;
+        }
+
+        .calculator-btn {
+            padding: 12px 8px;
+            border: none;
+            border-radius: 4px;
+            background-color: var(--calc-btn-bg);
+            color: var(--calc-btn-text);
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 50px;
+        }
+
+        .calculator-btn:hover {
+            background-color: var(--calc-btn-hover);
+        }
+
+        .calculator-btn.func {
+            background-color: var(--calc-func-bg);
+            font-size: 14px;
+        }
+
+        .calculator-btn.func:hover {
+            background-color: var(--calc-func-hover);
+        }
+
+        .calculator-btn.op {
+            background-color: var(--calc-op-bg);
+            color: var(--calc-op-text);
+            font-size: 18px;
+        }
+
+        .calculator-btn.op:hover {
+            background-color: var(--calc-op-hover);
+        }
+
+        .calculator-btn.equals {
+            background-color: var(--calc-op-bg);
+            color: var(--calc-op-text);
+            font-size: 18px;
+        }
+
+        .calculator-btn.equals:hover {
+            background-color: var(--calc-op-hover);
+        }
+
+        .calculator-btn.clear {
+            background-color: #a5a5a5;
+            color: #000;
+        }
+
+        .calculator-btn.clear:hover {
+            background-color: #b5b5b5;
+        }
+
+        .calculator-btn.sci {
+            background-color: var(--calc-sci-bg);
+            font-size: 14px;
+        }
+
+        .calculator-btn.sci:hover {
+            background-color: var(--calc-sci-hover);
+        }
+
+        .calculator-btn.prog {
+            background-color: var(--calc-sci-bg);
+            font-size: 14px;
+        }
+
+        .calculator-btn.prog:hover {
+            background-color: var(--calc-sci-hover);
+        }
+
+        /* Keypad Sections */
+        .calculator-keypad-basic {
+            display: contents;
+        }
+
+        .calculator-keypad-scientific {
+            display: none;
+            grid-template-columns: repeat(10, 1fr);
+            gap: 8px;
+        }
+
+        .calculator-keypad-programmer {
+            display: none;
+            grid-template-columns: repeat(10, 1fr);
+            gap: 8px;
+        }
+
+        /* Graphing Section */
+        .graphing-section {
+            padding: 40px 0;
+            background-color: var(--hero-bg);
+        }
+
+        .dark-mode .graphing-section {
+            background: linear-gradient(135deg, #2a1a4a, #3d2a6d);
+        }
+
+        .graphing-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background-color: var(--bg-color);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            padding: 30px;
+        }
+
+        .dark-mode .graphing-container {
+            background-color: var(--bg-secondary);
+        }
+
+        .graph-controls {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .graph-controls {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .graph-input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .graph-input {
+            padding: 10px 15px;
+            border-radius: var(--border-radius);
+            border: 1px solid var(--primary-color);
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: monospace;
+        }
+
+        .graph-btn {
+            padding: 12px 20px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            font-weight: bold;
+            transition: var(--transition);
+        }
+
+        .graph-btn:hover {
+            background-color: var(--primary-dark);
+        }
+
+        .graph-container {
+            width: 100%;
+            height: 400px;
+            background-color: var(--bg-color);
+            border-radius: var(--border-radius);
+        }
+
+        /* Conversions Section */
+        .conversions-section {
+            padding: 40px 0;
+            background-color: var(--bg-color);
+        }
+
+        .dark-mode .conversions-section {
+            background-color: var(--bg-secondary);
+        }
+
+        .conversions-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background-color: var(--bg-secondary);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            padding: 30px;
+        }
+
+        .conversion-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .conversion-tab {
+            padding: 10px 20px;
+            background-color: var(--bg-color);
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            transition: var(--transition);
+            font-weight: 500;
+        }
+
+        .conversion-tab.active {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .conversion-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .conversion-content {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .conversion-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .conversion-label {
+            font-weight: 500;
+            color: var(--primary-color);
+        }
+
+        .conversion-select, .conversion-input {
+            padding: 10px 15px;
+            border-radius: var(--border-radius);
+            border: 1px solid var(--primary-color);
+            background-color: var(--bg-color);
+            color: var(--text-color);
+        }
+
+        .conversion-result {
+            padding: 10px 15px;
+            background-color: var(--bg-color);
+            border-radius: var(--border-radius);
+            font-weight: bold;
+            min-height: 42px;
+            display: flex;
+            align-items: center;
+        }
+
+        /* Footer */
+        footer {
+            background-color: #000000;
+            color: white;
+            padding: 60px 0 80px;
+            position: relative;
+        }
+
+        .footer-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 60px;
+        }
+
+        .footer-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            text-decoration: none;
+        }
+
+        .footer-logo .logo-icon {
+            width: 40px;
+            height: 40px;
+        }
+
+        .footer-logo .logo-text {
+            color: #9370db;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .footer-section h3 {
+            color: white;
+            font-weight: 600;
+            font-size: 20px;
+            margin-bottom: 20px;
+        }
+
+        .footer-section h4 {
+            color: #9370db;
+            font-size: 18px;
+            margin-bottom: 15px;
+        }
+
+        .footer-links li {
+            margin-bottom: 10px;
+        }
+
+        .footer-links a {
+            color: white;
+        }
+
+        .footer-links a:hover {
+            color: #9370db;
+        }
+
+        .social-icons {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .social-icon {
+            width: 40px;
+            height: 40px;
+            background-color: #9370db;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+        }
+
+        .social-icon:hover {
+            background-color: #8a2be2;
+            transform: translateY(-3px);
+        }
+
+        .copyright {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            color: #f9f7ff;
+            font-size: 12px;
+        }
+
+        .footer-line {
+            position: absolute;
+            bottom: 50px;
+            left: 0;
+            width: 100%;
+            height: 1px;
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        /* Status Message */
+        .status-message {
+            padding: 15px;
+            border-radius: var(--border-radius);
+            margin-bottom: 20px;
+            text-align: center;
+            display: none;
+        }
+
+        .status-success {
+            background-color: rgba(16, 185, 129, 0.1);
+            color: var(--success-color);
+            border: 1px solid var(--success-color);
+        }
+
+        .status-error {
+            background-color: rgba(239, 68, 68, 0.1);
+            color: var(--error-color);
+            border: 1px solid var(--error-color);
+        }
+
+        /* Language Switcher */
+        .language-switcher {
+            position: fixed;
+            bottom: 10px;
+            right: 10px;
+            z-index: 1000;
+        }
+
+        .language-btn {
+            background-color: #9370db;
+            color: white;
+            border: none;
+            border-radius: 30px;
+            padding: 5px 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .language-dropdown {
+            position: absolute;
+            bottom: 100%;
+            right: 0;
+            width: 300px;
+            background-color: white;
+            border-radius: var(--border-radius);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            display: none;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .dark-mode .language-dropdown {
+            background-color: var(--bg-secondary);
+        }
+
+        .language-switcher:hover .language-dropdown {
+            display: grid;
+        }
+
+        .language-option {
+            padding: 8px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            text-align: center;
+            font-size: 14px;
+        }
+
+        .language-option:hover {
+            background-color: white;
+            color: #9370db;
+        }
+
+        .dark-mode .language-option:hover {
+            background-color: var(--bg-color);
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 992px) {
+            .footer-container {
+                grid-template-columns: 1fr 1fr;
+            }
+            
+            .calculator-keypad {
+                grid-template-columns: repeat(5, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            nav ul, .email {
+                display: none;
+            }
+            
+            .mobile-menu-btn {
+                display: block;
+            }
+            
+            .hero h1, .section-title {
+                font-size: 2rem;
+            }
+            
+            .hero p {
+                font-size: 1rem;
+            }
+            
+            .language-dropdown {
+                width: 250px;
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .footer-container {
+                grid-template-columns: 1fr;
+                gap: 40px;
+            }
+            
+            .calculator-keypad {
+                grid-template-columns: repeat(5, 1fr);
+            }
+        }
+
+        @media (max-width: 576px) {
+            .calculator-container, .graphing-container, .conversions-container {
+                padding: 20px;
+            }
+            
+            .calculator-btn {
+                padding: 10px 5px;
+                font-size: 14px;
+                min-height: 45px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container header-container">
+            <a href="https://lollypopdf.com" class="logo">
+                <div class="logo-icon">
+                    <div class="logo-circle">LPdf</div>
+                    <div class="logo-stem"></div>
+                </div>
+                <span class="logo-text">LollyPoPdf</span>
+            </a>
+            
+            <nav>
+                <ul>
+                    <li><a href="https://lollypopdf.github.io/LollyPoPdf#home" class="nav-link" data-i18n="nav.home">Home</a></li>
+                    <li><a href="https://lollypopdf.github.io/LollyPoPdf#about" class="nav-link" data-i18n="nav.about">About Us</a></li>
+                    <li><a href="https://lollypopdf.github.io/LollyPoPdf#tools" class="nav-link" data-i18n="nav.tools">Tools</a></li>
+                    <li><a href="contact.html" class="nav-link" data-i18n="nav.contact">Contact</a></li>
+                </ul>
+            </nav>
+            
+            <div class="header-right">
+                <span class="email">lollypoppdf@gmail.com</span>
+                <button class="theme-toggle" id="themeToggle">
+                    <i class="fas fa-moon"></i>
+                </button>
+                <button class="mobile-menu-btn" id="mobileMenuBtn">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </div>
+        
+        <!-- Mobile Menu -->
+        <div class="mobile-menu" id="mobileMenu">
+            <ul>
+                <li><a href="https://lollypopdf.github.io/LollyPoPdf#home" class="nav-link" data-i18n="nav.home">Home</a></li>
+                <li><a href="https://lollypopdf.github.io/LollyPoPdf#about" class="nav-link" data-i18n="nav.about">About Us</a></li>
+                <li><a href="https://lollypopdf.github.io/LollyPoPdf#tools" class="nav-link" data-i18n="nav.tools">Tools</a></li>
+                <li><a href="contact.html" class="nav-link" data-i18n="nav.contact">Contact</a></li>
+            </ul>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <h1 data-i18n="hero.title">Engineering & Scientific Calculator</h1>
+            <p data-i18n="hero.description">Advanced calculator with scientific functions, graphing capabilities, unit conversions, and offline support. All processing happens locally with complete privacy.</p>
+        </div>
+    </section>
+
+    <!-- Calculator Section -->
+    <section class="calculator-section">
+        <div class="container">
+            <h2 class="section-title" data-i18n="calculator.title">Scientific Calculator</h2>
+            <div class="calculator-container">
+                <!-- Status Message -->
+                <div class="status-message" id="statusMessage"></div>
+
+                <!-- Calculator Tabs -->
+                <div class="calculator-tabs">
+                    <div class="calculator-tab active" data-tab="basic">Basic</div>
+                    <div class="calculator-tab" data-tab="scientific">Scientific</div>
+                    <div class="calculator-tab" data-tab="programmer">Programmer</div>
+                </div>
+
+                <!-- Calculator Display -->
+                <div class="calculator-display">
+                    <div class="calculator-expression" id="calculatorExpression"></div>
+                    <div class="calculator-result" id="calculatorResult">0</div>
+                </div>
+
+                <!-- Calculator Keypad -->
+                <div class="calculator-keypad" id="calculatorKeypad">
+                    <!-- Basic Keypad -->
+                    <div class="calculator-keypad-basic">
+                        <!-- Row 1 -->
+                        <button class="calculator-btn clear" data-action="clear">C</button>
+                        <button class="calculator-btn clear" data-action="clear-entry">CE</button>
+                        <button class="calculator-btn func" data-action="backspace">⌫</button>
+                        <button class="calculator-btn op" data-action="divide">÷</button>
+                        <button class="calculator-btn func" data-action="reciprocal">1/x</button>
+                        <button class="calculator-btn func" data-action="square">x²</button>
+                        <button class="calculator-btn func" data-action="sqrt">√</button>
+                        <button class="calculator-btn func" data-action="percent">%</button>
+                        <button class="calculator-btn func" data-action="pi">π</button>
+                        <button class="calculator-btn op" data-action="multiply">×</button>
+
+                        <!-- Row 2 -->
+                        <button class="calculator-btn" data-value="7">7</button>
+                        <button class="calculator-btn" data-value="8">8</button>
+                        <button class="calculator-btn" data-value="9">9</button>
+                        <button class="calculator-btn op" data-action="subtract">−</button>
+                        <button class="calculator-btn sci" data-action="sin">sin</button>
+                        <button class="calculator-btn sci" data-action="cos">cos</button>
+                        <button class="calculator-btn sci" data-action="tan">tan</button>
+                        <button class="calculator-btn sci" data-action="log">log</button>
+                        <button class="calculator-btn sci" data-action="ln">ln</button>
+                        <button class="calculator-btn op" data-action="add">+</button>
+
+                        <!-- Row 3 -->
+                        <button class="calculator-btn" data-value="4">4</button>
+                        <button class="calculator-btn" data-value="5">5</button>
+                        <button class="calculator-btn" data-value="6">6</button>
+                        <button class="calculator-btn op" data-action="negate">±</button>
+                        <button class="calculator-btn sci" data-action="asin">sin⁻¹</button>
+                        <button class="calculator-btn sci" data-action="acos">cos⁻¹</button>
+                        <button class="calculator-btn sci" data-action="atan">tan⁻¹</button>
+                        <button class="calculator-btn sci" data-action="exp">eˣ</button>
+                        <button class="calculator-btn sci" data-action="power">xʸ</button>
+                        <button class="calculator-btn equals" data-action="equals">=</button>
+
+                        <!-- Row 4 -->
+                        <button class="calculator-btn" data-value="1">1</button>
+                        <button class="calculator-btn" data-value="2">2</button>
+                        <button class="calculator-btn" data-value="3">3</button>
+                        <button class="calculator-btn" data-action="decimal">.</button>
+                        <button class="calculator-btn sci" data-action="factorial">x!</button>
+                        <button class="calculator-btn sci" data-action="abs">|x|</button>
+                        <button class="calculator-btn sci" data-action="floor">floor</button>
+                        <button class="calculator-btn sci" data-action="ceil">ceil</button>
+                        <button class="calculator-btn sci" data-action="round">round</button>
+                        <button class="calculator-btn" data-value="0">0</button>
+
+                        <!-- Row 5 -->
+                        <button class="calculator-btn" data-value="(">(</button>
+                        <button class="calculator-btn" data-value=")">)</button>
+                        <button class="calculator-btn func" data-action="memory-clear">MC</button>
+                        <button class="calculator-btn func" data-action="memory-recall">MR</button>
+                        <button class="calculator-btn func" data-action="memory-add">M+</button>
+                        <button class="calculator-btn sci" data-action="deg">DEG</button>
+                        <button class="calculator-btn sci" data-action="rad">RAD</button>
+                        <button class="calculator-btn prog" data-action="binary">BIN</button>
+                        <button class="calculator-btn prog" data-action="hexadecimal">HEX</button>
+                        <button class="calculator-btn prog" data-action="and">AND</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Graphing Section -->
+    <section class="graphing-section">
+        <div class="container">
+            <h2 class="section-title" data-i18n="graphing.title">Function Graphing</h2>
+            <div class="graphing-container">
+                <div class="graph-controls">
+                    <div class="graph-input-group">
+                        <label for="graphFunction" data-i18n="graphing.function">Function (e.g., sin(x), x^2+3*x-5)</label>
+                        <input type="text" id="graphFunction" class="graph-input" value="sin(x)" placeholder="Enter function">
+                    </div>
+                    <div class="graph-input-group">
+                        <label for="graphRange" data-i18n="graphing.range">X Range (min, max)</label>
+                        <input type="text" id="graphRange" class="graph-input" value="-10, 10" placeholder="e.g., -10, 10">
+                    </div>
+                </div>
+                <button class="graph-btn" id="plotGraph" data-i18n="graphing.plot">Plot Graph</button>
+                <div class="graph-container" id="graphContainer"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Conversions Section -->
+    <section class="conversions-section">
+        <div class="container">
+            <h2 class="section-title" data-i18n="conversions.title">Unit Conversions</h2>
+            <div class="conversions-container">
+                <div class="conversion-tabs">
+                    <div class="conversion-tab active" data-conversion="length">Length</div>
+                    <div class="conversion-tab" data-conversion="weight">Weight</div>
+                    <div class="conversion-tab" data-conversion="temperature">Temperature</div>
+                    <div class="conversion-tab" data-conversion="energy">Energy</div>
+                    <div class="conversion-tab" data-conversion="power">Power</div>
+                </div>
+
+                <div class="conversion-content">
+                    <div class="conversion-group">
+                        <label class="conversion-label" for="conversionFrom">From</label>
+                        <select class="conversion-select" id="conversionFrom">
+                            <!-- Options will be populated by JavaScript -->
+                        </select>
+                        <input type="number" class="conversion-input" id="conversionInput" value="1" step="any">
+                    </div>
+                    <div class="conversion-group">
+                        <label class="conversion-label" for="conversionTo">To</label>
+                        <select class="conversion-select" id="conversionTo">
+                            <!-- Options will be populated by JavaScript -->
+                        </select>
+                        <div class="conversion-result" id="conversionResult">1</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container footer-container">
+            <!-- Left Section -->
+            <div class="footer-section">
+                <a href="https://lollypopdf.com" class="footer-logo">
+                    <div class="logo-icon">
+                        <div class="logo-circle">LPdf</div>
+                        <div class="logo-stem"></div>
+                    </div>
+                    <span class="logo-text">LollyPoPdf</span>
+                </a>
+                <h3 data-i18n="footer.follow">FOLLOW US</h3>
+                <div class="social-icons">
+                    <a href="https://facebook.com/lollypopdf" class="social-icon"><i class="fab fa-facebook-f"></i></a>
+                    <a href="https://linkedin.com/company/lollypopdf" class="social-icon"><i class="fab fa-linkedin-in"></i></a>
+                    <a href="https://twitter.com/lollypopdf" class="social-icon"><i class="fab fa-twitter"></i></a>
+                    <a href="https://instagram.com/lollypopdf" class="social-icon"><i class="fab fa-instagram"></i></a>
+                    <a href="https://pinterest.com/lollypopdf" class="social-icon"><i class="fab fa-pinterest-p"></i></a>
+                </div>
+            </div>
+            
+            <!-- Middle Section - Popular Categories -->
+            <div class="footer-section">
+                <h4 data-i18n="footer.categories">Popular Categories</h4>
+                <ul class="footer-links">
+                    <li><a href="https://lollypopdf.com#pdf-tools" data-i18n="footer.categories.pdf">PDF Tools</a></li>
+                    <li><a href="https://lollypopdf.com#image-tools" data-i18n="footer.categories.image">Image Tools</a></li>
+                    <li><a href="https://lollypopdf.com#text-tools" data-i18n="footer.categories.text">Text Tools</a></li>
+                    <li><a href="https://lollypopdf.com#audio-video-tools" data-i18n="footer.categories.av">Audio/Video Tools</a></li>
+                    <li><a href="https://lollypopdf.com#web-developer-tools" data-i18n="footer.categories.web">WebDeveloper Tools</a></li>
+                    <li><a href="https://lollypopdf.com#calculator-tools" data-i18n="footer.categories.calc">Calculator Tools</a></li>
+                    <li><a href="https://lollypopdf.com#utility-tools" data-i18n="footer.categories.util">Utility Tools</a></li>
+                    <li><a href="https://lollypopdf.com#color-tools" data-i18n="footer.categories.color">Color Tools</a></li>
+                </ul>
+            </div>
+            
+            <!-- Right Section - Quick Links -->
+            <div class="footer-section">
+                <h4 data-i18n="footer.quicklinks">Quick Links</h4>
+                <ul class="footer-links">
+                    <li><a href="https://lollypopdf.github.io/LollyPoPdf#home" data-i18n="nav.home">Home</a></li>
+                    <li><a href="https://lollypopdf.github.io/LollyPoPdf#tools" data-i18n="footer.links.tools">All Tools</a></li>
+                    <li><a href="faq.html" data-i18n="footer.links.faq">FAQ</a></li>
+                    <li><a href="contact.html" data-i18n="footer.links.contact">Contact</a></li>
+                    <li><a href="privacy-policy.html" data-i18n="footer.links.privacy">Privacy Policy</a></li>
+                    <li><a href="disclaimer.html" data-i18n="footer.links.disclaimer">Disclaimer</a></li>
+                    <li><a href="terms.html" data-i18n="footer.links.terms">Terms of Service</a></li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="footer-line"></div>
+        <div class="copyright" data-i18n="footer.copyright">© 2025 LollyPoPDF. All rights reserved.</div>
+    </footer>
+
+    <!-- Language Switcher -->
+    <div class="language-switcher">
+        <button class="language-btn">
+            <i class="fas fa-globe"></i>
+            <span id="currentLanguage">English</span>
+        </button>
+        <div class="language-dropdown">
+            <div class="language-option" data-lang="en">English</div>
+            <div class="language-option" data-lang="es">Español</div>
+            <div class="language-option" data-lang="fr">Français</div>
+            <div class="language-option" data-lang="de">Deutsch</div>
+            <div class="language-option" data-lang="it">Italiano</div>
+            <div class="language-option" data-lang="pt">Português</div>
+            <div class="language-option" data-lang="ja">日本語</div>
+            <div class="language-option" data-lang="ru">Pусский</div>
+            <div class="language-option" data-lang="ko">한국어</div>
+            <div class="language-option" data-lang="zh-CN">中文 (简体)</div>
+            <div class="language-option" data-lang="zh-TW">中文 (繁體)</div>
+            <div class="language-option" data-lang="ar">العربية</div>
+            <div class="language-option" data-lang="fa">فارسی</div>
+            <div class="language-option" data-lang="bg">Български</div>
+            <div class="language-option" data-lang="ca">Català</div>
+            <div class="language-option" data-lang="nl">Nederlands</div>
+            <div class="language-option" data-lang="el">Ελληνικά</div>
+            <div class="language-option" data-lang="hi">हिन्दी</div>
+            <div class="language-option" data-lang="te">తెలుగు</div>
+            <div class="language-option" data-lang="kn">ಕನ್ನಡ</div>
+            <div class="language-option" data-lang="ta">தமிழ்</div>
+            <div class="language-option" data-lang="ml">മലയാളം</div>
+            <div class="language-option" data-lang="id">Bahasa Indonesia</div>
+            <div class="language-option" data-lang="ms">Bahasa Melayu</div>
+            <div class="language-option" data-lang="pl">Polski</div>
+            <div class="language-option" data-lang="th">ภาษาไทย</div>
+            <div class="language-option" data-lang="tr">Türkçe</div>
+            <div class="language-option" data-lang="uk">Українська</div>
+            <div class="language-option" data-lang="vi">Tiếng Việt</div>
+            <div class="language-option" data-lang="is">Íslenska</div>
+            <div class="language-option" data-lang="no">Norsk</div>
+            <div class="language-option" data-lang="sv">Svenska</div>
+            <div class="language-option" data-lang="fi">Suomi</div>
+            <div class="language-option" data-lang="cs">Čeština</div>
+        </div>
+    </div>
+
+    <script>
+        // Theme Toggle
+        const themeToggle = document.getElementById('themeToggle');
+        const body = document.body;
+        
+        // Check for saved theme preference or respect OS preference
+        const savedTheme = localStorage.getItem('theme') || 
+            (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        
+        if (savedTheme === 'dark') {
+            body.classList.add('dark-mode');
+            themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+        }
+        
+        themeToggle.addEventListener('click', () => {
+            body.classList.toggle('dark-mode');
+            const isDarkMode = body.classList.contains('dark-mode');
+            
+            if (isDarkMode) {
+                themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+                localStorage.setItem('theme', 'dark');
+            } else {
+                themeToggle.innerHTML = '<i class="fas fa-moon"></i>';
+                localStorage.setItem('theme', 'light');
+            }
+        });
+
+        // Mobile Menu Toggle
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const mobileMenu = document.getElementById('mobileMenu');
+        
+        mobileMenuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('active');
+            
+            // Change icon based on menu state
+            if (mobileMenu.classList.contains('active')) {
+                mobileMenuBtn.innerHTML = '<i class="fas fa-times"></i>';
+            } else {
+                mobileMenuBtn.innerHTML = '<i class="fas fa-bars"></i>';
+            }
+        });
+
+        // Close mobile menu when clicking on a link
+        const mobileMenuLinks = mobileMenu.querySelectorAll('a');
+        mobileMenuLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                mobileMenu.classList.remove('active');
+                mobileMenuBtn.innerHTML = '<i class="fas fa-bars"></i>';
+            });
+        });
+
+        // Calculator Functionality
+        class Calculator {
+            constructor() {
+                this.currentInput = '0';
+                this.previousInput = '';
+                this.operation = null;
+                this.waitingForNewInput = false;
+                this.memory = 0;
+                this.history = JSON.parse(localStorage.getItem('calculatorHistory')) || [];
+                this.angleMode = 'deg'; // 'deg' or 'rad'
+                this.numberBase = 'dec'; // 'dec', 'bin', 'oct', 'hex'
+                
+                this.displayElement = document.getElementById('calculatorResult');
+                this.expressionElement = document.getElementById('calculatorExpression');
+                this.statusMessage = document.getElementById('statusMessage');
+                
+                this.initializeEventListeners();
+                this.updateDisplay();
+            }
+            
+            initializeEventListeners() {
+                // Calculator tabs
+                document.querySelectorAll('.calculator-tab').forEach(tab => {
+                    tab.addEventListener('click', () => {
+                        document.querySelectorAll('.calculator-tab').forEach(t => t.classList.remove('active'));
+                        tab.classList.add('active');
+                    });
+                });
+                
+                // Calculator buttons
+                document.querySelectorAll('.calculator-btn').forEach(button => {
+                    button.addEventListener('click', () => {
+                        const value = button.getAttribute('data-value');
+                        const action = button.getAttribute('data-action');
+                        
+                        if (value) {
+                            this.inputNumber(value);
+                        } else if (action) {
+                            this.handleAction(action);
+                        }
+                    });
+                });
+                
+                // Keyboard support
+                document.addEventListener('keydown', (e) => {
+                    this.handleKeyboardInput(e);
+                });
+            }
+            
+            inputNumber(num) {
+                if (this.waitingForNewInput) {
+                    this.currentInput = num;
+                    this.waitingForNewInput = false;
+                } else {
+                    this.currentInput = this.currentInput === '0' ? num : this.currentInput + num;
+                }
+                this.updateDisplay();
+            }
+            
+            handleAction(action) {
+                switch (action) {
+                    case 'clear':
+                        this.clear();
+                        break;
+                    case 'clear-entry':
+                        this.clearEntry();
+                        break;
+                    case 'backspace':
+                        this.backspace();
+                        break;
+                    case 'decimal':
+                        this.inputDecimal();
+                        break;
+                    case 'negate':
+                        this.negate();
+                        break;
+                    case 'add':
+                    case 'subtract':
+                    case 'multiply':
+                    case 'divide':
+                        this.setOperation(action);
+                        break;
+                    case 'equals':
+                        this.calculate();
+                        break;
+                    case 'percent':
+                        this.percent();
+                        break;
+                    case 'sqrt':
+                        this.squareRoot();
+                        break;
+                    case 'square':
+                        this.square();
+                        break;
+                    case 'reciprocal':
+                        this.reciprocal();
+                        break;
+                    case 'pi':
+                        this.inputPi();
+                        break;
+                    // Scientific functions
+                    case 'sin':
+                        this.sin();
+                        break;
+                    case 'cos':
+                        this.cos();
+                        break;
+                    case 'tan':
+                        this.tan();
+                        break;
+                    case 'asin':
+                        this.asin();
+                        break;
+                    case 'acos':
+                        this.acos();
+                        break;
+                    case 'atan':
+                        this.atan();
+                        break;
+                    case 'log':
+                        this.log();
+                        break;
+                    case 'ln':
+                        this.ln();
+                        break;
+                    case 'exp':
+                        this.exp();
+                        break;
+                    case 'power':
+                        this.power();
+                        break;
+                    case 'factorial':
+                        this.factorial();
+                        break;
+                    case 'abs':
+                        this.abs();
+                        break;
+                    case 'floor':
+                        this.floor();
+                        break;
+                    case 'ceil':
+                        this.ceil();
+                        break;
+                    case 'round':
+                        this.round();
+                        break;
+                    case 'deg':
+                        this.deg();
+                        break;
+                    case 'rad':
+                        this.rad();
+                        break;
+                    // Memory functions
+                    case 'memory-clear':
+                        this.memoryClear();
+                        break;
+                    case 'memory-recall':
+                        this.memoryRecall();
+                        break;
+                    case 'memory-add':
+                        this.memoryAdd();
+                        break;
+                    // Programmer functions
+                    case 'binary':
+                        this.convertToBase('bin');
+                        break;
+                    case 'hexadecimal':
+                        this.convertToBase('hex');
+                        break;
+                    case 'and':
+                        this.bitwiseOperation('and');
+                        break;
+                }
+            }
+            
+            handleKeyboardInput(e) {
+                const key = e.key;
+                
+                // Prevent default for calculator keys
+                if ('0123456789.+-*/=()'.includes(key) || key === 'Enter' || key === 'Backspace' || key === 'Escape') {
+                    e.preventDefault();
+                }
+                
+                if ('0123456789'.includes(key)) {
+                    this.inputNumber(key);
+                } else if (key === '.') {
+                    this.inputDecimal();
+                } else if (key === '+') {
+                    this.setOperation('add');
+                } else if (key === '-') {
+                    this.setOperation('subtract');
+                } else if (key === '*') {
+                    this.setOperation('multiply');
+                } else if (key === '/') {
+                    this.setOperation('divide');
+                } else if (key === 'Enter' || key === '=') {
+                    this.calculate();
+                } else if (key === 'Escape' || key === 'c' || key === 'C') {
+                    this.clear();
+                } else if (key === 'Backspace') {
+                    this.backspace();
+                } else if (key === '%') {
+                    this.percent();
+                }
+            }
+            
+            clear() {
+                this.currentInput = '0';
+                this.previousInput = '';
+                this.operation = null;
+                this.waitingForNewInput = false;
+                this.updateDisplay();
+            }
+            
+            clearEntry() {
+                this.currentInput = '0';
+                this.updateDisplay();
+            }
+            
+            backspace() {
+                if (this.currentInput.length > 1) {
+                    this.currentInput = this.currentInput.slice(0, -1);
+                } else {
+                    this.currentInput = '0';
+                }
+                this.updateDisplay();
+            }
+            
+            inputDecimal() {
+                if (this.waitingForNewInput) {
+                    this.currentInput = '0.';
+                    this.waitingForNewInput = false;
+                } else if (this.currentInput.indexOf('.') === -1) {
+                    this.currentInput += '.';
+                }
+                this.updateDisplay();
+            }
+            
+            negate() {
+                this.currentInput = String(-parseFloat(this.currentInput));
+                this.updateDisplay();
+            }
+            
+            setOperation(op) {
+                if (this.operation !== null && !this.waitingForNewInput) {
+                    this.calculate();
+                }
+                
+                this.operation = op;
+                this.previousInput = this.currentInput;
+                this.waitingForNewInput = true;
+                
+                this.updateDisplay();
+            }
+            
+            calculate() {
+                if (this.operation === null || this.waitingForNewInput) {
+                    return;
+                }
+                
+                const prev = parseFloat(this.previousInput);
+                const current = parseFloat(this.currentInput);
+                let result;
+                
+                try {
+                    switch (this.operation) {
+                        case 'add':
+                            result = prev + current;
+                            break;
+                        case 'subtract':
+                            result = prev - current;
+                            break;
+                        case 'multiply':
+                            result = prev * current;
+                            break;
+                        case 'divide':
+                            if (current === 0) {
+                                throw new Error('Division by zero');
+                            }
+                            result = prev / current;
+                            break;
+                        default:
+                            return;
+                    }
+                    
+                    this.currentInput = String(result);
+                    this.operation = null;
+                    this.previousInput = '';
+                    this.waitingForNewInput = true;
+                    this.updateDisplay();
+                } catch (error) {
+                    this.showStatus(error.message, 'error');
+                    this.clear();
+                }
+            }
+            
+            getOperationSymbol() {
+                switch (this.operation) {
+                    case 'add': return '+';
+                    case 'subtract': return '−';
+                    case 'multiply': return '×';
+                    case 'divide': return '÷';
+                    default: return '';
+                }
+            }
+            
+            percent() {
+                const current = parseFloat(this.currentInput);
+                this.currentInput = String(current / 100);
+                this.updateDisplay();
+            }
+            
+            squareRoot() {
+                const current = parseFloat(this.currentInput);
+                if (current < 0) {
+                    this.showStatus('Invalid input for square root', 'error');
+                    return;
+                }
+                
+                const result = Math.sqrt(current);
+                this.currentInput = String(result);
+                this.updateDisplay();
+            }
+            
+            square() {
+                const current = parseFloat(this.currentInput);
+                const result = current * current;
+                this.currentInput = String(result);
+                this.updateDisplay();
+            }
+            
+            reciprocal() {
+                const current = parseFloat(this.currentInput);
+                if (current === 0) {
+                    this.showStatus('Division by zero', 'error');
+                    return;
+                }
+                
+                const result = 1 / current;
+                this.currentInput = String(result);
+                this.updateDisplay();
+            }
+            
+            inputPi() {
+                this.currentInput = String(Math.PI);
+                this.updateDisplay();
+            }
+            
+            // Scientific functions
+            sin() {
+                const current = parseFloat(this.currentInput);
+                let angle = this.angleMode === 'deg' ? current * Math.PI / 180 : current;
+                const result = Math.sin(angle);
+                this.currentInput = String(result);
+                this.updateDisplay();
+            }
+            
+            cos() {
+                const current = parseFloat(this.currentInput);
+                let angle = this.angleMode === 'deg' ? current * Math.PI / 180 : current;
+                const result = Math.cos(angle);
+                this.currentInput = String(result);
+                this.updateDisplay();
+            }
+            
+            tan() {
+                const current = parseFloat(this.currentInput);
+                let angle = this.angleMode === 'deg' ? current * Math.PI / 180 : current;
+                const result = Math.tan(angle);
+                this.currentInput = String(result);
+                this.updateDisplay();
+            }
+            
+            asin() {
+                const current = parseFloat(this.currentInput);
+                if (current < -1 || current > 1) {
+                    this.showStatus('Invalid input for arcsin', 'error');
+                    return;
+                }
+                
+                let result = Math.asin(current);
+                if (this.angleMode === 'deg') {
+                    result = result * 180 / Math.PI;
+                }
+                this.currentInput = String(result);
+                this.updateDisplay();
+            }
+            
+            acos() {
+                const current = parseFloat(this.currentInput);
+                if (current < -1 || current > 1) {
+                    this.showStatus('Invalid input for arccos', 'error');
+                    return;
+                }
+                
+                let result = Math.acos(current);
+                if (this.angleMode === 'deg') {
+                    result = result * 180 / Math.PI;
+                }
+                this.currentInput = String(result);
+                this.updateDisplay();
+            }
+            
+            atan() {
+                const current = parseFloat(this.currentInput);
+                let result = Math.atan(current);
+                if (this.angleMode === 'deg') {
+                    result = result * 180 / Math.PI;
+                }
+                this.currentInput = String(result);
+                this.updateDisplay();
+            }
+            
+            log() {
+                const current = parseFloat(this.currentInput);
+                if (current <= 0) {
+                    this.showStatus('Invalid input for log', 'error');
+                    return;
+                }
+                
+                const result = Math.log10(current);
+                this.currentInput = String(result);
+                this.updateDisplay();
+            }
+            
+            ln() {
+                const current = parseFloat(this.currentInput);
+                if (current <= 0) {
+                    this.showStatus('Invalid input for ln', 'error');
+                    return;
+                }
+                
+                const result = Math.log(current);
+                this.currentInput = String(result);
+                this.updateDisplay();
+            }
+            
+            exp() {
+                const current = parseFloat(this.currentInput);
+                const result = Math.exp(current);
+                this.currentInput = String(result);
+                this.updateDisplay();
+            }
+            
+            power() {
+                // For power operation, we need two operands
+                this.setOperation('power');
+            }
+            
+            factorial() {
+                const current = parseInt(this.currentInput);
+                if (current < 0 || !Number.isInteger(current)) {
+                    this.showStatus('Invalid input for factorial', 'error');
+                    return;
+                }
+                
+                let result = 1;
+                for (let i = 2; i <= current; i++) {
+                    result *= i;
+                }
+                this.currentInput = String(result);
+                this.updateDisplay();
+            }
+            
+            abs() {
+                const current = parseFloat(this.currentInput);
+                const result = Math.abs(current);
+                this.currentInput = String(result);
+                this.updateDisplay();
+            }
+            
+            floor() {
+                const current = parseFloat(this.currentInput);
+                const result = Math.floor(current);
+                this.currentInput = String(result);
+                this.updateDisplay();
+            }
+            
+            ceil() {
+                const current = parseFloat(this.currentInput);
+                const result = Math.ceil(current);
+                this.currentInput = String(result);
+                this.updateDisplay();
+            }
+            
+            round() {
+                const current = parseFloat(this.currentInput);
+                const result = Math.round(current);
+                this.currentInput = String(result);
+                this.updateDisplay();
+            }
+            
+            deg() {
+                this.angleMode = 'deg';
+                this.showStatus('Angle mode set to degrees', 'success');
+            }
+            
+            rad() {
+                this.angleMode = 'rad';
+                this.showStatus('Angle mode set to radians', 'success');
+            }
+            
+            // Memory functions
+            memoryClear() {
+                this.memory = 0;
+                this.showStatus('Memory cleared', 'success');
+            }
+            
+            memoryRecall() {
+                this.currentInput = String(this.memory);
+                this.updateDisplay();
+            }
+            
+            memoryAdd() {
+                this.memory += parseFloat(this.currentInput);
+                this.showStatus('Added to memory', 'success');
+            }
+            
+            // Programmer functions
+            convertToBase(base) {
+                const current = parseInt(this.currentInput);
+                
+                if (isNaN(current)) {
+                    this.showStatus('Invalid number for conversion', 'error');
+                    return;
+                }
+                
+                let result;
+                switch (base) {
+                    case 'bin':
+                        result = current.toString(2);
+                        break;
+                    case 'hex':
+                        result = current.toString(16).toUpperCase();
+                        break;
+                }
+                
+                this.numberBase = base;
+                this.currentInput = result;
+                this.updateDisplay();
+            }
+            
+            bitwiseOperation(op) {
+                // For bitwise operations, we need two operands
+                this.setOperation(op);
+            }
+            
+            updateDisplay() {
+                this.displayElement.textContent = this.currentInput;
+                
+                let expression = '';
+                if (this.previousInput) {
+                    expression = `${this.previousInput} ${this.getOperationSymbol()}`;
+                }
+                this.expressionElement.textContent = expression;
+            }
+            
+            showStatus(message, type) {
+                this.statusMessage.textContent = message;
+                this.statusMessage.className = 'status-message';
+                
+                if (type === 'success') {
+                    this.statusMessage.classList.add('status-success');
+                } else if (type === 'error') {
+                    this.statusMessage.classList.add('status-error');
+                }
+                
+                this.statusMessage.style.display = 'block';
+                
+                // Auto-hide after 3 seconds
+                setTimeout(() => {
+                    this.statusMessage.style.display = 'none';
+                }, 3000);
+            }
+        }
+
+        // Graphing Functionality
+        class GraphingCalculator {
+            constructor() {
+                this.functionInput = document.getElementById('graphFunction');
+                this.rangeInput = document.getElementById('graphRange');
+                this.plotButton = document.getElementById('plotGraph');
+                this.graphContainer = document.getElementById('graphContainer');
+                
+                this.initializeEventListeners();
+            }
+            
+            initializeEventListeners() {
+                this.plotButton.addEventListener('click', () => {
+                    this.plotGraph();
+                });
+                
+                // Allow Enter key to plot graph
+                this.functionInput.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter') {
+                        this.plotGraph();
+                    }
+                });
+                
+                this.rangeInput.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter') {
+                        this.plotGraph();
+                    }
+                });
+            }
+            
+            plotGraph() {
+                const functionStr = this.functionInput.value.trim();
+                const rangeStr = this.rangeInput.value.trim();
+                
+                if (!functionStr) {
+                    alert('Please enter a function');
+                    return;
+                }
+                
+                let xMin, xMax;
+                try {
+                    [xMin, xMax] = rangeStr.split(',').map(val => parseFloat(val.trim()));
+                    if (isNaN(xMin) || isNaN(xMax)) {
+                        xMin = -10;
+                        xMax = 10;
+                    }
+                } catch (e) {
+                    xMin = -10;
+                    xMax = 10;
+                }
+                
+                // Generate data points
+                const step = (xMax - xMin) / 500;
+                const xValues = [];
+                const yValues = [];
+                
+                for (let x = xMin; x <= xMax; x += step) {
+                    try {
+                        // Use math.js to evaluate the function
+                        const scope = { x: x };
+                        const y = math.evaluate(functionStr, scope);
+                        
+                        if (typeof y === 'number' && isFinite(y)) {
+                            xValues.push(x);
+                            yValues.push(y);
+                        }
+                    } catch (e) {
+                        // Skip points where the function is undefined
+                    }
+                }
+                
+                // Create the plot
+                const trace = {
+                    x: xValues,
+                    y: yValues,
+                    type: 'scatter',
+                    mode: 'lines',
+                    line: {
+                        color: '#9370db',
+                        width: 2
+                    }
+                };
+                
+                const layout = {
+                    title: `Graph of ${functionStr}`,
+                    xaxis: {
+                        title: 'x',
+                        range: [xMin, xMax]
+                    },
+                    yaxis: {
+                        title: 'y'
+                    },
+                    paper_bgcolor: 'rgba(0,0,0,0)',
+                    plot_bgcolor: 'rgba(0,0,0,0)',
+                    font: {
+                        color: body.classList.contains('dark-mode') ? '#f0f0f0' : '#333333'
+                    }
+                };
+                
+                const config = {
+                    responsive: true,
+                    displayModeBar: true,
+                    displaylogo: false
+                };
+                
+                Plotly.newPlot(this.graphContainer, [trace], layout, config);
+            }
+        }
+
+        // Unit Conversion Functionality
+        class UnitConverter {
+            constructor() {
+                this.conversionTabs = document.querySelectorAll('.conversion-tab');
+                this.conversionFrom = document.getElementById('conversionFrom');
+                this.conversionTo = document.getElementById('conversionTo');
+                this.conversionInput = document.getElementById('conversionInput');
+                this.conversionResult = document.getElementById('conversionResult');
+                
+                this.conversionTypes = {
+                    length: [
+                        { name: 'Meters', value: 'm', factor: 1 },
+                        { name: 'Kilometers', value: 'km', factor: 1000 },
+                        { name: 'Centimeters', value: 'cm', factor: 0.01 },
+                        { name: 'Millimeters', value: 'mm', factor: 0.001 },
+                        { name: 'Miles', value: 'mi', factor: 1609.34 },
+                        { name: 'Yards', value: 'yd', factor: 0.9144 },
+                        { name: 'Feet', value: 'ft', factor: 0.3048 },
+                        { name: 'Inches', value: 'in', factor: 0.0254 }
+                    ],
+                    weight: [
+                        { name: 'Kilograms', value: 'kg', factor: 1 },
+                        { name: 'Grams', value: 'g', factor: 0.001 },
+                        { name: 'Milligrams', value: 'mg', factor: 0.000001 },
+                        { name: 'Pounds', value: 'lb', factor: 0.453592 },
+                        { name: 'Ounces', value: 'oz', factor: 0.0283495 },
+                        { name: 'Stones', value: 'st', factor: 6.35029 }
+                    ],
+                    temperature: [
+                        { name: 'Celsius', value: 'c', formula: (val, to) => {
+                            if (to === 'f') return (val * 9/5) + 32;
+                            if (to === 'k') return val + 273.15;
+                            return val;
+                        }},
+                        { name: 'Fahrenheit', value: 'f', formula: (val, to) => {
+                            if (to === 'c') return (val - 32) * 5/9;
+                            if (to === 'k') return (val - 32) * 5/9 + 273.15;
+                            return val;
+                        }},
+                        { name: 'Kelvin', value: 'k', formula: (val, to) => {
+                            if (to === 'c') return val - 273.15;
+                            if (to === 'f') return (val - 273.15) * 9/5 + 32;
+                            return val;
+                        }}
+                    ],
+                    energy: [
+                        { name: 'Joules', value: 'j', factor: 1 },
+                        { name: 'Kilojoules', value: 'kj', factor: 1000 },
+                        { name: 'Calories', value: 'cal', factor: 4.184 },
+                        { name: 'Kilocalories', value: 'kcal', factor: 4184 },
+                        { name: 'Watt-hours', value: 'wh', factor: 3600 },
+                        { name: 'Kilowatt-hours', value: 'kwh', factor: 3600000 },
+                        { name: 'Electronvolts', value: 'ev', factor: 1.60218e-19 }
+                    ],
+                    power: [
+                        { name: 'Watts', value: 'w', factor: 1 },
+                        { name: 'Kilowatts', value: 'kw', factor: 1000 },
+                        { name: 'Megawatts', value: 'mw', factor: 1000000 },
+                        { name: 'Horsepower', value: 'hp', factor: 745.7 },
+                        { name: 'BTU/hour', value: 'btuh', factor: 0.293071 }
+                    ]
+                };
+                
+                this.currentConversionType = 'length';
+                this.initializeEventListeners();
+                this.populateConversionOptions();
+                this.convert();
+            }
+            
+            initializeEventListeners() {
+                // Conversion tabs
+                this.conversionTabs.forEach(tab => {
+                    tab.addEventListener('click', () => {
+                        this.conversionTabs.forEach(t => t.classList.remove('active'));
+                        tab.classList.add('active');
+                        
+                        this.currentConversionType = tab.getAttribute('data-conversion');
+                        this.populateConversionOptions();
+                        this.convert();
+                    });
+                });
+                
+                // Conversion inputs
+                this.conversionFrom.addEventListener('change', () => {
+                    this.convert();
+                });
+                
+                this.conversionTo.addEventListener('change', () => {
+                    this.convert();
+                });
+                
+                this.conversionInput.addEventListener('input', () => {
+                    this.convert();
+                });
+            }
+            
+            populateConversionOptions() {
+                const units = this.conversionTypes[this.currentConversionType];
+                
+                // Clear existing options
+                this.conversionFrom.innerHTML = '';
+                this.conversionTo.innerHTML = '';
+                
+                // Add new options
+                units.forEach(unit => {
+                    const optionFrom = document.createElement('option');
+                    optionFrom.value = unit.value;
+                    optionFrom.textContent = unit.name;
+                    
+                    const optionTo = document.createElement('option');
+                    optionTo.value = unit.value;
+                    optionTo.textContent = unit.name;
+                    
+                    this.conversionFrom.appendChild(optionFrom);
+                    this.conversionTo.appendChild(optionTo);
+                });
+                
+                // Set default selections
+                if (units.length >= 2) {
+                    this.conversionFrom.selectedIndex = 0;
+                    this.conversionTo.selectedIndex = 1;
+                }
+            }
+            
+            convert() {
+                const fromUnit = this.conversionFrom.value;
+                const toUnit = this.conversionTo.value;
+                const inputValue = parseFloat(this.conversionInput.value) || 0;
+                
+                const units = this.conversionTypes[this.currentConversionType];
+                const fromUnitData = units.find(unit => unit.value === fromUnit);
+                const toUnitData = units.find(unit => unit.value === toUnit);
+                
+                if (!fromUnitData || !toUnitData) {
+                    this.conversionResult.textContent = 'Error';
+                    return;
+                }
+                
+                let result;
+                
+                // Special handling for temperature
+                if (this.currentConversionType === 'temperature') {
+                    result = fromUnitData.formula(inputValue, toUnit);
+                } else {
+                    // For other units, use factor-based conversion
+                    const valueInBase = inputValue * fromUnitData.factor;
+                    result = valueInBase / toUnitData.factor;
+                }
+                
+                // Format the result
+                if (Math.abs(result) < 0.0001 || Math.abs(result) > 1000000) {
+                    this.conversionResult.textContent = result.toExponential(6);
+                } else {
+                    this.conversionResult.textContent = result.toFixed(6).replace(/\.?0+$/, '');
+                }
+            }
+        }
+
+        // Language Switcher
+        const languageBtn = document.querySelector('.language-btn');
+        const currentLanguageElement = document.getElementById('currentLanguage');
+        const languageDropdown = document.querySelector('.language-dropdown');
+        
+        const languages = [
+            { code: 'en', name: 'English' },
+            { code: 'es', name: 'Español' },
+            { code: 'fr', name: 'Français' },
+            { code: 'de', name: 'Deutsch' },
+            { code: 'it', name: 'Italiano' },
+            { code: 'pt', name: 'Português' },
+            { code: 'ja', name: '日本語' },
+            { code: 'ru', name: 'Pусский' },
+            { code: 'ko', name: '한국어' },
+            { code: 'zh-CN', name: '中文 (简体)' },
+            { code: 'zh-TW', name: '中文 (繁體)' },
+            { code: 'ar', name: 'العربية' },
+            { code: 'fa', name: 'فارسی' },
+            { code: 'bg', name: 'Български' },
+            { code: 'ca', name: 'Català' },
+            { code: 'nl', name: 'Nederlands' },
+            { code: 'el', name: 'Ελληνικά' },
+            { code: 'hi', name: 'हिन्दी' },
+            { code: 'te', name: 'తెలుగు' },
+            { code: 'kn', name: 'ಕನ್ನಡ' },
+            { code: 'ta', name: 'தமிழ்' },
+            { code: 'ml', name: 'മലയാളം' },
+            { code: 'id', name: 'Bahasa Indonesia' }
+        ];
+
+        // Translation data
+        const translations = {
+            en: {
+                "nav.home": "Home",
+                "nav.about": "About Us",
+                "nav.tools": "Tools",
+                "nav.contact": "Contact",
+                "hero.title": "Engineering & Scientific Calculator",
+                "hero.description": "Advanced calculator with scientific functions, graphing capabilities, unit conversions, and offline support. All processing happens locally with complete privacy.",
+                "calculator.title": "Scientific Calculator",
+                "graphing.title": "Function Graphing",
+                "graphing.function": "Function (e.g., sin(x), x^2+3*x-5)",
+                "graphing.range": "X Range (min, max)",
+                "graphing.plot": "Plot Graph",
+                "conversions.title": "Unit Conversions",
+                "footer.follow": "FOLLOW US",
+                "footer.categories": "Popular Categories",
+                "footer.categories.pdf": "PDF Tools",
+                "footer.categories.image": "Image Tools",
+                "footer.categories.text": "Text Tools",
+                "footer.categories.av": "Audio/Video Tools",
+                "footer.categories.web": "WebDeveloper Tools",
+                "footer.categories.calc": "Calculator Tools",
+                "footer.categories.util": "Utility Tools",
+                "footer.categories.color": "Color Tools",
+                "footer.quicklinks": "Quick Links",
+                "footer.links.tools": "All Tools",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Contact",
+                "footer.links.privacy": "Privacy Policy",
+                "footer.links.disclaimer": "Disclaimer",
+                "footer.links.terms": "Terms of Service",
+                "footer.copyright": "© 2025 LollyPoPDF. All rights reserved."
+            },
+            es: {
+                "nav.home": "Inicio",
+                "nav.about": "Sobre Nosotros",
+                "nav.tools": "Herramientas",
+                "nav.contact": "Contacto",
+                "hero.title": "Calculadora de Ingeniería y Científica",
+                "hero.description": "Calculadora avanzada con funciones científicas, capacidades de graficación, conversiones de unidades y soporte sin conexión. Todo el procesamiento ocurre localmente con privacidad completa.",
+                "calculator.title": "Calculadora Científica",
+                "graphing.title": "Graficación de Funciones",
+                "graphing.function": "Función (ej., sin(x), x^2+3*x-5)",
+                "graphing.range": "Rango X (mín, máx)",
+                "graphing.plot": "Graficar",
+                "conversions.title": "Conversiones de Unidades",
+                "footer.follow": "SÍGUENOS",
+                "footer.categories": "Categorías Populares",
+                "footer.categories.pdf": "Herramientas PDF",
+                "footer.categories.image": "Herramientas de Imagen",
+                "footer.categories.text": "Herramientas de Texto",
+                "footer.categories.av": "Herramientas de Audio/Video",
+                "footer.categories.web": "Herramientas WebDesarrollador",
+                "footer.categories.calc": "Herramientas de Calculadora",
+                "footer.categories.util": "Herramientas de Utilidad",
+                "footer.categories.color": "Herramientas de Color",
+                "footer.quicklinks": "Enlaces Rápidos",
+                "footer.links.tools": "Todas las Herramientas",
+                "footer.links.faq": "Preguntas Frecuentes",
+                "footer.links.contact": "Contacto",
+                "footer.links.privacy": "Política de Privacidad",
+                "footer.links.disclaimer": "Descargo de Responsabilidad",
+                "footer.links.terms": "Términos de Servicio",
+                "footer.copyright": "© 2025 LollyPoPDF. Todos los derechos reservados."
+            },
+            fr: {
+                "nav.home": "Accueil",
+                "nav.about": "À propos de nous",
+                "nav.tools": "Outils",
+                "nav.contact": "Contact",
+                "hero.title": "Calculatrice d'Ingénierie et Scientifique",
+                "hero.description": "Calculatrice avancée avec fonctions scientifiques, capacités de graphique, conversions d'unités et support hors ligne. Tout le traitement se fait localement avec une confidentialité totale.",
+                "calculator.title": "Calculatrice Scientifique",
+                "graphing.title": "Graphique de Fonctions",
+                "graphing.function": "Fonction (ex., sin(x), x^2+3*x-5)",
+                "graphing.range": "Plage X (min, max)",
+                "graphing.plot": "Tracer le Graphique",
+                "conversions.title": "Conversions d'Unités",
+                "footer.follow": "SUIVEZ-NOUS",
+                "footer.categories": "Catégories Populaires",
+                "footer.categories.pdf": "Outils PDF",
+                "footer.categories.image": "Outils d'Image",
+                "footer.categories.text": "Outils de Texte",
+                "footer.categories.av": "Outils Audio/Vidéo",
+                "footer.categories.web": "Outils WebDéveloppeur",
+                "footer.categories.calc": "Outils de Calculatrice",
+                "footer.categories.util": "Outils Utilitaires",
+                "footer.categories.color": "Outils de Couleur",
+                "footer.quicklinks": "Liens Rapides",
+                "footer.links.tools": "Tous les Outils",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Contact",
+                "footer.links.privacy": "Politique de Confidentialité",
+                "footer.links.disclaimer": "Avertissement",
+                "footer.links.terms": "Conditions d'Utilisation",
+                "footer.copyright": "© 2025 LollyPoPDF. Tous droits réservés."
+            },
+            de: {
+                "nav.home": "Startseite",
+                "nav.about": "Über uns",
+                "nav.tools": "Werkzeuge",
+                "nav.contact": "Kontakt",
+                "hero.title": "Ingenieur- & Wissenschaftlicher Rechner",
+                "hero.description": "Erweiterter Rechner mit wissenschaftlichen Funktionen, Grafikfähigkeiten, Einheitenumrechnungen und Offline-Unterstützung. Alle Verarbeitungen erfolgen lokal mit vollständiger Privatsphäre.",
+                "calculator.title": "Wissenschaftlicher Rechner",
+                "graphing.title": "Funktionsgraph",
+                "graphing.function": "Funktion (z.B., sin(x), x^2+3*x-5)",
+                "graphing.range": "X-Bereich (min, max)",
+                "graphing.plot": "Graph zeichnen",
+                "conversions.title": "Einheitenumrechnungen",
+                "footer.follow": "FOLGE UNS",
+                "footer.categories": "Beliebte Kategorien",
+                "footer.categories.pdf": "PDF-Werkzeuge",
+                "footer.categories.image": "Bildwerkzeuge",
+                "footer.categories.text": "Textwerkzeuge",
+                "footer.categories.av": "Audio/Video-Werkzeuge",
+                "footer.categories.web": "WebEntwickler-Werkzeuge",
+                "footer.categories.calc": "Rechner-Werkzeuge",
+                "footer.categories.util": "Hilfsprogramme",
+                "footer.categories.color": "Farbwerkzeuge",
+                "footer.quicklinks": "Schnelllinks",
+                "footer.links.tools": "Alle Werkzeuge",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Kontakt",
+                "footer.links.privacy": "Datenschutzrichtlinie",
+                "footer.links.disclaimer": "Haftungsausschluss",
+                "footer.links.terms": "Nutzungsbedingungen",
+                "footer.copyright": "© 2025 LollyPoPDF. Alle Rechte vorbehalten."
+            },
+            it: {
+                "nav.home": "Home",
+                "nav.about": "Chi Siamo",
+                "nav.tools": "Strumenti",
+                "nav.contact": "Contatto",
+                "hero.title": "Calcolatrice Ingegneristica e Scientifica",
+                "hero.description": "Calcolatrice avanzata con funzioni scientifiche, capacità di graficazione, conversioni di unità e supporto offline. Tutte le elaborazioni avvengono localmente con completa privacy.",
+                "calculator.title": "Calcolatrice Scientifica",
+                "graphing.title": "Graficazione di Funzioni",
+                "graphing.function": "Funzione (es., sin(x), x^2+3*x-5)",
+                "graphing.range": "Intervallo X (min, max)",
+                "graphing.plot": "Traccia Grafico",
+                "conversions.title": "Conversioni di Unità",
+                "footer.follow": "SEGUICI",
+                "footer.categories": "Categorie Popolari",
+                "footer.categories.pdf": "Strumenti PDF",
+                "footer.categories.image": "Strumenti Immagine",
+                "footer.categories.text": "Strumenti Testo",
+                "footer.categories.av": "Strumenti Audio/Video",
+                "footer.categories.web": "Strumenti Sviluppatore Web",
+                "footer.categories.calc": "Strumenti Calcolatrice",
+                "footer.categories.util": "Strumenti Utilità",
+                "footer.categories.color": "Strumenti Colore",
+                "footer.quicklinks": "Link Rapidi",
+                "footer.links.tools": "Tutti gli Strumenti",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Contatto",
+                "footer.links.privacy": "Informativa sulla Privacy",
+                "footer.links.disclaimer": "Disclaimer",
+                "footer.links.terms": "Termini di Servizio",
+                "footer.copyright": "© 2025 LollyPoPDF. Tutti i diritti riservati."
+            },
+            pt: {
+                "nav.home": "Início",
+                "nav.about": "Sobre Nós",
+                "nav.tools": "Ferramentas",
+                "nav.contact": "Contato",
+                "hero.title": "Calculadora de Engenharia e Científica",
+                "hero.description": "Calculadora avançada com funções científicas, capacidades de gráficos, conversões de unidades e suporte offline. Todo o processamento acontece localmente com privacidade completa.",
+                "calculator.title": "Calculadora Científica",
+                "graphing.title": "Gráfico de Funções",
+                "graphing.function": "Função (ex., sin(x), x^2+3*x-5)",
+                "graphing.range": "Intervalo X (mín, máx)",
+                "graphing.plot": "Plotar Gráfico",
+                "conversions.title": "Conversões de Unidades",
+                "footer.follow": "SIGA-NOS",
+                "footer.categories": "Categorias Populares",
+                "footer.categories.pdf": "Ferramentas PDF",
+                "footer.categories.image": "Ferramentas de Imagem",
+                "footer.categories.text": "Ferramentas de Texto",
+                "footer.categories.av": "Ferramentas de Áudio/Vídeo",
+                "footer.categories.web": "Ferramentas WebDeveloper",
+                "footer.categories.calc": "Ferramentas de Calculadora",
+                "footer.categories.util": "Ferramentas de Utilidade",
+                "footer.categories.color": "Ferramentas de Cor",
+                "footer.quicklinks": "Links Rápidos",
+                "footer.links.tools": "Todas as Ferramentas",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Contato",
+                "footer.links.privacy": "Política de Privacidade",
+                "footer.links.disclaimer": "Aviso Legal",
+                "footer.links.terms": "Termos de Serviço",
+                "footer.copyright": "© 2025 LollyPoPDF. Todos os direitos reservados."
+            },
+            ja: {
+                "nav.home": "ホーム",
+                "nav.about": "会社概要",
+                "nav.tools": "ツール",
+                "nav.contact": "お問い合わせ",
+                "hero.title": "エンジニアリング＆科学計算機",
+                "hero.description": "科学関数、グラフ機能、単位変換、オフラインサポートを備えた高度な計算機。すべての処理は完全なプライバシーでローカルに実行されます。",
+                "calculator.title": "科学計算機",
+                "graphing.title": "関数グラフ",
+                "graphing.function": "関数（例：sin(x), x^2+3*x-5）",
+                "graphing.range": "X範囲（最小、最大）",
+                "graphing.plot": "グラフをプロット",
+                "conversions.title": "単位変換",
+                "footer.follow": "フォローする",
+                "footer.categories": "人気カテゴリ",
+                "footer.categories.pdf": "PDFツール",
+                "footer.categories.image": "画像ツール",
+                "footer.categories.text": "テキストツール",
+                "footer.categories.av": "オーディオ/ビデオツール",
+                "footer.categories.web": "Web開発者ツール",
+                "footer.categories.calc": "計算機ツール",
+                "footer.categories.util": "ユーティリティツール",
+                "footer.categories.color": "カラーツール",
+                "footer.quicklinks": "クイックリンク",
+                "footer.links.tools": "すべてのツール",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "お問い合わせ",
+                "footer.links.privacy": "プライバシーポリシー",
+                "footer.links.disclaimer": "免責事項",
+                "footer.links.terms": "利用規約",
+                "footer.copyright": "© 2025 LollyPoPDF. 無断転載を禁じます."
+            },
+            ru: {
+                "nav.home": "Главная",
+                "nav.about": "О нас",
+                "nav.tools": "Инструменты",
+                "nav.contact": "Контакты",
+                "hero.title": "Инженерный и научный калькулятор",
+                "hero.description": "Продвинутый калькулятор с научными функциями, возможностями построения графиков, преобразованием единиц и поддержкой офлайн. Вся обработка происходит локально с полной конфиденциальностью.",
+                "calculator.title": "Научный калькулятор",
+                "graphing.title": "Построение графиков функций",
+                "graphing.function": "Функция (например, sin(x), x^2+3*x-5)",
+                "graphing.range": "Диапазон X (мин, макс)",
+                "graphing.plot": "Построить график",
+                "conversions.title": "Преобразование единиц",
+                "footer.follow": "СЛЕДУЙТЕ ЗА НАМИ",
+                "footer.categories": "Популярные категории",
+                "footer.categories.pdf": "PDF инструменты",
+                "footer.categories.image": "Инструменты для изображений",
+                "footer.categories.text": "Текстовые инструменты",
+                "footer.categories.av": "Аудио/Видео инструменты",
+                "footer.categories.web": "Инструменты веб-разработчика",
+                "footer.categories.calc": "Инструменты калькулятора",
+                "footer.categories.util": "Утилиты",
+                "footer.categories.color": "Инструменты цвета",
+                "footer.quicklinks": "Быстрые ссылки",
+                "footer.links.tools": "Все инструменты",
+                "footer.links.faq": "Часто задаваемые вопросы",
+                "footer.links.contact": "Контакты",
+                "footer.links.privacy": "Политика конфиденциальности",
+                "footer.links.disclaimer": "Отказ от ответственности",
+                "footer.links.terms": "Условия обслуживания",
+                "footer.copyright": "© 2025 LollyPoPDF. Все права защищены."
+            },
+            ko: {
+                "nav.home": "홈",
+                "nav.about": "회사 소개",
+                "nav.tools": "도구",
+                "nav.contact": "연락처",
+                "hero.title": "공학 및 과학 계산기",
+                "hero.description": "과학 함수, 그래프 기능, 단위 변환 및 오프라인 지원을 갖춘 고급 계산기. 모든 처리는 완전한 개인 정보 보호와 함께 로컬에서 이루어집니다.",
+                "calculator.title": "과학 계산기",
+                "graphing.title": "함수 그래프",
+                "graphing.function": "함수 (예: sin(x), x^2+3*x-5)",
+                "graphing.range": "X 범위 (최소, 최대)",
+                "graphing.plot": "그래프 그리기",
+                "conversions.title": "단위 변환",
+                "footer.follow": "팔로우하기",
+                "footer.categories": "인기 카테고리",
+                "footer.categories.pdf": "PDF 도구",
+                "footer.categories.image": "이미지 도구",
+                "footer.categories.text": "텍스트 도구",
+                "footer.categories.av": "오디오/비디오 도구",
+                "footer.categories.web": "웹 개발자 도구",
+                "footer.categories.calc": "계산기 도구",
+                "footer.categories.util": "유틸리티 도구",
+                "footer.categories.color": "색상 도구",
+                "footer.quicklinks": "빠른 링크",
+                "footer.links.tools": "모든 도구",
+                "footer.links.faq": "자주 묻는 질문",
+                "footer.links.contact": "연락처",
+                "footer.links.privacy": "개인정보 보호정책",
+                "footer.links.disclaimer": "면책 조항",
+                "footer.links.terms": "서비스 약관",
+                "footer.copyright": "© 2025 LollyPoPDF. 모든 권리 보유."
+            },
+            "zh-CN": {
+                "nav.home": "首页",
+                "nav.about": "关于我们",
+                "nav.tools": "工具",
+                "nav.contact": "联系我们",
+                "hero.title": "工程与科学计算器",
+                "hero.description": "具有科学函数、绘图功能、单位转换和离线支持的高级计算器。所有处理都在本地完成，确保完全隐私。",
+                "calculator.title": "科学计算器",
+                "graphing.title": "函数绘图",
+                "graphing.function": "函数（例如：sin(x), x^2+3*x-5）",
+                "graphing.range": "X范围（最小值，最大值）",
+                "graphing.plot": "绘制图形",
+                "conversions.title": "单位转换",
+                "footer.follow": "关注我们",
+                "footer.categories": "热门类别",
+                "footer.categories.pdf": "PDF工具",
+                "footer.categories.image": "图像工具",
+                "footer.categories.text": "文本工具",
+                "footer.categories.av": "音频/视频工具",
+                "footer.categories.web": "Web开发工具",
+                "footer.categories.calc": "计算器工具",
+                "footer.categories.util": "实用工具",
+                "footer.categories.color": "颜色工具",
+                "footer.quicklinks": "快速链接",
+                "footer.links.tools": "所有工具",
+                "footer.links.faq": "常见问题",
+                "footer.links.contact": "联系我们",
+                "footer.links.privacy": "隐私政策",
+                "footer.links.disclaimer": "免责声明",
+                "footer.links.terms": "服务条款",
+                "footer.copyright": "© 2025 LollyPoPDF. 保留所有权利。"
+            },
+            "zh-TW": {
+                "nav.home": "首頁",
+                "nav.about": "關於我們",
+                "nav.tools": "工具",
+                "nav.contact": "聯絡我們",
+                "hero.title": "工程與科學計算機",
+                "hero.description": "具有科學函數、繪圖功能、單位轉換和離線支援的高級計算機。所有處理都在本地完成，確保完全隱私。",
+                "calculator.title": "科學計算機",
+                "graphing.title": "函數繪圖",
+                "graphing.function": "函數（例如：sin(x), x^2+3*x-5）",
+                "graphing.range": "X範圍（最小值，最大值）",
+                "graphing.plot": "繪製圖形",
+                "conversions.title": "單位轉換",
+                "footer.follow": "關注我們",
+                "footer.categories": "熱門類別",
+                "footer.categories.pdf": "PDF工具",
+                "footer.categories.image": "圖片工具",
+                "footer.categories.text": "文字工具",
+                "footer.categories.av": "音訊/影片工具",
+                "footer.categories.web": "網頁開發工具",
+                "footer.categories.calc": "計算機工具",
+                "footer.categories.util": "實用工具",
+                "footer.categories.color": "顏色工具",
+                "footer.quicklinks": "快速連結",
+                "footer.links.tools": "所有工具",
+                "footer.links.faq": "常見問題",
+                "footer.links.contact": "聯絡我們",
+                "footer.links.privacy": "隱私政策",
+                "footer.links.disclaimer": "免責聲明",
+                "footer.links.terms": "服務條款",
+                "footer.copyright": "© 2025 LollyPoPDF. 版權所有。"
+            },
+            ar: {
+                "nav.home": "الرئيسية",
+                "nav.about": "من نحن",
+                "nav.tools": "الأدوات",
+                "nav.contact": "اتصل بنا",
+                "hero.title": "آلة حاسبة هندسية وعلمية",
+                "hero.description": "آلة حاسبة متقدمة مع وظائف علمية، وإمكانيات الرسم البياني، وتحويل الوحدات، ودعم دون اتصال. كل المعالجة تتم محليًا مع خصوصية كاملة.",
+                "calculator.title": "آلة حاسبة علمية",
+                "graphing.title": "رسم بياني للدوال",
+                "graphing.function": "الدالة (مثال: sin(x), x^2+3*x-5)",
+                "graphing.range": "نطاق X (الحد الأدنى، الحد الأقصى)",
+                "graphing.plot": "رسم بياني",
+                "conversions.title": "تحويل الوحدات",
+                "footer.follow": "تابعنا",
+                "footer.categories": "الفئات الشائعة",
+                "footer.categories.pdf": "أدوات PDF",
+                "footer.categories.image": "أدوات الصور",
+                "footer.categories.text": "أدوات النص",
+                "footer.categories.av": "أدوات الصوت/الفيديو",
+                "footer.categories.web": "أدوات مطور الويب",
+                "footer.categories.calc": "أدوات الآلة الحاسبة",
+                "footer.categories.util": "أدوات المساعدة",
+                "footer.categories.color": "أدوات الألوان",
+                "footer.quicklinks": "روابط سريعة",
+                "footer.links.tools": "جميع الأدوات",
+                "footer.links.faq": "الأسئلة الشائعة",
+                "footer.links.contact": "اتصل بنا",
+                "footer.links.privacy": "سياسة الخصوصية",
+                "footer.links.disclaimer": "إخلاء المسؤولية",
+                "footer.links.terms": "شروط الخدمة",
+                "footer.copyright": "© 2025 LollyPoPDF. جميع الحقوق محفوظة."
+            },
+            fa: {
+                "nav.home": "خانه",
+                "nav.about": "درباره ما",
+                "nav.tools": "ابزارها",
+                "nav.contact": "تماس با ما",
+                "hero.title": "ماشین حساب مهندسی و علمی",
+                "hero.description": "ماشین حساب پیشرفته با توابع علمی، قابلیت‌های ترسیم نمودار، تبدیل واحدها و پشتیبانی آفلاین. تمام پردازش به صورت محلی و با حفظ حریم خصوصی کامل انجام می‌شود.",
+                "calculator.title": "ماشین حساب علمی",
+                "graphing.title": "ترسیم نمودار تابع",
+                "graphing.function": "تابع (مثال: sin(x), x^2+3*x-5)",
+                "graphing.range": "محدوده X (حداقل، حداکثر)",
+                "graphing.plot": "ترسیم نمودار",
+                "conversions.title": "تبدیل واحدها",
+                "footer.follow": "ما را دنبال کنید",
+                "footer.categories": "دسته‌بندی‌های محبوب",
+                "footer.categories.pdf": "ابزارهای PDF",
+                "footer.categories.image": "ابزارهای تصویر",
+                "footer.categories.text": "ابزارهای متن",
+                "footer.categories.av": "ابزارهای صوتی/تصویری",
+                "footer.categories.web": "ابزارهای توسعه دهنده وب",
+                "footer.categories.calc": "ابزارهای ماشین حساب",
+                "footer.categories.util": "ابزارهای کمکی",
+                "footer.categories.color": "ابزارهای رنگ",
+                "footer.quicklinks": "لینک‌های سریع",
+                "footer.links.tools": "همه ابزارها",
+                "footer.links.faq": "سوالات متداول",
+                "footer.links.contact": "تماس با ما",
+                "footer.links.privacy": "سیاست حفظ حریم خصوصی",
+                "footer.links.disclaimer": "سلب مسئولیت",
+                "footer.links.terms": "شرایط استفاده از خدمات",
+                "footer.copyright": "© 2025 LollyPoPDF. تمام حقوق محفوظ است."
+            },
+            bg: {
+                "nav.home": "Начало",
+                "nav.about": "За нас",
+                "nav.tools": "Инструменти",
+                "nav.contact": "Контакт",
+                "hero.title": "Инженерен и научен калкулатор",
+                "hero.description": "Разширен калкулатор с научни функции, възможности за графики, преобразуване на единици и офлайн поддръжка. Цялата обработка се извършва локално с пълна поверителност.",
+                "calculator.title": "Научен калкулатор",
+                "graphing.title": "Графики на функции",
+                "graphing.function": "Функция (напр. sin(x), x^2+3*x-5)",
+                "graphing.range": "X обхват (мин, макс)",
+                "graphing.plot": "Начертай графика",
+                "conversions.title": "Преобразуване на единици",
+                "footer.follow": "СЛЕДВАЙТЕ НИ",
+                "footer.categories": "Популярни категории",
+                "footer.categories.pdf": "PDF инструменти",
+                "footer.categories.image": "Инструменти за изображения",
+                "footer.categories.text": "Текстови инструменти",
+                "footer.categories.av": "Аудио/Видео инструменти",
+                "footer.categories.web": "Инструменти за уеб разработчици",
+                "footer.categories.calc": "Инструменти за калкулатор",
+                "footer.categories.util": "Помощни инструменти",
+                "footer.categories.color": "Инструменти за цветове",
+                "footer.quicklinks": "Бързи връзки",
+                "footer.links.tools": "Всички инструменти",
+                "footer.links.faq": "ЧЗВ",
+                "footer.links.contact": "Контакт",
+                "footer.links.privacy": "Политика за поверителност",
+                "footer.links.disclaimer": "Отказ от отговорност",
+                "footer.links.terms": "Условия за ползване",
+                "footer.copyright": "© 2025 LollyPoPDF. Всички права запазени."
+            },
+            ca: {
+                "nav.home": "Inici",
+                "nav.about": "Sobre nosaltres",
+                "nav.tools": "Eines",
+                "nav.contact": "Contacte",
+                "hero.title": "Calculadora d'Enginyeria i Científica",
+                "hero.description": "Calculadora avançada amb funcions científiques, capacitats de gràfics, conversions d'unitats i suport fora de línia. Tot el processament es realitza localment amb privacitat completa.",
+                "calculator.title": "Calculadora Científica",
+                "graphing.title": "Gràfics de Funcions",
+                "graphing.function": "Funció (ex. sin(x), x^2+3*x-5)",
+                "graphing.range": "Rang X (mín, màx)",
+                "graphing.plot": "Dibuixar Gràfic",
+                "conversions.title": "Conversions d'Unitats",
+                "footer.follow": "SEGUEIX-NOS",
+                "footer.categories": "Categories Populars",
+                "footer.categories.pdf": "Eines PDF",
+                "footer.categories.image": "Eines d'Imatge",
+                "footer.categories.text": "Eines de Text",
+                "footer.categories.av": "Eines d'Àudio/Video",
+                "footer.categories.web": "Eines de Desenvolupador Web",
+                "footer.categories.calc": "Eines de Calculadora",
+                "footer.categories.util": "Eines d'Utilitat",
+                "footer.categories.color": "Eines de Color",
+                "footer.quicklinks": "Enllaços Ràpids",
+                "footer.links.tools": "Totes les Eines",
+                "footer.links.faq": "PMF",
+                "footer.links.contact": "Contacte",
+                "footer.links.privacy": "Política de Privacitat",
+                "footer.links.disclaimer": "Avís Legal",
+                "footer.links.terms": "Termes del Servei",
+                "footer.copyright": "© 2025 LollyPoPDF. Tots els drets reservats."
+            },
+            nl: {
+                "nav.home": "Home",
+                "nav.about": "Over ons",
+                "nav.tools": "Tools",
+                "nav.contact": "Contact",
+                "hero.title": "Technische en Wetenschappelijke Rekenmachine",
+                "hero.description": "Geavanceerde rekenmachine met wetenschappelijke functies, grafiekmogelijkheden, eenheidsconversies en offline ondersteuning. Alle verwerking gebeurt lokaal met volledige privacy.",
+                "calculator.title": "Wetenschappelijke Rekenmachine",
+                "graphing.title": "Functie Grafieken",
+                "graphing.function": "Functie (bijv. sin(x), x^2+3*x-5)",
+                "graphing.range": "X Bereik (min, max)",
+                "graphing.plot": "Teken Grafiek",
+                "conversions.title": "Eenheidsconversies",
+                "footer.follow": "VOLG ONS",
+                "footer.categories": "Populaire Categorieën",
+                "footer.categories.pdf": "PDF Tools",
+                "footer.categories.image": "Afbeelding Tools",
+                "footer.categories.text": "Tekst Tools",
+                "footer.categories.av": "Audio/Video Tools",
+                "footer.categories.web": "WebDeveloper Tools",
+                "footer.categories.calc": "Rekenmachine Tools",
+                "footer.categories.util": "Utility Tools",
+                "footer.categories.color": "Kleur Tools",
+                "footer.quicklinks": "Snelle Links",
+                "footer.links.tools": "Alle Tools",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Contact",
+                "footer.links.privacy": "Privacybeleid",
+                "footer.links.disclaimer": "Disclaimer",
+                "footer.links.terms": "Servicevoorwaarden",
+                "footer.copyright": "© 2025 LollyPoPDF. Alle rechten voorbehouden."
+            },
+            el: {
+                "nav.home": "Αρχική",
+                "nav.about": "Σχετικά με εμάς",
+                "nav.tools": "Εργαλεία",
+                "nav.contact": "Επικοινωνία",
+                "hero.title": "Μηχανικός και Επιστημονικός Υπολογιστής",
+                "hero.description": "Προηγμένος υπολογιστής με επιστημονικές λειτουργίες, δυνατότητες γραφημάτων, μετατροπές μονάδων και υποστήριξη εκτός σύνδεσης. Όλη η επεξεργασία γίνεται τοπικά με πλήρη ιδιωτικότητα.",
+                "calculator.title": "Επιστημονικός Υπολογιστής",
+                "graphing.title": "Γραφήματα Συναρτήσεων",
+                "graphing.function": "Συνάρτηση (π.χ. sin(x), x^2+3*x-5)",
+                "graphing.range": "Εύρος X (ελάχ., μέγ.)",
+                "graphing.plot": "Σχεδίαση Γραφήματος",
+                "conversions.title": "Μετατροπές Μονάδων",
+                "footer.follow": "ΑΚΟΛΟΥΘΗΣΤΕ ΜΑΣ",
+                "footer.categories": "Δημοφιλείς Κατηγορίες",
+                "footer.categories.pdf": "Εργαλεία PDF",
+                "footer.categories.image": "Εργαλεία Εικόνας",
+                "footer.categories.text": "Εργαλεία Κειμένου",
+                "footer.categories.av": "Εργαλεία Ήχου/Βίντεο",
+                "footer.categories.web": "Εργαλεία WebDeveloper",
+                "footer.categories.calc": "Εργαλεία Υπολογιστή",
+                "footer.categories.util": "Εργαλεία Χρησιμότητας",
+                "footer.categories.color": "Εργαλεία Χρώματος",
+                "footer.quicklinks": "Γρήγοροι Σύνδεσμοι",
+                "footer.links.tools": "Όλα τα Εργαλεία",
+                "footer.links.faq": "Συχνές Ερωτήσεις",
+                "footer.links.contact": "Επικοινωνία",
+                "footer.links.privacy": "Πολιτική Απορρήτου",
+                "footer.links.disclaimer": "Αποποίηση Ευθυνών",
+                "footer.links.terms": "Όροι Υπηρεσίας",
+                "footer.copyright": "© 2025 LollyPoPDF. Με επιφύλαξη παντός δικαιώματος."
+            },
+            hi: {
+                "nav.home": "होम",
+                "nav.about": "हमारे बारे में",
+                "nav.tools": "टूल्स",
+                "nav.contact": "संपर्क करें",
+                "hero.title": "इंजीनियरिंग और वैज्ञानिक कैलकुलेटर",
+                "hero.description": "वैज्ञानिक कार्यों, ग्राफ़िंग क्षमताओं, इकाई रूपांतरण और ऑफ़लाइन समर्थन के साथ उन्नत कैलकुलेटर। सभी प्रसंस्करण पूर्ण गोपनीयता के साथ स्थानीय रूप से होता है।",
+                "calculator.title": "वैज्ञानिक कैलकुलेटर",
+                "graphing.title": "फ़ंक्शन ग्राफ़िंग",
+                "graphing.function": "फ़ंक्शन (उदा. sin(x), x^2+3*x-5)",
+                "graphing.range": "X रेंज (न्यूनतम, अधिकतम)",
+                "graphing.plot": "ग्राफ़ प्लॉट करें",
+                "conversions.title": "यूनिट रूपांतरण",
+                "footer.follow": "हमें फॉलो करें",
+                "footer.categories": "लोकप्रिय श्रेणियाँ",
+                "footer.categories.pdf": "PDF टूल्स",
+                "footer.categories.image": "इमेज टूल्स",
+                "footer.categories.text": "टेक्स्ट टूल्स",
+                "footer.categories.av": "ऑडियो/वीडियो टूल्स",
+                "footer.categories.web": "वेबडेवलपर टूल्स",
+                "footer.categories.calc": "कैलकुलेटर टूल्स",
+                "footer.categories.util": "यूटिलिटी टूल्स",
+                "footer.categories.color": "कलर टूल्स",
+                "footer.quicklinks": "क्विक लिंक्स",
+                "footer.links.tools": "सभी टूल्स",
+                "footer.links.faq": "सामान्य प्रश्न",
+                "footer.links.contact": "संपर्क करें",
+                "footer.links.privacy": "गोपनीयता नीति",
+                "footer.links.disclaimer": "अस्वीकरण",
+                "footer.links.terms": "सेवा की शर्तें",
+                "footer.copyright": "© 2025 LollyPoPDF. सर्वाधिकार सुरक्षित।"
+            },
+            te: {
+                "nav.home": "హోమ్",
+                "nav.about": "మా గురించి",
+                "nav.tools": "టూల్స్",
+                "nav.contact": "సంప్రదించండి",
+                "hero.title": "ఇంజనీరింగ్ & సైంటిఫిక్ కాలిక్యులేటర్",
+                "hero.description": "సైంటిఫిక్ ఫంక్షన్లు, గ్రాఫింగ్ సామర్థ్యాలు, యూనిట్ కన్వర్షన్లు మరియు ఆఫ్లైన్ సపోర్ట్ తో అధునాతన కాలిక్యులేటర్. అన్ని ప్రాసెసింగ్ పూర్తి గోప్యతతో స్థానికంగా జరుగుతుంది.",
+                "calculator.title": "సైంటిఫిక్ కాలిక్యులేటర్",
+                "graphing.title": "ఫంక్షన్ గ్రాఫింగ్",
+                "graphing.function": "ఫంక్షన్ (ఉదా. sin(x), x^2+3*x-5)",
+                "graphing.range": "X పరిధి (కనిష్ట, గరిష్ట)",
+                "graphing.plot": "గ్రాఫ్ ప్లాట్ చేయండి",
+                "conversions.title": "యూనిట్ కన్వర్షన్లు",
+                "footer.follow": "మమ్మల్ని ఫాలో అవ్వండి",
+                "footer.categories": "జనాదరణ పొందిన కెటగరీలు",
+                "footer.categories.pdf": "PDF టూల్స్",
+                "footer.categories.image": "ఇమేజ్ టూల్స్",
+                "footer.categories.text": "టెక్స్ట్ టూల్స్",
+                "footer.categories.av": "ఆడియో/వీడియో టూల్స్",
+                "footer.categories.web": "వెబ్ డెవలపర్ టూల్స్",
+                "footer.categories.calc": "కాలిక్యులేటర్ టూల్స్",
+                "footer.categories.util": "యుటిలిటీ టూల్స్",
+                "footer.categories.color": "కలర్ టూల్స్",
+                "footer.quicklinks": "త్వరిత లింకులు",
+                "footer.links.tools": "అన్ని టూల్స్",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "సంప్రదించండి",
+                "footer.links.privacy": "గోప్యతా విధానం",
+                "footer.links.disclaimer": "డిస్క్లెయిమర్",
+                "footer.links.terms": "సేవా నిబంధనలు",
+                "footer.copyright": "© 2025 LollyPoPDF. అన్ని హక్కులు రిజర్వు."
+            },
+            kn: {
+                "nav.home": "ಹೋಮ್",
+                "nav.about": "ನಮ್ಮ ಬಗ್ಗೆ",
+                "nav.tools": "ಟೂಲ್ಸ್",
+                "nav.contact": "ಸಂಪರ್ಕಿಸಿ",
+                "hero.title": "ಎಂಜಿನಿಯರಿಂಗ್ & ಸೈಂಟಿಫಿಕ್ ಕ್ಯಾಲ್ಕುಲೇಟರ್",
+                "hero.description": "ಸೈಂಟಿಫಿಕ್ ಕಾರ್ಯಗಳು, ಗ್ರಾಫಿಂಗ್ ಸಾಮರ್ಥ್ಯಗಳು, ಯೂನಿಟ್ ಪರಿವರ್ತನೆಗಳು ಮತ್ತು ಆಫ್ಲೈನ್ ಬೆಂಬಲದೊಂದಿಗೆ ಸುಧಾರಿತ ಕ್ಯಾಲ್ಕುಲೇಟರ್. ಎಲ್ಲಾ ಪ್ರಕ್ರಿಯೆಗಳು ಸಂಪೂರ್ಣ ಗೌಪ್ಯತೆಯೊಂದಿಗೆ ಸ್ಥಳೀಯವಾಗಿ ನಡೆಯುತ್ತದೆ.",
+                "calculator.title": "ಸೈಂಟಿಫಿಕ್ ಕ್ಯಾಲ್ಕುಲೇಟರ್",
+                "graphing.title": "ಫಂಕ್ಷನ್ ಗ್ರಾಫಿಂಗ್",
+                "graphing.function": "ಫಂಕ್ಷನ್ (ಉದಾ. sin(x), x^2+3*x-5)",
+                "graphing.range": "X ಶ್ರೇಣಿ (ಕನಿಷ್ಠ, ಗರಿಷ್ಠ)",
+                "graphing.plot": "ಗ್ರಾಫ್ ಪ್ಲಾಟ್ ಮಾಡಿ",
+                "conversions.title": "ಯೂನಿಟ್ ಪರಿವರ್ತನೆಗಳು",
+                "footer.follow": "ನಮ್ಮನ್ನು ಅನುಸರಿಸಿ",
+                "footer.categories": "ಜನಪ್ರಿಯ ವರ್ಗಗಳು",
+                "footer.categories.pdf": "PDF ಟೂಲ್ಸ್",
+                "footer.categories.image": "ಇಮೇಜ್ ಟೂಲ್ಸ್",
+                "footer.categories.text": "ಟೆಕ್ಸ್ಟ್ ಟೂಲ್ಸ್",
+                "footer.categories.av": "ಆಡಿಯೋ/ವೀಡಿಯೋ ಟೂಲ್ಸ್",
+                "footer.categories.web": "ವೆಬ್ ಡೆವಲಪರ್ ಟೂಲ್ಸ್",
+                "footer.categories.calc": "ಕ್ಯಾಲ್ಕುಲೇಟರ್ ಟೂಲ್ಸ್",
+                "footer.categories.util": "ಯುಟಿಲಿಟಿ ಟೂಲ್ಸ್",
+                "footer.categories.color": "ಕಲರ್ ಟೂಲ್ಸ್",
+                "footer.quicklinks": "ತ್ವರಿತ ಲಿಂಕ್ಗಳು",
+                "footer.links.tools": "ಎಲ್ಲಾ ಟೂಲ್ಸ್",
+                "footer.links.faq": "ಸಾಮಾನ್ಯ ಪ್ರಶ್ನೆಗಳು",
+                "footer.links.contact": "ಸಂಪರ್ಕಿಸಿ",
+                "footer.links.privacy": "ಗೌಪ್ಯತಾ ನೀತಿ",
+                "footer.links.disclaimer": "ಡಿಸ್ಕ್ಲೈಮರ್",
+                "footer.links.terms": "ಸೇವಾ ನಿಯಮಗಳು",
+                "footer.copyright": "© 2025 LollyPoPDF. ಎಲ್ಲಾ ಹಕ್ಕುಗಳು ಕಾಯ್ದಿರಿಸಿವೆ."
+            },
+            ta: {
+                "nav.home": "முகப்பு",
+                "nav.about": "எங்களைப் பற்றி",
+                "nav.tools": "கருவிகள்",
+                "nav.contact": "தொடர்பு கொள்ள",
+                "hero.title": "இன்ஜினியரிங் & சயின்டிஃபிக் கால்குலேட்டர்",
+                "hero.description": "அறிவியல் செயல்பாடுகள், வரைபட வசதிகள், அலகு மாற்றங்கள் மற்றும் ஆஃப்லைன் ஆதரவுடன் கூடிய மேம்பட்ட கால்குலேட்டர். அனைத்து செயலாக்கமும் முழு தனியுரிமையுடன் உள்நாட்டில் நடைபெறுகிறது.",
+                "calculator.title": "அறிவியல் கால்குலேட்டர்",
+                "graphing.title": "செயல்பாடு வரைபடம்",
+                "graphing.function": "செயல்பாடு (எ.கா. sin(x), x^2+3*x-5)",
+                "graphing.range": "X வரம்பு (குறைந்தபட்ச, அதிகபட்ச)",
+                "graphing.plot": "வரைபடத்தை வரையவும்",
+                "conversions.title": "அலகு மாற்றங்கள்",
+                "footer.follow": "எங்களைப் பின்தொடரவும்",
+                "footer.categories": "பிரபலமான வகைகள்",
+                "footer.categories.pdf": "PDF கருவிகள்",
+                "footer.categories.image": "பட கருவிகள்",
+                "footer.categories.text": "உரை கருவிகள்",
+                "footer.categories.av": "ஆடியோ/வீடியோ கருவிகள்",
+                "footer.categories.web": "வெப்டெவலப்பர் கருவிகள்",
+                "footer.categories.calc": "கால்குலேட்டர் கருவிகள்",
+                "footer.categories.util": "பயன்பாட்டு கருவிகள்",
+                "footer.categories.color": "நிற கருவிகள்",
+                "footer.quicklinks": "விரைவு இணைப்புகள்",
+                "footer.links.tools": "அனைத்து கருவிகள்",
+                "footer.links.faq": "அடிக்கடி கேட்கப்படும் கேள்விகள்",
+                "footer.links.contact": "தொடர்பு கொள்ள",
+                "footer.links.privacy": "தனியுரிமைக் கொள்கை",
+                "footer.links.disclaimer": "பொறுப்புத் துறப்பு",
+                "footer.links.terms": "சேவை விதிமுறைகள்",
+                "footer.copyright": "© 2025 LollyPoPDF. அனைத்து உரிமைகளும் பாதுகாக்கப்பட்டவை."
+            },
+            ml: {
+                "nav.home": "ഹോം",
+                "nav.about": "ഞങ്ങളെക്കുറിച്ച്",
+                "nav.tools": "ടൂളുകൾ",
+                "nav.contact": "ബന്ധപ്പെടുക",
+                "hero.title": "എഞ്ചിനീയറിംഗ് & സയിന്റിഫിക് കാൽക്കുലേറ്റർ",
+                "hero.description": "സയിന്റിഫിക് ഫംഗ്ഷനുകൾ, ഗ്രാഫിംഗ് കഴിവുകൾ, യൂണിറ്റ് പരിവർത്തനങ്ങൾ, ഓഫ്ലൈൻ സപ്പോർട്ട് എന്നിവയുള്ള അഡ്വാൻസ്ഡ് കാൽക്കുലേറ്റർ. എല്ലാ പ്രോസസ്സിംഗും പൂർണ്ണ സ്വകാര്യതയോടെ പ്രാദേശികമായി നടക്കുന്നു.",
+                "calculator.title": "സയിന്റിഫിക് കാൽക്കുലേറ്റർ",
+                "graphing.title": "ഫംഗ്ഷൻ ഗ്രാഫിംഗ്",
+                "graphing.function": "ഫംഗ്ഷൻ (ഉദാ. sin(x), x^2+3*x-5)",
+                "graphing.range": "X ശ്രേണി (കുറഞ്ഞ, ഉയർന്ന)",
+                "graphing.plot": "ഗ്രാഫ് പ്ലോട്ട് ചെയ്യുക",
+                "conversions.title": "യൂണിറ്റ് പരിവർത്തനങ്ങൾ",
+                "footer.follow": "ഞങ്ങളെ പിന്തുടരുക",
+                "footer.categories": "ജനപ്രിയ വിഭാഗങ്ങൾ",
+                "footer.categories.pdf": "PDF ടൂളുകൾ",
+                "footer.categories.image": "ഇമേജ് ടൂളുകൾ",
+                "footer.categories.text": "ടെക്സ്റ്റ് ടൂളുകൾ",
+                "footer.categories.av": "ഓഡിയോ/വീഡിയോ ടൂളുകൾ",
+                "footer.categories.web": "വെബ് ഡെവലപ്പർ ടൂളുകൾ",
+                "footer.categories.calc": "കാൽക്കുലേറ്റർ ടൂളുകൾ",
+                "footer.categories.util": "യൂട്ടിലിറ്റി ടൂളുകൾ",
+                "footer.categories.color": "കളർ ടൂളുകൾ",
+                "footer.quicklinks": "ദ്രുത ലിങ്കുകൾ",
+                "footer.links.tools": "എല്ലാ ടൂളുകളും",
+                "footer.links.faq": "പതിവുചോദ്യങ്ങൾ",
+                "footer.links.contact": "ബന്ധപ്പെടുക",
+                "footer.links.privacy": "സ്വകാര്യതാ നയം",
+                "footer.links.disclaimer": "ഡിസ്ക്ലെയിമർ",
+                "footer.links.terms": "സേവന നിബന്ധനകൾ",
+                "footer.copyright": "© 2025 LollyPoPDF. എല്ലാ അവകാശങ്ങളും സംരക്ഷിച്ചിരിക്കുന്നു."
+            },
+            id: {
+                "nav.home": "Beranda",
+                "nav.about": "Tentang Kami",
+                "nav.tools": "Alat",
+                "nav.contact": "Kontak",
+                "hero.title": "Kalkulator Teknik & Ilmiah",
+                "hero.description": "Kalkulator canggih dengan fungsi ilmiah, kemampuan grafik, konversi satuan, dan dukungan offline. Semua pemrosesan terjadi secara lokal dengan privasi lengkap.",
+                "calculator.title": "Kalkulator Ilmiah",
+                "graphing.title": "Grafik Fungsi",
+                "graphing.function": "Fungsi (mis. sin(x), x^2+3*x-5)",
+                "graphing.range": "Rentang X (min, maks)",
+                "graphing.plot": "Plot Grafik",
+                "conversions.title": "Konversi Satuan",
+                "footer.follow": "IKUTI KAMI",
+                "footer.categories": "Kategori Populer",
+                "footer.categories.pdf": "Alat PDF",
+                "footer.categories.image": "Alat Gambar",
+                "footer.categories.text": "Alat Teks",
+                "footer.categories.av": "Alat Audio/Video",
+                "footer.categories.web": "Alat WebDeveloper",
+                "footer.categories.calc": "Alat Kalkulator",
+                "footer.categories.util": "Alat Utilitas",
+                "footer.categories.color": "Alat Warna",
+                "footer.quicklinks": "Tautan Cepat",
+                "footer.links.tools": "Semua Alat",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Kontak",
+                "footer.links.privacy": "Kebijakan Privasi",
+                "footer.links.disclaimer": "Penafian",
+                "footer.links.terms": "Syarat Layanan",
+                "footer.copyright": "© 2025 LollyPoPDF. Hak cipta dilindungi undang-undang."
+            },
+            ms: {
+                "nav.home": "Laman Utama",
+                "nav.about": "Tentang Kami",
+                "nav.tools": "Alatan",
+                "nav.contact": "Hubungi",
+                "hero.title": "Kalkulator Kejuruteraan & Saintifik",
+                "hero.description": "Kalkulator lanjutan dengan fungsi saintifik, keupayaan grafik, penukaran unit, dan sokongan luar talian. Semua pemprosesan berlaku secara tempatan dengan privasi lengkap.",
+                "calculator.title": "Kalkulator Saintifik",
+                "graphing.title": "Pembuatan Graf Fungsi",
+                "graphing.function": "Fungsi (cth. sin(x), x^2+3*x-5)",
+                "graphing.range": "Julat X (min, maks)",
+                "graphing.plot": "Plot Graf",
+                "conversions.title": "Penukaran Unit",
+                "footer.follow": "IKUTI KAMI",
+                "footer.categories": "Kategori Popular",
+                "footer.categories.pdf": "Alatan PDF",
+                "footer.categories.image": "Alatan Imej",
+                "footer.categories.text": "Alatan Teks",
+                "footer.categories.av": "Alatan Audio/Video",
+                "footer.categories.web": "Alatan WebDeveloper",
+                "footer.categories.calc": "Alatan Kalkulator",
+                "footer.categories.util": "Alatan Utiliti",
+                "footer.categories.color": "Alatan Warna",
+                "footer.quicklinks": "Pautan Pantas",
+                "footer.links.tools": "Semua Alatan",
+                "footer.links.faq": "Soalan Lazim",
+                "footer.links.contact": "Hubungi",
+                "footer.links.privacy": "Dasar Privasi",
+                "footer.links.disclaimer": "Penafian",
+                "footer.links.terms": "Syarat Perkhidmatan",
+                "footer.copyright": "© 2025 LollyPoPDF. Hak cipta terpelihara."
+            },
+            pl: {
+                "nav.home": "Strona Główna",
+                "nav.about": "O Nas",
+                "nav.tools": "Narzędzia",
+                "nav.contact": "Kontakt",
+                "hero.title": "Inżynierski i Naukowy Kalkulator",
+                "hero.description": "Zaawansowany kalkulator z funkcjami naukowymi, możliwościami tworzenia wykresów, konwersjami jednostek i wsparciem offline. Wszystkie przetwarzania odbywają się lokalnie z pełną prywatnością.",
+                "calculator.title": "Kalkulator Naukowy",
+                "graphing.title": "Wykresy Funkcji",
+                "graphing.function": "Funkcja (np. sin(x), x^2+3*x-5)",
+                "graphing.range": "Zakres X (min, maks)",
+                "graphing.plot": "Narysuj Wykres",
+                "conversions.title": "Konwersje Jednostek",
+                "footer.follow": "OBSERWUJ NAS",
+                "footer.categories": "Popularne Kategorie",
+                "footer.categories.pdf": "Narzędzia PDF",
+                "footer.categories.image": "Narzędzia Obrazów",
+                "footer.categories.text": "Narzędzia Tekstowe",
+                "footer.categories.av": "Narzędzia Audio/Wideo",
+                "footer.categories.web": "Narzędzia WebDevelopera",
+                "footer.categories.calc": "Narzędzia Kalkulatora",
+                "footer.categories.util": "Narzędzia Użytkowe",
+                "footer.categories.color": "Narzędzia Kolorów",
+                "footer.quicklinks": "Szybkie Linki",
+                "footer.links.tools": "Wszystkie Narzędzia",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Kontakt",
+                "footer.links.privacy": "Polityka Prywatności",
+                "footer.links.disclaimer": "Zastrzeżenie",
+                "footer.links.terms": "Warunki Usługi",
+                "footer.copyright": "© 2025 LollyPoPDF. Wszelkie prawa zastrzeżone."
+            },
+            th: {
+                "nav.home": "หน้าหลัก",
+                "nav.about": "เกี่ยวกับเรา",
+                "nav.tools": "เครื่องมือ",
+                "nav.contact": "ติดต่อ",
+                "hero.title": "เครื่องคิดเลขวิศวกรรมและวิทยาศาสตร์",
+                "hero.description": "เครื่องคิดเลขขั้นสูงพร้อมฟังก์ชันทางวิทยาศาสตร์ ความสามารถในการสร้างกราฟ การแปลงหน่วย และการสนับสนุนแบบออฟไลน์ การประมวลผลทั้งหมดเกิดขึ้นในเครื่องด้วยความเป็นส่วนตัวอย่างสมบูรณ์",
+                "calculator.title": "เครื่องคิดเลขวิทยาศาสตร์",
+                "graphing.title": "การสร้างกราฟฟังก์ชัน",
+                "graphing.function": "ฟังก์ชัน (เช่น sin(x), x^2+3*x-5)",
+                "graphing.range": "ช่วง X (ต่ำสุด, สูงสุด)",
+                "graphing.plot": "พล็อตกราฟ",
+                "conversions.title": "การแปลงหน่วย",
+                "footer.follow": "ติดตามเรา",
+                "footer.categories": "หมวดหมู่ยอดนิยม",
+                "footer.categories.pdf": "เครื่องมือ PDF",
+                "footer.categories.image": "เครื่องมือรูปภาพ",
+                "footer.categories.text": "เครื่องมือข้อความ",
+                "footer.categories.av": "เครื่องมือเสียง/วิดีโอ",
+                "footer.categories.web": "เครื่องมือนักพัฒนาเว็บ",
+                "footer.categories.calc": "เครื่องมือเครื่องคิดเลข",
+                "footer.categories.util": "เครื่องมืออรรถประโยชน์",
+                "footer.categories.color": "เครื่องมือสี",
+                "footer.quicklinks": "ลิงก์ด่วน",
+                "footer.links.tools": "เครื่องมือทั้งหมด",
+                "footer.links.faq": "คำถามที่พบบ่อย",
+                "footer.links.contact": "ติดต่อ",
+                "footer.links.privacy": "นโยบายความเป็นส่วนตัว",
+                "footer.links.disclaimer": "ข้อจำกัดความรับผิดชอบ",
+                "footer.links.terms": "เงื่อนไขการให้บริการ",
+                "footer.copyright": "© 2025 LollyPoPDF. สงวนลิขสิทธิ์"
+            },
+            tr: {
+                "nav.home": "Ana Sayfa",
+                "nav.about": "Hakkımızda",
+                "nav.tools": "Araçlar",
+                "nav.contact": "İletişim",
+                "hero.title": "Mühendislik ve Bilimsel Hesap Makinesi",
+                "hero.description": "Bilimsel fonksiyonlar, grafik çizme yetenekleri, birim dönüşümleri ve çevrimdışı destek ile gelişmiş hesap makinesi. Tüm işlemler tam gizlilikle yerel olarak gerçekleşir.",
+                "calculator.title": "Bilimsel Hesap Makinesi",
+                "graphing.title": "Fonksiyon Grafiği",
+                "graphing.function": "Fonksiyon (örn. sin(x), x^2+3*x-5)",
+                "graphing.range": "X Aralığı (min, maks)",
+                "graphing.plot": "Grafik Çiz",
+                "conversions.title": "Birim Dönüşümleri",
+                "footer.follow": "BİZİ TAKİP EDİN",
+                "footer.categories": "Popüler Kategoriler",
+                "footer.categories.pdf": "PDF Araçları",
+                "footer.categories.image": "Resim Araçları",
+                "footer.categories.text": "Metin Araçları",
+                "footer.categories.av": "Ses/Video Araçları",
+                "footer.categories.web": "WebGeliştirici Araçları",
+                "footer.categories.calc": "Hesap Makinesi Araçları",
+                "footer.categories.util": "Yardımcı Araçlar",
+                "footer.categories.color": "Renk Araçları",
+                "footer.quicklinks": "Hızlı Bağlantılar",
+                "footer.links.tools": "Tüm Araçlar",
+                "footer.links.faq": "SSS",
+                "footer.links.contact": "İletişim",
+                "footer.links.privacy": "Gizlilik Politikası",
+                "footer.links.disclaimer": "Feragatname",
+                "footer.links.terms": "Hizmet Şartları",
+                "footer.copyright": "© 2025 LollyPoPDF. Tüm hakları saklıdır."
+            },
+            uk: {
+                "nav.home": "Головна",
+                "nav.about": "Про нас",
+                "nav.tools": "Інструменти",
+                "nav.contact": "Контакт",
+                "hero.title": "Інженерний та Науковий Калькулятор",
+                "hero.description": "Розширений калькулятор з науковими функціями, можливостями побудови графіків, перетворенням одиниць та підтримкою офлайн. Вся обробка відбувається локально з повною конфіденційністю.",
+                "calculator.title": "Науковий Калькулятор",
+                "graphing.title": "Побудова Графіків Функцій",
+                "graphing.function": "Функція (напр. sin(x), x^2+3*x-5)",
+                "graphing.range": "Діапазон X (мін, макс)",
+                "graphing.plot": "Побудувати Графік",
+                "conversions.title": "Перетворення Одиниць",
+                "footer.follow": "СЛІДКУЙТЕ ЗА НАМИ",
+                "footer.categories": "Популярні Категорії",
+                "footer.categories.pdf": "PDF Інструменти",
+                "footer.categories.image": "Інструменти Зображень",
+                "footer.categories.text": "Текстовий Інструменти",
+                "footer.categories.av": "Аудіо/Відео Інструменти",
+                "footer.categories.web": "Інструменти ВебРозробника",
+                "footer.categories.calc": "Інструменти Калькулятора",
+                "footer.categories.util": "Утиліти",
+                "footer.categories.color": "Інструменти Кольору",
+                "footer.quicklinks": "Швидкі Посилання",
+                "footer.links.tools": "Всі Інструменти",
+                "footer.links.faq": "Часті Запитання",
+                "footer.links.contact": "Контакт",
+                "footer.links.privacy": "Політика Конфіденційності",
+                "footer.links.disclaimer": "Відмова від Відповідальності",
+                "footer.links.terms": "Умови Обслуговування",
+                "footer.copyright": "© 2025 LollyPoPDF. Всі права захищені."
+            },
+            vi: {
+                "nav.home": "Trang Chủ",
+                "nav.about": "Về Chúng Tôi",
+                "nav.tools": "Công Cụ",
+                "nav.contact": "Liên Hệ",
+                "hero.title": "Máy Tính Kỹ Thuật & Khoa Học",
+                "hero.description": "Máy tính nâng cao với các hàm khoa học, khả năng vẽ đồ thị, chuyển đổi đơn vị và hỗ trợ ngoại tuyến. Tất cả xử lý diễn ra cục bộ với quyền riêng tư hoàn toàn.",
+                "calculator.title": "Máy Tính Khoa Học",
+                "graphing.title": "Vẽ Đồ Thị Hàm Số",
+                "graphing.function": "Hàm số (vd. sin(x), x^2+3*x-5)",
+                "graphing.range": "Phạm vi X (tối thiểu, tối đa)",
+                "graphing.plot": "Vẽ Đồ Thị",
+                "conversions.title": "Chuyển Đổi Đơn Vị",
+                "footer.follow": "THEO DÕI CHÚNG TÔI",
+                "footer.categories": "Danh Mục Phổ Biến",
+                "footer.categories.pdf": "Công Cụ PDF",
+                "footer.categories.image": "Công Cụ Hình Ảnh",
+                "footer.categories.text": "Công Cụ Văn Bản",
+                "footer.categories.av": "Công Cụ Âm Thanh/Video",
+                "footer.categories.web": "Công Cụ WebDeveloper",
+                "footer.categories.calc": "Công Cụ Máy Tính",
+                "footer.categories.util": "Công Cụ Tiện Ích",
+                "footer.categories.color": "Công Cụ Màu Sắc",
+                "footer.quicklinks": "Liên Kết Nhanh",
+                "footer.links.tools": "Tất Cả Công Cụ",
+                "footer.links.faq": "Câu Hỏi Thường Gặp",
+                "footer.links.contact": "Liên Hệ",
+                "footer.links.privacy": "Chính Sách Bảo Mật",
+                "footer.links.disclaimer": "Tuyên Bố Miễn Trừ",
+                "footer.links.terms": "Điều Khoản Dịch Vụ",
+                "footer.copyright": "© 2025 LollyPoPDF. Đã đăng ký bản quyền."
+            },
+            is: {
+                "nav.home": "Heim",
+                "nav.about": "Um Okkur",
+                "nav.tools": "Verkfæri",
+                "nav.contact": "Hafa Samband",
+                "hero.title": "Verkfræði- og Vísinda Reiknivél",
+                "hero.description": "Ítarleg reiknivél með vísinda aðgerðum, möguleikum á myndrænum framsetningum, einingabreytingum og stuðningi án nettengingar. Öll vinnsla fer fram staðbundið með fullri næði.",
+                "calculator.title": "Vísinda Reiknivél",
+                "graphing.title": "Fallagrafar",
+                "graphing.function": "Fall (t.d. sin(x), x^2+3*x-5)",
+                "graphing.range": "X Bils (lágm., hámm.)",
+                "graphing.plot": "Teikna Graf",
+                "conversions.title": "Einingabreytingar",
+                "footer.follow": "FYLGDU OKKUR",
+                "footer.categories": "Vinsælar Flokkar",
+                "footer.categories.pdf": "PDF Verkfæri",
+                "footer.categories.image": "Mynd Verkfæri",
+                "footer.categories.text": "Texta Verkfæri",
+                "footer.categories.av": "Hljóð/Myndband Verkfæri",
+                "footer.categories.web": "WebDeveloper Verkfæri",
+                "footer.categories.calc": "Reiknivél Verkfæri",
+                "footer.categories.util": "Gagnleg Verkfæri",
+                "footer.categories.color": "Lit Verkfæri",
+                "footer.quicklinks": "Flýtileiðir",
+                "footer.links.tools": "Öll Verkfæri",
+                "footer.links.faq": "Algengar Spurningar",
+                "footer.links.contact": "Hafa Samband",
+                "footer.links.privacy": "Meðferðarreglur",
+                "footer.links.disclaimer": "Fyrirvari",
+                "footer.links.terms": "Þjónustuskilmálar",
+                "footer.copyright": "© 2025 LollyPoPDF. Öll réttindi áskilin."
+            },
+            no: {
+                "nav.home": "Hjem",
+                "nav.about": "Om Oss",
+                "nav.tools": "Verktøy",
+                "nav.contact": "Kontakt",
+                "hero.title": "Ingeniør- og Vitenskapelig Kalkulator",
+                "hero.description": "Avansert kalkulator med vitenskapelige funksjoner, grafegenskaper, enhetskonverteringer og offline støtte. All behandling skjer lokalt med fullstendig personvern.",
+                "calculator.title": "Vitenskapelig Kalkulator",
+                "graphing.title": "Funksjonsgrafer",
+                "graphing.function": "Funksjon (f.eks. sin(x), x^2+3*x-5)",
+                "graphing.range": "X Rekkevidde (min, maks)",
+                "graphing.plot": "Tegn Graf",
+                "conversions.title": "Enhetskonverteringer",
+                "footer.follow": "FØLG OSS",
+                "footer.categories": "Populære Kategorier",
+                "footer.categories.pdf": "PDF Verktøy",
+                "footer.categories.image": "Bildeverktøy",
+                "footer.categories.text": "Tekstverktøy",
+                "footer.categories.av": "Lyd/Video Verktøy",
+                "footer.categories.web": "WebUtvikler Verktøy",
+                "footer.categories.calc": "Kalkulator Verktøy",
+                "footer.categories.util": "Nytteverktøy",
+                "footer.categories.color": "Fargeverktøy",
+                "footer.quicklinks": "Hurtiglenker",
+                "footer.links.tools": "Alle Verktøy",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Kontakt",
+                "footer.links.privacy": "Personvernregler",
+                "footer.links.disclaimer": "Ansvarsfraskrivelse",
+                "footer.links.terms": "Tjenestevilkår",
+                "footer.copyright": "© 2025 LollyPoPDF. Alle rettigheter forbeholdt."
+            },
+            sv: {
+                "nav.home": "Hem",
+                "nav.about": "Om Oss",
+                "nav.tools": "Verktyg",
+                "nav.contact": "Kontakt",
+                "hero.title": "Ingenjörs- och Vetenskaplig Kalkylator",
+                "hero.description": "Avancerad kalkylator med vetenskapliga funktioner, diagrammöjligheter, enhetsomvandlingar och offline-stöd. All bearbetning sker lokalt med fullständig integritet.",
+                "calculator.title": "Vetenskaplig Kalkylator",
+                "graphing.title": "Funktionsdiagram",
+                "graphing.function": "Funktion (t.ex. sin(x), x^2+3*x-5)",
+                "graphing.range": "X Omfång (min, max)",
+                "graphing.plot": "Rita Diagram",
+                "conversions.title": "Enhetsomvandlingar",
+                "footer.follow": "FÖLJ OSS",
+                "footer.categories": "Populära Kategorier",
+                "footer.categories.pdf": "PDF Verktyg",
+                "footer.categories.image": "Bildverktyg",
+                "footer.categories.text": "Textverktyg",
+                "footer.categories.av": "Ljud/Video Verktyg",
+                "footer.categories.web": "WebbUtvecklare Verktyg",
+                "footer.categories.calc": "Kalkylator Verktyg",
+                "footer.categories.util": "Verktyg för Verktyg",
+                "footer.categories.color": "Färgverktyg",
+                "footer.quicklinks": "Snabblänkar",
+                "footer.links.tools": "Alla Verktyg",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Kontakt",
+                "footer.links.privacy": "Integritetspolicy",
+                "footer.links.disclaimer": "Ansvarsfriskrivning",
+                "footer.links.terms": "Användarvillkor",
+                "footer.copyright": "© 2025 LollyPoPDF. Alla rättigheter förbehållna."
+            },
+            fi: {
+                "nav.home": "Koti",
+                "nav.about": "Meistä",
+                "nav.tools": "Työkalut",
+                "nav.contact": "Yhteystiedot",
+                "hero.title": "Insinööri- ja Tieteellinen Laskin",
+                "hero.description": "Kehittynyt laskin tieteellisillä funktioilla, kaavioiden piirtokyvyillä, yksikkömuunnoksilla ja offline-tuella. Kaikki käsittely tapahtuu paikallisesti täydellisen yksityisyyden kanssa.",
+                "calculator.title": "Tieteellinen Laskin",
+                "graphing.title": "Funktiokaaviot",
+                "graphing.function": "Funktio (esim. sin(x), x^2+3*x-5)",
+                "graphing.range": "X Alue (min, max)",
+                "graphing.plot": "Piirrä Kaavio",
+                "conversions.title": "Yksikkömuunnokset",
+                "footer.follow": "SEURA MEITÄ",
+                "footer.categories": "Suositut Kategoriat",
+                "footer.categories.pdf": "PDF Työkalut",
+                "footer.categories.image": "Kuvatyökalut",
+                "footer.categories.text": "Tekstityökalut",
+                "footer.categories.av": "Ääni/Video Työkalut",
+                "footer.categories.web": "WebKehittäjä Työkalut",
+                "footer.categories.calc": "Laskin Työkalut",
+                "footer.categories.util": "Aputyökalut",
+                "footer.categories.color": "Väri Työkalut",
+                "footer.quicklinks": "Pikalinkit",
+                "footer.links.tools": "Kaikki Työkalut",
+                "footer.links.faq": "UKK",
+                "footer.links.contact": "Yhteystiedot",
+                "footer.links.privacy": "Tietosuojakäytäntö",
+                "footer.links.disclaimer": "Vastuuvapauslauseke",
+                "footer.links.terms": "Käyttöehdot",
+                "footer.copyright": "© 2025 LollyPoPDF. Kaikki oikeudet pidätetään."
+            },
+            cs: {
+                "nav.home": "Domů",
+                "nav.about": "O Nás",
+                "nav.tools": "Nástroje",
+                "nav.contact": "Kontakt",
+                "hero.title": "Inženýrská a Vědecká Kalkulačka",
+                "hero.description": "Pokročilá kalkulačka s vědeckými funkcemi, možnostmi grafů, převody jednotek a offline podporou. Veškeré zpracování probíhá lokálně s úplným soukromím.",
+                "calculator.title": "Vědecká Kalkulačka",
+                "graphing.title": "Grafy Funkcí",
+                "graphing.function": "Funkce (např. sin(x), x^2+3*x-5)",
+                "graphing.range": "Rozsah X (min, max)",
+                "graphing.plot": "Vykreslit Graf",
+                "conversions.title": "Převody Jednotek",
+                "footer.follow": "SLEDUJTE NÁS",
+                "footer.categories": "Populární Kategorie",
+                "footer.categories.pdf": "PDF Nástroje",
+                "footer.categories.image": "Obrázkové Nástroje",
+                "footer.categories.text": "Textové Nástroje",
+                "footer.categories.av": "Audio/Video Nástroje",
+                "footer.categories.web": "WebVývojářské Nástroje",
+                "footer.categories.calc": "Kalkulačkové Nástroje",
+                "footer.categories.util": "Užitečné Nástroje",
+                "footer.categories.color": "Barevné Nástroje",
+                "footer.quicklinks": "Rychlé Odkazy",
+                "footer.links.tools": "Všechny Nástroje",
+                "footer.links.faq": "Často Kladené Otázky",
+                "footer.links.contact": "Kontakt",
+                "footer.links.privacy": "Zásady Ochrany Osobních Údajů",
+                "footer.links.disclaimer": "Odmítnutí Odpovědnosti",
+                "footer.links.terms": "Podmínky Služby",
+                "footer.copyright": "© 2025 LollyPoPDF. Všechna práva vyhrazena."
+            }
+
+
+        };
+
+        // Function to change language
+        function changeLanguage(langCode) {
+            const langData = translations[langCode];
+            if (!langData) return;
+            
+            // Update all elements with data-i18n attribute
+            document.querySelectorAll('[data-i18n]').forEach(element => {
+                const key = element.getAttribute('data-i18n');
+                if (langData[key]) {
+                    element.textContent = langData[key];
+                }
+            });
+            
+            // Update current language display
+            currentLanguageElement.textContent = languages.find(lang => lang.code === langCode)?.name || 'English';
+            
+            // Save language preference
+            localStorage.setItem('language', langCode);
+        }
+
+        // Initialize components when DOM is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            // Initialize calculator
+            const calculator = new Calculator();
+            
+            // Initialize graphing calculator
+            const graphingCalculator = new GraphingCalculator();
+            
+            // Initialize unit converter
+            const unitConverter = new UnitConverter();
+            
+            // Initialize language
+            const savedLanguage = localStorage.getItem('language') || 'en';
+            changeLanguage(savedLanguage);
+            
+            // Language selection handler
+            languageDropdown.addEventListener('click', (e) => {
+                if (e.target.classList.contains('language-option')) {
+                    const langCode = e.target.getAttribute('data-lang');
+                    changeLanguage(langCode);
+                }
+            });
+        });
+    </script>
+</body>
+</html>

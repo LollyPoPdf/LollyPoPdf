@@ -1,0 +1,3148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unit Converter | LollyPoPdf</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #9370db;
+            --primary-dark: #8a2be2;
+            --secondary-color: #f0ebff;
+            --text-color: #333333;
+            --text-light: #6b7280;
+            --bg-color: #ffffff;
+            --bg-secondary: #f9f9f9;
+            --border-radius: 12px;
+            --transition: all 0.3s ease;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --header-height: 80px;
+            --white: #ffffff;
+            --header-text: #6b7280;
+            --accent-color: #9370db;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --error-color: #ef4444;
+        }
+
+        .dark-mode {
+            --primary-color: #a391f2;
+            --primary-dark: #8a2be2;
+            --secondary-color: #2d2d2d;
+            --text-color: #f0f0f0;
+            --text-light: #a0a0a0;
+            --bg-color: #1a1a1a;
+            --bg-secondary: #2d2d2d;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+            --white: #1a1a1a;
+            --header-text: #a0a0a0;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            transition: var(--transition);
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        ul {
+            list-style: none;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header Styles */
+        header {
+            background-color: var(--white);
+            color: var(--header-text);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+        }
+
+        .logo-icon {
+            position: relative;
+            width: 40px;
+            height: 40px;
+        }
+
+        .logo-circle {
+            width: 40px;
+            height: 40px;
+            border-radius: 40%;
+            background: linear-gradient(to bottom right, #9370db, #8a2be2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .logo-stem {
+            position: absolute;
+            bottom: -17px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 6px;
+            height: 17px;
+            background-color: #8a2be2;
+            border-radius: 0 0 3px 3px;
+        }
+
+        .logo-text {
+            font-size: 24px;
+            font-weight: bold;
+            color: #9370db;
+        }
+
+        nav ul {
+            display: flex;
+            gap: 30px;
+            list-style: none;
+        }
+
+        nav a {
+            font-weight: 500;
+            position: relative;
+            color: var(--header-text);
+            padding: 8px 0;
+            border-radius: 0;
+            transition: var(--transition);
+            text-decoration: none;
+        }
+
+        nav a:hover {
+            color: var(--accent-color);
+        }
+
+        nav a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: var(--accent-color);
+            transition: width 0.3s ease;
+        }
+
+        nav a:hover::after {
+            width: 100%;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .email {
+            font-size: 14px;
+            color: var(--header-text);
+        }
+
+        .theme-toggle {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 20px;
+            color: var(--header-text);
+            padding: 8px;
+            border-radius: 50%;
+            transition: var(--transition);
+        }
+
+        .theme-toggle:hover {
+            background-color: #f0ebff;
+            color: var(--accent-color);
+        }
+
+        .dark-mode .theme-toggle:hover {
+            background-color: #2d3748;
+            color: var(--accent-color);
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--header-text);
+        }
+
+        /* Mobile Menu */
+        .mobile-menu {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            width: 100%;
+            background-color: var(--white);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            z-index: 999;
+        }
+
+        .dark-mode .mobile-menu {
+            background-color: var(--bg-secondary);
+        }
+
+        .mobile-menu.active {
+            display: block;
+        }
+
+        .mobile-menu ul {
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .mobile-menu a {
+            display: block;
+            padding: 10px 0;
+            font-weight: 500;
+            color: var(--header-text);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .dark-mode .mobile-menu a {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .mobile-menu a:hover {
+            color: var(--accent-color);
+        }
+
+        /* Hero Section */
+        .hero {
+            background-color: var(--secondary-color);
+            padding: 60px 0;
+            text-align: center;
+        }
+
+        .dark-mode .hero {
+            background: linear-gradient(135deg, #2a1a4a, #3d2a6d);
+        }
+
+        .hero h1 {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            color: #000;
+        }
+
+        .dark-mode .hero h1 {
+            color: var(--text-color);
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            color: var(--text-color);
+            max-width: 700px;
+            margin: 0 auto 30px;
+        }
+
+        /* How to Use Section */
+        .how-to-section {
+            padding: 80px 0;
+            background-color: var(--bg-color);
+        }
+
+        .dark-mode .how-to-section {
+            background-color: var(--bg-secondary);
+        }
+
+        .section-title {
+            font-size: 2rem;
+            text-align: center;
+            margin-bottom: 40px;
+            color: #000000;
+        }
+
+        .dark-mode .section-title {
+            color: var(--text-color);
+        }
+
+        .steps-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 40px;
+        }
+
+        .step-box {
+            background-color: var(--bg-secondary);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            padding: 30px;
+            min-height: 200px;
+            position: relative;
+        }
+
+        .step-number {
+            width: 40px;
+            height: 40px;
+            background-color: var(--primary-color);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 16px;
+            margin-bottom: 15px;
+        }
+
+        .step-title {
+            font-size: 18px;
+            color: #000000;
+            margin-bottom: 10px;
+        }
+
+        .dark-mode .step-title {
+            color: var(--text-color);
+        }
+
+        .step-description {
+            font-size: 14px;
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        /* Tool Section */
+        .tool-section {
+            padding: 80px 0;
+            background-color: var(--secondary-color);
+        }
+
+        .dark-mode .tool-section {
+            background: linear-gradient(135deg, #2a1a4a, #3d2a6d);
+        }
+
+        .tool-title {
+            font-size: 2.5rem;
+            text-align: center;
+            margin-bottom: 40px;
+            color: #a391f2;
+        }
+
+        .dark-mode .tool-title {
+            color: #a391f2;
+        }
+
+        .tool-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background-color: var(--bg-color);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            padding: 40px;
+        }
+
+        /* Converter Controls */
+        .converter-controls {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .control-label {
+            font-weight: 600;
+            color: var(--text-color);
+        }
+
+        .select-wrapper {
+            position: relative;
+        }
+
+        .category-select, .unit-select {
+            width: 100%;
+            padding: 12px 15px;
+            border-radius: var(--border-radius);
+            border: 1px solid var(--primary-color);
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-size: 16px;
+            appearance: none;
+            cursor: pointer;
+        }
+
+        .select-arrow {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            pointer-events: none;
+            color: var(--primary-color);
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .input-label {
+            font-weight: 600;
+            color: var(--text-color);
+        }
+
+        .value-input {
+            width: 100%;
+            padding: 12px 15px;
+            border-radius: var(--border-radius);
+            border: 1px solid var(--primary-color);
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-size: 16px;
+        }
+
+        /* Results Section */
+        .results-section {
+            margin-top: 30px;
+        }
+
+        .results-title {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            color: var(--primary-color);
+            text-align: center;
+        }
+
+        .results-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .result-card {
+            background-color: var(--bg-secondary);
+            border-radius: var(--border-radius);
+            padding: 20px;
+            text-align: center;
+            box-shadow: var(--shadow);
+            transition: transform 0.3s ease;
+        }
+
+        .result-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .result-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--primary-color);
+            margin-bottom: 5px;
+        }
+
+        .result-unit {
+            font-size: 0.9rem;
+            color: var(--text-light);
+        }
+
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+
+        .action-btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            min-width: 150px;
+        }
+
+        .convert-btn {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .convert-btn:hover {
+            background-color: var(--primary-dark);
+        }
+
+        .clear-btn {
+            background-color: white;
+            color: var(--primary-color);
+            border: 2px solid var(--primary-color);
+        }
+
+        .clear-btn:hover {
+            background-color: var(--secondary-color);
+        }
+
+        /* Footer */
+        footer {
+            background-color: #000000;
+            color: white;
+            padding: 60px 0 80px;
+            position: relative;
+        }
+
+        .footer-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 60px;
+        }
+
+        .footer-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            text-decoration: none;
+        }
+
+        .footer-logo .logo-icon {
+            width: 40px;
+            height: 40px;
+        }
+
+        .footer-logo .logo-text {
+            color: #9370db;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .footer-section h3 {
+            color: white;
+            font-weight: 600;
+            font-size: 20px;
+            margin-bottom: 20px;
+        }
+
+        .footer-section h4 {
+            color: #9370db;
+            font-size: 18px;
+            margin-bottom: 15px;
+        }
+
+        .footer-links li {
+            margin-bottom: 10px;
+        }
+
+        .footer-links a {
+            color: white;
+        }
+
+        .footer-links a:hover {
+            color: #9370db;
+        }
+
+        .social-icons {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .social-icon {
+            width: 40px;
+            height: 40px;
+            background-color: #9370db;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+        }
+
+        .social-icon:hover {
+            background-color: #8a2be2;
+            transform: translateY(-3px);
+        }
+
+        .copyright {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            color: #f9f7ff;
+            font-size: 12px;
+        }
+
+        .footer-line {
+            position: absolute;
+            bottom: 50px;
+            left: 0;
+            width: 100%;
+            height: 1px;
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        /* Language Switcher */
+        .language-switcher {
+            position: fixed;
+            bottom: 10px;
+            right: 10px;
+            z-index: 1000;
+        }
+
+        .language-btn {
+            background-color: #9370db;
+            color: white;
+            border: none;
+            border-radius: 30px;
+            padding: 5px 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .language-dropdown {
+            position: absolute;
+            bottom: 100%;
+            right: 0;
+            width: 300px;
+            background-color: white;
+            border-radius: var(--border-radius);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            display: none;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .dark-mode .language-dropdown {
+            background-color: var(--bg-secondary);
+        }
+
+        .language-switcher:hover .language-dropdown {
+            display: grid;
+        }
+
+        .language-option {
+            padding: 8px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            text-align: center;
+            font-size: 14px;
+        }
+
+        .language-option:hover {
+            background-color: white;
+            color: #9370db;
+        }
+
+        .dark-mode .language-option:hover {
+            background-color: var(--bg-color);
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 992px) {
+            .steps-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .footer-container {
+                grid-template-columns: 1fr 1fr;
+            }
+            
+            .converter-controls {
+                grid-template-columns: 1fr;
+            }
+            
+            .results-grid {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            }
+        }
+
+        @media (max-width: 768px) {
+            nav ul, .email {
+                display: none;
+            }
+            
+            .mobile-menu-btn {
+                display: block;
+            }
+            
+            .hero h1, .tool-title {
+                font-size: 2rem;
+            }
+            
+            .hero p {
+                font-size: 1rem;
+            }
+            
+            .language-dropdown {
+                width: 250px;
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .footer-container {
+                grid-template-columns: 1fr;
+                gap: 40px;
+            }
+            
+            .results-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .tool-container {
+                padding: 20px;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+            
+            .action-btn {
+                width: 100%;
+            }
+            
+            .results-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container header-container">
+            <a href="https://lollypopdf.com" class="logo">
+                <div class="logo-icon">
+                    <div class="logo-circle">LPdf</div>
+                    <div class="logo-stem"></div>
+                </div>
+                <span class="logo-text">LollyPoPdf</span>
+            </a>
+            
+            <nav>
+                <ul>
+                    <li><a href="https://lollypopdf.github.io/LollyPoPdf#home" class="nav-link" data-i18n="nav.home">Home</a></li>
+                    <li><a href="https://lollypopdf.github.io/LollyPoPdf#about" class="nav-link" data-i18n="nav.about">About Us</a></li>
+                    <li><a href="https://lollypopdf.github.io/LollyPoPdf#tools" class="nav-link" data-i18n="nav.tools">Tools</a></li>
+                    <li><a href="contact.html" class="nav-link" data-i18n="nav.contact">Contact</a></li>
+                </ul>
+            </nav>
+            
+            <div class="header-right">
+                <span class="email">lollypoppdf@gmail.com</span>
+                <button class="theme-toggle" id="themeToggle">
+                    <i class="fas fa-moon"></i>
+                </button>
+                <button class="mobile-menu-btn" id="mobileMenuBtn">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </div>
+        
+        <!-- Mobile Menu -->
+        <div class="mobile-menu" id="mobileMenu">
+            <ul>
+                <li><a href="https://lollypopdf.github.io/LollyPoPdf#home" class="nav-link" data-i18n="nav.home">Home</a></li>
+                <li><a href="https://lollypopdf.github.io/LollyPoPdf#about" class="nav-link" data-i18n="nav.about">About Us</a></li>
+                <li><a href="https://lollypopdf.github.io/LollyPoPdf#tools" class="nav-link" data-i18n="nav.tools">Tools</a></li>
+                <li><a href="contact.html" class="nav-link" data-i18n="nav.contact">Contact</a></li>
+            </ul>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <h1 data-i18n="hero.title">Unit Converter Tool</h1>
+            <p data-i18n="hero.description">Convert between different units of measurement instantly. All conversions happen locally in your browser with no file size limits and complete privacy.</p>
+        </div>
+    </section>
+
+    <!-- How to Use Section -->
+    <section class="how-to-section">
+        <div class="container">
+            <h2 class="section-title" data-i18n="howto.title">How to Use the Unit Converter</h2>
+            <div class="steps-container">
+                <div class="step-box">
+                    <div class="step-number">1</div>
+                    <h3 class="step-title" data-i18n="howto.step1.title">Select Category</h3>
+                    <p class="step-description" data-i18n="howto.step1.description">Choose the category of units you want to convert between, such as length, weight, temperature, volume, area, or time.</p>
+                </div>
+                <div class="step-box">
+                    <div class="step-number">2</div>
+                    <h3 class="step-title" data-i18n="howto.step2.title">Choose Units</h3>
+                    <p class="step-description" data-i18n="howto.step2.description">Select the unit you want to convert from and the unit you want to convert to from the dropdown menus.</p>
+                </div>
+                <div class="step-box">
+                    <div class="step-number">3</div>
+                    <h3 class="step-title" data-i18n="howto.step3.title">Enter Value</h3>
+                    <p class="step-description" data-i18n="howto.step3.description">Type the value you want to convert in the input field. The conversion happens instantly as you type.</p>
+                </div>
+                <div class="step-box">
+                    <div class="step-number">4</div>
+                    <h3 class="step-title" data-i18n="howto.step4.title">View Results</h3>
+                    <p class="step-description" data-i18n="howto.step4.description">See the converted value and compare it with other common units in the same category. All processing happens locally in your browser.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Tool Section -->
+    <section class="tool-section">
+        <div class="container">
+            <h2 class="tool-title" data-i18n="tool.title">Unit Converter</h2>
+            <div class="tool-container">
+                <!-- Converter Controls -->
+                <div class="converter-controls">
+                    <div class="control-group">
+                        <label class="control-label" data-i18n="tool.category">Category:</label>
+                        <div class="select-wrapper">
+                            <select id="categorySelect" class="category-select">
+                                <option value="length" data-i18n="tool.categories.length">Length</option>
+                                <option value="weight" data-i18n="tool.categories.weight">Weight</option>
+                                <option value="temperature" data-i18n="tool.categories.temperature">Temperature</option>
+                                <option value="volume" data-i18n="tool.categories.volume">Volume</option>
+                                <option value="area" data-i18n="tool.categories.area">Area</option>
+                                <option value="time" data-i18n="tool.categories.time">Time</option>
+                                <option value="speed" data-i18n="tool.categories.speed">Speed</option>
+                                <option value="digital" data-i18n="tool.categories.digital">Digital Storage</option>
+                            </select>
+                            <div class="select-arrow">
+                                <i class="fas fa-chevron-down"></i>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="control-group">
+                        <label class="control-label" data-i18n="tool.from">From:</label>
+                        <div class="select-wrapper">
+                            <select id="fromUnit" class="unit-select">
+                                <!-- Options will be populated by JavaScript -->
+                            </select>
+                            <div class="select-arrow">
+                                <i class="fas fa-chevron-down"></i>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label class="input-label" data-i18n="tool.value">Value:</label>
+                        <input type="number" id="inputValue" class="value-input" placeholder="Enter value" step="any">
+                    </div>
+                    
+                    <div class="control-group">
+                        <label class="control-label" data-i18n="tool.to">To:</label>
+                        <div class="select-wrapper">
+                            <select id="toUnit" class="unit-select">
+                                <!-- Options will be populated by JavaScript -->
+                            </select>
+                            <div class="select-arrow">
+                                <i class="fas fa-chevron-down"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Results Section -->
+                <div class="results-section">
+                    <h3 class="results-title" data-i18n="tool.results">Conversion Results</h3>
+                    <div class="results-grid" id="resultsGrid">
+                        <!-- Results will be populated by JavaScript -->
+                    </div>
+                </div>
+                
+                <!-- Action Buttons -->
+                <div class="action-buttons">
+                    <button class="action-btn convert-btn" id="convertBtn" data-i18n="tool.convert">
+                        <i class="fas fa-sync-alt"></i> Convert
+                    </button>
+                    <button class="action-btn clear-btn" id="clearBtn" data-i18n="tool.clear">
+                        <i class="fas fa-trash"></i> Clear All
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container footer-container">
+            <!-- Left Section -->
+            <div class="footer-section">
+                <a href="https://lollypopdf.com" class="footer-logo">
+                    <div class="logo-icon">
+                        <div class="logo-circle">LPdf</div>
+                        <div class="logo-stem"></div>
+                    </div>
+                    <span class="logo-text">LollyPoPdf</span>
+                </a>
+                <h3 data-i18n="footer.follow">FOLLOW US</h3>
+                <div class="social-icons">
+                    <a href="https://facebook.com/lollypopdf" class="social-icon"><i class="fab fa-facebook-f"></i></a>
+                    <a href="https://linkedin.com/company/lollypopdf" class="social-icon"><i class="fab fa-linkedin-in"></i></a>
+                    <a href="https://twitter.com/lollypopdf" class="social-icon"><i class="fab fa-twitter"></i></a>
+                    <a href="https://instagram.com/lollypopdf" class="social-icon"><i class="fab fa-instagram"></i></a>
+                    <a href="https://pinterest.com/lollypopdf" class="social-icon"><i class="fab fa-pinterest-p"></i></a>
+                </div>
+            </div>
+            
+            <!-- Middle Section - Popular Categories -->
+            <div class="footer-section">
+                <h4 data-i18n="footer.categories">Popular Categories</h4>
+                <ul class="footer-links">
+                    <li><a href="https://lollypopdf.com#pdf-tools" data-i18n="footer.categories.pdf">PDF Tools</a></li>
+                    <li><a href="https://lollypopdf.com#image-tools" data-i18n="footer.categories.image">Image Tools</a></li>
+                    <li><a href="https://lollypopdf.com#text-tools" data-i18n="footer.categories.text">Text Tools</a></li>
+                    <li><a href="https://lollypopdf.com#audio-video-tools" data-i18n="footer.categories.av">Audio/Video Tools</a></li>
+                    <li><a href="https://lollypopdf.com#web-developer-tools" data-i18n="footer.categories.web">WebDeveloper Tools</a></li>
+                    <li><a href="https://lollypopdf.com#calculator-tools" data-i18n="footer.categories.calc">Calculator Tools</a></li>
+                    <li><a href="https://lollypopdf.com#utility-tools" data-i18n="footer.categories.util">Utility Tools</a></li>
+                    <li><a href="https://lollypopdf.com#color-tools" data-i18n="footer.categories.color">Color Tools</a></li>
+                </ul>
+            </div>
+            
+            <!-- Right Section - Quick Links -->
+            <div class="footer-section">
+                <h4 data-i18n="footer.quicklinks">Quick Links</h4>
+                <ul class="footer-links">
+                    <li><a href="https://lollypopdf.github.io/LollyPoPdf#home" data-i18n="nav.home">Home</a></li>
+                    <li><a href="https://lollypopdf.github.io/LollyPoPdf#tools" data-i18n="footer.links.tools">All Tools</a></li>
+                    <li><a href="faq.html" data-i18n="footer.links.faq">FAQ</a></li>
+                    <li><a href="contact.html" data-i18n="footer.links.contact">Contact</a></li>
+                    <li><a href="privacy-policy.html" data-i18n="footer.links.privacy">Privacy Policy</a></li>
+                    <li><a href="disclaimer.html" data-i18n="footer.links.disclaimer">Disclaimer</a></li>
+                    <li><a href="terms.html" data-i18n="footer.links.terms">Terms of Service</a></li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="footer-line"></div>
+        <div class="copyright" data-i18n="footer.copyright">© 2025 LollyPoPDF. All rights reserved.</div>
+    </footer>
+
+    <!-- Language Switcher -->
+    <div class="language-switcher">
+        <button class="language-btn">
+            <i class="fas fa-globe"></i>
+            <span id="currentLanguage">English</span>
+        </button>
+        <div class="language-dropdown">
+            <div class="language-option" data-lang="en">English</div>
+            <div class="language-option" data-lang="es">Español</div>
+            <div class="language-option" data-lang="fr">Français</div>
+            <div class="language-option" data-lang="de">Deutsch</div>
+            <div class="language-option" data-lang="it">Italiano</div>
+            <div class="language-option" data-lang="pt">Português</div>
+            <div class="language-option" data-lang="ja">日本語</div>
+            <div class="language-option" data-lang="ru">Pусский</div>
+            <div class="language-option" data-lang="ko">한국어</div>
+            <div class="language-option" data-lang="zh-CN">中文 (简体)</div>
+            <div class="language-option" data-lang="zh-TW">中文 (繁體)</div>
+            <div class="language-option" data-lang="ar">العربية</div>
+            <div class="language-option" data-lang="fa">فارسی</div>
+            <div class="language-option" data-lang="bg">Български</div>
+            <div class="language-option" data-lang="ca">Català</div>
+            <div class="language-option" data-lang="nl">Nederlands</div>
+            <div class="language-option" data-lang="el">Ελληνικά</div>
+            <div class="language-option" data-lang="hi">हिन्दी</div>
+            <div class="language-option" data-lang="te">తెలుగు</div>
+            <div class="language-option" data-lang="kn">ಕನ್ನಡ</div>
+            <div class="language-option" data-lang="ta">தமிழ்</div>
+            <div class="language-option" data-lang="ml">മലയാളം</div>
+            <div class="language-option" data-lang="id">Bahasa Indonesia</div>
+            <div class="language-option" data-lang="ms">Bahasa Melayu</div>
+            <div class="language-option" data-lang="pl">Polski</div>
+            <div class="language-option" data-lang="th">ภาษาไทย</div>
+            <div class="language-option" data-lang="tr">Türkçe</div>
+            <div class="language-option" data-lang="uk">Українська</div>
+            <div class="language-option" data-lang="vi">Tiếng Việt</div>
+            <div class="language-option" data-lang="is">Íslenska</div>
+            <div class="language-option" data-lang="no">Norsk</div>
+            <div class="language-option" data-lang="sv">Svenska</div>
+            <div class="language-option" data-lang="fi">Suomi</div>
+            <div class="language-option" data-lang="cs">Čeština</div>
+        </div>
+    </div>
+
+    <script>
+        // Theme Toggle
+        const themeToggle = document.getElementById('themeToggle');
+        const body = document.body;
+        
+        // Check for saved theme preference or respect OS preference
+        const savedTheme = localStorage.getItem('theme') || 
+            (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        
+        if (savedTheme === 'dark') {
+            body.classList.add('dark-mode');
+            themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+        }
+        
+        themeToggle.addEventListener('click', () => {
+            body.classList.toggle('dark-mode');
+            const isDarkMode = body.classList.contains('dark-mode');
+            
+            if (isDarkMode) {
+                themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+                localStorage.setItem('theme', 'dark');
+            } else {
+                themeToggle.innerHTML = '<i class="fas fa-moon"></i>';
+                localStorage.setItem('theme', 'light');
+            }
+        });
+
+        // Mobile Menu Toggle
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const mobileMenu = document.getElementById('mobileMenu');
+        
+        mobileMenuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('active');
+            
+            // Change icon based on menu state
+            if (mobileMenu.classList.contains('active')) {
+                mobileMenuBtn.innerHTML = '<i class="fas fa-times"></i>';
+            } else {
+                mobileMenuBtn.innerHTML = '<i class="fas fa-bars"></i>';
+            }
+        });
+
+        // Close mobile menu when clicking on a link
+        const mobileMenuLinks = mobileMenu.querySelectorAll('a');
+        mobileMenuLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                mobileMenu.classList.remove('active');
+                mobileMenuBtn.innerHTML = '<i class="fas fa-bars"></i>';
+            });
+        });
+
+        // Unit Converter Functionality
+        const categorySelect = document.getElementById('categorySelect');
+        const fromUnit = document.getElementById('fromUnit');
+        const toUnit = document.getElementById('toUnit');
+        const inputValue = document.getElementById('inputValue');
+        const convertBtn = document.getElementById('convertBtn');
+        const clearBtn = document.getElementById('clearBtn');
+        const resultsGrid = document.getElementById('resultsGrid');
+
+        // Unit definitions
+        const units = {
+            length: {
+                meter: { name: 'Meter', symbol: 'm', factor: 1 },
+                centimeter: { name: 'Centimeter', symbol: 'cm', factor: 0.01 },
+                millimeter: { name: 'Millimeter', symbol: 'mm', factor: 0.001 },
+                kilometer: { name: 'Kilometer', symbol: 'km', factor: 1000 },
+                inch: { name: 'Inch', symbol: 'in', factor: 0.0254 },
+                foot: { name: 'Foot', symbol: 'ft', factor: 0.3048 },
+                yard: { name: 'Yard', symbol: 'yd', factor: 0.9144 },
+                mile: { name: 'Mile', symbol: 'mi', factor: 1609.344 }
+            },
+            weight: {
+                kilogram: { name: 'Kilogram', symbol: 'kg', factor: 1 },
+                gram: { name: 'Gram', symbol: 'g', factor: 0.001 },
+                milligram: { name: 'Milligram', symbol: 'mg', factor: 0.000001 },
+                pound: { name: 'Pound', symbol: 'lb', factor: 0.453592 },
+                ounce: { name: 'Ounce', symbol: 'oz', factor: 0.0283495 },
+                ton: { name: 'Ton', symbol: 't', factor: 1000 }
+            },
+            temperature: {
+                celsius: { name: 'Celsius', symbol: '°C', factor: 1, offset: 0 },
+                fahrenheit: { name: 'Fahrenheit', symbol: '°F', factor: 5/9, offset: -32 },
+                kelvin: { name: 'Kelvin', symbol: 'K', factor: 1, offset: -273.15 }
+            },
+            volume: {
+                liter: { name: 'Liter', symbol: 'L', factor: 1 },
+                milliliter: { name: 'Milliliter', symbol: 'mL', factor: 0.001 },
+                cubicMeter: { name: 'Cubic Meter', symbol: 'm³', factor: 1000 },
+                gallon: { name: 'Gallon', symbol: 'gal', factor: 3.78541 },
+                quart: { name: 'Quart', symbol: 'qt', factor: 0.946353 },
+                pint: { name: 'Pint', symbol: 'pt', factor: 0.473176 },
+                cup: { name: 'Cup', symbol: 'cup', factor: 0.24 }
+            },
+            area: {
+                squareMeter: { name: 'Square Meter', symbol: 'm²', factor: 1 },
+                squareKilometer: { name: 'Square Kilometer', symbol: 'km²', factor: 1000000 },
+                squareCentimeter: { name: 'Square Centimeter', symbol: 'cm²', factor: 0.0001 },
+                squareMillimeter: { name: 'Square Millimeter', symbol: 'mm²', factor: 0.000001 },
+                hectare: { name: 'Hectare', symbol: 'ha', factor: 10000 },
+                acre: { name: 'Acre', symbol: 'ac', factor: 4046.86 },
+                squareMile: { name: 'Square Mile', symbol: 'mi²', factor: 2589988.11 },
+                squareYard: { name: 'Square Yard', symbol: 'yd²', factor: 0.836127 },
+                squareFoot: { name: 'Square Foot', symbol: 'ft²', factor: 0.092903 },
+                squareInch: { name: 'Square Inch', symbol: 'in²', factor: 0.00064516 }
+            },
+            time: {
+                second: { name: 'Second', symbol: 's', factor: 1 },
+                millisecond: { name: 'Millisecond', symbol: 'ms', factor: 0.001 },
+                minute: { name: 'Minute', symbol: 'min', factor: 60 },
+                hour: { name: 'Hour', symbol: 'h', factor: 3600 },
+                day: { name: 'Day', symbol: 'd', factor: 86400 },
+                week: { name: 'Week', symbol: 'wk', factor: 604800 },
+                month: { name: 'Month', symbol: 'mo', factor: 2592000 },
+                year: { name: 'Year', symbol: 'yr', factor: 31536000 }
+            },
+            speed: {
+                meterPerSecond: { name: 'Meter/Second', symbol: 'm/s', factor: 1 },
+                kilometerPerHour: { name: 'Kilometer/Hour', symbol: 'km/h', factor: 0.277778 },
+                milePerHour: { name: 'Mile/Hour', symbol: 'mph', factor: 0.44704 },
+                knot: { name: 'Knot', symbol: 'kn', factor: 0.514444 },
+                footPerSecond: { name: 'Foot/Second', symbol: 'ft/s', factor: 0.3048 }
+            },
+            digital: {
+                bit: { name: 'Bit', symbol: 'b', factor: 1 },
+                byte: { name: 'Byte', symbol: 'B', factor: 8 },
+                kilobyte: { name: 'Kilobyte', symbol: 'KB', factor: 8192 },
+                megabyte: { name: 'Megabyte', symbol: 'MB', factor: 8388608 },
+                gigabyte: { name: 'Gigabyte', symbol: 'GB', factor: 8589934592 },
+                terabyte: { name: 'Terabyte', symbol: 'TB', factor: 8796093022208 },
+                petabyte: { name: 'Petabyte', symbol: 'PB', factor: 9007199254740992 }
+            }
+        };
+
+        // Populate unit dropdowns based on selected category
+        function populateUnitDropdowns() {
+            const category = categorySelect.value;
+            const unitList = units[category];
+            
+            // Clear existing options
+            fromUnit.innerHTML = '';
+            toUnit.innerHTML = '';
+            
+            // Add options for each unit in the category
+            for (const unitKey in unitList) {
+                const unit = unitList[unitKey];
+                const optionFrom = document.createElement('option');
+                optionFrom.value = unitKey;
+                optionFrom.textContent = `${unit.name} (${unit.symbol})`;
+                
+                const optionTo = document.createElement('option');
+                optionTo.value = unitKey;
+                optionTo.textContent = `${unit.name} (${unit.symbol})`;
+                
+                fromUnit.appendChild(optionFrom);
+                toUnit.appendChild(optionTo);
+            }
+            
+            // Set default selections
+            if (category === 'temperature') {
+                fromUnit.value = 'celsius';
+                toUnit.value = 'fahrenheit';
+            } else {
+                const unitKeys = Object.keys(unitList);
+                fromUnit.value = unitKeys[0];
+                toUnit.value = unitKeys[1] || unitKeys[0];
+            }
+            
+            // Trigger conversion
+            performConversion();
+        }
+
+        // Perform unit conversion
+        function performConversion() {
+            const category = categorySelect.value;
+            const fromUnitKey = fromUnit.value;
+            const toUnitKey = toUnit.value;
+            const value = parseFloat(inputValue.value) || 0;
+            
+            if (category === 'temperature') {
+                convertTemperature(value, fromUnitKey, toUnitKey);
+            } else {
+                convertStandard(value, fromUnitKey, toUnitKey, category);
+            }
+        }
+
+        // Convert standard units (non-temperature)
+        function convertStandard(value, fromUnitKey, toUnitKey, category) {
+            const fromUnitData = units[category][fromUnitKey];
+            const toUnitData = units[category][toUnitKey];
+            
+            // Convert to base unit first
+            const baseValue = value * fromUnitData.factor;
+            
+            // Convert from base unit to target unit
+            const result = baseValue / toUnitData.factor;
+            
+            // Update results display
+            updateResults(value, fromUnitData, result, toUnitData, category);
+        }
+
+        // Convert temperature units
+        function convertTemperature(value, fromUnitKey, toUnitKey) {
+            let result;
+            
+            // Convert to Celsius first
+            let celsiusValue;
+            if (fromUnitKey === 'celsius') {
+                celsiusValue = value;
+            } else if (fromUnitKey === 'fahrenheit') {
+                celsiusValue = (value - 32) * 5/9;
+            } else if (fromUnitKey === 'kelvin') {
+                celsiusValue = value - 273.15;
+            }
+            
+            // Convert from Celsius to target unit
+            if (toUnitKey === 'celsius') {
+                result = celsiusValue;
+            } else if (toUnitKey === 'fahrenheit') {
+                result = (celsiusValue * 9/5) + 32;
+            } else if (toUnitKey === 'kelvin') {
+                result = celsiusValue + 273.15;
+            }
+            
+            const fromUnitData = units.temperature[fromUnitKey];
+            const toUnitData = units.temperature[toUnitKey];
+            
+            // Update results display
+            updateResults(value, fromUnitData, result, toUnitData, 'temperature');
+        }
+
+        // Update results display
+        function updateResults(value, fromUnitData, result, toUnitData, category) {
+            // Clear previous results
+            resultsGrid.innerHTML = '';
+            
+            // Create result card for the main conversion
+            const mainResultCard = document.createElement('div');
+            mainResultCard.className = 'result-card';
+            mainResultCard.innerHTML = `
+                <div class="result-value">${formatNumber(result)}</div>
+                <div class="result-unit">${toUnitData.name} (${toUnitData.symbol})</div>
+            `;
+            resultsGrid.appendChild(mainResultCard);
+            
+            // Create result cards for other units in the same category
+            const unitList = units[category];
+            for (const unitKey in unitList) {
+                if (unitKey !== toUnitData.name.toLowerCase().replace(' ', '')) {
+                    let convertedValue;
+                    
+                    if (category === 'temperature') {
+                        // Convert to Celsius first
+                        let celsiusValue;
+                        if (fromUnitData.name === 'Celsius') {
+                            celsiusValue = value;
+                        } else if (fromUnitData.name === 'Fahrenheit') {
+                            celsiusValue = (value - 32) * 5/9;
+                        } else if (fromUnitData.name === 'Kelvin') {
+                            celsiusValue = value - 273.15;
+                        }
+                        
+                        // Convert from Celsius to target unit
+                        if (unitList[unitKey].name === 'Celsius') {
+                            convertedValue = celsiusValue;
+                        } else if (unitList[unitKey].name === 'Fahrenheit') {
+                            convertedValue = (celsiusValue * 9/5) + 32;
+                        } else if (unitList[unitKey].name === 'Kelvin') {
+                            convertedValue = celsiusValue + 273.15;
+                        }
+                    } else {
+                        // Convert to base unit first
+                        const baseValue = value * fromUnitData.factor;
+                        
+                        // Convert from base unit to target unit
+                        convertedValue = baseValue / unitList[unitKey].factor;
+                    }
+                    
+                    const resultCard = document.createElement('div');
+                    resultCard.className = 'result-card';
+                    resultCard.innerHTML = `
+                        <div class="result-value">${formatNumber(convertedValue)}</div>
+                        <div class="result-unit">${unitList[unitKey].name} (${unitList[unitKey].symbol})</div>
+                    `;
+                    resultsGrid.appendChild(resultCard);
+                }
+            }
+        }
+
+        // Format number for display
+        function formatNumber(num) {
+            if (num === 0) return '0';
+            
+            // For very small numbers, use scientific notation
+            if (Math.abs(num) < 0.0001) {
+                return num.toExponential(4);
+            }
+            
+            // For very large numbers, use scientific notation
+            if (Math.abs(num) > 1000000) {
+                return num.toExponential(4);
+            }
+            
+            // For regular numbers, limit decimal places
+            return parseFloat(num.toFixed(6)).toString();
+        }
+
+        // Event listeners
+        categorySelect.addEventListener('change', populateUnitDropdowns);
+        fromUnit.addEventListener('change', performConversion);
+        toUnit.addEventListener('change', performConversion);
+        inputValue.addEventListener('input', performConversion);
+        convertBtn.addEventListener('click', performConversion);
+        
+        clearBtn.addEventListener('click', () => {
+            inputValue.value = '';
+            resultsGrid.innerHTML = '';
+        });
+
+        // Initialize the converter
+        populateUnitDropdowns();
+
+        // Language Switcher
+        const languageBtn = document.querySelector('.language-btn');
+        const currentLanguageElement = document.getElementById('currentLanguage');
+        const languageDropdown = document.querySelector('.language-dropdown');
+        
+        const languages = [
+            { code: 'en', name: 'English' },
+            { code: 'es', name: 'Español' },
+            { code: 'fr', name: 'Français' },
+            { code: 'de', name: 'Deutsch' },
+            { code: 'it', name: 'Italiano' },
+            { code: 'pt', name: 'Português' },
+            { code: 'ja', name: '日本語' },
+            { code: 'ru', name: 'Pусский' },
+            { code: 'ko', name: '한국어' },
+            { code: 'zh-CN', name: '中文 (简体)' },
+            { code: 'zh-TW', name: '中文 (繁體)' },
+            { code: 'ar', name: 'العربية' },
+            { code: 'fa', name: 'فارسی' },
+            { code: 'bg', name: 'Български' },
+            { code: 'ca', name: 'Català' },
+            { code: 'nl', name: 'Nederlands' },
+            { code: 'el', name: 'Ελληνικά' },
+            { code: 'hi', name: 'हिन्दी' },
+            { code: 'te', name: 'తెలుగు' },
+            { code: 'kn', name: 'ಕನ್ನಡ' },
+            { code: 'ta', name: 'தமிழ்' },
+            { code: 'ml', name: 'മലയാളം' },
+            { code: 'id', name: 'Bahasa Indonesia' },
+            { code: 'ms', name: 'Bahasa Melayu' },
+            { code: 'pl', name: 'Polski' },
+            { code: 'th', name: 'ภาษาไทย' },
+            { code: 'tr', name: 'Türkçe' },
+            { code: 'uk', name: 'Українська' },
+            { code: 'vi', name: 'Tiếng Việt' },
+            { code: 'is', name: 'Íslenska' },
+            { code: 'no', name: 'Norsk' },
+            { code: 'sv', name: 'Svenska' },
+            { code: 'fi', name: 'Suomi' },
+            { code: 'cs', name: 'Čeština' }
+        ];
+
+        // Translation data
+        const translations = {
+            en: {
+                "nav.home": "Home",
+                "nav.about": "About Us",
+                "nav.tools": "Tools",
+                "nav.contact": "Contact",
+                "hero.title": "Unit Converter Tool",
+                "hero.description": "Convert between different units of measurement instantly. All conversions happen locally in your browser with no file size limits and complete privacy.",
+                "howto.title": "How to Use the Unit Converter",
+                "howto.step1.title": "Select Category",
+                "howto.step1.description": "Choose the category of units you want to convert between, such as length, weight, temperature, volume, area, or time.",
+                "howto.step2.title": "Choose Units",
+                "howto.step2.description": "Select the unit you want to convert from and the unit you want to convert to from the dropdown menus.",
+                "howto.step3.title": "Enter Value",
+                "howto.step3.description": "Type the value you want to convert in the input field. The conversion happens instantly as you type.",
+                "howto.step4.title": "View Results",
+                "howto.step4.description": "See the converted value and compare it with other common units in the same category. All processing happens locally in your browser.",
+                "tool.title": "Unit Converter",
+                "tool.category": "Category:",
+                "tool.categories.length": "Length",
+                "tool.categories.weight": "Weight",
+                "tool.categories.temperature": "Temperature",
+                "tool.categories.volume": "Volume",
+                "tool.categories.area": "Area",
+                "tool.categories.time": "Time",
+                "tool.categories.speed": "Speed",
+                "tool.categories.digital": "Digital Storage",
+                "tool.from": "From:",
+                "tool.value": "Value:",
+                "tool.to": "To:",
+                "tool.results": "Conversion Results",
+                "tool.convert": "Convert",
+                "tool.clear": "Clear All",
+                "footer.follow": "FOLLOW US",
+                "footer.categories": "Popular Categories",
+                "footer.categories.pdf": "PDF Tools",
+                "footer.categories.image": "Image Tools",
+                "footer.categories.text": "Text Tools",
+                "footer.categories.av": "Audio/Video Tools",
+                "footer.categories.web": "WebDeveloper Tools",
+                "footer.categories.calc": "Calculator Tools",
+                "footer.categories.util": "Utility Tools",
+                "footer.categories.color": "Color Tools",
+                "footer.quicklinks": "Quick Links",
+                "footer.links.tools": "All Tools",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Contact",
+                "footer.links.privacy": "Privacy Policy",
+                "footer.links.disclaimer": "Disclaimer",
+                "footer.links.terms": "Terms of Service",
+                "footer.copyright": "© 2025 LollyPoPDF. All rights reserved."
+            },
+            es: {
+                "nav.home": "Inicio",
+                "nav.about": "Sobre Nosotros",
+                "nav.tools": "Herramientas",
+                "nav.contact": "Contacto",
+                "hero.title": "Herramienta Convertidor de Unidades",
+                "hero.description": "Convierte entre diferentes unidades de medida al instante. Todas las conversiones ocurren localmente en tu navegador sin límites de tamaño de archivo y con privacidad completa.",
+                "howto.title": "Cómo Usar el Convertidor de Unidades",
+                "howto.step1.title": "Selecciona Categoría",
+                "howto.step1.description": "Elige la categoría de unidades que quieres convertir, como longitud, peso, temperatura, volumen, área o tiempo.",
+                "howto.step2.title": "Elige Unidades",
+                "howto.step2.description": "Selecciona la unidad desde la que quieres convertir y la unidad a la que quieres convertir desde los menús desplegables.",
+                "howto.step3.title": "Ingresa Valor",
+                "howto.step3.description": "Escribe el valor que quieres convertir en el campo de entrada. La conversión ocurre instantáneamente mientras escribes.",
+                "howto.step4.title": "Ver Resultados",
+                "howto.step4.description": "Ve el valor convertido y compáralo con otras unidades comunes en la misma categoría. Todo el procesamiento ocurre localmente en tu navegador.",
+                "tool.title": "Convertidor de Unidades",
+                "tool.category": "Categoría:",
+                "tool.categories.length": "Longitud",
+                "tool.categories.weight": "Peso",
+                "tool.categories.temperature": "Temperatura",
+                "tool.categories.volume": "Volumen",
+                "tool.categories.area": "Área",
+                "tool.categories.time": "Tiempo",
+                "tool.categories.speed": "Velocidad",
+                "tool.categories.digital": "Almacenamiento Digital",
+                "tool.from": "De:",
+                "tool.value": "Valor:",
+                "tool.to": "A:",
+                "tool.results": "Resultados de Conversión",
+                "tool.convert": "Convertir",
+                "tool.clear": "Limpiar Todo",
+                "footer.follow": "SÍGUENOS",
+                "footer.categories": "Categorías Populares",
+                "footer.categories.pdf": "Herramientas PDF",
+                "footer.categories.image": "Herramientas de Imagen",
+                "footer.categories.text": "Herramientas de Texto",
+                "footer.categories.av": "Herramientas de Audio/Video",
+                "footer.categories.web": "Herramientas WebDesarrollador",
+                "footer.categories.calc": "Herramientas de Calculadora",
+                "footer.categories.util": "Herramientas de Utilidad",
+                "footer.categories.color": "Herramientas de Color",
+                "footer.quicklinks": "Enlaces Rápidos",
+                "footer.links.tools": "Todas las Herramientas",
+                "footer.links.faq": "Preguntas Frecuentes",
+                "footer.links.contact": "Contacto",
+                "footer.links.privacy": "Política de Privacidad",
+                "footer.links.disclaimer": "Descargo de Responsabilidad",
+                "footer.links.terms": "Términos de Servicio",
+                "footer.copyright": "© 2025 LollyPoPDF. Todos los derechos reservados."
+            },
+            fr: {
+                "nav.home": "Accueil",
+                "nav.about": "À Propos",
+                "nav.tools": "Outils",
+                "nav.contact": "Contact",
+                "hero.title": "Outil de Conversion d'Unités",
+                "hero.description": "Convertissez entre différentes unités de mesure instantanément. Toutes les conversions se font localement dans votre navigateur sans limites de taille de fichier et avec une confidentialité totale.",
+                "howto.title": "Comment Utiliser le Convertisseur d'Unités",
+                "howto.step1.title": "Sélectionnez la Catégorie",
+                "howto.step1.description": "Choisissez la catégorie d'unités que vous souhaitez convertir, comme la longueur, le poids, la température, le volume, la surface ou le temps.",
+                "howto.step2.title": "Choisissez les Unités",
+                "howto.step2.description": "Sélectionnez l'unité à partir de laquelle vous voulez convertir et l'unité vers laquelle vous voulez convertir dans les menus déroulants.",
+                "howto.step3.title": "Entrez la Valeur",
+                "howto.step3.description": "Tapez la valeur que vous souhaitez convertir dans le champ de saisie. La conversion se fait instantanément pendant que vous tapez.",
+                "howto.step4.title": "Voir les Résultats",
+                "howto.step4.description": "Voyez la valeur convertie et comparez-la avec d'autres unités courantes dans la même catégorie. Tout le traitement se fait localement dans votre navigateur.",
+                "tool.title": "Convertisseur d'Unités",
+                "tool.category": "Catégorie:",
+                "tool.categories.length": "Longueur",
+                "tool.categories.weight": "Poids",
+                "tool.categories.temperature": "Température",
+                "tool.categories.volume": "Volume",
+                "tool.categories.area": "Surface",
+                "tool.categories.time": "Temps",
+                "tool.categories.speed": "Vitesse",
+                "tool.categories.digital": "Stockage Numérique",
+                "tool.from": "De:",
+                "tool.value": "Valeur:",
+                "tool.to": "À:",
+                "tool.results": "Résultats de Conversion",
+                "tool.convert": "Convertir",
+                "tool.clear": "Tout Effacer",
+                "footer.follow": "SUIVEZ-NOUS",
+                "footer.categories": "Catégories Populaires",
+                "footer.categories.pdf": "Outils PDF",
+                "footer.categories.image": "Outils d'Image",
+                "footer.categories.text": "Outils de Texte",
+                "footer.categories.av": "Outils Audio/Video",
+                "footer.categories.web": "Outils WebDéveloppeur",
+                "footer.categories.calc": "Outils de Calculatrice",
+                "footer.categories.util": "Outils d'Utilité",
+                "footer.categories.color": "Outils de Couleur",
+                "footer.quicklinks": "Liens Rapides",
+                "footer.links.tools": "Tous les Outils",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Contact",
+                "footer.links.privacy": "Politique de Confidentialité",
+                "footer.links.disclaimer": "Avertissement",
+                "footer.links.terms": "Conditions d'Utilisation",
+                "footer.copyright": "© 2025 LollyPoPDF. Tous droits réservés."
+            },
+            de: {
+                "nav.home": "Startseite",
+                "nav.about": "Über Uns",
+                "nav.tools": "Werkzeuge",
+                "nav.contact": "Kontakt",
+                "hero.title": "Einheiten-Umrechnungstool",
+                "hero.description": "Konvertieren Sie sofort zwischen verschiedenen Maßeinheiten. Alle Umrechnungen erfolgen lokal in Ihrem Browser ohne Dateigrößenbeschränkungen und mit vollständiger Privatsphäre.",
+                "howto.title": "So verwenden Sie den Einheiten-Umrechner",
+                "howto.step1.title": "Kategorie auswählen",
+                "howto.step1.description": "Wählen Sie die Kategorie der Einheiten aus, die Sie umrechnen möchten, z.B. Länge, Gewicht, Temperatur, Volumen, Fläche oder Zeit.",
+                "howto.step2.title": "Einheiten wählen",
+                "howto.step2.description": "Wählen Sie die Einheit, von der Sie umrechnen möchten, und die Einheit, in die Sie umrechnen möchten, aus den Dropdown-Menüs.",
+                "howto.step3.title": "Wert eingeben",
+                "howto.step3.description": "Geben Sie den Wert, den Sie umrechnen möchten, in das Eingabefeld ein. Die Umrechnung erfolgt sofort während der Eingabe.",
+                "howto.step4.title": "Ergebnisse anzeigen",
+                "howto.step4.description": "Sehen Sie den umgerechneten Wert und vergleichen Sie ihn mit anderen gebräuchlichen Einheiten derselben Kategorie. Die gesamte Verarbeitung erfolgt lokal in Ihrem Browser.",
+                "tool.title": "Einheiten-Umrechner",
+                "tool.category": "Kategorie:",
+                "tool.categories.length": "Länge",
+                "tool.categories.weight": "Gewicht",
+                "tool.categories.temperature": "Temperatur",
+                "tool.categories.volume": "Volumen",
+                "tool.categories.area": "Fläche",
+                "tool.categories.time": "Zeit",
+                "tool.categories.speed": "Geschwindigkeit",
+                "tool.categories.digital": "Digitale Speicherung",
+                "tool.from": "Von:",
+                "tool.value": "Wert:",
+                "tool.to": "Zu:",
+                "tool.results": "Umrechnungsergebnisse",
+                "tool.convert": "Umrechnen",
+                "tool.clear": "Alles löschen",
+                "footer.follow": "FOLGEN SIE UNS",
+                "footer.categories": "Beliebte Kategorien",
+                "footer.categories.pdf": "PDF-Werkzeuge",
+                "footer.categories.image": "Bildwerkzeuge",
+                "footer.categories.text": "Textwerkzeuge",
+                "footer.categories.av": "Audio/Video-Werkzeuge",
+                "footer.categories.web": "WebEntwickler-Werkzeuge",
+                "footer.categories.calc": "Rechnerwerkzeuge",
+                "footer.categories.util": "Hilfsprogramme",
+                "footer.categories.color": "Farbwerkzeuge",
+                "footer.quicklinks": "Schnelllinks",
+                "footer.links.tools": "Alle Werkzeuge",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Kontakt",
+                "footer.links.privacy": "Datenschutzrichtlinie",
+                "footer.links.disclaimer": "Haftungsausschluss",
+                "footer.links.terms": "Nutzungsbedingungen",
+                "footer.copyright": "© 2025 LollyPoPDF. Alle Rechte vorbehalten."
+            },
+            it: {
+                "nav.home": "Home",
+                "nav.about": "Chi Siamo",
+                "nav.tools": "Strumenti",
+                "nav.contact": "Contatto",
+                "hero.title": "Strumento Convertitore di Unità",
+                "hero.description": "Converti tra diverse unità di misura istantaneamente. Tutte le conversioni avvengono localmente nel tuo browser senza limiti di dimensione file e con completa privacy.",
+                "howto.title": "Come Usare il Convertitore di Unità",
+                "howto.step1.title": "Seleziona Categoria",
+                "howto.step1.description": "Scegli la categoria di unità che vuoi convertire, come lunghezza, peso, temperatura, volume, area o tempo.",
+                "howto.step2.title": "Scegli le Unità",
+                "howto.step2.description": "Seleziona l'unità da cui vuoi convertire e l'unità in cui vuoi convertire dai menu a discesa.",
+                "howto.step3.title": "Inserisci Valore",
+                "howto.step3.description": "Digita il valore che vuoi convertire nel campo di input. La conversione avviene istantaneamente mentre digiti.",
+                "howto.step4.title": "Visualizza Risultati",
+                "howto.step4.description": "Vedi il valore convertito e confrontalo con altre unità comuni nella stessa categoria. Tutta l'elaborazione avviene localmente nel tuo browser.",
+                "tool.title": "Convertitore di Unità",
+                "tool.category": "Categoria:",
+                "tool.categories.length": "Lunghezza",
+                "tool.categories.weight": "Peso",
+                "tool.categories.temperature": "Temperatura",
+                "tool.categories.volume": "Volume",
+                "tool.categories.area": "Area",
+                "tool.categories.time": "Tempo",
+                "tool.categories.speed": "Velocità",
+                "tool.categories.digital": "Memoria Digitale",
+                "tool.from": "Da:",
+                "tool.value": "Valore:",
+                "tool.to": "A:",
+                "tool.results": "Risultati Conversione",
+                "tool.convert": "Converti",
+                "tool.clear": "Pulisci Tutto",
+                "footer.follow": "SEGUICI",
+                "footer.categories": "Categorie Popolari",
+                "footer.categories.pdf": "Strumenti PDF",
+                "footer.categories.image": "Strumenti Immagine",
+                "footer.categories.text": "Strumenti Testo",
+                "footer.categories.av": "Strumenti Audio/Video",
+                "footer.categories.web": "Strumenti Sviluppatore Web",
+                "footer.categories.calc": "Strumenti Calcolatrice",
+                "footer.categories.util": "Strumenti Utilità",
+                "footer.categories.color": "Strumenti Colore",
+                "footer.quicklinks": "Link Rapidi",
+                "footer.links.tools": "Tutti gli Strumenti",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Contatto",
+                "footer.links.privacy": "Informativa sulla Privacy",
+                "footer.links.disclaimer": "Disclaimer",
+                "footer.links.terms": "Termini di Servizio",
+                "footer.copyright": "© 2025 LollyPoPDF. Tutti i diritti riservati."
+            },
+            pt: {
+                "nav.home": "Início",
+                "nav.about": "Sobre Nós",
+                "nav.tools": "Ferramentas",
+                "nav.contact": "Contato",
+                "hero.title": "Ferramenta Conversor de Unidades",
+                "hero.description": "Converta entre diferentes unidades de medida instantaneamente. Todas as conversões acontecem localmente no seu navegador sem limites de tamanho de arquivo e com privacidade completa.",
+                "howto.title": "Como Usar o Conversor de Unidades",
+                "howto.step1.title": "Selecione Categoria",
+                "howto.step1.description": "Escolha a categoria de unidades que deseja converter, como comprimento, peso, temperatura, volume, área ou tempo.",
+                "howto.step2.title": "Escolha Unidades",
+                "howto.step2.description": "Selecione a unidade da qual deseja converter e a unidade para a qual deseja converter nos menus suspensos.",
+                "howto.step3.title": "Insira Valor",
+                "howto.step3.description": "Digite o valor que deseja converter no campo de entrada. A conversão acontece instantaneamente enquanto você digita.",
+                "howto.step4.title": "Ver Resultados",
+                "howto.step4.description": "Veja o valor convertido e compare-o com outras unidades comuns na mesma categoria. Todo o processamento acontece localmente no seu navegador.",
+                "tool.title": "Conversor de Unidades",
+                "tool.category": "Categoria:",
+                "tool.categories.length": "Comprimento",
+                "tool.categories.weight": "Peso",
+                "tool.categories.temperature": "Temperatura",
+                "tool.categories.volume": "Volume",
+                "tool.categories.area": "Área",
+                "tool.categories.time": "Tempo",
+                "tool.categories.speed": "Velocidade",
+                "tool.categories.digital": "Armazenamento Digital",
+                "tool.from": "De:",
+                "tool.value": "Valor:",
+                "tool.to": "Para:",
+                "tool.results": "Resultados da Conversão",
+                "tool.convert": "Converter",
+                "tool.clear": "Limpar Tudo",
+                "footer.follow": "SIGA-NOS",
+                "footer.categories": "Categorias Populares",
+                "footer.categories.pdf": "Ferramentas PDF",
+                "footer.categories.image": "Ferramentas de Imagem",
+                "footer.categories.text": "Ferramentas de Texto",
+                "footer.categories.av": "Ferramentas de Áudio/Video",
+                "footer.categories.web": "Ferramentas WebDesenvolvedor",
+                "footer.categories.calc": "Ferramentas de Calculadora",
+                "footer.categories.util": "Ferramentas de Utilidade",
+                "footer.categories.color": "Ferramentas de Cor",
+                "footer.quicklinks": "Links Rápidos",
+                "footer.links.tools": "Todas as Ferramentas",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Contato",
+                "footer.links.privacy": "Política de Privacidade",
+                "footer.links.disclaimer": "Aviso Legal",
+                "footer.links.terms": "Termos de Serviço",
+                "footer.copyright": "© 2025 LollyPoPDF. Todos os direitos reservados."
+            },
+            ja: {
+                "nav.home": "ホーム",
+                "nav.about": "会社概要",
+                "nav.tools": "ツール",
+                "nav.contact": "お問い合わせ",
+                "hero.title": "単位変換ツール",
+                "hero.description": "さまざまな測定単位を瞬時に変換します。すべての変換はブラウザ内でローカルに行われ、ファイルサイズ制限がなく、完全なプライバシーが保たれます。",
+                "howto.title": "単位変換ツールの使い方",
+                "howto.step1.title": "カテゴリを選択",
+                "howto.step1.description": "長さ、重量、温度、体積、面積、時間など、変換したい単位のカテゴリを選択します。",
+                "howto.step2.title": "単位を選択",
+                "howto.step2.description": "変換元の単位と変換先の単位をドロップダウンメニューから選択します。",
+                "howto.step3.title": "値を入力",
+                "howto.step3.description": "変換したい値を入力フィールドに入力します。入力すると同時に瞬時に変換が行われます。",
+                "howto.step4.title": "結果を表示",
+                "howto.step4.description": "変換された値を確認し、同じカテゴリの他の一般的な単位と比較します。すべての処理はブラウザ内でローカルに行われます。",
+                "tool.title": "単位変換ツール",
+                "tool.category": "カテゴリ:",
+                "tool.categories.length": "長さ",
+                "tool.categories.weight": "重量",
+                "tool.categories.temperature": "温度",
+                "tool.categories.volume": "体積",
+                "tool.categories.area": "面積",
+                "tool.categories.time": "時間",
+                "tool.categories.speed": "速度",
+                "tool.categories.digital": "デジタルストレージ",
+                "tool.from": "変換元:",
+                "tool.value": "値:",
+                "tool.to": "変換先:",
+                "tool.results": "変換結果",
+                "tool.convert": "変換",
+                "tool.clear": "すべてクリア",
+                "footer.follow": "フォローする",
+                "footer.categories": "人気カテゴリ",
+                "footer.categories.pdf": "PDFツール",
+                "footer.categories.image": "画像ツール",
+                "footer.categories.text": "テキストツール",
+                "footer.categories.av": "オーディオ/ビデオツール",
+                "footer.categories.web": "Web開発者ツール",
+                "footer.categories.calc": "電卓ツール",
+                "footer.categories.util": "ユーティリティツール",
+                "footer.categories.color": "カラーツール",
+                "footer.quicklinks": "クイックリンク",
+                "footer.links.tools": "すべてのツール",
+                "footer.links.faq": "よくある質問",
+                "footer.links.contact": "お問い合わせ",
+                "footer.links.privacy": "プライバシーポリシー",
+                "footer.links.disclaimer": "免責事項",
+                "footer.links.terms": "利用規約",
+                "footer.copyright": "© 2025 LollyPoPDF. 無断転載を禁じます."
+            },
+            ru: {
+                "nav.home": "Главная",
+                "nav.about": "О нас",
+                "nav.tools": "Инструменты",
+                "nav.contact": "Контакты",
+                "hero.title": "Инструмент конвертации единиц",
+                "hero.description": "Мгновенно конвертируйте между различными единицами измерения. Все преобразования происходят локально в вашем браузере без ограничений по размеру файла и с полной конфиденциальностью.",
+                "howto.title": "Как использовать конвертер единиц",
+                "howto.step1.title": "Выберите категорию",
+                "howto.step1.description": "Выберите категорию единиц, которые вы хотите преобразовать, например, длина, вес, температура, объем, площадь или время.",
+                "howto.step2.title": "Выберите единицы",
+                "howto.step2.description": "Выберите единицу, из которой вы хотите преобразовать, и единицу, в которую вы хотите преобразовать, из выпадающих меню.",
+                "howto.step3.title": "Введите значение",
+                "howto.step3.description": "Введите значение, которое вы хотите преобразовать, в поле ввода. Преобразование происходит мгновенно по мере ввода.",
+                "howto.step4.title": "Просмотр результатов",
+                "howto.step4.description": "Посмотрите преобразованное значение и сравните его с другими распространенными единицами в той же категории. Вся обработка происходит локально в вашем браузере.",
+                "tool.title": "Конвертер единиц",
+                "tool.category": "Категория:",
+                "tool.categories.length": "Длина",
+                "tool.categories.weight": "Вес",
+                "tool.categories.temperature": "Температура",
+                "tool.categories.volume": "Объем",
+                "tool.categories.area": "Площадь",
+                "tool.categories.time": "Время",
+                "tool.categories.speed": "Скорость",
+                "tool.categories.digital": "Цифровое хранилище",
+                "tool.from": "Из:",
+                "tool.value": "Значение:",
+                "tool.to": "В:",
+                "tool.results": "Результаты конвертации",
+                "tool.convert": "Конвертировать",
+                "tool.clear": "Очистить все",
+                "footer.follow": "СЛЕДУЙТЕ ЗА НАМИ",
+                "footer.categories": "Популярные категории",
+                "footer.categories.pdf": "PDF инструменты",
+                "footer.categories.image": "Инструменты для изображений",
+                "footer.categories.text": "Текстовые инструменты",
+                "footer.categories.av": "Аудио/Видео инструменты",
+                "footer.categories.web": "Инструменты веб-разработчика",
+                "footer.categories.calc": "Инструменты калькулятора",
+                "footer.categories.util": "Утилиты",
+                "footer.categories.color": "Инструменты цвета",
+                "footer.quicklinks": "Быстрые ссылки",
+                "footer.links.tools": "Все инструменты",
+                "footer.links.faq": "ЧаВо",
+                "footer.links.contact": "Контакты",
+                "footer.links.privacy": "Политика конфиденциальности",
+                "footer.links.disclaimer": "Отказ от ответственности",
+                "footer.links.terms": "Условия использования",
+                "footer.copyright": "© 2025 LollyPoPDF. Все права защищены."
+            },
+            ko: {
+                "nav.home": "홈",
+                "nav.about": "회사 소개",
+                "nav.tools": "도구",
+                "nav.contact": "문의하기",
+                "hero.title": "단위 변환 도구",
+                "hero.description": "다양한 측정 단위를 즉시 변환하세요. 모든 변환은 파일 크기 제한 없이 브라우저에서 로컬로 이루어지며 완전한 개인 정보 보호가 제공됩니다.",
+                "howto.title": "단위 변환기 사용 방법",
+                "howto.step1.title": "카테고리 선택",
+                "howto.step1.description": "길이, 무게, 온도, 부피, 면적 또는 시간과 같이 변환하려는 단위의 카테고리를 선택하세요.",
+                "howto.step2.title": "단위 선택",
+                "howto.step2.description": "변환하려는 단위와 변환할 단위를 드롭다운 메뉴에서 선택하세요.",
+                "howto.step3.title": "값 입력",
+                "howto.step3.description": "변환하려는 값을 입력 필드에 입력하세요. 입력하는 즉시 변환이 이루어집니다.",
+                "howto.step4.title": "결과 보기",
+                "howto.step4.description": "변환된 값을 확인하고 동일한 카테고리의 다른 일반 단위와 비교하세요. 모든 처리는 브라우저에서 로컬로 이루어집니다.",
+                "tool.title": "단위 변환기",
+                "tool.category": "카테고리:",
+                "tool.categories.length": "길이",
+                "tool.categories.weight": "무게",
+                "tool.categories.temperature": "온도",
+                "tool.categories.volume": "부피",
+                "tool.categories.area": "면적",
+                "tool.categories.time": "시간",
+                "tool.categories.speed": "속도",
+                "tool.categories.digital": "디지털 저장소",
+                "tool.from": "변환 전:",
+                "tool.value": "값:",
+                "tool.to": "변환 후:",
+                "tool.results": "변환 결과",
+                "tool.convert": "변환",
+                "tool.clear": "모두 지우기",
+                "footer.follow": "팔로우하기",
+                "footer.categories": "인기 카테고리",
+                "footer.categories.pdf": "PDF 도구",
+                "footer.categories.image": "이미지 도구",
+                "footer.categories.text": "텍스트 도구",
+                "footer.categories.av": "오디오/비디오 도구",
+                "footer.categories.web": "웹 개발자 도구",
+                "footer.categories.calc": "계산기 도구",
+                "footer.categories.util": "유틸리티 도구",
+                "footer.categories.color": "색상 도구",
+                "footer.quicklinks": "빠른 링크",
+                "footer.links.tools": "모든 도구",
+                "footer.links.faq": "자주 묻는 질문",
+                "footer.links.contact": "문의하기",
+                "footer.links.privacy": "개인정보 보호정책",
+                "footer.links.disclaimer": "면책 조항",
+                "footer.links.terms": "이용 약관",
+                "footer.copyright": "© 2025 LollyPoPDF. 모든 권리 보유."
+            },
+            "zh-CN": {
+                "nav.home": "首页",
+                "nav.about": "关于我们",
+                "nav.tools": "工具",
+                "nav.contact": "联系我们",
+                "hero.title": "单位转换工具",
+                "hero.description": "即时在不同测量单位之间进行转换。所有转换都在您的浏览器本地进行，没有文件大小限制，完全保护隐私。",
+                "howto.title": "如何使用单位转换器",
+                "howto.step1.title": "选择类别",
+                "howto.step1.description": "选择您想要转换的单位类别，例如长度、重量、温度、体积、面积或时间。",
+                "howto.step2.title": "选择单位",
+                "howto.step2.description": "从下拉菜单中选择您要转换的原始单位和目标单位。",
+                "howto.step3.title": "输入数值",
+                "howto.step3.description": "在输入字段中输入您想要转换的数值。转换会在您输入时即时进行。",
+                "howto.step4.title": "查看结果",
+                "howto.step4.description": "查看转换后的数值，并与同一类别中的其他常用单位进行比较。所有处理都在您的浏览器本地进行。",
+                "tool.title": "单位转换器",
+                "tool.category": "类别:",
+                "tool.categories.length": "长度",
+                "tool.categories.weight": "重量",
+                "tool.categories.temperature": "温度",
+                "tool.categories.volume": "体积",
+                "tool.categories.area": "面积",
+                "tool.categories.time": "时间",
+                "tool.categories.speed": "速度",
+                "tool.categories.digital": "数字存储",
+                "tool.from": "从:",
+                "tool.value": "数值:",
+                "tool.to": "到:",
+                "tool.results": "转换结果",
+                "tool.convert": "转换",
+                "tool.clear": "全部清除",
+                "footer.follow": "关注我们",
+                "footer.categories": "热门类别",
+                "footer.categories.pdf": "PDF工具",
+                "footer.categories.image": "图像工具",
+                "footer.categories.text": "文本工具",
+                "footer.categories.av": "音频/视频工具",
+                "footer.categories.web": "Web开发工具",
+                "footer.categories.calc": "计算器工具",
+                "footer.categories.util": "实用工具",
+                "footer.categories.color": "颜色工具",
+                "footer.quicklinks": "快速链接",
+                "footer.links.tools": "所有工具",
+                "footer.links.faq": "常见问题",
+                "footer.links.contact": "联系我们",
+                "footer.links.privacy": "隐私政策",
+                "footer.links.disclaimer": "免责声明",
+                "footer.links.terms": "服务条款",
+                "footer.copyright": "© 2025 LollyPoPDF. 保留所有权利。"
+            },
+            "zh-TW": {
+                "nav.home": "首頁",
+                "nav.about": "關於我們",
+                "nav.tools": "工具",
+                "nav.contact": "聯絡我們",
+                "hero.title": "單位轉換工具",
+                "hero.description": "即時在不同測量單位之間進行轉換。所有轉換都在您的瀏覽器本地進行，沒有檔案大小限制，完全保護隱私。",
+                "howto.title": "如何使用單位轉換器",
+                "howto.step1.title": "選擇類別",
+                "howto.step1.description": "選擇您想要轉換的單位類別，例如長度、重量、溫度、體積、面積或時間。",
+                "howto.step2.title": "選擇單位",
+                "howto.step2.description": "從下拉式選單中選擇您要轉換的原始單位和目標單位。",
+                "howto.step3.title": "輸入數值",
+                "howto.step3.description": "在輸入欄位中輸入您想要轉換的數值。轉換會在您輸入時即時進行。",
+                "howto.step4.title": "查看結果",
+                "howto.step4.description": "查看轉換後的數值，並與同一類別中的其他常用單位進行比較。所有處理都在您的瀏覽器本地進行。",
+                "tool.title": "單位轉換器",
+                "tool.category": "類別:",
+                "tool.categories.length": "長度",
+                "tool.categories.weight": "重量",
+                "tool.categories.temperature": "溫度",
+                "tool.categories.volume": "體積",
+                "tool.categories.area": "面積",
+                "tool.categories.time": "時間",
+                "tool.categories.speed": "速度",
+                "tool.categories.digital": "數位儲存",
+                "tool.from": "從:",
+                "tool.value": "數值:",
+                "tool.to": "到:",
+                "tool.results": "轉換結果",
+                "tool.convert": "轉換",
+                "tool.clear": "全部清除",
+                "footer.follow": "追蹤我們",
+                "footer.categories": "熱門類別",
+                "footer.categories.pdf": "PDF工具",
+                "footer.categories.image": "影像工具",
+                "footer.categories.text": "文字工具",
+                "footer.categories.av": "音訊/視訊工具",
+                "footer.categories.web": "網頁開發工具",
+                "footer.categories.calc": "計算機工具",
+                "footer.categories.util": "實用工具",
+                "footer.categories.color": "色彩工具",
+                "footer.quicklinks": "快速連結",
+                "footer.links.tools": "所有工具",
+                "footer.links.faq": "常見問題",
+                "footer.links.contact": "聯絡我們",
+                "footer.links.privacy": "隱私權政策",
+                "footer.links.disclaimer": "免責聲明",
+                "footer.links.terms": "服務條款",
+                "footer.copyright": "© 2025 LollyPoPDF. 版權所有。"
+            },
+            ar: {
+                "nav.home": "الصفحة الرئيسية",
+                "nav.about": "من نحن",
+                "nav.tools": "الأدوات",
+                "nav.contact": "اتصل بنا",
+                "hero.title": "أداة تحويل الوحدات",
+                "hero.description": "تحويل بين وحدات القياس المختلفة على الفور. تحدث جميع التحويلات محليًا في متصفحك دون حدود لحجم الملف وبخصوصية كاملة.",
+                "howto.title": "كيفية استخدام محول الوحدات",
+                "howto.step1.title": "اختر الفئة",
+                "howto.step1.description": "اختر فئة الوحدات التي تريد التحويل بينها، مثل الطول، الوزن، درجة الحرارة، الحجم، المساحة أو الوقت.",
+                "howto.step2.title": "اختر الوحدات",
+                "howto.step2.description": "حدد الوحدة التي تريد التحويل منها والوحدة التي تريد التحويل إليها من القوائم المنسدلة.",
+                "howto.step3.title": "أدخل القيمة",
+                "howto.step3.description": "اكتب القيمة التي تريد تحويلها في حقل الإدخال. يحدث التحويل على الفور أثناء الكتابة.",
+                "howto.step4.title": "عرض النتائج",
+                "howto.step4.description": "شاهد القيمة المحولة وقارنها مع الوحدات الشائعة الأخرى في نفس الفئة. كل المعالجة تحدث محليًا في متصفحك.",
+                "tool.title": "محول الوحدات",
+                "tool.category": "الفئة:",
+                "tool.categories.length": "الطول",
+                "tool.categories.weight": "الوزن",
+                "tool.categories.temperature": "درجة الحرارة",
+                "tool.categories.volume": "الحجم",
+                "tool.categories.area": "المساحة",
+                "tool.categories.time": "الوقت",
+                "tool.categories.speed": "السرعة",
+                "tool.categories.digital": "التخزين الرقمي",
+                "tool.from": "من:",
+                "tool.value": "القيمة:",
+                "tool.to": "إلى:",
+                "tool.results": "نتائج التحويل",
+                "tool.convert": "تحويل",
+                "tool.clear": "مسح الكل",
+                "footer.follow": "تابعنا",
+                "footer.categories": "الفئات الشائعة",
+                "footer.categories.pdf": "أدوات PDF",
+                "footer.categories.image": "أدوات الصور",
+                "footer.categories.text": "أدوات النص",
+                "footer.categories.av": "أدوات الصوت/الفيديو",
+                "footer.categories.web": "أدوات مطور الويب",
+                "footer.categories.calc": "أدوات الآلة الحاسبة",
+                "footer.categories.util": "أدوات المساعدة",
+                "footer.categories.color": "أدوات الألوان",
+                "footer.quicklinks": "روابط سريعة",
+                "footer.links.tools": "جميع الأدوات",
+                "footer.links.faq": "الأسئلة الشائعة",
+                "footer.links.contact": "اتصل بنا",
+                "footer.links.privacy": "سياسة الخصوصية",
+                "footer.links.disclaimer": "إخلاء المسؤولية",
+                "footer.links.terms": "شروط الخدمة",
+                "footer.copyright": "© 2025 LollyPoPDF. جميع الحقوق محفوظة."
+            },
+            fa: {
+                "nav.home": "صفحه اصلی",
+                "nav.about": "درباره ما",
+                "nav.tools": "ابزارها",
+                "nav.contact": "تماس با ما",
+                "hero.title": "ابزار تبدیل واحد",
+                "hero.description": "بلافاصله بین واحدهای اندازه گیری مختلف تبدیل کنید. همه تبدیل ها به صورت محلی در مرورگر شما و بدون محدودیت اندازه فایل و با حریم خصوصی کامل انجام می شود.",
+                "howto.title": "نحوه استفاده از مبدل واحد",
+                "howto.step1.title": "انتخاب دسته",
+                "howto.step1.description": "دسته واحدهایی را که می خواهید بین آنها تبدیل کنید انتخاب کنید، مانند طول، وزن، دما، حجم، مساحت یا زمان.",
+                "howto.step2.title": "انتخاب واحدها",
+                "howto.step2.description": "واحد مورد نظر برای تبدیل و واحد هدف را از منوهای کشویی انتخاب کنید.",
+                "howto.step3.title": "وارد کردن مقدار",
+                "howto.step3.description": "مقداری را که می خواهید تبدیل کنید در فیلد ورودی تایپ کنید. تبدیل بلافاصله در حین تایپ انجام می شود.",
+                "howto.step4.title": "مشاهده نتایج",
+                "howto.step4.description": "مقدار تبدیل شده را ببینید و آن را با سایر واحدهای رایج در همان دسته مقایسه کنید. همه پردازش ها به صورت محلی در مرورگر شما انجام می شود.",
+                "tool.title": "مبدل واحد",
+                "tool.category": "دسته:",
+                "tool.categories.length": "طول",
+                "tool.categories.weight": "وزن",
+                "tool.categories.temperature": "دما",
+                "tool.categories.volume": "حجم",
+                "tool.categories.area": "مساحت",
+                "tool.categories.time": "زمان",
+                "tool.categories.speed": "سرعت",
+                "tool.categories.digital": "ذخیره سازی دیجیتال",
+                "tool.from": "از:",
+                "tool.value": "مقدار:",
+                "tool.to": "به:",
+                "tool.results": "نتایج تبدیل",
+                "tool.convert": "تبدیل",
+                "tool.clear": "پاک کردن همه",
+                "footer.follow": "ما را دنبال کنید",
+                "footer.categories": "دسته های محبوب",
+                "footer.categories.pdf": "ابزارهای PDF",
+                "footer.categories.image": "ابزارهای تصویر",
+                "footer.categories.text": "ابزارهای متن",
+                "footer.categories.av": "ابزارهای صوتی/تصویری",
+                "footer.categories.web": "ابزارهای توسعه دهنده وب",
+                "footer.categories.calc": "ابزارهای ماشین حساب",
+                "footer.categories.util": "ابزارهای کمکی",
+                "footer.categories.color": "ابزارهای رنگ",
+                "footer.quicklinks": "لینک های سریع",
+                "footer.links.tools": "همه ابزارها",
+                "footer.links.faq": "سوالات متداول",
+                "footer.links.contact": "تماس با ما",
+                "footer.links.privacy": "سیاست حفظ حریم خصوصی",
+                "footer.links.disclaimer": "سلب مسئولیت",
+                "footer.links.terms": "شرایط استفاده",
+                "footer.copyright": "© 2025 LollyPoPDF. تمامی حقوق محفوظ است."
+            },
+            bg: {
+                "nav.home": "Начало",
+                "nav.about": "За нас",
+                "nav.tools": "Инструменти",
+                "nav.contact": "Контакт",
+                "hero.title": "Инструмент за преобразуване на единици",
+                "hero.description": "Конвертирайте между различни мерни единици мигновено. Всички преобразувания се извършват локално във вашия браузър без ограничения на размера на файла и с пълна поверителност.",
+                "howto.title": "Как да използвате конвертора на единици",
+                "howto.step1.title": "Изберете категория",
+                "howto.step1.description": "Изберете категорията единици, които искате да конвертирате, като дължина, тегло, температура, обем, площ или време.",
+                "howto.step2.title": "Изберете единици",
+                "howto.step2.description": "Изберете единицата, от която искате да конвертирате, и единицата, към която искате да конвертирате, от падащите менюта.",
+                "howto.step3.title": "Въведете стойност",
+                "howto.step3.description": "Въведете стойността, която искате да конвертирате, в полето за въвеждане. Преобразуването се извършва мигновено, докато пишете.",
+                "howto.step4.title": "Преглед на резултатите",
+                "howto.step4.description": "Вижте преобразуваната стойност и я сравнете с други често срещани единици в същата категория. Цялата обработка се извършва локално във вашия браузър.",
+                "tool.title": "Конвертор на единици",
+                "tool.category": "Категория:",
+                "tool.categories.length": "Дължина",
+                "tool.categories.weight": "Тегло",
+                "tool.categories.temperature": "Температура",
+                "tool.categories.volume": "Обем",
+                "tool.categories.area": "Площ",
+                "tool.categories.time": "Време",
+                "tool.categories.speed": "Скорост",
+                "tool.categories.digital": "Цифрово съхранение",
+                "tool.from": "От:",
+                "tool.value": "Стойност:",
+                "tool.to": "До:",
+                "tool.results": "Резултати от преобразуването",
+                "tool.convert": "Конвертирай",
+                "tool.clear": "Изчисти всичко",
+                "footer.follow": "СЛЕДВАЙТЕ НИ",
+                "footer.categories": "Популярни категории",
+                "footer.categories.pdf": "PDF инструменти",
+                "footer.categories.image": "Инструменти за изображения",
+                "footer.categories.text": "Текстови инструменти",
+                "footer.categories.av": "Аудио/Видео инструменти",
+                "footer.categories.web": "Инструменти за уеб разработчици",
+                "footer.categories.calc": "Инструменти за калкулатор",
+                "footer.categories.util": "Помощни инструменти",
+                "footer.categories.color": "Инструменти за цветове",
+                "footer.quicklinks": "Бързи връзки",
+                "footer.links.tools": "Всички инструменти",
+                "footer.links.faq": "ЧЗВ",
+                "footer.links.contact": "Контакт",
+                "footer.links.privacy": "Политика за поверителност",
+                "footer.links.disclaimer": "Отказ от отговорност",
+                "footer.links.terms": "Условия за ползване",
+                "footer.copyright": "© 2025 LollyPoPDF. Всички права запазени."
+            },
+            ca: {
+                "nav.home": "Inici",
+                "nav.about": "Sobre nosaltres",
+                "nav.tools": "Eines",
+                "nav.contact": "Contacte",
+                "hero.title": "Eina de conversió d'unitats",
+                "hero.description": "Converteix entre diferents unitats de mesura instantàniament. Totes les conversions es realitzen localment al teu navegador sense límits de mida de fitxer i amb privacitat completa.",
+                "howto.title": "Com utilitzar el convertidor d'unitats",
+                "howto.step1.title": "Selecciona la categoria",
+                "howto.step1.description": "Tria la categoria d'unitats que vols convertir, com ara longitud, pes, temperatura, volum, àrea o temps.",
+                "howto.step2.title": "Tria les unitats",
+                "howto.step2.description": "Selecciona la unitat des de la qual vols convertir i la unitat a la qual vols convertir des dels menús desplegables.",
+                "howto.step3.title": "Introdueix el valor",
+                "howto.step3.description": "Escriu el valor que vols convertir al camp d'entrada. La conversió es realitza instantàniament mentre escrius.",
+                "howto.step4.title": "Visualitza els resultats",
+                "howto.step4.description": "Mira el valor convertit i compara'l amb altres unitats comunes en la mateixa categoria. Tot el processament es realitza localment al teu navegador.",
+                "tool.title": "Convertidor d'unitats",
+                "tool.category": "Categoria:",
+                "tool.categories.length": "Longitud",
+                "tool.categories.weight": "Pes",
+                "tool.categories.temperature": "Temperatura",
+                "tool.categories.volume": "Volum",
+                "tool.categories.area": "Àrea",
+                "tool.categories.time": "Temps",
+                "tool.categories.speed": "Velocitat",
+                "tool.categories.digital": "Emmagatzematge digital",
+                "tool.from": "De:",
+                "tool.value": "Valor:",
+                "tool.to": "A:",
+                "tool.results": "Resultats de la conversió",
+                "tool.convert": "Converteix",
+                "tool.clear": "Neteja-ho tot",
+                "footer.follow": "SEGUEIX-NOS",
+                "footer.categories": "Categories populars",
+                "footer.categories.pdf": "Eines PDF",
+                "footer.categories.image": "Eines d'imatge",
+                "footer.categories.text": "Eines de text",
+                "footer.categories.av": "Eines d'àudio/vídeo",
+                "footer.categories.web": "Eines de desenvolupador web",
+                "footer.categories.calc": "Eines de calculadora",
+                "footer.categories.util": "Eines d'utilitat",
+                "footer.categories.color": "Eines de color",
+                "footer.quicklinks": "Enllaços ràpids",
+                "footer.links.tools": "Totes les eines",
+                "footer.links.faq": "PMF",
+                "footer.links.contact": "Contacte",
+                "footer.links.privacy": "Política de privadesa",
+                "footer.links.disclaimer": "Avís legal",
+                "footer.links.terms": "Termes del servei",
+                "footer.copyright": "© 2025 LollyPoPDF. Tots els drets reservats."
+            },
+            nl: {
+                "nav.home": "Home",
+                "nav.about": "Over ons",
+                "nav.tools": "Hulpmiddelen",
+                "nav.contact": "Contact",
+                "hero.title": "Eenhedenconversie Tool",
+                "hero.description": "Converteer direct tussen verschillende meeteenheden. Alle conversies vinden lokaal plaats in uw browser zonder bestandsgroottebeperkingen en met volledige privacy.",
+                "howto.title": "Hoe de eenhedenconverter te gebruiken",
+                "howto.step1.title": "Selecteer categorie",
+                "howto.step1.description": "Kies de categorie eenheden die u wilt converteren, zoals lengte, gewicht, temperatuur, volume, oppervlakte of tijd.",
+                "howto.step2.title": "Kies eenheden",
+                "howto.step2.description": "Selecteer de eenheid waarvan u wilt converteren en de eenheid waarnaar u wilt converteren vanuit de dropdown-menu's.",
+                "howto.step3.title": "Voer waarde in",
+                "howto.step3.description": "Typ de waarde die u wilt converteren in het invoerveld. De conversie vindt direct plaats tijdens het typen.",
+                "howto.step4.title": "Bekijk resultaten",
+                "howto.step4.description": "Bekijk de geconverteerde waarde en vergelijk deze met andere veelgebruikte eenheden in dezelfde categorie. Alle verwerking vindt lokaal plaats in uw browser.",
+                "tool.title": "Eenhedenconverter",
+                "tool.category": "Categorie:",
+                "tool.categories.length": "Lengte",
+                "tool.categories.weight": "Gewicht",
+                "tool.categories.temperature": "Temperatuur",
+                "tool.categories.volume": "Volume",
+                "tool.categories.area": "Oppervlakte",
+                "tool.categories.time": "Tijd",
+                "tool.categories.speed": "Snelheid",
+                "tool.categories.digital": "Digitale opslag",
+                "tool.from": "Van:",
+                "tool.value": "Waarde:",
+                "tool.to": "Naar:",
+                "tool.results": "Conversieresultaten",
+                "tool.convert": "Converteer",
+                "tool.clear": "Alles wissen",
+                "footer.follow": "VOLG ONS",
+                "footer.categories": "Populaire categorieën",
+                "footer.categories.pdf": "PDF-hulpmiddelen",
+                "footer.categories.image": "Afbeeldingshulpmiddelen",
+                "footer.categories.text": "Teksthulpmiddelen",
+                "footer.categories.av": "Audio/Video-hulpmiddelen",
+                "footer.categories.web": "Webontwikkelaar-hulpmiddelen",
+                "footer.categories.calc": "Rekenmachine-hulpmiddelen",
+                "footer.categories.util": "Hulpprogramma's",
+                "footer.categories.color": "Kleurenhulpmiddelen",
+                "footer.quicklinks": "Snelle links",
+                "footer.links.tools": "Alle hulpmiddelen",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Contact",
+                "footer.links.privacy": "Privacybeleid",
+                "footer.links.disclaimer": "Disclaimer",
+                "footer.links.terms": "Servicevoorwaarden",
+                "footer.copyright": "© 2025 LollyPoPDF. Alle rechten voorbehouden."
+            },
+            el: {
+                "nav.home": "Αρχική",
+                "nav.about": "Σχετικά με εμάς",
+                "nav.tools": "Εργαλεία",
+                "nav.contact": "Επικοινωνία",
+                "hero.title": "Εργαλείο Μετατροπής Μονάδων",
+                "hero.description": "Μετατρέψτε μεταξύ διαφορετικών μονάδων μέτρησης αμέσως. Όλες οι μετατροπές γίνονται τοπικά στο πρόγραμμα περιήγησής σας χωρίς όρια μεγέθους αρχείου και με πλήρη ιδιωτικότητα.",
+                "howto.title": "Πώς να χρησιμοποιήσετε τον Μετατροπέα Μονάδων",
+                "howto.step1.title": "Επιλέξτε Κατηγορία",
+                "howto.step1.description": "Επιλέξτε την κατηγορία μονάδων που θέλετε να μετατρέψετε, όπως μήκος, βάρος, θερμοκρασία, όγκο, επιφάνεια ή χρόνος.",
+                "howto.step2.title": "Επιλέξτε Μονάδες",
+                "howto.step2.description": "Επιλέξτε τη μονάδα από την οποία θέλετε να μετατρέψετε και τη μονάδα προς την οποία θέλετε να μετατρέψετε από τα αναπτυσσόμενα μενού.",
+                "howto.step3.title": "Εισαγάγετε Τιμή",
+                "howto.step3.description": "Πληκτρολογήστε την τιμή που θέλετε να μετατρέψετε στο πεδίο εισαγωγής. Η μετατροπή γίνεται αμέσως καθώς πληκτρολογείτε.",
+                "howto.step4.title": "Προβολή Αποτελεσμάτων",
+                "howto.step4.description": "Δείτε τη μετατρεπόμενη τιμή και συγκρίνετε την με άλλες κοινές μονάδες στην ίδια κατηγορία. Όλη η επεξεργασία γίνεται τοπικά στο πρόγραμμα περιήγησής σας.",
+                "tool.title": "Μετατροπέας Μονάδων",
+                "tool.category": "Κατηγορία:",
+                "tool.categories.length": "Μήκος",
+                "tool.categories.weight": "Βάρος",
+                "tool.categories.temperature": "Θερμοκρασία",
+                "tool.categories.volume": "Όγκος",
+                "tool.categories.area": "Επιφάνεια",
+                "tool.categories.time": "Χρόνος",
+                "tool.categories.speed": "Ταχύτητα",
+                "tool.categories.digital": "Ψηφιακή Αποθήκευση",
+                "tool.from": "Από:",
+                "tool.value": "Τιμή:",
+                "tool.to": "Προς:",
+                "tool.results": "Αποτελέσματα Μετατροπής",
+                "tool.convert": "Μετατροπή",
+                "tool.clear": "Καθαρισμός Όλων",
+                "footer.follow": "ΑΚΟΛΟΥΘΗΣΤΕ ΜΑΣ",
+                "footer.categories": "Δημοφιλείς Κατηγορίες",
+                "footer.categories.pdf": "Εργαλεία PDF",
+                "footer.categories.image": "Εργαλεία Εικόνας",
+                "footer.categories.text": "Εργαλεία Κειμένου",
+                "footer.categories.av": "Εργαλεία Ήχου/Βίντεο",
+                "footer.categories.web": "Εργαλεία Web Developer",
+                "footer.categories.calc": "Εργαλεία Αριθμομηχανής",
+                "footer.categories.util": "Εργαλεία Χρησιμότητας",
+                "footer.categories.color": "Εργαλεία Χρώματος",
+                "footer.quicklinks": "Γρήγοροι Σύνδεσμοι",
+                "footer.links.tools": "Όλα τα Εργαλεία",
+                "footer.links.faq": "Συχνές Ερωτήσεις",
+                "footer.links.contact": "Επικοινωνία",
+                "footer.links.privacy": "Πολιτική Απορρήτου",
+                "footer.links.disclaimer": "Αποποίηση Ευθυνών",
+                "footer.links.terms": "Όροι Χρήσης",
+                "footer.copyright": "© 2025 LollyPoPDF. Με επιφύλαξη παντός δικαιώματος."
+            },
+            hi: {
+                "nav.home": "होम",
+                "nav.about": "हमारे बारे में",
+                "nav.tools": "टूल्स",
+                "nav.contact": "संपर्क करें",
+                "hero.title": "यूनिट कनवर्टर टूल",
+                "hero.description": "विभिन्न माप इकाइयों के बीच तुरंत कनवर्ट करें। सभी रूपांतरण आपके ब्राउज़र में स्थानीय रूप से होते हैं, बिना फ़ाइल आकार सीमा के और पूर्ण गोपनीयता के साथ।",
+                "howto.title": "यूनिट कनवर्टर का उपयोग कैसे करें",
+                "howto.step1.title": "श्रेणी चुनें",
+                "howto.step1.description": "उन इकाइयों की श्रेणी चुनें जिनके बीच आप कनवर्ट करना चाहते हैं, जैसे लंबाई, वजन, तापमान, आयतन, क्षेत्रफल या समय।",
+                "howto.step2.title": "इकाइयाँ चुनें",
+                "howto.step2.description": "ड्रॉपडाउन मेनू से वह इकाई चुनें जिससे आप कनवर्ट करना चाहते हैं और वह इकाई जिसमें आप कनवर्ट करना चाहते हैं।",
+                "howto.step3.title": "मान दर्ज करें",
+                "howto.step3.description": "इनपुट फ़ील्ड में वह मान टाइप करें जिसे आप कनवर्ट करना चाहते हैं। जैसे ही आप टाइप करते हैं, रूपांतरण तुरंत हो जाता है।",
+                "howto.step4.title": "परिणाम देखें",
+                "howto.step4.description": "कनवर्ट किए गए मान को देखें और उसकी तुलना उसी श्रेणी की अन्य सामान्य इकाइयों से करें। सभी प्रसंस्करण आपके ब्राउज़र में स्थानीय रूप से होता है।",
+                "tool.title": "यूनिट कनवर्टर",
+                "tool.category": "श्रेणी:",
+                "tool.categories.length": "लंबाई",
+                "tool.categories.weight": "वजन",
+                "tool.categories.temperature": "तापमान",
+                "tool.categories.volume": "आयतन",
+                "tool.categories.area": "क्षेत्रफल",
+                "tool.categories.time": "समय",
+                "tool.categories.speed": "गति",
+                "tool.categories.digital": "डिजिटल स्टोरेज",
+                "tool.from": "से:",
+                "tool.value": "मान:",
+                "tool.to": "को:",
+                "tool.results": "रूपांतरण परिणाम",
+                "tool.convert": "कनवर्ट करें",
+                "tool.clear": "सब साफ करें",
+                "footer.follow": "हमें फॉलो करें",
+                "footer.categories": "लोकप्रिय श्रेणियाँ",
+                "footer.categories.pdf": "PDF टूल्स",
+                "footer.categories.image": "इमेज टूल्स",
+                "footer.categories.text": "टेक्स्ट टूल्स",
+                "footer.categories.av": "ऑडियो/वीडियो टूल्स",
+                "footer.categories.web": "वेब डेवलपर टूल्स",
+                "footer.categories.calc": "कैलकुलेटर टूल्स",
+                "footer.categories.util": "यूटिलिटी टूल्स",
+                "footer.categories.color": "कलर टूल्स",
+                "footer.quicklinks": "त्वरित लिंक",
+                "footer.links.tools": "सभी टूल्स",
+                "footer.links.faq": "सामान्य प्रश्न",
+                "footer.links.contact": "संपर्क करें",
+                "footer.links.privacy": "गोपनीयता नीति",
+                "footer.links.disclaimer": "अस्वीकरण",
+                "footer.links.terms": "सेवा की शर्तें",
+                "footer.copyright": "© 2025 LollyPoPDF. सर्वाधिकार सुरक्षित।"
+            },
+            te: {
+                "nav.home": "హోమ్",
+                "nav.about": "మా గురించి",
+                "nav.tools": "టూల్స్",
+                "nav.contact": "సంప్రదించండి",
+                "hero.title": "యూనిట్ కన్వర్టర్ టూల్",
+                "hero.description": "వివిధ కొలత యూనిట్ల మధ్య తక్షణంగా మార్చండి. అన్ని మార్పిడులు మీ బ్రౌజర్‌లో స్థానికంగా జరుగుతాయి, ఫైల్ సైజు పరిమితులు లేకుండా మరియు పూర్తి గోప్యతతో.",
+                "howto.title": "యూనిట్ కన్వర్టర్ ఎలా ఉపయోగించాలి",
+                "howto.step1.title": "కేటగరీ ఎంచుకోండి",
+                "howto.step1.description": "మీరు మార్చాలనుకుంటున్న యూనిట్ల కేటగరీని ఎంచుకోండి, ఉదాహరణకు పొడవు, బరువు, ఉష్ణోగ్రత, వాల్యూమ్, ప్రాంతం లేదా సమయం.",
+                "howto.step2.title": "యూనిట్లను ఎంచుకోండి",
+                "howto.step2.description": "డ్రాప్‌డౌన్ మెనూల నుండి మీరు మార్చాలనుకుంటున్న యూనిట్ మరియు మార్చాలనుకుంటున్న యూనిట్‌ను ఎంచుకోండి.",
+                "howto.step3.title": "విలువను నమోదు చేయండి",
+                "howto.step3.description": "మీరు మార్చాలనుకుంటున్న విలువను ఇన్పుట్ ఫీల్డ్‌లో టైప్ చేయండి. మీరు టైప్ చేస్తున్నప్పుడు మార్పిడి తక్షణంగా జరుగుతుంది.",
+                "howto.step4.title": "ఫలితాలను వీక్షించండి",
+                "howto.step4.description": "మార్చబడిన విలువను చూడండి మరియు దాన్ని అదే కేటగరీలోని ఇతర సాధారణ యూనిట్లతో సరిపోల్చండి. అన్ని ప్రాసెసింగ్ మీ బ్రౌజర్‌లో స్థానికంగా జరుగుతుంది.",
+                "tool.title": "యూనిట్ కన్వర్టర్",
+                "tool.category": "కేటగరీ:",
+                "tool.categories.length": "పొడవు",
+                "tool.categories.weight": "బరువు",
+                "tool.categories.temperature": "ఉష్ణోగ్రత",
+                "tool.categories.volume": "వాల్యూమ్",
+                "tool.categories.area": "ప్రాంతం",
+                "tool.categories.time": "సమయం",
+                "tool.categories.speed": "వేగం",
+                "tool.categories.digital": "డిజిటల్ స్టోరేజ్",
+                "tool.from": "నుండి:",
+                "tool.value": "విలువ:",
+                "tool.to": "కు:",
+                "tool.results": "మార్పిడి ఫలితాలు",
+                "tool.convert": "మార్చండి",
+                "tool.clear": "అన్నీ క్లియర్ చేయండి",
+                "footer.follow": "మమ్మల్ని ఫాలో చేయండి",
+                "footer.categories": "జనాదరణ పొందిన కేటగరీలు",
+                "footer.categories.pdf": "PDF టూల్స్",
+                "footer.categories.image": "ఇమేజ్ టూల్స్",
+                "footer.categories.text": "టెక్స్ట్ టూల్స్",
+                "footer.categories.av": "ఆడియో/వీడియో టూల్స్",
+                "footer.categories.web": "వెబ్ డెవలపర్ టూల్స్",
+                "footer.categories.calc": "కాలిక్యులేటర్ టూల్స్",
+                "footer.categories.util": "యుటిలిటీ టూల్స్",
+                "footer.categories.color": "కలర్ టూల్స్",
+                "footer.quicklinks": "త్వరిత లింకులు",
+                "footer.links.tools": "అన్ని టూల్స్",
+                "footer.links.faq": "సాధారణ ప్రశ్నలు",
+                "footer.links.contact": "సంప్రదించండి",
+                "footer.links.privacy": "గోప్యతా విధానం",
+                "footer.links.disclaimer": "డిస్క్లైమర్",
+                "footer.links.terms": "సేవా నిబంధనలు",
+                "footer.copyright": "© 2025 LollyPoPDF. హక్కులు ప్రత్యేకించబడినవి."
+            },
+            kn: {
+                "nav.home": "ಮುಖಪುಟ",
+                "nav.about": "ನಮ್ಮ ಬಗ್ಗೆ",
+                "nav.tools": "ಉಪಕರಣಗಳು",
+                "nav.contact": "ಸಂಪರ್ಕಿಸಿ",
+                "hero.title": "ಯೂನಿಟ್ ಕನ್ವರ್ಟರ್ ಟೂಲ್",
+                "hero.description": "ವಿವಿಧ ಅಳತೆ ಘಟಕಗಳ ನಡುವೆ ತಕ್ಷಣವೇ ಪರಿವರ್ತಿಸಿ. ಎಲ್ಲಾ ಪರಿವರ್ತನೆಗಳು ನಿಮ್ಮ ಬ್ರೌಸರ್‌ನಲ್ಲಿ ಸ್ಥಳೀಯವಾಗಿ ನಡೆಯುತ್ತವೆ, ಫೈಲ್ ಗಾತ್ರದ ಮಿತಿಗಳಿಲ್ಲದೆ ಮತ್ತು ಸಂಪೂರ್ಣ ಗೌಪ್ಯತೆಯೊಂದಿಗೆ.",
+                "howto.title": "ಯೂನಿಟ್ ಕನ್ವರ್ಟರ್ ಅನ್ನು ಹೇಗೆ ಬಳಸುವುದು",
+                "howto.step1.title": "ವರ್ಗವನ್ನು ಆಯ್ಕೆಮಾಡಿ",
+                "howto.step1.description": "ನೀವು ಪರಿವರ್ತಿಸಲು ಬಯಸುವ ಘಟಕಗಳ ವರ್ಗವನ್ನು ಆಯ್ಕೆಮಾಡಿ, ಉದಾಹರಣೆಗೆ ಉದ್ದ, ತೂಕ, ತಾಪಮಾನ, ಪರಿಮಾಣ, ಪ್ರದೇಶ ಅಥವಾ ಸಮಯ.",
+                "howto.step2.title": "ಘಟಕಗಳನ್ನು ಆಯ್ಕೆಮಾಡಿ",
+                "howto.step2.description": "ಡ್ರಾಪ್‌ಡೌನ್ ಮೆನುಗಳಿಂದ ನೀವು ಪರಿವರ್ತಿಸಲು ಬಯಸುವ ಘಟಕ ಮತ್ತು ಪರಿವರ್ತಿಸಲು ಬಯಸುವ ಘಟಕವನ್ನು ಆಯ್ಕೆಮಾಡಿ.",
+                "howto.step3.title": "ಮೌಲ್ಯವನ್ನು ನಮೂದಿಸಿ",
+                "howto.step3.description": "ನೀವು ಪರಿವರ್ತಿಸಲು ಬಯಸುವ ಮೌಲ್ಯವನ್ನು ಇನ್ಪುಟ್ ಫೀಲ್ಡ್‌ನಲ್ಲಿ ಟೈಪ್ ಮಾಡಿ. ನೀವು ಟೈಪ್ ಮಾಡುತ್ತಿದ್ದಂತೆ ಪರಿವರ್ತನೆ ತಕ್ಷಣವೇ ನಡೆಯುತ್ತದೆ.",
+                "howto.step4.title": "ಫಲಿತಾಂಶಗಳನ್ನು ವೀಕ್ಷಿಸಿ",
+                "howto.step4.description": "ಪರಿವರ್ತಿತ ಮೌಲ್ಯವನ್ನು ನೋಡಿ ಮತ್ತು ಅದೇ ವರ್ಗದ ಇತರ ಸಾಮಾನ್ಯ ಘಟಕಗಳೊಂದಿಗೆ ಹೋಲಿಕೆ ಮಾಡಿ. ಎಲ್ಲಾ ಪ್ರಕ್ರಿಯೆ ನಿಮ್ಮ ಬ್ರೌಸರ್‌ನಲ್ಲಿ ಸ್ಥಳೀಯವಾಗಿ ನಡೆಯುತ್ತದೆ.",
+                "tool.title": "ಯೂನಿಟ್ ಕನ್ವರ್ಟರ್",
+                "tool.category": "ವರ್ಗ:",
+                "tool.categories.length": "ಉದ್ದ",
+                "tool.categories.weight": "ತೂಕ",
+                "tool.categories.temperature": "ತಾಪಮಾನ",
+                "tool.categories.volume": "ಪರಿಮಾಣ",
+                "tool.categories.area": "ಪ್ರದೇಶ",
+                "tool.categories.time": "ಸಮಯ",
+                "tool.categories.speed": "ವೇಗ",
+                "tool.categories.digital": "ಡಿಜಿಟಲ್ ಸ್ಟೋರೇಜ್",
+                "tool.from": "ನಿಂದ:",
+                "tool.value": "ಮೌಲ್ಯ:",
+                "tool.to": "ಗೆ:",
+                "tool.results": "ಪರಿವರ್ತನೆ ಫಲಿತಾಂಶಗಳು",
+                "tool.convert": "ಪರಿವರ್ತಿಸಿ",
+                "tool.clear": "ಎಲ್ಲಾ ತೆರವುಗೊಳಿಸಿ",
+                "footer.follow": "ನಮ್ಮನ್ನು ಅನುಸರಿಸಿ",
+                "footer.categories": "ಜನಪ್ರಿಯ ವರ್ಗಗಳು",
+                "footer.categories.pdf": "PDF ಉಪಕರಣಗಳು",
+                "footer.categories.image": "ಚಿತ್ರ ಉಪಕರಣಗಳು",
+                "footer.categories.text": "ಪಠ್ಯ ಉಪಕರಣಗಳು",
+                "footer.categories.av": "ಆಡಿಯೋ/ವೀಡಿಯೋ ಉಪಕರಣಗಳು",
+                "footer.categories.web": "ವೆಬ್ ಡೆವಲಪರ್ ಉಪಕರಣಗಳು",
+                "footer.categories.calc": "ಕ್ಯಾಲ್ಕುಲೇಟರ್ ಉಪಕರಣಗಳು",
+                "footer.categories.util": "ಯುಟಿಲಿಟಿ ಉಪಕರಣಗಳು",
+                "footer.categories.color": "ಬಣ್ಣ ಉಪಕರಣಗಳು",
+                "footer.quicklinks": "ತ್ವರಿತ ಲಿಂಕ್‌ಗಳು",
+                "footer.links.tools": "ಎಲ್ಲಾ ಉಪಕರಣಗಳು",
+                "footer.links.faq": "ಸಾಮಾನ್ಯ ಪ್ರಶ್ನೆಗಳು",
+                "footer.links.contact": "ಸಂಪರ್ಕಿಸಿ",
+                "footer.links.privacy": "ಗೌಪ್ಯತಾ ನೀತಿ",
+                "footer.links.disclaimer": "ಮುನ್ಸೂಚನೆ",
+                "footer.links.terms": "ಸೇವಾ ನಿಯಮಗಳು",
+                "footer.copyright": "© 2025 LollyPoPDF. ಎಲ್ಲಾ ಹಕ್ಕುಗಳು ಕಾಯ್ದಿರಿಸಿದೆ."
+            },
+            ta: {
+                "nav.home": "முகப்பு",
+                "nav.about": "எங்களைப் பற்றி",
+                "nav.tools": "கருவிகள்",
+                "nav.contact": "தொடர்பு கொள்ள",
+                "hero.title": "அலகு மாற்றி கருவி",
+                "hero.description": "பல்வேறு அளவீட்டு அலகுகளுக்கு இடையே உடனடியாக மாற்றவும். அனைத்து மாற்றங்களும் உங்கள் உலாவியில் உள்ளூரிலேயே நடக்கும், கோப்பு அளவு வரம்புகள் இல்லாமல் மற்றும் முழுமையான தனியுரிமையுடன்.",
+                "howto.title": "அலகு மாற்றியை எவ்வாறு பயன்படுத்துவது",
+                "howto.step1.title": "வகையைத் தேர்ந்தெடுக்கவும்",
+                "howto.step1.description": "நீங்கள் மாற்ற விரும்பும் அலகுகளின் வகையைத் தேர்ந்தெடுக்கவும், எடுத்துக்காட்டாக நீளம், எடை, வெப்பநிலை, கன அளவு, பரப்பளவு அல்லது நேரம்.",
+                "howto.step2.title": "அலகுகளைத் தேர்ந்தெடுக்கவும்",
+                "howto.step2.description": "நீங்கள் மாற்ற விரும்பும் அலகு மற்றும் மாற்ற விரும்பும் அலகை டிராப்புடவுன் மெனுக்களிலிருந்து தேர்ந்தெடுக்கவும்.",
+                "howto.step3.title": "மதிப்பை உள்ளிடவும்",
+                "howto.step3.description": "நீங்கள் மாற்ற விரும்பும் மதிப்பை உள்ளீட்டுப் புலத்தில் தட்டச்சு செய்யவும். நீங்கள் தட்டச்சு செய்யும் போது மாற்றம் உடனடியாக நடக்கும்.",
+                "howto.step4.title": "முடிவுகளைக் காண்க",
+                "howto.step4.description": "மாற்றப்பட்ட மதிப்பைக் காண்க மற்றும் அதே வகையில் உள்ள பிற பொதுவான அலகுகளுடன் ஒப்பிடுக. அனைத்து செயலாக்கமும் உங்கள் உலாவியில் உள்ளூரிலேயே நடக்கும்.",
+                "tool.title": "அலகு மாற்றி",
+                "tool.category": "வகை:",
+                "tool.categories.length": "நீளம்",
+                "tool.categories.weight": "எடை",
+                "tool.categories.temperature": "வெப்பநிலை",
+                "tool.categories.volume": "கன அளவு",
+                "tool.categories.area": "பரப்பளவு",
+                "tool.categories.time": "நேரம்",
+                "tool.categories.speed": "வேகம்",
+                "tool.categories.digital": "டிஜிட்டல் சேமிப்பு",
+                "tool.from": "இருந்து:",
+                "tool.value": "மதிப்பு:",
+                "tool.to": "க்கு:",
+                "tool.results": "மாற்றம் முடிவுகள்",
+                "tool.convert": "மாற்று",
+                "tool.clear": "அனைத்தையும் அழி",
+                "footer.follow": "எங்களைப் பின்தொடரவும்",
+                "footer.categories": "பிரபலமான வகைகள்",
+                "footer.categories.pdf": "PDF கருவிகள்",
+                "footer.categories.image": "பட கருவிகள்",
+                "footer.categories.text": "உரை கருவிகள்",
+                "footer.categories.av": "ஆடியோ/வீடியோ கருவிகள்",
+                "footer.categories.web": "வெப் டெவலப்பர் கருவிகள்",
+                "footer.categories.calc": "கால்குலேட்டர் கருவிகள்",
+                "footer.categories.util": "பயன்பாட்டு கருவிகள்",
+                "footer.categories.color": "நிற கருவிகள்",
+                "footer.quicklinks": "விரைவு இணைப்புகள்",
+                "footer.links.tools": "அனைத்து கருவிகள்",
+                "footer.links.faq": "அடிக்கடி கேட்கப்படும் கேள்விகள்",
+                "footer.links.contact": "தொடர்பு கொள்ள",
+                "footer.links.privacy": "தனியுரிமைக் கொள்கை",
+                "footer.links.disclaimer": "பொறுப்புத் துறப்பு",
+                "footer.links.terms": "சேவை விதிமுறைகள்",
+                "footer.copyright": "© 2025 LollyPoPDF. அனைத்து உரிமைகளும் பாதுகாக்கப்பட்டவை."
+            },
+            ml: {
+                "nav.home": "ഹോം",
+                "nav.about": "ഞങ്ങളെക്കുറിച്ച്",
+                "nav.tools": "ടൂളുകൾ",
+                "nav.contact": "ബന്ധപ്പെടുക",
+                "hero.title": "യൂണിറ്റ് കൺവെർട്ടർ ടൂൾ",
+                "hero.description": "വിവിധ അളവെടുപ്പ് യൂണിറ്റുകൾക്കിടയിൽ തൽക്ഷണം പരിവർത്തനം ചെയ്യുക. എല്ലാ പരിവർത്തനങ്ങളും നിങ്ങളുടെ ബ്രൗസറിൽ പ്രാദേശികമായി നടക്കുന്നു, ഫയൽ വലുപ്പ പരിധികളില്ലാതെ, പൂർണ്ണ സ്വകാര്യതയോടെ.",
+                "howto.title": "യൂണിറ്റ് കൺവെർട്ടർ എങ്ങനെ ഉപയോഗിക്കാം",
+                "howto.step1.title": "വിഭാഗം തിരഞ്ഞെടുക്കുക",
+                "howto.step1.description": "നിങ്ങൾ പരിവർത്തനം ചെയ്യാൻ ആഗ്രഹിക്കുന്ന യൂണിറ്റുകളുടെ വിഭാഗം തിരഞ്ഞെടുക്കുക, ഉദാഹരണത്തിന് നീളം, ഭാരം, താപനില, വ്യാപ്തം, വിസ്തീർണ്ണം അല്ലെങ്കിൽ സമയം.",
+                "howto.step2.title": "യൂണിറ്റുകൾ തിരഞ്ഞെടുക്കുക",
+                "howto.step2.description": "ഡ്രോപ്പ്ഡൗൺ മെനുകളിൽ നിന്ന് നിങ്ങൾ പരിവർത്തനം ചെയ്യാൻ ആഗ്രഹിക്കുന്ന യൂണിറ്റും പരിവർത്തനം ചെയ്യാൻ ആഗ്രഹിക്കുന്ന യൂണിറ്റും തിരഞ്ഞെടുക്കുക.",
+                "howto.step3.title": "മൂല്യം നൽകുക",
+                "howto.step3.description": "നിങ്ങൾ പരിവർത്തനം ചെയ്യാൻ ആഗ്രഹിക്കുന്ന മൂല്യം ഇൻപുട്ട് ഫീൽഡിൽ ടൈപ്പ് ചെയ്യുക. നിങ്ങൾ ടൈപ്പ് ചെയ്യുമ്പോൾ തന്നെ പരിവർത്തനം തൽക്ഷണം നടക്കുന്നു.",
+                "howto.step4.title": "ഫലങ്ങൾ കാണുക",
+                "howto.step4.description": "പരിവർത്തനം ചെയ്ത മൂല്യം കാണുക, അത് അതേ വിഭാഗത്തിലെ മറ്റ് പൊതു യൂണിറ്റുകളുമായി താരതമ്യം ചെയ്യുക. എല്ലാ പ്രോസസ്സിംഗും നിങ്ങളുടെ ബ്രൗസറിൽ പ്രാദേശികമായി നടക്കുന്നു.",
+                "tool.title": "യൂണിറ്റ് കൺവെർട്ടർ",
+                "tool.category": "വിഭാഗം:",
+                "tool.categories.length": "നീളം",
+                "tool.categories.weight": "ഭാരം",
+                "tool.categories.temperature": "താപനില",
+                "tool.categories.volume": "വ്യാപ്തം",
+                "tool.categories.area": "വിസ്തീർണ്ണം",
+                "tool.categories.time": "സമയം",
+                "tool.categories.speed": "വേഗത",
+                "tool.categories.digital": "ഡിജിറ്റൽ സംഭരണം",
+                "tool.from": "നിന്ന്:",
+                "tool.value": "മൂല്യം:",
+                "tool.to": "ഇലേക്ക്:",
+                "tool.results": "പരിവർത്തന ഫലങ്ങൾ",
+                "tool.convert": "പരിവർത്തനം ചെയ്യുക",
+                "tool.clear": "എല്ലാം മായ്ക്കുക",
+                "footer.follow": "ഞങ്ങളെ പിന്തുടരുക",
+                "footer.categories": "ജനപ്രിയ വിഭാഗങ്ങൾ",
+                "footer.categories.pdf": "PDF ടൂളുകൾ",
+                "footer.categories.image": "ഇമേജ് ടൂളുകൾ",
+                "footer.categories.text": "ടെക്സ്റ്റ് ടൂളുകൾ",
+                "footer.categories.av": "ഓഡിയോ/വീഡിയോ ടൂളുകൾ",
+                "footer.categories.web": "വെബ് ഡെവലപ്പർ ടൂളുകൾ",
+                "footer.categories.calc": "കാൽക്കുലേറ്റർ ടൂളുകൾ",
+                "footer.categories.util": "യൂട്ടിലിറ്റി ടൂളുകൾ",
+                "footer.categories.color": "കളർ ടൂളുകൾ",
+                "footer.quicklinks": "ദ്രുത ലിങ്കുകൾ",
+                "footer.links.tools": "എല്ലാ ടൂളുകളും",
+                "footer.links.faq": "പതിവുചോദ്യങ്ങൾ",
+                "footer.links.contact": "ബന്ധപ്പെടുക",
+                "footer.links.privacy": "സ്വകാര്യതാ നയം",
+                "footer.links.disclaimer": "അസ്വീകാര്യത",
+                "footer.links.terms": "സേവന നിബന്ധനകൾ",
+                "footer.copyright": "© 2025 LollyPoPDF. എല്ലാ അവകാശങ്ങളും നിക്ഷിപ്തം."
+            },
+            id: {
+                "nav.home": "Beranda",
+                "nav.about": "Tentang Kami",
+                "nav.tools": "Alat",
+                "nav.contact": "Kontak",
+                "hero.title": "Alat Konverter Satuan",
+                "hero.description": "Konversi antara berbagai satuan pengukuran secara instan. Semua konversi terjadi secara lokal di browser Anda tanpa batasan ukuran file dan dengan privasi lengkap.",
+                "howto.title": "Cara Menggunakan Konverter Satuan",
+                "howto.step1.title": "Pilih Kategori",
+                "howto.step1.description": "Pilih kategori satuan yang ingin Anda konversi, seperti panjang, berat, suhu, volume, luas, atau waktu.",
+                "howto.step2.title": "Pilih Satuan",
+                "howto.step2.description": "Pilih satuan yang ingin Anda konversi dari dan satuan yang ingin Anda konversi ke dari menu dropdown.",
+                "howto.step3.title": "Masukkan Nilai",
+                "howto.step3.description": "Ketik nilai yang ingin Anda konversi di bidang input. Konversi terjadi secara instan saat Anda mengetik.",
+                "howto.step4.title": "Lihat Hasil",
+                "howto.step4.description": "Lihat nilai yang telah dikonversi dan bandingkan dengan satuan umum lainnya dalam kategori yang sama. Semua pemrosesan terjadi secara lokal di browser Anda.",
+                "tool.title": "Konverter Satuan",
+                "tool.category": "Kategori:",
+                "tool.categories.length": "Panjang",
+                "tool.categories.weight": "Berat",
+                "tool.categories.temperature": "Suhu",
+                "tool.categories.volume": "Volume",
+                "tool.categories.area": "Luas",
+                "tool.categories.time": "Waktu",
+                "tool.categories.speed": "Kecepatan",
+                "tool.categories.digital": "Penyimpanan Digital",
+                "tool.from": "Dari:",
+                "tool.value": "Nilai:",
+                "tool.to": "Ke:",
+                "tool.results": "Hasil Konversi",
+                "tool.convert": "Konversi",
+                "tool.clear": "Hapus Semua",
+                "footer.follow": "IKUTI KAMI",
+                "footer.categories": "Kategori Populer",
+                "footer.categories.pdf": "Alat PDF",
+                "footer.categories.image": "Alat Gambar",
+                "footer.categories.text": "Alat Teks",
+                "footer.categories.av": "Alat Audio/Video",
+                "footer.categories.web": "Alat Web Developer",
+                "footer.categories.calc": "Alat Kalkulator",
+                "footer.categories.util": "Alat Utilitas",
+                "footer.categories.color": "Alat Warna",
+                "footer.quicklinks": "Tautan Cepat",
+                "footer.links.tools": "Semua Alat",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Kontak",
+                "footer.links.privacy": "Kebijakan Privasi",
+                "footer.links.disclaimer": "Penafian",
+                "footer.links.terms": "Syarat Layanan",
+                "footer.copyright": "© 2025 LollyPoPDF. Hak Cipta Dilindungi."
+            },
+            ms: {
+                "nav.home": "Laman Utama",
+                "nav.about": "Tentang Kami",
+                "nav.tools": "Alat",
+                "nav.contact": "Hubungi",
+                "hero.title": "Alat Penukar Unit",
+                "hero.description": "Tukar antara pelbagai unit ukuran dengan serta-merta. Semua penukaran berlaku secara tempatan dalam pelayar anda tanpa had saiz fail dan dengan privasi lengkap.",
+                "howto.title": "Cara Menggunakan Penukar Unit",
+                "howto.step1.title": "Pilih Kategori",
+                "howto.step1.description": "Pilih kategori unit yang anda ingin tukar, seperti panjang, berat, suhu, isipadu, kawasan atau masa.",
+                "howto.step2.title": "Pilih Unit",
+                "howto.step2.description": "Pilih unit yang anda ingin tukar dari dan unit yang anda ingin tukar ke dari menu juntai bawah.",
+                "howto.step3.title": "Masukkan Nilai",
+                "howto.step3.description": "Taip nilai yang anda ingin tukar dalam medan input. Penukaran berlaku serta-merta semasa anda menaip.",
+                "howto.step4.title": "Lihat Keputusan",
+                "howto.step4.description": "Lihat nilai yang telah ditukar dan bandingkannya dengan unit biasa lain dalam kategori yang sama. Semua pemprosesan berlaku secara tempatan dalam pelayar anda.",
+                "tool.title": "Penukar Unit",
+                "tool.category": "Kategori:",
+                "tool.categories.length": "Panjang",
+                "tool.categories.weight": "Berat",
+                "tool.categories.temperature": "Suhu",
+                "tool.categories.volume": "Isipadu",
+                "tool.categories.area": "Kawasan",
+                "tool.categories.time": "Masa",
+                "tool.categories.speed": "Kelajuan",
+                "tool.categories.digital": "Penyimpanan Digital",
+                "tool.from": "Dari:",
+                "tool.value": "Nilai:",
+                "tool.to": "Ke:",
+                "tool.results": "Keputusan Penukaran",
+                "tool.convert": "Tukar",
+                "tool.clear": "Kosongkan Semua",
+                "footer.follow": "IKUTI KAMI",
+                "footer.categories": "Kategori Popular",
+                "footer.categories.pdf": "Alat PDF",
+                "footer.categories.image": "Alat Imej",
+                "footer.categories.text": "Alat Teks",
+                "footer.categories.av": "Alat Audio/Video",
+                "footer.categories.web": "Alat Web Developer",
+                "footer.categories.calc": "Alat Kalkulator",
+                "footer.categories.util": "Alat Utiliti",
+                "footer.categories.color": "Alat Warna",
+                "footer.quicklinks": "Pautan Pantas",
+                "footer.links.tools": "Semua Alat",
+                "footer.links.faq": "Soalan Lazim",
+                "footer.links.contact": "Hubungi",
+                "footer.links.privacy": "Dasar Privasi",
+                "footer.links.disclaimer": "Penafian",
+                "footer.links.terms": "Syarat Perkhidmatan",
+                "footer.copyright": "© 2025 LollyPoPDF. Hak Cipta Terpelihara."
+            },
+            pl: {
+                "nav.home": "Strona główna",
+                "nav.about": "O nas",
+                "nav.tools": "Narzędzia",
+                "nav.contact": "Kontakt",
+                "hero.title": "Narzędzie konwersji jednostek",
+                "hero.description": "Konwertuj między różnymi jednostkami miary natychmiast. Wszystkie konwersje odbywają się lokalnie w Twojej przeglądarce bez ograniczeń rozmiaru pliku i z pełną prywatnością.",
+                "howto.title": "Jak korzystać z konwertera jednostek",
+                "howto.step1.title": "Wybierz kategorię",
+                "howto.step1.description": "Wybierz kategorię jednostek, które chcesz przeliczać, takie jak długość, waga, temperatura, objętość, powierzchnia lub czas.",
+                "howto.step2.title": "Wybierz jednostki",
+                "howto.step2.description": "Wybierz jednostkę, z której chcesz konwertować i jednostkę, na którą chcesz konwertować z menu rozwijanych.",
+                "howto.step3.title": "Wprowadź wartość",
+                "howto.step3.description": "Wpisz wartość, którą chcesz przeliczyć w polu wprowadzania. Konwersja odbywa się natychmiast podczas pisania.",
+                "howto.step4.title": "Zobacz wyniki",
+                "howto.step4.description": "Zobacz przekonwertowaną wartość i porównaj ją z innymi powszechnymi jednostkami w tej samej kategorii. Wszystkie przetwarzanie odbywa się lokalnie w Twojej przeglądarce.",
+                "tool.title": "Konwerter jednostek",
+                "tool.category": "Kategoria:",
+                "tool.categories.length": "Długość",
+                "tool.categories.weight": "Waga",
+                "tool.categories.temperature": "Temperatura",
+                "tool.categories.volume": "Objętość",
+                "tool.categories.area": "Powierzchnia",
+                "tool.categories.time": "Czas",
+                "tool.categories.speed": "Prędkość",
+                "tool.categories.digital": "Pamięć cyfrowa",
+                "tool.from": "Z:",
+                "tool.value": "Wartość:",
+                "tool.to": "Na:",
+                "tool.results": "Wyniki konwersji",
+                "tool.convert": "Konwertuj",
+                "tool.clear": "Wyczyść wszystko",
+                "footer.follow": "OBSERWUJ NAS",
+                "footer.categories": "Popularne kategorie",
+                "footer.categories.pdf": "Narzędzia PDF",
+                "footer.categories.image": "Narzędzia obrazów",
+                "footer.categories.text": "Narzędzia tekstowe",
+                "footer.categories.av": "Narzędzia audio/wideo",
+                "footer.categories.web": "Narzędzia Web Developera",
+                "footer.categories.calc": "Narzędzia kalkulatora",
+                "footer.categories.util": "Narzędzia użytkowe",
+                "footer.categories.color": "Narzędzia kolorów",
+                "footer.quicklinks": "Szybkie linki",
+                "footer.links.tools": "Wszystkie narzędzia",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Kontakt",
+                "footer.links.privacy": "Polityka prywatności",
+                "footer.links.disclaimer": "Zastrzeżenie",
+                "footer.links.terms": "Warunki usługi",
+                "footer.copyright": "© 2025 LollyPoPDF. Wszelkie prawa zastrzeżone."
+            },
+            th: {
+                "nav.home": "หน้าแรก",
+                "nav.about": "เกี่ยวกับเรา",
+                "nav.tools": "เครื่องมือ",
+                "nav.contact": "ติดต่อ",
+                "hero.title": "เครื่องมือแปลงหน่วย",
+                "hero.description": "แปลงระหว่างหน่วยวัดต่างๆ ได้ทันที การแปลงทั้งหมดเกิดขึ้นในเบราว์เซอร์ของคุณโดยไม่มีข้อจำกัดเกี่ยวกับขนาดไฟล์และความเป็นส่วนตัวสมบูรณ์",
+                "howto.title": "วิธีใช้ตัวแปลงหน่วย",
+                "howto.step1.title": "เลือกหมวดหมู่",
+                "howto.step1.description": "เลือกหมวดหมู่ของหน่วยที่คุณต้องการแปลง เช่น ความยาว น้ำหนัก อุณหภูมิ ปริมาตร พื้นที่ หรือเวลา",
+                "howto.step2.title": "เลือกหน่วย",
+                "howto.step2.description": "เลือกหน่วยที่คุณต้องการแปลงจากและหน่วยที่คุณต้องการแปลงเป็นจากเมนูแบบเลื่อนลง",
+                "howto.step3.title": "ป้อนค่า",
+                "howto.step3.description": "พิมพ์ค่าที่คุณต้องการแปลงในช่องป้อนข้อมูล การแปลงจะเกิดขึ้นทันทีขณะที่คุณพิมพ์",
+                "howto.step4.title": "ดูผลลัพธ์",
+                "howto.step4.description": "ดูค่าที่แปลงแล้วและเปรียบเทียบกับหน่วยทั่วไปอื่นๆ ในหมวดหมู่เดียวกัน การประมวลผลทั้งหมดเกิดขึ้นในเบราว์เซอร์ของคุณ",
+                "tool.title": "ตัวแปลงหน่วย",
+                "tool.category": "หมวดหมู่:",
+                "tool.categories.length": "ความยาว",
+                "tool.categories.weight": "น้ำหนัก",
+                "tool.categories.temperature": "อุณหภูมิ",
+                "tool.categories.volume": "ปริมาตร",
+                "tool.categories.area": "พื้นที่",
+                "tool.categories.time": "เวลา",
+                "tool.categories.speed": "ความเร็ว",
+                "tool.categories.digital": "ที่เก็บข้อมูลดิจิทัล",
+                "tool.from": "จาก:",
+                "tool.value": "ค่า:",
+                "tool.to": "เป็น:",
+                "tool.results": "ผลการแปลง",
+                "tool.convert": "แปลง",
+                "tool.clear": "ล้างทั้งหมด",
+                "footer.follow": "ติดตามเรา",
+                "footer.categories": "หมวดหมู่ยอดนิยม",
+                "footer.categories.pdf": "เครื่องมือ PDF",
+                "footer.categories.image": "เครื่องมือรูปภาพ",
+                "footer.categories.text": "เครื่องมือข้อความ",
+                "footer.categories.av": "เครื่องมือเสียง/วิดีโอ",
+                "footer.categories.web": "เครื่องมือนักพัฒนาเว็บ",
+                "footer.categories.calc": "เครื่องมือเครื่องคิดเลข",
+                "footer.categories.util": "เครื่องมืออรรถประโยชน์",
+                "footer.categories.color": "เครื่องมือสี",
+                "footer.quicklinks": "ลิงก์ด่วน",
+                "footer.links.tools": "เครื่องมือทั้งหมด",
+                "footer.links.faq": "คำถามที่พบบ่อย",
+                "footer.links.contact": "ติดต่อ",
+                "footer.links.privacy": "นโยบายความเป็นส่วนตัว",
+                "footer.links.disclaimer": "ข้อจำกัดความรับผิดชอบ",
+                "footer.links.terms": "ข้อกำหนดการให้บริการ",
+                "footer.copyright": "© 2025 LollyPoPDF. สงวนลิขสิทธิ์."
+            },
+            tr: {
+                "nav.home": "Ana Sayfa",
+                "nav.about": "Hakkımızda",
+                "nav.tools": "Araçlar",
+                "nav.contact": "İletişim",
+                "hero.title": "Birim Dönüştürücü Aracı",
+                "hero.description": "Farklı ölçü birimleri arasında anında dönüştürün. Tüm dönüşümler tarayıcınızda yerel olarak gerçekleşir, dosya boyutu sınırı olmadan ve tam gizlilikle.",
+                "howto.title": "Birim Dönüştürücü Nasıl Kullanılır",
+                "howto.step1.title": "Kategori Seçin",
+                "howto.step1.description": "Uzunluk, ağırlık, sıcaklık, hacim, alan veya zaman gibi dönüştürmek istediğiniz birimlerin kategorisini seçin.",
+                "howto.step2.title": "Birimleri Seçin",
+                "howto.step2.description": "Açılır menülerden dönüştürmek istediğiniz birimi ve dönüştürmek istediğiniz birimi seçin.",
+                "howto.step3.title": "Değer Girin",
+                "howto.step3.description": "Dönüştürmek istediğiniz değeri giriş alanına yazın. Dönüşüm yazarken anında gerçekleşir.",
+                "howto.step4.title": "Sonuçları Görüntüleyin",
+                "howto.step4.description": "Dönüştürülen değeri görün ve aynı kategorideki diğer yaygın birimlerle karşılaştırın. Tüm işlem tarayıcınızda yerel olarak gerçekleşir.",
+                "tool.title": "Birim Dönüştürücü",
+                "tool.category": "Kategori:",
+                "tool.categories.length": "Uzunluk",
+                "tool.categories.weight": "Ağırlık",
+                "tool.categories.temperature": "Sıcaklık",
+                "tool.categories.volume": "Hacim",
+                "tool.categories.area": "Alan",
+                "tool.categories.time": "Zaman",
+                "tool.categories.speed": "Hız",
+                "tool.categories.digital": "Dijital Depolama",
+                "tool.from": "Şundan:",
+                "tool.value": "Değer:",
+                "tool.to": "Şuna:",
+                "tool.results": "Dönüşüm Sonuçları",
+                "tool.convert": "Dönüştür",
+                "tool.clear": "Tümünü Temizle",
+                "footer.follow": "BİZİ TAKİP EDİN",
+                "footer.categories": "Popüler Kategoriler",
+                "footer.categories.pdf": "PDF Araçları",
+                "footer.categories.image": "Resim Araçları",
+                "footer.categories.text": "Metin Araçları",
+                "footer.categories.av": "Ses/Video Araçları",
+                "footer.categories.web": "Web Geliştirici Araçları",
+                "footer.categories.calc": "Hesap Makinesi Araçları",
+                "footer.categories.util": "Yardımcı Araçlar",
+                "footer.categories.color": "Renk Araçları",
+                "footer.quicklinks": "Hızlı Bağlantılar",
+                "footer.links.tools": "Tüm Araçlar",
+                "footer.links.faq": "SSS",
+                "footer.links.contact": "İletişim",
+                "footer.links.privacy": "Gizlilik Politikası",
+                "footer.links.disclaimer": "Feragatname",
+                "footer.links.terms": "Hizmet Şartları",
+                "footer.copyright": "© 2025 LollyPoPDF. Tüm hakları saklıdır."
+            },
+            uk: {
+                "nav.home": "Головна",
+                "nav.about": "Про нас",
+                "nav.tools": "Інструменти",
+                "nav.contact": "Контакт",
+                "hero.title": "Інструмент конвертації одиниць",
+                "hero.description": "Миттєво конвертуйте між різними одиницями вимірювання. Усі перетворення відбуваються локально у вашому браузері без обмежень розміру файлу та з повною конфіденційністю.",
+                "howto.title": "Як використовувати конвертер одиниць",
+                "howto.step1.title": "Виберіть категорію",
+                "howto.step1.description": "Виберіть категорію одиниць, які ви хочете конвертувати, наприклад довжина, вага, температура, об'єм, площа або час.",
+                "howto.step2.title": "Виберіть одиниці",
+                "howto.step2.description": "Виберіть одиницю, з якої ви хочете конвертувати, та одиницю, в яку ви хочете конвертувати, з випадаючих меню.",
+                "howto.step3.title": "Введіть значення",
+                "howto.step3.description": "Введіть значення, яке ви хочете конвертувати, у поле введення. Конвертація відбувається миттєво під час введення.",
+                "howto.step4.title": "Перегляньте результати",
+                "howto.step4.description": "Подивіться на конвертоване значення та порівняйте його з іншими поширеними одиницями в тій же категорії. Уся обробка відбувається локально у вашому браузері.",
+                "tool.title": "Конвертер одиниць",
+                "tool.category": "Категорія:",
+                "tool.categories.length": "Довжина",
+                "tool.categories.weight": "Вага",
+                "tool.categories.temperature": "Температура",
+                "tool.categories.volume": "Об'єм",
+                "tool.categories.area": "Площа",
+                "tool.categories.time": "Час",
+                "tool.categories.speed": "Швидкість",
+                "tool.categories.digital": "Цифрове сховище",
+                "tool.from": "З:",
+                "tool.value": "Значення:",
+                "tool.to": "В:",
+                "tool.results": "Результати конвертації",
+                "tool.convert": "Конвертувати",
+                "tool.clear": "Очистити все",
+                "footer.follow": "СЛІДКУЙТЕ ЗА НАМИ",
+                "footer.categories": "Популярні категорії",
+                "footer.categories.pdf": "PDF інструменти",
+                "footer.categories.image": "Інструменти для зображень",
+                "footer.categories.text": "Текстові інструменти",
+                "footer.categories.av": "Аудіо/Відео інструменти",
+                "footer.categories.web": "Інструменти веб-розробника",
+                "footer.categories.calc": "Інструменти калькулятора",
+                "footer.categories.util": "Утиліти",
+                "footer.categories.color": "Інструменти кольору",
+                "footer.quicklinks": "Швидкі посилання",
+                "footer.links.tools": "Усі інструменти",
+                "footer.links.faq": "ЧаПи",
+                "footer.links.contact": "Контакт",
+                "footer.links.privacy": "Політика конфіденційності",
+                "footer.links.disclaimer": "Відмова від відповідальності",
+                "footer.links.terms": "Умови використання",
+                "footer.copyright": "© 2025 LollyPoPDF. Всі права захищені."
+            },
+            vi: {
+                "nav.home": "Trang chủ",
+                "nav.about": "Về chúng tôi",
+                "nav.tools": "Công cụ",
+                "nav.contact": "Liên hệ",
+                "hero.title": "Công cụ chuyển đổi đơn vị",
+                "hero.description": "Chuyển đổi giữa các đơn vị đo lường khác nhau ngay lập tức. Tất cả các chuyển đổi diễn ra cục bộ trong trình duyệt của bạn mà không có giới hạn kích thước tệp và với quyền riêng tư hoàn toàn.",
+                "howto.title": "Cách sử dụng bộ chuyển đổi đơn vị",
+                "howto.step1.title": "Chọn danh mục",
+                "howto.step1.description": "Chọn danh mục đơn vị bạn muốn chuyển đổi, chẳng hạn như chiều dài, trọng lượng, nhiệt độ, thể tích, diện tích hoặc thời gian.",
+                "howto.step2.title": "Chọn đơn vị",
+                "howto.step2.description": "Chọn đơn vị bạn muốn chuyển đổi từ và đơn vị bạn muốn chuyển đổi sang từ menu thả xuống.",
+                "howto.step3.title": "Nhập giá trị",
+                "howto.step3.description": "Nhập giá trị bạn muốn chuyển đổi vào trường nhập liệu. Việc chuyển đổi diễn ra ngay lập tức khi bạn nhập.",
+                "howto.step4.title": "Xem kết quả",
+                "howto.step4.description": "Xem giá trị đã chuyển đổi và so sánh nó với các đơn vị phổ biến khác trong cùng danh mục. Tất cả xử lý diễn ra cục bộ trong trình duyệt của bạn.",
+                "tool.title": "Bộ chuyển đổi đơn vị",
+                "tool.category": "Danh mục:",
+                "tool.categories.length": "Chiều dài",
+                "tool.categories.weight": "Trọng lượng",
+                "tool.categories.temperature": "Nhiệt độ",
+                "tool.categories.volume": "Thể tích",
+                "tool.categories.area": "Diện tích",
+                "tool.categories.time": "Thời gian",
+                "tool.categories.speed": "Tốc độ",
+                "tool.categories.digital": "Lưu trữ kỹ thuật số",
+                "tool.from": "Từ:",
+                "tool.value": "Giá trị:",
+                "tool.to": "Sang:",
+                "tool.results": "Kết quả chuyển đổi",
+                "tool.convert": "Chuyển đổi",
+                "tool.clear": "Xóa tất cả",
+                "footer.follow": "THEO DÕI CHÚNG TÔI",
+                "footer.categories": "Danh mục phổ biến",
+                "footer.categories.pdf": "Công cụ PDF",
+                "footer.categories.image": "Công cụ hình ảnh",
+                "footer.categories.text": "Công cụ văn bản",
+                "footer.categories.av": "Công cụ Âm thanh/Video",
+                "footer.categories.web": "Công cụ Nhà phát triển Web",
+                "footer.categories.calc": "Công cụ Máy tính",
+                "footer.categories.util": "Công cụ Tiện ích",
+                "footer.categories.color": "Công cụ Màu sắc",
+                "footer.quicklinks": "Liên kết nhanh",
+                "footer.links.tools": "Tất cả công cụ",
+                "footer.links.faq": "Câu hỏi thường gặp",
+                "footer.links.contact": "Liên hệ",
+                "footer.links.privacy": "Chính sách bảo mật",
+                "footer.links.disclaimer": "Tuyên bố miễn trừ trách nhiệm",
+                "footer.links.terms": "Điều khoản dịch vụ",
+                "footer.copyright": "© 2025 LollyPoPDF. Đã đăng ký bản quyền."
+            },
+            is: {
+                "nav.home": "Heim",
+                "nav.about": "Um okkur",
+                "nav.tools": "Verkfæri",
+                "nav.contact": "Hafa samband",
+                "hero.title": "Einingabreytingartól",
+                "hero.description": "Breyttu á milli mismunandi mælieininga augnabliklega. Allar breytingar eiga sér stað staðbundið í vafranum þínum án takmarkana á skráarstærð og með fullri næði.",
+                "howto.title": "Hvernig á að nota einingabreytingartólið",
+                "howto.step1.title": "Veldu flokk",
+                "howto.step1.description": "Veldu flokk eininga sem þú vilt breyta á milli, svo sem lengd, þyngd, hitastig, rúmmál, flatarmál eða tími.",
+                "howto.step2.title": "Veldu einingar",
+                "howto.step2.description": "Veldu eininguna sem þú vilt breyta frá og eininguna sem þú vilt breyta yfir í úr fellivalmyndunum.",
+                "howto.step3.title": "Sláðu inn gildi",
+                "howto.step3.description": "Sláðu inn gildið sem þú vilt breyta í inntaksreitinn. Breytingin á sér stað augnabliklega þegar þú slærð inn.",
+                "howto.step4.title": "Skoða niðurstöður",
+                "howto.step4.description": "Skoðaðu breytta gildið og berðu það saman við aðrar algengar einingar í sama flokki. Öll vinnsla á sér stað staðbundið í vafranum þínum.",
+                "tool.title": "Einingabreytingartól",
+                "tool.category": "Flokkur:",
+                "tool.categories.length": "Lengd",
+                "tool.categories.weight": "Þyngd",
+                "tool.categories.temperature": "Hitastig",
+                "tool.categories.volume": "Rúmmál",
+                "tool.categories.area": "Flatarmál",
+                "tool.categories.time": "Tími",
+                "tool.categories.speed": "Hraði",
+                "tool.categories.digital": "Stafræn geymsla",
+                "tool.from": "Frá:",
+                "tool.value": "Gildi:",
+                "tool.to": "Yfir í:",
+                "tool.results": "Breytingarniðurstöður",
+                "tool.convert": "Breyta",
+                "tool.clear": "Hreinsa allt",
+                "footer.follow": "FYLGDU OKKUR",
+                "footer.categories": "Vinsælir flokkar",
+                "footer.categories.pdf": "PDF verkfæri",
+                "footer.categories.image": "Myndverkfæri",
+                "footer.categories.text": "Textaverkfæri",
+                "footer.categories.av": "Hljóð-/myndbandaverkfæri",
+                "footer.categories.web": "Vefþróunarverkfæri",
+                "footer.categories.calc": "Reiknivélarverkfæri",
+                "footer.categories.util": "Hagnýt verkfæri",
+                "footer.categories.color": "Litverkfæri",
+                "footer.quicklinks": "Flýtileiðir",
+                "footer.links.tools": "Öll verkfæri",
+                "footer.links.faq": "Algengar spurningar",
+                "footer.links.contact": "Hafa samband",
+                "footer.links.privacy": "Meðferðarstefna",
+                "footer.links.disclaimer": "Fyrirvari",
+                "footer.links.terms": "Þjónustuskilmálar",
+                "footer.copyright": "© 2025 LollyPoPDF. Öll réttindi áskilin."
+            },
+            no: {
+                "nav.home": "Hjem",
+                "nav.about": "Om oss",
+                "nav.tools": "Verktøy",
+                "nav.contact": "Kontakt",
+                "hero.title": "Enhetskonverteringsverktøy",
+                "hero.description": "Konverter mellom ulike måleenheter umiddelbart. Alle konverteringer skjer lokalt i nettleseren din uten filstørrelsesbegrensninger og med fullstendig personvern.",
+                "howto.title": "Hvordan bruke enhetskonvertereren",
+                "howto.step1.title": "Velg kategori",
+                "howto.step1.description": "Velg kategorien for enheter du vil konvertere mellom, for eksempel lengde, vekt, temperatur, volum, areal eller tid.",
+                "howto.step2.title": "Velg enheter",
+                "howto.step2.description": "Velg enheten du vil konvertere fra og enheten du vil konvertere til fra rullegardinmenyene.",
+                "howto.step3.title": "Skriv inn verdi",
+                "howto.step3.description": "Skriv inn verdien du vil konvertere i inndatafeltet. Konverteringen skjer umiddelbart mens du skriver.",
+                "howto.step4.title": "Se resultater",
+                "howto.step4.description": "Se den konverterte verdien og sammenlign den med andre vanlige enheter i samme kategori. All behandling skjer lokalt i nettleseren din.",
+                "tool.title": "Enhetskonverterer",
+                "tool.category": "Kategori:",
+                "tool.categories.length": "Lengde",
+                "tool.categories.weight": "Vekt",
+                "tool.categories.temperature": "Temperatur",
+                "tool.categories.volume": "Volum",
+                "tool.categories.area": "Areal",
+                "tool.categories.time": "Tid",
+                "tool.categories.speed": "Hastighet",
+                "tool.categories.digital": "Digital lagring",
+                "tool.from": "Fra:",
+                "tool.value": "Verdi:",
+                "tool.to": "Til:",
+                "tool.results": "Konverteringsresultater",
+                "tool.convert": "Konverter",
+                "tool.clear": "Tøm alt",
+                "footer.follow": "FØLG OSS",
+                "footer.categories": "Populære kategorier",
+                "footer.categories.pdf": "PDF-verktøy",
+                "footer.categories.image": "Bildeverktøy",
+                "footer.categories.text": "Tekstverktøy",
+                "footer.categories.av": "Lyd/Video-verktøy",
+                "footer.categories.web": "Webutvikler-verktøy",
+                "footer.categories.calc": "Kalkulatorverktøy",
+                "footer.categories.util": "Nytteverktøy",
+                "footer.categories.color": "Fargeverktøy",
+                "footer.quicklinks": "Hurtiglenker",
+                "footer.links.tools": "Alle verktøy",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Kontakt",
+                "footer.links.privacy": "Personvernregler",
+                "footer.links.disclaimer": "Ansvarsfraskrivelse",
+                "footer.links.terms": "Tjenestevilkår",
+                "footer.copyright": "© 2025 LollyPoPDF. Alle rettigheter forbeholdt."
+            },
+            sv: {
+                "nav.home": "Hem",
+                "nav.about": "Om oss",
+                "nav.tools": "Verktyg",
+                "nav.contact": "Kontakt",
+                "hero.title": "Enhetsomvandlingsverktyg",
+                "hero.description": "Konvertera mellan olika måttenheter omedelbart. Alla omvandlingar sker lokalt i din webbläsare utan filstorleksbegränsningar och med fullständig integritet.",
+                "howto.title": "Hur man använder enhetsomvandlaren",
+                "howto.step1.title": "Välj kategori",
+                "howto.step1.description": "Välj kategorin för enheter du vill konvertera mellan, såsom längd, vikt, temperatur, volym, area eller tid.",
+                "howto.step2.title": "Välj enheter",
+                "howto.step2.description": "Välj enheten du vill konvertera från och enheten du vill konvertera till från rullgardinsmenyerna.",
+                "howto.step3.title": "Ange värde",
+                "howto.step3.description": "Skriv in värdet du vill konvertera i inmatningsfältet. Omvandlingen sker omedelbart när du skriver.",
+                "howto.step4.title": "Visa resultat",
+                "howto.step4.description": "Se det konverterade värdet och jämför det med andra vanliga enheter i samma kategori. All bearbetning sker lokalt i din webbläsare.",
+                "tool.title": "Enhetsomvandlare",
+                "tool.category": "Kategori:",
+                "tool.categories.length": "Längd",
+                "tool.categories.weight": "Vikt",
+                "tool.categories.temperature": "Temperatur",
+                "tool.categories.volume": "Volym",
+                "tool.categories.area": "Area",
+                "tool.categories.time": "Tid",
+                "tool.categories.speed": "Hastighet",
+                "tool.categories.digital": "Digital lagring",
+                "tool.from": "Från:",
+                "tool.value": "Värde:",
+                "tool.to": "Till:",
+                "tool.results": "Omvandlingsresultat",
+                "tool.convert": "Konvertera",
+                "tool.clear": "Rensa allt",
+                "footer.follow": "FÖLJ OSS",
+                "footer.categories": "Populära kategorier",
+                "footer.categories.pdf": "PDF-verktyg",
+                "footer.categories.image": "Bildverktyg",
+                "footer.categories.text": "Textverktyg",
+                "footer.categories.av": "Ljud/Video-verktyg",
+                "footer.categories.web": "Webbutvecklarverktyg",
+                "footer.categories.calc": "Kalkylatorverktyg",
+                "footer.categories.util": "Verktyg för verktyg",
+                "footer.categories.color": "Färgverktyg",
+                "footer.quicklinks": "Snabblänkar",
+                "footer.links.tools": "Alla verktyg",
+                "footer.links.faq": "Vanliga frågor",
+                "footer.links.contact": "Kontakt",
+                "footer.links.privacy": "Integritetspolicy",
+                "footer.links.disclaimer": "Ansvarsfriskrivning",
+                "footer.links.terms": "Användarvillkor",
+                "footer.copyright": "© 2025 LollyPoPDF. Alla rättigheter förbehållna."
+            },
+            fi: {
+                "nav.home": "Koti",
+                "nav.about": "Tietoa meistä",
+                "nav.tools": "Työkalut",
+                "nav.contact": "Yhteystiedot",
+                "hero.title": "Yksikkömuunnintyökalu",
+                "hero.description": "Muunna eri mittayksiköiden välillä välittömästi. Kaikki muunnokset tapahtuvat paikallisesti selaimessasi ilman tiedostokokorajoituksia ja täydellisen yksityisyyden kanssa.",
+                "howto.title": "Kuinka käyttää yksikkömuunninta",
+                "howto.step1.title": "Valitse luokka",
+                "howto.step1.description": "Valitse yksiköiden luokka, joiden välillä haluat muuntaa, kuten pituus, paino, lämpötila, tilavuus, pinta-ala tai aika.",
+                "howto.step2.title": "Valitse yksiköt",
+                "howto.step2.description": "Valitse yksikkö, josta haluat muuntaa, ja yksikkö, johon haluat muuntaa, pudotusvalikoista.",
+                "howto.step3.title": "Syötä arvo",
+                "howto.step3.description": "Kirjoita muunnettava arvo syöttökenttään. Muunnos tapahtuu välittömästi kirjoitettaessa.",
+                "howto.step4.title": "Näytä tulokset",
+                "howto.step4.description": "Katso muunnettu arvo ja vertaa sitä muihin yleisiin yksiköihin samassa luokassa. Kaikki käsittely tapahtuu paikallisesti selaimessasi.",
+                "tool.title": "Yksikkömuunnin",
+                "tool.category": "Luokka:",
+                "tool.categories.length": "Pituus",
+                "tool.categories.weight": "Paino",
+                "tool.categories.temperature": "Lämpötila",
+                "tool.categories.volume": "Tilavuus",
+                "tool.categories.area": "Pinta-ala",
+                "tool.categories.time": "Aika",
+                "tool.categories.speed": "Nopeus",
+                "tool.categories.digital": "Digitaalinen tallennus",
+                "tool.from": "Mistä:",
+                "tool.value": "Arvo:",
+                "tool.to": "Mihin:",
+                "tool.results": "Muunnostulokset",
+                "tool.convert": "Muunna",
+                "tool.clear": "Tyhjennä kaikki",
+                "footer.follow": "SEURA MEITÄ",
+                "footer.categories": "Suositut luokat",
+                "footer.categories.pdf": "PDF-työkalut",
+                "footer.categories.image": "Kuvatyökalut",
+                "footer.categories.text": "Tekstityökalut",
+                "footer.categories.av": "Ääni/Video-työkalut",
+                "footer.categories.web": "Web-kehittäjätyökalut",
+                "footer.categories.calc": "Laskurityökalut",
+                "footer.categories.util": "Aputyökalut",
+                "footer.categories.color": "Värityökalut",
+                "footer.quicklinks": "Pikalinkit",
+                "footer.links.tools": "Kaikki työkalut",
+                "footer.links.faq": "Usein kysytyt kysymykset",
+                "footer.links.contact": "Yhteystiedot",
+                "footer.links.privacy": "Tietosuojakäytäntö",
+                "footer.links.disclaimer": "Vastuuvapauslauseke",
+                "footer.links.terms": "Käyttöehdot",
+                "footer.copyright": "© 2025 LollyPoPDF. Kaikki oikeudet pidätetään."
+            },
+            cs: {
+                "nav.home": "Domů",
+                "nav.about": "O nás",
+                "nav.tools": "Nástroje",
+                "nav.contact": "Kontakt",
+                "hero.title": "Nástroj pro převod jednotek",
+                "hero.description": "Okamžitě převádějte mezi různými měrnými jednotkami. Všechny převody probíhají lokálně ve vašem prohlížeči bez omezení velikosti souboru a s úplným soukromím.",
+                "howto.title": "Jak používat převodník jednotek",
+                "howto.step1.title": "Vyberte kategorii",
+                "howto.step1.description": "Zvolte kategorii jednotek, mezi kterými chcete převádět, například délka, hmotnost, teplota, objem, plocha nebo čas.",
+                "howto.step2.title": "Zvolte jednotky",
+                "howto.step2.description": "Vyberte jednotku, ze které chcete převádět, a jednotku, na kterou chcete převádět, z rozbalovacích nabídek.",
+                "howto.step3.title": "Zadejte hodnotu",
+                "howto.step3.description": "Zadejte hodnotu, kterou chcete převést, do vstupního pole. Převod proběhne okamžitě při psaní.",
+                "howto.step4.title": "Zobrazte výsledky",
+                "howto.step4.description": "Podívejte se na převedenou hodnotu a porovnejte ji s dalšími běžnými jednotkami ve stejné kategorii. Veškeré zpracování probíhá lokálně ve vašem prohlížeči.",
+                "tool.title": "Převodník jednotek",
+                "tool.category": "Kategorie:",
+                "tool.categories.length": "Délka",
+                "tool.categories.weight": "Hmotnost",
+                "tool.categories.temperature": "Teplota",
+                "tool.categories.volume": "Objem",
+                "tool.categories.area": "Plocha",
+                "tool.categories.time": "Čas",
+                "tool.categories.speed": "Rychlost",
+                "tool.categories.digital": "Digitální úložiště",
+                "tool.from": "Z:",
+                "tool.value": "Hodnota:",
+                "tool.to": "Na:",
+                "tool.results": "Výsledky převodu",
+                "tool.convert": "Převést",
+                "tool.clear": "Vymazat vše",
+                "footer.follow": "SLEDUJTE NÁS",
+                "footer.categories": "Populární kategorie",
+                "footer.categories.pdf": "PDF nástroje",
+                "footer.categories.image": "Obrázkové nástroje",
+                "footer.categories.text": "Textové nástroje",
+                "footer.categories.av": "Audio/Video nástroje",
+                "footer.categories.web": "Webové vývojářské nástroje",
+                "footer.categories.calc": "Kalkulační nástroje",
+                "footer.categories.util": "Užitečné nástroje",
+                "footer.categories.color": "Barevné nástroje",
+                "footer.quicklinks": "Rychlé odkazy",
+                "footer.links.tools": "Všechny nástroje",
+                "footer.links.faq": "Často kladené otázky",
+                "footer.links.contact": "Kontakt",
+                "footer.links.privacy": "Zásady ochrany osobních údajů",
+                "footer.links.disclaimer": "Odmítnutí odpovědnosti",
+                "footer.links.terms": "Podmínky služby",
+                "footer.copyright": "© 2025 LollyPoPDF. Všechna práva vyhrazena."
+            }
+            
+
+        };
+
+        // Function to change language
+        function changeLanguage(langCode) {
+            const langData = translations[langCode];
+            if (!langData) return;
+            
+            // Update all elements with data-i18n attribute
+            document.querySelectorAll('[data-i18n]').forEach(element => {
+                const key = element.getAttribute('data-i18n');
+                if (langData[key]) {
+                    element.textContent = langData[key];
+                }
+            });
+            
+            // Update current language display
+            currentLanguageElement.textContent = languages.find(lang => lang.code === langCode)?.name || 'English';
+            
+            // Save language preference
+            localStorage.setItem('language', langCode);
+        }
+
+        // Initialize language
+        const savedLanguage = localStorage.getItem('language') || 'en';
+        changeLanguage(savedLanguage);
+        
+        // Language selection handler
+        languageDropdown.addEventListener('click', (e) => {
+            if (e.target.classList.contains('language-option')) {
+                const langCode = e.target.getAttribute('data-lang');
+                changeLanguage(langCode);
+            }
+        });
+    </script>
+</body>
+</html>

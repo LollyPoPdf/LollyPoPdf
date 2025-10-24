@@ -1,0 +1,3179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Time Zone Converter | LollyPoPdf</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #9370db;
+            --primary-dark: #8a2be2;
+            --secondary-color: #f0ebff;
+            --text-color: #333333;
+            --text-light: #6b7280;
+            --bg-color: #ffffff;
+            --bg-secondary: #f9f9f9;
+            --border-radius: 12px;
+            --transition: all 0.3s ease;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --header-height: 80px;
+            --white: #ffffff;
+            --header-text: #6b7280;
+            --accent-color: #9370db;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --error-color: #ef4444;
+        }
+
+        .dark-mode {
+            --primary-color: #a391f2;
+            --primary-dark: #8a2be2;
+            --secondary-color: #2d2d2d;
+            --text-color: #f0f0f0;
+            --text-light: #a0a0a0;
+            --bg-color: #1a1a1a;
+            --bg-secondary: #2d2d2d;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+            --white: #1a1a1a;
+            --header-text: #a0a0a0;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            transition: var(--transition);
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        ul {
+            list-style: none;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header Styles */
+        header {
+            background-color: var(--white);
+            color: var(--header-text);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+        }
+
+        .logo-icon {
+            position: relative;
+            width: 40px;
+            height: 40px;
+        }
+
+        .logo-circle {
+            width: 40px;
+            height: 40px;
+            border-radius: 40%;
+            background: linear-gradient(to bottom right, #9370db, #8a2be2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .logo-stem {
+            position: absolute;
+            bottom: -17px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 6px;
+            height: 17px;
+            background-color: #8a2be2;
+            border-radius: 0 0 3px 3px;
+        }
+
+        .logo-text {
+            font-size: 24px;
+            font-weight: bold;
+            color: #9370db;
+        }
+
+        nav ul {
+            display: flex;
+            gap: 30px;
+            list-style: none;
+        }
+
+        nav a {
+            font-weight: 500;
+            position: relative;
+            color: var(--header-text);
+            padding: 8px 0;
+            border-radius: 0;
+            transition: var(--transition);
+            text-decoration: none;
+        }
+
+        nav a:hover {
+            color: var(--accent-color);
+        }
+
+        nav a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: var(--accent-color);
+            transition: width 0.3s ease;
+        }
+
+        nav a:hover::after {
+            width: 100%;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .email {
+            font-size: 14px;
+            color: var(--header-text);
+        }
+
+        .theme-toggle {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 20px;
+            color: var(--header-text);
+            padding: 8px;
+            border-radius: 50%;
+            transition: var(--transition);
+        }
+
+        .theme-toggle:hover {
+            background-color: #f0ebff;
+            color: var(--accent-color);
+        }
+
+        .dark-mode .theme-toggle:hover {
+            background-color: #2d3748;
+            color: var(--accent-color);
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--header-text);
+        }
+
+        /* Mobile Menu */
+        .mobile-menu {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            width: 100%;
+            background-color: var(--white);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            z-index: 999;
+        }
+
+        .dark-mode .mobile-menu {
+            background-color: var(--bg-secondary);
+        }
+
+        .mobile-menu.active {
+            display: block;
+        }
+
+        .mobile-menu ul {
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .mobile-menu a {
+            display: block;
+            padding: 10px 0;
+            font-weight: 500;
+            color: var(--header-text);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .dark-mode .mobile-menu a {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .mobile-menu a:hover {
+            color: var(--accent-color);
+        }
+
+        /* Hero Section */
+        .hero {
+            background-color: var(--secondary-color);
+            padding: 60px 0;
+            text-align: center;
+        }
+
+        .dark-mode .hero {
+            background: linear-gradient(135deg, #2a1a4a, #3d2a6d);
+        }
+
+        .hero h1 {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            color: #000;
+        }
+
+        .dark-mode .hero h1 {
+            color: var(--text-color);
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            color: var(--text-color);
+            max-width: 700px;
+            margin: 0 auto 30px;
+        }
+
+        /* How to Use Section */
+        .how-to-section {
+            padding: 80px 0;
+            background-color: var(--bg-color);
+        }
+
+        .dark-mode .how-to-section {
+            background-color: var(--bg-secondary);
+        }
+
+        .section-title {
+            font-size: 2rem;
+            text-align: center;
+            margin-bottom: 40px;
+            color: #000000;
+        }
+
+        .dark-mode .section-title {
+            color: var(--text-color);
+        }
+
+        .steps-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 40px;
+        }
+
+        .step-box {
+            background-color: var(--bg-secondary);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            padding: 30px;
+            min-height: 200px;
+            position: relative;
+        }
+
+        .step-number {
+            width: 40px;
+            height: 40px;
+            background-color: var(--primary-color);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 16px;
+            margin-bottom: 15px;
+        }
+
+        .step-title {
+            font-size: 18px;
+            color: #000000;
+            margin-bottom: 10px;
+        }
+
+        .dark-mode .step-title {
+            color: var(--text-color);
+        }
+
+        .step-description {
+            font-size: 14px;
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        /* Tool Section */
+        .tool-section {
+            padding: 80px 0;
+            background-color: var(--secondary-color);
+        }
+
+        .dark-mode .tool-section {
+            background: linear-gradient(135deg, #2a1a4a, #3d2a6d);
+        }
+
+        .tool-title {
+            font-size: 2.5rem;
+            text-align: center;
+            margin-bottom: 40px;
+            color: #a391f2;
+        }
+
+        .dark-mode .tool-title {
+            color: #a391f2;
+        }
+
+        .tool-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background-color: var(--bg-color);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            padding: 40px;
+        }
+
+        /* Converter Controls */
+        .converter-controls {
+            background-color: var(--bg-secondary);
+            border-radius: var(--border-radius);
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+
+        .controls-title {
+            font-size: 18px;
+            margin-bottom: 15px;
+            color: var(--primary-color);
+        }
+
+        .time-inputs {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .time-input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .time-label {
+            display: block;
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 5px;
+        }
+
+        .time-input {
+            padding: 8px 12px;
+            border-radius: var(--border-radius);
+            border: 1px solid var(--primary-color);
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-size: 14px;
+            width: 100%;
+        }
+
+        .time-zone-select {
+            padding: 8px 12px;
+            border-radius: var(--border-radius);
+            border: 1px solid var(--primary-color);
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-size: 14px;
+            width: 100%;
+        }
+
+        .voice-controls {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+
+        .voice-btn {
+            padding: 8px 15px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .voice-btn:hover {
+            background-color: var(--primary-dark);
+        }
+
+        .voice-btn:disabled {
+            background-color: var(--text-light);
+            cursor: not-allowed;
+        }
+
+        .voice-status {
+            margin-top: 10px;
+            font-size: 14px;
+            color: var(--text-light);
+            text-align: center;
+        }
+
+        .voice-recording {
+            color: var(--error-color);
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+
+        /* Result Section */
+        .result-container {
+            background-color: var(--bg-secondary);
+            border-radius: var(--border-radius);
+            padding: 20px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .result-title {
+            font-size: 18px;
+            margin-bottom: 15px;
+            color: var(--primary-color);
+        }
+
+        .converted-time {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: var(--primary-color);
+            margin-bottom: 10px;
+        }
+
+        .time-difference {
+            font-size: 1rem;
+            color: var(--text-light);
+        }
+
+        /* Live Clocks */
+        .live-clocks {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .clock-container {
+            background-color: var(--bg-secondary);
+            border-radius: var(--border-radius);
+            padding: 20px;
+            text-align: center;
+            box-shadow: var(--shadow);
+        }
+
+        .clock-title {
+            font-size: 18px;
+            margin-bottom: 15px;
+            color: var(--primary-color);
+        }
+
+        .clock-display {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--primary-color);
+            margin-bottom: 10px;
+        }
+
+        .clock-date {
+            font-size: 1rem;
+            color: var(--text-light);
+        }
+
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .action-btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: var(--transition);
+            flex: 1;
+            min-width: 150px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .convert-btn {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .convert-btn:hover {
+            background-color: var(--primary-dark);
+        }
+
+        .copy-btn {
+            background-color: var(--success-color);
+            color: white;
+        }
+
+        .copy-btn:hover {
+            background-color: #0da271;
+        }
+
+        .clear-btn {
+            background-color: white;
+            color: var(--primary-color);
+            border: 2px solid var(--primary-color);
+        }
+
+        .clear-btn:hover {
+            background-color: var(--secondary-color);
+        }
+
+        /* Footer */
+        footer {
+            background-color: #000000;
+            color: white;
+            padding: 60px 0 80px;
+            position: relative;
+        }
+
+        .footer-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 60px;
+        }
+
+        .footer-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            text-decoration: none;
+        }
+
+        .footer-logo .logo-icon {
+            width: 40px;
+            height: 40px;
+        }
+
+        .footer-logo .logo-text {
+            color: #9370db;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .footer-section h3 {
+            color: white;
+            font-weight: 600;
+            font-size: 20px;
+            margin-bottom: 20px;
+        }
+
+        .footer-section h4 {
+            color: #9370db;
+            font-size: 18px;
+            margin-bottom: 15px;
+        }
+
+        .footer-links li {
+            margin-bottom: 10px;
+        }
+
+        .footer-links a {
+            color: white;
+        }
+
+        .footer-links a:hover {
+            color: #9370db;
+        }
+
+        .social-icons {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .social-icon {
+            width: 40px;
+            height: 40px;
+            background-color: #9370db;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+        }
+
+        .social-icon:hover {
+            background-color: #8a2be2;
+            transform: translateY(-3px);
+        }
+
+        .copyright {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            color: #f9f7ff;
+            font-size: 12px;
+        }
+
+        .footer-line {
+            position: absolute;
+            bottom: 50px;
+            left: 0;
+            width: 100%;
+            height: 1px;
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        /* Language Switcher */
+        .language-switcher {
+            position: fixed;
+            bottom: 10px;
+            right: 10px;
+            z-index: 1000;
+        }
+
+        .language-btn {
+            background-color: #9370db;
+            color: white;
+            border: none;
+            border-radius: 30px;
+            padding: 5px 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .language-dropdown {
+            position: absolute;
+            bottom: 100%;
+            right: 0;
+            width: 300px;
+            background-color: white;
+            border-radius: var(--border-radius);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            display: none;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .dark-mode .language-dropdown {
+            background-color: var(--bg-secondary);
+        }
+
+        .language-switcher:hover .language-dropdown {
+            display: grid;
+        }
+
+        .language-option {
+            padding: 8px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            text-align: center;
+            font-size: 14px;
+        }
+
+        .language-option:hover {
+            background-color: white;
+            color: #9370db;
+        }
+
+        .dark-mode .language-option:hover {
+            background-color: var(--bg-color);
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 992px) {
+            .steps-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .footer-container {
+                grid-template-columns: 1fr 1fr;
+            }
+            
+            .live-clocks {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            nav ul, .email {
+                display: none;
+            }
+            
+            .mobile-menu-btn {
+                display: block;
+            }
+            
+            .hero h1, .tool-title {
+                font-size: 2rem;
+            }
+            
+            .hero p {
+                font-size: 1rem;
+            }
+            
+            .language-dropdown {
+                width: 250px;
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .footer-container {
+                grid-template-columns: 1fr;
+                gap: 40px;
+            }
+            
+            .time-inputs {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .tool-container {
+                padding: 20px;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+            
+            .action-btn {
+                width: 100%;
+            }
+            
+            .voice-controls {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container header-container">
+            <a href="https://lollypopdf.com" class="logo">
+                <div class="logo-icon">
+                    <div class="logo-circle">LPdf</div>
+                    <div class="logo-stem"></div>
+                </div>
+                <span class="logo-text">LollyPoPdf</span>
+            </a>
+            
+            <nav>
+                <ul>
+                    <li><a href="https://lollypopdf.github.io/LollyPoPdf#home" class="nav-link" data-i18n="nav.home">Home</a></li>
+                    <li><a href="https://lollypopdf.github.io/LollyPoPdf#about" class="nav-link" data-i18n="nav.about">About Us</a></li>
+                    <li><a href="https://lollypopdf.github.io/LollyPoPdf#tools" class="nav-link" data-i18n="nav.tools">Tools</a></li>
+                    <li><a href="contact.html" class="nav-link" data-i18n="nav.contact">Contact</a></li>
+                </ul>
+            </nav>
+            
+            <div class="header-right">
+                <span class="email">lollypoppdf@gmail.com</span>
+                <button class="theme-toggle" id="themeToggle">
+                    <i class="fas fa-moon"></i>
+                </button>
+                <button class="mobile-menu-btn" id="mobileMenuBtn">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </div>
+        
+        <!-- Mobile Menu -->
+        <div class="mobile-menu" id="mobileMenu">
+            <ul>
+                <li><a href="https://lollypopdf.github.io/LollyPoPdf#home" class="nav-link" data-i18n="nav.home">Home</a></li>
+                <li><a href="https://lollypopdf.github.io/LollyPoPdf#about" class="nav-link" data-i18n="nav.about">About Us</a></li>
+                <li><a href="https://lollypopdf.github.io/LollyPoPdf#tools" class="nav-link" data-i18n="nav.tools">Tools</a></li>
+                <li><a href="contact.html" class="nav-link" data-i18n="nav.contact">Contact</a></li>
+            </ul>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <h1 data-i18n="hero.title">Time Zone Converter Tool</h1>
+            <p data-i18n="hero.description">Convert time instantly between different time zones. Use manual input or voice recognition for quick conversions. All processing happens locally in your browser with complete privacy.</p>
+        </div>
+    </section>
+
+    <!-- How to Use Section -->
+    <section class="how-to-section">
+        <div class="container">
+            <h2 class="section-title" data-i18n="howto.title">How to Use the Time Zone Converter</h2>
+            <div class="steps-container">
+                <div class="step-box">
+                    <div class="step-number">1</div>
+                    <h3 class="step-title" data-i18n="howto.step1.title">Select Time Zones</h3>
+                    <p class="step-description" data-i18n="howto.step1.description">Choose your source and destination time zones from the dropdown menus. The tool includes all major time zones around the world.</p>
+                </div>
+                <div class="step-box">
+                    <div class="step-number">2</div>
+                    <h3 class="step-title" data-i18n="howto.step2.title">Enter Time</h3>
+                    <p class="step-description" data-i18n="howto.step2.description">Enter the time you want to convert in the source time zone. You can type it manually or use voice recognition for hands-free input.</p>
+                </div>
+                <div class="step-box">
+                    <div class="step-number">3</div>
+                    <h3 class="step-title" data-i18n="howto.step3.title">Convert & View</h3>
+                    <p class="step-description" data-i18n="howto.step3.description">Click "Convert Time" to instantly see the converted time in the destination time zone. Live clocks show current time in both zones.</p>
+                </div>
+                <div class="step-box">
+                    <div class="step-number">4</div>
+                    <h3 class="step-title" data-i18n="howto.step4.title">Copy or Share</h3>
+                    <p class="step-description" data-i18n="howto.step4.description">Copy the converted time to clipboard with one click. All processing happens locally in your browser - your data never leaves your device.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Tool Section -->
+    <section class="tool-section">
+        <div class="container">
+            <h2 class="tool-title" data-i18n="tool.title">Time Zone Converter</h2>
+            <div class="tool-container">
+                <!-- Converter Controls -->
+                <div class="converter-controls">
+                    <h3 class="controls-title" data-i18n="tool.converter.title">Time Zone Conversion</h3>
+                    
+                    <div class="time-inputs">
+                        <div class="time-input-group">
+                            <label for="fromTimeZone" class="time-label" data-i18n="tool.converter.from">From Time Zone:</label>
+                            <select id="fromTimeZone" class="time-zone-select">
+                                <option value="auto" data-i18n="tool.converter.auto">Auto-detect (Your Time Zone)</option>
+                                <!-- Time zones will be populated by JavaScript -->
+                            </select>
+                        </div>
+                        <div class="time-input-group">
+                            <label for="toTimeZone" class="time-label" data-i18n="tool.converter.to">To Time Zone:</label>
+                            <select id="toTimeZone" class="time-zone-select">
+                                <!-- Time zones will be populated by JavaScript -->
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="time-inputs">
+                        <div class="time-input-group">
+                            <label for="dateInput" class="time-label" data-i18n="tool.converter.date">Date:</label>
+                            <input type="date" id="dateInput" class="time-input">
+                        </div>
+                        <div class="time-input-group">
+                            <label for="timeInput" class="time-label" data-i18n="tool.converter.time">Time:</label>
+                            <input type="time" id="timeInput" class="time-input">
+                        </div>
+                    </div>
+                    
+                    <!-- Voice Controls -->
+                    <div class="voice-controls">
+                        <button class="voice-btn" id="voiceInputBtn">
+                            <i class="fas fa-microphone"></i> <span data-i18n="tool.voice.input">Voice Input</span>
+                        </button>
+                        <button class="voice-btn" id="voiceOutputBtn">
+                            <i class="fas fa-volume-up"></i> <span data-i18n="tool.voice.output">Voice Output</span>
+                        </button>
+                    </div>
+                    <div class="voice-status" id="voiceStatus"></div>
+                </div>
+
+                <!-- Result Section -->
+                <div class="result-container">
+                    <h3 class="result-title" data-i18n="tool.result.title">Converted Time</h3>
+                    <div class="converted-time" id="convertedTime">--:-- --</div>
+                    <div class="time-difference" id="timeDifference"></div>
+                </div>
+
+                <!-- Live Clocks -->
+                <div class="live-clocks">
+                    <div class="clock-container">
+                        <h3 class="clock-title" id="fromClockTitle">Source Time Zone</h3>
+                        <div class="clock-display" id="fromClock">--:--:--</div>
+                        <div class="clock-date" id="fromDate">--</div>
+                    </div>
+                    <div class="clock-container">
+                        <h3 class="clock-title" id="toClockTitle">Destination Time Zone</h3>
+                        <div class="clock-display" id="toClock">--:--:--</div>
+                        <div class="clock-date" id="toDate">--</div>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="action-buttons">
+                    <button class="action-btn convert-btn" id="convertBtn" data-i18n="tool.convert.button">
+                        <i class="fas fa-sync-alt"></i> Convert Time
+                    </button>
+                    <button class="action-btn copy-btn" id="copyBtn" data-i18n="tool.copy">
+                        <i class="fas fa-copy"></i> Copy Result
+                    </button>
+                    <button class="action-btn clear-btn" id="clearBtn" data-i18n="tool.clear">
+                        <i class="fas fa-trash"></i> Clear All
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container footer-container">
+            <!-- Left Section -->
+            <div class="footer-section">
+                <a href="https://lollypopdf.com" class="footer-logo">
+                    <div class="logo-icon">
+                        <div class="logo-circle">LPdf</div>
+                        <div class="logo-stem"></div>
+                    </div>
+                    <span class="logo-text">LollyPoPdf</span>
+                </a>
+                <h3 data-i18n="footer.follow">FOLLOW US</h3>
+                <div class="social-icons">
+                    <a href="https://facebook.com/lollypopdf" class="social-icon"><i class="fab fa-facebook-f"></i></a>
+                    <a href="https://linkedin.com/company/lollypopdf" class="social-icon"><i class="fab fa-linkedin-in"></i></a>
+                    <a href="https://twitter.com/lollypopdf" class="social-icon"><i class="fab fa-twitter"></i></a>
+                    <a href="https://instagram.com/lollypopdf" class="social-icon"><i class="fab fa-instagram"></i></a>
+                    <a href="https://pinterest.com/lollypopdf" class="social-icon"><i class="fab fa-pinterest-p"></i></a>
+                </div>
+            </div>
+            
+            <!-- Middle Section - Popular Categories -->
+            <div class="footer-section">
+                <h4 data-i18n="footer.categories">Popular Categories</h4>
+                <ul class="footer-links">
+                    <li><a href="https://lollypopdf.com#pdf-tools" data-i18n="footer.categories.pdf">PDF Tools</a></li>
+                    <li><a href="https://lollypopdf.com#image-tools" data-i18n="footer.categories.image">Image Tools</a></li>
+                    <li><a href="https://lollypopdf.com#text-tools" data-i18n="footer.categories.text">Text Tools</a></li>
+                    <li><a href="https://lollypopdf.com#audio-video-tools" data-i18n="footer.categories.av">Audio/Video Tools</a></li>
+                    <li><a href="https://lollypopdf.com#web-developer-tools" data-i18n="footer.categories.web">WebDeveloper Tools</a></li>
+                    <li><a href="https://lollypopdf.com#calculator-tools" data-i18n="footer.categories.calc">Calculator Tools</a></li>
+                    <li><a href="https://lollypopdf.com#utility-tools" data-i18n="footer.categories.util">Utility Tools</a></li>
+                    <li><a href="https://lollypopdf.com#color-tools" data-i18n="footer.categories.color">Color Tools</a></li>
+                </ul>
+            </div>
+            
+            <!-- Right Section - Quick Links -->
+            <div class="footer-section">
+                <h4 data-i18n="footer.quicklinks">Quick Links</h4>
+                <ul class="footer-links">
+                    <li><a href="https://lollypopdf.github.io/LollyPoPdf#home" data-i18n="nav.home">Home</a></li>
+                    <li><a href="https://lollypopdf.github.io/LollyPoPdf#tools" data-i18n="footer.links.tools">All Tools</a></li>
+                    <li><a href="faq.html" data-i18n="footer.links.faq">FAQ</a></li>
+                    <li><a href="contact.html" data-i18n="footer.links.contact">Contact</a></li>
+                    <li><a href="privacy-policy.html" data-i18n="footer.links.privacy">Privacy Policy</a></li>
+                    <li><a href="disclaimer.html" data-i18n="footer.links.disclaimer">Disclaimer</a></li>
+                    <li><a href="terms.html" data-i18n="footer.links.terms">Terms of Service</a></li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="footer-line"></div>
+        <div class="copyright" data-i18n="footer.copyright">© 2025 LollyPoPDF. All rights reserved.</div>
+    </footer>
+
+    <!-- Language Switcher -->
+    <div class="language-switcher">
+        <button class="language-btn">
+            <i class="fas fa-globe"></i>
+            <span id="currentLanguage">English</span>
+        </button>
+        <div class="language-dropdown">
+            <div class="language-option" data-lang="en">English</div>
+            <div class="language-option" data-lang="es">Español</div>
+            <div class="language-option" data-lang="fr">Français</div>
+            <div class="language-option" data-lang="de">Deutsch</div>
+            <div class="language-option" data-lang="it">Italiano</div>
+            <div class="language-option" data-lang="pt">Português</div>
+            <div class="language-option" data-lang="ja">日本語</div>
+            <div class="language-option" data-lang="ru">Pусский</div>
+            <div class="language-option" data-lang="ko">한국어</div>
+            <div class="language-option" data-lang="zh-CN">中文 (简体)</div>
+            <div class="language-option" data-lang="zh-TW">中文 (繁體)</div>
+            <div class="language-option" data-lang="ar">العربية</div>
+            <div class="language-option" data-lang="fa">فارسی</div>
+            <div class="language-option" data-lang="bg">Български</div>
+            <div class="language-option" data-lang="ca">Català</div>
+            <div class="language-option" data-lang="nl">Nederlands</div>
+            <div class="language-option" data-lang="el">Ελληνικά</div>
+            <div class="language-option" data-lang="hi">हिन्दी</div>
+            <div class="language-option" data-lang="te">తెలుగు</div>
+            <div class="language-option" data-lang="kn">ಕನ್ನಡ</div>
+            <div class="language-option" data-lang="ta">தமிழ்</div>
+            <div class="language-option" data-lang="ml">മലയാളം</div>
+            <div class="language-option" data-lang="id">Bahasa Indonesia</div>
+            <div class="language-option" data-lang="ms">Bahasa Melayu</div>
+            <div class="language-option" data-lang="pl">Polski</div>
+            <div class="language-option" data-lang="th">ภาษาไทย</div>
+            <div class="language-option" data-lang="tr">Türkçe</div>
+            <div class="language-option" data-lang="uk">Українська</div>
+            <div class="language-option" data-lang="vi">Tiếng Việt</div>
+            <div class="language-option" data-lang="is">Íslenska</div>
+            <div class="language-option" data-lang="no">Norsk</div>
+            <div class="language-option" data-lang="sv">Svenska</div>
+            <div class="language-option" data-lang="fi">Suomi</div>
+            <div class="language-option" data-lang="cs">Čeština</div>
+        </div>
+    </div>
+
+    <script>
+        // Theme Toggle
+        const themeToggle = document.getElementById('themeToggle');
+        const body = document.body;
+        
+        // Check for saved theme preference or respect OS preference
+        const savedTheme = localStorage.getItem('theme') || 
+            (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        
+        if (savedTheme === 'dark') {
+            body.classList.add('dark-mode');
+            themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+        }
+        
+        themeToggle.addEventListener('click', () => {
+            body.classList.toggle('dark-mode');
+            const isDarkMode = body.classList.contains('dark-mode');
+            
+            if (isDarkMode) {
+                themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+                localStorage.setItem('theme', 'dark');
+            } else {
+                themeToggle.innerHTML = '<i class="fas fa-moon"></i>';
+                localStorage.setItem('theme', 'light');
+            }
+        });
+
+        // Mobile Menu Toggle
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const mobileMenu = document.getElementById('mobileMenu');
+        
+        mobileMenuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('active');
+            
+            // Change icon based on menu state
+            if (mobileMenu.classList.contains('active')) {
+                mobileMenuBtn.innerHTML = '<i class="fas fa-times"></i>';
+            } else {
+                mobileMenuBtn.innerHTML = '<i class="fas fa-bars"></i>';
+            }
+        });
+
+        // Close mobile menu when clicking on a link
+        const mobileMenuLinks = mobileMenu.querySelectorAll('a');
+        mobileMenuLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                mobileMenu.classList.remove('active');
+                mobileMenuBtn.innerHTML = '<i class="fas fa-bars"></i>';
+            });
+        });
+
+        // Time Zone Converter Functionality
+        const fromTimeZone = document.getElementById('fromTimeZone');
+        const toTimeZone = document.getElementById('toTimeZone');
+        const dateInput = document.getElementById('dateInput');
+        const timeInput = document.getElementById('timeInput');
+        const convertBtn = document.getElementById('convertBtn');
+        const copyBtn = document.getElementById('copyBtn');
+        const clearBtn = document.getElementById('clearBtn');
+        const convertedTime = document.getElementById('convertedTime');
+        const timeDifference = document.getElementById('timeDifference');
+        const fromClock = document.getElementById('fromClock');
+        const fromDate = document.getElementById('fromDate');
+        const toClock = document.getElementById('toClock');
+        const toDate = document.getElementById('toDate');
+        const fromClockTitle = document.getElementById('fromClockTitle');
+        const toClockTitle = document.getElementById('toClockTitle');
+        const voiceInputBtn = document.getElementById('voiceInputBtn');
+        const voiceOutputBtn = document.getElementById('voiceOutputBtn');
+        const voiceStatus = document.getElementById('voiceStatus');
+
+        // Voice recognition variables
+        let recognition = null;
+        let isListening = false;
+        let speechSynthesis = window.speechSynthesis;
+
+        // Popular time zones
+        const timeZones = [
+            { value: 'auto', name: 'Auto-detect (Your Time Zone)' },
+            { value: 'America/New_York', name: 'Eastern Time (ET)' },
+            { value: 'America/Chicago', name: 'Central Time (CT)' },
+            { value: 'America/Denver', name: 'Mountain Time (MT)' },
+            { value: 'America/Los_Angeles', name: 'Pacific Time (PT)' },
+            { value: 'America/Anchorage', name: 'Alaska Time (AKT)' },
+            { value: 'Pacific/Honolulu', name: 'Hawaii Time (HT)' },
+            { value: 'Europe/London', name: 'Greenwich Mean Time (GMT)' },
+            { value: 'Europe/Paris', name: 'Central European Time (CET)' },
+            { value: 'Europe/Berlin', name: 'Central European Time (CET)' },
+            { value: 'Europe/Moscow', name: 'Moscow Time (MSK)' },
+            { value: 'Asia/Dubai', name: 'Gulf Standard Time (GST)' },
+            { value: 'Asia/Kolkata', name: 'India Standard Time (IST)' },
+            { value: 'Asia/Shanghai', name: 'China Standard Time (CST)' },
+            { value: 'Asia/Tokyo', name: 'Japan Standard Time (JST)' },
+            { value: 'Australia/Sydney', name: 'Australian Eastern Time (AET)' },
+            { value: 'Pacific/Auckland', name: 'New Zealand Time (NZT)' }
+        ];
+
+        // Initialize time zone dropdowns
+        function initializeTimeZones() {
+            // Clear existing options
+            fromTimeZone.innerHTML = '';
+            toTimeZone.innerHTML = '';
+            
+            // Add time zones to both dropdowns
+            timeZones.forEach(tz => {
+                const fromOption = document.createElement('option');
+                fromOption.value = tz.value;
+                fromOption.textContent = tz.name;
+                fromTimeZone.appendChild(fromOption);
+                
+                const toOption = document.createElement('option');
+                toOption.value = tz.value;
+                toOption.textContent = tz.name;
+                toTimeZone.appendChild(toOption);
+            });
+            
+            // Set default values
+            fromTimeZone.value = 'auto';
+            toTimeZone.value = 'Europe/London';
+            
+            // Set current date and time
+            const now = new Date();
+            dateInput.value = now.toISOString().split('T')[0];
+            timeInput.value = now.toTimeString().split(' ')[0].substring(0, 5);
+        }
+
+        // Get user's time zone
+        function getUserTimeZone() {
+            return Intl.DateTimeFormat().resolvedOptions().timeZone;
+        }
+
+        // Format time for display
+        function formatTime(date, timeZone) {
+            return date.toLocaleTimeString('en-US', { 
+                timeZone: timeZone,
+                hour: 'numeric', 
+                minute: '2-digit',
+                hour12: true 
+            });
+        }
+
+        // Format date for display
+        function formatDate(date, timeZone) {
+            return date.toLocaleDateString('en-US', { 
+                timeZone: timeZone,
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+        }
+
+        // Calculate time difference between two time zones
+        function calculateTimeDifference(fromTZ, toTZ) {
+            const now = new Date();
+            const fromTime = now.toLocaleString('en-US', { timeZone: fromTZ });
+            const toTime = now.toLocaleString('en-US', { timeZone: toTZ });
+            
+            const fromDate = new Date(fromTime);
+            const toDate = new Date(toTime);
+            
+            const diffMs = toDate.getTime() - fromDate.getTime();
+            const diffHrs = Math.round(diffMs / (1000 * 60 * 60));
+            
+            if (diffHrs === 0) {
+                return 'Same time';
+            } else if (diffHrs > 0) {
+                return `${diffHrs} hour${Math.abs(diffHrs) !== 1 ? 's' : ''} ahead`;
+            } else {
+                return `${Math.abs(diffHrs)} hour${Math.abs(diffHrs) !== 1 ? 's' : ''} behind`;
+            }
+        }
+
+        // Convert time between time zones
+        function convertTime() {
+            const fromTZ = fromTimeZone.value === 'auto' ? getUserTimeZone() : fromTimeZone.value;
+            const toTZ = toTimeZone.value;
+            
+            // Get the input date and time
+            const dateValue = dateInput.value;
+            const timeValue = timeInput.value;
+            
+            if (!dateValue || !timeValue) {
+                alert('Please enter both date and time.');
+                return;
+            }
+            
+            // Create a date object in the source timezone
+            const sourceDate = new Date(`${dateValue}T${timeValue}`);
+            
+            // Convert to the target timezone
+            const targetDate = new Date(sourceDate.toLocaleString('en-US', { timeZone: toTZ }));
+            
+            // Format the result
+            const formattedTime = formatTime(targetDate, toTZ);
+            const formattedDate = formatDate(targetDate, toTZ);
+            
+            // Update the display
+            convertedTime.textContent = formattedTime;
+            timeDifference.textContent = `${formattedDate} • ${calculateTimeDifference(fromTZ, toTZ)}`;
+            
+            // Update clock titles
+            fromClockTitle.textContent = getTimeZoneName(fromTZ);
+            toClockTitle.textContent = getTimeZoneName(toTZ);
+        }
+
+        // Get time zone display name
+        function getTimeZoneName(timeZone) {
+            const tz = timeZones.find(tz => tz.value === timeZone);
+            return tz ? tz.name : timeZone.replace(/_/g, ' ');
+        }
+
+        // Update live clocks
+        function updateClocks() {
+            const fromTZ = fromTimeZone.value === 'auto' ? getUserTimeZone() : fromTimeZone.value;
+            const toTZ = toTimeZone.value;
+            const now = new Date();
+            
+            // Update from clock
+            fromClock.textContent = now.toLocaleTimeString('en-US', { 
+                timeZone: fromTZ,
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit',
+                hour12: false
+            });
+            fromDate.textContent = formatDate(now, fromTZ);
+            
+            // Update to clock
+            toClock.textContent = now.toLocaleTimeString('en-US', { 
+                timeZone: toTZ,
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit',
+                hour12: false
+            });
+            toDate.textContent = formatDate(now, toTZ);
+            
+            // Update clock titles
+            fromClockTitle.textContent = getTimeZoneName(fromTZ);
+            toClockTitle.textContent = getTimeZoneName(toTZ);
+        }
+
+        // Initialize voice recognition
+        function initializeVoiceRecognition() {
+            if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+                recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+                recognition.continuous = false;
+                recognition.interimResults = false;
+                recognition.lang = 'en-US';
+                
+                recognition.onstart = function() {
+                    isListening = true;
+                    voiceStatus.textContent = 'Listening...';
+                    voiceStatus.classList.add('voice-recording');
+                    voiceInputBtn.innerHTML = '<i class="fas fa-microphone-slash"></i> Stop Listening';
+                };
+                
+                recognition.onresult = function(event) {
+                    const transcript = event.results[0][0].transcript;
+                    voiceStatus.textContent = `Heard: "${transcript}"`;
+                    
+                    // Try to parse the time from the transcript
+                    parseVoiceTime(transcript);
+                };
+                
+                recognition.onerror = function(event) {
+                    voiceStatus.textContent = `Error: ${event.error}`;
+                    resetVoiceUI();
+                };
+                
+                recognition.onend = function() {
+                    resetVoiceUI();
+                };
+            } else {
+                voiceInputBtn.disabled = true;
+                voiceStatus.textContent = 'Voice recognition not supported in this browser.';
+            }
+        }
+
+        // Parse time from voice input
+        function parseVoiceTime(transcript) {
+            // Simple time parsing - can be enhanced with more sophisticated NLP
+            const timeRegex = /(\d{1,2})(?::(\d{2}))?\s*(am|pm)?/i;
+            const match = transcript.match(timeRegex);
+            
+            if (match) {
+                let hours = parseInt(match[1]);
+                const minutes = match[2] ? parseInt(match[2]) : 0;
+                const period = match[3] ? match[3].toLowerCase() : '';
+                
+                // Convert to 24-hour format
+                if (period === 'pm' && hours < 12) hours += 12;
+                if (period === 'am' && hours === 12) hours = 0;
+                
+                // Format time for input
+                const formattedTime = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+                timeInput.value = formattedTime;
+                
+                // Auto-convert after voice input
+                convertTime();
+            } else {
+                voiceStatus.textContent = 'Could not detect a valid time. Please try again.';
+            }
+        }
+
+        // Reset voice UI after recognition ends
+        function resetVoiceUI() {
+            isListening = false;
+            voiceStatus.classList.remove('voice-recording');
+            voiceInputBtn.innerHTML = '<i class="fas fa-microphone"></i> Voice Input';
+            
+            // Clear status after a delay
+            setTimeout(() => {
+                if (!isListening) {
+                    voiceStatus.textContent = '';
+                }
+            }, 3000);
+        }
+
+        // Text-to-speech for output
+        function speakTime() {
+            if (convertedTime.textContent !== '--:-- --') {
+                const utterance = new SpeechSynthesisUtterance(
+                    `The converted time is ${convertedTime.textContent}`
+                );
+                speechSynthesis.speak(utterance);
+                voiceStatus.textContent = 'Speaking converted time...';
+                
+                utterance.onend = function() {
+                    voiceStatus.textContent = '';
+                };
+            } else {
+                voiceStatus.textContent = 'No converted time to speak. Please convert a time first.';
+            }
+        }
+
+        // Copy result to clipboard
+        function copyToClipboard() {
+            if (convertedTime.textContent !== '--:-- --') {
+                const textToCopy = `${convertedTime.textContent} - ${timeDifference.textContent}`;
+                
+                navigator.clipboard.writeText(textToCopy).then(() => {
+                    // Show temporary success message
+                    const originalText = copyBtn.innerHTML;
+                    copyBtn.innerHTML = '<i class="fas fa-check"></i> Copied!';
+                    
+                    setTimeout(() => {
+                        copyBtn.innerHTML = originalText;
+                    }, 2000);
+                }).catch(err => {
+                    console.error('Failed to copy: ', err);
+                });
+            }
+        }
+
+        // Clear all inputs and results
+        function clearAll() {
+            fromTimeZone.value = 'auto';
+            toTimeZone.value = 'Europe/London';
+            
+            const now = new Date();
+            dateInput.value = now.toISOString().split('T')[0];
+            timeInput.value = now.toTimeString().split(' ')[0].substring(0, 5);
+            
+            convertedTime.textContent = '--:-- --';
+            timeDifference.textContent = '';
+            
+            // Reset voice status
+            voiceStatus.textContent = '';
+            
+            // Update clocks
+            updateClocks();
+        }
+
+        // Event listeners
+        convertBtn.addEventListener('click', convertTime);
+        copyBtn.addEventListener('click', copyToClipboard);
+        clearBtn.addEventListener('click', clearAll);
+
+        voiceInputBtn.addEventListener('click', () => {
+            if (isListening) {
+                recognition.stop();
+            } else {
+                recognition.start();
+            }
+        });
+
+        voiceOutputBtn.addEventListener('click', speakTime);
+
+        // Update clocks every second
+        setInterval(updateClocks, 1000);
+
+        // Initialize the tool
+        initializeTimeZones();
+        initializeVoiceRecognition();
+        updateClocks();
+
+        // Language Switcher
+        const languageBtn = document.querySelector('.language-btn');
+        const currentLanguageElement = document.getElementById('currentLanguage');
+        const languageDropdown = document.querySelector('.language-dropdown');
+        
+        const languages = [
+            { code: 'en', name: 'English' },
+            { code: 'es', name: 'Español' },
+            { code: 'fr', name: 'Français' },
+            { code: 'de', name: 'Deutsch' },
+            { code: 'it', name: 'Italiano' },
+            { code: 'pt', name: 'Português' },
+            { code: 'ja', name: '日本語' },
+            { code: 'ru', name: 'Pусский' },
+            { code: 'ko', name: '한국어' },
+            { code: 'zh-CN', name: '中文 (简体)' },
+            { code: 'zh-TW', name: '中文 (繁體)' },
+            { code: 'ar', name: 'العربية' },
+            { code: 'fa', name: 'فارسی' },
+            { code: 'bg', name: 'Български' },
+            { code: 'ca', name: 'Català' },
+            { code: 'nl', name: 'Nederlands' },
+            { code: 'el', name: 'Ελληνικά' },
+            { code: 'hi', name: 'हिन्दी' },
+            { code: 'te', name: 'తెలుగు' },
+            { code: 'kn', name: 'ಕನ್ನಡ' },
+            { code: 'ta', name: 'தமிழ்' },
+            { code: 'ml', name: 'മലയാളം' },
+            { code: 'id', name: 'Bahasa Indonesia' },
+            { code: 'ms', name: 'Bahasa Melayu' }
+        ];
+
+        // Translation data
+        const translations = {
+            en: {
+                "nav.home": "Home",
+                "nav.about": "About Us",
+                "nav.tools": "Tools",
+                "nav.contact": "Contact",
+                "hero.title": "Time Zone Converter Tool",
+                "hero.description": "Convert time instantly between different time zones. Use manual input or voice recognition for quick conversions. All processing happens locally in your browser with complete privacy.",
+                "howto.title": "How to Use the Time Zone Converter",
+                "howto.step1.title": "Select Time Zones",
+                "howto.step1.description": "Choose your source and destination time zones from the dropdown menus. The tool includes all major time zones around the world.",
+                "howto.step2.title": "Enter Time",
+                "howto.step2.description": "Enter the time you want to convert in the source time zone. You can type it manually or use voice recognition for hands-free input.",
+                "howto.step3.title": "Convert & View",
+                "howto.step3.description": "Click \"Convert Time\" to instantly see the converted time in the destination time zone. Live clocks show current time in both zones.",
+                "howto.step4.title": "Copy or Share",
+                "howto.step4.description": "Copy the converted time to clipboard with one click. All processing happens locally in your browser - your data never leaves your device.",
+                "tool.title": "Time Zone Converter",
+                "tool.converter.title": "Time Zone Conversion",
+                "tool.converter.from": "From Time Zone:",
+                "tool.converter.to": "To Time Zone:",
+                "tool.converter.date": "Date:",
+                "tool.converter.time": "Time:",
+                "tool.converter.auto": "Auto-detect (Your Time Zone)",
+                "tool.convert.button": "Convert Time",
+                "tool.voice.input": "Voice Input",
+                "tool.voice.output": "Voice Output",
+                "tool.result.title": "Converted Time",
+                "tool.copy": "Copy Result",
+                "tool.clear": "Clear All",
+                "footer.follow": "FOLLOW US",
+                "footer.categories": "Popular Categories",
+                "footer.categories.pdf": "PDF Tools",
+                "footer.categories.image": "Image Tools",
+                "footer.categories.text": "Text Tools",
+                "footer.categories.av": "Audio/Video Tools",
+                "footer.categories.web": "WebDeveloper Tools",
+                "footer.categories.calc": "Calculator Tools",
+                "footer.categories.util": "Utility Tools",
+                "footer.categories.color": "Color Tools",
+                "footer.quicklinks": "Quick Links",
+                "footer.links.tools": "All Tools",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Contact",
+                "footer.links.privacy": "Privacy Policy",
+                "footer.links.disclaimer": "Disclaimer",
+                "footer.links.terms": "Terms of Service",
+                "footer.copyright": "© 2025 LollyPoPDF. All rights reserved."
+            },
+            es: {
+                "nav.home": "Inicio",
+                "nav.about": "Sobre Nosotros",
+                "nav.tools": "Herramientas",
+                "nav.contact": "Contacto",
+                "hero.title": "Herramienta Convertidora de Zona Horaria",
+                "hero.description": "Convierte el tiempo instantáneamente entre diferentes zonas horarias. Usa entrada manual o reconocimiento de voz para conversiones rápidas. Todo el procesamiento ocurre localmente en tu navegador con privacidad completa.",
+                "howto.title": "Cómo Usar el Convertidor de Zona Horaria",
+                "howto.step1.title": "Selecciona Zonas Horarias",
+                "howto.step1.description": "Elige tus zonas horarias de origen y destino de los menús desplegables. La herramienta incluye todas las zonas horarias principales del mundo.",
+                "howto.step2.title": "Ingresa la Hora",
+                "howto.step2.description": "Ingresa la hora que deseas convertir en la zona horaria de origen. Puedes escribirla manualmente o usar reconocimiento de voz para entrada sin manos.",
+                "howto.step3.title": "Convierte y Visualiza",
+                "howto.step3.description": "Haz clic en \"Convertir Hora\" para ver instantáneamente la hora convertida en la zona horaria de destino. Los relojes en vivo muestran la hora actual en ambas zonas.",
+                "howto.step4.title": "Copia o Comparte",
+                "howto.step4.description": "Copia la hora convertida al portapapeles con un clic. Todo el procesamiento ocurre localmente en tu navegador - tus datos nunca salen de tu dispositivo.",
+                "tool.title": "Convertidor de Zona Horaria",
+                "tool.converter.title": "Conversión de Zona Horaria",
+                "tool.converter.from": "Desde Zona Horaria:",
+                "tool.converter.to": "A Zona Horaria:",
+                "tool.converter.date": "Fecha:",
+                "tool.converter.time": "Hora:",
+                "tool.converter.auto": "Detección automática (Tu Zona Horaria)",
+                "tool.convert.button": "Convertir Hora",
+                "tool.voice.input": "Entrada de Voz",
+                "tool.voice.output": "Salida de Voz",
+                "tool.result.title": "Hora Convertida",
+                "tool.copy": "Copiar Resultado",
+                "tool.clear": "Limpiar Todo",
+                "footer.follow": "SÍGUENOS",
+                "footer.categories": "Categorías Populares",
+                "footer.categories.pdf": "Herramientas PDF",
+                "footer.categories.image": "Herramientas de Imagen",
+                "footer.categories.text": "Herramientas de Texto",
+                "footer.categories.av": "Herramientas de Audio/Video",
+                "footer.categories.web": "Herramientas WebDesarrollador",
+                "footer.categories.calc": "Herramientas de Calculadora",
+                "footer.categories.util": "Herramientas de Utilidad",
+                "footer.categories.color": "Herramientas de Color",
+                "footer.quicklinks": "Enlaces Rápidos",
+                "footer.links.tools": "Todas las Herramientas",
+                "footer.links.faq": "Preguntas Frecuentes",
+                "footer.links.contact": "Contacto",
+                "footer.links.privacy": "Política de Privacidad",
+                "footer.links.disclaimer": "Descargo de Responsabilidad",
+                "footer.links.terms": "Términos de Servicio",
+                "footer.copyright": "© 2025 LollyPoPDF. Todos los derechos reservados."
+            },
+            fr: {
+                "nav.home": "Accueil",
+                "nav.about": "À propos de nous",
+                "nav.tools": "Outils",
+                "nav.contact": "Contact",
+                "hero.title": "Outil de Conversion de Fuseaux Horaires",
+                "hero.description": "Convertissez instantanément l'heure entre différents fuseaux horaires. Utilisez la saisie manuelle ou la reconnaissance vocale pour des conversions rapides. Tout le traitement se fait localement dans votre navigateur avec une confidentialité totale.",
+                "howto.title": "Comment Utiliser le Convertisseur de Fuseaux Horaires",
+                "howto.step1.title": "Sélectionnez les Fuseaux Horaires",
+                "howto.step1.description": "Choisissez vos fuseaux horaires source et de destination dans les menus déroulants. L'outil inclut tous les principaux fuseaux horaires du monde.",
+                "howto.step2.title": "Entrez l'Heure",
+                "howto.step2.description": "Entrez l'heure que vous souhaitez convertir dans le fuseau horaire source. Vous pouvez la taper manuellement ou utiliser la reconnaissance vocale pour une saisie mains libres.",
+                "howto.step3.title": "Convertissez et Visualisez",
+                "howto.step3.description": "Cliquez sur \"Convertir l'Heure\" pour voir instantanément l'heure convertie dans le fuseau horaire de destination. Les horloges en direct affichent l'heure actuelle dans les deux zones.",
+                "howto.step4.title": "Copiez ou Partagez",
+                "howto.step4.description": "Copiez l'heure convertie dans le presse-papiers en un clic. Tout le traitement se fait localement dans votre navigateur - vos données ne quittent jamais votre appareil.",
+                "tool.title": "Convertisseur de Fuseaux Horaires",
+                "tool.converter.title": "Conversion de Fuseaux Horaires",
+                "tool.converter.from": "Du Fuseau Horaire:",
+                "tool.converter.to": "Au Fuseau Horaire:",
+                "tool.converter.date": "Date:",
+                "tool.converter.time": "Heure:",
+                "tool.converter.auto": "Détection automatique (Votre Fuseau Horaire)",
+                "tool.convert.button": "Convertir l'Heure",
+                "tool.voice.input": "Entrée Vocale",
+                "tool.voice.output": "Sortie Vocale",
+                "tool.result.title": "Heure Convertie",
+                "tool.copy": "Copier le Résultat",
+                "tool.clear": "Tout Effacer",
+                "footer.follow": "SUIVEZ-NOUS",
+                "footer.categories": "Catégories Populaires",
+                "footer.categories.pdf": "Outils PDF",
+                "footer.categories.image": "Outils d'Image",
+                "footer.categories.text": "Outils de Texte",
+                "footer.categories.av": "Outils Audio/Video",
+                "footer.categories.web": "Outils WebDéveloppeur",
+                "footer.categories.calc": "Outils de Calculatrice",
+                "footer.categories.util": "Outils d'Utilité",
+                "footer.categories.color": "Outils de Couleur",
+                "footer.quicklinks": "Liens Rapides",
+                "footer.links.tools": "Tous les Outils",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Contact",
+                "footer.links.privacy": "Politique de Confidentialité",
+                "footer.links.disclaimer": "Avertissement",
+                "footer.links.terms": "Conditions d'Utilisation",
+                "footer.copyright": "© 2025 LollyPoPDF. Tous droits réservés."
+            },
+            de: {
+                "nav.home": "Startseite",
+                "nav.about": "Über Uns",
+                "nav.tools": "Werkzeuge",
+                "nav.contact": "Kontakt",
+                "hero.title": "Zeitzonen-Umrechnungstool",
+                "hero.description": "Konvertieren Sie Zeit sofort zwischen verschiedenen Zeitzonen. Verwenden Sie manuelle Eingabe oder Spracherkennung für schnelle Umrechnungen. Die gesamte Verarbeitung erfolgt lokal in Ihrem Browser mit vollständiger Privatsphäre.",
+                "howto.title": "So verwenden Sie den Zeitzonen-Umrechner",
+                "howto.step1.title": "Zeitzonen auswählen",
+                "howto.step1.description": "Wählen Sie Ihre Quell- und Zielzeitzonen aus den Dropdown-Menüs. Das Tool enthält alle wichtigen Zeitzonen weltweit.",
+                "howto.step2.title": "Zeit eingeben",
+                "howto.step2.description": "Geben Sie die Zeit ein, die Sie in der Quellzeitzone umrechnen möchten. Sie können sie manuell eingeben oder Spracherkennung für freihändige Eingabe verwenden.",
+                "howto.step3.title": "Umrechnen & Anzeigen",
+                "howto.step3.description": "Klicken Sie auf \"Zeit umrechnen\", um sofort die umgerechnete Zeit in der Zielzeitzone zu sehen. Live-Uhren zeigen die aktuelle Zeit in beiden Zonen.",
+                "howto.step4.title": "Kopieren oder Teilen",
+                "howto.step4.description": "Kopieren Sie die umgerechnete Zeit mit einem Klick in die Zwischenablage. Die gesamte Verarbeitung erfolgt lokal in Ihrem Browser - Ihre Daten verlassen niemals Ihr Gerät.",
+                "tool.title": "Zeitzonen-Umrechner",
+                "tool.converter.title": "Zeitzonen-Umrechnung",
+                "tool.converter.from": "Von Zeitzone:",
+                "tool.converter.to": "Zu Zeitzone:",
+                "tool.converter.date": "Datum:",
+                "tool.converter.time": "Zeit:",
+                "tool.converter.auto": "Automatische Erkennung (Ihre Zeitzone)",
+                "tool.convert.button": "Zeit umrechnen",
+                "tool.voice.input": "Spracheingabe",
+                "tool.voice.output": "Sprachausgabe",
+                "tool.result.title": "Umrechnete Zeit",
+                "tool.copy": "Ergebnis kopieren",
+                "tool.clear": "Alles löschen",
+                "footer.follow": "FOLGEN SIE UNS",
+                "footer.categories": "Beliebte Kategorien",
+                "footer.categories.pdf": "PDF-Werkzeuge",
+                "footer.categories.image": "Bildwerkzeuge",
+                "footer.categories.text": "Textwerkzeuge",
+                "footer.categories.av": "Audio/Video-Werkzeuge",
+                "footer.categories.web": "WebEntwickler-Werkzeuge",
+                "footer.categories.calc": "Rechnerwerkzeuge",
+                "footer.categories.util": "Hilfswerkzeuge",
+                "footer.categories.color": "Farbwerkzeuge",
+                "footer.quicklinks": "Schnelllinks",
+                "footer.links.tools": "Alle Werkzeuge",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Kontakt",
+                "footer.links.privacy": "Datenschutzrichtlinie",
+                "footer.links.disclaimer": "Haftungsausschluss",
+                "footer.links.terms": "Nutzungsbedingungen",
+                "footer.copyright": "© 2025 LollyPoPDF. Alle Rechte vorbehalten."
+            },
+            it: {
+                "nav.home": "Home",
+                "nav.about": "Chi Siamo",
+                "nav.tools": "Strumenti",
+                "nav.contact": "Contatto",
+                "hero.title": "Strumento Convertitore Fusi Orari",
+                "hero.description": "Converti istantaneamente l'ora tra diversi fusi orari. Usa l'inserimento manuale o il riconoscimento vocale per conversioni rapide. Tutta l'elaborazione avviene localmente nel tuo browser con completa privacy.",
+                "howto.title": "Come Usare il Convertitore di Fusi Orari",
+                "howto.step1.title": "Seleziona i Fusi Orari",
+                "howto.step1.description": "Scegli i tuoi fusi orari di origine e destinazione dai menu a discesa. Lo strumento include tutti i principali fusi orari del mondo.",
+                "howto.step2.title": "Inserisci l'Ora",
+                "howto.step2.description": "Inserisci l'ora che desideri convertire nel fuso orario di origine. Puoi digitarla manualmente o usare il riconoscimento vocale per l'inserimento a mani libere.",
+                "howto.step3.title": "Converti e Visualizza",
+                "howto.step3.description": "Clicca \"Converti Ora\" per vedere istantaneamente l'ora convertita nel fuso orario di destinazione. Gli orologi in tempo reale mostrano l'ora corrente in entrambe le zone.",
+                "howto.step4.title": "Copia o Condividi",
+                "howto.step4.description": "Copia l'ora convertita negli appunti con un clic. Tutta l'elaborazione avviene localmente nel tuo browser - i tuoi dati non lasciano mai il tuo dispositivo.",
+                "tool.title": "Convertitore Fusi Orari",
+                "tool.converter.title": "Conversione Fusi Orari",
+                "tool.converter.from": "Dal Fuso Orario:",
+                "tool.converter.to": "Al Fuso Orario:",
+                "tool.converter.date": "Data:",
+                "tool.converter.time": "Ora:",
+                "tool.converter.auto": "Rilevamento automatico (Il Tuo Fuso Orario)",
+                "tool.convert.button": "Converti Ora",
+                "tool.voice.input": "Inserimento Vocale",
+                "tool.voice.output": "Uscita Vocale",
+                "tool.result.title": "Ora Convertita",
+                "tool.copy": "Copia Risultato",
+                "tool.clear": "Cancella Tutto",
+                "footer.follow": "SEGUICI",
+                "footer.categories": "Categorie Popolari",
+                "footer.categories.pdf": "Strumenti PDF",
+                "footer.categories.image": "Strumenti Immagine",
+                "footer.categories.text": "Strumenti Testo",
+                "footer.categories.av": "Strumenti Audio/Video",
+                "footer.categories.web": "Strumenti Sviluppatore Web",
+                "footer.categories.calc": "Strumenti Calcolatrice",
+                "footer.categories.util": "Strumenti Utilità",
+                "footer.categories.color": "Strumenti Colore",
+                "footer.quicklinks": "Link Rapidi",
+                "footer.links.tools": "Tutti gli Strumenti",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Contatto",
+                "footer.links.privacy": "Informativa sulla Privacy",
+                "footer.links.disclaimer": "Disclaimer",
+                "footer.links.terms": "Termini di Servizio",
+                "footer.copyright": "© 2025 LollyPoPDF. Tutti i diritti riservati."
+            },
+            pt: {
+                "nav.home": "Início",
+                "nav.about": "Sobre Nós",
+                "nav.tools": "Ferramentas",
+                "nav.contact": "Contato",
+                "hero.title": "Ferramenta Conversor de Fusos Horários",
+                "hero.description": "Converta o tempo instantaneamente entre diferentes fusos horários. Use entrada manual ou reconhecimento de voz para conversões rápidas. Todo o processamento acontece localmente no seu navegador com privacidade completa.",
+                "howto.title": "Como Usar o Conversor de Fusos Horários",
+                "howto.step1.title": "Selecione Fusos Horários",
+                "howto.step1.description": "Escolha seus fusos horários de origem e destino nos menus suspensos. A ferramenta inclui todos os principais fusos horários ao redor do mundo.",
+                "howto.step2.title": "Insira o Tempo",
+                "howto.step2.description": "Insira o tempo que deseja converter no fuso horário de origem. Você pode digitá-lo manualmente ou usar reconhecimento de voz para entrada sem usar as mãos.",
+                "howto.step3.title": "Converta e Visualize",
+                "howto.step3.description": "Clique em \"Converter Tempo\" para ver instantaneamente o tempo convertido no fuso horário de destino. Relógios ao vivo mostram o tempo atual em ambas as zonas.",
+                "howto.step4.title": "Copie ou Compartilhe",
+                "howto.step4.description": "Copie o tempo convertido para a área de transferência com um clique. Todo o processamento acontece localmente no seu navegador - seus dados nunca saem do seu dispositivo.",
+                "tool.title": "Conversor de Fusos Horários",
+                "tool.converter.title": "Conversão de Fusos Horários",
+                "tool.converter.from": "Do Fuso Horário:",
+                "tool.converter.to": "Para o Fuso Horário:",
+                "tool.converter.date": "Data:",
+                "tool.converter.time": "Tempo:",
+                "tool.converter.auto": "Detecção automática (Seu Fuso Horário)",
+                "tool.convert.button": "Converter Tempo",
+                "tool.voice.input": "Entrada de Voz",
+                "tool.voice.output": "Saída de Voz",
+                "tool.result.title": "Tempo Convertido",
+                "tool.copy": "Copiar Resultado",
+                "tool.clear": "Limpar Tudo",
+                "footer.follow": "SIGA-NOS",
+                "footer.categories": "Categorias Populares",
+                "footer.categories.pdf": "Ferramentas PDF",
+                "footer.categories.image": "Ferramentas de Imagem",
+                "footer.categories.text": "Ferramentas de Texto",
+                "footer.categories.av": "Ferramentas de Áudio/Video",
+                "footer.categories.web": "Ferramentas WebDesenvolvedor",
+                "footer.categories.calc": "Ferramentas de Calculadora",
+                "footer.categories.util": "Ferramentas de Utilidade",
+                "footer.categories.color": "Ferramentas de Cor",
+                "footer.quicklinks": "Links Rápidos",
+                "footer.links.tools": "Todas as Ferramentas",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Contato",
+                "footer.links.privacy": "Política de Privacidade",
+                "footer.links.disclaimer": "Aviso Legal",
+                "footer.links.terms": "Termos de Serviço",
+                "footer.copyright": "© 2025 LollyPoPDF. Todos os direitos reservados."
+            },
+            ja: {
+                "nav.home": "ホーム",
+                "nav.about": "私たちについて",
+                "nav.tools": "ツール",
+                "nav.contact": "お問い合わせ",
+                "hero.title": "タイムゾーン変換ツール",
+                "hero.description": "異なるタイムゾーン間で瞬時に時間を変換します。手動入力または音声認識を使用して迅速に変換できます。すべての処理はブラウザ内でローカルに行われ、完全なプライバシーが保証されます。",
+                "howto.title": "タイムゾーン変換ツールの使用方法",
+                "howto.step1.title": "タイムゾーンを選択",
+                "howto.step1.description": "ドロップダウンメニューから変換元と変換先のタイムゾーンを選択します。このツールには世界中の主要なタイムゾーンが含まれています。",
+                "howto.step2.title": "時間を入力",
+                "howto.step2.description": "変換元のタイムゾーンで変換したい時間を入力します。手動で入力するか、音声認識を使用してハンズフリーで入力できます。",
+                "howto.step3.title": "変換と表示",
+                "howto.step3.description": "「時間を変換」をクリックすると、変換先のタイムゾーンでの変換された時間が瞬時に表示されます。ライブクロックは両方のゾーンの現在時刻を表示します。",
+                "howto.step4.title": "コピーまたは共有",
+                "howto.step4.description": "ワンクリックで変換された時間をクリップボードにコピーします。すべての処理はブラウザ内でローカルに行われます - データがデバイスから流出することはありません。",
+                "tool.title": "タイムゾーン変換ツール",
+                "tool.converter.title": "タイムゾーン変換",
+                "tool.converter.from": "変換元タイムゾーン:",
+                "tool.converter.to": "変換先タイムゾーン:",
+                "tool.converter.date": "日付:",
+                "tool.converter.time": "時間:",
+                "tool.converter.auto": "自動検出（あなたのタイムゾーン）",
+                "tool.convert.button": "時間を変換",
+                "tool.voice.input": "音声入力",
+                "tool.voice.output": "音声出力",
+                "tool.result.title": "変換された時間",
+                "tool.copy": "結果をコピー",
+                "tool.clear": "すべてクリア",
+                "footer.follow": "フォローする",
+                "footer.categories": "人気カテゴリー",
+                "footer.categories.pdf": "PDFツール",
+                "footer.categories.image": "画像ツール",
+                "footer.categories.text": "テキストツール",
+                "footer.categories.av": "オーディオ/ビデオツール",
+                "footer.categories.web": "Web開発者ツール",
+                "footer.categories.calc": "計算機ツール",
+                "footer.categories.util": "ユーティリティツール",
+                "footer.categories.color": "カラーツール",
+                "footer.quicklinks": "クイックリンク",
+                "footer.links.tools": "すべてのツール",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "お問い合わせ",
+                "footer.links.privacy": "プライバシーポリシー",
+                "footer.links.disclaimer": "免責事項",
+                "footer.links.terms": "利用規約",
+                "footer.copyright": "© 2025 LollyPoPDF. 全著作権所有。"
+            },
+            ru: {
+                "nav.home": "Главная",
+                "nav.about": "О нас",
+                "nav.tools": "Инструменты",
+                "nav.contact": "Контакты",
+                "hero.title": "Инструмент конвертации часовых поясов",
+                "hero.description": "Мгновенно конвертируйте время между разными часовыми поясами. Используйте ручной ввод или распознавание речи для быстрых преобразований. Вся обработка происходит локально в вашем браузере с полной конфиденциальностью.",
+                "howto.title": "Как использовать конвертер часовых поясов",
+                "howto.step1.title": "Выберите часовые пояса",
+                "howto.step1.description": "Выберите исходный и целевой часовые пояса из выпадающих меню. Инструмент включает все основные часовые пояса мира.",
+                "howto.step2.title": "Введите время",
+                "howto.step2.description": "Введите время, которое вы хотите конвертировать в исходном часовом поясе. Вы можете ввести его вручную или использовать распознавание речи для ввода без помощи рук.",
+                "howto.step3.title": "Конвертируйте и просмотрите",
+                "howto.step3.description": "Нажмите \"Конвертировать время\", чтобы мгновенно увидеть конвертированное время в целевом часовом поясе. Живые часы показывают текущее время в обеих зонах.",
+                "howto.step4.title": "Скопируйте или поделитесь",
+                "howto.step4.description": "Скопируйте конвертированное время в буфер обмена одним щелчком. Вся обработка происходит локально в вашем браузере - ваши данные никогда не покидают ваше устройство.",
+                "tool.title": "Конвертер часовых поясов",
+                "tool.converter.title": "Конвертация часовых поясов",
+                "tool.converter.from": "Из часового пояса:",
+                "tool.converter.to": "В часовой пояс:",
+                "tool.converter.date": "Дата:",
+                "tool.converter.time": "Время:",
+                "tool.converter.auto": "Автоопределение (Ваш часовой пояс)",
+                "tool.convert.button": "Конвертировать время",
+                "tool.voice.input": "Голосовой ввод",
+                "tool.voice.output": "Голосовой вывод",
+                "tool.result.title": "Конвертированное время",
+                "tool.copy": "Копировать результат",
+                "tool.clear": "Очистить все",
+                "footer.follow": "СЛЕДУЙТЕ ЗА НАМИ",
+                "footer.categories": "Популярные категории",
+                "footer.categories.pdf": "PDF инструменты",
+                "footer.categories.image": "Инструменты для изображений",
+                "footer.categories.text": "Текстовые инструменты",
+                "footer.categories.av": "Аудио/Видео инструменты",
+                "footer.categories.web": "Инструменты веб-разработчика",
+                "footer.categories.calc": "Инструменты калькулятора",
+                "footer.categories.util": "Утилитарные инструменты",
+                "footer.categories.color": "Цветовые инструменты",
+                "footer.quicklinks": "Быстрые ссылки",
+                "footer.links.tools": "Все инструменты",
+                "footer.links.faq": "ЧаВо",
+                "footer.links.contact": "Контакты",
+                "footer.links.privacy": "Политика конфиденциальности",
+                "footer.links.disclaimer": "Отказ от ответственности",
+                "footer.links.terms": "Условия обслуживания",
+                "footer.copyright": "© 2025 LollyPoPDF. Все права защищены."
+            },
+            ko: {
+                "nav.home": "홈",
+                "nav.about": "회사 소개",
+                "nav.tools": "도구",
+                "nav.contact": "연락처",
+                "hero.title": "시간대 변환 도구",
+                "hero.description": "다른 시간대 간에 즉시 시간을 변환하세요. 빠른 변환을 위해 수동 입력 또는 음성 인식을 사용하세요. 모든 처리는 브라우저에서 로컬로 이루어지며 완전한 개인 정보 보호가 제공됩니다.",
+                "howto.title": "시간대 변환기 사용 방법",
+                "howto.step1.title": "시간대 선택",
+                "howto.step1.description": "드롭다운 메뉴에서 원본 및 대상 시간대를 선택하세요. 이 도구에는 전 세계 주요 시간대가 모두 포함되어 있습니다.",
+                "howto.step2.title": "시간 입력",
+                "howto.step2.description": "원본 시간대에서 변환하려는 시간을 입력하세요. 수동으로 입력하거나 음성 인식을 사용하여 핸즈프리 입력이 가능합니다.",
+                "howto.step3.title": "변환 및 보기",
+                "howto.step3.description": "시간 변환을 클릭하면 대상 시간대에서 변환된 시간이 즉시 표시됩니다. 실시간 시계는 두 영역의 현재 시간을 보여줍니다.",
+                "howto.step4.title": "복사 또는 공유",
+                "howto.step4.description": "한 번의 클릭으로 변환된 시간을 클립보드에 복사하세요. 모든 처리는 브라우저에서 로컬로 이루어집니다 - 데이터가 기기를 떠나지 않습니다.",
+                "tool.title": "시간대 변환기",
+                "tool.converter.title": "시간대 변환",
+                "tool.converter.from": "원본 시간대:",
+                "tool.converter.to": "대상 시간대:",
+                "tool.converter.date": "날짜:",
+                "tool.converter.time": "시간:",
+                "tool.converter.auto": "자동 감지 (귀하의 시간대)",
+                "tool.convert.button": "시간 변환",
+                "tool.voice.input": "음성 입력",
+                "tool.voice.output": "음성 출력",
+                "tool.result.title": "변환된 시간",
+                "tool.copy": "결과 복사",
+                "tool.clear": "모두 지우기",
+                "footer.follow": "팔로우하기",
+                "footer.categories": "인기 카테고리",
+                "footer.categories.pdf": "PDF 도구",
+                "footer.categories.image": "이미지 도구",
+                "footer.categories.text": "텍스트 도구",
+                "footer.categories.av": "오디오/비디오 도구",
+                "footer.categories.web": "웹개발자 도구",
+                "footer.categories.calc": "계산기 도구",
+                "footer.categories.util": "유틸리티 도구",
+                "footer.categories.color": "색상 도구",
+                "footer.quicklinks": "빠른 링크",
+                "footer.links.tools": "모든 도구",
+                "footer.links.faq": "자주 묻는 질문",
+                "footer.links.contact": "연락처",
+                "footer.links.privacy": "개인정보 보호정책",
+                "footer.links.disclaimer": "면책 조항",
+                "footer.links.terms": "이용 약관",
+                "footer.copyright": "© 2025 LollyPoPDF. 모든 권리 보유."
+            },
+            "zh-CN": {
+                "nav.home": "首页",
+                "nav.about": "关于我们",
+                "nav.tools": "工具",
+                "nav.contact": "联系我们",
+                "hero.title": "时区转换工具",
+                "hero.description": "在不同时区之间即时转换时间。使用手动输入或语音识别进行快速转换。所有处理都在您的浏览器本地完成，完全保护隐私。",
+                "howto.title": "如何使用时区转换器",
+                "howto.step1.title": "选择时区",
+                "howto.step1.description": "从下拉菜单中选择源时区和目标时区。该工具包含世界各地所有主要时区。",
+                "howto.step2.title": "输入时间",
+                "howto.step2.description": "在源时区输入您要转换的时间。您可以手动输入或使用语音识别进行免提输入。",
+                "howto.step3.title": "转换和查看",
+                "howto.step3.description": "点击\"转换时间\"立即查看目标时区中的转换时间。实时时钟显示两个区域的当前时间。",
+                "howto.step4.title": "复制或分享",
+                "howto.step4.description": "一键将转换后的时间复制到剪贴板。所有处理都在您的浏览器本地完成 - 您的数据永远不会离开您的设备。",
+                "tool.title": "时区转换器",
+                "tool.converter.title": "时区转换",
+                "tool.converter.from": "源时区:",
+                "tool.converter.to": "目标时区:",
+                "tool.converter.date": "日期:",
+                "tool.converter.time": "时间:",
+                "tool.converter.auto": "自动检测（您的时区）",
+                "tool.convert.button": "转换时间",
+                "tool.voice.input": "语音输入",
+                "tool.voice.output": "语音输出",
+                "tool.result.title": "转换后的时间",
+                "tool.copy": "复制结果",
+                "tool.clear": "清除全部",
+                "footer.follow": "关注我们",
+                "footer.categories": "热门类别",
+                "footer.categories.pdf": "PDF工具",
+                "footer.categories.image": "图像工具",
+                "footer.categories.text": "文本工具",
+                "footer.categories.av": "音频/视频工具",
+                "footer.categories.web": "Web开发工具",
+                "footer.categories.calc": "计算器工具",
+                "footer.categories.util": "实用工具",
+                "footer.categories.color": "颜色工具",
+                "footer.quicklinks": "快速链接",
+                "footer.links.tools": "所有工具",
+                "footer.links.faq": "常见问题",
+                "footer.links.contact": "联系我们",
+                "footer.links.privacy": "隐私政策",
+                "footer.links.disclaimer": "免责声明",
+                "footer.links.terms": "服务条款",
+                "footer.copyright": "© 2025 LollyPoPDF. 保留所有权利。"
+            },
+            "zh-TW": {
+                "nav.home": "首頁",
+                "nav.about": "關於我們",
+                "nav.tools": "工具",
+                "nav.contact": "聯絡我們",
+                "hero.title": "時區轉換工具",
+                "hero.description": "在不同時區之間即時轉換時間。使用手動輸入或語音識別進行快速轉換。所有處理都在您的瀏覽器本地完成，完全保護隱私。",
+                "howto.title": "如何使用時區轉換器",
+                "howto.step1.title": "選擇時區",
+                "howto.step1.description": "從下拉選單中選擇來源時區和目標時區。該工具包含世界各地所有主要時區。",
+                "howto.step2.title": "輸入時間",
+                "howto.step2.description": "在來源時區輸入您要轉換的時間。您可以手動輸入或使用語音識別進行免持輸入。",
+                "howto.step3.title": "轉換和查看",
+                "howto.step3.description": "點擊\"轉換時間\"立即查看目標時區中的轉換時間。即時時鐘顯示兩個區域的目前時間。",
+                "howto.step4.title": "複製或分享",
+                "howto.step4.description": "一鍵將轉換後的時間複製到剪貼簿。所有處理都在您的瀏覽器本地完成 - 您的資料永遠不會離開您的裝置。",
+                "tool.title": "時區轉換器",
+                "tool.converter.title": "時區轉換",
+                "tool.converter.from": "來源時區:",
+                "tool.converter.to": "目標時區:",
+                "tool.converter.date": "日期:",
+                "tool.converter.time": "時間:",
+                "tool.converter.auto": "自動偵測（您的時區）",
+                "tool.convert.button": "轉換時間",
+                "tool.voice.input": "語音輸入",
+                "tool.voice.output": "語音輸出",
+                "tool.result.title": "轉換後的時間",
+                "tool.copy": "複製結果",
+                "tool.clear": "清除全部",
+                "footer.follow": "追蹤我們",
+                "footer.categories": "熱門類別",
+                "footer.categories.pdf": "PDF工具",
+                "footer.categories.image": "圖片工具",
+                "footer.categories.text": "文字工具",
+                "footer.categories.av": "音訊/視訊工具",
+                "footer.categories.web": "網頁開發工具",
+                "footer.categories.calc": "計算機工具",
+                "footer.categories.util": "實用工具",
+                "footer.categories.color": "顏色工具",
+                "footer.quicklinks": "快速連結",
+                "footer.links.tools": "所有工具",
+                "footer.links.faq": "常見問題",
+                "footer.links.contact": "聯絡我們",
+                "footer.links.privacy": "隱私權政策",
+                "footer.links.disclaimer": "免責聲明",
+                "footer.links.terms": "服務條款",
+                "footer.copyright": "© 2025 LollyPoPDF. 保留所有權利。"
+            },
+            ar: {
+                "nav.home": "الصفحة الرئيسية",
+                "nav.about": "معلومات عنا",
+                "nav.tools": "الأدوات",
+                "nav.contact": "اتصل بنا",
+                "hero.title": "أداة تحويل المناطق الزمنية",
+                "hero.description": "قم بتحويل الوقت على الفور بين المناطق الزمنية المختلفة. استخدم الإدخال اليدوي أو التعرف الصوتي للتحويلات السريعة. تتم جميع المعالجات محليًا في متصفحك مع خصوصية كاملة.",
+                "howto.title": "كيفية استخدام محول المناطق الزمنية",
+                "howto.step1.title": "اختر المناطق الزمنية",
+                "howto.step1.description": "اختر منطقتك الزمنية المصدر والوجهة من القوائم المنسدلة. تحتوي الأداة على جميع المناطق الزمنية الرئيسية حول العالم.",
+                "howto.step2.title": "أدخل الوقت",
+                "howto.step2.description": "أدخل الوقت الذي تريد تحويله في المنطقة الزمنية المصدر. يمكنك كتابته يدويًا أو استخدام التعرف الصوتي للإدخال بدون استخدام اليدين.",
+                "howto.step3.title": "تحويل وعرض",
+                "howto.step3.description": "انقر فوق \"تحويل الوقت\" لرؤية الوقت المحول على الفور في المنطقة الزمنية الوجهة. تعرض الساعات المباشرة الوقت الحالي في كلا المنطقتين.",
+                "howto.step4.title": "نسخ أو مشاركة",
+                "howto.step4.description": "انسخ الوقت المحول إلى الحافظة بنقرة واحدة. تتم جميع المعالجات محليًا في متصفحك - بياناتك لا تغادر جهازك أبدًا.",
+                "tool.title": "محول المناطق الزمنية",
+                "tool.converter.title": "تحويل المناطق الزمنية",
+                "tool.converter.from": "من المنطقة الزمنية:",
+                "tool.converter.to": "إلى المنطقة الزمنية:",
+                "tool.converter.date": "التاريخ:",
+                "tool.converter.time": "الوقت:",
+                "tool.converter.auto": "الكشف التلقائي (منطقتك الزمنية)",
+                "tool.convert.button": "تحويل الوقت",
+                "tool.voice.input": "الإدخال الصوتي",
+                "tool.voice.output": "الإخراج الصوتي",
+                "tool.result.title": "الوقت المحول",
+                "tool.copy": "نسخ النتيجة",
+                "tool.clear": "مسح الكل",
+                "footer.follow": "تابعنا",
+                "footer.categories": "الفئات الشائعة",
+                "footer.categories.pdf": "أدوات PDF",
+                "footer.categories.image": "أدوات الصور",
+                "footer.categories.text": "أدوات النص",
+                "footer.categories.av": "أدوات الصوت/الفيديو",
+                "footer.categories.web": "أدوات مطور الويب",
+                "footer.categories.calc": "أدوات الآلة الحاسبة",
+                "footer.categories.util": "أدوات المساعدة",
+                "footer.categories.color": "أدوات الألوان",
+                "footer.quicklinks": "روابط سريعة",
+                "footer.links.tools": "جميع الأدوات",
+                "footer.links.faq": "الأسئلة الشائعة",
+                "footer.links.contact": "اتصل بنا",
+                "footer.links.privacy": "سياسة الخصوصية",
+                "footer.links.disclaimer": "إخلاء المسؤولية",
+                "footer.links.terms": "شروط الخدمة",
+                "footer.copyright": "© 2025 LollyPoPDF. جميع الحقوق محفوظة."
+            },
+            fa: {
+                "nav.home": "خانه",
+                "nav.about": "درباره ما",
+                "nav.tools": "ابزارها",
+                "nav.contact": "تماس با ما",
+                "hero.title": "ابزار تبدیل منطقه زمانی",
+                "hero.description": "بلافاصله زمان را بین مناطق زمانی مختلف تبدیل کنید. برای تبدیل‌های سریع از ورودی دستی یا تشخیص صدا استفاده کنید. تمام پردازش به صورت محلی در مرورگر شما با حفظ حریم خصوصی کامل انجام می‌شود.",
+                "howto.title": "نحوه استفاده از مبدل منطقه زمانی",
+                "howto.step1.title": "مناطق زمانی را انتخاب کنید",
+                "howto.step1.description": "مناطق زمانی مبدأ و مقصد خود را از منوهای کشویی انتخاب کنید. این ابزار شامل تمام مناطق زمانی اصلی در سراسر جهان است.",
+                "howto.step2.title": "زمان را وارد کنید",
+                "howto.step2.description": "زمانی را که می‌خواهید در منطقه زمانی مبدأ تبدیل کنید وارد کنید. می‌توانید آن را به صورت دستی تایپ کنید یا از تشخیص صدا برای ورودی بدون دست استفاده کنید.",
+                "howto.step3.title": "تبدیل و مشاهده",
+                "howto.step3.description": "روی \"تبدیل زمان\" کلیک کنید تا بلافاصله زمان تبدیل شده در منطقه زمانی مقصد را ببینید. ساعت‌های زنده زمان فعلی را در هر دو منطقه نشان می‌دهند.",
+                "howto.step4.title": "کپی یا اشتراک",
+                "howto.step4.description": "با یک کلیک زمان تبدیل شده را در کلیپ‌بورد کپی کنید. تمام پردازش به صورت محلی در مرورگر شما انجام می‌شود - داده‌های شما هرگز دستگاه شما را ترک نمی‌کنند.",
+                "tool.title": "مبدل منطقه زمانی",
+                "tool.converter.title": "تبدیل منطقه زمانی",
+                "tool.converter.from": "از منطقه زمانی:",
+                "tool.converter.to": "به منطقه زمانی:",
+                "tool.converter.date": "تاریخ:",
+                "tool.converter.time": "زمان:",
+                "tool.converter.auto": "تشخیص خودکار (منطقه زمانی شما)",
+                "tool.convert.button": "تبدیل زمان",
+                "tool.voice.input": "ورودی صوتی",
+                "tool.voice.output": "خروجی صوتی",
+                "tool.result.title": "زمان تبدیل شده",
+                "tool.copy": "کپی نتیجه",
+                "tool.clear": "پاک کردن همه",
+                "footer.follow": "ما را دنبال کنید",
+                "footer.categories": "دسته‌بندی‌های محبوب",
+                "footer.categories.pdf": "ابزارهای PDF",
+                "footer.categories.image": "ابزارهای تصویر",
+                "footer.categories.text": "ابزارهای متن",
+                "footer.categories.av": "ابزارهای صوتی/تصویری",
+                "footer.categories.web": "ابزارهای توسعه دهنده وب",
+                "footer.categories.calc": "ابزارهای ماشین حساب",
+                "footer.categories.util": "ابزارهای کمکی",
+                "footer.categories.color": "ابزارهای رنگ",
+                "footer.quicklinks": "لینک‌های سریع",
+                "footer.links.tools": "همه ابزارها",
+                "footer.links.faq": "سوالات متداول",
+                "footer.links.contact": "تماس با ما",
+                "footer.links.privacy": "سیاست حفظ حریم خصوصی",
+                "footer.links.disclaimer": "سلب مسئولیت",
+                "footer.links.terms": "شرایط خدمات",
+                "footer.copyright": "© 2025 LollyPoPDF. تمامی حقوق محفوظ است."
+            },
+            bg: {
+                "nav.home": "Начало",
+                "nav.about": "За нас",
+                "nav.tools": "Инструменти",
+                "nav.contact": "Контакт",
+                "hero.title": "Инструмент за преобразуване на часови зони",
+                "hero.description": "Преобразувайте времето мигновено между различни часови зони. Използвайте ръчен въвеждане или разпознаване на реч за бързи преобразувания. Цялата обработка се извършва локално във вашия браузър с пълна поверителност.",
+                "howto.title": "Как да използвате преобразувателя на часови зони",
+                "howto.step1.title": "Изберете часови зони",
+                "howto.step1.description": "Изберете вашите изходна и целева часова зона от падащите менюта. Инструментът включва всички основни часови зони по света.",
+                "howto.step2.title": "Въведете време",
+                "howto.step2.description": "Въведете времето, което искате да преобразувате в изходната часова зона. Можете да го въведете ръчно или да използвате разпознаване на реч за въвеждане без ръце.",
+                "howto.step3.title": "Преобразувайте и прегледайте",
+                "howto.step3.description": "Щракнете върху \"Преобразуване на време\", за да видите мигновено преобразуваното време в целевата часова зона. Живите часовници показват текущото време и в двете зони.",
+                "howto.step4.title": "Копирайте или споделете",
+                "howto.step4.description": "Копирайте преобразуваното време в клипборда с едно щракване. Цялата обработка се извършва локално във вашия браузър - вашите данни никога не напускат вашето устройство.",
+                "tool.title": "Преобразовател на часови зони",
+                "tool.converter.title": "Преобразуване на часови зони",
+                "tool.converter.from": "От часова зона:",
+                "tool.converter.to": "Към часова зона:",
+                "tool.converter.date": "Дата:",
+                "tool.converter.time": "Време:",
+                "tool.converter.auto": "Автоматично откриване (Вашата часова зона)",
+                "tool.convert.button": "Преобразуване на време",
+                "tool.voice.input": "Гласово въвеждане",
+                "tool.voice.output": "Гласов изход",
+                "tool.result.title": "Преобразувано време",
+                "tool.copy": "Копиране на резултат",
+                "tool.clear": "Изчисти всичко",
+                "footer.follow": "СЛЕДВАЙТЕ НИ",
+                "footer.categories": "Популярни категории",
+                "footer.categories.pdf": "PDF инструменти",
+                "footer.categories.image": "Инструменти за изображения",
+                "footer.categories.text": "Текстови инструменти",
+                "footer.categories.av": "Аудио/Видео инструменти",
+                "footer.categories.web": "Инструменти за уеб разработчици",
+                "footer.categories.calc": "Калкулаторни инструменти",
+                "footer.categories.util": "Помощни инструменти",
+                "footer.categories.color": "Цветови инструменти",
+                "footer.quicklinks": "Бързи връзки",
+                "footer.links.tools": "Всички инструменти",
+                "footer.links.faq": "ЧЗВ",
+                "footer.links.contact": "Контакт",
+                "footer.links.privacy": "Политика за поверителност",
+                "footer.links.disclaimer": "Отказ от отговорност",
+                "footer.links.terms": "Условия за ползване",
+                "footer.copyright": "© 2025 LollyPoPDF. Всички права запазени."
+            },
+            ca: {
+                "nav.home": "Inici",
+                "nav.about": "Sobre nosaltres",
+                "nav.tools": "Eines",
+                "nav.contact": "Contacte",
+                "hero.title": "Eina de conversió de zones horàries",
+                "hero.description": "Converteix el temps instantàniament entre diferents zones horàries. Utilitza l'entrada manual o el reconeixement de veu per a conversions ràpides. Tot el processament es realitza localment al teu navegador amb privacitat completa.",
+                "howto.title": "Com utilitzar el convertidor de zones horàries",
+                "howto.step1.title": "Selecciona zones horàries",
+                "howto.step1.description": "Tria les teves zones horàries d'origen i destí dels menús desplegables. L'eina inclou totes les zones horàries principals del món.",
+                "howto.step2.title": "Introdueix l'hora",
+                "howto.step2.description": "Introdueix l'hora que vols convertir a la zona horària d'origen. Pots escriure-la manualment o utilitzar el reconeixement de veu per a una entrada sense mans.",
+                "howto.step3.title": "Converteix i visualitza",
+                "howto.step3.description": "Fes clic a \"Converteix l'hora\" per veure instantàniament l'hora convertida a la zona horària de destí. Els rellotges en viu mostren l'hora actual a les dues zones.",
+                "howto.step4.title": "Copia o comparteix",
+                "howto.step4.description": "Copia l'hora convertida al porta-retalls amb un sol clic. Tot el processament es realitza localment al teu navegador - les teves dades mai surten del teu dispositiu.",
+                "tool.title": "Convertidor de zones horàries",
+                "tool.converter.title": "Conversió de zones horàries",
+                "tool.converter.from": "Des de la zona horària:",
+                "tool.converter.to": "A la zona horària:",
+                "tool.converter.date": "Data:",
+                "tool.converter.time": "Hora:",
+                "tool.converter.auto": "Detecció automàtica (La teva zona horària)",
+                "tool.convert.button": "Converteix l'hora",
+                "tool.voice.input": "Entrada de veu",
+                "tool.voice.output": "Sortida de veu",
+                "tool.result.title": "Hora convertida",
+                "tool.copy": "Copia el resultat",
+                "tool.clear": "Neteja-ho tot",
+                "footer.follow": "SEGUEIX-NOS",
+                "footer.categories": "Categories populars",
+                "footer.categories.pdf": "Eines PDF",
+                "footer.categories.image": "Eines d'imatge",
+                "footer.categories.text": "Eines de text",
+                "footer.categories.av": "Eines d'àudio/vídeo",
+                "footer.categories.web": "Eines de desenvolupador web",
+                "footer.categories.calc": "Eines de calculadora",
+                "footer.categories.util": "Eines d'utilitat",
+                "footer.categories.color": "Eines de color",
+                "footer.quicklinks": "Enllaços ràpids",
+                "footer.links.tools": "Totes les eines",
+                "footer.links.faq": "PMF",
+                "footer.links.contact": "Contacte",
+                "footer.links.privacy": "Política de privadesa",
+                "footer.links.disclaimer": "Descàrrec de responsabilitat",
+                "footer.links.terms": "Termes del servei",
+                "footer.copyright": "© 2025 LollyPoPDF. Tots els drets reservats."
+            },
+            nl: {
+                "nav.home": "Home",
+                "nav.about": "Over Ons",
+                "nav.tools": "Tools",
+                "nav.contact": "Contact",
+                "hero.title": "Tijdzone Converter Tool",
+                "hero.description": "Converteer tijd direct tussen verschillende tijdzones. Gebruik handmatige invoer of spraakherkenning voor snelle conversies. Alle verwerking gebeurt lokaal in uw browser met volledige privacy.",
+                "howto.title": "Hoe de Tijdzone Converter te gebruiken",
+                "howto.step1.title": "Selecteer Tijdzones",
+                "howto.step1.description": "Kies uw bron- en bestemmings tijdzones uit de dropdown menu's. De tool bevat alle belangrijke tijdzones over de hele wereld.",
+                "howto.step2.title": "Voer Tijd in",
+                "howto.step2.description": "Voer de tijd in die u wilt converteren in de bron tijdzone. U kunt deze handmatig typen of spraakherkenning gebruiken voor handenvrije invoer.",
+                "howto.step3.title": "Converteer en Bekijk",
+                "howto.step3.description": "Klik op \"Converteer Tijd\" om direct de geconverteerde tijd in de bestemmings tijdzone te zien. Live klokken tonen de huidige tijd in beide zones.",
+                "howto.step4.title": "Kopieer of Deel",
+                "howto.step4.description": "Kopieer de geconverteerde tijd naar het klembord met één klik. Alle verwerking gebeurt lokaal in uw browser - uw gegevens verlaten nooit uw apparaat.",
+                "tool.title": "Tijdzone Converter",
+                "tool.converter.title": "Tijdzone Conversie",
+                "tool.converter.from": "Van Tijdzone:",
+                "tool.converter.to": "Naar Tijdzone:",
+                "tool.converter.date": "Datum:",
+                "tool.converter.time": "Tijd:",
+                "tool.converter.auto": "Automatische detectie (Uw Tijdzone)",
+                "tool.convert.button": "Converteer Tijd",
+                "tool.voice.input": "Spraakinvoer",
+                "tool.voice.output": "Spraakuitvoer",
+                "tool.result.title": "Geconverteerde Tijd",
+                "tool.copy": "Kopieer Resultaat",
+                "tool.clear": "Alles Wissen",
+                "footer.follow": "VOLG ONS",
+                "footer.categories": "Populaire Categorieën",
+                "footer.categories.pdf": "PDF Tools",
+                "footer.categories.image": "Afbeelding Tools",
+                "footer.categories.text": "Tekst Tools",
+                "footer.categories.av": "Audio/Video Tools",
+                "footer.categories.web": "WebOntwikkelaar Tools",
+                "footer.categories.calc": "Rekenmachine Tools",
+                "footer.categories.util": "Hulpmiddelen",
+                "footer.categories.color": "Kleur Tools",
+                "footer.quicklinks": "Snelle Links",
+                "footer.links.tools": "Alle Tools",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Contact",
+                "footer.links.privacy": "Privacybeleid",
+                "footer.links.disclaimer": "Disclaimer",
+                "footer.links.terms": "Servicevoorwaarden",
+                "footer.copyright": "© 2025 LollyPoPDF. Alle rechten voorbehouden."
+            },
+            el: {
+                "nav.home": "Αρχική",
+                "nav.about": "Σχετικά με εμάς",
+                "nav.tools": "Εργαλεία",
+                "nav.contact": "Επικοινωνία",
+                "hero.title": "Εργαλείο Μετατροπής Ζώνης Ώρας",
+                "hero.description": "Μετατρέψτε αμέσως την ώρα μεταξύ διαφορετικών ζωνών ώρας. Χρησιμοποιήστε χειροκίνητη εισαγωγή ή αναγνώριση φωνής για γρήγορες μετατροπές. Όλη η επεξεργασία γίνεται τοπικά στο πρόγραμμα περιήγησής σας με πλήρη ιδιωτικότητα.",
+                "howto.title": "Πώς να χρησιμοποιήσετε τον Μετατροπέα Ζώνης Ώρας",
+                "howto.step1.title": "Επιλέξτε Ζώνες Ώρας",
+                "howto.step1.description": "Επιλέξτε τις ζώνες ώρας προέλευσης και προορισμού σας από τα αναπτυσσόμενα μενού. Το εργαλείο περιλαμβάνει όλες τις κύριες ζώνες ώρας σε όλο τον κόσμο.",
+                "howto.step2.title": "Εισαγάγετε Ώρα",
+                "howto.step2.description": "Εισαγάγετε την ώρα που θέλετε να μετατρέψετε στη ζώνη ώρας προέλευσης. Μπορείτε να την πληκτρολογήσετε χειροκίνητα ή να χρησιμοποιήσετε αναγνώριση φωνής για εισαγωγή χωρίς χέρια.",
+                "howto.step3.title": "Μετατροπή και Προβολή",
+                "howto.step3.description": "Κάντε κλικ στο \"Μετατροπή Ώρας\" για να δείτε αμέσως τη μετατρεπόμενη ώρα στη ζώνη ώρας προορισμού. Οι ζωντανοί ρολόι εμφανίζουν την τρέχουσα ώρα και στις δύο ζώνες.",
+                "howto.step4.title": "Αντιγραφή ή Κοινή Χρήση",
+                "howto.step4.description": "Αντιγράψτε τη μετατρεπόμενη ώρα στο πρόχειρο με ένα κλικ. Όλη η επεξεργασία γίνεται τοπικά στο πρόγραμμα περιήγησής σας - τα δεδομένα σας δεν εγκαταλείπουν ποτέ τη συσκευή σας.",
+                "tool.title": "Μετατροπέας Ζώνης Ώρας",
+                "tool.converter.title": "Μετατροπή Ζώνης Ώρας",
+                "tool.converter.from": "Από Ζώνη Ώρας:",
+                "tool.converter.to": "Σε Ζώνη Ώρας:",
+                "tool.converter.date": "Ημερομηνία:",
+                "tool.converter.time": "Ώρα:",
+                "tool.converter.auto": "Αυτόματος εντοπισμός (Η Ζώνη Ώρας σας)",
+                "tool.convert.button": "Μετατροπή Ώρας",
+                "tool.voice.input": "Φωνητική Εισαγωγή",
+                "tool.voice.output": "Φωνητική Έξοδος",
+                "tool.result.title": "Μετατρεπόμενη Ώρα",
+                "tool.copy": "Αντιγραφή Αποτελέσματος",
+                "tool.clear": "Καθαρισμός Όλων",
+                "footer.follow": "ΑΚΟΛΟΥΘΗΣΤΕ ΜΑΣ",
+                "footer.categories": "Δημοφιλείς Κατηγορίες",
+                "footer.categories.pdf": "Εργαλεία PDF",
+                "footer.categories.image": "Εργαλεία Εικόνας",
+                "footer.categories.text": "Εργαλεία Κειμένου",
+                "footer.categories.av": "Εργαλεία Ήχου/Βίντεο",
+                "footer.categories.web": "Εργαλεία WebΠρογραμματιστή",
+                "footer.categories.calc": "Εργαλεία Αριθμομηχανής",
+                "footer.categories.util": "Εργαλεία Χρησιμότητας",
+                "footer.categories.color": "Εργαλεία Χρώματος",
+                "footer.quicklinks": "Γρήγοροι Σύνδεσμοι",
+                "footer.links.tools": "Όλα τα Εργαλεία",
+                "footer.links.faq": "Συχνές Ερωτήσεις",
+                "footer.links.contact": "Επικοινωνία",
+                "footer.links.privacy": "Πολιτική Απορρήτου",
+                "footer.links.disclaimer": "Αποποίηση Ευθυνών",
+                "footer.links.terms": "Όροι Χρήσης",
+                "footer.copyright": "© 2025 LollyPoPDF. Με επιφύλαξη παντός δικαιώματος."
+            },
+            hi: {
+                "nav.home": "होम",
+                "nav.about": "हमारे बारे में",
+                "nav.tools": "टूल्स",
+                "nav.contact": "संपर्क करें",
+                "hero.title": "टाइम जोन कनवर्टर टूल",
+                "hero.description": "विभिन्न टाइम जोन के बीच तुरंत समय परिवर्तित करें। त्वरित रूपांतरण के लिए मैन्युअल इनपुट या वॉयस रिकग्निशन का उपयोग करें। सभी प्रसंस्करण आपके ब्राउज़र में स्थानीय रूप से पूर्ण गोपनीयता के साथ होता है।",
+                "howto.title": "टाइम जोन कनवर्टर का उपयोग कैसे करें",
+                "howto.step1.title": "टाइम जोन चुनें",
+                "howto.step1.description": "ड्रॉपडाउन मेनू से अपने स्रोत और गंतव्य टाइम जोन चुनें। इस टूल में दुनिया भर के सभी प्रमुख टाइम जोन शामिल हैं।",
+                "howto.step2.title": "समय दर्ज करें",
+                "howto.step2.description": "स्रोत टाइम जोन में वह समय दर्ज करें जिसे आप परिवर्तित करना चाहते हैं। आप इसे मैन्युअल रूप से टाइप कर सकते हैं या हाथों-मुक्त इनपुट के लिए वॉयस रिकग्निशन का उपयोग कर सकते हैं।",
+                "howto.step3.title": "कन्वर्ट और देखें",
+                "howto.step3.description": "गंतव्य टाइम जोन में परिवर्तित समय को तुरंत देखने के लिए \"समय परिवर्तित करें\" पर क्लिक करें। लाइव घड़ियाँ दोनों जोन में वर्तमान समय दिखाती हैं।",
+                "howto.step4.title": "कॉपी या शेयर करें",
+                "howto.step4.description": "एक क्लिक में परिवर्तित समय को क्लिपबोर्ड पर कॉपी करें। सभी प्रसंस्करण आपके ब्राउज़र में स्थानीय रूप से होता है - आपका डेटा कभी भी आपके डिवाइस को नहीं छोड़ता।",
+                "tool.title": "टाइम जोन कनवर्टर",
+                "tool.converter.title": "टाइम जोन रूपांतरण",
+                "tool.converter.from": "से टाइम जोन:",
+                "tool.converter.to": "को टाइम जोन:",
+                "tool.converter.date": "तारीख:",
+                "tool.converter.time": "समय:",
+                "tool.converter.auto": "स्वचालित पहचान (आपका टाइम जोन)",
+                "tool.convert.button": "समय परिवर्तित करें",
+                "tool.voice.input": "वॉयस इनपुट",
+                "tool.voice.output": "वॉयस आउटपुट",
+                "tool.result.title": "परिवर्तित समय",
+                "tool.copy": "परिणाम कॉपी करें",
+                "tool.clear": "सब साफ करें",
+                "footer.follow": "हमें फॉलो करें",
+                "footer.categories": "लोकप्रिय श्रेणियाँ",
+                "footer.categories.pdf": "PDF टूल्स",
+                "footer.categories.image": "इमेज टूल्स",
+                "footer.categories.text": "टेक्स्ट टूल्स",
+                "footer.categories.av": "ऑडियो/वीडियो टूल्स",
+                "footer.categories.web": "वेबडेवलपर टूल्स",
+                "footer.categories.calc": "कैलकुलेटर टूल्स",
+                "footer.categories.util": "यूटिलिटी टूल्स",
+                "footer.categories.color": "कलर टूल्स",
+                "footer.quicklinks": "त्वरित लिंक",
+                "footer.links.tools": "सभी टूल्स",
+                "footer.links.faq": "सामान्य प्रश्न",
+                "footer.links.contact": "संपर्क करें",
+                "footer.links.privacy": "गोपनीयता नीति",
+                "footer.links.disclaimer": "अस्वीकरण",
+                "footer.links.terms": "सेवा की शर्तें",
+                "footer.copyright": "© 2025 LollyPoPDF. सर्वाधिकार सुरक्षित।"
+            },
+            te: {
+                "nav.home": "హోమ్",
+                "nav.about": "మా గురించి",
+                "nav.tools": "టూల్స్",
+                "nav.contact": "సంప్రదించండి",
+                "hero.title": "టైమ్ జోన్ కన్వర్టర్ టూల్",
+                "hero.description": "వివిధ టైమ్ జోన్ల మధ్య తక్షణమే సమయాన్ని మార్చండి. త్వరిత మార్పిడుల కోసం మాన్యువల్ ఇన్పుట్ లేదా వాయిస్ రికగ్నిషన్ ఉపయోగించండి. అన్ని ప్రాసెసింగ్ మీ బ్రౌజర్లో స్థానికంగా పూర్తి గోప్యతతో జరుగుతుంది.",
+                "howto.title": "టైమ్ జోన్ కన్వర్టర్ ఎలా ఉపయోగించాలి",
+                "howto.step1.title": "టైమ్ జోన్లను ఎంచుకోండి",
+                "howto.step1.description": "డ్రాప్డౌన్ మెనూల నుండి మీ సోర్స్ మరియు డెస్టినేషన్ టైమ్ జోన్లను ఎంచుకోండి. ఈ టూల్ ప్రపంచంలోని అన్ని ప్రధాన టైమ్ జోన్లను కలిగి ఉంటుంది.",
+                "howto.step2.title": "సమయాన్ని నమోదు చేయండి",
+                "howto.step2.description": "మీరు మార్చాలనుకునే సమయాన్ని సోర్స్ టైమ్ జోన్లో నమోదు చేయండి. మీరు దాన్ని మాన్యువల్గా టైప్ చేయవచ్చు లేదా హ్యాండ్స్-ఫ్రీ ఇన్పుట్ కోసం వాయిస్ రికగ్నిషన్ ఉపయోగించవచ్చు.",
+                "howto.step3.title": "మార్చండి మరియు వీక్షించండి",
+                "howto.step3.description": "డెస్టినేషన్ టైమ్ జోన్లో మార్చబడిన సమయాన్ని తక్షణమే చూడటానికి \"సమయాన్ని మార్చండి\" క్లిక్ చేయండి. లైవ్ గడియారాలు రెండు జోన్లలో ప్రస్తుత సమయాన్ని చూపుతాయి.",
+                "howto.step4.title": "కాపీ చేయండి లేదా షేర్ చేయండి",
+                "howto.step4.description": "ఒకే క్లిక్తో మార్చబడిన సమయాన్ని క్లిప్బోర్డ్కు కాపీ చేయండి. అన్ని ప్రాసెసింగ్ మీ బ్రౌజర్లో స్థానికంగా జరుగుతుంది - మీ డేటా ఎప్పుడూ మీ పరికరాన్ని విడిచిపెట్టదు.",
+                "tool.title": "టైమ్ జోన్ కన్వర్టర్",
+                "tool.converter.title": "టైమ్ జోన్ మార్పిడి",
+                "tool.converter.from": "టైమ్ జోన్ నుండి:",
+                "tool.converter.to": "టైమ్ జోన్కు:",
+                "tool.converter.date": "తేదీ:",
+                "tool.converter.time": "సమయం:",
+                "tool.converter.auto": "స్వయంచాలక గుర్తింపు (మీ టైమ్ జోన్)",
+                "tool.convert.button": "సమయాన్ని మార్చండి",
+                "tool.voice.input": "వాయిస్ ఇన్పుట్",
+                "tool.voice.output": "వాయిస్ అవుట్పుట్",
+                "tool.result.title": "మార్చబడిన సమయం",
+                "tool.copy": "ఫలితాన్ని కాపీ చేయండి",
+                "tool.clear": "అన్నీ క్లియర్ చేయండి",
+                "footer.follow": "మమ్మల్ని అనుసరించండి",
+                "footer.categories": "జనాదరణ పొందిన వర్గాలు",
+                "footer.categories.pdf": "PDF టూల్స్",
+                "footer.categories.image": "ఇమేజ్ టూల్స్",
+                "footer.categories.text": "టెక్స్ట్ టూల్స్",
+                "footer.categories.av": "ఆడియో/వీడియో టూల్స్",
+                "footer.categories.web": "వెబ్ డెవలపర్ టూల్స్",
+                "footer.categories.calc": "కాలిక్యులేటర్ టూల్స్",
+                "footer.categories.util": "యుటిలిటీ టూల్స్",
+                "footer.categories.color": "కలర్ టూల్స్",
+                "footer.quicklinks": "త్వరిత లింకులు",
+                "footer.links.tools": "అన్ని టూల్స్",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "సంప్రదించండి",
+                "footer.links.privacy": "గోప్యతా విధానం",
+                "footer.links.disclaimer": "డిస్క్లెయిమర్",
+                "footer.links.terms": "సేవా నిబంధనలు",
+                "footer.copyright": "© 2025 LollyPoPDF. అన్ని హక్కులు ప్రత్యేకించబడినవి."
+            },
+            kn: {
+                "nav.home": "ಹೋಮ್",
+                "nav.about": "ನಮ್ಮ ಬಗ್ಗೆ",
+                "nav.tools": "ಟೂಲ್ಸ್",
+                "nav.contact": "ಸಂಪರ್ಕಿಸಿ",
+                "hero.title": "ಟೈಮ್ ಜೋನ್ ಕನ್ವರ್ಟರ್ ಟೂಲ್",
+                "hero.description": "ವಿವಿಧ ಟೈಮ್ ಜೋನ್ಗಳ ನಡುವೆ ತಕ್ಷಣವೇ ಸಮಯವನ್ನು ಪರಿವರ್ತಿಸಿ. ತ್ವರಿತ ಪರಿವರ್ತನೆಗಳಿಗೆ ಮ್ಯಾನುವಲ್ ಇನ್ಪುಟ್ ಅಥವಾ ವಾಯ್ಸ್ ರೆಕಗ್ನಿಷನ್ ಬಳಸಿ. ಎಲ್ಲಾ ಪ್ರೊಸೆಸಿಂಗ್ ನಿಮ್ಮ ಬ್ರೌಸರ್ನಲ್ಲಿ ಸ್ಥಳೀಯವಾಗಿ ಪೂರ್ಣ ಗೌಪ್ಯತೆಯೊಂದಿಗೆ ನಡೆಯುತ್ತದೆ.",
+                "howto.title": "ಟೈಮ್ ಜೋನ್ ಕನ್ವರ್ಟರ್ ಹೇಗೆ ಬಳಸುವುದು",
+                "howto.step1.title": "ಟೈಮ್ ಜೋನ್ಗಳನ್ನು ಆಯ್ಕೆಮಾಡಿ",
+                "howto.step1.description": "ಡ್ರಾಪ್ಡೌನ್ ಮೆನುಗಳಿಂದ ನಿಮ್ಮ ಮೂಲ ಮತ್ತು ಗಮ್ಯಸ್ಥಾನ ಟೈಮ್ ಜೋನ್ಗಳನ್ನು ಆಯ್ಕೆಮಾಡಿ. ಈ ಟೂಲ್ ಪ್ರಪಂಚದ ಎಲ್ಲಾ ಪ್ರಮುಖ ಟೈಮ್ ಜೋನ್ಗಳನ್ನು ಒಳಗೊಂಡಿದೆ.",
+                "howto.step2.title": "ಸಮಯವನ್ನು ನಮೂದಿಸಿ",
+                "howto.step2.description": "ಮೂಲ ಟೈಮ್ ಜೋನ್ನಲ್ಲಿ ನೀವು ಪರಿವರ್ತಿಸಲು ಬಯಸುವ ಸಮಯವನ್ನು ನಮೂದಿಸಿ. ನೀವು ಅದನ್ನು ಮ್ಯಾನುವಲ್ ಆಗಿ ಟೈಪ್ ಮಾಡಬಹುದು ಅಥವಾ ಹ್ಯಾಂಡ್ಸ್-ಫ್ರೀ ಇನ್ಪುಟ್ಗಾಗಿ ವಾಯ್ಸ್ ರೆಕಗ್ನಿಷನ್ ಬಳಸಬಹುದು.",
+                "howto.step3.title": "ಪರಿವರ್ತಿಸಿ ಮತ್ತು ವೀಕ್ಷಿಸಿ",
+                "howto.step3.description": "ಗಮ್ಯಸ್ಥಾನ ಟೈಮ್ ಜೋನ್ನಲ್ಲಿ ಪರಿವರ್ತಿತ ಸಮಯವನ್ನು ತಕ್ಷಣವೇ ನೋಡಲು \"ಸಮಯ ಪರಿವರ್ತಿಸಿ\" ಕ್ಲಿಕ್ ಮಾಡಿ. ಲೈವ್ ಗಡಿಯಾರಗಳು ಎರಡೂ ಜೋನ್ಗಳಲ್ಲಿ ಪ್ರಸ್ತುತ ಸಮಯವನ್ನು ತೋರಿಸುತ್ತವೆ.",
+                "howto.step4.title": "ಕಾಪಿ ಅಥವಾ ಶೇರ್ ಮಾಡಿ",
+                "howto.step4.description": "ಒಂದೇ ಕ್ಲಿಕ್ನಲ್ಲಿ ಪರಿವರ್ತಿತ ಸಮಯವನ್ನು ಕ್ಲಿಪ್ಬೋರ್ಡ್ಗೆ ಕಾಪಿ ಮಾಡಿ. ಎಲ್ಲಾ ಪ್ರೊಸೆಸಿಂಗ್ ನಿಮ್ಮ ಬ್ರೌಸರ್ನಲ್ಲಿ ಸ್ಥಳೀಯವಾಗಿ ನಡೆಯುತ್ತದೆ - ನಿಮ್ಮ ಡೇಟಾ ಎಂದಿಗೂ ನಿಮ್ಮ ಸಾಧನವನ್ನು ಬಿಡುವುದಿಲ್ಲ.",
+                "tool.title": "ಟೈಮ್ ಜೋನ್ ಕನ್ವರ್ಟರ್",
+                "tool.converter.title": "ಟೈಮ್ ಜೋನ್ ಪರಿವರ್ತನೆ",
+                "tool.converter.from": "ಟೈಮ್ ಜೋನ್ ನಿಂದ:",
+                "tool.converter.to": "ಟೈಮ್ ಜೋನ್ಗೆ:",
+                "tool.converter.date": "ದಿನಾಂಕ:",
+                "tool.converter.time": "ಸಮಯ:",
+                "tool.converter.auto": "ಸ್ವಯಂಚಾಲಿತ ಪತ್ತೆ (ನಿಮ್ಮ ಟೈಮ್ ಜೋನ್)",
+                "tool.convert.button": "ಸಮಯ ಪರಿವರ್ತಿಸಿ",
+                "tool.voice.input": "ವಾಯ್ಸ್ ಇನ್ಪುಟ್",
+                "tool.voice.output": "ವಾಯ್ಸ್ ಔಟ್ಪುಟ್",
+                "tool.result.title": "ಪರಿವರ್ತಿತ ಸಮಯ",
+                "tool.copy": "ಫಲಿತಾಂಶವನ್ನು ಕಾಪಿ ಮಾಡಿ",
+                "tool.clear": "ಎಲ್ಲಾ ಕ್ಲಿಯರ್ ಮಾಡಿ",
+                "footer.follow": "ನಮ್ಮನ್ನು ಅನುಸರಿಸಿ",
+                "footer.categories": "ಜನಪ್ರಿಯ ವರ್ಗಗಳು",
+                "footer.categories.pdf": "PDF ಟೂಲ್ಸ್",
+                "footer.categories.image": "ಇಮೇಜ್ ಟೂಲ್ಸ್",
+                "footer.categories.text": "ಟೆಕ್ಸ್ಟ್ ಟೂಲ್ಸ್",
+                "footer.categories.av": "ಆಡಿಯೋ/ವೀಡಿಯೋ ಟೂಲ್ಸ್",
+                "footer.categories.web": "ವೆಬ್ ಡೆವಲಪರ್ ಟೂಲ್ಸ್",
+                "footer.categories.calc": "ಕ್ಯಾಲ್ಕುಲೇಟರ್ ಟೂಲ್ಸ್",
+                "footer.categories.util": "ಯುಟಿಲಿಟಿ ಟೂಲ್ಸ್",
+                "footer.categories.color": "ಕಲರ್ ಟೂಲ್ಸ್",
+                "footer.quicklinks": "ತ್ವರಿತ ಲಿಂಕ್ಗಳು",
+                "footer.links.tools": "ಎಲ್ಲಾ ಟೂಲ್ಸ್",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "ಸಂಪರ್ಕಿಸಿ",
+                "footer.links.privacy": "ಗೌಪ್ಯತಾ ನೀತಿ",
+                "footer.links.disclaimer": "ಡಿಸ್ಕ್ಲೈಮರ್",
+                "footer.links.terms": "ಸೇವಾ ನಿಯಮಗಳು",
+                "footer.copyright": "© 2025 LollyPoPDF. ಎಲ್ಲಾ ಹಕ್ಕುಗಳು ಕಾಯ್ದಿರಿಸಿದೆ."
+            },
+            ta: {
+                "nav.home": "முகப்பு",
+                "nav.about": "எங்களைப் பற்றி",
+                "nav.tools": "கருவிகள்",
+                "nav.contact": "தொடர்பு கொள்ள",
+                "hero.title": "நேர மண்டல மாற்றி கருவி",
+                "hero.description": "வெவ்வேறு நேர மண்டலங்களுக்கு இடையே உடனடியாக நேரத்தை மாற்றவும். விரைவான மாற்றங்களுக்கு கைமுறை உள்ளீடு அல்லது குரல் அங்கீகாரத்தைப் பயன்படுத்தவும். அனைத்து செயலாக்கமும் உங்கள் உலாவியில் உள்ளூரில் முழு தனியுரிமையுடன் நடக்கிறது.",
+                "howto.title": "நேர மண்டல மாற்றியை எவ்வாறு பயன்படுத்துவது",
+                "howto.step1.title": "நேர மண்டலங்களைத் தேர்ந்தெடுக்கவும்",
+                "howto.step1.description": "டிராப்பவுன் மெனுக்களிலிருந்து உங்கள் மூல மற்றும் இலக்கு நேர மண்டலங்களைத் தேர்ந்தெடுக்கவும். இந்த கருவி உலகின் அனைத்து முக்கிய நேர மண்டலங்களையும் உள்ளடக்கியது.",
+                "howto.step2.title": "நேரத்தை உள்ளிடவும்",
+                "howto.step2.description": "மூல நேர மண்டலத்தில் நீங்கள் மாற்ற விரும்பும் நேரத்தை உள்ளிடவும். நீங்கள் அதை கைமுறையாக தட்டச்சு செய்யலாம் அல்லது கைகளில்லா உள்ளீட்டிற்கு குரல் அங்கீகாரத்தைப் பயன்படுத்தலாம்.",
+                "howto.step3.title": "மாற்றி காண்க",
+                "howto.step3.description": "இலக்கு நேர மண்டலத்தில் மாற்றப்பட்ட நேரத்தை உடனடியாகக் காண \"நேரத்தை மாற்று\" எனக் கிளிக் செய்யவும். நேரடி கடிகாரங்கள் இரு மண்டலங்களிலும் தற்போதைய நேரத்தைக் காட்டுகின்றன.",
+                "howto.step4.title": "நகலெடுக்கவும் அல்லது பகிரவும்",
+                "howto.step4.description": "ஒரே கிளிக்கில் மாற்றப்பட்ட நேரத்தை கிளிப்போர்டுக்கு நகலெடுக்கவும். அனைத்து செயலாக்கமும் உங்கள் உலாவியில் உள்ளூரில் நடக்கிறது - உங்கள் தரவு உங்கள் சாதனத்தை விட்டு வெளியேறாது.",
+                "tool.title": "நேர மண்டல மாற்றி",
+                "tool.converter.title": "நேர மண்டல மாற்றம்",
+                "tool.converter.from": "நேர மண்டலத்திலிருந்து:",
+                "tool.converter.to": "நேர மண்டலத்திற்கு:",
+                "tool.converter.date": "தேதி:",
+                "tool.converter.time": "நேரம்:",
+                "tool.converter.auto": "தானியங்கி கண்டறிதல் (உங்கள் நேர மண்டலம்)",
+                "tool.convert.button": "நேரத்தை மாற்று",
+                "tool.voice.input": "குரல் உள்ளீடு",
+                "tool.voice.output": "குரல் வெளியீடு",
+                "tool.result.title": "மாற்றப்பட்ட நேரம்",
+                "tool.copy": "முடிவை நகலெடுக்கவும்",
+                "tool.clear": "அனைத்தையும் அழிக்கவும்",
+                "footer.follow": "எங்களைப் பின்தொடருங்கள்",
+                "footer.categories": "பிரபலமான வகைகள்",
+                "footer.categories.pdf": "PDF கருவிகள்",
+                "footer.categories.image": "பட கருவிகள்",
+                "footer.categories.text": "உரை கருவிகள்",
+                "footer.categories.av": "ஆடியோ/வீடியோ கருவிகள்",
+                "footer.categories.web": "வலை டெவலப்பர் கருவிகள்",
+                "footer.categories.calc": "கால்குலேட்டர் கருவிகள்",
+                "footer.categories.util": "பயன்பாட்டு கருவிகள்",
+                "footer.categories.color": "நிற கருவிகள்",
+                "footer.quicklinks": "விரைவு இணைப்புகள்",
+                "footer.links.tools": "அனைத்து கருவிகள்",
+                "footer.links.faq": "அடிக்கடி கேட்கப்படும் கேள்விகள்",
+                "footer.links.contact": "தொடர்பு கொள்ள",
+                "footer.links.privacy": "தனியுரிமைக் கொள்கை",
+                "footer.links.disclaimer": "பொறுப்புத் துறப்பு",
+                "footer.links.terms": "சேவை விதிமுறைகள்",
+                "footer.copyright": "© 2025 LollyPoPDF. அனைத்து உரிமைகளும் பாதுகாக்கப்பட்டவை."
+            },
+            ml: {
+                "nav.home": "ഹോം",
+                "nav.about": "ഞങ്ങളെക്കുറിച്ച്",
+                "nav.tools": "ടൂളുകൾ",
+                "nav.contact": "ബന്ധപ്പെടുക",
+                "hero.title": "ടൈം സോൺ കൺവെർട്ടർ ടൂൾ",
+                "hero.description": "വ്യത്യസ്ത ടൈം സോണുകൾക്കിടയിൽ തൽക്ഷണം സമയം പരിവർത്തനം ചെയ്യുക. വേഗത്തിലുള്ള പരിവർത്തനങ്ങൾക്കായി മാനുവൽ ഇൻപുട്ട് അല്ലെങ്കിൽ വോയ്സ് റെക്കഗ്നിഷൻ ഉപയോഗിക്കുക. എല്ലാ പ്രോസസ്സിംഗും നിങ്ങളുടെ ബ്രൗസറിൽ പ്രാദേശികമായി പൂർണ്ണ സ്വകാര്യതയോടെ നടക്കുന്നു.",
+                "howto.title": "ടൈം സോൺ കൺവെർട്ടർ എങ്ങനെ ഉപയോഗിക്കാം",
+                "howto.step1.title": "ടൈം സോണുകൾ തിരഞ്ഞെടുക്കുക",
+                "howto.step1.description": "ഡ്രോപ്പ്ഡൗൺ മെനുകളിൽ നിന്ന് നിങ്ങളുടെ സോഴ്സ്, ഡെസ്റ്റിനേഷൻ ടൈം സോണുകൾ തിരഞ്ഞെടുക്കുക. ഈ ടൂളിൽ ലോകത്തിലെ എല്ലാ പ്രധാന ടൈം സോണുകളും ഉൾപ്പെടുന്നു.",
+                "howto.step2.title": "സമയം നൽകുക",
+                "howto.step2.description": "സോഴ്സ് ടൈം സോണിൽ നിങ്ങൾ പരിവർത്തനം ചെയ്യാൻ ആഗ്രഹിക്കുന്ന സമയം നൽകുക. നിങ്ങൾക്ക് അത് മാനുവലായി ടൈപ്പ് ചെയ്യാം അല്ലെങ്കിൽ കൈകളില്ലാത്ത ഇൻപുട്ടിനായി വോയ്സ് റെക്കഗ്നിഷൻ ഉപയോഗിക്കാം.",
+                "howto.step3.title": "പരിവർത്തനം ചെയ്ത് കാണുക",
+                "howto.step3.description": "ഡെസ്റ്റിനേഷൻ ടൈം സോണിൽ പരിവർത്തനം ചെയ്ത സമയം തൽക്ഷണം കാണാൻ \"സമയം പരിവർത്തനം ചെയ്യുക\" ക്ലിക്ക് ചെയ്യുക. ലൈവ് ക്ലോക്കുകൾ രണ്ട് സോണുകളിലും നിലവിലെ സമയം കാണിക്കുന്നു.",
+                "howto.step4.title": "കോപ്പി അല്ലെങ്കിൽ പങ്കിടുക",
+                "howto.step4.description": "ഒരു ക്ലിക്കിൽ പരിവർത്തനം ചെയ്ത സമയം ക്ലിപ്പ്ബോർഡിലേക്ക് കോപ്പി ചെയ്യുക. എല്ലാ പ്രോസസ്സിംഗും നിങ്ങളുടെ ബ്രൗസറിൽ പ്രാദേശികമായി നടക്കുന്നു - നിങ്ങളുടെ ഡാറ്റ ഒരിക്കലും നിങ്ങളുടെ ഉപകരണം വിടുന്നില്ല.",
+                "tool.title": "ടൈം സോൺ കൺവെർട്ടർ",
+                "tool.converter.title": "ടൈം സോൺ പരിവർത്തനം",
+                "tool.converter.from": "ടൈം സോണിൽ നിന്ന്:",
+                "tool.converter.to": "ടൈം സോണിലേക്ക്:",
+                "tool.converter.date": "തീയതി:",
+                "tool.converter.time": "സമയം:",
+                "tool.converter.auto": "ഓട്ടോ ഡിറ്റക്ഷൻ (നിങ്ങളുടെ ടൈം സോൺ)",
+                "tool.convert.button": "സമയം പരിവർത്തനം ചെയ്യുക",
+                "tool.voice.input": "വോയ്സ് ഇൻപുട്ട്",
+                "tool.voice.output": "വോയ്സ് ഔട്ട്പുട്ട്",
+                "tool.result.title": "പരിവർത്തനം ചെയ്ത സമയം",
+                "tool.copy": "ഫലം കോപ്പി ചെയ്യുക",
+                "tool.clear": "എല്ലാം മായ്ക്കുക",
+                "footer.follow": "ഞങ്ങളെ പിന്തുടരുക",
+                "footer.categories": "ജനപ്രിയ വിഭാഗങ്ങൾ",
+                "footer.categories.pdf": "PDF ടൂളുകൾ",
+                "footer.categories.image": "ഇമേജ് ടൂളുകൾ",
+                "footer.categories.text": "ടെക്സ്റ്റ് ടൂളുകൾ",
+                "footer.categories.av": "ഓഡിയോ/വീഡിയോ ടൂളുകൾ",
+                "footer.categories.web": "വെബ് ഡവലപ്പർ ടൂളുകൾ",
+                "footer.categories.calc": "കാൽക്കുലേറ്റർ ടൂളുകൾ",
+                "footer.categories.util": "യൂട്ടിലിറ്റി ടൂളുകൾ",
+                "footer.categories.color": "കളർ ടൂളുകൾ",
+                "footer.quicklinks": "ദ്രുത ലിങ്കുകൾ",
+                "footer.links.tools": "എല്ലാ ടൂളുകളും",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "ബന്ധപ്പെടുക",
+                "footer.links.privacy": "സ്വകാര്യതാ നയം",
+                "footer.links.disclaimer": "ഡിസ്ക്ലെയിമർ",
+                "footer.links.terms": "സേവന നിബന്ധനകൾ",
+                "footer.copyright": "© 2025 LollyPoPDF. എല്ലാ അവകാശങ്ങളും നിക്ഷിപ്തം."
+            },
+            id: {
+                "nav.home": "Beranda",
+                "nav.about": "Tentang Kami",
+                "nav.tools": "Alat",
+                "nav.contact": "Kontak",
+                "hero.title": "Alat Konverter Zona Waktu",
+                "hero.description": "Konversi waktu secara instan antara zona waktu yang berbeda. Gunakan input manual atau pengenalan suara untuk konversi cepat. Semua pemrosesan terjadi secara lokal di browser Anda dengan privasi lengkap.",
+                "howto.title": "Cara Menggunakan Konverter Zona Waktu",
+                "howto.step1.title": "Pilih Zona Waktu",
+                "howto.step1.description": "Pilih zona waktu sumber dan tujuan Anda dari menu dropdown. Alat ini mencakup semua zona waktu utama di seluruh dunia.",
+                "howto.step2.title": "Masukkan Waktu",
+                "howto.step2.description": "Masukkan waktu yang ingin Anda konversi di zona waktu sumber. Anda dapat mengetiknya secara manual atau menggunakan pengenalan suara untuk input tanpa tangan.",
+                "howto.step3.title": "Konversi & Lihat",
+                "howto.step3.description": "Klik \"Konversi Waktu\" untuk langsung melihat waktu yang dikonversi di zona waktu tujuan. Jam langsung menunjukkan waktu saat ini di kedua zona.",
+                "howto.step4.title": "Salin atau Bagikan",
+                "howto.step4.description": "Salin waktu yang dikonversi ke clipboard dengan satu klik. Semua pemrosesan terjadi secara lokal di browser Anda - data Anda tidak pernah meninggalkan perangkat Anda.",
+                "tool.title": "Konverter Zona Waktu",
+                "tool.converter.title": "Konversi Zona Waktu",
+                "tool.converter.from": "Dari Zona Waktu:",
+                "tool.converter.to": "Ke Zona Waktu:",
+                "tool.converter.date": "Tanggal:",
+                "tool.converter.time": "Waktu:",
+                "tool.converter.auto": "Deteksi Otomatis (Zona Waktu Anda)",
+                "tool.convert.button": "Konversi Waktu",
+                "tool.voice.input": "Input Suara",
+                "tool.voice.output": "Output Suara",
+                "tool.result.title": "Waktu yang Dikonversi",
+                "tool.copy": "Salin Hasil",
+                "tool.clear": "Hapus Semua",
+                "footer.follow": "IKUTI KAMI",
+                "footer.categories": "Kategori Populer",
+                "footer.categories.pdf": "Alat PDF",
+                "footer.categories.image": "Alat Gambar",
+                "footer.categories.text": "Alat Teks",
+                "footer.categories.av": "Alat Audio/Video",
+                "footer.categories.web": "Alat WebDeveloper",
+                "footer.categories.calc": "Alat Kalkulator",
+                "footer.categories.util": "Alat Utilitas",
+                "footer.categories.color": "Alat Warna",
+                "footer.quicklinks": "Tautan Cepat",
+                "footer.links.tools": "Semua Alat",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Kontak",
+                "footer.links.privacy": "Kebijakan Privasi",
+                "footer.links.disclaimer": "Penafian",
+                "footer.links.terms": "Syarat Layanan",
+                "footer.copyright": "© 2025 LollyPoPDF. Hak cipta dilindungi undang-undang."
+            },
+            ms: {
+                "nav.home": "Laman Utama",
+                "nav.about": "Tentang Kami",
+                "nav.tools": "Alat",
+                "nav.contact": "Hubungi",
+                "hero.title": "Alat Penukar Zon Masa",
+                "hero.description": "Tukar masa serta-merta antara zon masa yang berbeza. Gunakan input manual atau pengecaman suara untuk penukaran pantas. Semua pemprosesan berlaku secara tempatan dalam pelayar anda dengan privasi lengkap.",
+                "howto.title": "Cara Menggunakan Penukar Zon Masa",
+                "howto.step1.title": "Pilih Zon Masa",
+                "howto.step1.description": "Pilih zon masa sumber dan destinasi anda dari menu juntai bawah. Alat ini merangkumi semua zon masa utama di seluruh dunia.",
+                "howto.step2.title": "Masukkan Masa",
+                "howto.step2.description": "Masukkan masa yang anda ingin tukar dalam zon masa sumber. Anda boleh menaipnya secara manual atau menggunakan pengecaman suara untuk input tanpa tangan.",
+                "howto.step3.title": "Tukar & Lihat",
+                "howto.step3.description": "Klik \"Tukar Masa\" untuk melihat serta-merta masa yang ditukar dalam zon masa destinasi. Jam langsung menunjukkan masa semasa dalam kedua-dua zon.",
+                "howto.step4.title": "Salin atau Kongsi",
+                "howto.step4.description": "Salin masa yang ditukar ke papan keratan dengan satu klik. Semua pemprosesan berlaku secara tempatan dalam pelayar anda - data anda tidak pernah meninggalkan peranti anda.",
+                "tool.title": "Penukar Zon Masa",
+                "tool.converter.title": "Penukaran Zon Masa",
+                "tool.converter.from": "Dari Zon Masa:",
+                "tool.converter.to": "Ke Zon Masa:",
+                "tool.converter.date": "Tarikh:",
+                "tool.converter.time": "Masa:",
+                "tool.converter.auto": "Pengesanan Automatik (Zon Masa Anda)",
+                "tool.convert.button": "Tukar Masa",
+                "tool.voice.input": "Input Suara",
+                "tool.voice.output": "Output Suara",
+                "tool.result.title": "Masa yang Ditukar",
+                "tool.copy": "Salin Hasil",
+                "tool.clear": "Kosongkan Semua",
+                "footer.follow": "IKUTI KAMI",
+                "footer.categories": "Kategori Popular",
+                "footer.categories.pdf": "Alat PDF",
+                "footer.categories.image": "Alat Imej",
+                "footer.categories.text": "Alat Teks",
+                "footer.categories.av": "Alat Audio/Video",
+                "footer.categories.web": "Alat WebPembangun",
+                "footer.categories.calc": "Alat Kalkulator",
+                "footer.categories.util": "Alat Utiliti",
+                "footer.categories.color": "Alat Warna",
+                "footer.quicklinks": "Pautan Pantas",
+                "footer.links.tools": "Semua Alat",
+                "footer.links.faq": "Soalan Lazim",
+                "footer.links.contact": "Hubungi",
+                "footer.links.privacy": "Dasar Privasi",
+                "footer.links.disclaimer": "Penafian",
+                "footer.links.terms": "Syarat Perkhidmatan",
+                "footer.copyright": "© 2025 LollyPoPDF. Hak cipta terpelihara."
+            },
+            pl: {
+                "nav.home": "Strona główna",
+                "nav.about": "O nas",
+                "nav.tools": "Narzędzia",
+                "nav.contact": "Kontakt",
+                "hero.title": "Narzędzie konwertera stref czasowych",
+                "hero.description": "Konwertuj czas natychmiast między różnymi strefami czasowymi. Użyj wprowadzania ręcznego lub rozpoznawania mowy dla szybkich konwersji. Wszystkie przetwarzania odbywają się lokalnie w Twojej przeglądarce z pełną prywatnością.",
+                "howto.title": "Jak używać konwertera stref czasowych",
+                "howto.step1.title": "Wybierz strefy czasowe",
+                "howto.step1.description": "Wybierz źródłową i docelową strefę czasową z menu rozwijanych. Narzędzie zawiera wszystkie główne strefy czasowe na świecie.",
+                "howto.step2.title": "Wprowadź czas",
+                "howto.step2.description": "Wprowadź czas, który chcesz przekonwertować w źródłowej strefie czasowej. Możesz wpisać go ręcznie lub użyć rozpoznawania mowy do wprowadzania bez użycia rąk.",
+                "howto.step3.title": "Konwertuj i przeglądaj",
+                "howto.step3.description": "Kliknij \"Konwertuj czas\", aby natychmiast zobaczyć przekonwertowany czas w docelowej strefie czasowej. Zegary na żywo pokazują aktualny czas w obu strefach.",
+                "howto.step4.title": "Kopiuj lub udostępniaj",
+                "howto.step4.description": "Skopiuj przekonwertowany czas do schowka jednym kliknięciem. Wszystkie przetwarzania odbywają się lokalnie w Twojej przeglądarce - Twoje dane nigdy nie opuszczają Twojego urządzenia.",
+                "tool.title": "Konwerter stref czasowych",
+                "tool.converter.title": "Konwersja stref czasowych",
+                "tool.converter.from": "Ze strefy czasowej:",
+                "tool.converter.to": "Do strefy czasowej:",
+                "tool.converter.date": "Data:",
+                "tool.converter.time": "Czas:",
+                "tool.converter.auto": "Wykrywanie automatyczne (Twoja strefa czasowa)",
+                "tool.convert.button": "Konwertuj czas",
+                "tool.voice.input": "Wejście głosowe",
+                "tool.voice.output": "Wyjście głosowe",
+                "tool.result.title": "Przekonwertowany czas",
+                "tool.copy": "Kopiuj wynik",
+                "tool.clear": "Wyczyść wszystko",
+                "footer.follow": "OBSERWUJ NAS",
+                "footer.categories": "Popularne kategorie",
+                "footer.categories.pdf": "Narzędzia PDF",
+                "footer.categories.image": "Narzędzia obrazów",
+                "footer.categories.text": "Narzędzia tekstu",
+                "footer.categories.av": "Narzędzia audio/wideo",
+                "footer.categories.web": "Narzędzia webdevelopera",
+                "footer.categories.calc": "Narzędzia kalkulatora",
+                "footer.categories.util": "Narzędzia użytkowe",
+                "footer.categories.color": "Narzędzia kolorów",
+                "footer.quicklinks": "Szybkie linki",
+                "footer.links.tools": "Wszystkie narzędzia",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Kontakt",
+                "footer.links.privacy": "Polityka prywatności",
+                "footer.links.disclaimer": "Zastrzeżenie",
+                "footer.links.terms": "Warunki usługi",
+                "footer.copyright": "© 2025 LollyPoPDF. Wszelkie prawa zastrzeżone."
+            },
+            th: {
+                "nav.home": "หน้าแรก",
+                "nav.about": "เกี่ยวกับเรา",
+                "nav.tools": "เครื่องมือ",
+                "nav.contact": "ติดต่อ",
+                "hero.title": "เครื่องมือแปลงเขตเวลา",
+                "hero.description": "แปลงเวลาทันทีระหว่างเขตเวลาต่างๆ ใช้การป้อนข้อมูลด้วยตนเองหรือการจดจำเสียงสำหรับการแปลงที่รวดเร็ว การประมวลผลทั้งหมดเกิดขึ้นในเบราว์เซอร์ของคุณด้วยความเป็นส่วนตัวเต็มรูปแบบ",
+                "howto.title": "วิธีใช้ตัวแปลงเขตเวลา",
+                "howto.step1.title": "เลือกเขตเวลา",
+                "howto.step1.description": "เลือกเขตเวลาต้นทางและปลายทางของคุณจากเมนูแบบเลื่อนลง เครื่องมือนี้รวมเขตเวลาหลักทั้งหมดทั่วโลก",
+                "howto.step2.title": "ป้อนเวลา",
+                "howto.step2.description": "ป้อนเวลาที่คุณต้องการแปลงในเขตเวลาต้นทาง คุณสามารถพิมพ์ด้วยตนเองหรือใช้การจดจำเสียงสำหรับการป้อนข้อมูลแบบไม่ใช้มือ",
+                "howto.step3.title": "แปลงและดู",
+                "howto.step3.description": "คลิก \"แปลงเวลา\" เพื่อดูเวลาที่แปลงแล้วในเขตเวลาปลายทางทันที นาฬิกาแบบสดแสดงเวลาปัจจุบันในทั้งสองโซน",
+                "howto.step4.title": "คัดลอกหรือแบ่งปัน",
+                "howto.step4.description": "คัดลอกเวลาที่แปลงแล้วไปยังคลิปบอร์ดด้วยคลิกเดียว การประมวลผลทั้งหมดเกิดขึ้นในเบราว์เซอร์ของคุณ - ข้อมูลของคุณไม่เคยออกจากอุปกรณ์ของคุณ",
+                "tool.title": "ตัวแปลงเขตเวลา",
+                "tool.converter.title": "การแปลงเขตเวลา",
+                "tool.converter.from": "จากเขตเวลา:",
+                "tool.converter.to": "ถึงเขตเวลา:",
+                "tool.converter.date": "วันที่:",
+                "tool.converter.time": "เวลา:",
+                "tool.converter.auto": "ตรวจจับอัตโนมัติ (เขตเวลาของคุณ)",
+                "tool.convert.button": "แปลงเวลา",
+                "tool.voice.input": "ป้อนข้อมูลด้วยเสียง",
+                "tool.voice.output": "ผลลัพธ์ด้วยเสียง",
+                "tool.result.title": "เวลาที่แปลงแล้ว",
+                "tool.copy": "คัดลอกผลลัพธ์",
+                "tool.clear": "ล้างทั้งหมด",
+                "footer.follow": "ติดตามเรา",
+                "footer.categories": "หมวดหมู่ยอดนิยม",
+                "footer.categories.pdf": "เครื่องมือ PDF",
+                "footer.categories.image": "เครื่องมือรูปภาพ",
+                "footer.categories.text": "เครื่องมือข้อความ",
+                "footer.categories.av": "เครื่องมือเสียง/วิดีโอ",
+                "footer.categories.web": "เครื่องมือนักพัฒนาเว็บ",
+                "footer.categories.calc": "เครื่องมือเครื่องคิดเลข",
+                "footer.categories.util": "เครื่องมืออรรถประโยชน์",
+                "footer.categories.color": "เครื่องมือสี",
+                "footer.quicklinks": "ลิงก์ด่วน",
+                "footer.links.tools": "เครื่องมือทั้งหมด",
+                "footer.links.faq": "คำถามที่พบบ่อย",
+                "footer.links.contact": "ติดต่อ",
+                "footer.links.privacy": "นโยบายความเป็นส่วนตัว",
+                "footer.links.disclaimer": "ข้อจำกัดความรับผิดชอบ",
+                "footer.links.terms": "เงื่อนไขการให้บริการ",
+                "footer.copyright": "© 2025 LollyPoPDF. สงวนลิขสิทธิ์"
+            },
+            tr: {
+                "nav.home": "Ana Sayfa",
+                "nav.about": "Hakkımızda",
+                "nav.tools": "Araçlar",
+                "nav.contact": "İletişim",
+                "hero.title": "Saat Dilimi Dönüştürücü Aracı",
+                "hero.description": "Farklı saat dilimleri arasında anında zaman dönüştürün. Hızlı dönüşümler için manuel giriş veya ses tanıma kullanın. Tüm işlemler tarayıcınızda yerel olarak tam gizlilikle gerçekleşir.",
+                "howto.title": "Saat Dilimi Dönüştürücü Nasıl Kullanılır",
+                "howto.step1.title": "Saat Dilimlerini Seçin",
+                "howto.step1.description": "Açılır menülerden kaynak ve hedef saat dilimlerinizi seçin. Araç dünyadaki tüm ana saat dilimlerini içerir.",
+                "howto.step2.title": "Zamanı Girin",
+                "howto.step2.description": "Kaynak saat diliminde dönüştürmek istediğiniz zamanı girin. Manuel olarak yazabilir veya el gerektirmeyen giriş için ses tanıma kullanabilirsiniz.",
+                "howto.step3.title": "Dönüştür ve Görüntüle",
+                "howto.step3.description": "Hedef saat dilimindeki dönüştürülmüş zamanı anında görmek için \"Zamanı Dönüştür\"e tıklayın. Canlı saatler her iki bölgedeki mevcut zamanı gösterir.",
+                "howto.step4.title": "Kopyala veya Paylaş",
+                "howto.step4.description": "Dönüştürülmüş zamanı tek tıkla panoya kopyalayın. Tüm işlemler tarayıcınızda yerel olarak gerçekleşir - verileriniz cihazınızdan asla ayrılmaz.",
+                "tool.title": "Saat Dilimi Dönüştürücü",
+                "tool.converter.title": "Saat Dilimi Dönüşümü",
+                "tool.converter.from": "Saat Diliminden:",
+                "tool.converter.to": "Saat Dilimine:",
+                "tool.converter.date": "Tarih:",
+                "tool.converter.time": "Zaman:",
+                "tool.converter.auto": "Otomatik Algılama (Sizin Saat Diliminiz)",
+                "tool.convert.button": "Zamanı Dönüştür",
+                "tool.voice.input": "Ses Girişi",
+                "tool.voice.output": "Ses Çıkışı",
+                "tool.result.title": "Dönüştürülmüş Zaman",
+                "tool.copy": "Sonucu Kopyala",
+                "tool.clear": "Tümünü Temizle",
+                "footer.follow": "BİZİ TAKİP EDİN",
+                "footer.categories": "Popüler Kategoriler",
+                "footer.categories.pdf": "PDF Araçları",
+                "footer.categories.image": "Görsel Araçları",
+                "footer.categories.text": "Metin Araçları",
+                "footer.categories.av": "Ses/Video Araçları",
+                "footer.categories.web": "WebGeliştirici Araçları",
+                "footer.categories.calc": "Hesap Makinesi Araçları",
+                "footer.categories.util": "Yardımcı Araçlar",
+                "footer.categories.color": "Renk Araçları",
+                "footer.quicklinks": "Hızlı Bağlantılar",
+                "footer.links.tools": "Tüm Araçlar",
+                "footer.links.faq": "SSS",
+                "footer.links.contact": "İletişim",
+                "footer.links.privacy": "Gizlilik Politikası",
+                "footer.links.disclaimer": "Feragatname",
+                "footer.links.terms": "Hizmet Şartları",
+                "footer.copyright": "© 2025 LollyPoPDF. Tüm hakları saklıdır."
+            },
+            uk: {
+                "nav.home": "Головна",
+                "nav.about": "Про нас",
+                "nav.tools": "Інструменти",
+                "nav.contact": "Контакт",
+                "hero.title": "Інструмент конвертації часових поясів",
+                "hero.description": "Миттєво конвертуйте час між різними часовими поясами. Використовуйте ручне введення або розпізнавання мови для швидких перетворень. Вся обробка відбувається локально у вашому браузері з повною конфіденційністю.",
+                "howto.title": "Як використовувати конвертер часових поясів",
+                "howto.step1.title": "Виберіть часові пояси",
+                "howto.step1.description": "Виберіть ваші вихідний та цільовий часові пояси з випадаючих меню. Інструмент включає всі основні часові пояси світу.",
+                "howto.step2.title": "Введіть час",
+                "howto.step2.description": "Введіть час, який ви хочете конвертувати у вихідному часовому поясі. Ви можете ввести його вручну або використати розпізнавання мови для введення без рук.",
+                "howto.step3.title": "Конвертуйте та переглядайте",
+                "howto.step3.description": "Натисніть \"Конвертувати час\", щоб миттєво побачити конвертований час у цільовому часовому поясі. Живі годинники показують поточний час в обох зонах.",
+                "howto.step4.title": "Копіюйте або діліться",
+                "howto.step4.description": "Скопіюйте конвертований час у буфер обміну одним клацанням. Вся обробка відбувається локально у вашому браузері - ваші дані ніколи не залишають ваш пристрій.",
+                "tool.title": "Конвертер часових поясів",
+                "tool.converter.title": "Конвертація часових поясів",
+                "tool.converter.from": "З часового поясу:",
+                "tool.converter.to": "У часовий пояс:",
+                "tool.converter.date": "Дата:",
+                "tool.converter.time": "Час:",
+                "tool.converter.auto": "Автовизначення (Ваш часовий пояс)",
+                "tool.convert.button": "Конвертувати час",
+                "tool.voice.input": "Голосовий ввід",
+                "tool.voice.output": "Голосовий вивід",
+                "tool.result.title": "Конвертований час",
+                "tool.copy": "Копіювати результат",
+                "tool.clear": "Очистити все",
+                "footer.follow": "СЛІДКУЙТЕ ЗА НАМИ",
+                "footer.categories": "Популярні категорії",
+                "footer.categories.pdf": "PDF інструменти",
+                "footer.categories.image": "Інструменти зображень",
+                "footer.categories.text": "Текстові інструменти",
+                "footer.categories.av": "Аудіо/Відео інструменти",
+                "footer.categories.web": "Інструменти веброзробника",
+                "footer.categories.calc": "Інструменти калькулятора",
+                "footer.categories.util": "Утилітарні інструменти",
+                "footer.categories.color": "Кольорові інструменти",
+                "footer.quicklinks": "Швидкі посилання",
+                "footer.links.tools": "Всі інструменти",
+                "footer.links.faq": "ЧаПи",
+                "footer.links.contact": "Контакт",
+                "footer.links.privacy": "Політика конфіденційності",
+                "footer.links.disclaimer": "Відмова від відповідальності",
+                "footer.links.terms": "Умови використання",
+                "footer.copyright": "© 2025 LollyPoPDF. Всі права захищені."
+            },
+            vi: {
+                "nav.home": "Trang Chủ",
+                "nav.about": "Về Chúng Tôi",
+                "nav.tools": "Công Cụ",
+                "nav.contact": "Liên Hệ",
+                "hero.title": "Công Cụ Chuyển Đổi Múi Giờ",
+                "hero.description": "Chuyển đổi thời gian ngay lập tức giữa các múi giờ khác nhau. Sử dụng nhập liệu thủ công hoặc nhận dạng giọng nói để chuyển đổi nhanh chóng. Tất cả xử lý diễn ra cục bộ trong trình duyệt của bạn với quyền riêng tư hoàn toàn.",
+                "howto.title": "Cách Sử Dụng Công Cụ Chuyển Đổi Múi Giờ",
+                "howto.step1.title": "Chọn Múi Giờ",
+                "howto.step1.description": "Chọn múi giờ nguồn và đích từ menu thả xuống. Công cụ bao gồm tất cả các múi giờ chính trên thế giới.",
+                "howto.step2.title": "Nhập Thời Gian",
+                "howto.step2.description": "Nhập thời gian bạn muốn chuyển đổi trong múi giờ nguồn. Bạn có thể nhập thủ công hoặc sử dụng nhận dạng giọng nói để nhập liệu không cần tay.",
+                "howto.step3.title": "Chuyển Đổi & Xem",
+                "howto.step3.description": "Nhấp \"Chuyển Đổi Thời Gian\" để xem ngay lập tức thời gian đã chuyển đổi trong múi giờ đích. Đồng hồ trực tiếp hiển thị thời gian hiện tại ở cả hai múi giờ.",
+                "howto.step4.title": "Sao Chép hoặc Chia Sẻ",
+                "howto.step4.description": "Sao chép thời gian đã chuyển đổi vào clipboard bằng một cú nhấp chuột. Tất cả xử lý diễn ra cục bộ trong trình duyệt của bạn - dữ liệu của bạn không bao giờ rời khỏi thiết bị.",
+                "tool.title": "Công Cụ Chuyển Đổi Múi Giờ",
+                "tool.converter.title": "Chuyển Đổi Múi Giờ",
+                "tool.converter.from": "Từ Múi Giờ:",
+                "tool.converter.to": "Đến Múi Giờ:",
+                "tool.converter.date": "Ngày:",
+                "tool.converter.time": "Thời Gian:",
+                "tool.converter.auto": "Tự động phát hiện (Múi giờ của bạn)",
+                "tool.convert.button": "Chuyển Đổi Thời Gian",
+                "tool.voice.input": "Nhập Giọng Nói",
+                "tool.voice.output": "Đầu Ra Giọng Nói",
+                "tool.result.title": "Thời Gian Đã Chuyển Đổi",
+                "tool.copy": "Sao Chép Kết Quả",
+                "tool.clear": "Xóa Tất Cả",
+                "footer.follow": "THEO DÕI CHÚNG TÔI",
+                "footer.categories": "Danh Mục Phổ Biến",
+                "footer.categories.pdf": "Công Cụ PDF",
+                "footer.categories.image": "Công Cụ Hình Ảnh",
+                "footer.categories.text": "Công Cụ Văn Bản",
+                "footer.categories.av": "Công Cụ Âm Thanh/Video",
+                "footer.categories.web": "Công Cụ WebDeveloper",
+                "footer.categories.calc": "Công Cụ Máy Tính",
+                "footer.categories.util": "Công Cụ Tiện Ích",
+                "footer.categories.color": "Công Cụ Màu Sắc",
+                "footer.quicklinks": "Liên Kết Nhanh",
+                "footer.links.tools": "Tất Cả Công Cụ",
+                "footer.links.faq": "Câu Hỏi Thường Gặp",
+                "footer.links.contact": "Liên Hệ",
+                "footer.links.privacy": "Chính Sách Riêng Tư",
+                "footer.links.disclaimer": "Tuyên Bố Miễn Trừ",
+                "footer.links.terms": "Điều Khoản Dịch Vụ",
+                "footer.copyright": "© 2025 LollyPoPDF. Tất cả các quyền được bảo lưu."
+            },
+            is: {
+                "nav.home": "Heim",
+                "nav.about": "Um Okkur",
+                "nav.tools": "Verkfæri",
+                "nav.contact": "Hafa Samband",
+                "hero.title": "Tímabeltis Umbreyti",
+                "hero.description": "Umbreyttu tíma augnabliklega á milli mismunandi tímabelta. Notaðu handvirka inntak eða raddgreiningu fyrir fljótlegar umbreytingar. Öll vinnsla fer fram staðbundið í vafranum þínum með fullri næði.",
+                "howto.title": "Hvernig á að nota Tímabeltis Umbreytann",
+                "howto.step1.title": "Veldu Tímabelti",
+                "howto.step1.description": "Veldu upprunalegt og áfangatímabeltið þitt úr fellivalmyndunum. Tólin innihalda öll helstu tímabelti um allan heim.",
+                "howto.step2.title": "Sláðu Inn Tíma",
+                "howto.step2.description": "Sláðu inn tímann sem þú vilt umbreyta í upprunalega tímabeltinu. Þú getur slegið það inn handvirkt eða notað raddgreiningu fyrir inntak án hendanna.",
+                "howto.step3.title": "Umbreyttu & Skoðaðu",
+                "howto.step3.description": "Smelltu á \"Umbreyta Tíma\" til að sjá umbreyttan tíma strax í áfangatímabeltinu. Lifandi klukkur sýna núverandi tíma í báðum tímabeltum.",
+                "howto.step4.title": "Afrita eða Deila",
+                "howto.step4.description": "Afritaðu umbreyttan tíma á klippiborðið með einum smelli. Öll vinnsla fer fram staðbundið í vafranum þínum - gögnin þín fara aldrei út fyrir tækið.",
+                "tool.title": "Tímabeltis Umbreyti",
+                "tool.converter.title": "Tímabeltis Umbreyting",
+                "tool.converter.from": "Frá Tímabelti:",
+                "tool.converter.to": "Til Tímabeltis:",
+                "tool.converter.date": "Dagsetning:",
+                "tool.converter.time": "Tími:",
+                "tool.converter.auto": "Sjálfvirk uppgötvun (Tímabelti þitt)",
+                "tool.convert.button": "Umbreyta Tíma",
+                "tool.voice.input": "Radd Inntak",
+                "tool.voice.output": "Radd Úttak",
+                "tool.result.title": "Umbreyttur Tími",
+                "tool.copy": "Afrita Niðurstöðu",
+                "tool.clear": "Hreinsa Allt",
+                "footer.follow": "FYLGDU OKKUR",
+                "footer.categories": "Vinsælir Flokkar",
+                "footer.categories.pdf": "PDF Verkfæri",
+                "footer.categories.image": "Mynd Verkfæri",
+                "footer.categories.text": "Texta Verkfæri",
+                "footer.categories.av": "Hljóð/Myndband Verkfæri",
+                "footer.categories.web": "Vefþróunaraðili Verkfæri",
+                "footer.categories.calc": "Reiknivél Verkfæri",
+                "footer.categories.util": "Gagnleg Verkfæri",
+                "footer.categories.color": "Lit Verkfæri",
+                "footer.quicklinks": "Flýtileiðir",
+                "footer.links.tools": "Öll Verkfæri",
+                "footer.links.faq": "Algengar Spurningar",
+                "footer.links.contact": "Hafa Samband",
+                "footer.links.privacy": "Meðferðarregla",
+                "footer.links.disclaimer": "Fyrirvari",
+                "footer.links.terms": "Þjónustuskilmálar",
+                "footer.copyright": "© 2025 LollyPoPDF. Öll réttindi áskilin."
+            },
+            no: {
+                "nav.home": "Hjem",
+                "nav.about": "Om Oss",
+                "nav.tools": "Verktøy",
+                "nav.contact": "Kontakt",
+                "hero.title": "Tidssone Konverteringsverktøy",
+                "hero.description": "Konverter tid umiddelbart mellom forskjellige tidssoner. Bruk manuell inndata eller talegjenkjenning for raske konverteringer. All behandling skjer lokalt i nettleseren din med fullstendig personvern.",
+                "howto.title": "Hvordan Bruke Tidssone Konvertereren",
+                "howto.step1.title": "Velg Tidssoner",
+                "howto.step1.description": "Velg dine kilde- og destinasjonstidssoner fra rullegardinmenyene. Verktøyet inkluderer alle store tidssoner rundt om i verden.",
+                "howto.step2.title": "Skriv Inn Tid",
+                "howto.step2.description": "Skriv inn tiden du vil konvertere i kildetidssonen. Du kan skrive den manuelt eller bruke talegjenkjenning for hendefri inndata.",
+                "howto.step3.title": "Konverter & Se",
+                "howto.step3.description": "Klikk \"Konverter Tid\" for umiddelbart å se den konverterte tiden i destinasjonstidssonen. Live klokker viser gjeldende tid i begge soner.",
+                "howto.step4.title": "Kopier eller Del",
+                "howto.step4.description": "Kopier den konverterte tiden til utklippstavlen med ett klikk. All behandling skjer lokalt i nettleseren din - dine data forlater aldri enheten din.",
+                "tool.title": "Tidssone Konverter",
+                "tool.converter.title": "Tidssone Konvertering",
+                "tool.converter.from": "Fra Tidssone:",
+                "tool.converter.to": "Til Tidssone:",
+                "tool.converter.date": "Dato:",
+                "tool.converter.time": "Tid:",
+                "tool.converter.auto": "Auto-oppdag (Din Tidssone)",
+                "tool.convert.button": "Konverter Tid",
+                "tool.voice.input": "Stemme Inndata",
+                "tool.voice.output": "Stemme Utdata",
+                "tool.result.title": "Konvertert Tid",
+                "tool.copy": "Kopier Resultat",
+                "tool.clear": "Tøm Alt",
+                "footer.follow": "FØLG OSS",
+                "footer.categories": "Populære Kategorier",
+                "footer.categories.pdf": "PDF Verktøy",
+                "footer.categories.image": "Bilde Verktøy",
+                "footer.categories.text": "Tekst Verktøy",
+                "footer.categories.av": "Lyd/Video Verktøy",
+                "footer.categories.web": "WebUtvikler Verktøy",
+                "footer.categories.calc": "Kalkulator Verktøy",
+                "footer.categories.util": "Nyttige Verktøy",
+                "footer.categories.color": "Farge Verktøy",
+                "footer.quicklinks": "Hurtiglenker",
+                "footer.links.tools": "Alle Verktøy",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Kontakt",
+                "footer.links.privacy": "Personvernregler",
+                "footer.links.disclaimer": "Ansvarsfraskrivelse",
+                "footer.links.terms": "Tjenestevilkår",
+                "footer.copyright": "© 2025 LollyPoPDF. Alle rettigheter forbeholdt."
+            },
+            sv: {
+                "nav.home": "Hem",
+                "nav.about": "Om Oss",
+                "nav.tools": "Verktyg",
+                "nav.contact": "Kontakt",
+                "hero.title": "Tidszonsomvandlarverktyg",
+                "hero.description": "Omvandla tid omedelbart mellan olika tidszoner. Använd manuell inmatning eller röstigenkänning för snabba omvandlingar. All bearbetning sker lokalt i din webbläsare med fullständig integritet.",
+                "howto.title": "Hur man använder Tidszonsomvandlaren",
+                "howto.step1.title": "Välj Tidszoner",
+                "howto.step1.description": "Välj dina käll- och destinationstidszoner från rullgardinsmenyerna. Verktyget inkluderar alla större tidszoner runt om i världen.",
+                "howto.step2.title": "Ange Tid",
+                "howto.step2.description": "Ange tiden du vill omvandla i källtidszonen. Du kan skriva den manuellt eller använda röstigenkänning för handsfri inmatning.",
+                "howto.step3.title": "Omvandla & Visa",
+                "howto.step3.description": "Klicka \"Omvandla Tid\" för att omedelbart se den omvandlade tiden i destinationstidszonen. Liveklockor visar aktuell tid i båda zonerna.",
+                "howto.step4.title": "Kopiera eller Dela",
+                "howto.step4.description": "Kopiera den omvandlade tiden till urklipp med ett klick. All bearbetning sker lokalt i din webbläsare - din data lämnar aldrig din enhet.",
+                "tool.title": "Tidszonsomvandlare",
+                "tool.converter.title": "Tidszonsomvandling",
+                "tool.converter.from": "Från Tidszon:",
+                "tool.converter.to": "Till Tidszon:",
+                "tool.converter.date": "Datum:",
+                "tool.converter.time": "Tid:",
+                "tool.converter.auto": "Auto-upptäckt (Din Tidszon)",
+                "tool.convert.button": "Omvandla Tid",
+                "tool.voice.input": "Röstinmatning",
+                "tool.voice.output": "Röstutmatning",
+                "tool.result.title": "Omvandlad Tid",
+                "tool.copy": "Kopiera Resultat",
+                "tool.clear": "Rensa Allt",
+                "footer.follow": "FÖLJ OSS",
+                "footer.categories": "Populära Kategorier",
+                "footer.categories.pdf": "PDF Verktyg",
+                "footer.categories.image": "Bildverktyg",
+                "footer.categories.text": "Textverktyg",
+                "footer.categories.av": "Ljud/Video Verktyg",
+                "footer.categories.web": "Webbutvecklare Verktyg",
+                "footer.categories.calc": "Kalkylator Verktyg",
+                "footer.categories.util": "Verktyg för Verktyg",
+                "footer.categories.color": "Färgverktyg",
+                "footer.quicklinks": "Snabblänkar",
+                "footer.links.tools": "Alla Verktyg",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Kontakt",
+                "footer.links.privacy": "Integritetspolicy",
+                "footer.links.disclaimer": "Ansvarsfriskrivning",
+                "footer.links.terms": "Användarvillkor",
+                "footer.copyright": "© 2025 LollyPoPDF. Alla rättigheter förbehållna."
+            },
+            fi: {
+                "nav.home": "Koti",
+                "nav.about": "Meistä",
+                "nav.tools": "Työkalut",
+                "nav.contact": "Yhteystiedot",
+                "hero.title": "Aikavyöhyke Muunnin Työkalu",
+                "hero.description": "Muunna aika välittömästi eri aikavyöhykkeiden välillä. Käytä manuaalista syöttöä tai puheentunnistusta nopeisiin muunnoksiin. Kaikki käsittely tapahtuu paikallisesti selaimeesi täydellisen yksityisyyden kanssa.",
+                "howto.title": "Kuinka Käyttää Aikavyöhyke Muunninta",
+                "howto.step1.title": "Valitse Aikavyöhykkeet",
+                "howto.step1.description": "Valitse lähde- ja kohdeaikavyöhykkeesi pudotusvalikoista. Työkalu sisältää kaikki suuret aikavyöhykkeet ympäri maailmaa.",
+                "howto.step2.title": "Syötä Aika",
+                "howto.step2.description": "Syötä aika, jonka haluat muuntaa lähdeaikavyöhykkeessä. Voit kirjoittaa sen manuaalisesti tai käyttää puheentunnistusta käsittömään syöttöön.",
+                "howto.step3.title": "Muunna & Näytä",
+                "howto.step3.description": "Napsauta \"Muunna Aika\" nähdäksesi muunnetun ajan välittömästi kohdeaikavyöhykkeessä. Live-kellot näyttävät nykyisen ajan molemmissa vyöhykkeissä.",
+                "howto.step4.title": "Kopioi tai Jaa",
+                "howto.step4.description": "Kopioi muunnettu aika leikepöydälle yhdellä napsautuksella. Kaikki käsittely tapahtuu paikallisesti selaimeesi - tietosi eivät koskaan poistu laitteestasi.",
+                "tool.title": "Aikavyöhyke Muunnin",
+                "tool.converter.title": "Aikavyöhyke Muunnos",
+                "tool.converter.from": "Mistä Aikavyöhyke:",
+                "tool.converter.to": "Mihin Aikavyöhyke:",
+                "tool.converter.date": "Päivämäärä:",
+                "tool.converter.time": "Aika:",
+                "tool.converter.auto": "Automaattinen tunnistus (Aikavyöhykkeesi)",
+                "tool.convert.button": "Muunna Aika",
+                "tool.voice.input": "Äänisyöttö",
+                "tool.voice.output": "Äänilähtö",
+                "tool.result.title": "Muunnettu Aika",
+                "tool.copy": "Kopioi Tulos",
+                "tool.clear": "Tyhjennä Kaikki",
+                "footer.follow": "SEURA MEITÄ",
+                "footer.categories": "Suositut Kategoriat",
+                "footer.categories.pdf": "PDF Työkalut",
+                "footer.categories.image": "Kuvatyökalut",
+                "footer.categories.text": "Tekstityökalut",
+                "footer.categories.av": "Ääni/Video Työkalut",
+                "footer.categories.web": "WebKehittäjä Työkalut",
+                "footer.categories.calc": "Laskin Työkalut",
+                "footer.categories.util": "Aputyökalut",
+                "footer.categories.color": "Väri Työkalut",
+                "footer.quicklinks": "Pikalinkit",
+                "footer.links.tools": "Kaikki Työkalut",
+                "footer.links.faq": "UKK",
+                "footer.links.contact": "Yhteystiedot",
+                "footer.links.privacy": "Tietosuojakäytäntö",
+                "footer.links.disclaimer": "Vastuuvapauslauseke",
+                "footer.links.terms": "Käyttöehdot",
+                "footer.copyright": "© 2025 LollyPoPDF. Kaikki oikeudet pidätetään."
+            },
+            cs: {
+                "nav.home": "Domů",
+                "nav.about": "O Nás",
+                "nav.tools": "Nástroje",
+                "nav.contact": "Kontakt",
+                "hero.title": "Nástroj pro Převod Časových Pásem",
+                "hero.description": "Převádějte čas okamžitě mezi různými časovými pásmy. Použijte manuální vstup nebo rozpoznávání řeči pro rychlé převody. Veškeré zpracování probíhá lokálně ve vašem prohlížeči s úplným soukromím.",
+                "howto.title": "Jak Používat Převodník Časových Pásem",
+                "howto.step1.title": "Vyberte Časová Pásma",
+                "howto.step1.description": "Zvolte zdrojové a cílové časové pásmo z rozbalovacích menu. Nástroj zahrnuje všechna hlavní časová pásma po celém světě.",
+                "howto.step2.title": "Zadejte Čas",
+                "howto.step2.description": "Zadejte čas, který chcete převést ve zdrojovém časovém pásmu. Můžete jej zadat manuálně nebo použít rozpoznávání řeči pro vstup bez použití rukou.",
+                "howto.step3.title": "Převést & Zobrazit",
+                "howto.step3.description": "Klikněte \"Převést Čas\" pro okamžité zobrazení převedeného času v cílovém časovém pásmu. Živé hodiny zobrazují aktuální čas v obou pásmech.",
+                "howto.step4.title": "Kopírovat nebo Sdílet",
+                "howto.step4.description": "Zkopírujte převedený čas do schránky jedním kliknutím. Veškeré zpracování probíhá lokálně ve vašem prohlížeči - vaše data nikdy neopustí vaše zařízení.",
+                "tool.title": "Převodník Časových Pásem",
+                "tool.converter.title": "Převod Časového Pásma",
+                "tool.converter.from": "Z Časového Pásma:",
+                "tool.converter.to": "Do Časového Pásma:",
+                "tool.converter.date": "Datum:",
+                "tool.converter.time": "Čas:",
+                "tool.converter.auto": "Automatická detekce (Vaše Časové Pásmo)",
+                "tool.convert.button": "Převést Čas",
+                "tool.voice.input": "Hlasový Vstup",
+                "tool.voice.output": "Hlasový Výstup",
+                "tool.result.title": "Převedený Čas",
+                "tool.copy": "Kopírovat Výsledek",
+                "tool.clear": "Vymazat Vše",
+                "footer.follow": "SLEDUJTE NÁS",
+                "footer.categories": "Populární Kategorie",
+                "footer.categories.pdf": "PDF Nástroje",
+                "footer.categories.image": "Obrázkové Nástroje",
+                "footer.categories.text": "Textové Nástroje",
+                "footer.categories.av": "Audio/Video Nástroje",
+                "footer.categories.web": "WebVývojářské Nástroje",
+                "footer.categories.calc": "Kalkulačkové Nástroje",
+                "footer.categories.util": "Užitečné Nástroje",
+                "footer.categories.color": "Barevné Nástroje",
+                "footer.quicklinks": "Rychlé Odkazy",
+                "footer.links.tools": "Všechny Nástroje",
+                "footer.links.faq": "Často Kladené Otázky",
+                "footer.links.contact": "Kontakt",
+                "footer.links.privacy": "Zásady Ochrany Osobních Údajů",
+                "footer.links.disclaimer": "Odmítnutí Odpovědnosti",
+                "footer.links.terms": "Podmínky Služby",
+                "footer.copyright": "© 2025 LollyPoPDF. Všechna práva vyhrazena."
+            }
+
+
+        };
+
+        // Function to change language
+        function changeLanguage(langCode) {
+            const langData = translations[langCode];
+            if (!langData) return;
+            
+            // Update all elements with data-i18n attribute
+            document.querySelectorAll('[data-i18n]').forEach(element => {
+                const key = element.getAttribute('data-i18n');
+                if (langData[key]) {
+                    element.textContent = langData[key];
+                }
+            });
+            
+            // Update current language display
+            currentLanguageElement.textContent = languages.find(lang => lang.code === langCode)?.name || 'English';
+            
+            // Save language preference
+            localStorage.setItem('language', langCode);
+        }
+
+        // Initialize language
+        const savedLanguage = localStorage.getItem('language') || 'en';
+        changeLanguage(savedLanguage);
+        
+        // Language selection handler
+        languageDropdown.addEventListener('click', (e) => {
+            if (e.target.classList.contains('language-option')) {
+                const langCode = e.target.getAttribute('data-lang');
+                changeLanguage(langCode);
+            }
+        });
+    </script>
+</body>
+</html>

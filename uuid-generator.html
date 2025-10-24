@@ -1,4 +1,3073 @@
- uk: {
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UUID Generator | LollyPoPdf</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #9370db;
+            --primary-dark: #8a2be2;
+            --secondary-color: #f0ebff;
+            --text-color: #333333;
+            --text-light: #6b7280;
+            --bg-color: #ffffff;
+            --bg-secondary: #f9f9f9;
+            --border-radius: 12px;
+            --transition: all 0.3s ease;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --header-height: 80px;
+            --white: #ffffff;
+            --header-text: #6b7280;
+            --accent-color: #9370db;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --error-color: #ef4444;
+        }
+
+        .dark-mode {
+            --primary-color: #a391f2;
+            --primary-dark: #8a2be2;
+            --secondary-color: #2d2d2d;
+            --text-color: #f0f0f0;
+            --text-light: #a0a0a0;
+            --bg-color: #1a1a1a;
+            --bg-secondary: #2d2d2d;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+            --white: #1a1a1a;
+            --header-text: #a0a0a0;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            transition: var(--transition);
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        ul {
+            list-style: none;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header Styles */
+        header {
+            background-color: var(--white);
+            color: var(--header-text);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+        }
+
+        .logo-icon {
+            position: relative;
+            width: 40px;
+            height: 40px;
+        }
+
+        .logo-circle {
+            width: 40px;
+            height: 40px;
+            border-radius: 40%;
+            background: linear-gradient(to bottom right, #9370db, #8a2be2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .logo-stem {
+            position: absolute;
+            bottom: -17px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 6px;
+            height: 17px;
+            background-color: #8a2be2;
+            border-radius: 0 0 3px 3px;
+        }
+
+        .logo-text {
+            font-size: 24px;
+            font-weight: bold;
+            color: #9370db;
+        }
+
+        nav ul {
+            display: flex;
+            gap: 30px;
+            list-style: none;
+        }
+
+        nav a {
+            font-weight: 500;
+            position: relative;
+            color: var(--header-text);
+            padding: 8px 0;
+            border-radius: 0;
+            transition: var(--transition);
+            text-decoration: none;
+        }
+
+        nav a:hover {
+            color: var(--accent-color);
+        }
+
+        nav a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: var(--accent-color);
+            transition: width 0.3s ease;
+        }
+
+        nav a:hover::after {
+            width: 100%;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .email {
+            font-size: 14px;
+            color: var(--header-text);
+        }
+
+        .theme-toggle {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 20px;
+            color: var(--header-text);
+            padding: 8px;
+            border-radius: 50%;
+            transition: var(--transition);
+        }
+
+        .theme-toggle:hover {
+            background-color: #f0ebff;
+            color: var(--accent-color);
+        }
+
+        .dark-mode .theme-toggle:hover {
+            background-color: #2d3748;
+            color: var(--accent-color);
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--header-text);
+        }
+
+        /* Mobile Menu */
+        .mobile-menu {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            width: 100%;
+            background-color: var(--white);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            z-index: 999;
+        }
+
+        .dark-mode .mobile-menu {
+            background-color: var(--bg-secondary);
+        }
+
+        .mobile-menu.active {
+            display: block;
+        }
+
+        .mobile-menu ul {
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .mobile-menu a {
+            display: block;
+            padding: 10px 0;
+            font-weight: 500;
+            color: var(--header-text);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .dark-mode .mobile-menu a {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .mobile-menu a:hover {
+            color: var(--accent-color);
+        }
+
+        /* Hero Section */
+        .hero {
+            background-color: var(--secondary-color);
+            padding: 60px 0;
+            text-align: center;
+        }
+
+        .dark-mode .hero {
+            background: linear-gradient(135deg, #2a1a4a, #3d2a6d);
+        }
+
+        .hero h1 {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            color: #000;
+        }
+
+        .dark-mode .hero h1 {
+            color: var(--text-color);
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            color: var(--text-color);
+            max-width: 700px;
+            margin: 0 auto 30px;
+        }
+
+        /* How to Use Section */
+        .how-to-section {
+            padding: 80px 0;
+            background-color: var(--bg-color);
+        }
+
+        .dark-mode .how-to-section {
+            background-color: var(--bg-secondary);
+        }
+
+        .section-title {
+            font-size: 2rem;
+            text-align: center;
+            margin-bottom: 40px;
+            color: #000000;
+        }
+
+        .dark-mode .section-title {
+            color: var(--text-color);
+        }
+
+        .steps-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 40px;
+        }
+
+        .step-box {
+            background-color: var(--bg-secondary);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            padding: 30px;
+            min-height: 200px;
+            position: relative;
+        }
+
+        .step-number {
+            width: 40px;
+            height: 40px;
+            background-color: var(--primary-color);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 16px;
+            margin-bottom: 15px;
+        }
+
+        .step-title {
+            font-size: 18px;
+            color: #000000;
+            margin-bottom: 10px;
+        }
+
+        .dark-mode .step-title {
+            color: var(--text-color);
+        }
+
+        .step-description {
+            font-size: 14px;
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        /* Tool Section */
+        .tool-section {
+            padding: 80px 0;
+            background-color: var(--secondary-color);
+        }
+
+        .dark-mode .tool-section {
+            background: linear-gradient(135deg, #2a1a4a, #3d2a6d);
+        }
+
+        .tool-title {
+            font-size: 2.5rem;
+            text-align: center;
+            margin-bottom: 40px;
+            color: #a391f2;
+        }
+
+        .dark-mode .tool-title {
+            color: #a391f2;
+        }
+
+        .tool-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background-color: var(--bg-color);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            padding: 40px;
+        }
+
+        /* UUID Controls */
+        .uuid-controls {
+            background-color: var(--bg-secondary);
+            border-radius: var(--border-radius);
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+
+        .controls-title {
+            font-size: 18px;
+            margin-bottom: 15px;
+            color: var(--primary-color);
+        }
+
+        .uuid-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .option-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .option-label {
+            display: block;
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 5px;
+        }
+
+        .option-select, .option-input {
+            padding: 8px 12px;
+            border-radius: var(--border-radius);
+            border: 1px solid var(--primary-color);
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-size: 14px;
+            width: 100%;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .checkbox-label {
+            font-size: 14px;
+        }
+
+        /* UUID Display */
+        .uuid-display-container {
+            margin-bottom: 30px;
+            background-color: var(--bg-secondary);
+            border-radius: var(--border-radius);
+            padding: 20px;
+            box-shadow: var(--shadow);
+        }
+
+        .uuid-display-title {
+            font-size: 18px;
+            margin-bottom: 15px;
+            color: var(--primary-color);
+            text-align: center;
+        }
+
+        .uuid-display {
+            width: 100%;
+            min-height: 150px;
+            background-color: var(--bg-color);
+            border-radius: var(--border-radius);
+            padding: 15px;
+            margin-bottom: 10px;
+            font-family: 'Courier New', monospace;
+            font-size: 16px;
+            line-height: 1.5;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            word-break: break-all;
+        }
+
+        .uuid-controls-bottom {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 15px;
+        }
+
+        .uuid-count {
+            font-size: 14px;
+            color: var(--text-light);
+        }
+
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .action-btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: var(--transition);
+            flex: 1;
+            min-width: 150px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .generate-btn {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .generate-btn:hover {
+            background-color: var(--primary-dark);
+        }
+
+        .copy-btn {
+            background-color: var(--success-color);
+            color: white;
+        }
+
+        .copy-btn:hover {
+            background-color: #0da271;
+        }
+
+        .download-btn {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .download-btn:hover {
+            background-color: var(--primary-dark);
+        }
+
+        .clear-btn {
+            background-color: white;
+            color: var(--primary-color);
+            border: 2px solid var(--primary-color);
+        }
+
+        .clear-btn:hover {
+            background-color: var(--secondary-color);
+        }
+
+        /* History Section */
+        .history-section {
+            margin-top: 40px;
+            background-color: var(--bg-secondary);
+            border-radius: var(--border-radius);
+            padding: 20px;
+        }
+
+        .history-title {
+            font-size: 18px;
+            margin-bottom: 15px;
+            color: var(--primary-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .history-list {
+            max-height: 200px;
+            overflow-y: auto;
+            background-color: var(--bg-color);
+            border-radius: var(--border-radius);
+            padding: 15px;
+        }
+
+        .history-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .dark-mode .history-item {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .history-uuid {
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            flex: 1;
+            margin-right: 10px;
+        }
+
+        .history-actions {
+            display: flex;
+            gap: 5px;
+        }
+
+        .history-action-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: var(--text-light);
+            font-size: 14px;
+            padding: 4px;
+            border-radius: 4px;
+        }
+
+        .history-action-btn:hover {
+            color: var(--primary-color);
+            background-color: rgba(147, 112, 219, 0.1);
+        }
+
+        /* Footer */
+        footer {
+            background-color: #000000;
+            color: white;
+            padding: 60px 0 80px;
+            position: relative;
+        }
+
+        .footer-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 60px;
+        }
+
+        .footer-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            text-decoration: none;
+        }
+
+        .footer-logo .logo-icon {
+            width: 40px;
+            height: 40px;
+        }
+
+        .footer-logo .logo-text {
+            color: #9370db;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .footer-section h3 {
+            color: white;
+            font-weight: 600;
+            font-size: 20px;
+            margin-bottom: 20px;
+        }
+
+        .footer-section h4 {
+            color: #9370db;
+            font-size: 18px;
+            margin-bottom: 15px;
+        }
+
+        .footer-links li {
+            margin-bottom: 10px;
+        }
+
+        .footer-links a {
+            color: white;
+        }
+
+        .footer-links a:hover {
+            color: #9370db;
+        }
+
+        .social-icons {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .social-icon {
+            width: 40px;
+            height: 40px;
+            background-color: #9370db;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+        }
+
+        .social-icon:hover {
+            background-color: #8a2be2;
+            transform: translateY(-3px);
+        }
+
+        .copyright {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            color: #f9f7ff;
+            font-size: 12px;
+        }
+
+        .footer-line {
+            position: absolute;
+            bottom: 50px;
+            left: 0;
+            width: 100%;
+            height: 1px;
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        /* Language Switcher */
+        .language-switcher {
+            position: fixed;
+            bottom: 10px;
+            right: 10px;
+            z-index: 1000;
+        }
+
+        .language-btn {
+            background-color: #9370db;
+            color: white;
+            border: none;
+            border-radius: 30px;
+            padding: 5px 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .language-dropdown {
+            position: absolute;
+            bottom: 100%;
+            right: 0;
+            width: 300px;
+            background-color: white;
+            border-radius: var(--border-radius);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            display: none;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .dark-mode .language-dropdown {
+            background-color: var(--bg-secondary);
+        }
+
+        .language-switcher:hover .language-dropdown {
+            display: grid;
+        }
+
+        .language-option {
+            padding: 8px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            text-align: center;
+            font-size: 14px;
+        }
+
+        .language-option:hover {
+            background-color: white;
+            color: #9370db;
+        }
+
+        .dark-mode .language-option:hover {
+            background-color: var(--bg-color);
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 992px) {
+            .steps-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .footer-container {
+                grid-template-columns: 1fr 1fr;
+            }
+            
+            .uuid-options {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            nav ul, .email {
+                display: none;
+            }
+            
+            .mobile-menu-btn {
+                display: block;
+            }
+            
+            .hero h1, .tool-title {
+                font-size: 2rem;
+            }
+            
+            .hero p {
+                font-size: 1rem;
+            }
+            
+            .language-dropdown {
+                width: 250px;
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .footer-container {
+                grid-template-columns: 1fr;
+                gap: 40px;
+            }
+            
+            .uuid-options {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .tool-container {
+                padding: 20px;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+            
+            .action-btn {
+                width: 100%;
+            }
+            
+            .uuid-controls-bottom {
+                flex-direction: column;
+                gap: 10px;
+                align-items: flex-start;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container header-container">
+            <a href="https://lollypopdf.com" class="logo">
+                <div class="logo-icon">
+                    <div class="logo-circle">LPdf</div>
+                    <div class="logo-stem"></div>
+                </div>
+                <span class="logo-text">LollyPoPdf</span>
+            </a>
+            
+            <nav>
+                <ul>
+                    <li><a href="https://lollypopdf.github.io/LollyPoPdf#home" class="nav-link" data-i18n="nav.home">Home</a></li>
+                    <li><a href="https://lollypopdf.github.io/LollyPoPdf#about" class="nav-link" data-i18n="nav.about">About Us</a></li>
+                    <li><a href="https://lollypopdf.github.io/LollyPoPdf#tools" class="nav-link" data-i18n="nav.tools">Tools</a></li>
+                    <li><a href="contact.html" class="nav-link" data-i18n="nav.contact">Contact</a></li>
+                </ul>
+            </nav>
+            
+            <div class="header-right">
+                <span class="email">lollypoppdf@gmail.com</span>
+                <button class="theme-toggle" id="themeToggle">
+                    <i class="fas fa-moon"></i>
+                </button>
+                <button class="mobile-menu-btn" id="mobileMenuBtn">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </div>
+        
+        <!-- Mobile Menu -->
+        <div class="mobile-menu" id="mobileMenu">
+            <ul>
+                <li><a href="https://lollypopdf.github.io/LollyPoPdf#home" class="nav-link" data-i18n="nav.home">Home</a></li>
+                <li><a href="https://lollypopdf.github.io/LollyPoPdf#about" class="nav-link" data-i18n="nav.about">About Us</a></li>
+                <li><a href="https://lollypopdf.github.io/LollyPoPdf#tools" class="nav-link" data-i18n="nav.tools">Tools</a></li>
+                <li><a href="contact.html" class="nav-link" data-i18n="nav.contact">Contact</a></li>
+            </ul>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <h1 data-i18n="hero.title">UUID Generator Tool</h1>
+            <p data-i18n="hero.description">Generate unique identifiers instantly with our free UUID generator. Create UUIDs in various formats, copy them to clipboard, and download lists for your projects. All processing happens locally in your browser for complete privacy.</p>
+        </div>
+    </section>
+
+    <!-- How to Use Section -->
+    <section class="how-to-section">
+        <div class="container">
+            <h2 class="section-title" data-i18n="howto.title">How to Use the UUID Generator</h2>
+            <div class="steps-container">
+                <div class="step-box">
+                    <div class="step-number">1</div>
+                    <h3 class="step-title" data-i18n="howto.step1.title">Configure Options</h3>
+                    <p class="step-description" data-i18n="howto.step1.description">Select UUID version, number of UUIDs to generate, format, and other options. The tool supports UUID v1, v4, and v5 (simulated).</p>
+                </div>
+                <div class="step-box">
+                    <div class="step-number">2</div>
+                    <h3 class="step-title" data-i18n="howto.step2.title">Generate UUIDs</h3>
+                    <p class="step-description" data-i18n="howto.step2.description">Click the "Generate UUIDs" button to create unique identifiers instantly. Watch as they appear in the display area with options to copy individual UUIDs.</p>
+                </div>
+                <div class="step-box">
+                    <div class="step-number">3</div>
+                    <h3 class="step-title" data-i18n="howto.step3.title">Copy or Download</h3>
+                    <p class="step-description" data-i18n="howto.step3.description">Copy individual UUIDs to clipboard or download the entire list in your preferred format (TXT, JSON, CSV). All processing happens locally in your browser.</p>
+                </div>
+                <div class="step-box">
+                    <div class="step-number">4</div>
+                    <h3 class="step-title" data-i18n="howto.step4.title">Manage History</h3>
+                    <p class="step-description" data-i18n="howto.step4.description">View your UUID generation history, copy previous UUIDs, or clear the history. Your data stays in your browser and never leaves your device.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Tool Section -->
+    <section class="tool-section">
+        <div class="container">
+            <h2 class="tool-title" data-i18n="tool.title">UUID Generator</h2>
+            <div class="tool-container">
+                <!-- UUID Controls -->
+                <div class="uuid-controls">
+                    <h3 class="controls-title" data-i18n="tool.options.title">Generation Options</h3>
+                    
+                    <div class="uuid-options">
+                        <div class="option-group">
+                            <label for="uuidVersion" class="option-label" data-i18n="tool.options.version">UUID Version:</label>
+                            <select id="uuidVersion" class="option-select">
+                                <option value="v4" data-i18n="tool.options.v4">v4 (Random)</option>
+                                <option value="v1" data-i18n="tool.options.v1">v1 (Timestamp)</option>
+                                <option value="v5" data-i18n="tool.options.v5">v5 (Namespace)</option>
+                            </select>
+                        </div>
+                        
+                        <div class="option-group">
+                            <label for="uuidCount" class="option-label" data-i18n="tool.options.count">Number of UUIDs:</label>
+                            <input type="number" id="uuidCount" class="option-input" min="1" max="1000" value="1">
+                        </div>
+                        
+                        <div class="option-group">
+                            <label for="outputFormat" class="option-label" data-i18n="tool.options.format">Output Format:</label>
+                            <select id="outputFormat" class="option-select">
+                                <option value="plain" data-i18n="tool.options.plain">Plain Text</option>
+                                <option value="json" data-i18n="tool.options.json">JSON Array</option>
+                                <option value="csv" data-i18n="tool.options.csv">CSV</option>
+                            </select>
+                        </div>
+                        
+                        <div class="option-group">
+                            <label class="option-label" data-i18n="tool.options.case">Case:</label>
+                            <div class="checkbox-group">
+                                <input type="checkbox" id="uppercase" class="option-checkbox">
+                                <label for="uppercase" class="checkbox-label" data-i18n="tool.options.uppercase">Uppercase</label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Namespace input for v5 UUIDs -->
+                    <div class="option-group" id="namespaceGroup" style="display: none;">
+                        <label for="namespace" class="option-label" data-i18n="tool.options.namespace">Namespace UUID:</label>
+                        <input type="text" id="namespace" class="option-input" placeholder="00000000-0000-0000-0000-000000000000">
+                        <small data-i18n="tool.options.namespaceHelp">Provide a valid UUID to use as namespace for v5 UUIDs</small>
+                    </div>
+                </div>
+
+                <!-- UUID Display -->
+                <div class="uuid-display-container">
+                    <h3 class="uuid-display-title" data-i18n="tool.display.title">Generated UUIDs</h3>
+                    <div id="uuidDisplay" class="uuid-display" data-i18n="tool.display.placeholder">Your UUIDs will appear here...</div>
+                    <div class="uuid-controls-bottom">
+                        <div class="uuid-count" id="uuidCountDisplay">0 UUIDs generated</div>
+                        <button class="action-btn copy-btn" id="copyAllBtn">
+                            <i class="fas fa-copy"></i> <span data-i18n="tool.buttons.copyAll">Copy All</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="action-buttons">
+                    <button class="action-btn generate-btn" id="generateBtn">
+                        <i class="fas fa-bolt"></i> <span data-i18n="tool.buttons.generate">Generate UUIDs</span>
+                    </button>
+                    <button class="action-btn download-btn" id="downloadBtn">
+                        <i class="fas fa-download"></i> <span data-i18n="tool.buttons.download">Download</span>
+                    </button>
+                    <button class="action-btn clear-btn" id="clearBtn">
+                        <i class="fas fa-trash"></i> <span data-i18n="tool.buttons.clear">Clear All</span>
+                    </button>
+                </div>
+
+                <!-- History Section -->
+                <div class="history-section">
+                    <div class="history-title">
+                        <span data-i18n="tool.history.title">Generation History</span>
+                        <button class="action-btn clear-btn" id="clearHistoryBtn" style="padding: 5px 10px; font-size: 12px;">
+                            <i class="fas fa-trash"></i> <span data-i18n="tool.history.clear">Clear History</span>
+                        </button>
+                    </div>
+                    <div id="historyList" class="history-list">
+                        <!-- History items will be added here dynamically -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container footer-container">
+            <!-- Left Section -->
+            <div class="footer-section">
+                <a href="https://lollypopdf.com" class="footer-logo">
+                    <div class="logo-icon">
+                        <div class="logo-circle">LPdf</div>
+                        <div class="logo-stem"></div>
+                    </div>
+                    <span class="logo-text">LollyPoPdf</span>
+                </a>
+                <h3 data-i18n="footer.follow">FOLLOW US</h3>
+                <div class="social-icons">
+                    <a href="https://facebook.com/lollypopdf" class="social-icon"><i class="fab fa-facebook-f"></i></a>
+                    <a href="https://linkedin.com/company/lollypopdf" class="social-icon"><i class="fab fa-linkedin-in"></i></a>
+                    <a href="https://twitter.com/lollypopdf" class="social-icon"><i class="fab fa-twitter"></i></a>
+                    <a href="https://instagram.com/lollypopdf" class="social-icon"><i class="fab fa-instagram"></i></a>
+                    <a href="https://pinterest.com/lollypopdf" class="social-icon"><i class="fab fa-pinterest-p"></i></a>
+                </div>
+            </div>
+            
+            <!-- Middle Section - Popular Categories -->
+            <div class="footer-section">
+                <h4 data-i18n="footer.categories">Popular Categories</h4>
+                <ul class="footer-links">
+                    <li><a href="https://lollypopdf.com#pdf-tools" data-i18n="footer.categories.pdf">PDF Tools</a></li>
+                    <li><a href="https://lollypopdf.com#image-tools" data-i18n="footer.categories.image">Image Tools</a></li>
+                    <li><a href="https://lollypopdf.com#text-tools" data-i18n="footer.categories.text">Text Tools</a></li>
+                    <li><a href="https://lollypopdf.com#audio-video-tools" data-i18n="footer.categories.av">Audio/Video Tools</a></li>
+                    <li><a href="https://lollypopdf.com#web-developer-tools" data-i18n="footer.categories.web">WebDeveloper Tools</a></li>
+                    <li><a href="https://lollypopdf.com#calculator-tools" data-i18n="footer.categories.calc">Calculator Tools</a></li>
+                    <li><a href="https://lollypopdf.com#utility-tools" data-i18n="footer.categories.util">Utility Tools</a></li>
+                    <li><a href="https://lollypopdf.com#color-tools" data-i18n="footer.categories.color">Color Tools</a></li>
+                </ul>
+            </div>
+            
+            <!-- Right Section - Quick Links -->
+            <div class="footer-section">
+                <h4 data-i18n="footer.quicklinks">Quick Links</h4>
+                <ul class="footer-links">
+                    <li><a href="https://lollypopdf.github.io/LollyPoPdf#home" data-i18n="nav.home">Home</a></li>
+                    <li><a href="https://lollypopdf.github.io/LollyPoPdf#tools" data-i18n="footer.links.tools">All Tools</a></li>
+                    <li><a href="faq.html" data-i18n="footer.links.faq">FAQ</a></li>
+                    <li><a href="contact.html" data-i18n="footer.links.contact">Contact</a></li>
+                    <li><a href="privacy-policy.html" data-i18n="footer.links.privacy">Privacy Policy</a></li>
+                    <li><a href="disclaimer.html" data-i18n="footer.links.disclaimer">Disclaimer</a></li>
+                    <li><a href="terms.html" data-i18n="footer.links.terms">Terms of Service</a></li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="footer-line"></div>
+        <div class="copyright" data-i18n="footer.copyright">© 2025 LollyPoPDF. All rights reserved.</div>
+    </footer>
+
+    <!-- Language Switcher -->
+    <div class="language-switcher">
+        <button class="language-btn">
+            <i class="fas fa-globe"></i>
+            <span id="currentLanguage">English</span>
+        </button>
+        <div class="language-dropdown">
+            <div class="language-option" data-lang="en">English</div>
+            <div class="language-option" data-lang="es">Español</div>
+            <div class="language-option" data-lang="fr">Français</div>
+            <div class="language-option" data-lang="de">Deutsch</div>
+            <div class="language-option" data-lang="it">Italiano</div>
+            <div class="language-option" data-lang="pt">Português</div>
+            <div class="language-option" data-lang="ja">日本語</div>
+            <div class="language-option" data-lang="ru">Pусский</div>
+            <div class="language-option" data-lang="ko">한국어</div>
+            <div class="language-option" data-lang="zh-CN">中文 (简体)</div>
+            <div class="language-option" data-lang="zh-TW">中文 (繁體)</div>
+            <div class="language-option" data-lang="ar">العربية</div>
+            <div class="language-option" data-lang="fa">فارسی</div>
+            <div class="language-option" data-lang="bg">Български</div>
+            <div class="language-option" data-lang="ca">Català</div>
+            <div class="language-option" data-lang="nl">Nederlands</div>
+            <div class="language-option" data-lang="el">Ελληνικά</div>
+            <div class="language-option" data-lang="hi">हिन्दी</div>
+            <div class="language-option" data-lang="te">తెలుగు</div>
+            <div class="language-option" data-lang="kn">ಕನ್ನಡ</div>
+            <div class="language-option" data-lang="ta">தமிழ்</div>
+            <div class="language-option" data-lang="ml">മലയാളം</div>
+            <div class="language-option" data-lang="id">Bahasa Indonesia</div>
+            <div class="language-option" data-lang="ms">Bahasa Melayu</div>
+            <div class="language-option" data-lang="pl">Polski</div>
+            <div class="language-option" data-lang="th">ภาษาไทย</div>
+            <div class="language-option" data-lang="tr">Türkçe</div>
+            <div class="language-option" data-lang="uk">Українська</div>
+            <div class="language-option" data-lang="vi">Tiếng Việt</div>
+            <div class="language-option" data-lang="is">Íslenska</div>
+            <div class="language-option" data-lang="no">Norsk</div>
+            <div class="language-option" data-lang="sv">Svenska</div>
+            <div class="language-option" data-lang="fi">Suomi</div>
+            <div class="language-option" data-lang="cs">Čeština</div>
+        </div>
+    </div>
+
+    <script>
+        // Theme Toggle
+        const themeToggle = document.getElementById('themeToggle');
+        const body = document.body;
+        
+        // Check for saved theme preference or respect OS preference
+        const savedTheme = localStorage.getItem('theme') || 
+            (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        
+        if (savedTheme === 'dark') {
+            body.classList.add('dark-mode');
+            themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+        }
+        
+        themeToggle.addEventListener('click', () => {
+            body.classList.toggle('dark-mode');
+            const isDarkMode = body.classList.contains('dark-mode');
+            
+            if (isDarkMode) {
+                themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+                localStorage.setItem('theme', 'dark');
+            } else {
+                themeToggle.innerHTML = '<i class="fas fa-moon"></i>';
+                localStorage.setItem('theme', 'light');
+            }
+        });
+
+        // Mobile Menu Toggle
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const mobileMenu = document.getElementById('mobileMenu');
+        
+        mobileMenuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('active');
+            
+            // Change icon based on menu state
+            if (mobileMenu.classList.contains('active')) {
+                mobileMenuBtn.innerHTML = '<i class="fas fa-times"></i>';
+            } else {
+                mobileMenuBtn.innerHTML = '<i class="fas fa-bars"></i>';
+            }
+        });
+
+        // Close mobile menu when clicking on a link
+        const mobileMenuLinks = mobileMenu.querySelectorAll('a');
+        mobileMenuLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                mobileMenu.classList.remove('active');
+                mobileMenuBtn.innerHTML = '<i class="fas fa-bars"></i>';
+            });
+        });
+
+        // UUID Generator Functionality
+        const uuidVersion = document.getElementById('uuidVersion');
+        const uuidCount = document.getElementById('uuidCount');
+        const outputFormat = document.getElementById('outputFormat');
+        const uppercase = document.getElementById('uppercase');
+        const namespaceGroup = document.getElementById('namespaceGroup');
+        const namespace = document.getElementById('namespace');
+        const uuidDisplay = document.getElementById('uuidDisplay');
+        const uuidCountDisplay = document.getElementById('uuidCountDisplay');
+        const generateBtn = document.getElementById('generateBtn');
+        const copyAllBtn = document.getElementById('copyAllBtn');
+        const downloadBtn = document.getElementById('downloadBtn');
+        const clearBtn = document.getElementById('clearBtn');
+        const historyList = document.getElementById('historyList');
+        const clearHistoryBtn = document.getElementById('clearHistoryBtn');
+        
+        let generatedUUIDs = [];
+        let history = JSON.parse(localStorage.getItem('uuidHistory')) || [];
+        
+        // Show/hide namespace input based on UUID version
+        uuidVersion.addEventListener('change', () => {
+            if (uuidVersion.value === 'v5') {
+                namespaceGroup.style.display = 'block';
+            } else {
+                namespaceGroup.style.display = 'none';
+            }
+        });
+        
+        // Generate UUIDs
+        generateBtn.addEventListener('click', () => {
+            const count = parseInt(uuidCount.value) || 1;
+            const version = uuidVersion.value;
+            const isUppercase = uppercase.checked;
+            const format = outputFormat.value;
+            
+            if (count < 1 || count > 1000) {
+                alert('Please enter a number between 1 and 1000');
+                return;
+            }
+            
+            generatedUUIDs = [];
+            
+            for (let i = 0; i < count; i++) {
+                let uuid;
+                
+                switch (version) {
+                    case 'v1':
+                        uuid = generateUUIDv1();
+                        break;
+                    case 'v5':
+                        uuid = generateUUIDv5();
+                        break;
+                    case 'v4':
+                    default:
+                        uuid = generateUUIDv4();
+                        break;
+                }
+                
+                if (isUppercase) {
+                    uuid = uuid.toUpperCase();
+                }
+                
+                generatedUUIDs.push(uuid);
+            }
+            
+            // Update display
+            displayUUIDs(generatedUUIDs, format);
+            
+            // Update count display
+            uuidCountDisplay.textContent = `${generatedUUIDs.length} UUID${generatedUUIDs.length !== 1 ? 's' : ''} generated`;
+            
+            // Add to history
+            addToHistory(generatedUUIDs);
+        });
+        
+        // Copy all UUIDs to clipboard
+        copyAllBtn.addEventListener('click', () => {
+            if (generatedUUIDs.length === 0) {
+                alert('No UUIDs to copy');
+                return;
+            }
+            
+            const format = outputFormat.value;
+            let textToCopy = '';
+            
+            switch (format) {
+                case 'json':
+                    textToCopy = JSON.stringify(generatedUUIDs, null, 2);
+                    break;
+                case 'csv':
+                    textToCopy = generatedUUIDs.join('\n');
+                    break;
+                case 'plain':
+                default:
+                    textToCopy = generatedUUIDs.join('\n');
+                    break;
+            }
+            
+            navigator.clipboard.writeText(textToCopy).then(() => {
+                // Show success feedback
+                const originalText = copyAllBtn.innerHTML;
+                copyAllBtn.innerHTML = '<i class="fas fa-check"></i> Copied!';
+                setTimeout(() => {
+                    copyAllBtn.innerHTML = originalText;
+                }, 2000);
+            }).catch(err => {
+                console.error('Failed to copy: ', err);
+                alert('Failed to copy to clipboard');
+            });
+        });
+        
+        // Download UUIDs
+        downloadBtn.addEventListener('click', () => {
+            if (generatedUUIDs.length === 0) {
+                alert('No UUIDs to download');
+                return;
+            }
+            
+            const format = outputFormat.value;
+            let content = '';
+            let filename = '';
+            let mimeType = '';
+            
+            switch (format) {
+                case 'json':
+                    content = JSON.stringify(generatedUUIDs, null, 2);
+                    filename = 'uuids.json';
+                    mimeType = 'application/json';
+                    break;
+                case 'csv':
+                    content = generatedUUIDs.join('\n');
+                    filename = 'uuids.csv';
+                    mimeType = 'text/csv';
+                    break;
+                case 'plain':
+                default:
+                    content = generatedUUIDs.join('\n');
+                    filename = 'uuids.txt';
+                    mimeType = 'text/plain';
+                    break;
+            }
+            
+            const blob = new Blob([content], { type: mimeType });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        });
+        
+        // Clear current UUIDs
+        clearBtn.addEventListener('click', () => {
+            generatedUUIDs = [];
+            uuidDisplay.textContent = 'Your UUIDs will appear here...';
+            uuidCountDisplay.textContent = '0 UUIDs generated';
+        });
+        
+        // Clear history
+        clearHistoryBtn.addEventListener('click', () => {
+            if (confirm('Are you sure you want to clear the history?')) {
+                history = [];
+                localStorage.setItem('uuidHistory', JSON.stringify(history));
+                renderHistory();
+            }
+        });
+        
+        // Display UUIDs in the specified format
+        function displayUUIDs(uuids, format) {
+            let displayText = '';
+            
+            switch (format) {
+                case 'json':
+                    displayText = JSON.stringify(uuids, null, 2);
+                    break;
+                case 'csv':
+                    displayText = uuids.join('\n');
+                    break;
+                case 'plain':
+                default:
+                    displayText = uuids.map((uuid, index) => {
+                        return `${index + 1}. ${uuid}`;
+                    }).join('\n');
+                    break;
+            }
+            
+            uuidDisplay.textContent = displayText;
+        }
+        
+        // Generate UUID v4 (random)
+        function generateUUIDv4() {
+            return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+                const r = Math.random() * 16 | 0;
+                const v = c == 'x' ? r : (r & 0x3 | 0x8);
+                return v.toString(16);
+            });
+        }
+        
+        // Generate UUID v1 (timestamp-based)
+        function generateUUIDv1() {
+            // Simplified v1 implementation (not fully RFC compliant)
+            const now = new Date().getTime();
+            const timeLow = (now & 0xFFFFFFFF).toString(16).padStart(8, '0');
+            const timeMid = ((now >> 32) & 0xFFFF).toString(16).padStart(4, '0');
+            const timeHigh = ((now >> 48) & 0x0FFF).toString(16).padStart(3, '0') + '1'; // Version 1
+            
+            const clockSeq = Math.floor(Math.random() * 0x3FFF).toString(16).padStart(4, '0');
+            const node = Array.from({length: 6}, () => 
+                Math.floor(Math.random() * 256).toString(16).padStart(2, '0')
+            ).join('');
+            
+            return `${timeLow}-${timeMid}-${timeHigh}-${clockSeq}-${node}`;
+        }
+        
+        // Generate UUID v5 (namespace-based)
+        function generateUUIDv5() {
+            // Simplified v5 implementation using SHA-1 hash (not fully RFC compliant)
+            const namespaceValue = namespace.value || '00000000-0000-0000-0000-000000000000';
+            const name = Math.random().toString(36).substring(2) + Date.now().toString(36);
+            
+            // Create a simple hash (not cryptographically secure)
+            let hash = 0;
+            for (let i = 0; i < name.length; i++) {
+                const char = name.charCodeAt(i);
+                hash = ((hash << 5) - hash) + char;
+                hash = hash & hash; // Convert to 32bit integer
+            }
+            
+            // Format as UUID v5
+            const timeLow = (hash & 0xFFFFFFFF).toString(16).padStart(8, '0');
+            const timeMid = ((hash >> 32) & 0xFFFF).toString(16).padStart(4, '0');
+            const timeHigh = (((hash >> 48) & 0x0FFF) | 0x5000).toString(16).padStart(4, '0'); // Version 5
+            
+            const clockSeq = Math.floor(Math.random() * 0x3FFF).toString(16).padStart(4, '0');
+            const node = Array.from({length: 6}, () => 
+                Math.floor(Math.random() * 256).toString(16).padStart(2, '0')
+            ).join('');
+            
+            return `${timeLow}-${timeMid}-${timeHigh}-${clockSeq}-${node}`;
+        }
+        
+        // Add UUIDs to history
+        function addToHistory(uuids) {
+            const timestamp = new Date().toLocaleString();
+            history.unshift({
+                uuids: uuids,
+                timestamp: timestamp,
+                count: uuids.length
+            });
+            
+            // Keep only the last 50 entries
+            if (history.length > 50) {
+                history = history.slice(0, 50);
+            }
+            
+            localStorage.setItem('uuidHistory', JSON.stringify(history));
+            renderHistory();
+        }
+        
+        // Render history
+        function renderHistory() {
+            historyList.innerHTML = '';
+            
+            if (history.length === 0) {
+                historyList.innerHTML = '<div style="text-align: center; color: var(--text-light); padding: 20px;">No history yet</div>';
+                return;
+            }
+            
+            history.forEach((entry, index) => {
+                const historyItem = document.createElement('div');
+                historyItem.className = 'history-item';
+                
+                const uuidText = document.createElement('span');
+                uuidText.className = 'history-uuid';
+                uuidText.textContent = `${entry.uuids[0]}${entry.uuids.length > 1 ? ` (+${entry.uuids.length - 1} more)` : ''}`;
+                
+                const timestamp = document.createElement('span');
+                timestamp.style.fontSize = '12px';
+                timestamp.style.color = 'var(--text-light)';
+                timestamp.textContent = entry.timestamp;
+                
+                const actions = document.createElement('div');
+                actions.className = 'history-actions';
+                
+                const copyBtn = document.createElement('button');
+                copyBtn.className = 'history-action-btn';
+                copyBtn.innerHTML = '<i class="fas fa-copy"></i>';
+                copyBtn.title = 'Copy UUIDs';
+                copyBtn.addEventListener('click', () => {
+                    const textToCopy = entry.uuids.join('\n');
+                    navigator.clipboard.writeText(textToCopy).then(() => {
+                        // Show success feedback
+                        const originalHTML = copyBtn.innerHTML;
+                        copyBtn.innerHTML = '<i class="fas fa-check"></i>';
+                        setTimeout(() => {
+                            copyBtn.innerHTML = originalHTML;
+                        }, 2000);
+                    });
+                });
+                
+                actions.appendChild(copyBtn);
+                
+                historyItem.appendChild(uuidText);
+                historyItem.appendChild(timestamp);
+                historyItem.appendChild(actions);
+                
+                historyList.appendChild(historyItem);
+            });
+        }
+        
+        // Initialize history on page load
+        renderHistory();
+        
+        // Language Switcher
+        const languageBtn = document.querySelector('.language-btn');
+        const currentLanguageElement = document.getElementById('currentLanguage');
+        const languageDropdown = document.querySelector('.language-dropdown');
+        
+        const languages = [
+            { code: 'en', name: 'English' },
+            { code: 'es', name: 'Español' },
+            { code: 'fr', name: 'Français' },
+            { code: 'de', name: 'Deutsch' },
+            { code: 'it', name: 'Italiano' },
+            { code: 'pt', name: 'Português' },
+            { code: 'ja', name: '日本語' },
+            { code: 'ru', name: 'Pусский' },
+            { code: 'ko', name: '한국어' },
+            { code: 'zh-CN', name: '中文 (简体)' },
+            { code: 'zh-TW', name: '中文 (繁體)' },
+            { code: 'ar', name: 'العربية' },
+            { code: 'fa', name: 'فارسی' },
+            { code: 'bg', name: 'Български' },
+            { code: 'ca', name: 'Català' },
+            { code: 'nl', name: 'Nederlands' },
+            { code: 'el', name: 'Ελληνικά' },
+            { code: 'hi', name: 'हिन्दी' },
+            { code: 'te', name: 'తెలుగు' },
+            { code: 'kn', name: 'ಕನ್ನಡ' },
+            { code: 'ta', name: 'தமிழ்' },
+            { code: 'ml', name: 'മലയാളം' },
+            { code: 'id', name: 'Bahasa Indonesia' },
+            { code: 'ms', name: 'Bahasa Melayu' },
+            { code: 'pl', name: 'Polski' },
+            { code: 'th', name: 'ภาษาไทย' },
+            { code: 'tr', name: 'Türkçe' },
+            { code: 'uk', name: 'Українська' },
+            { code: 'vi', name: 'Tiếng Việt' },
+            { code: 'is', name: 'Íslenska' },
+            { code: 'no', name: 'Norsk' },
+            { code: 'sv', name: 'Svenska' },
+            { code: 'fi', name: 'Suomi' },
+            { code: 'cs', name: 'Čeština' }
+        ];
+
+        // Translation data
+        const translations = {
+            en: {
+                "nav.home": "Home",
+                "nav.about": "About Us",
+                "nav.tools": "Tools",
+                "nav.contact": "Contact",
+                "hero.title": "UUID Generator Tool",
+                "hero.description": "Generate unique identifiers instantly with our free UUID generator. Create UUIDs in various formats, copy them to clipboard, and download lists for your projects. All processing happens locally in your browser for complete privacy.",
+                "howto.title": "How to Use the UUID Generator",
+                "howto.step1.title": "Configure Options",
+                "howto.step1.description": "Select UUID version, number of UUIDs to generate, format, and other options. The tool supports UUID v1, v4, and v5 (simulated).",
+                "howto.step2.title": "Generate UUIDs",
+                "howto.step2.description": "Click the \"Generate UUIDs\" button to create unique identifiers instantly. Watch as they appear in the display area with options to copy individual UUIDs.",
+                "howto.step3.title": "Copy or Download",
+                "howto.step3.description": "Copy individual UUIDs to clipboard or download the entire list in your preferred format (TXT, JSON, CSV). All processing happens locally in your browser.",
+                "howto.step4.title": "Manage History",
+                "howto.step4.description": "View your UUID generation history, copy previous UUIDs, or clear the history. Your data stays in your browser and never leaves your device.",
+                "tool.title": "UUID Generator",
+                "tool.options.title": "Generation Options",
+                "tool.options.version": "UUID Version:",
+                "tool.options.v4": "v4 (Random)",
+                "tool.options.v1": "v1 (Timestamp)",
+                "tool.options.v5": "v5 (Namespace)",
+                "tool.options.count": "Number of UUIDs:",
+                "tool.options.format": "Output Format:",
+                "tool.options.plain": "Plain Text",
+                "tool.options.json": "JSON Array",
+                "tool.options.csv": "CSV",
+                "tool.options.case": "Case:",
+                "tool.options.uppercase": "Uppercase",
+                "tool.options.namespace": "Namespace UUID:",
+                "tool.options.namespaceHelp": "Provide a valid UUID to use as namespace for v5 UUIDs",
+                "tool.display.title": "Generated UUIDs",
+                "tool.display.placeholder": "Your UUIDs will appear here...",
+                "tool.buttons.generate": "Generate UUIDs",
+                "tool.buttons.copyAll": "Copy All",
+                "tool.buttons.download": "Download",
+                "tool.buttons.clear": "Clear All",
+                "tool.history.title": "Generation History",
+                "tool.history.clear": "Clear History",
+                "footer.follow": "FOLLOW US",
+                "footer.categories": "Popular Categories",
+                "footer.categories.pdf": "PDF Tools",
+                "footer.categories.image": "Image Tools",
+                "footer.categories.text": "Text Tools",
+                "footer.categories.av": "Audio/Video Tools",
+                "footer.categories.web": "WebDeveloper Tools",
+                "footer.categories.calc": "Calculator Tools",
+                "footer.categories.util": "Utility Tools",
+                "footer.categories.color": "Color Tools",
+                "footer.quicklinks": "Quick Links",
+                "footer.links.tools": "All Tools",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Contact",
+                "footer.links.privacy": "Privacy Policy",
+                "footer.links.disclaimer": "Disclaimer",
+                "footer.links.terms": "Terms of Service",
+                "footer.copyright": "© 2025 LollyPoPDF. All rights reserved."
+            },
+            es: {
+                "nav.home": "Inicio",
+                "nav.about": "Sobre Nosotros",
+                "nav.tools": "Herramientas",
+                "nav.contact": "Contacto",
+                "hero.title": "Generador de UUID",
+                "hero.description": "Genera identificadores únicos al instante con nuestro generador de UUID gratuito. Crea UUIDs en varios formatos, cópialos al portapapeles y descarga listas para tus proyectos. Todo el procesamiento ocurre localmente en tu navegador para una privacidad completa.",
+                "howto.title": "Cómo Usar el Generador de UUID",
+                "howto.step1.title": "Configurar Opciones",
+                "howto.step1.description": "Selecciona la versión de UUID, número de UUIDs a generar, formato y otras opciones. La herramienta soporta UUID v1, v4 y v5 (simulado).",
+                "howto.step2.title": "Generar UUIDs",
+                "howto.step2.description": "Haz clic en el botón \"Generar UUIDs\" para crear identificadores únicos al instante. Observa cómo aparecen en el área de visualización con opciones para copiar UUIDs individuales.",
+                "howto.step3.title": "Copiar o Descargar",
+                "howto.step3.description": "Copia UUIDs individuales al portapapeles o descarga la lista completa en tu formato preferido (TXT, JSON, CSV). Todo el procesamiento ocurre localmente en tu navegador.",
+                "howto.step4.title": "Gestionar Historial",
+                "howto.step4.description": "Visualiza tu historial de generación de UUIDs, copia UUIDs anteriores o limpia el historial. Tus datos permanecen en tu navegador y nunca salen de tu dispositivo.",
+                "tool.title": "Generador de UUID",
+                "tool.options.title": "Opciones de Generación",
+                "tool.options.version": "Versión UUID:",
+                "tool.options.v4": "v4 (Aleatorio)",
+                "tool.options.v1": "v1 (Marca de Tiempo)",
+                "tool.options.v5": "v5 (Espacio de Nombres)",
+                "tool.options.count": "Número de UUIDs:",
+                "tool.options.format": "Formato de Salida:",
+                "tool.options.plain": "Texto Plano",
+                "tool.options.json": "Array JSON",
+                "tool.options.csv": "CSV",
+                "tool.options.case": "Mayúsculas:",
+                "tool.options.uppercase": "Mayúsculas",
+                "tool.options.namespace": "UUID de Espacio de Nombres:",
+                "tool.options.namespaceHelp": "Proporciona un UUID válido para usar como espacio de nombres para UUIDs v5",
+                "tool.display.title": "UUIDs Generados",
+                "tool.display.placeholder": "Tus UUIDs aparecerán aquí...",
+                "tool.buttons.generate": "Generar UUIDs",
+                "tool.buttons.copyAll": "Copiar Todo",
+                "tool.buttons.download": "Descargar",
+                "tool.buttons.clear": "Limpiar Todo",
+                "tool.history.title": "Historial de Generación",
+                "tool.history.clear": "Limpiar Historial",
+                "footer.follow": "SÍGUENOS",
+                "footer.categories": "Categorías Populares",
+                "footer.categories.pdf": "Herramientas PDF",
+                "footer.categories.image": "Herramientas de Imagen",
+                "footer.categories.text": "Herramientas de Texto",
+                "footer.categories.av": "Herramientas de Audio/Video",
+                "footer.categories.web": "Herramientas WebDesarrollador",
+                "footer.categories.calc": "Herramientas de Calculadora",
+                "footer.categories.util": "Herramientas de Utilidad",
+                "footer.categories.color": "Herramientas de Color",
+                "footer.quicklinks": "Enlaces Rápidos",
+                "footer.links.tools": "Todas las Herramientas",
+                "footer.links.faq": "Preguntas Frecuentes",
+                "footer.links.contact": "Contacto",
+                "footer.links.privacy": "Política de Privacidad",
+                "footer.links.disclaimer": "Descargo de Responsabilidad",
+                "footer.links.terms": "Términos de Servicio",
+                "footer.copyright": "© 2025 LollyPoPDF. Todos los derechos reservados."
+            },
+            fr: {
+                "nav.home": "Accueil",
+                "nav.about": "À Propos",
+                "nav.tools": "Outils",
+                "nav.contact": "Contact",
+                "hero.title": "Générateur d'UUID",
+                "hero.description": "Générez des identifiants uniques instantanément avec notre générateur d'UUID gratuit. Créez des UUID dans divers formats, copiez-les dans le presse-papiers et téléchargez des listes pour vos projets. Tout le traitement se fait localement dans votre navigateur pour une confidentialité totale.",
+                "howto.title": "Comment Utiliser le Générateur d'UUID",
+                "howto.step1.title": "Configurer les Options",
+                "howto.step1.description": "Sélectionnez la version d'UUID, le nombre d'UUID à générer, le format et autres options. L'outil prend en charge les UUID v1, v4 et v5 (simulé).",
+                "howto.step2.title": "Générer des UUID",
+                "howto.step2.description": "Cliquez sur le bouton \"Générer des UUID\" pour créer des identifiants uniques instantanément. Regardez-les apparaître dans la zone d'affichage avec des options pour copier des UUID individuels.",
+                "howto.step3.title": "Copier ou Télécharger",
+                "howto.step3.description": "Copiez des UUID individuels dans le presse-papiers ou téléchargez la liste entière dans votre format préféré (TXT, JSON, CSV). Tout le traitement se fait localement dans votre navigateur.",
+                "howto.step4.title": "Gérer l'Historique",
+                "howto.step4.description": "Consultez votre historique de génération d'UUID, copiez des UUID précédents ou effacez l'historique. Vos données restent dans votre navigateur et ne quittent jamais votre appareil.",
+                "tool.title": "Générateur d'UUID",
+                "tool.options.title": "Options de Génération",
+                "tool.options.version": "Version UUID:",
+                "tool.options.v4": "v4 (Aléatoire)",
+                "tool.options.v1": "v1 (Horodatage)",
+                "tool.options.v5": "v5 (Espace de noms)",
+                "tool.options.count": "Nombre d'UUID:",
+                "tool.options.format": "Format de Sortie:",
+                "tool.options.plain": "Texte Brut",
+                "tool.options.json": "Tableau JSON",
+                "tool.options.csv": "CSV",
+                "tool.options.case": "Casse:",
+                "tool.options.uppercase": "Majuscules",
+                "tool.options.namespace": "UUID d'Espace de Noms:",
+                "tool.options.namespaceHelp": "Fournissez un UUID valide à utiliser comme espace de noms pour les UUID v5",
+                "tool.display.title": "UUID Générés",
+                "tool.display.placeholder": "Vos UUID apparaîtront ici...",
+                "tool.buttons.generate": "Générer des UUID",
+                "tool.buttons.copyAll": "Tout Copier",
+                "tool.buttons.download": "Télécharger",
+                "tool.buttons.clear": "Tout Effacer",
+                "tool.history.title": "Historique de Génération",
+                "tool.history.clear": "Effacer l'Historique",
+                "footer.follow": "SUIVEZ-NOUS",
+                "footer.categories": "Catégories Populaires",
+                "footer.categories.pdf": "Outils PDF",
+                "footer.categories.image": "Outils d'Image",
+                "footer.categories.text": "Outils de Texte",
+                "footer.categories.av": "Outils Audio/Video",
+                "footer.categories.web": "Outils WebDéveloppeur",
+                "footer.categories.calc": "Outils de Calculatrice",
+                "footer.categories.util": "Outils d'Utilité",
+                "footer.categories.color": "Outils de Couleur",
+                "footer.quicklinks": "Liens Rapides",
+                "footer.links.tools": "Tous les Outils",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Contact",
+                "footer.links.privacy": "Politique de Confidentialité",
+                "footer.links.disclaimer": "Avertissement",
+                "footer.links.terms": "Conditions d'Utilisation",
+                "footer.copyright": "© 2025 LollyPoPDF. Tous droits réservés."
+            },
+            de: {
+                "nav.home": "Startseite",
+                "nav.about": "Über Uns",
+                "nav.tools": "Werkzeuge",
+                "nav.contact": "Kontakt",
+                "hero.title": "UUID-Generator",
+                "hero.description": "Generieren Sie sofort eindeutige Identifikatoren mit unserem kostenlosen UUID-Generator. Erstellen Sie UUIDs in verschiedenen Formaten, kopieren Sie sie in die Zwischenablage und laden Sie Listen für Ihre Projekte herunter. Die gesamte Verarbeitung erfolgt lokal in Ihrem Browser für vollständige Privatsphäre.",
+                "howto.title": "So verwenden Sie den UUID-Generator",
+                "howto.step1.title": "Optionen konfigurieren",
+                "howto.step1.description": "Wählen Sie UUID-Version, Anzahl der zu generierenden UUIDs, Format und andere Optionen. Das Tool unterstützt UUID v1, v4 und v5 (simuliert).",
+                "howto.step2.title": "UUIDs generieren",
+                "howto.step2.description": "Klicken Sie auf die Schaltfläche \"UUIDs generieren\", um sofort eindeutige Identifikatoren zu erstellen. Beobachten Sie, wie sie im Anzeigebereich erscheinen, mit Optionen zum Kopieren einzelner UUIDs.",
+                "howto.step3.title": "Kopieren oder Herunterladen",
+                "howto.step3.description": "Kopieren Sie einzelne UUIDs in die Zwischenablage oder laden Sie die gesamte Liste in Ihrem bevorzugten Format herunter (TXT, JSON, CSV). Die gesamte Verarbeitung erfolgt lokal in Ihrem Browser.",
+                "howto.step4.title": "Verlauf verwalten",
+                "howto.step4.description": "Zeigen Sie Ihren UUID-Generierungsverlauf an, kopieren Sie vorherige UUIDs oder löschen Sie den Verlauf. Ihre Daten bleiben in Ihrem Browser und verlassen niemals Ihr Gerät.",
+                "tool.title": "UUID-Generator",
+                "tool.options.title": "Generierungsoptionen",
+                "tool.options.version": "UUID-Version:",
+                "tool.options.v4": "v4 (Zufällig)",
+                "tool.options.v1": "v1 (Zeitstempel)",
+                "tool.options.v5": "v5 (Namensraum)",
+                "tool.options.count": "Anzahl der UUIDs:",
+                "tool.options.format": "Ausgabeformat:",
+                "tool.options.plain": "Klartext",
+                "tool.options.json": "JSON-Array",
+                "tool.options.csv": "CSV",
+                "tool.options.case": "Groß-/Kleinschreibung:",
+                "tool.options.uppercase": "Großbuchstaben",
+                "tool.options.namespace": "Namensraum-UUID:",
+                "tool.options.namespaceHelp": "Geben Sie eine gültige UUID an, die als Namensraum für v5-UUIDs verwendet werden soll",
+                "tool.display.title": "Generierte UUIDs",
+                "tool.display.placeholder": "Ihre UUIDs werden hier angezeigt...",
+                "tool.buttons.generate": "UUIDs generieren",
+                "tool.buttons.copyAll": "Alle kopieren",
+                "tool.buttons.download": "Herunterladen",
+                "tool.buttons.clear": "Alles löschen",
+                "tool.history.title": "Generierungsverlauf",
+                "tool.history.clear": "Verlauf löschen",
+                "footer.follow": "FOLGEN SIE UNS",
+                "footer.categories": "Beliebte Kategorien",
+                "footer.categories.pdf": "PDF-Werkzeuge",
+                "footer.categories.image": "Bildwerkzeuge",
+                "footer.categories.text": "Textwerkzeuge",
+                "footer.categories.av": "Audio/Video-Werkzeuge",
+                "footer.categories.web": "WebEntwickler-Werkzeuge",
+                "footer.categories.calc": "Rechnerwerkzeuge",
+                "footer.categories.util": "Hilfsprogramme",
+                "footer.categories.color": "Farbwerkzeuge",
+                "footer.quicklinks": "Schnelllinks",
+                "footer.links.tools": "Alle Werkzeuge",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Kontakt",
+                "footer.links.privacy": "Datenschutzrichtlinie",
+                "footer.links.disclaimer": "Haftungsausschluss",
+                "footer.links.terms": "Nutzungsbedingungen",
+                "footer.copyright": "© 2025 LollyPoPDF. Alle Rechte vorbehalten."
+            },
+            it: {
+                "nav.home": "Home",
+                "nav.about": "Chi Siamo",
+                "nav.tools": "Strumenti",
+                "nav.contact": "Contatto",
+                "hero.title": "Generatore di UUID",
+                "hero.description": "Genera identificatori unici all'istante con il nostro generatore di UUID gratuito. Crea UUID in vari formati, copiali negli appunti e scarica elenchi per i tuoi progetti. Tutta l'elaborazione avviene localmente nel tuo browser per una privacy completa.",
+                "howto.title": "Come Usare il Generatore di UUID",
+                "howto.step1.title": "Configura le Opzioni",
+                "howto.step1.description": "Seleziona la versione UUID, il numero di UUID da generare, il formato e altre opzioni. Lo strumento supporta UUID v1, v4 e v5 (simulato).",
+                "howto.step2.title": "Genera UUID",
+                "howto.step2.description": "Clicca il pulsante \"Genera UUID\" per creare identificatori unici all'istante. Guarda mentre appaiono nell'area di visualizzazione con opzioni per copiare UUID individuali.",
+                "howto.step3.title": "Copia o Scarica",
+                "howto.step3.description": "Copia UUID individuali negli appunti o scarica l'intera lista nel tuo formato preferito (TXT, JSON, CSV). Tutta l'elaborazione avviene localmente nel tuo browser.",
+                "howto.step4.title": "Gestisci Cronologia",
+                "howto.step4.description": "Visualizza la cronologia di generazione UUID, copia UUID precedenti o cancella la cronologia. I tuoi dati rimangono nel tuo browser e non lasciano mai il tuo dispositivo.",
+                "tool.title": "Generatore di UUID",
+                "tool.options.title": "Opzioni di Generazione",
+                "tool.options.version": "Versione UUID:",
+                "tool.options.v4": "v4 (Casuale)",
+                "tool.options.v1": "v1 (Timestamp)",
+                "tool.options.v5": "v5 (Namespace)",
+                "tool.options.count": "Numero di UUID:",
+                "tool.options.format": "Formato di Output:",
+                "tool.options.plain": "Testo Semplice",
+                "tool.options.json": "Array JSON",
+                "tool.options.csv": "CSV",
+                "tool.options.case": "Maiuscole/Miniuscole:",
+                "tool.options.uppercase": "Maiuscole",
+                "tool.options.namespace": "UUID Namespace:",
+                "tool.options.namespaceHelp": "Fornisci un UUID valido da usare come namespace per UUID v5",
+                "tool.display.title": "UUID Generati",
+                "tool.display.placeholder": "I tuoi UUID appariranno qui...",
+                "tool.buttons.generate": "Genera UUID",
+                "tool.buttons.copyAll": "Copia Tutto",
+                "tool.buttons.download": "Scarica",
+                "tool.buttons.clear": "Cancella Tutto",
+                "tool.history.title": "Cronologia Generazione",
+                "tool.history.clear": "Cancella Cronologia",
+                "footer.follow": "SEGUICI",
+                "footer.categories": "Categorie Popolari",
+                "footer.categories.pdf": "Strumenti PDF",
+                "footer.categories.image": "Strumenti Immagine",
+                "footer.categories.text": "Strumenti Testo",
+                "footer.categories.av": "Strumenti Audio/Video",
+                "footer.categories.web": "Strumenti Sviluppatore Web",
+                "footer.categories.calc": "Strumenti Calcolatrice",
+                "footer.categories.util": "Strumenti Utilità",
+                "footer.categories.color": "Strumenti Colore",
+                "footer.quicklinks": "Link Rapidi",
+                "footer.links.tools": "Tutti gli Strumenti",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Contatto",
+                "footer.links.privacy": "Informativa sulla Privacy",
+                "footer.links.disclaimer": "Disclaimer",
+                "footer.links.terms": "Termini di Servizio",
+                "footer.copyright": "© 2025 LollyPoPDF. Tutti i diritti riservati."
+            },
+            pt: {
+                "nav.home": "Início",
+                "nav.about": "Sobre Nós",
+                "nav.tools": "Ferramentas",
+                "nav.contact": "Contato",
+                "hero.title": "Gerador de UUID",
+                "hero.description": "Gere identificadores únicos instantaneamente com nosso gerador de UUID gratuito. Crie UUIDs em vários formatos, copie-os para a área de transferência e baixe listas para seus projetos. Todo o processamento acontece localmente no seu navegador para privacidade completa.",
+                "howto.title": "Como Usar o Gerador de UUID",
+                "howto.step1.title": "Configurar Opções",
+                "howto.step1.description": "Selecione a versão UUID, número de UUIDs a gerar, formato e outras opções. A ferramenta suporta UUID v1, v4 e v5 (simulado).",
+                "howto.step2.title": "Gerar UUIDs",
+                "howto.step2.description": "Clique no botão \"Gerar UUIDs\" para criar identificadores únicos instantaneamente. Observe como eles aparecem na área de exibição com opções para copiar UUIDs individuais.",
+                "howto.step3.title": "Copiar ou Baixar",
+                "howto.step3.description": "Copie UUIDs individuais para a área de transferência ou baixe a lista inteira no seu formato preferido (TXT, JSON, CSV). Todo o processamento acontece localmente no seu navegador.",
+                "howto.step4.title": "Gerenciar Histórico",
+                "howto.step4.description": "Visualize seu histórico de geração de UUID, copie UUIDs anteriores ou limpe o histórico. Seus dados permanecem no seu navegador e nunca saem do seu dispositivo.",
+                "tool.title": "Gerador de UUID",
+                "tool.options.title": "Opções de Geração",
+                "tool.options.version": "Versão UUID:",
+                "tool.options.v4": "v4 (Aleatório)",
+                "tool.options.v1": "v1 (Timestamp)",
+                "tool.options.v5": "v5 (Namespace)",
+                "tool.options.count": "Número de UUIDs:",
+                "tool.options.format": "Formato de Saída:",
+                "tool.options.plain": "Texto Simples",
+                "tool.options.json": "Array JSON",
+                "tool.options.csv": "CSV",
+                "tool.options.case": "Maiúsculas/Minúsculas:",
+                "tool.options.uppercase": "Maiúsculas",
+                "tool.options.namespace": "UUID de Namespace:",
+                "tool.options.namespaceHelp": "Forneça um UUID válido para usar como namespace para UUIDs v5",
+                "tool.display.title": "UUIDs Gerados",
+                "tool.display.placeholder": "Seus UUIDs aparecerão aqui...",
+                "tool.buttons.generate": "Gerar UUIDs",
+                "tool.buttons.copyAll": "Copiar Tudo",
+                "tool.buttons.download": "Baixar",
+                "tool.buttons.clear": "Limpar Tudo",
+                "tool.history.title": "Histórico de Geração",
+                "tool.history.clear": "Limpar Histórico",
+                "footer.follow": "SIGA-NOS",
+                "footer.categories": "Categorias Populares",
+                "footer.categories.pdf": "Ferramentas PDF",
+                "footer.categories.image": "Ferramentas de Imagem",
+                "footer.categories.text": "Ferramentas de Texto",
+                "footer.categories.av": "Ferramentas Áudio/Video",
+                "footer.categories.web": "Ferramentas WebDesenvolvedor",
+                "footer.categories.calc": "Ferramentas Calculadora",
+                "footer.categories.util": "Ferramentas de Utilidade",
+                "footer.categories.color": "Ferramentas de Cor",
+                "footer.quicklinks": "Links Rápidos",
+                "footer.links.tools": "Todas as Ferramentas",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Contato",
+                "footer.links.privacy": "Política de Privacidade",
+                "footer.links.disclaimer": "Aviso Legal",
+                "footer.links.terms": "Termos de Serviço",
+                "footer.copyright": "© 2025 LollyPoPDF. Todos os direitos reservados."
+            },
+            ja: {
+                "nav.home": "ホーム",
+                "nav.about": "会社概要",
+                "nav.tools": "ツール",
+                "nav.contact": "お問い合わせ",
+                "hero.title": "UUID生成ツール",
+                "hero.description": "無料のUUIDジェネレーターで一意の識別子を即座に生成します。さまざまな形式でUUIDを作成し、クリップボードにコピーし、プロジェクト用のリストをダウンロードできます。すべての処理はブラウザ内でローカルに行われるため、完全なプライバシーが保証されます。",
+                "howto.title": "UUIDジェネレーターの使用方法",
+                "howto.step1.title": "オプションの設定",
+                "howto.step1.description": "UUIDバージョン、生成するUUIDの数、形式、その他のオプションを選択します。このツールはUUID v1、v4、v5（シミュレート）をサポートしています。",
+                "howto.step2.title": "UUIDの生成",
+                "howto.step2.description": "「UUIDを生成」ボタンをクリックして、一意の識別子を即座に作成します。表示エリアに表示され、個々のUUIDをコピーするオプションがあります。",
+                "howto.step3.title": "コピーまたはダウンロード",
+                "howto.step3.description": "個々のUUIDをクリップボードにコピーするか、希望の形式（TXT、JSON、CSV）でリスト全体をダウンロードします。すべての処理はブラウザ内でローカルに行われます。",
+                "howto.step4.title": "履歴の管理",
+                "howto.step4.description": "UUID生成履歴を表示し、以前のUUIDをコピーするか、履歴をクリアします。データはブラウザ内に残り、デバイスから離れることはありません。",
+                "tool.title": "UUIDジェネレーター",
+                "tool.options.title": "生成オプション",
+                "tool.options.version": "UUIDバージョン:",
+                "tool.options.v4": "v4 (ランダム)",
+                "tool.options.v1": "v1 (タイムスタンプ)",
+                "tool.options.v5": "v5 (名前空間)",
+                "tool.options.count": "UUIDの数:",
+                "tool.options.format": "出力形式:",
+                "tool.options.plain": "プレーンテキスト",
+                "tool.options.json": "JSON配列",
+                "tool.options.csv": "CSV",
+                "tool.options.case": "大文字/小文字:",
+                "tool.options.uppercase": "大文字",
+                "tool.options.namespace": "名前空間UUID:",
+                "tool.options.namespaceHelp": "v5 UUIDの名前空間として使用する有効なUUIDを提供してください",
+                "tool.display.title": "生成されたUUID",
+                "tool.display.placeholder": "UUIDがここに表示されます...",
+                "tool.buttons.generate": "UUIDを生成",
+                "tool.buttons.copyAll": "すべてコピー",
+                "tool.buttons.download": "ダウンロード",
+                "tool.buttons.clear": "すべてクリア",
+                "tool.history.title": "生成履歴",
+                "tool.history.clear": "履歴をクリア",
+                "footer.follow": "フォローする",
+                "footer.categories": "人気カテゴリ",
+                "footer.categories.pdf": "PDFツール",
+                "footer.categories.image": "画像ツール",
+                "footer.categories.text": "テキストツール",
+                "footer.categories.av": "オーディオ/ビデオツール",
+                "footer.categories.web": "Web開発者ツール",
+                "footer.categories.calc": "電卓ツール",
+                "footer.categories.util": "ユーティリティツール",
+                "footer.categories.color": "カラーツール",
+                "footer.quicklinks": "クイックリンク",
+                "footer.links.tools": "すべてのツール",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "お問い合わせ",
+                "footer.links.privacy": "プライバシーポリシー",
+                "footer.links.disclaimer": "免責事項",
+                "footer.links.terms": "利用規約",
+                "footer.copyright": "© 2025 LollyPoPDF. 無断複写・転載を禁じます。"
+            },
+            ru: {
+                "nav.home": "Главная",
+                "nav.about": "О нас",
+                "nav.tools": "Инструменты",
+                "nav.contact": "Контакты",
+                "hero.title": "Генератор UUID",
+                "hero.description": "Мгновенно генерируйте уникальные идентификаторы с помощью нашего бесплатного генератора UUID. Создавайте UUID в различных форматах, копируйте их в буфер обмена и загружайте списки для ваших проектов. Вся обработка происходит локально в вашем браузере для полной конфиденциальности.",
+                "howto.title": "Как использовать генератор UUID",
+                "howto.step1.title": "Настройка параметров",
+                "howto.step1.description": "Выберите версию UUID, количество UUID для генерации, формат и другие параметры. Инструмент поддерживает UUID v1, v4 и v5 (симулированный).",
+                "howto.step2.title": "Генерация UUID",
+                "howto.step2.description": "Нажмите кнопку \"Сгенерировать UUID\" для мгновенного создания уникальных идентификаторов. Наблюдайте, как они появляются в области отображения с возможностью копирования отдельных UUID.",
+                "howto.step3.title": "Копировать или скачать",
+                "howto.step3.description": "Копируйте отдельные UUID в буфер обмена или загружайте весь список в предпочитаемом формате (TXT, JSON, CSV). Вся обработка происходит локально в вашем браузере.",
+                "howto.step4.title": "Управление историей",
+                "howto.step4.description": "Просматривайте историю генерации UUID, копируйте предыдущие UUID или очищайте историю. Ваши данные остаются в вашем браузере и никогда не покидают ваше устройство.",
+                "tool.title": "Генератор UUID",
+                "tool.options.title": "Параметры генерации",
+                "tool.options.version": "Версия UUID:",
+                "tool.options.v4": "v4 (Случайный)",
+                "tool.options.v1": "v1 (Временная метка)",
+                "tool.options.v5": "v5 (Пространство имен)",
+                "tool.options.count": "Количество UUID:",
+                "tool.options.format": "Формат вывода:",
+                "tool.options.plain": "Простой текст",
+                "tool.options.json": "Массив JSON",
+                "tool.options.csv": "CSV",
+                "tool.options.case": "Регистр:",
+                "tool.options.uppercase": "Верхний регистр",
+                "tool.options.namespace": "UUID пространства имен:",
+                "tool.options.namespaceHelp": "Укажите действительный UUID для использования в качестве пространства имен для UUID v5",
+                "tool.display.title": "Сгенерированные UUID",
+                "tool.display.placeholder": "Ваши UUID появятся здесь...",
+                "tool.buttons.generate": "Сгенерировать UUID",
+                "tool.buttons.copyAll": "Копировать все",
+                "tool.buttons.download": "Скачать",
+                "tool.buttons.clear": "Очистить все",
+                "tool.history.title": "История генерации",
+                "tool.history.clear": "Очистить историю",
+                "footer.follow": "СЛЕДУЙТЕ ЗА НАМИ",
+                "footer.categories": "Популярные категории",
+                "footer.categories.pdf": "PDF инструменты",
+                "footer.categories.image": "Инструменты для изображений",
+                "footer.categories.text": "Текстовые инструменты",
+                "footer.categories.av": "Аудио/Видео инструменты",
+                "footer.categories.web": "Инструменты веб-разработчика",
+                "footer.categories.calc": "Калькуляторные инструменты",
+                "footer.categories.util": "Утилитарные инструменты",
+                "footer.categories.color": "Цветовые инструменты",
+                "footer.quicklinks": "Быстрые ссылки",
+                "footer.links.tools": "Все инструменты",
+                "footer.links.faq": "ЧаВо",
+                "footer.links.contact": "Контакты",
+                "footer.links.privacy": "Политика конфиденциальности",
+                "footer.links.disclaimer": "Отказ от ответственности",
+                "footer.links.terms": "Условия использования",
+                "footer.copyright": "© 2025 LollyPoPDF. Все права защищены."
+            },
+            ko: {
+                "nav.home": "홈",
+                "nav.about": "회사 소개",
+                "nav.tools": "도구",
+                "nav.contact": "문의하기",
+                "hero.title": "UUID 생성기",
+                "hero.description": "무료 UUID 생성기로 고유 식별자를 즉시 생성하세요. 다양한 형식으로 UUID를 생성하고 클립보드에 복사하며 프로젝트용 목록을 다운로드하세요. 모든 처리는 브라우저에서 로컬로 이루어져 완전한 개인정보 보호가 가능합니다.",
+                "howto.title": "UUID 생성기 사용 방법",
+                "howto.step1.title": "옵션 구성",
+                "howto.step1.description": "UUID 버전, 생성할 UUID 수, 형식 및 기타 옵션을 선택하세요. 이 도구는 UUID v1, v4 및 v5(시뮬레이션)를 지원합니다.",
+                "howto.step2.title": "UUID 생성",
+                "howto.step2.description": "\"UUID 생성\" 버튼을 클릭하여 고유 식별자를 즉시 생성하세요. 개별 UUID를 복사하는 옵션과 함께 표시 영역에 나타나는 것을 확인하세요.",
+                "howto.step3.title": "복사 또는 다운로드",
+                "howto.step3.description": "개별 UUID를 클립보드에 복사하거나 선호하는 형식(TXT, JSON, CSV)으로 전체 목록을 다운로드하세요. 모든 처리는 브라우저에서 로컬로 이루어집니다.",
+                "howto.step4.title": "기록 관리",
+                "howto.step4.description": "UUID 생성 기록을 보고 이전 UUID를 복사하거나 기록을 지우세요. 데이터는 브라우저에 남아 있으며 기기를 떠나지 않습니다.",
+                "tool.title": "UUID 생성기",
+                "tool.options.title": "생성 옵션",
+                "tool.options.version": "UUID 버전:",
+                "tool.options.v4": "v4 (무작위)",
+                "tool.options.v1": "v1 (타임스탬프)",
+                "tool.options.v5": "v5 (네임스페이스)",
+                "tool.options.count": "UUID 수:",
+                "tool.options.format": "출력 형식:",
+                "tool.options.plain": "일반 텍스트",
+                "tool.options.json": "JSON 배열",
+                "tool.options.csv": "CSV",
+                "tool.options.case": "대소문자:",
+                "tool.options.uppercase": "대문자",
+                "tool.options.namespace": "네임스페이스 UUID:",
+                "tool.options.namespaceHelp": "v5 UUID에 대한 네임스페이스로 사용할 유효한 UUID를 제공하세요",
+                "tool.display.title": "생성된 UUID",
+                "tool.display.placeholder": "UUID가 여기에 표시됩니다...",
+                "tool.buttons.generate": "UUID 생성",
+                "tool.buttons.copyAll": "모두 복사",
+                "tool.buttons.download": "다운로드",
+                "tool.buttons.clear": "모두 지우기",
+                "tool.history.title": "생성 기록",
+                "tool.history.clear": "기록 지우기",
+                "footer.follow": "팔로우하기",
+                "footer.categories": "인기 카테고리",
+                "footer.categories.pdf": "PDF 도구",
+                "footer.categories.image": "이미지 도구",
+                "footer.categories.text": "텍스트 도구",
+                "footer.categories.av": "오디오/비디오 도구",
+                "footer.categories.web": "웹개발자 도구",
+                "footer.categories.calc": "계산기 도구",
+                "footer.categories.util": "유틸리티 도구",
+                "footer.categories.color": "색상 도구",
+                "footer.quicklinks": "빠른 링크",
+                "footer.links.tools": "모든 도구",
+                "footer.links.faq": "자주 묻는 질문",
+                "footer.links.contact": "문의하기",
+                "footer.links.privacy": "개인정보 보호정책",
+                "footer.links.disclaimer": "면책 조항",
+                "footer.links.terms": "서비스 약관",
+                "footer.copyright": "© 2025 LollyPoPDF. 모든 권리 보유."
+            },
+            'zh-CN': {
+                "nav.home": "首页",
+                "nav.about": "关于我们",
+                "nav.tools": "工具",
+                "nav.contact": "联系我们",
+                "hero.title": "UUID生成工具",
+                "hero.description": "使用我们的免费UUID生成器即时生成唯一标识符。创建各种格式的UUID，将其复制到剪贴板，并为您的项目下载列表。所有处理都在您的浏览器中本地完成，确保完全隐私。",
+                "howto.title": "如何使用UUID生成器",
+                "howto.step1.title": "配置选项",
+                "howto.step1.description": "选择UUID版本、要生成的UUID数量、格式和其他选项。该工具支持UUID v1、v4和v5（模拟）。",
+                "howto.step2.title": "生成UUID",
+                "howto.step2.description": "点击\"生成UUID\"按钮立即创建唯一标识符。观察它们如何出现在显示区域中，并带有复制单个UUID的选项。",
+                "howto.step3.title": "复制或下载",
+                "howto.step3.description": "将单个UUID复制到剪贴板，或以您喜欢的格式（TXT、JSON、CSV）下载整个列表。所有处理都在您的浏览器中本地完成。",
+                "howto.step4.title": "管理历史记录",
+                "howto.step4.description": "查看您的UUID生成历史记录，复制以前的UUID或清除历史记录。您的数据保留在浏览器中，永远不会离开您的设备。",
+                "tool.title": "UUID生成器",
+                "tool.options.title": "生成选项",
+                "tool.options.version": "UUID版本:",
+                "tool.options.v4": "v4 (随机)",
+                "tool.options.v1": "v1 (时间戳)",
+                "tool.options.v5": "v5 (命名空间)",
+                "tool.options.count": "UUID数量:",
+                "tool.options.format": "输出格式:",
+                "tool.options.plain": "纯文本",
+                "tool.options.json": "JSON数组",
+                "tool.options.csv": "CSV",
+                "tool.options.case": "大小写:",
+                "tool.options.uppercase": "大写",
+                "tool.options.namespace": "命名空间UUID:",
+                "tool.options.namespaceHelp": "提供一个有效的UUID作为v5 UUID的命名空间",
+                "tool.display.title": "生成的UUID",
+                "tool.display.placeholder": "您的UUID将在此显示...",
+                "tool.buttons.generate": "生成UUID",
+                "tool.buttons.copyAll": "全部复制",
+                "tool.buttons.download": "下载",
+                "tool.buttons.clear": "全部清除",
+                "tool.history.title": "生成历史",
+                "tool.history.clear": "清除历史",
+                "footer.follow": "关注我们",
+                "footer.categories": "热门类别",
+                "footer.categories.pdf": "PDF工具",
+                "footer.categories.image": "图像工具",
+                "footer.categories.text": "文本工具",
+                "footer.categories.av": "音频/视频工具",
+                "footer.categories.web": "Web开发工具",
+                "footer.categories.calc": "计算器工具",
+                "footer.categories.util": "实用工具",
+                "footer.categories.color": "颜色工具",
+                "footer.quicklinks": "快速链接",
+                "footer.links.tools": "所有工具",
+                "footer.links.faq": "常见问题",
+                "footer.links.contact": "联系我们",
+                "footer.links.privacy": "隐私政策",
+                "footer.links.disclaimer": "免责声明",
+                "footer.links.terms": "服务条款",
+                "footer.copyright": "© 2025 LollyPoPDF. 保留所有权利。"
+            },
+            'zh-TW': {
+                "nav.home": "首頁",
+                "nav.about": "關於我們",
+                "nav.tools": "工具",
+                "nav.contact": "聯絡我們",
+                "hero.title": "UUID生成工具",
+                "hero.description": "使用我們的免費UUID生成器即時生成唯一識別碼。建立各種格式的UUID，將其複製到剪貼簿，並為您的專案下載清單。所有處理都在您的瀏覽器中本地完成，確保完全隱私。",
+                "howto.title": "如何使用UUID生成器",
+                "howto.step1.title": "配置選項",
+                "howto.step1.description": "選擇UUID版本、要生成的UUID數量、格式和其他選項。該工具支援UUID v1、v4和v5（模擬）。",
+                "howto.step2.title": "生成UUID",
+                "howto.step2.description": "點擊\"生成UUID\"按鈕立即建立唯一識別碼。觀察它們如何出現在顯示區域中，並帶有複製單個UUID的選項。",
+                "howto.step3.title": "複製或下載",
+                "howto.step3.description": "將單個UUID複製到剪貼簿，或以您喜歡的格式（TXT、JSON、CSV）下載整個清單。所有處理都在您的瀏覽器中本地完成。",
+                "howto.step4.title": "管理歷史記錄",
+                "howto.step4.description": "檢視您的UUID生成歷史記錄，複製以前的UUID或清除歷史記錄。您的資料保留在瀏覽器中，永遠不會離開您的裝置。",
+                "tool.title": "UUID生成器",
+                "tool.options.title": "生成選項",
+                "tool.options.version": "UUID版本:",
+                "tool.options.v4": "v4 (隨機)",
+                "tool.options.v1": "v1 (時間戳)",
+                "tool.options.v5": "v5 (命名空間)",
+                "tool.options.count": "UUID數量:",
+                "tool.options.format": "輸出格式:",
+                "tool.options.plain": "純文字",
+                "tool.options.json": "JSON陣列",
+                "tool.options.csv": "CSV",
+                "tool.options.case": "大小寫:",
+                "tool.options.uppercase": "大寫",
+                "tool.options.namespace": "命名空間UUID:",
+                "tool.options.namespaceHelp": "提供一個有效的UUID作為v5 UUID的命名空間",
+                "tool.display.title": "生成的UUID",
+                "tool.display.placeholder": "您的UUID將在此顯示...",
+                "tool.buttons.generate": "生成UUID",
+                "tool.buttons.copyAll": "全部複製",
+                "tool.buttons.download": "下載",
+                "tool.buttons.clear": "全部清除",
+                "tool.history.title": "生成歷史",
+                "tool.history.clear": "清除歷史",
+                "footer.follow": "追蹤我們",
+                "footer.categories": "熱門類別",
+                "footer.categories.pdf": "PDF工具",
+                "footer.categories.image": "影像工具",
+                "footer.categories.text": "文字工具",
+                "footer.categories.av": "音訊/視訊工具",
+                "footer.categories.web": "Web開發工具",
+                "footer.categories.calc": "計算機工具",
+                "footer.categories.util": "實用工具",
+                "footer.categories.color": "顏色工具",
+                "footer.quicklinks": "快速連結",
+                "footer.links.tools": "所有工具",
+                "footer.links.faq": "常見問題",
+                "footer.links.contact": "聯絡我們",
+                "footer.links.privacy": "隱私政策",
+                "footer.links.disclaimer": "免責聲明",
+                "footer.links.terms": "服務條款",
+                "footer.copyright": "© 2025 LollyPoPDF. 保留所有權利。"
+            },
+            ar: {
+                "nav.home": "الرئيسية",
+                "nav.about": "من نحن",
+                "nav.tools": "الأدوات",
+                "nav.contact": "اتصل بنا",
+                "hero.title": "أداة إنشاء UUID",
+                "hero.description": "قم بإنشاء معرفات فريدة على الفور باستخدام منشئ UUID المجاني الخاص بنا. أنشئ UUIDs بتنسيقات مختلفة، وانسخها إلى الحافظة، وقم بتنزيل القوائم لمشاريعك. تتم جميع المعالجة محليًا في متصفحك للخصوصية الكاملة.",
+                "howto.title": "كيفية استخدام منشئ UUID",
+                "howto.step1.title": "تكوين الخيارات",
+                "howto.step1.description": "حدد إصدار UUID، وعدد UUIDs المراد إنشاؤها، والتنسيق، والخيارات الأخرى. تدعم الأداة UUID v1 و v4 و v5 (محاكاة).",
+                "howto.step2.title": "إنشاء UUIDs",
+                "howto.step2.description": "انقر على زر \"إنشاء UUIDs\" لإنشاء معرفات فريدة على الفور. شاهد كيف تظهر في منطقة العرض مع خيارات لنسخ UUIDs الفردية.",
+                "howto.step3.title": "نسخ أو تنزيل",
+                "howto.step3.description": "انسخ UUIDs فردية إلى الحافظة أو قم بتنزيل القائمة بأكملها بالتنسيق المفضل لديك (TXT، JSON، CSV). تتم جميع المعالجة محليًا في متصفحك.",
+                "howto.step4.title": "إدارة السجل",
+                "howto.step4.description": "عرض سجل إنشاء UUID الخاص بك، ونسخ UUIDs سابقة، أو مسح السجل. تبقى بياناتك في متصفحك ولا تغادر جهازك أبدًا.",
+                "tool.title": "منشئ UUID",
+                "tool.options.title": "خيارات الإنشاء",
+                "tool.options.version": "إصدار UUID:",
+                "tool.options.v4": "v4 (عشوائي)",
+                "tool.options.v1": "v1 (طابع زمني)",
+                "tool.options.v5": "v5 (مساحة الاسم)",
+                "tool.options.count": "عدد UUIDs:",
+                "tool.options.format": "تنسيق الإخراج:",
+                "tool.options.plain": "نص عادي",
+                "tool.options.json": "مصفوفة JSON",
+                "tool.options.csv": "CSV",
+                "tool.options.case": "حالة الأحرف:",
+                "tool.options.uppercase": "أحرف كبيرة",
+                "tool.options.namespace": "UUID مساحة الاسم:",
+                "tool.options.namespaceHelp": "قدم UUID صالحًا لاستخدامه كمساحة اسم لـ UUIDs v5",
+                "tool.display.title": "UUIDs المُنشأة",
+                "tool.display.placeholder": "ستظهر UUIDs الخاصة بك هنا...",
+                "tool.buttons.generate": "إنشاء UUIDs",
+                "tool.buttons.copyAll": "نسخ الكل",
+                "tool.buttons.download": "تنزيل",
+                "tool.buttons.clear": "مسح الكل",
+                "tool.history.title": "سجل الإنشاء",
+                "tool.history.clear": "مسح السجل",
+                "footer.follow": "تابعنا",
+                "footer.categories": "الفئات الشائعة",
+                "footer.categories.pdf": "أدوات PDF",
+                "footer.categories.image": "أدوات الصور",
+                "footer.categories.text": "أدوات النص",
+                "footer.categories.av": "أدوات الصوت/الفيديو",
+                "footer.categories.web": "أدوات مطور الويب",
+                "footer.categories.calc": "أدوات الآلة الحاسبة",
+                "footer.categories.util": "أدوات المساعدة",
+                "footer.categories.color": "أدوات الألوان",
+                "footer.quicklinks": "روابط سريعة",
+                "footer.links.tools": "جميع الأدوات",
+                "footer.links.faq": "الأسئلة الشائعة",
+                "footer.links.contact": "اتصل بنا",
+                "footer.links.privacy": "سياسة الخصوصية",
+                "footer.links.disclaimer": "إخلاء المسؤولية",
+                "footer.links.terms": "شروط الخدمة",
+                "footer.copyright": "© 2025 LollyPoPDF. جميع الحقوق محفوظة."
+            },
+            fa: {
+                "nav.home": "خانه",
+                "nav.about": "درباره ما",
+                "nav.tools": "ابزارها",
+                "nav.contact": "تماس با ما",
+                "hero.title": "ابزار تولید UUID",
+                "hero.description": "با تولیدکننده UUID رایگان ما، شناسه‌های یکتا را فوراً ایجاد کنید. UUIDها را در قالب‌های مختلف ایجاد کنید، آن‌ها را به کلیپ‌بورد کپی کنید و لیست‌ها را برای پروژه‌های خود دانلود کنید. تمام پردازش به صورت محلی در مرورگر شما برای حفظ حریم خصوصی کامل انجام می‌شود.",
+                "howto.title": "نحوه استفاده از تولیدکننده UUID",
+                "howto.step1.title": "پیکربندی گزینه‌ها",
+                "howto.step1.description": "نسخه UUID، تعداد UUIDهای مورد نظر برای تولید، قالب و سایر گزینه‌ها را انتخاب کنید. این ابزار از UUID v1، v4 و v5 (شبیه‌سازی شده) پشتیبانی می‌کند.",
+                "howto.step2.title": "تولید UUIDها",
+                "howto.step2.description": "برای ایجاد فوری شناسه‌های یکتا، روی دکمه \"تولید UUIDها\" کلیک کنید. تماشا کنید که چگونه در ناحیه نمایش ظاهر می‌شوند با گزینه‌هایی برای کپی کردن UUIDهای جداگانه.",
+                "howto.step3.title": "کپی یا دانلود",
+                "howto.step3.description": "UUIDهای جداگانه را به کلیپ‌بورد کپی کنید یا کل لیست را در قالب مورد نظر خود دانلود کنید (TXT، JSON، CSV). تمام پردازش به صورت محلی در مرورگر شما انجام می‌شود.",
+                "howto.step4.title": "مدیریت تاریخچه",
+                "howto.step4.description": "تاریخچه تولید UUID خود را مشاهده کنید، UUIDهای قبلی را کپی کنید یا تاریخچه را پاک کنید. داده‌های شما در مرورگر شما باقی می‌ماند و هرگز دستگاه شما را ترک نمی‌کند.",
+                "tool.title": "تولیدکننده UUID",
+                "tool.options.title": "گزینه‌های تولید",
+                "tool.options.version": "نسخه UUID:",
+                "tool.options.v4": "v4 (تصادفی)",
+                "tool.options.v1": "v1 (مهر زمانی)",
+                "tool.options.v5": "v5 (فضای نام)",
+                "tool.options.count": "تعداد UUIDها:",
+                "tool.options.format": "قالب خروجی:",
+                "tool.options.plain": "متن ساده",
+                "tool.options.json": "آرایه JSON",
+                "tool.options.csv": "CSV",
+                "tool.options.case": "حروف:",
+                "tool.options.uppercase": "حروف بزرگ",
+                "tool.options.namespace": "UUID فضای نام:",
+                "tool.options.namespaceHelp": "یک UUID معتبر برای استفاده به عنوان فضای نام برای UUIDهای v5 ارائه دهید",
+                "tool.display.title": "UUIDهای تولید شده",
+                "tool.display.placeholder": "UUIDهای شما در اینجا ظاهر خواهند شد...",
+                "tool.buttons.generate": "تولید UUIDها",
+                "tool.buttons.copyAll": "کپی همه",
+                "tool.buttons.download": "دانلود",
+                "tool.buttons.clear": "پاک کردن همه",
+                "tool.history.title": "تاریخچه تولید",
+                "tool.history.clear": "پاک کردن تاریخچه",
+                "footer.follow": "ما را دنبال کنید",
+                "footer.categories": "دسته‌بندی‌های محبوب",
+                "footer.categories.pdf": "ابزارهای PDF",
+                "footer.categories.image": "ابزارهای تصویر",
+                "footer.categories.text": "ابزارهای متن",
+                "footer.categories.av": "ابزارهای صدا/ویدیو",
+                "footer.categories.web": "ابزارهای توسعه‌دهنده وب",
+                "footer.categories.calc": "ابزارهای ماشین حساب",
+                "footer.categories.util": "ابزارهای کاربردی",
+                "footer.categories.color": "ابزارهای رنگ",
+                "footer.quicklinks": "لینک‌های سریع",
+                "footer.links.tools": "همه ابزارها",
+                "footer.links.faq": "سوالات متداول",
+                "footer.links.contact": "تماس با ما",
+                "footer.links.privacy": "سیاست حفظ حریم خصوصی",
+                "footer.links.disclaimer": "سلب مسئولیت",
+                "footer.links.terms": "شرایط استفاده",
+                "footer.copyright": "© 2025 LollyPoPDF. تمامی حقوق محفوظ است."
+            },
+            bg: {
+                "nav.home": "Начало",
+                "nav.about": "За нас",
+                "nav.tools": "Инструменти",
+                "nav.contact": "Контакт",
+                "hero.title": "Инструмент за генериране на UUID",
+                "hero.description": "Генерирайте уникални идентификатори мигновено с нашия безплатен генератор на UUID. Създавайте UUID в различни формати, копирайте ги в клипборда и изтегляйте списъци за вашите проекти. Цялата обработка се извършва локално във вашия браузър за пълна поверителност.",
+                "howto.title": "Как да използвате генератора на UUID",
+                "howto.step1.title": "Конфигуриране на опции",
+                "howto.step1.description": "Изберете версия на UUID, брой UUID за генериране, формат и други опции. Инструментът поддържа UUID v1, v4 и v5 (симулирани).",
+                "howto.step2.title": "Генериране на UUID",
+                "howto.step2.description": "Щракнете върху бутона \"Генериране на UUID\" за мигновено създаване на уникални идентификатори. Наблюдавайте как се появяват в областта за показване с опции за копиране на отделни UUID.",
+                "howto.step3.title": "Копиране или изтегляне",
+                "howto.step3.description": "Копирайте отделни UUID в клипборда или изтеглете целия списък в предпочитания от вас формат (TXT, JSON, CSV). Цялата обработка се извършва локално във вашия браузър.",
+                "howto.step4.title": "Управление на история",
+                "howto.step4.description": "Прегледайте историята на генериране на UUID, копирайте предишни UUID или изчистете историята. Вашите данни остават във вашия браузър и никога не напускат вашето устройство.",
+                "tool.title": "Генератор на UUID",
+                "tool.options.title": "Опции за генериране",
+                "tool.options.version": "Версия на UUID:",
+                "tool.options.v4": "v4 (Случаен)",
+                "tool.options.v1": "v1 (Времеви маркер)",
+                "tool.options.v5": "v5 (Именно пространство)",
+                "tool.options.count": "Брой UUID:",
+                "tool.options.format": "Изходен формат:",
+                "tool.options.plain": "Обикновен текст",
+                "tool.options.json": "JSON масив",
+                "tool.options.csv": "CSV",
+                "tool.options.case": "Регистър:",
+                "tool.options.uppercase": "Главни букви",
+                "tool.options.namespace": "UUID на именно пространство:",
+                "tool.options.namespaceHelp": "Предоставете валиден UUID за използване като именно пространство за UUID v5",
+                "tool.display.title": "Генерирани UUID",
+                "tool.display.placeholder": "Вашите UUID ще се появят тук...",
+                "tool.buttons.generate": "Генериране на UUID",
+                "tool.buttons.copyAll": "Копиране на всички",
+                "tool.buttons.download": "Изтегляне",
+                "tool.buttons.clear": "Изчистване на всички",
+                "tool.history.title": "История на генериране",
+                "tool.history.clear": "Изчистване на история",
+                "footer.follow": "СЛЕДВАЙТЕ НИ",
+                "footer.categories": "Популярни категории",
+                "footer.categories.pdf": "PDF инструменти",
+                "footer.categories.image": "Инструменти за изображения",
+                "footer.categories.text": "Текстови инструменти",
+                "footer.categories.av": "Аудио/Видео инструменти",
+                "footer.categories.web": "Инструменти за уеб разработчици",
+                "footer.categories.calc": "Калкулаторни инструменти",
+                "footer.categories.util": "Помощни инструменти",
+                "footer.categories.color": "Цветови инструменти",
+                "footer.quicklinks": "Бързи връзки",
+                "footer.links.tools": "Всички инструменти",
+                "footer.links.faq": "ЧЗВ",
+                "footer.links.contact": "Контакт",
+                "footer.links.privacy": "Политика за поверителност",
+                "footer.links.disclaimer": "Отказ от отговорност",
+                "footer.links.terms": "Условия за ползване",
+                "footer.copyright": "© 2025 LollyPoPDF. Всички права запазени."
+            },
+            ca: {
+                "nav.home": "Inici",
+                "nav.about": "Sobre Nosaltres",
+                "nav.tools": "Eines",
+                "nav.contact": "Contacte",
+                "hero.title": "Eina Generadora d'UUID",
+                "hero.description": "Genera identificadors únics instantàniament amb el nostre generador d'UUID gratuït. Crea UUID en diversos formats, copia'ls al porta-retalls i descarrega llistes per als teus projectes. Tot el processament es realitza localment al teu navegador per a una privacitat completa.",
+                "howto.title": "Com Utilitzar el Generador d'UUID",
+                "howto.step1.title": "Configurar Opcions",
+                "howto.step1.description": "Selecciona la versió d'UUID, nombre d'UUID a generar, format i altres opcions. L'eina admet UUID v1, v4 i v5 (simulat).",
+                "howto.step2.title": "Generar UUID",
+                "howto.step2.description": "Fes clic al botó \"Generar UUID\" per crear identificadors únics instantàniament. Observa com apareixen a l'àrea de visualització amb opcions per copiar UUID individuals.",
+                "howto.step3.title": "Copiar o Descarregar",
+                "howto.step3.description": "Copia UUID individuals al porta-retalls o descarrega la llista sencera en el teu format preferit (TXT, JSON, CSV). Tot el processament es realitza localment al teu navegador.",
+                "howto.step4.title": "Gestionar Historial",
+                "howto.step4.description": "Visualitza el teu historial de generació d'UUID, copia UUID anteriors o esborra l'historial. Les teves dades romanen al teu navegador i mai surten del teu dispositiu.",
+                "tool.title": "Generador d'UUID",
+                "tool.options.title": "Opcions de Generació",
+                "tool.options.version": "Versió UUID:",
+                "tool.options.v4": "v4 (Aleatori)",
+                "tool.options.v1": "v1 (Marca de temps)",
+                "tool.options.v5": "v5 (Espai de noms)",
+                "tool.options.count": "Nombre d'UUID:",
+                "tool.options.format": "Format de Sortida:",
+                "tool.options.plain": "Text Plà",
+                "tool.options.json": "Array JSON",
+                "tool.options.csv": "CSV",
+                "tool.options.case": "Majúscules/Minúscules:",
+                "tool.options.uppercase": "Majúscules",
+                "tool.options.namespace": "UUID d'Espai de Noms:",
+                "tool.options.namespaceHelp": "Proporciona un UUID vàlid per utilitzar com a espai de noms per a UUID v5",
+                "tool.display.title": "UUID Generats",
+                "tool.display.placeholder": "Els teus UUID apareixeran aquí...",
+                "tool.buttons.generate": "Generar UUID",
+                "tool.buttons.copyAll": "Copiar Tot",
+                "tool.buttons.download": "Descarregar",
+                "tool.buttons.clear": "Esborrar Tot",
+                "tool.history.title": "Historial de Generació",
+                "tool.history.clear": "Esborrar Historial",
+                "footer.follow": "SEGUEIX-NOS",
+                "footer.categories": "Categories Populars",
+                "footer.categories.pdf": "Eines PDF",
+                "footer.categories.image": "Eines d'Imatge",
+                "footer.categories.text": "Eines de Text",
+                "footer.categories.av": "Eines d'Àudio/Video",
+                "footer.categories.web": "Eines WebDesenvolupador",
+                "footer.categories.calc": "Eines de Calculadora",
+                "footer.categories.util": "Eines d'Utilitat",
+                "footer.categories.color": "Eines de Color",
+                "footer.quicklinks": "Enllaços Ràpids",
+                "footer.links.tools": "Totes les Eines",
+                "footer.links.faq": "PMF",
+                "footer.links.contact": "Contacte",
+                "footer.links.privacy": "Política de Privadesa",
+                "footer.links.disclaimer": "Avís Legal",
+                "footer.links.terms": "Termes del Servei",
+                "footer.copyright": "© 2025 LollyPoPDF. Tots els drets reservats."
+            },
+            nl: {
+                "nav.home": "Home",
+                "nav.about": "Over Ons",
+                "nav.tools": "Tools",
+                "nav.contact": "Contact",
+                "hero.title": "UUID Generator Tool",
+                "hero.description": "Genereer unieke identificatoren direct met onze gratis UUID generator. Maak UUID's in verschillende formaten, kopieer ze naar het klembord en download lijsten voor uw projecten. Alle verwerking gebeurt lokaal in uw browser voor volledige privacy.",
+                "howto.title": "Hoe de UUID Generator te Gebruiken",
+                "howto.step1.title": "Opties Configureren",
+                "howto.step1.description": "Selecteer UUID versie, aantal UUID's om te genereren, formaat en andere opties. De tool ondersteunt UUID v1, v4 en v5 (gesimuleerd).",
+                "howto.step2.title": "UUID's Genereren",
+                "howto.step2.description": "Klik op de knop \"UUID's Genereren\" om direct unieke identificatoren te maken. Zie hoe ze verschijnen in het weergavegebied met opties om individuele UUID's te kopiëren.",
+                "howto.step3.title": "Kopiëren of Downloaden",
+                "howto.step3.description": "Kopieer individuele UUID's naar het klembord of download de volledige lijst in uw voorkeursformaat (TXT, JSON, CSV). Alle verwerking gebeurt lokaal in uw browser.",
+                "howto.step4.title": "Geschiedenis Beheren",
+                "howto.step4.description": "Bekijk uw UUID generatiegeschiedenis, kopieer eerdere UUID's of wis de geschiedenis. Uw gegevens blijven in uw browser en verlaten nooit uw apparaat.",
+                "tool.title": "UUID Generator",
+                "tool.options.title": "Generatie Opties",
+                "tool.options.version": "UUID Versie:",
+                "tool.options.v4": "v4 (Willekeurig)",
+                "tool.options.v1": "v1 (Tijdstempel)",
+                "tool.options.v5": "v5 (Naamruimte)",
+                "tool.options.count": "Aantal UUID's:",
+                "tool.options.format": "Uitvoerformaat:",
+                "tool.options.plain": "Platte Tekst",
+                "tool.options.json": "JSON Array",
+                "tool.options.csv": "CSV",
+                "tool.options.case": "Hoofdletters/Kleine letters:",
+                "tool.options.uppercase": "Hoofdletters",
+                "tool.options.namespace": "Naamruimte UUID:",
+                "tool.options.namespaceHelp": "Geef een geldige UUID op om te gebruiken als naamruimte voor v5 UUID's",
+                "tool.display.title": "Gegenereerde UUID's",
+                "tool.display.placeholder": "Uw UUID's verschijnen hier...",
+                "tool.buttons.generate": "UUID's Genereren",
+                "tool.buttons.copyAll": "Alles Kopiëren",
+                "tool.buttons.download": "Downloaden",
+                "tool.buttons.clear": "Alles Wissen",
+                "tool.history.title": "Generatiegeschiedenis",
+                "tool.history.clear": "Geschiedenis Wissen",
+                "footer.follow": "VOLG ONS",
+                "footer.categories": "Populaire Categorieën",
+                "footer.categories.pdf": "PDF Tools",
+                "footer.categories.image": "Afbeeldingstools",
+                "footer.categories.text": "Teksttools",
+                "footer.categories.av": "Audio/Video Tools",
+                "footer.categories.web": "WebOntwikkelaar Tools",
+                "footer.categories.calc": "Rekenmachine Tools",
+                "footer.categories.util": "Hulpprogramma's",
+                "footer.categories.color": "Kleurentools",
+                "footer.quicklinks": "Snelle Links",
+                "footer.links.tools": "Alle Tools",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Contact",
+                "footer.links.privacy": "Privacybeleid",
+                "footer.links.disclaimer": "Disclaimer",
+                "footer.links.terms": "Servicevoorwaarden",
+                "footer.copyright": "© 2025 LollyPoPDF. Alle rechten voorbehouden."
+            },
+            el: {
+                "nav.home": "Αρχική",
+                "nav.about": "Σχετικά με εμάς",
+                "nav.tools": "Εργαλεία",
+                "nav.contact": "Επικοινωνία",
+                "hero.title": "Εργαλείο Δημιουργίας UUID",
+                "hero.description": "Δημιουργήστε μοναδικά αναγνωριστικά αμέσως με το δωρεάν γεννήτορα UUID μας. Δημιουργήστε UUID σε διάφορες μορφές, αντιγράψτε τα στο πρόχειρο και κατεβάστε λίστες για τα έργα σας. Όλη η επεξεργασία γίνεται τοπικά στο πρόγραμμα περιήγησής σας για πλήρη απόρρητο.",
+                "howto.title": "Πώς να Χρησιμοποιήσετε τον Γεννήτορα UUID",
+                "howto.step1.title": "Διαμόρφωση Επιλογών",
+                "howto.step1.description": "Επιλέξτε έκδοση UUID, αριθμό UUID προς δημιουργία, μορφή και άλλες επιλογές. Το εργαλείο υποστηρίζει UUID v1, v4 και v5 (προσομοιωμένα).",
+                "howto.step2.title": "Δημιουργία UUID",
+                "howto.step2.description": "Κάντε κλικ στο κουμπί \"Δημιουργία UUID\" για να δημιουργήσετε μοναδικά αναγνωριστικά αμέσως. Παρακολουθήστε καθώς εμφανίζονται στην περιοχή εμφάνισης με επιλογές για αντιγραφή μεμονωμένων UUID.",
+                "howto.step3.title": "Αντιγραφή ή Λήψη",
+                "howto.step3.description": "Αντιγράψτε μεμονωμένα UUID στο πρόχειρο ή κατεβάστε ολόκληρη τη λίστα στην προτιμώμενη μορφή σας (TXT, JSON, CSV). Όλη η επεξεργασία γίνεται τοπικά στο πρόγραμμα περιήγησής σας.",
+                "howto.step4.title": "Διαχείριση Ιστορικού",
+                "howto.step4.description": "Προβάλετε το ιστορικό δημιουργίας UUID σας, αντιγράψτε προηγούμενα UUID ή διαγράψτε το ιστορικό. Τα δεδομένα σας παραμένουν στο πρόγραμμα περιήγησής σας και δεν φεύγουν ποτέ από τη συσκευή σας.",
+                "tool.title": "Γεννήτορας UUID",
+                "tool.options.title": "Επιλογές Δημιουργίας",
+                "tool.options.version": "Έκδοση UUID:",
+                "tool.options.v4": "v4 (Τυχαίο)",
+                "tool.options.v1": "v1 (Χρονική σήμανση)",
+                "tool.options.v5": "v5 (Χώρος ονομάτων)",
+                "tool.options.count": "Αριθμός UUID:",
+                "tool.options.format": "Μορφή Εξόδου:",
+                "tool.options.plain": "Απλό Κείμενο",
+                "tool.options.json": "Πίνακας JSON",
+                "tool.options.csv": "CSV",
+                "tool.options.case": "Κεφαλαία/Πεζά:",
+                "tool.options.uppercase": "Κεφαλαία",
+                "tool.options.namespace": "UUID Χώρου Ονομάτων:",
+                "tool.options.namespaceHelp": "Παρακαλώ δώστε ένα έγκυρο UUID για χρήση ως χώρος ονομάτων για UUID v5",
+                "tool.display.title": "Δημιουργημένα UUID",
+                "tool.display.placeholder": "Τα UUID σας θα εμφανιστούν εδώ...",
+                "tool.buttons.generate": "Δημιουργία UUID",
+                "tool.buttons.copyAll": "Αντιγραφή Όλων",
+                "tool.buttons.download": "Λήψη",
+                "tool.buttons.clear": "Εκκαθάριση Όλων",
+                "tool.history.title": "Ιστορικό Δημιουργίας",
+                "tool.history.clear": "Εκκαθάριση Ιστορικού",
+                "footer.follow": "ΑΚΟΛΟΥΘΗΣΤΕ ΜΑΣ",
+                "footer.categories": "Δημοφιλείς Κατηγορίες",
+                "footer.categories.pdf": "Εργαλεία PDF",
+                "footer.categories.image": "Εργαλεία Εικόνας",
+                "footer.categories.text": "Εργαλεία Κειμένου",
+                "footer.categories.av": "Εργαλεία Ήχου/Βίντεο",
+                "footer.categories.web": "Εργαλεία WebΠρογραμματιστή",
+                "footer.categories.calc": "Εργαλεία Αριθμομηχανής",
+                "footer.categories.util": "Εργαλεία Χρησιμότητας",
+                "footer.categories.color": "Εργαλεία Χρώματος",
+                "footer.quicklinks": "Γρήγοροι Σύνδεσμοι",
+                "footer.links.tools": "Όλα τα Εργαλεία",
+                "footer.links.faq": "Συχνές Ερωτήσεις",
+                "footer.links.contact": "Επικοινωνία",
+                "footer.links.privacy": "Πολιτική Απορρήτου",
+                "footer.links.disclaimer": "Αποποίηση Ευθυνών",
+                "footer.links.terms": "Όροι Χρήσης",
+                "footer.copyright": "© 2025 LollyPoPDF. Με επιφύλαξη παντός δικαιώματος."
+            },
+            hi: {
+                "nav.home": "होम",
+                "nav.about": "हमारे बारे में",
+                "nav.tools": "टूल्स",
+                "nav.contact": "संपर्क करें",
+                "hero.title": "UUID जनरेटर टूल",
+                "hero.description": "हमारे मुफ्त UUID जनरेटर के साथ तुरंत अद्वितीय पहचानकर्ता उत्पन्न करें। विभिन्न प्रारूपों में UUID बनाएं, उन्हें क्लिपबोर्ड पर कॉपी करें, और अपनी परियोजनाओं के लिए सूचियां डाउनलोड करें। सभी प्रसंस्करण आपके ब्राउज़र में स्थानीय रूप से होता है, पूर्ण गोपनीयता के लिए।",
+                "howto.title": "UUID जनरेटर का उपयोग कैसे करें",
+                "howto.step1.title": "विकल्प कॉन्फ़िगर करें",
+                "howto.step1.description": "UUID संस्करण, उत्पन्न करने के लिए UUID की संख्या, प्रारूप और अन्य विकल्प चुनें। यह टूल UUID v1, v4 और v5 (सिम्युलेटेड) का समर्थन करता है।",
+                "howto.step2.title": "UUID उत्पन्न करें",
+                "howto.step2.description": "अद्वितीय पहचानकर्ता तुरंत बनाने के लिए \"UUID उत्पन्न करें\" बटन पर क्लिक करें। देखें कि वे प्रदर्शन क्षेत्र में कैसे दिखाई देते हैं, व्यक्तिगत UUID को कॉपी करने के विकल्पों के साथ।",
+                "howto.step3.title": "कॉपी या डाउनलोड करें",
+                "howto.step3.description": "व्यक्तिगत UUID को क्लिपबोर्ड पर कॉपी करें या अपने पसंदीदा प्रारूप (TXT, JSON, CSV) में पूरी सूची डाउनलोड करें। सभी प्रसंस्करण आपके ब्राउज़र में स्थानीय रूप से होता है।",
+                "howto.step4.title": "इतिहास प्रबंधित करें",
+                "howto.step4.description": "अपना UUID जनरेशन इतिहास देखें, पिछले UUID को कॉपी करें, या इतिहास साफ़ करें। आपका डेटा आपके ब्राउज़र में रहता है और कभी भी आपके डिवाइस को नहीं छोड़ता।",
+                "tool.title": "UUID जनरेटर",
+                "tool.options.title": "जनरेशन विकल्प",
+                "tool.options.version": "UUID संस्करण:",
+                "tool.options.v4": "v4 (यादृच्छिक)",
+                "tool.options.v1": "v1 (टाइमस्टैम्प)",
+                "tool.options.v5": "v5 (नेमस्पेस)",
+                "tool.options.count": "UUID की संख्या:",
+                "tool.options.format": "आउटपुट प्रारूप:",
+                "tool.options.plain": "सादा पाठ",
+                "tool.options.json": "JSON सरणी",
+                "tool.options.csv": "CSV",
+                "tool.options.case": "केस:",
+                "tool.options.uppercase": "अपरकेस",
+                "tool.options.namespace": "नेमस्पेस UUID:",
+                "tool.options.namespaceHelp": "v5 UUID के लिए नेमस्पेस के रूप में उपयोग करने के लिए एक वैध UUID प्रदान करें",
+                "tool.display.title": "उत्पन्न UUID",
+                "tool.display.placeholder": "आपके UUID यहां दिखाई देंगे...",
+                "tool.buttons.generate": "UUID उत्पन्न करें",
+                "tool.buttons.copyAll": "सभी कॉपी करें",
+                "tool.buttons.download": "डाउनलोड",
+                "tool.buttons.clear": "सभी साफ़ करें",
+                "tool.history.title": "जनरेशन इतिहास",
+                "tool.history.clear": "इतिहास साफ़ करें",
+                "footer.follow": "हमें फॉलो करें",
+                "footer.categories": "लोकप्रिय श्रेणियां",
+                "footer.categories.pdf": "PDF टूल्स",
+                "footer.categories.image": "इमेज टूल्स",
+                "footer.categories.text": "टेक्स्ट टूल्स",
+                "footer.categories.av": "ऑडियो/वीडियो टूल्स",
+                "footer.categories.web": "वेबडेवलपर टूल्स",
+                "footer.categories.calc": "कैलकुलेटर टूल्स",
+                "footer.categories.util": "यूटिलिटी टूल्स",
+                "footer.categories.color": "कलर टूल्स",
+                "footer.quicklinks": "त्वरित लिंक",
+                "footer.links.tools": "सभी टूल्स",
+                "footer.links.faq": "सामान्य प्रश्न",
+                "footer.links.contact": "संपर्क करें",
+                "footer.links.privacy": "गोपनीयता नीति",
+                "footer.links.disclaimer": "अस्वीकरण",
+                "footer.links.terms": "सेवा की शर्तें",
+                "footer.copyright": "© 2025 LollyPoPDF. सर्वाधिकार सुरक्षित।"
+            },
+            te: {
+                "nav.home": "హోమ్",
+                "nav.about": "మా గురించి",
+                "nav.tools": "టూల్స్",
+                "nav.contact": "సంప్రదించండి",
+                "hero.title": "UUID జనరేటర్ టూల్",
+                "hero.description": "మా ఉచిత UUID జనరేటర్తో తక్షణంగా ప్రత్యేక గుర్తింపులను రూపొందించండి. వివిధ ఫార్మాట్లలో UUIDలను సృష్టించండి, వాటిని క్లిప్బోర్డ్కు కాపీ చేయండి మరియు మీ ప్రాజెక్టుల కోసం జాబితాలను డౌన్లోడ్ చేయండి. పూర్తి గోప్యత కోసం అన్ని ప్రాసెసింగ్ మీ బ్రౌజర్లో స్థానికంగా జరుగుతుంది.",
+                "howto.title": "UUID జనరేటర్ను ఎలా ఉపయోగించాలి",
+                "howto.step1.title": "ఎంపికలను కాన్ఫిగర్ చేయండి",
+                "howto.step1.description": "UUID వెర్షన్, రూపొందించాల్సిన UUIDల సంఖ్య, ఫార్మాట్ మరియు ఇతర ఎంపికలను ఎంచుకోండి. ఈ టూల్ UUID v1, v4 మరియు v5 (సిమ్యులేటెడ్)ని మద్దతు ఇస్తుంది.",
+                "howto.step2.title": "UUIDలను రూపొందించండి",
+                "howto.step2.description": "ప్రత్యేక గుర్తింపులను తక్షణంగా సృష్టించడానికి \"UUIDలను రూపొందించండి\" బటన్పై క్లిక్ చేయండి. వ్యక్తిగత UUIDలను కాపీ చేయడానికి ఎంపికలతో అవి డిస్ప్లే ప్రాంతంలో కనిపించే విధానాన్ని చూడండి.",
+                "howto.step3.title": "కాపీ చేయండి లేదా డౌన్లోడ్ చేయండి",
+                "howto.step3.description": "వ్యక్తిగత UUIDలను క్లిప్బోర్డ్కు కాపీ చేయండి లేదా మీకు నచ్చిన ఫార్మాట్లో (TXT, JSON, CSV) మొత్తం జాబితాను డౌన్లోడ్ చేయండి. అన్ని ప్రాసెసింగ్ మీ బ్రౌజర్లో స్థానికంగా జరుగుతుంది.",
+                "howto.step4.title": "చరిత్రను నిర్వహించండి",
+                "howto.step4.description": "మీ UUID జనరేషన్ చరిత్రను వీక్షించండి, మునుపటి UUIDలను కాపీ చేయండి లేదా చరిత్రను క్లియర్ చేయండి. మీ డేటా మీ బ్రౌజర్లోనే ఉంటుంది మరియు మీ పరికరాన్ని ఎప్పుడూ విడిచిపెట్టదు.",
+                "tool.title": "UUID జనరేటర్",
+                "tool.options.title": "జనరేషన్ ఎంపికలు",
+                "tool.options.version": "UUID వెర్షన్:",
+                "tool.options.v4": "v4 (యాదృచ్ఛిక)",
+                "tool.options.v1": "v1 (టైమ్స్టాంప్)",
+                "tool.options.v5": "v5 (నేమ్స్పేస్)",
+                "tool.options.count": "UUIDల సంఖ్య:",
+                "tool.options.format": "అవుట్పుట్ ఫార్మాట్:",
+                "tool.options.plain": "సాదా వచనం",
+                "tool.options.json": "JSON శ్రేణి",
+                "tool.options.csv": "CSV",
+                "tool.options.case": "కేస్:",
+                "tool.options.uppercase": "అప్పర్ కేస్",
+                "tool.options.namespace": "నేమ్స్పేస్ UUID:",
+                "tool.options.namespaceHelp": "v5 UUIDల కోసం నేమ్స్పేస్గా ఉపయోగించడానికి చెల్లుబాటు అయ్యే UUIDని అందించండి",
+                "tool.display.title": "రూపొందించబడిన UUIDలు",
+                "tool.display.placeholder": "మీ UUIDలు ఇక్కడ కనిపిస్తాయి...",
+                "tool.buttons.generate": "UUIDలను రూపొందించండి",
+                "tool.buttons.copyAll": "అన్నీ కాపీ చేయండి",
+                "tool.buttons.download": "డౌన్లోడ్",
+                "tool.buttons.clear": "అన్నీ క్లియర్ చేయండి",
+                "tool.history.title": "జనరేషన్ చరిత్ర",
+                "tool.history.clear": "చరిత్రను క్లియర్ చేయండి",
+                "footer.follow": "మమ్మల్ని అనుసరించండి",
+                "footer.categories": "జనాదరణ పొందిన వర్గాలు",
+                "footer.categories.pdf": "PDF టూల్స్",
+                "footer.categories.image": "ఇమేజ్ టూల్స్",
+                "footer.categories.text": "టెక్స్ట్ టూల్స్",
+                "footer.categories.av": "ఆడియో/వీడియో టూల్స్",
+                "footer.categories.web": "వెబ్ డెవలపర్ టూల్స్",
+                "footer.categories.calc": "కాలిక్యులేటర్ టూల్స్",
+                "footer.categories.util": "యుటిలిటీ టూల్స్",
+                "footer.categories.color": "కలర్ టూల్స్",
+                "footer.quicklinks": "త్వరిత లింకులు",
+                "footer.links.tools": "అన్ని టూల్స్",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "సంప్రదించండి",
+                "footer.links.privacy": "గోప్యతా విధానం",
+                "footer.links.disclaimer": "డిస్క్లెయిమర్",
+                "footer.links.terms": "సేవా నిబంధనలు",
+                "footer.copyright": "© 2025 LollyPoPDF. అన్ని హక్కులు ప్రత్యేకించబడినవి."
+            },
+            kn: {
+                "nav.home": "ಮುಖಪುಟ",
+                "nav.about": "ನಮ್ಮ ಬಗ್ಗೆ",
+                "nav.tools": "ಉಪಕರಣಗಳು",
+                "nav.contact": "ಸಂಪರ್ಕಿಸಿ",
+                "hero.title": "UUID ಜನರೇಟರ್ ಟೂಲ್",
+                "hero.description": "ನಮ್ಮ ಉಚಿತ UUID ಜನರೇಟರ್ನೊಂದಿಗೆ ತಕ್ಷಣವೇ ಅನನ್ಯ ಗುರುತಿಸುವಿಕೆಗಳನ್ನು ರಚಿಸಿ. ವಿವಿಧ ಸ್ವರೂಪಗಳಲ್ಲಿ UUIDಗಳನ್ನು ರಚಿಸಿ, ಅವುಗಳನ್ನು ಕ್ಲಿಪ್ಬೋರ್ಡ್ಗೆ ನಕಲಿಸಿ ಮತ್ತು ನಿಮ್ಮ ಯೋಜನೆಗಳಿಗಾಗಿ ಪಟ್ಟಿಗಳನ್ನು ಡೌನ್ಲೋಡ್ ಮಾಡಿ. ಸಂಪೂರ್ಣ ಗೌಪ್ಯತೆಗಾಗಿ ಎಲ್ಲಾ ಪ್ರಕ್ರಿಯೆ ನಿಮ್ಮ ಬ್ರೌಸರ್ನಲ್ಲಿ ಸ್ಥಳೀಯವಾಗಿ ನಡೆಯುತ್ತದೆ.",
+                "howto.title": "UUID ಜನರೇಟರ್ ಅನ್ನು ಹೇಗೆ ಬಳಸುವುದು",
+                "howto.step1.title": "ಆಯ್ಕೆಗಳನ್ನು ಕಾನ್ಫಿಗರ್ ಮಾಡಿ",
+                "howto.step1.description": "UUID ಆವೃತ್ತಿ, ರಚಿಸಬೇಕಾದ UUIDಗಳ ಸಂಖ್ಯೆ, ಸ್ವರೂಪ ಮತ್ತು ಇತರ ಆಯ್ಕೆಗಳನ್ನು ಆಯ್ಕೆಮಾಡಿ. ಈ ಉಪಕರಣವು UUID v1, v4 ಮತ್ತು v5 (ಸಿಮ್ಯುಲೇಟೆಡ್) ಅನ್ನು ಬೆಂಬಲಿಸುತ್ತದೆ.",
+                "howto.step2.title": "UUIDಗಳನ್ನು ರಚಿಸಿ",
+                "howto.step2.description": "ಅನನ್ಯ ಗುರುತಿಸುವಿಕೆಗಳನ್ನು ತಕ್ಷಣವೇ ರಚಿಸಲು \"UUIDಗಳನ್ನು ರಚಿಸಿ\" ಬಟನ್ ಅನ್ನು ಕ್ಲಿಕ್ ಮಾಡಿ. ಪ್ರತ್ಯೇಕ UUIDಗಳನ್ನು ನಕಲಿಸಲು ಆಯ್ಕೆಗಳೊಂದಿಗೆ ಅವು ಪ್ರದರ್ಶನ ಪ್ರದೇಶದಲ್ಲಿ ಕಾಣಿಸಿಕೊಳ್ಳುವುದನ್ನು ವೀಕ್ಷಿಸಿ.",
+                "howto.step3.title": "ನಕಲಿಸಿ ಅಥವಾ ಡೌನ್ಲೋಡ್ ಮಾಡಿ",
+                "howto.step3.description": "ಪ್ರತ್ಯೇಕ UUIDಗಳನ್ನು ಕ್ಲಿಪ್ಬೋರ್ಡ್ಗೆ ನಕಲಿಸಿ ಅಥವಾ ನಿಮ್ಮ ಆದ್ಯತೆಯ ಸ್ವರೂಪದಲ್ಲಿ (TXT, JSON, CSV) ಸಂಪೂರ್ಣ ಪಟ್ಟಿಯನ್ನು ಡೌನ್ಲೋಡ್ ಮಾಡಿ. ಎಲ್ಲಾ ಪ್ರಕ್ರಿಯೆ ನಿಮ್ಮ ಬ್ರೌಸರ್ನಲ್ಲಿ ಸ್ಥಳೀಯವಾಗಿ ನಡೆಯುತ್ತದೆ.",
+                "howto.step4.title": "ಇತಿಹಾಸವನ್ನು ನಿರ್ವಹಿಸಿ",
+                "howto.step4.description": "ನಿಮ್ಮ UUID ಜನರೇಷನ್ ಇತಿಹಾಸವನ್ನು ವೀಕ್ಷಿಸಿ, ಹಿಂದಿನ UUIDಗಳನ್ನು ನಕಲಿಸಿ ಅಥವಾ ಇತಿಹಾಸವನ್ನು ತೆರವುಗೊಳಿಸಿ. ನಿಮ್ಮ ಡೇಟಾ ನಿಮ್ಮ ಬ್ರೌಸರ್ನಲ್ಲಿ ಉಳಿಯುತ್ತದೆ ಮತ್ತು ನಿಮ್ಮ ಸಾಧನವನ್ನು ಎಂದಿಗೂ ಬಿಡುವುದಿಲ್ಲ.",
+                "tool.title": "UUID ಜನರೇಟರ್",
+                "tool.options.title": "ಜನರೇಷನ್ ಆಯ್ಕೆಗಳು",
+                "tool.options.version": "UUID ಆವೃತ್ತಿ:",
+                "tool.options.v4": "v4 (ಯಾದೃಚ್ಛಿಕ)",
+                "tool.options.v1": "v1 (ಟೈಮ್ಸ್ಟಾಂಪ್)",
+                "tool.options.v5": "v5 (ನೇಮ್ಸ್ಪೇಸ್)",
+                "tool.options.count": "UUIDಗಳ ಸಂಖ್ಯೆ:",
+                "tool.options.format": "ಔಟ್ಪುಟ್ ಸ್ವರೂಪ:",
+                "tool.options.plain": "ಸರಳ ಪಠ್ಯ",
+                "tool.options.json": "JSON ಶ್ರೇಣಿ",
+                "tool.options.csv": "CSV",
+                "tool.options.case": "ಕೇಸ್:",
+                "tool.options.uppercase": "ಅಪ್ಪರ್ ಕೇಸ್",
+                "tool.options.namespace": "ನೇಮ್ಸ್ಪೇಸ್ UUID:",
+                "tool.options.namespaceHelp": "v5 UUIDಗಳಿಗೆ ನೇಮ್ಸ್ಪೇಸ್ ಆಗಿ ಬಳಸಲು ಮಾನ್ಯ UUID ಅನ್ನು ಒದಗಿಸಿ",
+                "tool.display.title": "ರಚಿಸಲಾದ UUIDಗಳು",
+                "tool.display.placeholder": "ನಿಮ್ಮ UUIDಗಳು ಇಲ್ಲಿ ಕಾಣಿಸಿಕೊಳ್ಳುತ್ತವೆ...",
+                "tool.buttons.generate": "UUIDಗಳನ್ನು ರಚಿಸಿ",
+                "tool.buttons.copyAll": "ಎಲ್ಲವನ್ನೂ ನಕಲಿಸಿ",
+                "tool.buttons.download": "ಡೌನ್ಲೋಡ್",
+                "tool.buttons.clear": "ಎಲ್ಲವನ್ನೂ ತೆರವುಗೊಳಿಸಿ",
+                "tool.history.title": "ಜನರೇಷನ್ ಇತಿಹಾಸ",
+                "tool.history.clear": "ಇತಿಹಾಸವನ್ನು ತೆರವುಗೊಳಿಸಿ",
+                "footer.follow": "ನಮ್ಮನ್ನು ಅನುಸರಿಸಿ",
+                "footer.categories": "ಜನಪ್ರಿಯ ವರ್ಗಗಳು",
+                "footer.categories.pdf": "PDF ಉಪಕರಣಗಳು",
+                "footer.categories.image": "ಚಿತ್ರ ಉಪಕರಣಗಳು",
+                "footer.categories.text": "ಪಠ್ಯ ಉಪಕರಣಗಳು",
+                "footer.categories.av": "ಆಡಿಯೋ/ವೀಡಿಯೊ ಉಪಕರಣಗಳು",
+                "footer.categories.web": "ವೆಬ್ ಡೆವಲಪರ್ ಉಪಕರಣಗಳು",
+                "footer.categories.calc": "ಕ್ಯಾಲ್ಕುಲೇಟರ್ ಉಪಕರಣಗಳು",
+                "footer.categories.util": "ಯುಟಿಲಿಟಿ ಉಪಕರಣಗಳು",
+                "footer.categories.color": "ಬಣ್ಣ ಉಪಕರಣಗಳು",
+                "footer.quicklinks": "ತ್ವರಿತ ಲಿಂಕ್ಗಳು",
+                "footer.links.tools": "ಎಲ್ಲಾ ಉಪಕರಣಗಳು",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "ಸಂಪರ್ಕಿಸಿ",
+                "footer.links.privacy": "ಗೌಪ್ಯತಾ ನೀತಿ",
+                "footer.links.disclaimer": "ಡಿಸ್ಕ್ಲೈಮರ್",
+                "footer.links.terms": "ಸೇವಾ ನಿಯಮಗಳು",
+                "footer.copyright": "© 2025 LollyPoPDF. ಎಲ್ಲಾ ಹಕ್ಕುಗಳು ಕಾಯ್ದಿರಿಸಿದೆ."
+            },
+            ta: {
+                "nav.home": "முகப்பு",
+                "nav.about": "எங்களைப் பற்றி",
+                "nav.tools": "கருவிகள்",
+                "nav.contact": "தொடர்பு கொள்ள",
+                "hero.title": "UUID ஜெனரேட்டர் கருவி",
+                "hero.description": "எங்கள் இலவச UUID ஜெனரேட்டருடன் உடனடியாக தனித்துவமான அடையாளங்காட்டிகளை உருவாக்கவும். பல்வேறு வடிவங்களில் UUIDகளை உருவாக்கி, அவற்றை கிளிப்போர்டுக்கு நகலெடுக்கவும், உங்கள் திட்டங்களுக்கான பட்டியல்களை பதிவிறக்கவும். முழுமையான தனியுரிமைக்காக அனைத்து செயலாக்கமும் உங்கள் உலாவியில் உள்ளூரில் நடைபெறுகிறது.",
+                "howto.title": "UUID ஜெனரேட்டரை எவ்வாறு பயன்படுத்துவது",
+                "howto.step1.title": "விருப்பங்களை கட்டமைக்கவும்",
+                "howto.step1.description": "UUID பதிப்பு, உருவாக்க வேண்டிய UUIDகளின் எண்ணிக்கை, வடிவம் மற்றும் பிற விருப்பங்களைத் தேர்ந்தெடுக்கவும். இந்த கருவி UUID v1, v4 மற்றும் v5 (சிமுலேட்டட்) ஆகியவற்றை ஆதரிக்கிறது.",
+                "howto.step2.title": "UUIDகளை உருவாக்கவும்",
+                "howto.step2.description": "தனித்துவமான அடையாளங்காட்டிகளை உடனடியாக உருவாக்க \"UUIDகளை உருவாக்கவும்\" பொத்தானைக் கிளிக் செய்யவும். தனிப்பட்ட UUIDகளை நகலெடுக்கும் விருப்பங்களுடன் அவை காட்சிப் பகுதியில் தோன்றுவதைக் கவனிக்கவும்.",
+                "howto.step3.title": "நகலெடுக்கவும் அல்லது பதிவிறக்கவும்",
+                "howto.step3.description": "தனிப்பட்ட UUIDகளை கிளிப்போர்டுக்கு நகலெடுக்கவும் அல்லது உங்களுக்கு விருப்பமான வடிவத்தில் (TXT, JSON, CSV) முழு பட்டியலையும் பதிவிறக்கவும். அனைத்து செயலாக்கமும் உங்கள் உலாவியில் உள்ளூரில் நடைபெறுகிறது.",
+                "howto.step4.title": "வரலாற்றை நிர்வகிக்கவும்",
+                "howto.step4.description": "உங்கள் UUID உருவாக்க வரலாற்றைக் காண்க, முந்தைய UUIDகளை நகலெடுக்கவும் அல்லது வரலாற்றை அழிக்கவும். உங்கள் தரவு உங்கள் உலாவியில் இருக்கும் மற்றும் உங்கள் சாதனத்தை விட்டு வெளியேறாது.",
+                "tool.title": "UUID ஜெனரேட்டர்",
+                "tool.options.title": "உருவாக்கும் விருப்பங்கள்",
+                "tool.options.version": "UUID பதிப்பு:",
+                "tool.options.v4": "v4 (சீரற்ற)",
+                "tool.options.v1": "v1 (நேர முத்திரை)",
+                "tool.options.v5": "v5 (பெயர்வெளி)",
+                "tool.options.count": "UUIDகளின் எண்ணிக்கை:",
+                "tool.options.format": "வெளியீட்டு வடிவம்:",
+                "tool.options.plain": "எளிய உரை",
+                "tool.options.json": "JSON வரிசை",
+                "tool.options.csv": "CSV",
+                "tool.options.case": "வழக்கு:",
+                "tool.options.uppercase": "பெரிய எழுத்து",
+                "tool.options.namespace": "பெயர்வெளி UUID:",
+                "tool.options.namespaceHelp": "v5 UUIDகளுக்கு பெயர்வெளியாகப் பயன்படுத்த சரியான UUID ஒன்றை வழங்கவும்",
+                "tool.display.title": "உருவாக்கப்பட்ட UUIDகள்",
+                "tool.display.placeholder": "உங்கள் UUIDகள் இங்கே தோன்றும்...",
+                "tool.buttons.generate": "UUIDகளை உருவாக்கவும்",
+                "tool.buttons.copyAll": "அனைத்தையும் நகலெடுக்கவும்",
+                "tool.buttons.download": "பதிவிறக்கம்",
+                "tool.buttons.clear": "அனைத்தையும் அழிக்கவும்",
+                "tool.history.title": "உருவாக்கும் வரலாறு",
+                "tool.history.clear": "வரலாற்றை அழிக்கவும்",
+                "footer.follow": "எங்களைப் பின்தொடரவும்",
+                "footer.categories": "பிரபலமான வகைகள்",
+                "footer.categories.pdf": "PDF கருவிகள்",
+                "footer.categories.image": "பட கருவிகள்",
+                "footer.categories.text": "உரை கருவிகள்",
+                "footer.categories.av": "ஆடியோ/வீடியோ கருவிகள்",
+                "footer.categories.web": "வெப்டெவலப்பர் கருவிகள்",
+                "footer.categories.calc": "கால்குலேட்டர் கருவிகள்",
+                "footer.categories.util": "பயன்பாட்டு கருவிகள்",
+                "footer.categories.color": "வண்ண கருவிகள்",
+                "footer.quicklinks": "விரைவு இணைப்புகள்",
+                "footer.links.tools": "அனைத்து கருவிகள்",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "தொடர்பு கொள்ள",
+                "footer.links.privacy": "தனியுரிமைக் கொள்கை",
+                "footer.links.disclaimer": "பொறுப்புத் துறப்பு",
+                "footer.links.terms": "சேவை விதிமுறைகள்",
+                "footer.copyright": "© 2025 LollyPoPDF. அனைத்து உரிமைகளும் பாதுகாக்கப்பட்டவை."
+            },
+            ml: {
+                "nav.home": "ഹോം",
+                "nav.about": "ഞങ്ങളെക്കുറിച്ച്",
+                "nav.tools": "ടൂളുകൾ",
+                "nav.contact": "ബന്ധപ്പെടുക",
+                "hero.title": "UUID ജനറേറ്റർ ടൂൾ",
+                "hero.description": "ഞങ്ങളുടെ സൗജന്യ UUID ജനറേറ്റർ ഉപയോഗിച്ച് തൽക്ഷണം അദ്വിതീയ ഐഡന്റിഫയറുകൾ സൃഷ്ടിക്കുക. വിവിധ ഫോർമാറ്റുകളിൽ UUIDകൾ സൃഷ്ടിക്കുക, അവ ക്ലിപ്പ്ബോർഡിലേക്ക് കോപ്പി ചെയ്യുക, നിങ്ങളുടെ പ്രോജക്റ്റുകൾക്കായി ലിസ്റ്റുകൾ ഡൗൺലോഡ് ചെയ്യുക. പൂർണ്ണ സ്വകാര്യതയ്ക്കായി എല്ലാ പ്രോസസ്സിംഗും നിങ്ങളുടെ ബ്രൗസറിൽ പ്രാദേശികമായി നടക്കുന്നു.",
+                "howto.title": "UUID ജനറേറ്റർ എങ്ങനെ ഉപയോഗിക്കാം",
+                "howto.step1.title": "ഓപ്ഷനുകൾ കോൺഫിഗർ ചെയ്യുക",
+                "howto.step1.description": "UUID വേർഷൻ, ജനറേറ്റ് ചെയ്യേണ്ട UUIDകളുടെ എണ്ണം, ഫോർമാറ്റ്, മറ്റ് ഓപ്ഷനുകൾ തിരഞ്ഞെടുക്കുക. ഈ ടൂൾ UUID v1, v4, v5 (സിമുലേറ്റഡ്) എന്നിവ പിന്തുണക്കുന്നു.",
+                "howto.step2.title": "UUIDകൾ ജനറേറ്റ് ചെയ്യുക",
+                "howto.step2.description": "അദ്വിതീയ ഐഡന്റിഫയറുകൾ തൽക്ഷണം സൃഷ്ടിക്കാൻ \"UUIDകൾ ജനറേറ്റ് ചെയ്യുക\" ബട്ടൺ ക്ലിക്ക് ചെയ്യുക. വ്യക്തിഗത UUIDകൾ കോപ്പി ചെയ്യാനുള്ള ഓപ്ഷനുകളോടെ അവ ഡിസ്പ്ലേ ഏരിയയിൽ പ്രത്യക്ഷപ്പെടുന്നത് നിരീക്ഷിക്കുക.",
+                "howto.step3.title": "കോപ്പി ചെയ്യുക അല്ലെങ്കിൽ ഡൗൺലോഡ് ചെയ്യുക",
+                "howto.step3.description": "വ്യക്തിഗത UUIDകൾ ക്ലിപ്പ്ബോർഡിലേക്ക് കോപ്പി ചെയ്യുക അല്ലെങ്കിൽ നിങ്ങൾ തിരഞ്ഞെടുത്ത ഫോർമാറ്റിൽ (TXT, JSON, CSV) മുഴുവൻ ലിസ്റ്റും ഡൗൺലോഡ് ചെയ്യുക. എല്ലാ പ്രോസസ്സിംഗും നിങ്ങളുടെ ബ്രൗസറിൽ പ്രാദേശികമായി നടക്കുന്നു.",
+                "howto.step4.title": "ഹിസ്റ്ററി മാനേജ് ചെയ്യുക",
+                "howto.step4.description": "നിങ്ങളുടെ UUID ജനറേഷൻ ഹിസ്റ്ററി കാണുക, മുമ്പത്തെ UUIDകൾ കോപ്പി ചെയ്യുക അല്ലെങ്കിൽ ഹിസ്റ്ററി ക്ലിയർ ചെയ്യുക. നിങ്ങളുടെ ഡാറ്റ നിങ്ങളുടെ ബ്രൗസറിൽ തുടരുകയും നിങ്ങളുടെ ഉപകരണം ഒരിക്കലും വിട്ടുപോകുകയും ചെയ്യുന്നില്ല.",
+                "tool.title": "UUID ജനറേറ്റർ",
+                "tool.options.title": "ജനറേഷൻ ഓപ്ഷനുകൾ",
+                "tool.options.version": "UUID വേർഷൻ:",
+                "tool.options.v4": "v4 (റാൻഡം)",
+                "tool.options.v1": "v1 (ടൈംസ്റ്റാമ്പ്)",
+                "tool.options.v5": "v5 (നെയിംസ്പേസ്)",
+                "tool.options.count": "UUIDകളുടെ എണ്ണം:",
+                "tool.options.format": "ഔട്ട്പുട്ട് ഫോർമാറ്റ്:",
+                "tool.options.plain": "പ്ലെയിൻ ടെക്സ്റ്റ്",
+                "tool.options.json": "JSON അറേ",
+                "tool.options.csv": "CSV",
+                "tool.options.case": "കേസ്:",
+                "tool.options.uppercase": "അപ്പർകേസ്",
+                "tool.options.namespace": "നെയിംസ്പേസ് UUID:",
+                "tool.options.namespaceHelp": "v5 UUIDകൾക്ക് നെയിംസ്പേസ് ആയി ഉപയോഗിക്കാൻ ഒരു സാധുവായ UUID നൽകുക",
+                "tool.display.title": "ജനറേറ്റ് ചെയ്ത UUIDകൾ",
+                "tool.display.placeholder": "നിങ്ങളുടെ UUIDകൾ ഇവിടെ കാണാം...",
+                "tool.buttons.generate": "UUIDകൾ ജനറേറ്റ് ചെയ്യുക",
+                "tool.buttons.copyAll": "എല്ലാം കോപ്പി ചെയ്യുക",
+                "tool.buttons.download": "ഡൗൺലോഡ്",
+                "tool.buttons.clear": "എല്ലാം ക്ലിയർ ചെയ്യുക",
+                "tool.history.title": "ജനറേഷൻ ഹിസ്റ്ററി",
+                "tool.history.clear": "ഹിസ്റ്ററി ക്ലിയർ ചെയ്യുക",
+                "footer.follow": "ഞങ്ങളെ പിന്തുടരുക",
+                "footer.categories": "ജനപ്രിയ വിഭാഗങ്ങൾ",
+                "footer.categories.pdf": "PDF ടൂളുകൾ",
+                "footer.categories.image": "ഇമേജ് ടൂളുകൾ",
+                "footer.categories.text": "ടെക്സ്റ്റ് ടൂളുകൾ",
+                "footer.categories.av": "ഓഡിയോ/വീഡിയോ ടൂളുകൾ",
+                "footer.categories.web": "വെബ്ഡെവലപ്പർ ടൂളുകൾ",
+                "footer.categories.calc": "കാൽക്കുലേറ്റർ ടൂളുകൾ",
+                "footer.categories.util": "യൂട്ടിലിറ്റി ടൂളുകൾ",
+                "footer.categories.color": "കളർ ടൂളുകൾ",
+                "footer.quicklinks": "ദ്രുത ലിങ്കുകൾ",
+                "footer.links.tools": "എല്ലാ ടൂളുകളും",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "ബന്ധപ്പെടുക",
+                "footer.links.privacy": "സ്വകാര്യതാ നയം",
+                "footer.links.disclaimer": "ഡിസ്ക്ലെയിമർ",
+                "footer.links.terms": "സേവന നിബന്ധനകൾ",
+                "footer.copyright": "© 2025 LollyPoPDF. എല്ലാ അവകാശങ്ങളും നിക്ഷിപ്തം."
+            },
+            id: {
+                "nav.home": "Beranda",
+                "nav.about": "Tentang Kami",
+                "nav.tools": "Alat",
+                "nav.contact": "Kontak",
+                "hero.title": "Alat Pembuat UUID",
+                "hero.description": "Hasilkan pengidentifikasi unik secara instan dengan pembuat UUID gratis kami. Buat UUID dalam berbagai format, salin ke papan klip, dan unduh daftar untuk proyek Anda. Semua pemrosesan terjadi secara lokal di browser Anda untuk privasi lengkap.",
+                "howto.title": "Cara Menggunakan Pembuat UUID",
+                "howto.step1.title": "Konfigurasi Opsi",
+                "howto.step1.description": "Pilih versi UUID, jumlah UUID yang akan dibuat, format, dan opsi lainnya. Alat ini mendukung UUID v1, v4, dan v5 (simulasi).",
+                "howto.step2.title": "Buat UUID",
+                "howto.step2.description": "Klik tombol \"Buat UUID\" untuk membuat pengidentifikasi unik secara instan. Perhatikan saat mereka muncul di area tampilan dengan opsi untuk menyalin UUID individual.",
+                "howto.step3.title": "Salin atau Unduh",
+                "howto.step3.description": "Salin UUID individual ke papan klip atau unduh seluruh daftar dalam format pilihan Anda (TXT, JSON, CSV). Semua pemrosesan terjadi secara lokal di browser Anda.",
+                "howto.step4.title": "Kelola Riwayat",
+                "howto.step4.description": "Lihat riwayat pembuatan UUID Anda, salin UUID sebelumnya, atau hapus riwayat. Data Anda tetap di browser Anda dan tidak pernah meninggalkan perangkat Anda.",
+                "tool.title": "Pembuat UUID",
+                "tool.options.title": "Opsi Pembuatan",
+                "tool.options.version": "Versi UUID:",
+                "tool.options.v4": "v4 (Acak)",
+                "tool.options.v1": "v1 (Stempel Waktu)",
+                "tool.options.v5": "v5 (Namespace)",
+                "tool.options.count": "Jumlah UUID:",
+                "tool.options.format": "Format Keluaran:",
+                "tool.options.plain": "Teks Biasa",
+                "tool.options.json": "Array JSON",
+                "tool.options.csv": "CSV",
+                "tool.options.case": "Huruf:",
+                "tool.options.uppercase": "Huruf Besar",
+                "tool.options.namespace": "UUID Namespace:",
+                "tool.options.namespaceHelp": "Berikan UUID yang valid untuk digunakan sebagai namespace untuk UUID v5",
+                "tool.display.title": "UUID yang Dihasilkan",
+                "tool.display.placeholder": "UUID Anda akan muncul di sini...",
+                "tool.buttons.generate": "Buat UUID",
+                "tool.buttons.copyAll": "Salin Semua",
+                "tool.buttons.download": "Unduh",
+                "tool.buttons.clear": "Hapus Semua",
+                "tool.history.title": "Riwayat Pembuatan",
+                "tool.history.clear": "Hapus Riwayat",
+                "footer.follow": "IKUTI KAMI",
+                "footer.categories": "Kategori Populer",
+                "footer.categories.pdf": "Alat PDF",
+                "footer.categories.image": "Alat Gambar",
+                "footer.categories.text": "Alat Teks",
+                "footer.categories.av": "Alat Audio/Video",
+                "footer.categories.web": "Alat WebDeveloper",
+                "footer.categories.calc": "Alat Kalkulator",
+                "footer.categories.util": "Alat Utilitas",
+                "footer.categories.color": "Alat Warna",
+                "footer.quicklinks": "Tautan Cepat",
+                "footer.links.tools": "Semua Alat",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Kontak",
+                "footer.links.privacy": "Kebijakan Privasi",
+                "footer.links.disclaimer": "Penafian",
+                "footer.links.terms": "Syarat Layanan",
+                "footer.copyright": "© 2025 LollyPoPDF. Hak cipta dilindungi."
+            },
+            ms: {
+                "nav.home": "Laman Utama",
+                "nav.about": "Tentang Kami",
+                "nav.tools": "Alat",
+                "nav.contact": "Hubungi",
+                "hero.title": "Alat Penjana UUID",
+                "hero.description": "Hasilkan pengenal unik serta-merta dengan penjana UUID percuma kami. Buat UUID dalam pelbagai format, salin ke papan keratan dan muat turun senarai untuk projek anda. Semua pemprosesan berlaku secara tempatan dalam pelayar anda untuk privasi lengkap.",
+                "howto.title": "Cara Menggunakan Penjana UUID",
+                "howto.step1.title": "Konfigurasi Pilihan",
+                "howto.step1.description": "Pilih versi UUID, bilangan UUID untuk dijana, format dan pilihan lain. Alat ini menyokong UUID v1, v4 dan v5 (simulasi).",
+                "howto.step2.title": "Jana UUID",
+                "howto.step2.description": "Klik butang \"Jana UUID\" untuk mencipta pengenal unik serta-merta. Perhatikan apabila ia muncul di kawasan paparan dengan pilihan untuk menyalin UUID individu.",
+                "howto.step3.title": "Salin atau Muat Turun",
+                "howto.step3.description": "Salin UUID individu ke papan keratan atau muat turun keseluruhan senarai dalam format pilihan anda (TXT, JSON, CSV). Semua pemprosesan berlaku secara tempatan dalam pelayar anda.",
+                "howto.step4.title": "Urus Sejarah",
+                "howto.step4.description": "Lihat sejarah penjanaan UUID anda, salin UUID sebelumnya atau kosongkan sejarah. Data anda kekal dalam pelayar anda dan tidak pernah meninggalkan peranti anda.",
+                "tool.title": "Penjana UUID",
+                "tool.options.title": "Pilihan Penjanaan",
+                "tool.options.version": "Versi UUID:",
+                "tool.options.v4": "v4 (Rawak)",
+                "tool.options.v1": "v1 (Cap Masa)",
+                "tool.options.v5": "v5 (Ruang Nama)",
+                "tool.options.count": "Bilangan UUID:",
+                "tool.options.format": "Format Output:",
+                "tool.options.plain": "Teks Biasa",
+                "tool.options.json": "Tatasusunan JSON",
+                "tool.options.csv": "CSV",
+                "tool.options.case": "Kes:",
+                "tool.options.uppercase": "Huruf Besar",
+                "tool.options.namespace": "UUID Ruang Nama:",
+                "tool.options.namespaceHelp": "Sediakan UUID yang sah untuk digunakan sebagai ruang nama untuk UUID v5",
+                "tool.display.title": "UUID Dijana",
+                "tool.display.placeholder": "UUID anda akan muncul di sini...",
+                "tool.buttons.generate": "Jana UUID",
+                "tool.buttons.copyAll": "Salin Semua",
+                "tool.buttons.download": "Muat Turun",
+                "tool.buttons.clear": "Kosongkan Semua",
+                "tool.history.title": "Sejarah Penjanaan",
+                "tool.history.clear": "Kosongkan Sejarah",
+                "footer.follow": "IKUTI KAMI",
+                "footer.categories": "Kategori Popular",
+                "footer.categories.pdf": "Alat PDF",
+                "footer.categories.image": "Alat Imej",
+                "footer.categories.text": "Alat Teks",
+                "footer.categories.av": "Alat Audio/Video",
+                "footer.categories.web": "Alat WebPembangun",
+                "footer.categories.calc": "Alat Kalkulator",
+                "footer.categories.util": "Alat Utiliti",
+                "footer.categories.color": "Alat Warna",
+                "footer.quicklinks": "Pautan Pantas",
+                "footer.links.tools": "Semua Alat",
+                "footer.links.faq": "Soalan Lazim",
+                "footer.links.contact": "Hubungi",
+                "footer.links.privacy": "Dasar Privasi",
+                "footer.links.disclaimer": "Penafian",
+                "footer.links.terms": "Syarat Perkhidmatan",
+                "footer.copyright": "© 2025 LollyPoPDF. Hak cipta terpelihara."
+            },
+            pl: {
+                "nav.home": "Strona główna",
+                "nav.about": "O nas",
+                "nav.tools": "Narzędzia",
+                "nav.contact": "Kontakt",
+                "hero.title": "Generator UUID",
+                "hero.description": "Generuj unikalne identyfikatory natychmiast z naszym darmowym generatorem UUID. Twórz UUID w różnych formatach, kopiuj je do schowka i pobieraj listy dla swoich projektów. Wszystkie przetwarzanie odbywa się lokalnie w Twojej przeglądarce dla pełnej prywatności.",
+                "howto.title": "Jak używać generatora UUID",
+                "howto.step1.title": "Konfiguracja opcji",
+                "howto.step1.description": "Wybierz wersję UUID, liczbę UUID do wygenerowania, format i inne opcje. Narzędzie obsługuje UUID v1, v4 i v5 (symulowane).",
+                "howto.step2.title": "Generuj UUID",
+                "howto.step2.description": "Kliknij przycisk \"Generuj UUID\", aby natychmiast utworzyć unikalne identyfikatory. Obserwuj, jak pojawiają się w obszarze wyświetlania z opcjami kopiowania pojedynczych UUID.",
+                "howto.step3.title": "Kopiuj lub pobierz",
+                "howto.step3.description": "Kopiuj pojedyncze UUID do schowka lub pobierz całą listę w preferowanym formacie (TXT, JSON, CSV). Wszystkie przetwarzanie odbywa się lokalnie w Twojej przeglądarce.",
+                "howto.step4.title": "Zarządzaj historią",
+                "howto.step4.description": "Przeglądaj historię generowania UUID, kopiuj poprzednie UUID lub wyczyść historię. Twoje dane pozostają w Twojej przeglądarce i nigdy nie opuszczają Twojego urządzenia.",
+                "tool.title": "Generator UUID",
+                "tool.options.title": "Opcje generowania",
+                "tool.options.version": "Wersja UUID:",
+                "tool.options.v4": "v4 (Losowy)",
+                "tool.options.v1": "v1 (Znacznik czasu)",
+                "tool.options.v5": "v5 (Przestrzeń nazw)",
+                "tool.options.count": "Liczba UUID:",
+                "tool.options.format": "Format wyjścia:",
+                "tool.options.plain": "Zwykły tekst",
+                "tool.options.json": "Tablica JSON",
+                "tool.options.csv": "CSV",
+                "tool.options.case": "Wielkość liter:",
+                "tool.options.uppercase": "Wielkie litery",
+                "tool.options.namespace": "UUID przestrzeni nazw:",
+                "tool.options.namespaceHelp": "Podaj prawidłowy UUID do użycia jako przestrzeń nazw dla UUID v5",
+                "tool.display.title": "Wygenerowane UUID",
+                "tool.display.placeholder": "Twoje UUID pojawią się tutaj...",
+                "tool.buttons.generate": "Generuj UUID",
+                "tool.buttons.copyAll": "Kopiuj wszystko",
+                "tool.buttons.download": "Pobierz",
+                "tool.buttons.clear": "Wyczyść wszystko",
+                "tool.history.title": "Historia generowania",
+                "tool.history.clear": "Wyczyść historię",
+                "footer.follow": "OBSERWUJ NAS",
+                "footer.categories": "Popularne kategorie",
+                "footer.categories.pdf": "Narzędzia PDF",
+                "footer.categories.image": "Narzędzia obrazów",
+                "footer.categories.text": "Narzędzia tekstowe",
+                "footer.categories.av": "Narzędzia audio/wideo",
+                "footer.categories.web": "Narzędzia webdevelopera",
+                "footer.categories.calc": "Narzędzia kalkulatora",
+                "footer.categories.util": "Narzędzia użytkowe",
+                "footer.categories.color": "Narzędzia kolorów",
+                "footer.quicklinks": "Szybkie linki",
+                "footer.links.tools": "Wszystkie narzędzia",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Kontakt",
+                "footer.links.privacy": "Polityka prywatności",
+                "footer.links.disclaimer": "Zastrzeżenie",
+                "footer.links.terms": "Warunki usługi",
+                "footer.copyright": "© 2025 LollyPoPDF. Wszelkie prawa zastrzeżone."
+            },
+            th: {
+                "nav.home": "หน้าแรก",
+                "nav.about": "เกี่ยวกับเรา",
+                "nav.tools": "เครื่องมือ",
+                "nav.contact": "ติดต่อ",
+                "hero.title": "เครื่องมือสร้าง UUID",
+                "hero.description": "สร้างตัวระบุเฉพาะทันทีด้วยเครื่องมือสร้าง UUID ฟรีของเรา สร้าง UUID ในรูปแบบต่างๆ คัดลอกไปยังคลิปบอร์ด และดาวน์โหลดรายการสำหรับโครงการของคุณ การประมวลผลทั้งหมดเกิดขึ้นในเบราว์เซอร์ของคุณสำหรับความเป็นส่วนตัวแบบเต็มรูปแบบ",
+                "howto.title": "วิธีใช้เครื่องมือสร้าง UUID",
+                "howto.step1.title": "กำหนดค่าตัวเลือก",
+                "howto.step1.description": "เลือกรุ่น UUID จำนวน UUID ที่จะสร้าง รูปแบบ และตัวเลือกอื่นๆ เครื่องมือนี้รองรับ UUID v1, v4 และ v5 (จำลอง)",
+                "howto.step2.title": "สร้าง UUID",
+                "howto.step2.description": "คลิกปุ่ม \"สร้าง UUID\" เพื่อสร้างตัวระบุเฉพาะทันที ดูขณะที่พวกเขาปรากฏในพื้นที่แสดงผลด้วยตัวเลือกในการคัดลอก UUID แต่ละรายการ",
+                "howto.step3.title": "คัดลอกหรือดาวน์โหลด",
+                "howto.step3.description": "คัดลอก UUID แต่ละรายการไปยังคลิปบอร์ดหรือดาวน์โหลดรายการทั้งหมดในรูปแบบที่คุณต้องการ (TXT, JSON, CSV) การประมวลผลทั้งหมดเกิดขึ้นในเบราว์เซอร์ของคุณ",
+                "howto.step4.title": "จัดการประวัติ",
+                "howto.step4.description": "ดูประวัติการสร้าง UUID ของคุณ คัดลอก UUID ก่อนหน้าหรือล้างประวัติ ข้อมูลของคุณยังคงอยู่ในเบราว์เซอร์ของคุณและไม่เคยออกจากอุปกรณ์ของคุณ",
+                "tool.title": "เครื่องมือสร้าง UUID",
+                "tool.options.title": "ตัวเลือกการสร้าง",
+                "tool.options.version": "รุ่น UUID:",
+                "tool.options.v4": "v4 (สุ่ม)",
+                "tool.options.v1": "v1 (ประทับเวลา)",
+                "tool.options.v5": "v5 (เนมสเปซ)",
+                "tool.options.count": "จำนวน UUID:",
+                "tool.options.format": "รูปแบบผลลัพธ์:",
+                "tool.options.plain": "ข้อความธรรมดา",
+                "tool.options.json": "อาร์เรย์ JSON",
+                "tool.options.csv": "CSV",
+                "tool.options.case": "ตัวพิมพ์:",
+                "tool.options.uppercase": "ตัวพิมพ์ใหญ่",
+                "tool.options.namespace": "UUID เนมสเปซ:",
+                "tool.options.namespaceHelp": "ระบุ UUID ที่ถูกต้องเพื่อใช้เป็นเนมสเปซสำหรับ UUID v5",
+                "tool.display.title": "UUID ที่สร้างแล้ว",
+                "tool.display.placeholder": "UUID ของคุณจะปรากฏที่นี่...",
+                "tool.buttons.generate": "สร้าง UUID",
+                "tool.buttons.copyAll": "คัดลอกทั้งหมด",
+                "tool.buttons.download": "ดาวน์โหลด",
+                "tool.buttons.clear": "ล้างทั้งหมด",
+                "tool.history.title": "ประวัติการสร้าง",
+                "tool.history.clear": "ล้างประวัติ",
+                "footer.follow": "ติดตามเรา",
+                "footer.categories": "หมวดหมู่ยอดนิยม",
+                "footer.categories.pdf": "เครื่องมือ PDF",
+                "footer.categories.image": "เครื่องมือรูปภาพ",
+                "footer.categories.text": "เครื่องมือข้อความ",
+                "footer.categories.av": "เครื่องมือเสียง/วิดีโอ",
+                "footer.categories.web": "เครื่องมือนักพัฒนาเว็บ",
+                "footer.categories.calc": "เครื่องมือเครื่องคิดเลข",
+                "footer.categories.util": "เครื่องมืออรรถประโยชน์",
+                "footer.categories.color": "เครื่องมือสี",
+                "footer.quicklinks": "ลิงก์ด่วน",
+                "footer.links.tools": "เครื่องมือทั้งหมด",
+                "footer.links.faq": "คำถามที่พบบ่อย",
+                "footer.links.contact": "ติดต่อ",
+                "footer.links.privacy": "นโยบายความเป็นส่วนตัว",
+                "footer.links.disclaimer": "ข้อจำกัดความรับผิดชอบ",
+                "footer.links.terms": "ข้อกำหนดการให้บริการ",
+                "footer.copyright": "© 2025 LollyPoPDF. สงวนลิขสิทธิ์."
+            },
+            tr: {
+                "nav.home": "Ana Sayfa",
+                "nav.about": "Hakkımızda",
+                "nav.tools": "Araçlar",
+                "nav.contact": "İletişim",
+                "hero.title": "UUID Oluşturucu Aracı",
+                "hero.description": "Ücretsiz UUID oluşturucumuzla anında benzersiz tanımlayıcılar oluşturun. Çeşitli formatlarda UUID'ler oluşturun, panoya kopyalayın ve projeleriniz için listeler indirin. Tüm işlemler tam gizlilik için tarayıcınızda yerel olarak gerçekleşir.",
+                "howto.title": "UUID Oluşturucu Nasıl Kullanılır",
+                "howto.step1.title": "Seçenekleri Yapılandır",
+                "howto.step1.description": "UUID sürümü, oluşturulacak UUID sayısı, format ve diğer seçenekleri seçin. Araç UUID v1, v4 ve v5'u (simüle edilmiş) destekler.",
+                "howto.step2.title": "UUID'leri Oluştur",
+                "howto.step2.description": "Benzersiz tanımlayıcıları anında oluşturmak için \"UUID'leri Oluştur\" düğmesine tıklayın. Görüntüleme alanında bireysel UUID'leri kopyalama seçenekleriyle göründüklerini izleyin.",
+                "howto.step3.title": "Kopyala veya İndir",
+                "howto.step3.description": "Bireysel UUID'leri panoya kopyalayın veya tercih ettiğiniz formatta (TXT, JSON, CSV) tüm listeyi indirin. Tüm işlemler tarayıcınızda yerel olarak gerçekleşir.",
+                "howto.step4.title": "Geçmişi Yönet",
+                "howto.step4.description": "UUID oluşturma geçmişinizi görüntüleyin, önceki UUID'leri kopyalayın veya geçmişi temizleyin. Verileriniz tarayıcınızda kalır ve cihazınızdan asla ayrılmaz.",
+                "tool.title": "UUID Oluşturucu",
+                "tool.options.title": "Oluşturma Seçenekleri",
+                "tool.options.version": "UUID Sürümü:",
+                "tool.options.v4": "v4 (Rastgele)",
+                "tool.options.v1": "v1 (Zaman Damgası)",
+                "tool.options.v5": "v5 (İsim Alanı)",
+                "tool.options.count": "UUID Sayısı:",
+                "tool.options.format": "Çıktı Formatı:",
+                "tool.options.plain": "Düz Metin",
+                "tool.options.json": "JSON Dizisi",
+                "tool.options.csv": "CSV",
+                "tool.options.case": "Büyük/Küçük Harf:",
+                "tool.options.uppercase": "Büyük Harf",
+                "tool.options.namespace": "İsim Alanı UUID:",
+                "tool.options.namespaceHelp": "v5 UUID'ler için isim alanı olarak kullanılacak geçerli bir UUID sağlayın",
+                "tool.display.title": "Oluşturulan UUID'ler",
+                "tool.display.placeholder": "UUID'leriniz burada görünecek...",
+                "tool.buttons.generate": "UUID'leri Oluştur",
+                "tool.buttons.copyAll": "Tümünü Kopyala",
+                "tool.buttons.download": "İndir",
+                "tool.buttons.clear": "Tümünü Temizle",
+                "tool.history.title": "Oluşturma Geçmişi",
+                "tool.history.clear": "Geçmişi Temizle",
+                "footer.follow": "BİZİ TAKİP EDİN",
+                "footer.categories": "Popüler Kategoriler",
+                "footer.categories.pdf": "PDF Araçları",
+                "footer.categories.image": "Görsel Araçları",
+                "footer.categories.text": "Metin Araçları",
+                "footer.categories.av": "Ses/Video Araçları",
+                "footer.categories.web": "WebGeliştirici Araçları",
+                "footer.categories.calc": "Hesap Makinesi Araçları",
+                "footer.categories.util": "Yardımcı Araçlar",
+                "footer.categories.color": "Renk Araçları",
+                "footer.quicklinks": "Hızlı Bağlantılar",
+                "footer.links.tools": "Tüm Araçlar",
+                "footer.links.faq": "SSS",
+                "footer.links.contact": "İletişim",
+                "footer.links.privacy": "Gizlilik Politikası",
+                "footer.links.disclaimer": "Feragatname",
+                "footer.links.terms": "Hizmet Şartları",
+                "footer.copyright": "© 2025 LollyPoPDF. Tüm hakları saklıdır."
+            },
+             uk: {
                 "nav.home": "Головна",
                 "nav.about": "Про нас",
                 "nav.tools": "Інструменти",
@@ -404,3 +3473,40 @@
                 "footer.links.terms": "Podmínky služby",
                 "footer.copyright": "© 2025 LollyPoPDF. Všechna práva vyhrazena."
             }
+
+        };
+
+        // Function to change language
+        function changeLanguage(langCode) {
+            const langData = translations[langCode];
+            if (!langData) return;
+            
+            // Update all elements with data-i18n attribute
+            document.querySelectorAll('[data-i18n]').forEach(element => {
+                const key = element.getAttribute('data-i18n');
+                if (langData[key]) {
+                    element.textContent = langData[key];
+                }
+            });
+            
+            // Update current language display
+            currentLanguageElement.textContent = languages.find(lang => lang.code === langCode)?.name || 'English';
+            
+            // Save language preference
+            localStorage.setItem('language', langCode);
+        }
+
+        // Initialize language
+        const savedLanguage = localStorage.getItem('language') || 'en';
+        changeLanguage(savedLanguage);
+        
+        // Language selection handler
+        languageDropdown.addEventListener('click', (e) => {
+            if (e.target.classList.contains('language-option')) {
+                const langCode = e.target.getAttribute('data-lang');
+                changeLanguage(langCode);
+            }
+        });
+    </script>
+</body>
+</html>

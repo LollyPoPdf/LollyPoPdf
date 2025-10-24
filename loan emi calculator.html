@@ -1,0 +1,3733 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loan EMI Calculator | LollyPoPdf</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --primary-color: #9370db;
+            --primary-dark: #8a2be2;
+            --secondary-color: #f0ebff;
+            --text-color: #333333;
+            --text-light: #6b7280;
+            --bg-color: #ffffff;
+            --bg-secondary: #f9f9f9;
+            --border-radius: 12px;
+            --transition: all 0.3s ease;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --header-height: 80px;
+            --white: #ffffff;
+            --header-text: #6b7280;
+            --accent-color: #9370db;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --error-color: #ef4444;
+        }
+
+        .dark-mode {
+            --primary-color: #a391f2;
+            --primary-dark: #8a2be2;
+            --secondary-color: #2d2d2d;
+            --text-color: #f0f0f0;
+            --text-light: #a0a0a0;
+            --bg-color: #1a1a1a;
+            --bg-secondary: #2d2d2d;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+            --white: #1a1a1a;
+            --header-text: #a0a0a0;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            transition: var(--transition);
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        ul {
+            list-style: none;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header Styles */
+        header {
+            background-color: var(--white);
+            color: var(--header-text);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+        }
+
+        .logo-icon {
+            position: relative;
+            width: 40px;
+            height: 40px;
+        }
+
+        .logo-circle {
+            width: 40px;
+            height: 40px;
+            border-radius: 40%;
+            background: linear-gradient(to bottom right, #9370db, #8a2be2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .logo-stem {
+            position: absolute;
+            bottom: -17px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 6px;
+            height: 17px;
+            background-color: #8a2be2;
+            border-radius: 0 0 3px 3px;
+        }
+
+        .logo-text {
+            font-size: 24px;
+            font-weight: bold;
+            color: #9370db;
+        }
+
+        nav ul {
+            display: flex;
+            gap: 30px;
+            list-style: none;
+        }
+
+        nav a {
+            font-weight: 500;
+            position: relative;
+            color: var(--header-text);
+            padding: 8px 0;
+            border-radius: 0;
+            transition: var(--transition);
+            text-decoration: none;
+        }
+
+        nav a:hover {
+            color: var(--accent-color);
+        }
+
+        nav a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: var(--accent-color);
+            transition: width 0.3s ease;
+        }
+
+        nav a:hover::after {
+            width: 100%;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .email {
+            font-size: 14px;
+            color: var(--header-text);
+        }
+
+        .theme-toggle {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 20px;
+            color: var(--header-text);
+            padding: 8px;
+            border-radius: 50%;
+            transition: var(--transition);
+        }
+
+        .theme-toggle:hover {
+            background-color: #f0ebff;
+            color: var(--accent-color);
+        }
+
+        .dark-mode .theme-toggle:hover {
+            background-color: #2d3748;
+            color: var(--accent-color);
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--header-text);
+        }
+
+        /* Mobile Menu */
+        .mobile-menu {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            width: 100%;
+            background-color: var(--white);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            z-index: 999;
+        }
+
+        .dark-mode .mobile-menu {
+            background-color: var(--bg-secondary);
+        }
+
+        .mobile-menu.active {
+            display: block;
+        }
+
+        .mobile-menu ul {
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .mobile-menu a {
+            display: block;
+            padding: 10px 0;
+            font-weight: 500;
+            color: var(--header-text);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .dark-mode .mobile-menu a {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .mobile-menu a:hover {
+            color: var(--accent-color);
+        }
+
+        /* Hero Section */
+        .hero {
+            background-color: var(--secondary-color);
+            padding: 60px 0;
+            text-align: center;
+        }
+
+        .dark-mode .hero {
+            background: linear-gradient(135deg, #2a1a4a, #3d2a6d);
+        }
+
+        .hero h1 {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            color: #000;
+        }
+
+        .dark-mode .hero h1 {
+            color: var(--text-color);
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            color: var(--text-color);
+            max-width: 700px;
+            margin: 0 auto 30px;
+        }
+
+        /* How to Use Section */
+        .how-to-section {
+            padding: 80px 0;
+            background-color: var(--bg-color);
+        }
+
+        .dark-mode .how-to-section {
+            background-color: var(--bg-secondary);
+        }
+
+        .section-title {
+            font-size: 2rem;
+            text-align: center;
+            margin-bottom: 40px;
+            color: #000000;
+        }
+
+        .dark-mode .section-title {
+            color: var(--text-color);
+        }
+
+        .steps-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 40px;
+        }
+
+        .step-box {
+            background-color: var(--bg-secondary);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            padding: 30px;
+            min-height: 200px;
+            position: relative;
+        }
+
+        .step-number {
+            width: 40px;
+            height: 40px;
+            background-color: var(--primary-color);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 16px;
+            margin-bottom: 15px;
+        }
+
+        .step-title {
+            font-size: 18px;
+            color: #000000;
+            margin-bottom: 10px;
+        }
+
+        .dark-mode .step-title {
+            color: var(--text-color);
+        }
+
+        .step-description {
+            font-size: 14px;
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        /* Tool Section */
+        .tool-section {
+            padding: 80px 0;
+            background-color: var(--secondary-color);
+        }
+
+        .dark-mode .tool-section {
+            background: linear-gradient(135deg, #2a1a4a, #3d2a6d);
+        }
+
+        .tool-title {
+            font-size: 2.5rem;
+            text-align: center;
+            margin-bottom: 40px;
+            color: #a391f2;
+        }
+
+        .dark-mode .tool-title {
+            color: #a391f2;
+        }
+
+        .tool-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background-color: var(--bg-color);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            padding: 40px;
+        }
+
+        /* Calculator Inputs */
+        .calculator-inputs {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .input-label {
+            font-weight: 600;
+            font-size: 16px;
+            color: var(--text-color);
+        }
+
+        .input-container {
+            position: relative;
+        }
+
+        .input-with-icon {
+            padding-left: 40px;
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--primary-color);
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid var(--primary-color);
+            border-radius: var(--border-radius);
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-size: 16px;
+        }
+
+        .input-field:focus {
+            outline: none;
+            border-color: var(--primary-dark);
+            box-shadow: 0 0 0 3px rgba(147, 112, 219, 0.2);
+        }
+
+        .range-input {
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        .range-labels {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            color: var(--text-light);
+            margin-top: 5px;
+        }
+
+        /* Results Section */
+        .results-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .results-card {
+            background-color: var(--bg-secondary);
+            border-radius: var(--border-radius);
+            padding: 25px;
+            box-shadow: var(--shadow);
+            text-align: center;
+        }
+
+        .results-title {
+            font-size: 18px;
+            margin-bottom: 15px;
+            color: var(--primary-color);
+        }
+
+        .emi-amount {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: var(--primary-color);
+            margin-bottom: 10px;
+        }
+
+        .results-breakdown {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .breakdown-item {
+            text-align: center;
+        }
+
+        .breakdown-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        .breakdown-label {
+            font-size: 14px;
+            color: var(--text-light);
+        }
+
+        /* Chart Section */
+        .chart-container {
+            background-color: var(--bg-secondary);
+            border-radius: var(--border-radius);
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: var(--shadow);
+        }
+
+        .chart-title {
+            font-size: 18px;
+            margin-bottom: 15px;
+            color: var(--primary-color);
+            text-align: center;
+        }
+
+        .chart-wrapper {
+            position: relative;
+            height: 300px;
+        }
+
+        /* Amortization Table */
+        .amortization-section {
+            margin-bottom: 30px;
+        }
+
+        .amortization-title {
+            font-size: 18px;
+            margin-bottom: 15px;
+            color: var(--primary-color);
+            text-align: center;
+        }
+
+        .amortization-table-container {
+            overflow-x: auto;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+        }
+
+        .amortization-table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: var(--bg-color);
+        }
+
+        .amortization-table th {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 12px 15px;
+            text-align: left;
+        }
+
+        .amortization-table td {
+            padding: 10px 15px;
+            border-bottom: 1px solid var(--bg-secondary);
+        }
+
+        .amortization-table tr:nth-child(even) {
+            background-color: var(--bg-secondary);
+        }
+
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .action-btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: var(--transition);
+            flex: 1;
+            min-width: 150px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .calculate-btn {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .calculate-btn:hover {
+            background-color: var(--primary-dark);
+        }
+
+        .reset-btn {
+            background-color: white;
+            color: var(--primary-color);
+            border: 2px solid var(--primary-color);
+        }
+
+        .reset-btn:hover {
+            background-color: var(--secondary-color);
+        }
+
+        .share-btn {
+            background-color: var(--success-color);
+            color: white;
+        }
+
+        .share-btn:hover {
+            background-color: #0da271;
+        }
+
+        /* Footer */
+        footer {
+            background-color: #000000;
+            color: white;
+            padding: 60px 0 80px;
+            position: relative;
+        }
+
+        .footer-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 60px;
+        }
+
+        .footer-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            text-decoration: none;
+        }
+
+        .footer-logo .logo-icon {
+            width: 40px;
+            height: 40px;
+        }
+
+        .footer-logo .logo-text {
+            color: #9370db;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .footer-section h3 {
+            color: white;
+            font-weight: 600;
+            font-size: 20px;
+            margin-bottom: 20px;
+        }
+
+        .footer-section h4 {
+            color: #9370db;
+            font-size: 18px;
+            margin-bottom: 15px;
+        }
+
+        .footer-links li {
+            margin-bottom: 10px;
+        }
+
+        .footer-links a {
+            color: white;
+        }
+
+        .footer-links a:hover {
+            color: #9370db;
+        }
+
+        .social-icons {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .social-icon {
+            width: 40px;
+            height: 40px;
+            background-color: #9370db;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+        }
+
+        .social-icon:hover {
+            background-color: #8a2be2;
+            transform: translateY(-3px);
+        }
+
+        .copyright {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            color: #f9f7ff;
+            font-size: 12px;
+        }
+
+        .footer-line {
+            position: absolute;
+            bottom: 50px;
+            left: 0;
+            width: 100%;
+            height: 1px;
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        /* Language Switcher */
+        .language-switcher {
+            position: fixed;
+            bottom: 10px;
+            right: 10px;
+            z-index: 1000;
+        }
+
+        .language-btn {
+            background-color: #9370db;
+            color: white;
+            border: none;
+            border-radius: 30px;
+            padding: 5px 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .language-dropdown {
+            position: absolute;
+            bottom: 100%;
+            right: 0;
+            width: 300px;
+            background-color: white;
+            border-radius: var(--border-radius);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            display: none;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .dark-mode .language-dropdown {
+            background-color: var(--bg-secondary);
+        }
+
+        .language-switcher:hover .language-dropdown {
+            display: grid;
+        }
+
+        .language-option {
+            padding: 8px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            text-align: center;
+            font-size: 14px;
+        }
+
+        .language-option:hover {
+            background-color: white;
+            color: #9370db;
+        }
+
+        .dark-mode .language-option:hover {
+            background-color: var(--bg-color);
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 992px) {
+            .steps-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .footer-container {
+                grid-template-columns: 1fr 1fr;
+            }
+            
+            .calculator-inputs {
+                grid-template-columns: 1fr;
+            }
+            
+            .results-section {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            nav ul, .email {
+                display: none;
+            }
+            
+            .mobile-menu-btn {
+                display: block;
+            }
+            
+            .hero h1, .tool-title {
+                font-size: 2rem;
+            }
+            
+            .hero p {
+                font-size: 1rem;
+            }
+            
+            .language-dropdown {
+                width: 250px;
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .footer-container {
+                grid-template-columns: 1fr;
+                gap: 40px;
+            }
+            
+            .results-breakdown {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .tool-container {
+                padding: 20px;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+            
+            .action-btn {
+                width: 100%;
+            }
+            
+            .amortization-table-container {
+                font-size: 14px;
+            }
+            
+            .amortization-table th, 
+            .amortization-table td {
+                padding: 8px 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container header-container">
+            <a href="https://lollypopdf.com" class="logo">
+                <div class="logo-icon">
+                    <div class="logo-circle">LPdf</div>
+                    <div class="logo-stem"></div>
+                </div>
+                <span class="logo-text">LollyPoPdf</span>
+            </a>
+            
+            <nav>
+                <ul>
+                    <li><a href="https://lollypopdf.github.io/LollyPoPdf#home" class="nav-link" data-i18n="nav.home">Home</a></li>
+                    <li><a href="https://lollypopdf.github.io/LollyPoPdf#about" class="nav-link" data-i18n="nav.about">About Us</a></li>
+                    <li><a href="https://lollypopdf.github.io/LollyPoPdf#tools" class="nav-link" data-i18n="nav.tools">Tools</a></li>
+                    <li><a href="contact.html" class="nav-link" data-i18n="nav.contact">Contact</a></li>
+                </ul>
+            </nav>
+            
+            <div class="header-right">
+                <span class="email">lollypoppdf@gmail.com</span>
+                <button class="theme-toggle" id="themeToggle">
+                    <i class="fas fa-moon"></i>
+                </button>
+                <button class="mobile-menu-btn" id="mobileMenuBtn">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </div>
+        
+        <!-- Mobile Menu -->
+        <div class="mobile-menu" id="mobileMenu">
+            <ul>
+                <li><a href="https://lollypopdf.github.io/LollyPoPdf#home" class="nav-link" data-i18n="nav.home">Home</a></li>
+                <li><a href="https://lollypopdf.github.io/LollyPoPdf#about" class="nav-link" data-i18n="nav.about">About Us</a></li>
+                <li><a href="https://lollypopdf.github.io/LollyPoPdf#tools" class="nav-link" data-i18n="nav.tools">Tools</a></li>
+                <li><a href="contact.html" class="nav-link" data-i18n="nav.contact">Contact</a></li>
+            </ul>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <h1 data-i18n="hero.title">Loan EMI Calculator</h1>
+            <p data-i18n="hero.description">Calculate your Equated Monthly Installment (EMI) for home loans, car loans, personal loans, and more. Plan your finances with accurate EMI calculations and detailed breakdowns.</p>
+        </div>
+    </section>
+
+    <!-- How to Use Section -->
+    <section class="how-to-section">
+        <div class="container">
+            <h2 class="section-title" data-i18n="howto.title">How to Use the EMI Calculator</h2>
+            <div class="steps-container">
+                <div class="step-box">
+                    <div class="step-number">1</div>
+                    <h3 class="step-title" data-i18n="howto.step1.title">Enter Loan Details</h3>
+                    <p class="step-description" data-i18n="howto.step1.description">Input the loan amount, annual interest rate, and loan tenure. Use the sliders or type directly into the input fields.</p>
+                </div>
+                <div class="step-box">
+                    <div class="step-number">2</div>
+                    <h3 class="step-title" data-i18n="howto.step2.title">Calculate EMI</h3>
+                    <p class="step-description" data-i18n="howto.step2.description">Click the "Calculate EMI" button to instantly see your monthly payment amount and total repayment details.</p>
+                </div>
+                <div class="step-box">
+                    <div class="step-number">3</div>
+                    <h3 class="step-title" data-i18n="howto.step3.title">Analyze Results</h3>
+                    <p class="step-description" data-i18n="howto.step3.description">Review the detailed breakdown including total interest payable and see the payment distribution in the chart.</p>
+                </div>
+                <div class="step-box">
+                    <div class="step-number">4</div>
+                    <h3 class="step-title" data-i18n="howto.step4.title">Plan Your Finances</h3>
+                    <p class="step-description" data-i18n="howto.step4.description">Use the amortization schedule to understand how your payments are allocated between principal and interest over time.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Tool Section -->
+    <section class="tool-section">
+        <div class="container">
+            <h2 class="tool-title" data-i18n="tool.title">EMI Calculator</h2>
+            <div class="tool-container">
+                <!-- Calculator Inputs -->
+                <div class="calculator-inputs">
+                    <div class="input-group">
+                        <label for="loanAmount" class="input-label" data-i18n="tool.inputs.amount">Loan Amount</label>
+                        <div class="input-container">
+                            <i class="fas fa-dollar-sign input-icon"></i>
+                            <input type="number" id="loanAmount" class="input-field input-with-icon" placeholder="100000" min="1000" max="100000000" step="1000" value="1000000">
+                        </div>
+                        <input type="range" id="loanAmountRange" class="range-input" min="1000" max="10000000" step="1000" value="1000000">
+                        <div class="range-labels">
+                            <span>₹1K</span>
+                            <span>₹1Cr</span>
+                        </div>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="interestRate" class="input-label" data-i18n="tool.inputs.rate">Interest Rate (% per annum)</label>
+                        <div class="input-container">
+                            <i class="fas fa-percent input-icon"></i>
+                            <input type="number" id="interestRate" class="input-field input-with-icon" placeholder="8.5" min="0.1" max="30" step="0.1" value="8.5">
+                        </div>
+                        <input type="range" id="interestRateRange" class="range-input" min="0.1" max="30" step="0.1" value="8.5">
+                        <div class="range-labels">
+                            <span>0.1%</span>
+                            <span>30%</span>
+                        </div>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="loanTenure" class="input-label" data-i18n="tool.inputs.tenure">Loan Tenure (Years)</label>
+                        <div class="input-container">
+                            <i class="fas fa-calendar-alt input-icon"></i>
+                            <input type="number" id="loanTenure" class="input-field input-with-icon" placeholder="20" min="1" max="30" step="1" value="20">
+                        </div>
+                        <input type="range" id="loanTenureRange" class="range-input" min="1" max="30" step="1" value="20">
+                        <div class="range-labels">
+                            <span>1 Year</span>
+                            <span>30 Years</span>
+                        </div>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="loanType" class="input-label" data-i18n="tool.inputs.type">Loan Type</label>
+                        <select id="loanType" class="input-field">
+                            <option value="home" data-i18n="tool.loanTypes.home">Home Loan</option>
+                            <option value="car" data-i18n="tool.loanTypes.car">Car Loan</option>
+                            <option value="personal" data-i18n="tool.loanTypes.personal">Personal Loan</option>
+                            <option value="education" data-i18n="tool.loanTypes.education">Education Loan</option>
+                            <option value="business" data-i18n="tool.loanTypes.business">Business Loan</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Results Section -->
+                <div class="results-section">
+                    <div class="results-card">
+                        <h3 class="results-title" data-i18n="tool.results.emi">Monthly EMI</h3>
+                        <div class="emi-amount" id="emiAmount">₹0</div>
+                        <div class="results-breakdown">
+                            <div class="breakdown-item">
+                                <div class="breakdown-value" id="totalPayment">₹0</div>
+                                <div class="breakdown-label" data-i18n="tool.results.total">Total Payment</div>
+                            </div>
+                            <div class="breakdown-item">
+                                <div class="breakdown-value" id="totalInterest">₹0</div>
+                                <div class="breakdown-label" data-i18n="tool.results.interest">Total Interest</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="results-card">
+                        <h3 class="results-title" data-i18n="tool.results.summary">Loan Summary</h3>
+                        <div class="results-breakdown">
+                            <div class="breakdown-item">
+                                <div class="breakdown-value" id="principalAmount">₹0</div>
+                                <div class="breakdown-label" data-i18n="tool.results.principal">Principal Amount</div>
+                            </div>
+                            <div class="breakdown-item">
+                                <div class="breakdown-value" id="interestPercentage">0%</div>
+                                <div class="breakdown-label" data-i18n="tool.results.interestPercent">Interest Percentage</div>
+                            </div>
+                            <div class="breakdown-item">
+                                <div class="breakdown-value" id="tenureMonths">0</div>
+                                <div class="breakdown-label" data-i18n="tool.results.months">Months</div>
+                            </div>
+                            <div class="breakdown-item">
+                                <div class="breakdown-value" id="loanTypeDisplay">-</div>
+                                <div class="breakdown-label" data-i18n="tool.results.type">Loan Type</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Chart Section -->
+                <div class="chart-container">
+                    <h3 class="chart-title" data-i18n="tool.chart.title">Payment Breakdown</h3>
+                    <div class="chart-wrapper">
+                        <canvas id="paymentChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Amortization Table -->
+                <div class="amortization-section">
+                    <h3 class="amortization-title" data-i18n="tool.amortization.title">Amortization Schedule</h3>
+                    <div class="amortization-table-container">
+                        <table class="amortization-table" id="amortizationTable">
+                            <thead>
+                                <tr>
+                                    <th data-i18n="tool.amortization.month">Month</th>
+                                    <th data-i18n="tool.amortization.emi">EMI</th>
+                                    <th data-i18n="tool.amortization.principal">Principal</th>
+                                    <th data-i18n="tool.amortization.interest">Interest</th>
+                                    <th data-i18n="tool.amortization.balance">Balance</th>
+                                </tr>
+                            </thead>
+                            <tbody id="amortizationBody">
+                                <!-- Amortization data will be populated here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="action-buttons">
+                    <button class="action-btn calculate-btn" id="calculateBtn">
+                        <i class="fas fa-calculator"></i> <span data-i18n="tool.calculate">Calculate EMI</span>
+                    </button>
+                    <button class="action-btn reset-btn" id="resetBtn">
+                        <i class="fas fa-redo"></i> <span data-i18n="tool.reset">Reset</span>
+                    </button>
+                    <button class="action-btn share-btn" id="shareBtn">
+                        <i class="fas fa-share-alt"></i> <span data-i18n="tool.share">Share Results</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container footer-container">
+            <!-- Left Section -->
+            <div class="footer-section">
+                <a href="https://lollypopdf.com" class="footer-logo">
+                    <div class="logo-icon">
+                        <div class="logo-circle">LPdf</div>
+                        <div class="logo-stem"></div>
+                    </div>
+                    <span class="logo-text">LollyPoPdf</span>
+                </a>
+                <h3 data-i18n="footer.follow">FOLLOW US</h3>
+                <div class="social-icons">
+                    <a href="https://facebook.com/lollypopdf" class="social-icon"><i class="fab fa-facebook-f"></i></a>
+                    <a href="https://linkedin.com/company/lollypopdf" class="social-icon"><i class="fab fa-linkedin-in"></i></a>
+                    <a href="https://twitter.com/lollypopdf" class="social-icon"><i class="fab fa-twitter"></i></a>
+                    <a href="https://instagram.com/lollypopdf" class="social-icon"><i class="fab fa-instagram"></i></a>
+                    <a href="https://pinterest.com/lollypopdf" class="social-icon"><i class="fab fa-pinterest-p"></i></a>
+                </div>
+            </div>
+            
+            <!-- Middle Section - Popular Categories -->
+            <div class="footer-section">
+                <h4 data-i18n="footer.categories">Popular Categories</h4>
+                <ul class="footer-links">
+                    <li><a href="https://lollypopdf.com#pdf-tools" data-i18n="footer.categories.pdf">PDF Tools</a></li>
+                    <li><a href="https://lollypopdf.com#image-tools" data-i18n="footer.categories.image">Image Tools</a></li>
+                    <li><a href="https://lollypopdf.com#text-tools" data-i18n="footer.categories.text">Text Tools</a></li>
+                    <li><a href="https://lollypopdf.com#audio-video-tools" data-i18n="footer.categories.av">Audio/Video Tools</a></li>
+                    <li><a href="https://lollypopdf.com#web-developer-tools" data-i18n="footer.categories.web">WebDeveloper Tools</a></li>
+                    <li><a href="https://lollypopdf.com#calculator-tools" data-i18n="footer.categories.calc">Calculator Tools</a></li>
+                    <li><a href="https://lollypopdf.com#utility-tools" data-i18n="footer.categories.util">Utility Tools</a></li>
+                    <li><a href="https://lollypopdf.com#color-tools" data-i18n="footer.categories.color">Color Tools</a></li>
+                </ul>
+            </div>
+            
+            <!-- Right Section - Quick Links -->
+            <div class="footer-section">
+                <h4 data-i18n="footer.quicklinks">Quick Links</h4>
+                <ul class="footer-links">
+                    <li><a href="https://lollypopdf.github.io/LollyPoPdf#home" data-i18n="nav.home">Home</a></li>
+                    <li><a href="https://lollypopdf.github.io/LollyPoPdf#tools" data-i18n="footer.links.tools">All Tools</a></li>
+                    <li><a href="faq.html" data-i18n="footer.links.faq">FAQ</a></li>
+                    <li><a href="contact.html" data-i18n="footer.links.contact">Contact</a></li>
+                    <li><a href="privacy-policy.html" data-i18n="footer.links.privacy">Privacy Policy</a></li>
+                    <li><a href="disclaimer.html" data-i18n="footer.links.disclaimer">Disclaimer</a></li>
+                    <li><a href="terms.html" data-i18n="footer.links.terms">Terms of Service</a></li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="footer-line"></div>
+        <div class="copyright" data-i18n="footer.copyright">© 2025 LollyPoPDF. All rights reserved.</div>
+    </footer>
+
+    <!-- Language Switcher -->
+    <div class="language-switcher">
+        <button class="language-btn">
+            <i class="fas fa-globe"></i>
+            <span id="currentLanguage">English</span>
+        </button>
+        <div class="language-dropdown">
+            <div class="language-option" data-lang="en">English</div>
+            <div class="language-option" data-lang="es">Español</div>
+            <div class="language-option" data-lang="fr">Français</div>
+            <div class="language-option" data-lang="de">Deutsch</div>
+            <div class="language-option" data-lang="it">Italiano</div>
+            <div class="language-option" data-lang="pt">Português</div>
+            <div class="language-option" data-lang="ja">日本語</div>
+            <div class="language-option" data-lang="ru">Pусский</div>
+            <div class="language-option" data-lang="ko">한국어</div>
+            <div class="language-option" data-lang="zh-CN">中文 (简体)</div>
+            <div class="language-option" data-lang="zh-TW">中文 (繁體)</div>
+            <div class="language-option" data-lang="ar">العربية</div>
+            <div class="language-option" data-lang="fa">فارسی</div>
+            <div class="language-option" data-lang="bg">Български</div>
+            <div class="language-option" data-lang="ca">Català</div>
+            <div class="language-option" data-lang="nl">Nederlands</div>
+            <div class="language-option" data-lang="el">Ελληνικά</div>
+            <div class="language-option" data-lang="hi">हिन्दी</div>
+            <div class="language-option" data-lang="te">తెలుగు</div>
+            <div class="language-option" data-lang="kn">ಕನ್ನಡ</div>
+            <div class="language-option" data-lang="ta">தமிழ்</div>
+            <div class="language-option" data-lang="ml">മലയാളം</div>
+            <div class="language-option" data-lang="id">Bahasa Indonesia</div>
+            <div class="language-option" data-lang="ms">Bahasa Melayu</div>
+            <div class="language-option" data-lang="pl">Polski</div>
+            <div class="language-option" data-lang="th">ภาษาไทย</div>
+            <div class="language-option" data-lang="tr">Türkçe</div>
+            <div class="language-option" data-lang="uk">Українська</div>
+            <div class="language-option" data-lang="vi">Tiếng Việt</div>
+            <div class="language-option" data-lang="is">Íslenska</div>
+            <div class="language-option" data-lang="no">Norsk</div>
+            <div class="language-option" data-lang="sv">Svenska</div>
+            <div class="language-option" data-lang="fi">Suomi</div>
+            <div class="language-option" data-lang="cs">Čeština</div>
+        </div>
+    </div>
+
+    <script>
+        // Theme Toggle
+        const themeToggle = document.getElementById('themeToggle');
+        const body = document.body;
+        
+        // Check for saved theme preference or respect OS preference
+        const savedTheme = localStorage.getItem('theme') || 
+            (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        
+        if (savedTheme === 'dark') {
+            body.classList.add('dark-mode');
+            themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+        }
+        
+        themeToggle.addEventListener('click', () => {
+            body.classList.toggle('dark-mode');
+            const isDarkMode = body.classList.contains('dark-mode');
+            
+            if (isDarkMode) {
+                themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+                localStorage.setItem('theme', 'dark');
+            } else {
+                themeToggle.innerHTML = '<i class="fas fa-moon"></i>';
+                localStorage.setItem('theme', 'light');
+            }
+        });
+
+        // Mobile Menu Toggle
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const mobileMenu = document.getElementById('mobileMenu');
+        
+        mobileMenuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('active');
+            
+            // Change icon based on menu state
+            if (mobileMenu.classList.contains('active')) {
+                mobileMenuBtn.innerHTML = '<i class="fas fa-times"></i>';
+            } else {
+                mobileMenuBtn.innerHTML = '<i class="fas fa-bars"></i>';
+            }
+        });
+
+        // Close mobile menu when clicking on a link
+        const mobileMenuLinks = mobileMenu.querySelectorAll('a');
+        mobileMenuLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                mobileMenu.classList.remove('active');
+                mobileMenuBtn.innerHTML = '<i class="fas fa-bars"></i>';
+            });
+        });
+
+        // EMI Calculator Functionality
+        const loanAmountInput = document.getElementById('loanAmount');
+        const loanAmountRange = document.getElementById('loanAmountRange');
+        const interestRateInput = document.getElementById('interestRate');
+        const interestRateRange = document.getElementById('interestRateRange');
+        const loanTenureInput = document.getElementById('loanTenure');
+        const loanTenureRange = document.getElementById('loanTenureRange');
+        const loanTypeSelect = document.getElementById('loanType');
+        
+        const emiAmountEl = document.getElementById('emiAmount');
+        const totalPaymentEl = document.getElementById('totalPayment');
+        const totalInterestEl = document.getElementById('totalInterest');
+        const principalAmountEl = document.getElementById('principalAmount');
+        const interestPercentageEl = document.getElementById('interestPercentage');
+        const tenureMonthsEl = document.getElementById('tenureMonths');
+        const loanTypeDisplayEl = document.getElementById('loanTypeDisplay');
+        
+        const calculateBtn = document.getElementById('calculateBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        const shareBtn = document.getElementById('shareBtn');
+        
+        const amortizationBody = document.getElementById('amortizationBody');
+        
+        let paymentChart = null;
+        
+        // Initialize inputs and ranges
+        function initializeInputs() {
+            // Sync input fields with range sliders
+            loanAmountInput.addEventListener('input', () => {
+                loanAmountRange.value = loanAmountInput.value;
+                calculateEMI();
+            });
+            
+            loanAmountRange.addEventListener('input', () => {
+                loanAmountInput.value = loanAmountRange.value;
+                calculateEMI();
+            });
+            
+            interestRateInput.addEventListener('input', () => {
+                interestRateRange.value = interestRateInput.value;
+                calculateEMI();
+            });
+            
+            interestRateRange.addEventListener('input', () => {
+                interestRateInput.value = interestRateRange.value;
+                calculateEMI();
+            });
+            
+            loanTenureInput.addEventListener('input', () => {
+                loanTenureRange.value = loanTenureInput.value;
+                calculateEMI();
+            });
+            
+            loanTenureRange.addEventListener('input', () => {
+                loanTenureInput.value = loanTenureRange.value;
+                calculateEMI();
+            });
+            
+            loanTypeSelect.addEventListener('change', calculateEMI);
+            
+            // Calculate EMI on page load
+            calculateEMI();
+        }
+        
+        // Calculate EMI using the standard formula
+        function calculateEMI() {
+            const principal = parseFloat(loanAmountInput.value);
+            const annualRate = parseFloat(interestRateInput.value);
+            const years = parseInt(loanTenureInput.value);
+            const loanType = loanTypeSelect.value;
+            
+            // Validate inputs
+            if (isNaN(principal) || isNaN(annualRate) || isNaN(years) || principal <= 0 || annualRate <= 0 || years <= 0) {
+                return;
+            }
+            
+            // Convert annual rate to monthly and percentage to decimal
+            const monthlyRate = annualRate / 12 / 100;
+            const months = years * 12;
+            
+            // EMI formula: EMI = P * r * (1+r)^n / ((1+r)^n - 1)
+            const emi = principal * monthlyRate * Math.pow(1 + monthlyRate, months) / (Math.pow(1 + monthlyRate, months) - 1);
+            
+            // Calculate totals
+            const totalPayment = emi * months;
+            const totalInterest = totalPayment - principal;
+            const interestPercentage = (totalInterest / totalPayment) * 100;
+            
+            // Update display
+            emiAmountEl.textContent = formatCurrency(emi);
+            totalPaymentEl.textContent = formatCurrency(totalPayment);
+            totalInterestEl.textContent = formatCurrency(totalInterest);
+            principalAmountEl.textContent = formatCurrency(principal);
+            interestPercentageEl.textContent = interestPercentage.toFixed(1) + '%';
+            tenureMonthsEl.textContent = months;
+            loanTypeDisplayEl.textContent = getLoanTypeDisplayName(loanType);
+            
+            // Update chart
+            updateChart(principal, totalInterest);
+            
+            // Update amortization schedule
+            updateAmortizationSchedule(principal, monthlyRate, months, emi);
+        }
+        
+        // Format currency with proper formatting
+        function formatCurrency(amount) {
+            return '₹' + amount.toLocaleString('en-IN', {
+                maximumFractionDigits: 0
+            });
+        }
+        
+        // Get display name for loan type
+        function getLoanTypeDisplayName(type) {
+            const types = {
+                'home': 'Home Loan',
+                'car': 'Car Loan',
+                'personal': 'Personal Loan',
+                'education': 'Education Loan',
+                'business': 'Business Loan'
+            };
+            return types[type] || type;
+        }
+        
+        // Update the payment breakdown chart
+        function updateChart(principal, totalInterest) {
+            const ctx = document.getElementById('paymentChart').getContext('2d');
+            
+            // Destroy existing chart if it exists
+            if (paymentChart) {
+                paymentChart.destroy();
+            }
+            
+            // Create new chart
+            paymentChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Principal Amount', 'Total Interest'],
+                    datasets: [{
+                        data: [principal, totalInterest],
+                        backgroundColor: [
+                            '#9370db',
+                            '#8a2be2'
+                        ],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                color: getComputedStyle(document.body).getPropertyValue('--text-color'),
+                                font: {
+                                    size: 14
+                                }
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const value = context.raw;
+                                    const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                    const percentage = Math.round((value / total) * 100);
+                                    return `${context.label}: ${formatCurrency(value)} (${percentage}%)`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+        
+        // Update the amortization schedule table
+        function updateAmortizationSchedule(principal, monthlyRate, months, emi) {
+            // Clear existing table
+            amortizationBody.innerHTML = '';
+            
+            let balance = principal;
+            let totalPrincipal = 0;
+            let totalInterest = 0;
+            
+            // Generate rows for first 12 months and last 12 months
+            const displayMonths = [];
+            
+            // Add first 12 months
+            for (let i = 1; i <= Math.min(12, months); i++) {
+                displayMonths.push(i);
+            }
+            
+            // Add last 12 months if loan is longer than 24 months
+            if (months > 24) {
+                for (let i = months - 11; i <= months; i++) {
+                    if (i > 12) {
+                        displayMonths.push(i);
+                    }
+                }
+            } else if (months > 12) {
+                // If loan is between 13-24 months, show all months
+                for (let i = 13; i <= months; i++) {
+                    displayMonths.push(i);
+                }
+            }
+            
+            // Generate table rows
+            displayMonths.forEach(month => {
+                const interest = balance * monthlyRate;
+                const principalPaid = emi - interest;
+                balance -= principalPaid;
+                
+                // Ensure balance doesn't go negative
+                if (balance < 0) balance = 0;
+                
+                totalPrincipal += principalPaid;
+                totalInterest += interest;
+                
+                const row = document.createElement('tr');
+                
+                // Add separator row if showing last months after first months
+                if (month === displayMonths[12] && months > 24) {
+                    const separatorRow = document.createElement('tr');
+                    separatorRow.innerHTML = `<td colspan="5" style="text-align: center; font-style: italic; padding: 10px;">... ${months - 24} months omitted ...</td>`;
+                    amortizationBody.appendChild(separatorRow);
+                }
+                
+                row.innerHTML = `
+                    <td>${month}</td>
+                    <td>${formatCurrency(emi)}</td>
+                    <td>${formatCurrency(principalPaid)}</td>
+                    <td>${formatCurrency(interest)}</td>
+                    <td>${formatCurrency(balance)}</td>
+                `;
+                
+                amortizationBody.appendChild(row);
+            });
+        }
+        
+        // Reset calculator to default values
+        function resetCalculator() {
+            loanAmountInput.value = 1000000;
+            loanAmountRange.value = 1000000;
+            interestRateInput.value = 8.5;
+            interestRateRange.value = 8.5;
+            loanTenureInput.value = 20;
+            loanTenureRange.value = 20;
+            loanTypeSelect.value = 'home';
+            
+            calculateEMI();
+        }
+        
+        // Share results functionality
+        function shareResults() {
+            const principal = parseFloat(loanAmountInput.value);
+            const annualRate = parseFloat(interestRateInput.value);
+            const years = parseInt(loanTenureInput.value);
+            const loanType = loanTypeSelect.value;
+            
+            const monthlyRate = annualRate / 12 / 100;
+            const months = years * 12;
+            const emi = principal * monthlyRate * Math.pow(1 + monthlyRate, months) / (Math.pow(1 + monthlyRate, months) - 1);
+            const totalPayment = emi * months;
+            const totalInterest = totalPayment - principal;
+            
+            const shareText = `Check out my EMI calculation:
+Loan Amount: ${formatCurrency(principal)}
+Interest Rate: ${annualRate}% p.a.
+Tenure: ${years} years
+Monthly EMI: ${formatCurrency(emi)}
+Total Interest: ${formatCurrency(totalInterest)}
+Total Payment: ${formatCurrency(totalPayment)}
+
+Calculated using LollyPoPdf EMI Calculator`;
+            
+            if (navigator.share) {
+                navigator.share({
+                    title: 'EMI Calculation Results',
+                    text: shareText,
+                    url: window.location.href
+                });
+            } else {
+                // Fallback: copy to clipboard
+                navigator.clipboard.writeText(shareText).then(() => {
+                    alert('Results copied to clipboard!');
+                });
+            }
+        }
+        
+        // Event listeners
+        calculateBtn.addEventListener('click', calculateEMI);
+        resetBtn.addEventListener('click', resetCalculator);
+        shareBtn.addEventListener('click', shareResults);
+        
+        // Initialize calculator on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            initializeInputs();
+        });
+        
+        // Language Switcher
+        const languageBtn = document.querySelector('.language-btn');
+        const currentLanguageElement = document.getElementById('currentLanguage');
+        const languageDropdown = document.querySelector('.language-dropdown');
+        
+        const languages = [
+            { code: 'en', name: 'English' },
+            { code: 'es', name: 'Español' },
+            { code: 'fr', name: 'Français' },
+            { code: 'de', name: 'Deutsch' },
+            { code: 'it', name: 'Italiano' },
+            { code: 'pt', name: 'Português' },
+            { code: 'ja', name: '日本語' },
+            { code: 'ru', name: 'Pусский' },
+            { code: 'ko', name: '한국어' },
+            { code: 'zh-CN', name: '中文 (简体)' },
+            { code: 'zh-TW', name: '中文 (繁體)' },
+            { code: 'ar', name: 'العربية' },
+            { code: 'fa', name: 'فارسی' },
+            { code: 'bg', name: 'Български' },
+            { code: 'ca', name: 'Català' },
+            { code: 'nl', name: 'Nederlands' },
+            { code: 'el', name: 'Ελληνικά' },
+            { code: 'hi', name: 'हिन्दी' },
+            { code: 'te', name: 'తెలుగు' },
+            { code: 'kn', name: 'ಕನ್ನಡ' },
+            { code: 'ta', name: 'தமிழ்' },
+            { code: 'ml', name: 'മലയാളം' },
+            { code: 'id', name: 'Bahasa Indonesia' },
+            { code: 'ms', name: 'Bahasa Melayu' },
+            { code: 'pl', name: 'Polski' },
+            { code: 'th', name: 'ภาษาไทย' },
+            { code: 'tr', name: 'Türkçe' },
+            { code: 'uk', name: 'Українська' },
+            { code: 'vi', name: 'Tiếng Việt' },
+            { code: 'is', name: 'Íslenska' },
+            { code: 'no', name: 'Norsk' },
+            { code: 'sv', name: 'Svenska' },
+            { code: 'fi', name: 'Suomi' },
+            { code: 'cs', name: 'Čeština' }
+        ];
+
+        // Translation data
+        const translations = {
+            en: {
+                "nav.home": "Home",
+                "nav.about": "About Us",
+                "nav.tools": "Tools",
+                "nav.contact": "Contact",
+                "hero.title": "Loan EMI Calculator",
+                "hero.description": "Calculate your Equated Monthly Installment (EMI) for home loans, car loans, personal loans, and more. Plan your finances with accurate EMI calculations and detailed breakdowns.",
+                "howto.title": "How to Use the EMI Calculator",
+                "howto.step1.title": "Enter Loan Details",
+                "howto.step1.description": "Input the loan amount, annual interest rate, and loan tenure. Use the sliders or type directly into the input fields.",
+                "howto.step2.title": "Calculate EMI",
+                "howto.step2.description": "Click the \"Calculate EMI\" button to instantly see your monthly payment amount and total repayment details.",
+                "howto.step3.title": "Analyze Results",
+                "howto.step3.description": "Review the detailed breakdown including total interest payable and see the payment distribution in the chart.",
+                "howto.step4.title": "Plan Your Finances",
+                "howto.step4.description": "Use the amortization schedule to understand how your payments are allocated between principal and interest over time.",
+                "tool.title": "EMI Calculator",
+                "tool.inputs.amount": "Loan Amount",
+                "tool.inputs.rate": "Interest Rate (% per annum)",
+                "tool.inputs.tenure": "Loan Tenure (Years)",
+                "tool.inputs.type": "Loan Type",
+                "tool.loanTypes.home": "Home Loan",
+                "tool.loanTypes.car": "Car Loan",
+                "tool.loanTypes.personal": "Personal Loan",
+                "tool.loanTypes.education": "Education Loan",
+                "tool.loanTypes.business": "Business Loan",
+                "tool.results.emi": "Monthly EMI",
+                "tool.results.total": "Total Payment",
+                "tool.results.interest": "Total Interest",
+                "tool.results.principal": "Principal Amount",
+                "tool.results.interestPercent": "Interest Percentage",
+                "tool.results.months": "Months",
+                "tool.results.type": "Loan Type",
+                "tool.results.summary": "Loan Summary",
+                "tool.chart.title": "Payment Breakdown",
+                "tool.amortization.title": "Amortization Schedule",
+                "tool.amortization.month": "Month",
+                "tool.amortization.emi": "EMI",
+                "tool.amortization.principal": "Principal",
+                "tool.amortization.interest": "Interest",
+                "tool.amortization.balance": "Balance",
+                "tool.calculate": "Calculate EMI",
+                "tool.reset": "Reset",
+                "tool.share": "Share Results",
+                "footer.follow": "FOLLOW US",
+                "footer.categories": "Popular Categories",
+                "footer.categories.pdf": "PDF Tools",
+                "footer.categories.image": "Image Tools",
+                "footer.categories.text": "Text Tools",
+                "footer.categories.av": "Audio/Video Tools",
+                "footer.categories.web": "WebDeveloper Tools",
+                "footer.categories.calc": "Calculator Tools",
+                "footer.categories.util": "Utility Tools",
+                "footer.categories.color": "Color Tools",
+                "footer.quicklinks": "Quick Links",
+                "footer.links.tools": "All Tools",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Contact",
+                "footer.links.privacy": "Privacy Policy",
+                "footer.links.disclaimer": "Disclaimer",
+                "footer.links.terms": "Terms of Service",
+                "footer.copyright": "© 2025 LollyPoPDF. All rights reserved."
+            },
+            es: {
+                "nav.home": "Inicio",
+                "nav.about": "Sobre Nosotros",
+                "nav.tools": "Herramientas",
+                "nav.contact": "Contacto",
+                "hero.title": "Calculadora de EMI de Préstamos",
+                "hero.description": "Calcula tu Cuota Mensual Equivalente (EMI) para préstamos hipotecarios, préstamos para automóviles, préstamos personales y más. Planifica tus finanzas con cálculos precisos de EMI y desgloses detallados.",
+                "howto.title": "Cómo Usar la Calculadora de EMI",
+                "howto.step1.title": "Ingresa los Detalles del Préstamo",
+                "howto.step1.description": "Ingresa el monto del préstamo, la tasa de interés anual y el plazo del préstamo. Usa los controles deslizantes o escribe directamente en los campos de entrada.",
+                "howto.step2.title": "Calcula el EMI",
+                "howto.step2.description": "Haz clic en el botón \"Calcular EMI\" para ver instantáneamente el monto de tu pago mensual y los detalles del reembolso total.",
+                "howto.step3.title": "Analiza los Resultados",
+                "howto.step3.description": "Revisa el desglose detallado que incluye el interés total a pagar y ve la distribución de pagos en el gráfico.",
+                "howto.step4.title": "Planifica Tus Finanzas",
+                "howto.step4.description": "Usa el calendario de amortización para entender cómo se asignan tus pagos entre capital e interés a lo largo del tiempo.",
+                "tool.title": "Calculadora de EMI",
+                "tool.inputs.amount": "Monto del Préstamo",
+                "tool.inputs.rate": "Tasa de Interés (% anual)",
+                "tool.inputs.tenure": "Plazo del Préstamo (Años)",
+                "tool.inputs.type": "Tipo de Préstamo",
+                "tool.loanTypes.home": "Préstamo Hipotecario",
+                "tool.loanTypes.car": "Préstamo para Automóvil",
+                "tool.loanTypes.personal": "Préstamo Personal",
+                "tool.loanTypes.education": "Préstamo Educativo",
+                "tool.loanTypes.business": "Préstamo Empresarial",
+                "tool.results.emi": "EMI Mensual",
+                "tool.results.total": "Pago Total",
+                "tool.results.interest": "Interés Total",
+                "tool.results.principal": "Monto Principal",
+                "tool.results.interestPercent": "Porcentaje de Interés",
+                "tool.results.months": "Meses",
+                "tool.results.type": "Tipo de Préstamo",
+                "tool.results.summary": "Resumen del Préstamo",
+                "tool.chart.title": "Desglose de Pagos",
+                "tool.amortization.title": "Calendario de Amortización",
+                "tool.amortization.month": "Mes",
+                "tool.amortization.emi": "EMI",
+                "tool.amortization.principal": "Principal",
+                "tool.amortization.interest": "Interés",
+                "tool.amortization.balance": "Saldo",
+                "tool.calculate": "Calcular EMI",
+                "tool.reset": "Restablecer",
+                "tool.share": "Compartir Resultados",
+                "footer.follow": "SÍGUENOS",
+                "footer.categories": "Categorías Populares",
+                "footer.categories.pdf": "Herramientas PDF",
+                "footer.categories.image": "Herramientas de Imagen",
+                "footer.categories.text": "Herramientas de Texto",
+                "footer.categories.av": "Herramientas de Audio/Video",
+                "footer.categories.web": "Herramientas WebDesarrollador",
+                "footer.categories.calc": "Herramientas de Calculadora",
+                "footer.categories.util": "Herramientas de Utilidad",
+                "footer.categories.color": "Herramientas de Color",
+                "footer.quicklinks": "Enlaces Rápidos",
+                "footer.links.tools": "Todas las Herramientas",
+                "footer.links.faq": "Preguntas Frecuentes",
+                "footer.links.contact": "Contacto",
+                "footer.links.privacy": "Política de Privacidad",
+                "footer.links.disclaimer": "Descargo de Responsabilidad",
+                "footer.links.terms": "Términos de Servicio",
+                "footer.copyright": "© 2025 LollyPoPDF. Todos los derechos reservados."
+            },
+            fr: {
+                "nav.home": "Accueil",
+                "nav.about": "À propos de nous",
+                "nav.tools": "Outils",
+                "nav.contact": "Contact",
+                "hero.title": "Calculateur d'EMI de Prêt",
+                "hero.description": "Calculez votre Échéance Mensuelle Équivalente (EMI) pour les prêts immobiliers, prêts automobiles, prêts personnels et plus. Planifiez vos finances avec des calculs d'EMI précis et des ventilations détaillées.",
+                "howto.title": "Comment Utiliser le Calculateur d'EMI",
+                "howto.step1.title": "Entrez les Détails du Prêt",
+                "howto.step1.description": "Saisissez le montant du prêt, le taux d'intérêt annuel et la durée du prêt. Utilisez les curseurs ou tapez directement dans les champs de saisie.",
+                "howto.step2.title": "Calculez l'EMI",
+                "howto.step2.description": "Cliquez sur le bouton \"Calculer l'EMI\" pour voir instantanément le montant de votre paiement mensuel et les détails du remboursement total.",
+                "howto.step3.title": "Analysez les Résultats",
+                "howto.step3.description": "Examinez la ventilation détaillée incluant l'intérêt total payable et voyez la distribution des paiements dans le graphique.",
+                "howto.step4.title": "Planifiez Vos Finances",
+                "howto.step4.description": "Utilisez le tableau d'amortissement pour comprendre comment vos paiements sont répartis entre le principal et les intérêts au fil du temps.",
+                "tool.title": "Calculateur d'EMI",
+                "tool.inputs.amount": "Montant du Prêt",
+                "tool.inputs.rate": "Taux d'Intérêt (% par an)",
+                "tool.inputs.tenure": "Durée du Prêt (Années)",
+                "tool.inputs.type": "Type de Prêt",
+                "tool.loanTypes.home": "Prêt Immobilier",
+                "tool.loanTypes.car": "Prêt Automobile",
+                "tool.loanTypes.personal": "Prêt Personnel",
+                "tool.loanTypes.education": "Prêt Éducatif",
+                "tool.loanTypes.business": "Prêt Commercial",
+                "tool.results.emi": "EMI Mensuel",
+                "tool.results.total": "Paiement Total",
+                "tool.results.interest": "Intérêt Total",
+                "tool.results.principal": "Montant Principal",
+                "tool.results.interestPercent": "Pourcentage d'Intérêt",
+                "tool.results.months": "Mois",
+                "tool.results.type": "Type de Prêt",
+                "tool.results.summary": "Résumé du Prêt",
+                "tool.chart.title": "Ventilation des Paiements",
+                "tool.amortization.title": "Tableau d'Amortissement",
+                "tool.amortization.month": "Mois",
+                "tool.amortization.emi": "EMI",
+                "tool.amortization.principal": "Principal",
+                "tool.amortization.interest": "Intérêt",
+                "tool.amortization.balance": "Solde",
+                "tool.calculate": "Calculer l'EMI",
+                "tool.reset": "Réinitialiser",
+                "tool.share": "Partager les Résultats",
+                "footer.follow": "SUIVEZ-NOUS",
+                "footer.categories": "Catégories Populaires",
+                "footer.categories.pdf": "Outils PDF",
+                "footer.categories.image": "Outils d'Image",
+                "footer.categories.text": "Outils de Texte",
+                "footer.categories.av": "Outils Audio/Video",
+                "footer.categories.web": "Outils WebDeveloper",
+                "footer.categories.calc": "Outils de Calculatrice",
+                "footer.categories.util": "Outils d'Utilité",
+                "footer.categories.color": "Outils de Couleur",
+                "footer.quicklinks": "Liens Rapides",
+                "footer.links.tools": "Tous les Outils",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Contact",
+                "footer.links.privacy": "Politique de Confidentialité",
+                "footer.links.disclaimer": "Avertissement",
+                "footer.links.terms": "Conditions d'Utilisation",
+                "footer.copyright": "© 2025 LollyPoPDF. Tous droits réservés."
+            },
+            de: {
+                "nav.home": "Startseite",
+                "nav.about": "Über uns",
+                "nav.tools": "Werkzeuge",
+                "nav.contact": "Kontakt",
+                "hero.title": "Kredit-EMI-Rechner",
+                "hero.description": "Berechnen Sie Ihre Equated Monthly Installment (EMI) für Hypotheken, Autokredite, Privatkredite und mehr. Planen Sie Ihre Finanzen mit genauen EMI-Berechnungen und detaillierten Aufschlüsselungen.",
+                "howto.title": "So verwenden Sie den EMI-Rechner",
+                "howto.step1.title": "Geben Sie Kreditdetails ein",
+                "howto.step1.description": "Geben Sie den Kreditbetrag, den jährlichen Zinssatz und die Kreditlaufzeit ein. Verwenden Sie die Schieberegler oder geben Sie direkt in die Eingabefelder ein.",
+                "howto.step2.title": "EMI berechnen",
+                "howto.step2.description": "Klicken Sie auf die Schaltfläche \"EMI berechnen\", um sofort Ihren monatlichen Zahlungsbetrag und die Details der Gesamtrückzahlung zu sehen.",
+                "howto.step3.title": "Ergebnisse analysieren",
+                "howto.step3.description": "Überprüfen Sie die detaillierte Aufschlüsselung einschließlich der gesamten zu zahlenden Zinsen und sehen Sie die Zahlungsverteilung im Diagramm.",
+                "howto.step4.title": "Planen Sie Ihre Finanzen",
+                "howto.step4.description": "Verwenden Sie den Tilgungsplan, um zu verstehen, wie Ihre Zahlungen im Laufe der Zeit zwischen Kapital und Zinsen aufgeteilt werden.",
+                "tool.title": "EMI-Rechner",
+                "tool.inputs.amount": "Kreditbetrag",
+                "tool.inputs.rate": "Zinssatz (% pro Jahr)",
+                "tool.inputs.tenure": "Kreditlaufzeit (Jahre)",
+                "tool.inputs.type": "Kreditart",
+                "tool.loanTypes.home": "Hypothekenkredit",
+                "tool.loanTypes.car": "Autokredit",
+                "tool.loanTypes.personal": "Privatkredit",
+                "tool.loanTypes.education": "Bildungskredit",
+                "tool.loanTypes.business": "Geschäftskredit",
+                "tool.results.emi": "Monatliche EMI",
+                "tool.results.total": "Gesamtzahlung",
+                "tool.results.interest": "Gesamtzinsen",
+                "tool.results.principal": "Kapitalbetrag",
+                "tool.results.interestPercent": "Zinsanteil",
+                "tool.results.months": "Monate",
+                "tool.results.type": "Kreditart",
+                "tool.results.summary": "Kreditzusammenfassung",
+                "tool.chart.title": "Zahlungsaufschlüsselung",
+                "tool.amortization.title": "Tilgungsplan",
+                "tool.amortization.month": "Monat",
+                "tool.amortization.emi": "EMI",
+                "tool.amortization.principal": "Kapital",
+                "tool.amortization.interest": "Zinsen",
+                "tool.amortization.balance": "Saldo",
+                "tool.calculate": "EMI berechnen",
+                "tool.reset": "Zurücksetzen",
+                "tool.share": "Ergebnisse teilen",
+                "footer.follow": "FOLGEN SIE UNS",
+                "footer.categories": "Beliebte Kategorien",
+                "footer.categories.pdf": "PDF-Werkzeuge",
+                "footer.categories.image": "Bildwerkzeuge",
+                "footer.categories.text": "Textwerkzeuge",
+                "footer.categories.av": "Audio/Video-Werkzeuge",
+                "footer.categories.web": "WebDeveloper-Werkzeuge",
+                "footer.categories.calc": "Rechnerwerkzeuge",
+                "footer.categories.util": "Hilfsprogramme",
+                "footer.categories.color": "Farbwerkzeuge",
+                "footer.quicklinks": "Schnelllinks",
+                "footer.links.tools": "Alle Werkzeuge",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Kontakt",
+                "footer.links.privacy": "Datenschutzrichtlinie",
+                "footer.links.disclaimer": "Haftungsausschluss",
+                "footer.links.terms": "Nutzungsbedingungen",
+                "footer.copyright": "© 2025 LollyPoPDF. Alle Rechte vorbehalten."
+            },
+            it: {
+                "nav.home": "Home",
+                "nav.about": "Chi Siamo",
+                "nav.tools": "Strumenti",
+                "nav.contact": "Contatto",
+                "hero.title": "Calcolatore EMI Prestito",
+                "hero.description": "Calcola la tua Rata Mensile Equivalente (EMI) per mutui, prestiti auto, prestiti personali e altro. Pianifica le tue finanze con calcoli EMI accurati e ripartizioni dettagliate.",
+                "howto.title": "Come Utilizzare il Calcolatore EMI",
+                "howto.step1.title": "Inserisci i Dettagli del Prestito",
+                "howto.step1.description": "Inserisci l'importo del prestito, il tasso di interesse annuo e la durata del prestito. Usa i cursori o digita direttamente nei campi di input.",
+                "howto.step2.title": "Calcola l'EMI",
+                "howto.step2.description": "Clicca il pulsante \"Calcola EMI\" per vedere istantaneamente l'importo della tua rata mensile e i dettagli del rimborso totale.",
+                "howto.step3.title": "Analizza i Risultati",
+                "howto.step3.description": "Rivedi la ripartizione dettagliata inclusi gli interessi totali da pagare e guarda la distribuzione dei pagamenti nel grafico.",
+                "howto.step4.title": "Pianifica le Tue Finanze",
+                "howto.step4.description": "Usa il piano di ammortamento per capire come i tuoi pagamenti sono allocati tra capitale e interessi nel tempo.",
+                "tool.title": "Calcolatore EMI",
+                "tool.inputs.amount": "Importo Prestito",
+                "tool.inputs.rate": "Tasso di Interesse (% annuo)",
+                "tool.inputs.tenure": "Durata Prestito (Anni)",
+                "tool.inputs.type": "Tipo di Prestito",
+                "tool.loanTypes.home": "Mutuo",
+                "tool.loanTypes.car": "Prestito Auto",
+                "tool.loanTypes.personal": "Prestito Personale",
+                "tool.loanTypes.education": "Prestito Istruzione",
+                "tool.loanTypes.business": "Prestito Commerciale",
+                "tool.results.emi": "EMI Mensile",
+                "tool.results.total": "Pagamento Totale",
+                "tool.results.interest": "Interessi Totali",
+                "tool.results.principal": "Importo Capitale",
+                "tool.results.interestPercent": "Percentuale Interessi",
+                "tool.results.months": "Mesi",
+                "tool.results.type": "Tipo di Prestito",
+                "tool.results.summary": "Riepilogo Prestito",
+                "tool.chart.title": "Ripartizione Pagamenti",
+                "tool.amortization.title": "Piano di Ammortamento",
+                "tool.amortization.month": "Mese",
+                "tool.amortization.emi": "EMI",
+                "tool.amortization.principal": "Capitale",
+                "tool.amortization.interest": "Interessi",
+                "tool.amortization.balance": "Saldo",
+                "tool.calculate": "Calcola EMI",
+                "tool.reset": "Reimposta",
+                "tool.share": "Condividi Risultati",
+                "footer.follow": "SEGUICI",
+                "footer.categories": "Categorie Popolari",
+                "footer.categories.pdf": "Strumenti PDF",
+                "footer.categories.image": "Strumenti Immagine",
+                "footer.categories.text": "Strumenti Testo",
+                "footer.categories.av": "Strumenti Audio/Video",
+                "footer.categories.web": "Strumenti WebDeveloper",
+                "footer.categories.calc": "Strumenti Calcolatrice",
+                "footer.categories.util": "Strumenti Utilità",
+                "footer.categories.color": "Strumenti Colore",
+                "footer.quicklinks": "Link Rapidi",
+                "footer.links.tools": "Tutti gli Strumenti",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Contatto",
+                "footer.links.privacy": "Informativa sulla Privacy",
+                "footer.links.disclaimer": "Disclaimer",
+                "footer.links.terms": "Termini di Servizio",
+                "footer.copyright": "© 2025 LollyPoPDF. Tutti i diritti riservati."
+            },
+            pt: {
+                "nav.home": "Início",
+                "nav.about": "Sobre Nós",
+                "nav.tools": "Ferramentas",
+                "nav.contact": "Contato",
+                "hero.title": "Calculadora de EMI de Empréstimo",
+                "hero.description": "Calcule sua Parcela Mensal Equivalente (EMI) para empréstimos habitacionais, empréstimos para carros, empréstimos pessoais e mais. Planeje suas finanças com cálculos precisos de EMI e detalhamentos completos.",
+                "howto.title": "Como Usar a Calculadora de EMI",
+                "howto.step1.title": "Insira os Detalhes do Empréstimo",
+                "howto.step1.description": "Insira o valor do empréstimo, a taxa de juros anual e o prazo do empréstimo. Use os controles deslizantes ou digite diretamente nos campos de entrada.",
+                "howto.step2.title": "Calcule o EMI",
+                "howto.step2.description": "Clique no botão \"Calcular EMI\" para ver instantaneamente o valor do seu pagamento mensal e os detalhes do reembolso total.",
+                "howto.step3.title": "Analise os Resultados",
+                "howto.step3.description": "Revise o detalhamento completo incluindo o juro total a pagar e veja a distribuição de pagamentos no gráfico.",
+                "howto.step4.title": "Planeje Suas Finanças",
+                "howto.step4.description": "Use a tabela de amortização para entender como seus pagamentos são alocados entre principal e juros ao longo do tempo.",
+                "tool.title": "Calculadora de EMI",
+                "tool.inputs.amount": "Valor do Empréstimo",
+                "tool.inputs.rate": "Taxa de Juros (% ao ano)",
+                "tool.inputs.tenure": "Prazo do Empréstimo (Anos)",
+                "tool.inputs.type": "Tipo de Empréstimo",
+                "tool.loanTypes.home": "Empréstimo Habitacional",
+                "tool.loanTypes.car": "Empréstimo para Carro",
+                "tool.loanTypes.personal": "Empréstimo Pessoal",
+                "tool.loanTypes.education": "Empréstimo Educacional",
+                "tool.loanTypes.business": "Empréstimo Comercial",
+                "tool.results.emi": "EMI Mensal",
+                "tool.results.total": "Pagamento Total",
+                "tool.results.interest": "Juro Total",
+                "tool.results.principal": "Valor Principal",
+                "tool.results.interestPercent": "Percentual de Juros",
+                "tool.results.months": "Meses",
+                "tool.results.type": "Tipo de Empréstimo",
+                "tool.results.summary": "Resumo do Empréstimo",
+                "tool.chart.title": "Detalhamento de Pagamentos",
+                "tool.amortization.title": "Tabela de Amortização",
+                "tool.amortization.month": "Mês",
+                "tool.amortization.emi": "EMI",
+                "tool.amortization.principal": "Principal",
+                "tool.amortization.interest": "Juros",
+                "tool.amortization.balance": "Saldo",
+                "tool.calculate": "Calcular EMI",
+                "tool.reset": "Redefinir",
+                "tool.share": "Compartilhar Resultados",
+                "footer.follow": "SIGA-NOS",
+                "footer.categories": "Categorias Populares",
+                "footer.categories.pdf": "Ferramentas PDF",
+                "footer.categories.image": "Ferramentas de Imagem",
+                "footer.categories.text": "Ferramentas de Texto",
+                "footer.categories.av": "Ferramentas de Áudio/Video",
+                "footer.categories.web": "Ferramentas WebDeveloper",
+                "footer.categories.calc": "Ferramentas de Calculadora",
+                "footer.categories.util": "Ferramentas de Utilidade",
+                "footer.categories.color": "Ferramentas de Cor",
+                "footer.quicklinks": "Links Rápidos",
+                "footer.links.tools": "Todas as Ferramentas",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Contato",
+                "footer.links.privacy": "Política de Privacidade",
+                "footer.links.disclaimer": "Aviso Legal",
+                "footer.links.terms": "Termos de Serviço",
+                "footer.copyright": "© 2025 LollyPoPDF. Todos os direitos reservados."
+            },
+            ja: {
+                "nav.home": "ホーム",
+                "nav.about": "会社概要",
+                "nav.tools": "ツール",
+                "nav.contact": "お問い合わせ",
+                "hero.title": "ローンEMI計算機",
+                "hero.description": "住宅ローン、カーローン、個人ローンのための均等月賦返済額（EMI）を計算します。正確なEMI計算と詳細な内訳で財務計画を立てましょう。",
+                "howto.title": "EMI計算機の使い方",
+                "howto.step1.title": "ローンの詳細を入力",
+                "howto.step1.description": "ローン金額、年間金利、ローン期間を入力します。スライダーを使用するか、入力フィールドに直接入力してください。",
+                "howto.step2.title": "EMIを計算",
+                "howto.step2.description": "「EMIを計算」ボタンをクリックすると、月々の支払額と総返済額の詳細が即座に表示されます。",
+                "howto.step3.title": "結果を分析",
+                "howto.step3.description": "支払総利息を含む詳細な内訳を確認し、グラフで支払いの分布を確認します。",
+                "howto.step4.title": "財務計画を立てる",
+                "howto.step4.description": "返済計画表を使用して、時間の経過とともに元本と利息の間で支払いがどのように配分されるかを理解します。",
+                "tool.title": "EMI計算機",
+                "tool.inputs.amount": "ローン金額",
+                "tool.inputs.rate": "金利（年率%）",
+                "tool.inputs.tenure": "ローン期間（年）",
+                "tool.inputs.type": "ローンタイプ",
+                "tool.loanTypes.home": "住宅ローン",
+                "tool.loanTypes.car": "カーローン",
+                "tool.loanTypes.personal": "個人ローン",
+                "tool.loanTypes.education": "教育ローン",
+                "tool.loanTypes.business": "ビジネスローン",
+                "tool.results.emi": "月々のEMI",
+                "tool.results.total": "総支払額",
+                "tool.results.interest": "総利息",
+                "tool.results.principal": "元本額",
+                "tool.results.interestPercent": "利息割合",
+                "tool.results.months": "月数",
+                "tool.results.type": "ローンタイプ",
+                "tool.results.summary": "ローンの概要",
+                "tool.chart.title": "支払い内訳",
+                "tool.amortization.title": "返済計画表",
+                "tool.amortization.month": "月",
+                "tool.amortization.emi": "EMI",
+                "tool.amortization.principal": "元本",
+                "tool.amortization.interest": "利息",
+                "tool.amortization.balance": "残高",
+                "tool.calculate": "EMIを計算",
+                "tool.reset": "リセット",
+                "tool.share": "結果を共有",
+                "footer.follow": "フォローする",
+                "footer.categories": "人気カテゴリー",
+                "footer.categories.pdf": "PDFツール",
+                "footer.categories.image": "画像ツール",
+                "footer.categories.text": "テキストツール",
+                "footer.categories.av": "オーディオ/ビデオツール",
+                "footer.categories.web": "Web開発者ツール",
+                "footer.categories.calc": "計算機ツール",
+                "footer.categories.util": "ユーティリティツール",
+                "footer.categories.color": "カラーツール",
+                "footer.quicklinks": "クイックリンク",
+                "footer.links.tools": "すべてのツール",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "お問い合わせ",
+                "footer.links.privacy": "プライバシーポリシー",
+                "footer.links.disclaimer": "免責事項",
+                "footer.links.terms": "利用規約",
+                "footer.copyright": "© 2025 LollyPoPDF. 無断転載を禁じます."
+            },
+            ru: {
+                "nav.home": "Главная",
+                "nav.about": "О нас",
+                "nav.tools": "Инструменты",
+                "nav.contact": "Контакты",
+                "hero.title": "Калькулятор EMI кредита",
+                "hero.description": "Рассчитайте свой равный ежемесячный платеж (EMI) для жилищных кредитов, автокредитов, персональных кредитов и других. Планируйте свои финансы с точными расчетами EMI и детализированными разбивками.",
+                "howto.title": "Как использовать калькулятор EMI",
+                "howto.step1.title": "Введите детали кредита",
+                "howto.step1.description": "Введите сумму кредита, годовую процентную ставку и срок кредита. Используйте ползунки или вводите непосредственно в поля ввода.",
+                "howto.step2.title": "Рассчитайте EMI",
+                "howto.step2.description": "Нажмите кнопку \"Рассчитать EMI\", чтобы мгновенно увидеть сумму вашего ежемесячного платежа и детали общего погашения.",
+                "howto.step3.title": "Проанализируйте результаты",
+                "howto.step3.description": "Просмотрите детализированную разбивку, включая общую сумму процентов к оплате, и посмотрите распределение платежей на графике.",
+                "howto.step4.title": "Планируйте свои финансы",
+                "howto.step4.description": "Используйте график погашения, чтобы понять, как ваши платежи распределяются между основной суммой и процентами с течением времени.",
+                "tool.title": "Калькулятор EMI",
+                "tool.inputs.amount": "Сумма кредита",
+                "tool.inputs.rate": "Процентная ставка (% годовых)",
+                "tool.inputs.tenure": "Срок кредита (лет)",
+                "tool.inputs.type": "Тип кредита",
+                "tool.loanTypes.home": "Жилищный кредит",
+                "tool.loanTypes.car": "Автокредит",
+                "tool.loanTypes.personal": "Персональный кредит",
+                "tool.loanTypes.education": "Образовательный кредит",
+                "tool.loanTypes.business": "Бизнес-кредит",
+                "tool.results.emi": "Ежемесячный EMI",
+                "tool.results.total": "Общий платеж",
+                "tool.results.interest": "Общие проценты",
+                "tool.results.principal": "Основная сумма",
+                "tool.results.interestPercent": "Процентная доля",
+                "tool.results.months": "Месяцы",
+                "tool.results.type": "Тип кредита",
+                "tool.results.summary": "Сводка по кредиту",
+                "tool.chart.title": "Разбивка платежей",
+                "tool.amortization.title": "График погашения",
+                "tool.amortization.month": "Месяц",
+                "tool.amortization.emi": "EMI",
+                "tool.amortization.principal": "Основной долг",
+                "tool.amortization.interest": "Проценты",
+                "tool.amortization.balance": "Остаток",
+                "tool.calculate": "Рассчитать EMI",
+                "tool.reset": "Сбросить",
+                "tool.share": "Поделиться результатами",
+                "footer.follow": "СЛЕДУЙТЕ ЗА НАМИ",
+                "footer.categories": "Популярные категории",
+                "footer.categories.pdf": "PDF инструменты",
+                "footer.categories.image": "Инструменты для изображений",
+                "footer.categories.text": "Текстовые инструменты",
+                "footer.categories.av": "Аудио/Видео инструменты",
+                "footer.categories.web": "Инструменты WebDeveloper",
+                "footer.categories.calc": "Калькуляторные инструменты",
+                "footer.categories.util": "Утилитарные инструменты",
+                "footer.categories.color": "Цветовые инструменты",
+                "footer.quicklinks": "Быстрые ссылки",
+                "footer.links.tools": "Все инструменты",
+                "footer.links.faq": "ЧаВо",
+                "footer.links.contact": "Контакты",
+                "footer.links.privacy": "Политика конфиденциальности",
+                "footer.links.disclaimer": "Отказ от ответственности",
+                "footer.links.terms": "Условия использования",
+                "footer.copyright": "© 2025 LollyPoPDF. Все права защищены."
+            },
+            ko: {
+                "nav.home": "홈",
+                "nav.about": "회사 소개",
+                "nav.tools": "도구",
+                "nav.contact": "연락처",
+                "hero.title": "대출 EMI 계산기",
+                "hero.description": "주택 대출, 자동차 대출, 개인 대출 등을 위한 균등 분할 상환금(EMI)을 계산하세요. 정확한 EMI 계산과 상세한 분석으로 재무를 계획하세요.",
+                "howto.title": "EMI 계산기 사용 방법",
+                "howto.step1.title": "대출 정보 입력",
+                "howto.step1.description": "대출 금액, 연이율, 대출 기간을 입력하세요. 슬라이더를 사용하거나 입력란에 직접 입력하세요.",
+                "howto.step2.title": "EMI 계산",
+                "howto.step2.description": "EMI 계산 버튼을 클릭하면 월 상환금과 총 상환 정보를 즉시 확인할 수 있습니다.",
+                "howto.step3.title": "결과 분석",
+                "howto.step3.description": "총 이자 금액을 포함한 상세 분석을 검토하고 차트에서 상환 분포를 확인하세요.",
+                "howto.step4.title": "재무 계획 수립",
+                "howto.step4.description": "상환 스케줄을 사용하여 시간에 따라 원금과 이자 간 상환이 어떻게 배분되는지 이해하세요.",
+                "tool.title": "EMI 계산기",
+                "tool.inputs.amount": "대출 금액",
+                "tool.inputs.rate": "이자율 (연%)",
+                "tool.inputs.tenure": "대출 기간 (년)",
+                "tool.inputs.type": "대출 유형",
+                "tool.loanTypes.home": "주택 대출",
+                "tool.loanTypes.car": "자동차 대출",
+                "tool.loanTypes.personal": "개인 대출",
+                "tool.loanTypes.education": "교육 대출",
+                "tool.loanTypes.business": "사업자 대출",
+                "tool.results.emi": "월별 EMI",
+                "tool.results.total": "총 상환액",
+                "tool.results.interest": "총 이자",
+                "tool.results.principal": "원금",
+                "tool.results.interestPercent": "이자 비율",
+                "tool.results.months": "개월",
+                "tool.results.type": "대출 유형",
+                "tool.results.summary": "대출 요약",
+                "tool.chart.title": "상환 내역",
+                "tool.amortization.title": "상환 스케줄",
+                "tool.amortization.month": "월",
+                "tool.amortization.emi": "EMI",
+                "tool.amortization.principal": "원금",
+                "tool.amortization.interest": "이자",
+                "tool.amortization.balance": "잔액",
+                "tool.calculate": "EMI 계산",
+                "tool.reset": "초기화",
+                "tool.share": "결과 공유",
+                "footer.follow": "팔로우하기",
+                "footer.categories": "인기 카테고리",
+                "footer.categories.pdf": "PDF 도구",
+                "footer.categories.image": "이미지 도구",
+                "footer.categories.text": "텍스트 도구",
+                "footer.categories.av": "오디오/비디오 도구",
+                "footer.categories.web": "웹 개발자 도구",
+                "footer.categories.calc": "계산기 도구",
+                "footer.categories.util": "유틸리티 도구",
+                "footer.categories.color": "색상 도구",
+                "footer.quicklinks": "빠른 링크",
+                "footer.links.tools": "모든 도구",
+                "footer.links.faq": "자주 묻는 질문",
+                "footer.links.contact": "연락처",
+                "footer.links.privacy": "개인정보 보호정책",
+                "footer.links.disclaimer": "면책 조항",
+                "footer.links.terms": "이용 약관",
+                "footer.copyright": "© 2025 LollyPoPDF. 모든 권리 보유."
+            },
+            'zh-CN': {
+                "nav.home": "首页",
+                "nav.about": "关于我们",
+                "nav.tools": "工具",
+                "nav.contact": "联系我们",
+                "hero.title": "贷款EMI计算器",
+                "hero.description": "计算您的住房贷款、汽车贷款、个人贷款等的等额月供（EMI）。通过精确的EMI计算和详细分析来规划您的财务。",
+                "howto.title": "如何使用EMI计算器",
+                "howto.step1.title": "输入贷款详情",
+                "howto.step1.description": "输入贷款金额、年利率和贷款期限。使用滑块或直接在输入框中输入。",
+                "howto.step2.title": "计算EMI",
+                "howto.step2.description": "点击\"计算EMI\"按钮，立即查看您的月供金额和总还款详情。",
+                "howto.step3.title": "分析结果",
+                "howto.step3.description": "查看包括应付总利息在内的详细分析，并在图表中查看还款分布。",
+                "howto.step4.title": "规划财务",
+                "howto.step4.description": "使用还款计划表了解您的还款如何随时间在本金和利息之间分配。",
+                "tool.title": "EMI计算器",
+                "tool.inputs.amount": "贷款金额",
+                "tool.inputs.rate": "利率（年%）",
+                "tool.inputs.tenure": "贷款期限（年）",
+                "tool.inputs.type": "贷款类型",
+                "tool.loanTypes.home": "住房贷款",
+                "tool.loanTypes.car": "汽车贷款",
+                "tool.loanTypes.personal": "个人贷款",
+                "tool.loanTypes.education": "教育贷款",
+                "tool.loanTypes.business": "商业贷款",
+                "tool.results.emi": "月供EMI",
+                "tool.results.total": "总还款额",
+                "tool.results.interest": "总利息",
+                "tool.results.principal": "本金金额",
+                "tool.results.interestPercent": "利息比例",
+                "tool.results.months": "月数",
+                "tool.results.type": "贷款类型",
+                "tool.results.summary": "贷款摘要",
+                "tool.chart.title": "还款分析",
+                "tool.amortization.title": "还款计划表",
+                "tool.amortization.month": "月份",
+                "tool.amortization.emi": "EMI",
+                "tool.amortization.principal": "本金",
+                "tool.amortization.interest": "利息",
+                "tool.amortization.balance": "余额",
+                "tool.calculate": "计算EMI",
+                "tool.reset": "重置",
+                "tool.share": "分享结果",
+                "footer.follow": "关注我们",
+                "footer.categories": "热门类别",
+                "footer.categories.pdf": "PDF工具",
+                "footer.categories.image": "图片工具",
+                "footer.categories.text": "文本工具",
+                "footer.categories.av": "音频/视频工具",
+                "footer.categories.web": "Web开发工具",
+                "footer.categories.calc": "计算器工具",
+                "footer.categories.util": "实用工具",
+                "footer.categories.color": "颜色工具",
+                "footer.quicklinks": "快速链接",
+                "footer.links.tools": "所有工具",
+                "footer.links.faq": "常见问题",
+                "footer.links.contact": "联系我们",
+                "footer.links.privacy": "隐私政策",
+                "footer.links.disclaimer": "免责声明",
+                "footer.links.terms": "服务条款",
+                "footer.copyright": "© 2025 LollyPoPDF. 版权所有。"
+            },
+            'zh-TW': {
+                "nav.home": "首頁",
+                "nav.about": "關於我們",
+                "nav.tools": "工具",
+                "nav.contact": "聯絡我們",
+                "hero.title": "貸款EMI計算機",
+                "hero.description": "計算您的房屋貸款、汽車貸款、個人貸款等的等額月供（EMI）。透過精確的EMI計算和詳細分析來規劃您的財務。",
+                "howto.title": "如何使用EMI計算機",
+                "howto.step1.title": "輸入貸款詳情",
+                "howto.step1.description": "輸入貸款金額、年利率和貸款期限。使用滑桿或直接在輸入框中輸入。",
+                "howto.step2.title": "計算EMI",
+                "howto.step2.description": "點擊\"計算EMI\"按鈕，立即查看您的月供金額和總還款詳情。",
+                "howto.step3.title": "分析結果",
+                "howto.step3.description": "查看包括應付總利息在內的詳細分析，並在圖表中查看還款分佈。",
+                "howto.step4.title": "規劃財務",
+                "howto.step4.description": "使用還款計劃表了解您的還款如何隨時間在本金和利息之間分配。",
+                "tool.title": "EMI計算機",
+                "tool.inputs.amount": "貸款金額",
+                "tool.inputs.rate": "利率（年%）",
+                "tool.inputs.tenure": "貸款期限（年）",
+                "tool.inputs.type": "貸款類型",
+                "tool.loanTypes.home": "房屋貸款",
+                "tool.loanTypes.car": "汽車貸款",
+                "tool.loanTypes.personal": "個人貸款",
+                "tool.loanTypes.education": "教育貸款",
+                "tool.loanTypes.business": "商業貸款",
+                "tool.results.emi": "月供EMI",
+                "tool.results.total": "總還款額",
+                "tool.results.interest": "總利息",
+                "tool.results.principal": "本金金額",
+                "tool.results.interestPercent": "利息比例",
+                "tool.results.months": "月數",
+                "tool.results.type": "貸款類型",
+                "tool.results.summary": "貸款摘要",
+                "tool.chart.title": "還款分析",
+                "tool.amortization.title": "還款計劃表",
+                "tool.amortization.month": "月份",
+                "tool.amortization.emi": "EMI",
+                "tool.amortization.principal": "本金",
+                "tool.amortization.interest": "利息",
+                "tool.amortization.balance": "餘額",
+                "tool.calculate": "計算EMI",
+                "tool.reset": "重置",
+                "tool.share": "分享結果",
+                "footer.follow": "關注我們",
+                "footer.categories": "熱門類別",
+                "footer.categories.pdf": "PDF工具",
+                "footer.categories.image": "圖片工具",
+                "footer.categories.text": "文字工具",
+                "footer.categories.av": "音訊/視訊工具",
+                "footer.categories.web": "Web開發工具",
+                "footer.categories.calc": "計算機工具",
+                "footer.categories.util": "實用工具",
+                "footer.categories.color": "顏色工具",
+                "footer.quicklinks": "快速連結",
+                "footer.links.tools": "所有工具",
+                "footer.links.faq": "常見問題",
+                "footer.links.contact": "聯絡我們",
+                "footer.links.privacy": "隱私政策",
+                "footer.links.disclaimer": "免責聲明",
+                "footer.links.terms": "服務條款",
+                "footer.copyright": "© 2025 LollyPoPDF. 版權所有。"
+            },
+            ar: {
+                "nav.home": "الرئيسية",
+                "nav.about": "من نحن",
+                "nav.tools": "الأدوات",
+                "nav.contact": "اتصل بنا",
+                "hero.title": "حاسبة قسط القرض الشهري",
+                "hero.description": "احسب قسطك الشهري الثابت (EMI) للقروض السكنية، قروض السيارات، القروض الشخصية والمزيد. خطط لشؤونك المالية بحسابات EMI دقيقة وتحليلات مفصلة.",
+                "howto.title": "كيفية استخدام حاسبة EMI",
+                "howto.step1.title": "أدخل تفاصيل القرض",
+                "howto.step1.description": "أدخل مبلغ القرض، سعر الفائدة السنوي ومدة القرض. استخدم أشرطة التمرير أو اكتب مباشرة في حقول الإدخال.",
+                "howto.step2.title": "احسب EMI",
+                "howto.step2.description": "انقر على زر \"احسب EMI\" لرؤية مبلغ دفعتك الشهرية وتفاصيل السداد الكلي على الفور.",
+                "howto.step3.title": "حلل النتائج",
+                "howto.step3.description": "راجع التحليل المفصل بما في ذلك إجمالي الفائدة المستحقة وشاهد توزيع المدفوعات في الرسم البياني.",
+                "howto.step4.title": "خطط لشؤونك المالية",
+                "howto.step4.description": "استخدم جدول الإطفاء لفهم كيفية تخصيص مدفوعاتك بين أصل القرض والفائدة مع مرور الوقت.",
+                "tool.title": "حاسبة EMI",
+                "tool.inputs.amount": "مبلغ القرض",
+                "tool.inputs.rate": "سعر الفائدة (% سنوي)",
+                "tool.inputs.tenure": "مدة القرض (سنوات)",
+                "tool.inputs.type": "نوع القرض",
+                "tool.loanTypes.home": "قرض سكني",
+                "tool.loanTypes.car": "قرض سيارة",
+                "tool.loanTypes.personal": "قرض شخصي",
+                "tool.loanTypes.education": "قرض تعليمي",
+                "tool.loanTypes.business": "قرض تجاري",
+                "tool.results.emi": "القسط الشهري EMI",
+                "tool.results.total": "إجمالي السداد",
+                "tool.results.interest": "إجمالي الفائدة",
+                "tool.results.principal": "المبلغ الأصلي",
+                "tool.results.interestPercent": "نسبة الفائدة",
+                "tool.results.months": "شهور",
+                "tool.results.type": "نوع القرض",
+                "tool.results.summary": "ملخص القرض",
+                "tool.chart.title": "تحليل المدفوعات",
+                "tool.amortization.title": "جدول الإطفاء",
+                "tool.amortization.month": "الشهر",
+                "tool.amortization.emi": "EMI",
+                "tool.amortization.principal": "الأصل",
+                "tool.amortization.interest": "الفائدة",
+                "tool.amortization.balance": "الرصيد",
+                "tool.calculate": "احسب EMI",
+                "tool.reset": "إعادة تعيين",
+                "tool.share": "مشاركة النتائج",
+                "footer.follow": "تابعنا",
+                "footer.categories": "الفئات الشائعة",
+                "footer.categories.pdf": "أدوات PDF",
+                "footer.categories.image": "أدوات الصور",
+                "footer.categories.text": "أدوات النص",
+                "footer.categories.av": "أدوات الصوت/الفيديو",
+                "footer.categories.web": "أدوات مطور الويب",
+                "footer.categories.calc": "أدوات الآلة الحاسبة",
+                "footer.categories.util": "أدوات المساعدة",
+                "footer.categories.color": "أدوات الألوان",
+                "footer.quicklinks": "روابط سريعة",
+                "footer.links.tools": "جميع الأدوات",
+                "footer.links.faq": "الأسئلة الشائعة",
+                "footer.links.contact": "اتصل بنا",
+                "footer.links.privacy": "سياسة الخصوصية",
+                "footer.links.disclaimer": "إخلاء المسؤولية",
+                "footer.links.terms": "شروط الخدمة",
+                "footer.copyright": "© 2025 LollyPoPDF. جميع الحقوق محفوظة."
+            },
+            fa: {
+                "nav.home": "خانه",
+                "nav.about": "درباره ما",
+                "nav.tools": "ابزارها",
+                "nav.contact": "تماس با ما",
+                "hero.title": "ماشین حساب اقساط وام",
+                "hero.description": "قسط ماهیانه ثابت (EMI) خود را برای وام مسکن، وام خودرو، وام شخصی و بیشتر محاسبه کنید. با محاسبات دقیق EMI و تجزیه و تحلیل های مفصل، امور مالی خود را برنامه ریزی کنید.",
+                "howto.title": "نحوه استفاده از ماشین حساب EMI",
+                "howto.step1.title": "وارد کردن جزئیات وام",
+                "howto.step1.description": "مبلغ وام، نرخ بهره سالانه و مدت وام را وارد کنید. از نوارهای لغزنده استفاده کنید یا مستقیماً در فیلدهای ورودی تایپ کنید.",
+                "howto.step2.title": "محاسبه EMI",
+                "howto.step2.description": "روی دکمه \"محاسبه EMI\" کلیک کنید تا بلافاصله مبلغ پرداخت ماهیانه و جزئیات بازپرداخت کل را مشاهده کنید.",
+                "howto.step3.title": "تجزیه و تحلیل نتایج",
+                "howto.step3.description": "تجزیه و تحلیل مفصل شامل کل بهره قابل پرداخت را مرور کنید و توزیع پرداخت ها را در نمودار مشاهده کنید.",
+                "howto.step4.title": "برنامه ریزی امور مالی خود",
+                "howto.step4.description": "از برنامه بازپرداخت استفاده کنید تا بفهمید پرداخت های شما چگونه در طول زمان بین اصل وام و بهره تخصیص می یابد.",
+                "tool.title": "ماشین حساب EMI",
+                "tool.inputs.amount": "مبلغ وام",
+                "tool.inputs.rate": "نرخ بهره (% سالانه)",
+                "tool.inputs.tenure": "مدت وام (سال)",
+                "tool.inputs.type": "نوع وام",
+                "tool.loanTypes.home": "وام مسکن",
+                "tool.loanTypes.car": "وام خودرو",
+                "tool.loanTypes.personal": "وام شخصی",
+                "tool.loanTypes.education": "وام آموزشی",
+                "tool.loanTypes.business": "وام تجاری",
+                "tool.results.emi": "قسط ماهیانه EMI",
+                "tool.results.total": "کل پرداخت",
+                "tool.results.interest": "کل بهره",
+                "tool.results.principal": "مبلغ اصل",
+                "tool.results.interestPercent": "درصد بهره",
+                "tool.results.months": "ماه",
+                "tool.results.type": "نوع وام",
+                "tool.results.summary": "خلاصه وام",
+                "tool.chart.title": "تجزیه پرداخت",
+                "tool.amortization.title": "برنامه بازپرداخت",
+                "tool.amortization.month": "ماه",
+                "tool.amortization.emi": "EMI",
+                "tool.amortization.principal": "اصل",
+                "tool.amortization.interest": "بهره",
+                "tool.amortization.balance": "مانده",
+                "tool.calculate": "محاسبه EMI",
+                "tool.reset": "بازنشانی",
+                "tool.share": "اشتراک گذاری نتایج",
+                "footer.follow": "ما را دنبال کنید",
+                "footer.categories": "دسته‌بندی‌های محبوب",
+                "footer.categories.pdf": "ابزارهای PDF",
+                "footer.categories.image": "ابزارهای تصویر",
+                "footer.categories.text": "ابزارهای متن",
+                "footer.categories.av": "ابزارهای صدا/ویدیو",
+                "footer.categories.web": "ابزارهای توسعه دهنده وب",
+                "footer.categories.calc": "ابزارهای ماشین حساب",
+                "footer.categories.util": "ابزارهای کمکی",
+                "footer.categories.color": "ابزارهای رنگ",
+                "footer.quicklinks": "لینک‌های سریع",
+                "footer.links.tools": "همه ابزارها",
+                "footer.links.faq": "سوالات متداول",
+                "footer.links.contact": "تماس با ما",
+                "footer.links.privacy": "سیاست حفظ حریم خصوصی",
+                "footer.links.disclaimer": "سلب مسئولیت",
+                "footer.links.terms": "شرایط استفاده",
+                "footer.copyright": "© 2025 LollyPoPDF. تمامی حقوق محفوظ است."
+            },
+            bg: {
+                "nav.home": "Начало",
+                "nav.about": "За нас",
+                "nav.tools": "Инструменти",
+                "nav.contact": "Контакт",
+                "hero.title": "Калкулатор за месечна вноска по кредит",
+                "hero.description": "Изчислете вашата равномерна месечна вноска (EMI) за жилищни кредити, автомобилни кредити, лични кредити и други. Планирайте вашите финанси с точни изчисления на EMI и подробни анализи.",
+                "howto.title": "Как да използвате калкулатора за EMI",
+                "howto.step1.title": "Въведете детайли за кредита",
+                "howto.step1.description": "Въведете сумата на кредита, годишния лихвен процент и срока на кредита. Използвайте плъзгачите или въведете директно в полетата за въвеждане.",
+                "howto.step2.title": "Изчислете EMI",
+                "howto.step2.description": "Кликнете върху бутона \"Изчисли EMI\", за да видите незабавно сумата на вашата месечна вноска и детайлите за общото изплащане.",
+                "howto.step3.title": "Анализирайте резултатите",
+                "howto.step3.description": "Прегледайте подробния анализ, включително общата дължима лихва, и вижте разпределението на плащанията в графиката.",
+                "howto.step4.title": "Планирайте вашите финанси",
+                "howto.step4.description": "Използвайте графика за изплащане, за да разберете как вашите плащания се разпределят между главница и лихва с течение на времето.",
+                "tool.title": "Калкулатор за EMI",
+                "tool.inputs.amount": "Сума на кредита",
+                "tool.inputs.rate": "Лихвен процент (% годишно)",
+                "tool.inputs.tenure": "Срок на кредита (Години)",
+                "tool.inputs.type": "Вид кредит",
+                "tool.loanTypes.home": "Жилищен кредит",
+                "tool.loanTypes.car": "Автомобилен кредит",
+                "tool.loanTypes.personal": "Личен кредит",
+                "tool.loanTypes.education": "Образователен кредит",
+                "tool.loanTypes.business": "Бизнес кредит",
+                "tool.results.emi": "Месечна EMI",
+                "tool.results.total": "Общо плащане",
+                "tool.results.interest": "Обща лихва",
+                "tool.results.principal": "Главница",
+                "tool.results.interestPercent": "Процент лихва",
+                "tool.results.months": "Месеци",
+                "tool.results.type": "Вид кредит",
+                "tool.results.summary": "Резюме на кредита",
+                "tool.chart.title": "Разпределение на плащанията",
+                "tool.amortization.title": "График за изплащане",
+                "tool.amortization.month": "Месец",
+                "tool.amortization.emi": "EMI",
+                "tool.amortization.principal": "Главница",
+                "tool.amortization.interest": "Лихва",
+                "tool.amortization.balance": "Баланс",
+                "tool.calculate": "Изчисли EMI",
+                "tool.reset": "Нулиране",
+                "tool.share": "Сподели резултати",
+                "footer.follow": "СЛЕДВАЙТЕ НИ",
+                "footer.categories": "Популярни категории",
+                "footer.categories.pdf": "PDF инструменти",
+                "footer.categories.image": "Инструменти за изображения",
+                "footer.categories.text": "Текстови инструменти",
+                "footer.categories.av": "Аудио/Видео инструменти",
+                "footer.categories.web": "WebDeveloper инструменти",
+                "footer.categories.calc": "Калкулаторни инструменти",
+                "footer.categories.util": "Помощни инструменти",
+                "footer.categories.color": "Цветови инструменти",
+                "footer.quicklinks": "Бързи връзки",
+                "footer.links.tools": "Всички инструменти",
+                "footer.links.faq": "ЧЗВ",
+                "footer.links.contact": "Контакт",
+                "footer.links.privacy": "Политика за поверителност",
+                "footer.links.disclaimer": "Отказ от отговорност",
+                "footer.links.terms": "Условия за ползване",
+                "footer.copyright": "© 2025 LollyPoPDF. Всички права запазени."
+            },
+            ca: {
+                "nav.home": "Inici",
+                "nav.about": "Sobre nosaltres",
+                "nav.tools": "Eines",
+                "nav.contact": "Contacte",
+                "hero.title": "Calculadora d'EMI de Préstec",
+                "hero.description": "Calcula la teva Quota Mensual Equivalent (EMI) per a préstecs hipotecaris, préstecs per a cotxes, préstecs personals i més. Planifica les teves finances amb càlculs precisos d'EMI i desglossaments detallats.",
+                "howto.title": "Com Utilitzar la Calculadora d'EMI",
+                "howto.step1.title": "Introdueix els Detalls del Préstec",
+                "howto.step1.description": "Introdueix l'import del préstec, la taxa d'interès anual i el termini del préstec. Utilitza els controladors lliscants o escriu directament als camps d'entrada.",
+                "howto.step2.title": "Calcula l'EMI",
+                "howto.step2.description": "Fes clic al botó \"Calcula l'EMI\" per veure instantàniament l'import del teu pagament mensual i els detalls del reemborsament total.",
+                "howto.step3.title": "Analitza els Resultats",
+                "howto.step3.description": "Revisa el desglossament detallat incloent l'interès total a pagar i veu la distribució de pagaments al gràfic.",
+                "howto.step4.title": "Planifica les Teves Finances",
+                "howto.step4.description": "Utilitza el calendari d'amortització per entendre com els teus pagaments s'assignen entre principal i interès al llarg del temps.",
+                "tool.title": "Calculadora d'EMI",
+                "tool.inputs.amount": "Import del Préstec",
+                "tool.inputs.rate": "Taxa d'Interès (% anual)",
+                "tool.inputs.tenure": "Termini del Préstec (Anys)",
+                "tool.inputs.type": "Tipus de Préstec",
+                "tool.loanTypes.home": "Préstec Hipotecari",
+                "tool.loanTypes.car": "Préstec per a Cotxe",
+                "tool.loanTypes.personal": "Préstec Personal",
+                "tool.loanTypes.education": "Préstec Educatiu",
+                "tool.loanTypes.business": "Préstec Empresarial",
+                "tool.results.emi": "EMI Mensual",
+                "tool.results.total": "Pagament Total",
+                "tool.results.interest": "Interès Total",
+                "tool.results.principal": "Import Principal",
+                "tool.results.interestPercent": "Percentatge d'Interès",
+                "tool.results.months": "Mesos",
+                "tool.results.type": "Tipus de Préstec",
+                "tool.results.summary": "Resum del Préstec",
+                "tool.chart.title": "Desglossament de Pagaments",
+                "tool.amortization.title": "Calendari d'Amortització",
+                "tool.amortization.month": "Mes",
+                "tool.amortization.emi": "EMI",
+                "tool.amortization.principal": "Principal",
+                "tool.amortization.interest": "Interès",
+                "tool.amortization.balance": "Saldo",
+                "tool.calculate": "Calcula l'EMI",
+                "tool.reset": "Reinicialitza",
+                "tool.share": "Comparteix Resultats",
+                "footer.follow": "SEGUEIX-NOS",
+                "footer.categories": "Categories Populars",
+                "footer.categories.pdf": "Eines PDF",
+                "footer.categories.image": "Eines d'Imatge",
+                "footer.categories.text": "Eines de Text",
+                "footer.categories.av": "Eines d'Àudio/Video",
+                "footer.categories.web": "Eines WebDeveloper",
+                "footer.categories.calc": "Eines de Calculadora",
+                "footer.categories.util": "Eines d'Utilitat",
+                "footer.categories.color": "Eines de Color",
+                "footer.quicklinks": "Enllaços Ràpids",
+                "footer.links.tools": "Totes les Eines",
+                "footer.links.faq": "PMF",
+                "footer.links.contact": "Contacte",
+                "footer.links.privacy": "Política de Privadesa",
+                "footer.links.disclaimer": "Avís Legal",
+                "footer.links.terms": "Termes de Servei",
+                "footer.copyright": "© 2025 LollyPoPDF. Tots els drets reservats."
+            },
+            nl: {
+                "nav.home": "Home",
+                "nav.about": "Over Ons",
+                "nav.tools": "Tools",
+                "nav.contact": "Contact",
+                "hero.title": "Lening EMI Calculator",
+                "hero.description": "Bereken uw Gelijkmatige Maandelijkse Aflossing (EMI) voor hypotheken, autoleningen, persoonlijke leningen en meer. Plan uw financiën met nauwkeurige EMI-berekeningen en gedetailleerde uitsplitsingen.",
+                "howto.title": "Hoe de EMI Calculator te Gebruiken",
+                "howto.step1.title": "Voer Leninggegevens in",
+                "howto.step1.description": "Voer het leenbedrag, het jaarlijkse rentepercentage en de looptijd van de lening in. Gebruik de schuifregelaars of typ rechtstreeks in de invoervelden.",
+                "howto.step2.title": "Bereken EMI",
+                "howto.step2.description": "Klik op de knop \"Bereken EMI\" om direct uw maandelijkse betalingsbedrag en de details van de totale terugbetaling te zien.",
+                "howto.step3.title": "Analyseer Resultaten",
+                "howto.step3.description": "Bekijk de gedetailleerde uitsplitsing inclusief de totale te betalen rente en zie de betalingsverdeling in de grafiek.",
+                "howto.step4.title": "Plan Uw Financiën",
+                "howto.step4.description": "Gebruik het aflossingsschema om te begrijpen hoe uw betalingen in de loop van de tijd worden toegewezen tussen hoofdsom en rente.",
+                "tool.title": "EMI Calculator",
+                "tool.inputs.amount": "Leenbedrag",
+                "tool.inputs.rate": "Rentepercentage (% per jaar)",
+                "tool.inputs.tenure": "Looptijd Lening (Jaren)",
+                "tool.inputs.type": "Type Lening",
+                "tool.loanTypes.home": "Hypotheek",
+                "tool.loanTypes.car": "Autolening",
+                "tool.loanTypes.personal": "Persoonlijke Lening",
+                "tool.loanTypes.education": "Onderwijslening",
+                "tool.loanTypes.business": "Zakelijke Lening",
+                "tool.results.emi": "Maandelijkse EMI",
+                "tool.results.total": "Totale Betaling",
+                "tool.results.interest": "Totale Rente",
+                "tool.results.principal": "Hoofdbedrag",
+                "tool.results.interestPercent": "Rentepercentage",
+                "tool.results.months": "Maanden",
+                "tool.results.type": "Type Lening",
+                "tool.results.summary": "Leningoverzicht",
+                "tool.chart.title": "Betalingsuitsplitsing",
+                "tool.amortization.title": "Aflossingsschema",
+                "tool.amortization.month": "Maand",
+                "tool.amortization.emi": "EMI",
+                "tool.amortization.principal": "Hoofdsom",
+                "tool.amortization.interest": "Rente",
+                "tool.amortization.balance": "Saldo",
+                "tool.calculate": "Bereken EMI",
+                "tool.reset": "Reset",
+                "tool.share": "Deel Resultaten",
+                "footer.follow": "VOLG ONS",
+                "footer.categories": "Populaire Categorieën",
+                "footer.categories.pdf": "PDF Tools",
+                "footer.categories.image": "Afbeelding Tools",
+                "footer.categories.text": "Tekst Tools",
+                "footer.categories.av": "Audio/Video Tools",
+                "footer.categories.web": "WebDeveloper Tools",
+                "footer.categories.calc": "Rekenmachine Tools",
+                "footer.categories.util": "Hulpprogramma's",
+                "footer.categories.color": "Kleur Tools",
+                "footer.quicklinks": "Snelle Links",
+                "footer.links.tools": "Alle Tools",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Contact",
+                "footer.links.privacy": "Privacybeleid",
+                "footer.links.disclaimer": "Disclaimer",
+                "footer.links.terms": "Servicevoorwaarden",
+                "footer.copyright": "© 2025 LollyPoPDF. Alle rechten voorbehouden."
+            },
+            el: {
+                "nav.home": "Αρχική",
+                "nav.about": "Σχετικά με εμάς",
+                "nav.tools": "Εργαλεία",
+                "nav.contact": "Επικοινωνία",
+                "hero.title": "Αριθμομηχανή EMI Δανείου",
+                "hero.description": "Υπολογίστε την Ισοδύναμη Μηνιαία Δόση (EMI) για στεγαστικά δάνεια, δάνεια αυτοκινήτων, προσωπικά δάνεια και άλλα. Σχεδιάστε τις οικονομίες σας με ακριβείς υπολογισμούς EMI και λεπτομερείς αναλύσεις.",
+                "howto.title": "Πώς να Χρησιμοποιήσετε την Αριθμομηχανή EMI",
+                "howto.step1.title": "Εισαγάγετε Λεπτομέρειες Δανείου",
+                "howto.step1.description": "Εισαγάγετε το ποσό του δανείου, το ετήσιο επιτόκιο και τη διάρκεια του δανείου. Χρησιμοποιήστε τους ρυθμιστές ή πληκτρολογήστε απευθείας στα πεδία εισαγωγής.",
+                "howto.step2.title": "Υπολογίστε το EMI",
+                "howto.step2.description": "Κάντε κλικ στο κουμπί \"Υπολογισμός EMI\" για να δείτε αμέσως το ποσό της μηνιαίας σας πληρωμής και τις λεπτομέρειες της συνολικής αποπληρωμής.",
+                "howto.step3.title": "Αναλύστε τα Αποτελέσματα",
+                "howto.step3.description": "Εξετάστε τη λεπτομερή ανάλυση συμπεριλαμβανομένου του συνολικού τόκου που πρέπει να πληρωθεί και δείτε την κατανομή πληρωμών στο γράφημα.",
+                "howto.step4.title": "Σχεδιάστε τις Οικονομίες Σας",
+                "howto.step4.description": "Χρησιμοποιήστε το πλάνο αποπληρωμής για να κατανοήσετε πώς οι πληρωμές σας κατανέμονται μεταξύ κεφαλαίου και τόκου με την πάροδο του χρόνου.",
+                "tool.title": "Αριθμομηχανή EMI",
+                "tool.inputs.amount": "Ποσό Δανείου",
+                "tool.inputs.rate": "Επιτόκιο (% ετησίως)",
+                "tool.inputs.tenure": "Διάρκεια Δανείου (Έτη)",
+                "tool.inputs.type": "Τύπος Δανείου",
+                "tool.loanTypes.home": "Στεγαστικό Δάνειο",
+                "tool.loanTypes.car": "Δάνειο Αυτοκινήτου",
+                "tool.loanTypes.personal": "Προσωπικό Δάνειο",
+                "tool.loanTypes.education": "Εκπαιδευτικό Δάνειο",
+                "tool.loanTypes.business": "Επαγγελματικό Δάνειο",
+                "tool.results.emi": "Μηνιαίο EMI",
+                "tool.results.total": "Συνολική Πληρωμή",
+                "tool.results.interest": "Συνολικός Τόκος",
+                "tool.results.principal": "Κεφάλαιο",
+                "tool.results.interestPercent": "Ποσοστό Τόκου",
+                "tool.results.months": "Μήνες",
+                "tool.results.type": "Τύπος Δανείου",
+                "tool.results.summary": "Περίληψη Δανείου",
+                "tool.chart.title": "Ανάλυση Πληρωμών",
+                "tool.amortization.title": "Πλάνο Αποπληρωμής",
+                "tool.amortization.month": "Μήνας",
+                "tool.amortization.emi": "EMI",
+                "tool.amortization.principal": "Κεφάλαιο",
+                "tool.amortization.interest": "Τόκος",
+                "tool.amortization.balance": "Υπόλοιπο",
+                "tool.calculate": "Υπολογισμός EMI",
+                "tool.reset": "Επαναφορά",
+                "tool.share": "Κοινοποίηση Αποτελεσμάτων",
+                "footer.follow": "ΑΚΟΛΟΥΘΗΣΤΕ ΜΑΣ",
+                "footer.categories": "Δημοφιλείς Κατηγορίες",
+                "footer.categories.pdf": "Εργαλεία PDF",
+                "footer.categories.image": "Εργαλεία Εικόνας",
+                "footer.categories.text": "Εργαλεία Κειμένου",
+                "footer.categories.av": "Εργαλεία Ήχου/Βίντεο",
+                "footer.categories.web": "Εργαλεία WebDeveloper",
+                "footer.categories.calc": "Εργαλεία Αριθμομηχανής",
+                "footer.categories.util": "Εργαλεία Χρησιμότητας",
+                "footer.categories.color": "Εργαλεία Χρώματος",
+                "footer.quicklinks": "Γρήγοροι Σύνδεσμοι",
+                "footer.links.tools": "Όλα τα Εργαλεία",
+                "footer.links.faq": "Συχνές Ερωτήσεις",
+                "footer.links.contact": "Επικοινωνία",
+                "footer.links.privacy": "Πολιτική Απορρήτου",
+                "footer.links.disclaimer": "Αποποίηση Ευθυνών",
+                "footer.links.terms": "Όροι Χρήσης",
+                "footer.copyright": "© 2025 LollyPoPDF. Με επιφύλαξη παντός δικαιώματος."
+            },
+            hi: {
+                "nav.home": "होम",
+                "nav.about": "हमारे बारे में",
+                "nav.tools": "टूल्स",
+                "nav.contact": "संपर्क करें",
+                "hero.title": "लोन ईएमआई कैलकुलेटर",
+                "hero.description": "होम लोन, कार लोन, पर्सनल लोन और अन्य के लिए अपनी समान मासिक किस्त (EMI) की गणना करें। सटीक EMI गणना और विस्तृत विश्लेषण के साथ अपने वित्त की योजना बनाएं।",
+                "howto.title": "ईएमआई कैलकुलेटर का उपयोग कैसे करें",
+                "howto.step1.title": "लोन विवरण दर्ज करें",
+                "howto.step1.description": "लोन राशि, वार्षिक ब्याज दर और लोन अवधि दर्ज करें। स्लाइडर्स का उपयोग करें या सीधे इनपुट फ़ील्ड में टाइप करें।",
+                "howto.step2.title": "ईएमआई की गणना करें",
+                "howto.step2.description": "अपनी मासिक भुगतान राशि और कुल चुकौती विवरण तुरंत देखने के लिए \"ईएमआई की गणना करें\" बटन पर क्लिक करें।",
+                "howto.step3.title": "परिणामों का विश्लेषण करें",
+                "howto.step3.description": "कुल देय ब्याज सहित विस्तृत विश्लेषण की समीक्षा करें और चार्ट में भुगतान वितरण देखें।",
+                "howto.step4.title": "अपने वित्त की योजना बनाएं",
+                "howto.step4.description": "समय के साथ आपके भुगतान मूलधन और ब्याज के बीच कैसे आवंटित होते हैं, इसे समझने के लिए परिशोधन अनुसूची का उपयोग करें।",
+                "tool.title": "ईएमआई कैलकुलेटर",
+                "tool.inputs.amount": "लोन राशि",
+                "tool.inputs.rate": "ब्याज दर (% वार्षिक)",
+                "tool.inputs.tenure": "लोन अवधि (वर्ष)",
+                "tool.inputs.type": "लोन प्रकार",
+                "tool.loanTypes.home": "होम लोन",
+                "tool.loanTypes.car": "कार लोन",
+                "tool.loanTypes.personal": "पर्सनल लोन",
+                "tool.loanTypes.education": "एजुकेशन लोन",
+                "tool.loanTypes.business": "बिजनेस लोन",
+                "tool.results.emi": "मासिक ईएमआई",
+                "tool.results.total": "कुल भुगतान",
+                "tool.results.interest": "कुल ब्याज",
+                "tool.results.principal": "मूल राशि",
+                "tool.results.interestPercent": "ब्याज प्रतिशत",
+                "tool.results.months": "महीने",
+                "tool.results.type": "लोन प्रकार",
+                "tool.results.summary": "लोन सारांश",
+                "tool.chart.title": "भुगतान विश्लेषण",
+                "tool.amortization.title": "परिशोधन अनुसूची",
+                "tool.amortization.month": "महीना",
+                "tool.amortization.emi": "ईएमआई",
+                "tool.amortization.principal": "मूलधन",
+                "tool.amortization.interest": "ब्याज",
+                "tool.amortization.balance": "शेष",
+                "tool.calculate": "ईएमआई की गणना करें",
+                "tool.reset": "रीसेट करें",
+                "tool.share": "परिणाम साझा करें",
+                "footer.follow": "हमें फॉलो करें",
+                "footer.categories": "लोकप्रिय श्रेणियाँ",
+                "footer.categories.pdf": "PDF टूल्स",
+                "footer.categories.image": "इमेज टूल्स",
+                "footer.categories.text": "टेक्स्ट टूल्स",
+                "footer.categories.av": "ऑडियो/वीडियो टूल्स",
+                "footer.categories.web": "वेबडेवलपर टूल्स",
+                "footer.categories.calc": "कैलकुलेटर टूल्स",
+                "footer.categories.util": "यूटिलिटी टूल्स",
+                "footer.categories.color": "कलर टूल्स",
+                "footer.quicklinks": "त्वरित लिंक",
+                "footer.links.tools": "सभी टूल्स",
+                "footer.links.faq": "सामान्य प्रश्न",
+                "footer.links.contact": "संपर्क करें",
+                "footer.links.privacy": "गोपनीयता नीति",
+                "footer.links.disclaimer": "अस्वीकरण",
+                "footer.links.terms": "सेवा की शर्तें",
+                "footer.copyright": "© 2025 LollyPoPDF. सर्वाधिकार सुरक्षित।"
+            },
+            te: {
+                "nav.home": "హోమ్",
+                "nav.about": "మా గురించి",
+                "nav.tools": "టూల్స్",
+                "nav.contact": "సంప్రదించండి",
+                "hero.title": "లోన్ EMI కాలిక్యులేటర్",
+                "hero.description": "హోమ్ లోన్లు, కార్ లోన్లు, పర్సనల్ లోన్లు మరియు ఇతరాల కోసం మీ సమాన మాసిక వాయిదా (EMI)ని లెక్కించండి. ఖచ్చితమైన EMI లెక్కలు మరియు వివరణాత్మక విశ్లేషణలతో మీ ఫైనాన్స్లను ప్లాన్ చేయండి.",
+                "howto.title": "EMI కాలిక్యులేటర్ ఎలా ఉపయోగించాలి",
+                "howto.step1.title": "లోన్ వివరాలు నమోదు చేయండి",
+                "howto.step1.description": "లోన్ మొత్తం, వార్షిక వడ్డీ రేటు మరియు లోన్ వ్యవధిని నమోదు చేయండి. స్లైడర్లను ఉపయోగించండి లేదా ఇన్పుట్ ఫీల్డ్లలో నేరుగా టైప్ చేయండి.",
+                "howto.step2.title": "EMI లెక్కించండి",
+                "howto.step2.description": "మీ నెలవారీ చెల్లింపు మొత్తం మరియు మొత్తం తిరిగి చెల్లింపు వివరాలను తక్షణం చూడటానికి \"EMI లెక్కించండి\" బటన్పై క్లిక్ చేయండి.",
+                "howto.step3.title": "ఫలితాలను విశ్లేషించండి",
+                "howto.step3.description": "మొత్తం చెల్లించాల్సిన వడ్డీతో సహా వివరణాత్మక విశ్లేషణను సమీక్షించండి మరియు చార్ట్లో చెల్లింపు పంపిణీని చూడండి.",
+                "howto.step4.title": "మీ ఫైనాన్స్లను ప్లాన్ చేయండి",
+                "howto.step4.description": "కాలానుగుణంగా మీ చెల్లింపులు ప్రిన్సిపాల్ మరియు వడ్డీ మధ్య ఎలా కేటాయించబడతాయో అర్థం చేసుకోవడానికి అమోర్టైజేషన్ షెడ్యూల్ను ఉపయోగించండి.",
+                "tool.title": "EMI కాలిక్యులేటర్",
+                "tool.inputs.amount": "లోన్ మొత్తం",
+                "tool.inputs.rate": "వడ్డీ రేటు (% వార్షిక)",
+                "tool.inputs.tenure": "లోన్ వ్యవధి (సంవత్సరాలు)",
+                "tool.inputs.type": "లోన్ రకం",
+                "tool.loanTypes.home": "హోమ్ లోన్",
+                "tool.loanTypes.car": "కార్ లోన్",
+                "tool.loanTypes.personal": "పర్సనల్ లోన్",
+                "tool.loanTypes.education": "ఎడ్యుకేషన్ లోన్",
+                "tool.loanTypes.business": "బిజినెస్ లోన్",
+                "tool.results.emi": "నెలవారీ EMI",
+                "tool.results.total": "మొత్తం చెల్లింపు",
+                "tool.results.interest": "మొత్తం వడ్డీ",
+                "tool.results.principal": "ప్రిన్సిపాల్ మొత్తం",
+                "tool.results.interestPercent": "వడ్డీ శాతం",
+                "tool.results.months": "నెలలు",
+                "tool.results.type": "లోన్ రకం",
+                "tool.results.summary": "లోన్ సారాంశం",
+                "tool.chart.title": "చెల్లింపు విశ్లేషణ",
+                "tool.amortization.title": "అమోర్టైజేషన్ షెడ్యూల్",
+                "tool.amortization.month": "నెల",
+                "tool.amortization.emi": "EMI",
+                "tool.amortization.principal": "ప్రిన్సిపాల్",
+                "tool.amortization.interest": "వడ్డీ",
+                "tool.amortization.balance": "బ్యాలెన్స్",
+                "tool.calculate": "EMI లెక్కించండి",
+                "tool.reset": "రీసెట్ చేయండి",
+                "tool.share": "ఫలితాలను షేర్ చేయండి",
+                "footer.follow": "మమ్మల్ని ఫాలో చేయండి",
+                "footer.categories": "జనాదరణ పొందిన వర్గాలు",
+                "footer.categories.pdf": "PDF టూల్స్",
+                "footer.categories.image": "ఇమేజ్ టూల్స్",
+                "footer.categories.text": "టెక్స్ట్ టూల్స్",
+                "footer.categories.av": "ఆడియో/వీడియో టూల్స్",
+                "footer.categories.web": "వెబ్ డెవలపర్ టూల్స్",
+                "footer.categories.calc": "కాలిక్యులేటర్ టూల్స్",
+                "footer.categories.util": "యుటిలిటీ టూల్స్",
+                "footer.categories.color": "కలర్ టూల్స్",
+                "footer.quicklinks": "త్వరిత లింకులు",
+                "footer.links.tools": "అన్ని టూల్స్",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "సంప్రదించండి",
+                "footer.links.privacy": "గోప్యతా విధానం",
+                "footer.links.disclaimer": "డిస్క్లైమర్",
+                "footer.links.terms": "సేవా నిబంధనలు",
+                "footer.copyright": "© 2025 LollyPoPDF. అన్ని హక్కులు ప్రత్యేకించబడినవి."
+            },
+            kn: {
+                "nav.home": "ಹೋಮ್",
+                "nav.about": "ನಮ್ಮ ಬಗ್ಗೆ",
+                "nav.tools": "ಟೂಲ್ಸ್",
+                "nav.contact": "ಸಂಪರ್ಕಿಸಿ",
+                "hero.title": "ಲೋನ್ EMI ಕ್ಯಾಲ್ಕುಲೇಟರ್",
+                "hero.description": "ಹೋಮ್ ಲೋನ್ಗಳು, ಕಾರ್ ಲೋನ್ಗಳು, ಪರ್ಸನಲ್ ಲೋನ್ಗಳು ಮತ್ತು ಇತರಗಳಿಗೆ ನಿಮ್ಮ ಸಮಾನ ಮಾಸಿಕ ಕಂತು (EMI) ಲೆಕ್ಕಾಚಾರ ಮಾಡಿ. ನಿಖರವಾದ EMI ಲೆಕ್ಕಾಚಾರಗಳು ಮತ್ತು ವಿವರವಾದ ವಿಶ್ಲೇಷಣೆಗಳೊಂದಿಗೆ ನಿಮ್ಮ ಹಣಕಾಸು ಯೋಜನೆ ಮಾಡಿ.",
+                "howto.title": "EMI ಕ್ಯಾಲ್ಕುಲೇಟರ್ ಅನ್ನು ಹೇಗೆ ಬಳಸುವುದು",
+                "howto.step1.title": "ಲೋನ್ ವಿವರಗಳನ್ನು ನಮೂದಿಸಿ",
+                "howto.step1.description": "ಲೋನ್ ಮೊತ್ತ, ವಾರ್ಷಿಕ ಬಡ್ಡಿ ದರ ಮತ್ತು ಲೋನ್ ಅವಧಿಯನ್ನು ನಮೂದಿಸಿ. ಸ್ಲೈಡರ್ಗಳನ್ನು ಬಳಸಿ ಅಥವಾ ಇನ್ಪುಟ್ ಫೀಲ್ಡ್ಗಳಲ್ಲಿ ನೇರವಾಗಿ ಟೈಪ್ ಮಾಡಿ.",
+                "howto.step2.title": "EMI ಲೆಕ್ಕಾಚಾರ ಮಾಡಿ",
+                "howto.step2.description": "ನಿಮ್ಮ ಮಾಸಿಕ ಪಾವತಿ ಮೊತ್ತ ಮತ್ತು ಒಟ್ಟು ಮರುಪಾವತಿ ವಿವರಗಳನ್ನು ತಕ್ಷಣವೇ ನೋಡಲು \"EMI ಲೆಕ್ಕಾಚಾರ ಮಾಡಿ\" ಬಟನ್ ಕ್ಲಿಕ್ ಮಾಡಿ.",
+                "howto.step3.title": "ಫಲಿತಾಂಶಗಳನ್ನು ವಿಶ್ಲೇಷಿಸಿ",
+                "howto.step3.description": "ಒಟ್ಟು ಪಾವತಿಸಬೇಕಾದ ಬಡ್ಡಿ ಸೇರಿದಂತೆ ವಿವರವಾದ ವಿಶ್ಲೇಷಣೆಯನ್ನು ಪರಿಶೀಲಿಸಿ ಮತ್ತು ಚಾರ್ಟ್ನಲ್ಲಿ ಪಾವತಿ ವಿತರಣೆಯನ್ನು ನೋಡಿ.",
+                "howto.step4.title": "ನಿಮ್ಮ ಹಣಕಾಸು ಯೋಜನೆ ಮಾಡಿ",
+                "howto.step4.description": "ಕಾಲಾನಂತರದಲ್ಲಿ ನಿಮ್ಮ ಪಾವತಿಗಳು ಮೂಲ ಮತ್ತು ಬಡ್ಡಿಯ ನಡುವೆ ಹೇಗೆ ಹಂಚಿಕೆಯಾಗುತ್ತವೆ ಎಂಬುದನ್ನು ಅರ್ಥಮಾಡಿಕೊಳ್ಳಲು ಅಮಾರ್ಟೈಜೇಷನ್ ಷೆಡ್ಯೂಲ್ ಬಳಸಿ.",
+                "tool.title": "EMI ಕ್ಯಾಲ್ಕುಲೇಟರ್",
+                "tool.inputs.amount": "ಲೋನ್ ಮೊತ್ತ",
+                "tool.inputs.rate": "ಬಡ್ಡಿ ದರ (% ವಾರ್ಷಿಕ)",
+                "tool.inputs.tenure": "ಲೋನ್ ಅವಧಿ (ವರ್ಷಗಳು)",
+                "tool.inputs.type": "ಲೋನ್ ಪ್ರಕಾರ",
+                "tool.loanTypes.home": "ಹೋಮ್ ಲೋನ್",
+                "tool.loanTypes.car": "ಕಾರ್ ಲೋನ್",
+                "tool.loanTypes.personal": "ಪರ್ಸನಲ್ ಲೋನ್",
+                "tool.loanTypes.education": "ಎಜುಕೇಷನ್ ಲೋನ್",
+                "tool.loanTypes.business": "ಬಿಸಿನೆಸ್ ಲೋನ್",
+                "tool.results.emi": "ಮಾಸಿಕ EMI",
+                "tool.results.total": "ಒಟ್ಟು ಪಾವತಿ",
+                "tool.results.interest": "ಒಟ್ಟು ಬಡ್ಡಿ",
+                "tool.results.principal": "ಮೂಲ ಮೊತ್ತ",
+                "tool.results.interestPercent": "ಬಡ್ಡಿ ಶೇಕಡಾವಾರು",
+                "tool.results.months": "ತಿಂಗಳುಗಳು",
+                "tool.results.type": "ಲೋನ್ ಪ್ರಕಾರ",
+                "tool.results.summary": "ಲೋನ್ ಸಾರಾಂಶ",
+                "tool.chart.title": "ಪಾವತಿ ವಿಶ್ಲೇಷಣೆ",
+                "tool.amortization.title": "ಅಮಾರ್ಟೈಜೇಷನ್ ಷೆಡ್ಯೂಲ್",
+                "tool.amortization.month": "ತಿಂಗಳು",
+                "tool.amortization.emi": "EMI",
+                "tool.amortization.principal": "ಮೂಲ",
+                "tool.amortization.interest": "ಬಡ್ಡಿ",
+                "tool.amortization.balance": "ಬ್ಯಾಲೆನ್ಸ್",
+                "tool.calculate": "EMI ಲೆಕ್ಕಾಚಾರ ಮಾಡಿ",
+                "tool.reset": "ರೀಸೆಟ್ ಮಾಡಿ",
+                "tool.share": "ಫಲಿತಾಂಶಗಳನ್ನು ಹಂಚಿಕೊಳ್ಳಿ",
+                "footer.follow": "ನಮ್ಮನ್ನು ಅನುಸರಿಸಿ",
+                "footer.categories": "ಜನಪ್ರಿಯ ವರ್ಗಗಳು",
+                "footer.categories.pdf": "PDF ಟೂಲ್ಸ್",
+                "footer.categories.image": "ಇಮೇಜ್ ಟೂಲ್ಸ್",
+                "footer.categories.text": "ಟೆಕ್ಸ್ಟ್ ಟೂಲ್ಸ್",
+                "footer.categories.av": "ಆಡಿಯೋ/ವೀಡಿಯೋ ಟೂಲ್ಸ್",
+                "footer.categories.web": "ವೆಬ್ ಡೆವಲಪರ್ ಟೂಲ್ಸ್",
+                "footer.categories.calc": "ಕ್ಯಾಲ್ಕುಲೇಟರ್ ಟೂಲ್ಸ್",
+                "footer.categories.util": "ಯುಟಿಲಿಟಿ ಟೂಲ್ಸ್",
+                "footer.categories.color": "ಕಲರ್ ಟೂಲ್ಸ್",
+                "footer.quicklinks": "ತ್ವರಿತ ಲಿಂಕ್ಗಳು",
+                "footer.links.tools": "ಎಲ್ಲಾ ಟೂಲ್ಸ್",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "ಸಂಪರ್ಕಿಸಿ",
+                "footer.links.privacy": "ಗೌಪ್ಯತಾ ನೀತಿ",
+                "footer.links.disclaimer": "ಡಿಸ್ಕ್ಲೈಮರ್",
+                "footer.links.terms": "ಸೇವಾ ನಿಯಮಗಳು",
+                "footer.copyright": "© 2025 LollyPoPDF. ಎಲ್ಲಾ ಹಕ್ಕುಗಳು ಕಾಯ್ದಿರಿಸಿವೆ."
+            },
+            ta: {
+                "nav.home": "முகப்பு",
+                "nav.about": "எங்களைப் பற்றி",
+                "nav.tools": "கருவிகள்",
+                "nav.contact": "தொடர்பு கொள்ள",
+                "hero.title": "கடன் EMI கால்குலேட்டர்",
+                "hero.description": "வீடு கடன்கள், கார் கடன்கள், தனிநபர் கடன்கள் மற்றும் பிறவற்றிற்கான உங்கள் சமமான மாதாந்திர தவணை (EMI) கணக்கிடுங்கள். துல்லியமான EMI கணக்கீடுகள் மற்றும் விரிவான பகுப்பாய்வுகளுடன் உங்கள் நிதிகளைத் திட்டமிடுங்கள்.",
+                "howto.title": "EMI கால்குலேட்டரை எவ்வாறு பயன்படுத்துவது",
+                "howto.step1.title": "கடன் விவரங்களை உள்ளிடவும்",
+                "howto.step1.description": "கடன் தொகை, வருடாந்திர வட்டி விகிதம் மற்றும் கடன் காலத்தை உள்ளிடவும். ஸ்லைடர்களைப் பயன்படுத்தவும் அல்லது நேரடியாக உள்ளீட்டு புலங்களில் தட்டச்சு செய்யவும்.",
+                "howto.step2.title": "EMI கணக்கிடுங்கள்",
+                "howto.step2.description": "உங்கள் மாதாந்திர கட்டணத் தொகை மற்றும் மொத்த திருப்பிச் செலுத்தும் விவரங்களை உடனடியாகப் பார்க்க \"EMI கணக்கிடுங்கள்\" பொத்தானைக் கிளிக் செய்யவும்.",
+                "howto.step3.title": "முடிவுகளை பகுப்பாய்வு செய்யுங்கள்",
+                "howto.step3.description": "மொத்த செலுத்த வேண்டிய வட்டி உட்பட விரிவான பகுப்பாய்வை மதிப்பாய்வு செய்து, விளக்கப்படத்தில் கட்டண விநியோகத்தைக் காணவும்.",
+                "howto.step4.title": "உங்கள் நிதிகளைத் திட்டமிடுங்கள்",
+                "howto.step4.description": "காலப்போக்கில் உங்கள் கட்டணங்கள் அசல் மற்றும் வட்டிக்கு இடையே எவ்வாறு ஒதுக்கீடு செய்யப்படுகின்றன என்பதைப் புரிந்துகொள்ள தவணை முறை அட்டவணையைப் பயன்படுத்தவும்.",
+                "tool.title": "EMI கால்குலேட்டர்",
+                "tool.inputs.amount": "கடன் தொகை",
+                "tool.inputs.rate": "வட்டி விகிதம் (% வருடாந்திர)",
+                "tool.inputs.tenure": "கடன் காலம் (ஆண்டுகள்)",
+                "tool.inputs.type": "கடன் வகை",
+                "tool.loanTypes.home": "வீடு கடன்",
+                "tool.loanTypes.car": "கார் கடன்",
+                "tool.loanTypes.personal": "தனிநபர் கடன்",
+                "tool.loanTypes.education": "கல்விக் கடன்",
+                "tool.loanTypes.business": "வணிகக் கடன்",
+                "tool.results.emi": "மாதாந்திர EMI",
+                "tool.results.total": "மொத்த கட்டணம்",
+                "tool.results.interest": "மொத்த வட்டி",
+                "tool.results.principal": "அசல் தொகை",
+                "tool.results.interestPercent": "வட்டி சதவீதம்",
+                "tool.results.months": "மாதங்கள்",
+                "tool.results.type": "கடன் வகை",
+                "tool.results.summary": "கடன் சுருக்கம்",
+                "tool.chart.title": "கட்டண பகுப்பாய்வு",
+                "tool.amortization.title": "தவணை முறை அட்டவணை",
+                "tool.amortization.month": "மாதம்",
+                "tool.amortization.emi": "EMI",
+                "tool.amortization.principal": "அசல்",
+                "tool.amortization.interest": "வட்டி",
+                "tool.amortization.balance": "மீதம்",
+                "tool.calculate": "EMI கணக்கிடுங்கள்",
+                "tool.reset": "மீட்டமைக்க",
+                "tool.share": "முடிவுகளைப் பகிரவும்",
+                "footer.follow": "எங்களைப் பின்தொடரவும்",
+                "footer.categories": "பிரபலமான வகைகள்",
+                "footer.categories.pdf": "PDF கருவிகள்",
+                "footer.categories.image": "பட கருவிகள்",
+                "footer.categories.text": "உரை கருவிகள்",
+                "footer.categories.av": "ஆடியோ/வீடியோ கருவிகள்",
+                "footer.categories.web": "வெப்டெவலப்பர் கருவிகள்",
+                "footer.categories.calc": "கால்குலேட்டர் கருவிகள்",
+                "footer.categories.util": "பயன்பாட்டு கருவிகள்",
+                "footer.categories.color": "நிற கருவிகள்",
+                "footer.quicklinks": "விரைவு இணைப்புகள்",
+                "footer.links.tools": "அனைத்து கருவிகள்",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "தொடர்பு கொள்ள",
+                "footer.links.privacy": "தனியுரிமைக் கொள்கை",
+                "footer.links.disclaimer": "பொறுப்புத் துறப்பு",
+                "footer.links.terms": "சேவை விதிமுறைகள்",
+                "footer.copyright": "© 2025 LollyPoPDF. அனைத்து உரிமைகளும் பாதுகாக்கப்பட்டவை."
+            },
+            ml: {
+                "nav.home": "ഹോം",
+                "nav.about": "ഞങ്ങളെക്കുറിച്ച്",
+                "nav.tools": "ടൂളുകൾ",
+                "nav.contact": "ബന്ധപ്പെടുക",
+                "hero.title": "ലോൺ EMI കാൽക്കുലേറ്റർ",
+                "hero.description": "വീട്ടുകടം, കാർ ലോൺ, വ്യക്തിഗത കടം എന്നിവയ്ക്കുള്ള നിങ്ങളുടെ തുല്യ മാസിക ഇൻസ്റ്റാൾമെന്റ് (EMI) കണക്കാക്കുക. കൃത്യമായ EMI കണക്കുകൂട്ടലുകളും വിശദമായ വിശകലനങ്ങളും ഉപയോഗിച്ച് നിങ്ങളുടെ ധനകാര്യങ്ങൾ പ്ലാൻ ചെയ്യുക.",
+                "howto.title": "EMI കാൽക്കുലേറ്റർ എങ്ങനെ ഉപയോഗിക്കാം",
+                "howto.step1.title": "ലോൺ വിശദാംശങ്ങൾ നൽകുക",
+                "howto.step1.description": "ലോൺ തുക, വാർഷിക പലിശ നിരക്ക്, ലോൺ കാലാവധി എന്നിവ നൽകുക. സ്ലൈഡറുകൾ ഉപയോഗിക്കുക അല്ലെങ്കിൽ ഇൻപുട്ട് ഫീൽഡുകളിൽ നേരിട്ട് ടൈപ്പ് ചെയ്യുക.",
+                "howto.step2.title": "EMI കണക്കാക്കുക",
+                "howto.step2.description": "നിങ്ങളുടെ മാസിക പേയ്മെന്റ് തുകയും മൊത്തം തിരിച്ചടവ് വിശദാംശങ്ങളും തൽക്ഷണം കാണാൻ \"EMI കണക്കാക്കുക\" ബട്ടൺ ക്ലിക്ക് ചെയ്യുക.",
+                "howto.step3.title": "ഫലങ്ങൾ വിശകലനം ചെയ്യുക",
+                "howto.step3.description": "ആകെ അടയ്ക്കേണ്ട പലിശ ഉൾപ്പെടെയുള്ള വിശദമായ വിശകലനം അവലോകനം ചെയ്ത് ചാർട്ടിൽ പേയ്മെന്റ് വിതരണം കാണുക.",
+                "howto.step4.title": "നിങ്ങളുടെ ധനകാര്യങ്ങൾ പ്ലാൻ ചെയ്യുക",
+                "howto.step4.description": "കാലക്രമേണ നിങ്ങളുടെ പേയ്മെന്റുകൾ പ്രിൻസിപ്പലും പലിശയും തമ്മിൽ എങ്ങനെ വിഭജിക്കപ്പെടുന്നു എന്ന് മനസിലാക്കാൻ അമോർട്ടൈസേഷൻ ഷെഡ്യൂൾ ഉപയോഗിക്കുക.",
+                "tool.title": "EMI കാൽക്കുലേറ്റർ",
+                "tool.inputs.amount": "ലോൺ തുക",
+                "tool.inputs.rate": "പലിശ നിരക്ക് (% വാർഷിക)",
+                "tool.inputs.tenure": "ലോൺ കാലാവധി (വർഷങ്ങൾ)",
+                "tool.inputs.type": "ലോൺ തരം",
+                "tool.loanTypes.home": "വീട്ടുകടം",
+                "tool.loanTypes.car": "കാർ ലോൺ",
+                "tool.loanTypes.personal": "വ്യക്തിഗത കടം",
+                "tool.loanTypes.education": "വിദ്യാഭ്യാസ കടം",
+                "tool.loanTypes.business": "ബിസിനസ് ലോൺ",
+                "tool.results.emi": "മാസിക EMI",
+                "tool.results.total": "മൊത്തം പേയ്മെന്റ്",
+                "tool.results.interest": "മൊത്തം പലിശ",
+                "tool.results.principal": "പ്രിൻസിപ്പൽ തുക",
+                "tool.results.interestPercent": "പലിശ ശതമാനം",
+                "tool.results.months": "മാസങ്ങൾ",
+                "tool.results.type": "ലോൺ തരം",
+                "tool.results.summary": "ലോൺ സംഗ്രഹം",
+                "tool.chart.title": "പേയ്മെന്റ് വിശകലനം",
+                "tool.amortization.title": "അമോർട്ടൈസേഷൻ ഷെഡ്യൂൾ",
+                "tool.amortization.month": "മാസം",
+                "tool.amortization.emi": "EMI",
+                "tool.amortization.principal": "പ്രിൻസിപ്പൽ",
+                "tool.amortization.interest": "പലിശ",
+                "tool.amortization.balance": "ബാലൻസ്",
+                "tool.calculate": "EMI കണക്കാക്കുക",
+                "tool.reset": "റീസെറ്റ് ചെയ്യുക",
+                "tool.share": "ഫലങ്ങൾ പങ്കിടുക",
+                "footer.follow": "ഞങ്ങളെ പിന്തുടരുക",
+                "footer.categories": "ജനപ്രിയ വിഭാഗങ്ങൾ",
+                "footer.categories.pdf": "PDF ടൂളുകൾ",
+                "footer.categories.image": "ഇമേജ് ടൂളുകൾ",
+                "footer.categories.text": "ടെക്സ്റ്റ് ടൂളുകൾ",
+                "footer.categories.av": "ഓഡിയോ/വീഡിയോ ടൂളുകൾ",
+                "footer.categories.web": "വെബ് ഡെവലപ്പർ ടൂളുകൾ",
+                "footer.categories.calc": "കാൽക്കുലേറ്റർ ടൂളുകൾ",
+                "footer.categories.util": "യൂട്ടിലിറ്റി ടൂളുകൾ",
+                "footer.categories.color": "കളർ ടൂളുകൾ",
+                "footer.quicklinks": "ദ്രുത ലിങ്കുകൾ",
+                "footer.links.tools": "എല്ലാ ടൂളുകളും",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "ബന്ധപ്പെടുക",
+                "footer.links.privacy": "സ്വകാര്യതാ നയം",
+                "footer.links.disclaimer": "ഡിസ്ക്ലെയിമർ",
+                "footer.links.terms": "സേവന നിബന്ധനകൾ",
+                "footer.copyright": "© 2025 LollyPoPDF. എല്ലാ അവകാശങ്ങളും നിക്ഷിപ്തം."
+            },
+            id: {
+                "nav.home": "Beranda",
+                "nav.about": "Tentang Kami",
+                "nav.tools": "Alat",
+                "nav.contact": "Kontak",
+                "hero.title": "Kalkulator EMI Pinjaman",
+                "hero.description": "Hitung Angsuran Bulanan Tetap (EMI) Anda untuk pinjaman rumah, pinjaman mobil, pinjaman pribadi, dan lainnya. Rencanakan keuangan Anda dengan perhitungan EMI yang akurat dan rincian lengkap.",
+                "howto.title": "Cara Menggunakan Kalkulator EMI",
+                "howto.step1.title": "Masukkan Detail Pinjaman",
+                "howto.step1.description": "Masukkan jumlah pinjaman, suku bunga tahunan, dan jangka waktu pinjaman. Gunakan slider atau ketik langsung ke bidang input.",
+                "howto.step2.title": "Hitung EMI",
+                "howto.step2.description": "Klik tombol \"Hitung EMI\" untuk langsung melihat jumlah pembayaran bulanan Anda dan detail pembayaran total.",
+                "howto.step3.title": "Analisis Hasil",
+                "howto.step3.description": "Tinjau rincian lengkap termasuk total bunga yang harus dibayar dan lihat distribusi pembayaran dalam grafik.",
+                "howto.step4.title": "Rencanakan Keuangan Anda",
+                "howto.step4.description": "Gunakan jadwal amortisasi untuk memahami bagaimana pembayaran Anda dialokasikan antara pokok dan bunga seiring waktu.",
+                "tool.title": "Kalkulator EMI",
+                "tool.inputs.amount": "Jumlah Pinjaman",
+                "tool.inputs.rate": "Suku Bunga (% per tahun)",
+                "tool.inputs.tenure": "Jangka Waktu Pinjaman (Tahun)",
+                "tool.inputs.type": "Jenis Pinjaman",
+                "tool.loanTypes.home": "Pinjaman Rumah",
+                "tool.loanTypes.car": "Pinjaman Mobil",
+                "tool.loanTypes.personal": "Pinjaman Pribadi",
+                "tool.loanTypes.education": "Pinjaman Pendidikan",
+                "tool.loanTypes.business": "Pinjaman Bisnis",
+                "tool.results.emi": "EMI Bulanan",
+                "tool.results.total": "Total Pembayaran",
+                "tool.results.interest": "Total Bunga",
+                "tool.results.principal": "Jumlah Pokok",
+                "tool.results.interestPercent": "Persentase Bunga",
+                "tool.results.months": "Bulan",
+                "tool.results.type": "Jenis Pinjaman",
+                "tool.results.summary": "Ringkasan Pinjaman",
+                "tool.chart.title": "Rincian Pembayaran",
+                "tool.amortization.title": "Jadwal Amortisasi",
+                "tool.amortization.month": "Bulan",
+                "tool.amortization.emi": "EMI",
+                "tool.amortization.principal": "Pokok",
+                "tool.amortization.interest": "Bunga",
+                "tool.amortization.balance": "Saldo",
+                "tool.calculate": "Hitung EMI",
+                "tool.reset": "Atur Ulang",
+                "tool.share": "Bagikan Hasil",
+                "footer.follow": "IKUTI KAMI",
+                "footer.categories": "Kategori Populer",
+                "footer.categories.pdf": "Alat PDF",
+                "footer.categories.image": "Alat Gambar",
+                "footer.categories.text": "Alat Teks",
+                "footer.categories.av": "Alat Audio/Video",
+                "footer.categories.web": "Alat WebDeveloper",
+                "footer.categories.calc": "Alat Kalkulator",
+                "footer.categories.util": "Alat Utilitas",
+                "footer.categories.color": "Alat Warna",
+                "footer.quicklinks": "Tautan Cepat",
+                "footer.links.tools": "Semua Alat",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Kontak",
+                "footer.links.privacy": "Kebijakan Privasi",
+                "footer.links.disclaimer": "Penafian",
+                "footer.links.terms": "Syarat Layanan",
+                "footer.copyright": "© 2025 LollyPoPDF. Hak cipta dilindungi undang-undang."
+            },
+            ms: {
+                "nav.home": "Laman Utama",
+                "nav.about": "Tentang Kami",
+                "nav.tools": "Alat",
+                "nav.contact": "Hubungi",
+                "hero.title": "Kalkulator EMI Pinjaman",
+                "hero.description": "Kira Bayaran Bulanan Sama (EMI) anda untuk pinjaman rumah, pinjaman kereta, pinjaman peribadi dan lain-lain. Rancang kewangan anda dengan pengiraan EMI yang tepat dan pecahan terperinci.",
+                "howto.title": "Cara Menggunakan Kalkulator EMI",
+                "howto.step1.title": "Masukkan Butiran Pinjaman",
+                "howto.step1.description": "Masukkan jumlah pinjaman, kadar faedah tahunan dan tempoh pinjaman. Gunakan gelangsar atau taip terus ke dalam medan input.",
+                "howto.step2.title": "Kira EMI",
+                "howto.step2.description": "Klik butang \"Kira EMI\" untuk melihat serta-merta jumlah bayaran bulanan anda dan butiran bayaran balik penuh.",
+                "howto.step3.title": "Analisis Keputusan",
+                "howto.step3.description": "Semak pecahan terperinci termasuk jumlah faedah perlu bayar dan lihat pengagihan bayaran dalam carta.",
+                "howto.step4.title": "Rancang Kewangan Anda",
+                "howto.step4.description": "Gunakan jadual pelunasan untuk memahami bagaimana bayaran anda diperuntukkan antara prinsipal dan faedah sepanjang masa.",
+                "tool.title": "Kalkulator EMI",
+                "tool.inputs.amount": "Jumlah Pinjaman",
+                "tool.inputs.rate": "Kadar Faedah (% setahun)",
+                "tool.inputs.tenure": "Tempoh Pinjaman (Tahun)",
+                "tool.inputs.type": "Jenis Pinjaman",
+                "tool.loanTypes.home": "Pinjaman Rumah",
+                "tool.loanTypes.car": "Pinjaman Kereta",
+                "tool.loanTypes.personal": "Pinjaman Peribadi",
+                "tool.loanTypes.education": "Pinjaman Pendidikan",
+                "tool.loanTypes.business": "Pinjaman Perniagaan",
+                "tool.results.emi": "EMI Bulanan",
+                "tool.results.total": "Jumlah Bayaran",
+                "tool.results.interest": "Jumlah Faedah",
+                "tool.results.principal": "Jumlah Prinsipal",
+                "tool.results.interestPercent": "Peratusan Faedah",
+                "tool.results.months": "Bulan",
+                "tool.results.type": "Jenis Pinjaman",
+                "tool.results.summary": "Ringkasan Pinjaman",
+                "tool.chart.title": "Pecahan Bayaran",
+                "tool.amortization.title": "Jadual Pelunasan",
+                "tool.amortization.month": "Bulan",
+                "tool.amortization.emi": "EMI",
+                "tool.amortization.principal": "Prinsipal",
+                "tool.amortization.interest": "Faedah",
+                "tool.amortization.balance": "Baki",
+                "tool.calculate": "Kira EMI",
+                "tool.reset": "Tetap Semula",
+                "tool.share": "Kongsi Keputusan",
+                "footer.follow": "IKUTI KAMI",
+                "footer.categories": "Kategori Popular",
+                "footer.categories.pdf": "Alat PDF",
+                "footer.categories.image": "Alat Imej",
+                "footer.categories.text": "Alat Teks",
+                "footer.categories.av": "Alat Audio/Video",
+                "footer.categories.web": "Alat WebDeveloper",
+                "footer.categories.calc": "Alat Kalkulator",
+                "footer.categories.util": "Alat Utiliti",
+                "footer.categories.color": "Alat Warna",
+                "footer.quicklinks": "Pautan Pantas",
+                "footer.links.tools": "Semua Alat",
+                "footer.links.faq": "Soalan Lazim",
+                "footer.links.contact": "Hubungi",
+                "footer.links.privacy": "Dasar Privasi",
+                "footer.links.disclaimer": "Penafian",
+                "footer.links.terms": "Syarat Perkhidmatan",
+                "footer.copyright": "© 2025 LollyPoPDF. Hak cipta terpelihara."
+            },
+            pl: {
+                "nav.home": "Strona główna",
+                "nav.about": "O nas",
+                "nav.tools": "Narzędzia",
+                "nav.contact": "Kontakt",
+                "hero.title": "Kalkulator Raty Kredytu",
+                "hero.description": "Oblicz swoją Równowartość Miesięcznej Raty (EMI) dla kredytów mieszkaniowych, kredytów samochodowych, kredytów osobistych i innych. Zaplanuj swoje finanse z dokładnymi obliczeniami EMI i szczegółowymi zestawieniami.",
+                "howto.title": "Jak korzystać z kalkulatora EMI",
+                "howto.step1.title": "Wprowadź szczegóły kredytu",
+                "howto.step1.description": "Wprowadź kwotę kredytu, roczne oprocentowanie i okres kredytowania. Użyj suwaków lub wpisz bezpośrednio w pola wejściowe.",
+                "howto.step2.title": "Oblicz EMI",
+                "howto.step2.description": "Kliknij przycisk \"Oblicz EMI\", aby natychmiast zobaczyć kwotę miesięcznej raty i szczegóły całkowitej spłaty.",
+                "howto.step3.title": "Przeanalizuj wyniki",
+                "howto.step3.description": "Przejrzyj szczegółowe zestawienie, w tym całkowite odsetki do zapłaty, i zobacz rozkład płatności na wykresie.",
+                "howto.step4.title": "Zaplanuj swoje finanse",
+                "howto.step4.description": "Użyj harmonogramu spłaty, aby zrozumieć, jak Twoje płatności są alokowane między kapitał a odsetki w miarę upływu czasu.",
+                "tool.title": "Kalkulator EMI",
+                "tool.inputs.amount": "Kwota kredytu",
+                "tool.inputs.rate": "Oprocentowanie (% rocznie)",
+                "tool.inputs.tenure": "Okres kredytowania (lata)",
+                "tool.inputs.type": "Rodzaj kredytu",
+                "tool.loanTypes.home": "Kredyt mieszkaniowy",
+                "tool.loanTypes.car": "Kredyt samochodowy",
+                "tool.loanTypes.personal": "Kredyt osobisty",
+                "tool.loanTypes.education": "Kredyt edukacyjny",
+                "tool.loanTypes.business": "Kredyt biznesowy",
+                "tool.results.emi": "Miesięczna rata EMI",
+                "tool.results.total": "Całkowita płatność",
+                "tool.results.interest": "Całkowite odsetki",
+                "tool.results.principal": "Kwota główna",
+                "tool.results.interestPercent": "Procent odsetek",
+                "tool.results.months": "Miesiące",
+                "tool.results.type": "Rodzaj kredytu",
+                "tool.results.summary": "Podsumowanie kredytu",
+                "tool.chart.title": "Podział płatności",
+                "tool.amortization.title": "Harmonogram spłaty",
+                "tool.amortization.month": "Miesiąc",
+                "tool.amortization.emi": "EMI",
+                "tool.amortization.principal": "Kapitał",
+                "tool.amortization.interest": "Odsetki",
+                "tool.amortization.balance": "Saldo",
+                "tool.calculate": "Oblicz EMI",
+                "tool.reset": "Resetuj",
+                "tool.share": "Udostępnij wyniki",
+                "footer.follow": "OBSERWUJ NAS",
+                "footer.categories": "Popularne kategorie",
+                "footer.categories.pdf": "Narzędzia PDF",
+                "footer.categories.image": "Narzędzia obrazów",
+                "footer.categories.text": "Narzędzia tekstowe",
+                "footer.categories.av": "Narzędzia audio/wideo",
+                "footer.categories.web": "Narzędzia WebDeveloper",
+                "footer.categories.calc": "Narzędzia kalkulatora",
+                "footer.categories.util": "Narzędzia użytkowe",
+                "footer.categories.color": "Narzędzia kolorów",
+                "footer.quicklinks": "Szybkie linki",
+                "footer.links.tools": "Wszystkie narzędzia",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Kontakt",
+                "footer.links.privacy": "Polityka prywatności",
+                "footer.links.disclaimer": "Zastrzeżenie",
+                "footer.links.terms": "Warunki usługi",
+                "footer.copyright": "© 2025 LollyPoPDF. Wszelkie prawa zastrzeżone."
+            },
+            th: {
+                "nav.home": "หน้าแรก",
+                "nav.about": "เกี่ยวกับเรา",
+                "nav.tools": "เครื่องมือ",
+                "nav.contact": "ติดต่อ",
+                "hero.title": "เครื่องคำนวณเงินกู้ EMI",
+                "hero.description": "คำนวณเงินงวดต่อเดือน (EMI) สำหรับเงินกู้บ้าน เงินกู้รถยนต์ เงินกู้ส่วนบุคคล และอื่นๆ วางแผนการเงินของคุณด้วยการคำนวณ EMI ที่แม่นยำและการวิเคราะห์โดยละเอียด",
+                "howto.title": "วิธีใช้เครื่องคำนวณ EMI",
+                "howto.step1.title": "ป้อนรายละเอียดเงินกู้",
+                "howto.step1.description": "ป้อนจำนวนเงินกู้ อัตราดอกเบี้ยรายปี และระยะเวลากู้ ใช้สไลด์หรือพิมพ์ลงในช่องป้อนข้อมูลโดยตรง",
+                "howto.step2.title": "คำนวณ EMI",
+                "howto.step2.description": "คลิกปุ่ม \"คำนวณ EMI\" เพื่อดูจำนวนเงินที่ต้องชำระรายเดือนและรายละเอียดการชำระคืนทั้งหมดทันที",
+                "howto.step3.title": "วิเคราะห์ผลลัพธ์",
+                "howto.step3.description": "ตรวจสอบการวิเคราะห์โดยละเอียดรวมถึงดอกเบี้ยทั้งหมดที่ต้องชำระและดูการกระจายการชำระเงินในแผนภูมิ",
+                "howto.step4.title": "วางแผนการเงินของคุณ",
+                "howto.step4.description": "ใช้ตารางการชำระเงินเพื่อเข้าใจว่าการชำระเงินของคุณถูกจัดสรรระหว่างเงินต้นและดอกเบี้ยอย่างไรเมื่อเวลาผ่านไป",
+                "tool.title": "เครื่องคำนวณ EMI",
+                "tool.inputs.amount": "จำนวนเงินกู้",
+                "tool.inputs.rate": "อัตราดอกเบี้ย (% ต่อปี)",
+                "tool.inputs.tenure": "ระยะเวลากู้ (ปี)",
+                "tool.inputs.type": "ประเภทเงินกู้",
+                "tool.loanTypes.home": "เงินกู้บ้าน",
+                "tool.loanTypes.car": "เงินกู้รถยนต์",
+                "tool.loanTypes.personal": "เงินกู้ส่วนบุคคล",
+                "tool.loanTypes.education": "เงินกู้เพื่อการศึกษา",
+                "tool.loanTypes.business": "เงินกู้ธุรกิจ",
+                "tool.results.emi": "EMI รายเดือน",
+                "tool.results.total": "การชำระเงินทั้งหมด",
+                "tool.results.interest": "ดอกเบี้ยทั้งหมด",
+                "tool.results.principal": "จำนวนเงินต้น",
+                "tool.results.interestPercent": "เปอร์เซ็นต์ดอกเบี้ย",
+                "tool.results.months": "เดือน",
+                "tool.results.type": "ประเภทเงินกู้",
+                "tool.results.summary": "สรุปเงินกู้",
+                "tool.chart.title": "การวิเคราะห์การชำระเงิน",
+                "tool.amortization.title": "ตารางการชำระเงิน",
+                "tool.amortization.month": "เดือน",
+                "tool.amortization.emi": "EMI",
+                "tool.amortization.principal": "เงินต้น",
+                "tool.amortization.interest": "ดอกเบี้ย",
+                "tool.amortization.balance": "ยอดคงเหลือ",
+                "tool.calculate": "คำนวณ EMI",
+                "tool.reset": "รีเซ็ต",
+                "tool.share": "แชร์ผลลัพธ์",
+                "footer.follow": "ติดตามเรา",
+                "footer.categories": "หมวดหมู่ยอดนิยม",
+                "footer.categories.pdf": "เครื่องมือ PDF",
+                "footer.categories.image": "เครื่องมือรูปภาพ",
+                "footer.categories.text": "เครื่องมือข้อความ",
+                "footer.categories.av": "เครื่องมือเสียง/วิดีโอ",
+                "footer.categories.web": "เครื่องมือ WebDeveloper",
+                "footer.categories.calc": "เครื่องมือเครื่องคิดเลข",
+                "footer.categories.util": "เครื่องมืออรรถประโยชน์",
+                "footer.categories.color": "เครื่องมือสี",
+                "footer.quicklinks": "ลิงก์ด่วน",
+                "footer.links.tools": "เครื่องมือทั้งหมด",
+                "footer.links.faq": "คำถามที่พบบ่อย",
+                "footer.links.contact": "ติดต่อ",
+                "footer.links.privacy": "นโยบายความเป็นส่วนตัว",
+                "footer.links.disclaimer": "ข้อจำกัดความรับผิดชอบ",
+                "footer.links.terms": "เงื่อนไขการให้บริการ",
+                "footer.copyright": "© 2025 LollyPoPDF. สงวนลิขสิทธิ์"
+            },
+            tr: {
+                "nav.home": "Ana Sayfa",
+                "nav.about": "Hakkımızda",
+                "nav.tools": "Araçlar",
+                "nav.contact": "İletişim",
+                "hero.title": "Kredi EMI Hesaplayıcı",
+                "hero.description": "Konut kredileri, araba kredileri, kişisel krediler ve daha fazlası için Eşit Aylık Taksitinizi (EMI) hesaplayın. Doğru EMI hesaplamaları ve detaylı analizlerle finansınızı planlayın.",
+                "howto.title": "EMI Hesaplayıcı Nasıl Kullanılır",
+                "howto.step1.title": "Kredi Detaylarını Girin",
+                "howto.step1.description": "Kredi tutarını, yıllık faiz oranını ve kredi vadesini girin. Kaydırıcıları kullanın veya doğrudan giriş alanlarına yazın.",
+                "howto.step2.title": "EMI Hesapla",
+                "howto.step2.description": "Aylık ödeme tutarınızı ve toplam geri ödeme detaylarını anında görmek için \"EMI Hesapla\" butonuna tıklayın.",
+                "howto.step3.title": "Sonuçları Analiz Edin",
+                "howto.step3.description": "Toplam ödenecek faiz dahil detaylı analizi inceleyin ve grafikte ödeme dağılımını görün.",
+                "howto.step4.title": "Finansınızı Planlayın",
+                "howto.step4.description": "Ödemelerinizin zaman içinde anapara ve faiz arasında nasıl dağıtıldığını anlamak için amortisman tablosunu kullanın.",
+                "tool.title": "EMI Hesaplayıcı",
+                "tool.inputs.amount": "Kredi Tutarı",
+                "tool.inputs.rate": "Faiz Oranı (% yıllık)",
+                "tool.inputs.tenure": "Kredi Vadesi (Yıl)",
+                "tool.inputs.type": "Kredi Türü",
+                "tool.loanTypes.home": "Konut Kredisi",
+                "tool.loanTypes.car": "Araba Kredisi",
+                "tool.loanTypes.personal": "Kişisel Kredi",
+                "tool.loanTypes.education": "Eğitim Kredisi",
+                "tool.loanTypes.business": "İş Kredisi",
+                "tool.results.emi": "Aylık EMI",
+                "tool.results.total": "Toplam Ödeme",
+                "tool.results.interest": "Toplam Faiz",
+                "tool.results.principal": "Anapara Tutarı",
+                "tool.results.interestPercent": "Faiz Yüzdesi",
+                "tool.results.months": "Ay",
+                "tool.results.type": "Kredi Türü",
+                "tool.results.summary": "Kredi Özeti",
+                "tool.chart.title": "Ödeme Analizi",
+                "tool.amortization.title": "Amortisman Tablosu",
+                "tool.amortization.month": "Ay",
+                "tool.amortization.emi": "EMI",
+                "tool.amortization.principal": "Anapara",
+                "tool.amortization.interest": "Faiz",
+                "tool.amortization.balance": "Bakiye",
+                "tool.calculate": "EMI Hesapla",
+                "tool.reset": "Sıfırla",
+                "tool.share": "Sonuçları Paylaş",
+                "footer.follow": "BİZİ TAKİP EDİN",
+                "footer.categories": "Popüler Kategoriler",
+                "footer.categories.pdf": "PDF Araçları",
+                "footer.categories.image": "Görsel Araçları",
+                "footer.categories.text": "Metin Araçları",
+                "footer.categories.av": "Ses/Video Araçları",
+                "footer.categories.web": "WebDeveloper Araçları",
+                "footer.categories.calc": "Hesap Makinesi Araçları",
+                "footer.categories.util": "Yardımcı Araçlar",
+                "footer.categories.color": "Renk Araçları",
+                "footer.quicklinks": "Hızlı Bağlantılar",
+                "footer.links.tools": "Tüm Araçlar",
+                "footer.links.faq": "SSS",
+                "footer.links.contact": "İletişim",
+                "footer.links.privacy": "Gizlilik Politikası",
+                "footer.links.disclaimer": "Feragatname",
+                "footer.links.terms": "Hizmet Şartları",
+                "footer.copyright": "© 2025 LollyPoPDF. Tüm hakları saklıdır."
+            },
+            uk: {
+                "nav.home": "Головна",
+                "nav.about": "Про нас",
+                "nav.tools": "Інструменти",
+                "nav.contact": "Контакти",
+                "hero.title": "Калькулятор кредиту EMI",
+                "hero.description": "Розрахуйте свою Рівномірну Місячну Виплату (EMI) для житлових кредитів, автокредитів, персональних кредитів та інших. Плануйте свої фінанси з точними розрахунками EMI та детальними аналізами.",
+                "howto.title": "Як використовувати калькулятор EMI",
+                "howto.step1.title": "Введіть деталі кредиту",
+                "howto.step1.description": "Введіть суму кредиту, річну процентну ставку та термін кредиту. Використовуйте повзунки або вводьте безпосередньо в поля введення.",
+                "howto.step2.title": "Розрахуйте EMI",
+                "howto.step2.description": "Натисніть кнопку \"Розрахувати EMI\", щоб миттєво побачити суму вашого щомісячного платежу та деталі загального погашення.",
+                "howto.step3.title": "Проаналізуйте результати",
+                "howto.step3.description": "Перегляньте детальний аналіз, включаючи загальні відсотки до сплати, та подивіться розподіл платежів на графіку.",
+                "howto.step4.title": "Плануйте свої фінанси",
+                "howto.step4.description": "Використовуйте графік погашення, щоб зрозуміти, як ваші платежі розподіляються між основним боргом та відсотками з часом.",
+                "tool.title": "Калькулятор EMI",
+                "tool.inputs.amount": "Сума кредиту",
+                "tool.inputs.rate": "Процентна ставка (% річних)",
+                "tool.inputs.tenure": "Термін кредиту (роки)",
+                "tool.inputs.type": "Тип кредиту",
+                "tool.loanTypes.home": "Житловий кредит",
+                "tool.loanTypes.car": "Автокредит",
+                "tool.loanTypes.personal": "Персональний кредит",
+                "tool.loanTypes.education": "Освітній кредит",
+                "tool.loanTypes.business": "Бізнес-кредит",
+                "tool.results.emi": "Щомісячний EMI",
+                "tool.results.total": "Загальний платіж",
+                "tool.results.interest": "Загальні відсотки",
+                "tool.results.principal": "Основна сума",
+                "tool.results.interestPercent": "Відсоткова частка",
+                "tool.results.months": "Місяці",
+                "tool.results.type": "Тип кредиту",
+                "tool.results.summary": "Підсумок кредиту",
+                "tool.chart.title": "Аналіз платежів",
+                "tool.amortization.title": "Графік погашення",
+                "tool.amortization.month": "Місяць",
+                "tool.amortization.emi": "EMI",
+                "tool.amortization.principal": "Основний борг",
+                "tool.amortization.interest": "Відсотки",
+                "tool.amortization.balance": "Залишок",
+                "tool.calculate": "Розрахувати EMI",
+                "tool.reset": "Скинути",
+                "tool.share": "Поділитися результатами",
+                "footer.follow": "СЛІДКУЙТЕ ЗА НАМИ",
+                "footer.categories": "Популярні категорії",
+                "footer.categories.pdf": "PDF інструменти",
+                "footer.categories.image": "Інструменти для зображень",
+                "footer.categories.text": "Текстові інструменти",
+                "footer.categories.av": "Аудіо/Відео інструменти",
+                "footer.categories.web": "Інструменти WebDeveloper",
+                "footer.categories.calc": "Калькуляторні інструменти",
+                "footer.categories.util": "Утилітарні інструменти",
+                "footer.categories.color": "Кольорові інструменти",
+                "footer.quicklinks": "Швидкі посилання",
+                "footer.links.tools": "Всі інструменти",
+                "footer.links.faq": "ЧаПи",
+                "footer.links.contact": "Контакти",
+                "footer.links.privacy": "Політика конфіденційності",
+                "footer.links.disclaimer": "Відмова від відповідальності",
+                "footer.links.terms": "Умови використання",
+                "footer.copyright": "© 2025 LollyPoPDF. Всі права захищені."
+            },
+            vi: {
+                "nav.home": "Trang chủ",
+                "nav.about": "Về chúng tôi",
+                "nav.tools": "Công cụ",
+                "nav.contact": "Liên hệ",
+                "hero.title": "Máy tính EMI Khoản vay",
+                "hero.description": "Tính toán Khoản trả góp Hàng tháng (EMI) của bạn cho các khoản vay mua nhà, vay mua xe, vay cá nhân và nhiều hơn nữa. Lập kế hoạch tài chính với các tính toán EMI chính xác và phân tích chi tiết.",
+                "howto.title": "Cách sử dụng Máy tính EMI",
+                "howto.step1.title": "Nhập chi tiết khoản vay",
+                "howto.step1.description": "Nhập số tiền vay, lãi suất hàng năm và thời hạn vay. Sử dụng thanh trượt hoặc nhập trực tiếp vào các trường nhập liệu.",
+                "howto.step2.title": "Tính toán EMI",
+                "howto.step2.description": "Nhấp vào nút \"Tính toán EMI\" để ngay lập tức xem số tiền thanh toán hàng tháng và chi tiết tổng số tiền hoàn trả.",
+                "howto.step3.title": "Phân tích kết quả",
+                "howto.step3.description": "Xem xét phân tích chi tiết bao gồm tổng lãi phải trả và xem phân bổ thanh toán trong biểu đồ.",
+                "howto.step4.title": "Lập kế hoạch tài chính",
+                "howto.step4.description": "Sử dụng lịch trình trả nợ để hiểu cách các khoản thanh toán của bạn được phân bổ giữa gốc và lãi theo thời gian.",
+                "tool.title": "Máy tính EMI",
+                "tool.inputs.amount": "Số tiền vay",
+                "tool.inputs.rate": "Lãi suất (% mỗi năm)",
+                "tool.inputs.tenure": "Thời hạn vay (Năm)",
+                "tool.inputs.type": "Loại khoản vay",
+                "tool.loanTypes.home": "Vay mua nhà",
+                "tool.loanTypes.car": "Vay mua xe",
+                "tool.loanTypes.personal": "Vay cá nhân",
+                "tool.loanTypes.education": "Vay giáo dục",
+                "tool.loanTypes.business": "Vay kinh doanh",
+                "tool.results.emi": "EMI hàng tháng",
+                "tool.results.total": "Tổng thanh toán",
+                "tool.results.interest": "Tổng lãi",
+                "tool.results.principal": "Số tiền gốc",
+                "tool.results.interestPercent": "Phần trăm lãi",
+                "tool.results.months": "Tháng",
+                "tool.results.type": "Loại khoản vay",
+                "tool.results.summary": "Tóm tắt khoản vay",
+                "tool.chart.title": "Phân tích thanh toán",
+                "tool.amortization.title": "Lịch trình trả nợ",
+                "tool.amortization.month": "Tháng",
+                "tool.amortization.emi": "EMI",
+                "tool.amortization.principal": "Gốc",
+                "tool.amortization.interest": "Lãi",
+                "tool.amortization.balance": "Số dư",
+                "tool.calculate": "Tính toán EMI",
+                "tool.reset": "Đặt lại",
+                "tool.share": "Chia sẻ kết quả",
+                "footer.follow": "THEO DÕI CHÚNG TÔI",
+                "footer.categories": "Danh mục phổ biến",
+                "footer.categories.pdf": "Công cụ PDF",
+                "footer.categories.image": "Công cụ hình ảnh",
+                "footer.categories.text": "Công cụ văn bản",
+                "footer.categories.av": "Công cụ Âm thanh/Video",
+                "footer.categories.web": "Công cụ WebDeveloper",
+                "footer.categories.calc": "Công cụ máy tính",
+                "footer.categories.util": "Công cụ tiện ích",
+                "footer.categories.color": "Công cụ màu sắc",
+                "footer.quicklinks": "Liên kết nhanh",
+                "footer.links.tools": "Tất cả công cụ",
+                "footer.links.faq": "Câu hỏi thường gặp",
+                "footer.links.contact": "Liên hệ",
+                "footer.links.privacy": "Chính sách bảo mật",
+                "footer.links.disclaimer": "Tuyên bố miễn trừ trách nhiệm",
+                "footer.links.terms": "Điều khoản dịch vụ",
+                "footer.copyright": "© 2025 LollyPoPDF. Đã đăng ký bản quyền."
+            },
+            is: {
+                "nav.home": "Heim",
+                "nav.about": "Um okkur",
+                "nav.tools": "Verkfæri",
+                "nav.contact": "Hafa samband",
+                "hero.title": "Lán EMI Reiknivél",
+                "hero.description": "Reiknaðu Jafna Mánaðarlegu Afborgunina (EMI) þína fyrir húsnæðislán, bílalán, persónuleg lán og fleira. Skipuleggðu fjármál þín með nákvæmum EMI útreikningum og ítarlegum sundurliðunum.",
+                "howto.title": "Hvernig á að nota EMI reiknivélina",
+                "howto.step1.title": "Sláðu inn lánsupplýsingar",
+                "howto.step1.description": "Sláðu inn lánsfjárhæð, ársvexti og lánstíma. Notaðu rennilur eða sláðu beint inn í inntaksreiti.",
+                "howto.step2.title": "Reikna EMI",
+                "howto.step2.description": "Smelltu á \"Reikna EMI\" hnappinn til að sjá mánaðarlegu greiðsluupphæðina þína og upplýsingar um heildarendurgreiðslu samstundis.",
+                "howto.step3.title": "Greindu niðurstöður",
+                "howto.step3.description": "Farið yfir ítarlega sundurliðun þar á meðal heildarvexti sem greiða skal og sjáðu greiðsludreifingu í línuritinu.",
+                "howto.step4.title": "Skipuleggðu fjármál þín",
+                "howto.step4.description": "Notaðu afborgunartafla til að skilja hvernig greiðslur þínar eru úthlutað á milli höfuðstóls og vaxta með tímanum.",
+                "tool.title": "EMI Reiknivél",
+                "tool.inputs.amount": "Lánsfjárhæð",
+                "tool.inputs.rate": "Vextir (% á ári)",
+                "tool.inputs.tenure": "Lánstími (Ár)",
+                "tool.inputs.type": "Lánstegund",
+                "tool.loanTypes.home": "Húsnæðislán",
+                "tool.loanTypes.car": "Bílalán",
+                "tool.loanTypes.personal": "Persónulegt lán",
+                "tool.loanTypes.education": "Menntalán",
+                "tool.loanTypes.business": "Fyrirtækjalán",
+                "tool.results.emi": "Mánaðarlegt EMI",
+                "tool.results.total": "Heildargreiðsla",
+                "tool.results.interest": "Heildarvextir",
+                "tool.results.principal": "Höfuðstóll",
+                "tool.results.interestPercent": "Vaxtaprósenta",
+                "tool.results.months": "Mánuðir",
+                "tool.results.type": "Lánstegund",
+                "tool.results.summary": "Lánsyfirlit",
+                "tool.chart.title": "Greiðslusundurliðun",
+                "tool.amortization.title": "Afborgunartafla",
+                "tool.amortization.month": "Mánuður",
+                "tool.amortization.emi": "EMI",
+                "tool.amortization.principal": "Höfuðstóll",
+                "tool.amortization.interest": "Vextir",
+                "tool.amortization.balance": "Eftirstöðvar",
+                "tool.calculate": "Reikna EMI",
+                "tool.reset": "Endurstilla",
+                "tool.share": "Deila niðurstöðum",
+                "footer.follow": "FYLGDU OKKUR",
+                "footer.categories": "Vinsælar flokkar",
+                "footer.categories.pdf": "PDF verkfæri",
+                "footer.categories.image": "Myndverkfæri",
+                "footer.categories.text": "Textaverkfæri",
+                "footer.categories.av": "Hljóð-/myndbandaverkfæri",
+                "footer.categories.web": "WebDeveloper verkfæri",
+                "footer.categories.calc": "Reiknivélarverkfæri",
+                "footer.categories.util": "Gagnleg verkfæri",
+                "footer.categories.color": "Litverkfæri",
+                "footer.quicklinks": "Flýtileiðir",
+                "footer.links.tools": "Öll verkfæri",
+                "footer.links.faq": "Algengar spurningar",
+                "footer.links.contact": "Hafa samband",
+                "footer.links.privacy": "Meðferð persónuupplýsinga",
+                "footer.links.disclaimer": "Fyrirvari",
+                "footer.links.terms": "Þjónustuskilmálar",
+                "footer.copyright": "© 2025 LollyPoPDF. Öll réttindi áskilin."
+            },
+            no: {
+                "nav.home": "Hjem",
+                "nav.about": "Om oss",
+                "nav.tools": "Verktøy",
+                "nav.contact": "Kontakt",
+                "hero.title": "Lån EMI Kalkulator",
+                "hero.description": "Beregn din Like Månedlige Avdrag (EMI) for boliglån, billån, personlige lån og mer. Planlegg økonomien din med nøyaktige EMI-beregninger og detaljerte oppdelinger.",
+                "howto.title": "Hvordan bruke EMI-kalkulatoren",
+                "howto.step1.title": "Skriv inn lånedetaljer",
+                "howto.step1.description": "Skriv inn lånebeløp, årlig rente og lånets løpetid. Bruk glidebryterne eller skriv direkte inn i inntastingsfeltene.",
+                "howto.step2.title": "Beregn EMI",
+                "howto.step2.description": "Klikk på \"Beregn EMI\"-knappen for umiddelbart å se månedlig betalingsbeløp og detaljer om total tilbakebetaling.",
+                "howto.step3.title": "Analyser resultater",
+                "howto.step3.description": "Gå gjennom den detaljerte oppdelingen inkludert total rente som skal betales og se betalingsfordelingen i diagrammet.",
+                "howto.step4.title": "Planlegg økonomien din",
+                "howto.step4.description": "Bruk avdragsplanen for å forstå hvordan betalingene dine fordeles mellom hovedstol og renter over tid.",
+                "tool.title": "EMI Kalkulator",
+                "tool.inputs.amount": "Lånebeløp",
+                "tool.inputs.rate": "Rente (% per år)",
+                "tool.inputs.tenure": "Lånets løpetid (År)",
+                "tool.inputs.type": "Lånetype",
+                "tool.loanTypes.home": "Boliglån",
+                "tool.loanTypes.car": "Billån",
+                "tool.loanTypes.personal": "Personlig lån",
+                "tool.loanTypes.education": "Utdanningslån",
+                "tool.loanTypes.business": "Bedriftslån",
+                "tool.results.emi": "Månedlig EMI",
+                "tool.results.total": "Total betaling",
+                "tool.results.interest": "Total rente",
+                "tool.results.principal": "Hovedstol",
+                "tool.results.interestPercent": "Renteprosent",
+                "tool.results.months": "Måneder",
+                "tool.results.type": "Lånetype",
+                "tool.results.summary": "Lånesammendrag",
+                "tool.chart.title": "Betalingsanalyse",
+                "tool.amortization.title": "Avdragsplan",
+                "tool.amortization.month": "Måned",
+                "tool.amortization.emi": "EMI",
+                "tool.amortization.principal": "Hovedstol",
+                "tool.amortization.interest": "Renter",
+                "tool.amortization.balance": "Saldo",
+                "tool.calculate": "Beregn EMI",
+                "tool.reset": "Nullstill",
+                "tool.share": "Del resultater",
+                "footer.follow": "FØLG OSS",
+                "footer.categories": "Populære kategorier",
+                "footer.categories.pdf": "PDF-verktøy",
+                "footer.categories.image": "Bildeverktøy",
+                "footer.categories.text": "Tekstverktøy",
+                "footer.categories.av": "Lyd/Video-verktøy",
+                "footer.categories.web": "WebDeveloper-verktøy",
+                "footer.categories.calc": "Kalkulatorverktøy",
+                "footer.categories.util": "Nyttige verktøy",
+                "footer.categories.color": "Fargeverktøy",
+                "footer.quicklinks": "Hurtiglenker",
+                "footer.links.tools": "Alle verktøy",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Kontakt",
+                "footer.links.privacy": "Personvernpolitikk",
+                "footer.links.disclaimer": "Ansvarsfraskrivelse",
+                "footer.links.terms": "Tjenestevilkår",
+                "footer.copyright": "© 2025 LollyPoPDF. Alle rettigheter forbeholdt."
+            },
+            sv: {
+                "nav.home": "Hem",
+                "nav.about": "Om oss",
+                "nav.tools": "Verktyg",
+                "nav.contact": "Kontakt",
+                "hero.title": "Lån EMI Kalkylator",
+                "hero.description": "Beräkna din Lika Månadsbetalning (EMI) för bolån, billån, privata lån och mer. Planera din ekonomi med exakta EMI-beräkningar och detaljerade uppdelningar.",
+                "howto.title": "Hur man använder EMI-kalkylatorn",
+                "howto.step1.title": "Ange låneinformation",
+                "howto.step1.description": "Ange lånebelopp, årlig ränta och lånetid. Använd reglagen eller skriv direkt i inmatningsfälten.",
+                "howto.step2.title": "Beräkna EMI",
+                "howto.step2.description": "Klicka på \"Beräkna EMI\"-knappen för att omedelbart se ditt månatliga betalningsbelopp och detaljer om total återbetalning.",
+                "howto.step3.title": "Analysera resultat",
+                "howto.step3.description": "Granska den detaljerade uppdelningen inklusive total ränta att betala och se betalningsfördelningen i diagrammet.",
+                "howto.step4.title": "Planera din ekonomi",
+                "howto.step4.description": "Använd amorteringsplanen för att förstå hur dina betalningar fördelas mellan amortering och ränta över tid.",
+                "tool.title": "EMI Kalkylator",
+                "tool.inputs.amount": "Lånebelopp",
+                "tool.inputs.rate": "Ränta (% per år)",
+                "tool.inputs.tenure": "Lånetid (År)",
+                "tool.inputs.type": "Låntyp",
+                "tool.loanTypes.home": "Bolån",
+                "tool.loanTypes.car": "Billån",
+                "tool.loanTypes.personal": "Privatlån",
+                "tool.loanTypes.education": "Utbildningslån",
+                "tool.loanTypes.business": "Företagslån",
+                "tool.results.emi": "Månads-EMI",
+                "tool.results.total": "Total betalning",
+                "tool.results.interest": "Total ränta",
+                "tool.results.principal": "Huvudbelopp",
+                "tool.results.interestPercent": "Ränteprocent",
+                "tool.results.months": "Månader",
+                "tool.results.type": "Låntyp",
+                "tool.results.summary": "Lånesammanfattning",
+                "tool.chart.title": "Betalningsanalys",
+                "tool.amortization.title": "Amorteringsplan",
+                "tool.amortization.month": "Månad",
+                "tool.amortization.emi": "EMI",
+                "tool.amortization.principal": "Amortering",
+                "tool.amortization.interest": "Ränta",
+                "tool.amortization.balance": "Saldo",
+                "tool.calculate": "Beräkna EMI",
+                "tool.reset": "Återställ",
+                "tool.share": "Dela resultat",
+                "footer.follow": "FÖLJ OSS",
+                "footer.categories": "Populära kategorier",
+                "footer.categories.pdf": "PDF-verktyg",
+                "footer.categories.image": "Bildverktyg",
+                "footer.categories.text": "Textverktyg",
+                "footer.categories.av": "Ljud/Video-verktyg",
+                "footer.categories.web": "WebDeveloper-verktyg",
+                "footer.categories.calc": "Kalkylatorverktyg",
+                "footer.categories.util": "Verktyg för verktyg",
+                "footer.categories.color": "Färgverktyg",
+                "footer.quicklinks": "Snabblänkar",
+                "footer.links.tools": "Alla verktyg",
+                "footer.links.faq": "Vanliga frågor",
+                "footer.links.contact": "Kontakt",
+                "footer.links.privacy": "Integritetspolicy",
+                "footer.links.disclaimer": "Ansvarsfriskrivning",
+                "footer.links.terms": "Användarvillkor",
+                "footer.copyright": "© 2025 LollyPoPDF. Alla rättigheter förbehållna."
+            },
+            fi: {
+                "nav.home": "Koti",
+                "nav.about": "Tietoa meistä",
+                "nav.tools": "Työkalut",
+                "nav.contact": "Ota yhteyttä",
+                "hero.title": "Laina EMI Laskuri",
+                "hero.description": "Laske Tasainen Kuukausierä (EMI) asuntolainoille, autolainoille, henkilökohtaisille lainoille ja muille. Suunnittele taloutesi tarkkojen EMI-laskelmien ja yksityiskohtaisten analyysien avulla.",
+                "howto.title": "Kuinka käyttää EMI-laskuria",
+                "howto.step1.title": "Syötä lainan tiedot",
+                "howto.step1.description": "Syötä lainan määrä, vuosikorko ja laina-aika. Käytä liukusäädintä tai kirjoita suoraan syöttökenttiin.",
+                "howto.step2.title": "Laske EMI",
+                "howto.step2.description": "Napsauta \"Laske EMI\"-painiketta nähdäksesi kuukausimaksusi määrän ja kokonaisuuden takaisinmaksun yksityiskohdat välittömästi.",
+                "howto.step3.title": "Analysoi tulokset",
+                "howto.step3.description": "Tarkastele yksityiskohtaista erittelyä mukaan lukien maksettava kokonaiskorko ja katso maksujen jakautuminen kaaviossa.",
+                "howto.step4.title": "Suunnittele taloutesi",
+                "howto.step4.description": "Käytä takaisinmaksuaikataulua ymmärtääksesi, kuinka maksusi kohdennetaan pääoman ja koron välillä ajan myötä.",
+                "tool.title": "EMI Laskuri",
+                "tool.inputs.amount": "Lainan määrä",
+                "tool.inputs.rate": "Korko (% vuodessa)",
+                "tool.inputs.tenure": "Laina-aika (Vuotta)",
+                "tool.inputs.type": "Lainatyyppi",
+                "tool.loanTypes.home": "Asuntolaina",
+                "tool.loanTypes.car": "Autolaina",
+                "tool.loanTypes.personal": "Henkilökohtainen laina",
+                "tool.loanTypes.education": "Koulutuslaina",
+                "tool.loanTypes.business": "Yrityslaina",
+                "tool.results.emi": "Kuukausittainen EMI",
+                "tool.results.total": "Kokonaismaksu",
+                "tool.results.interest": "Kokonaiskorko",
+                "tool.results.principal": "Pääoman määrä",
+                "tool.results.interestPercent": "Korkoprosentti",
+                "tool.results.months": "Kuukautta",
+                "tool.results.type": "Lainatyyppi",
+                "tool.results.summary": "Lainan yhteenveto",
+                "tool.chart.title": "Maksuanalyysi",
+                "tool.amortization.title": "Takaisinmaksuaikataulu",
+                "tool.amortization.month": "Kuukausi",
+                "tool.amortization.emi": "EMI",
+                "tool.amortization.principal": "Pääoma",
+                "tool.amortization.interest": "Korko",
+                "tool.amortization.balance": "Saldo",
+                "tool.calculate": "Laske EMI",
+                "tool.reset": "Nollaa",
+                "tool.share": "Jaa tulokset",
+                "footer.follow": "SEURA MEITÄ",
+                "footer.categories": "Suositut kategoriat",
+                "footer.categories.pdf": "PDF-työkalut",
+                "footer.categories.image": "Kuvatyökalut",
+                "footer.categories.text": "Tekstityökalut",
+                "footer.categories.av": "Ääni/Video-työkalut",
+                "footer.categories.web": "WebDeveloper-työkalut",
+                "footer.categories.calc": "Laskurityökalut",
+                "footer.categories.util": "Aputyökalut",
+                "footer.categories.color": "Väri työkalut",
+                "footer.quicklinks": "Pikalinkit",
+                "footer.links.tools": "Kaikki työkalut",
+                "footer.links.faq": "UKK",
+                "footer.links.contact": "Ota yhteyttä",
+                "footer.links.privacy": "Tietosuojakäytäntö",
+                "footer.links.disclaimer": "Vastuuvapauslauseke",
+                "footer.links.terms": "Käyttöehdot",
+                "footer.copyright": "© 2025 LollyPoPDF. Kaikki oikeudet pidätetään."
+            },
+            cs: {
+                "nav.home": "Domů",
+                "nav.about": "O nás",
+                "nav.tools": "Nástroje",
+                "nav.contact": "Kontakt",
+                "hero.title": "Kalkulačka splátky úvěru",
+                "hero.description": "Vypočítejte si Rovnoměrnou Měsíční Splátku (EMI) pro hypoteční úvěry, úvěry na auto, osobní úvěry a další. Plánujte své finance s přesnými výpočty EMI a podrobnými analýzami.",
+                "howto.title": "Jak používat kalkulačku EMI",
+                "howto.step1.title": "Zadejte podrobnosti úvěru",
+                "howto.step1.description": "Zadejte výši úvěru, roční úrokovou sazbu a dobu splatnosti úvěru. Použijte posuvníky nebo pište přímo do vstupních polí.",
+                "howto.step2.title": "Vypočítejte EMI",
+                "howto.step2.description": "Klikněte na tlačítko \"Vypočítat EMI\" a okamžitě uvidíte výši své měsíční splátky a podrobnosti celkové splátky.",
+                "howto.step3.title": "Analyzujte výsledky",
+                "howto.step3.description": "Prohlédněte si podrobný rozpis včetně celkového úroku k zaplacení a podívejte se na rozdělení plateb v grafu.",
+                "howto.step4.title": "Naplánujte si finance",
+                "howto.step4.description": "Použijte splátkový kalendář, abyste pochopili, jak se vaše platby v průběhu času rozdělují mezi jistinu a úrok.",
+                "tool.title": "Kalkulačka EMI",
+                "tool.inputs.amount": "Výše úvěru",
+                "tool.inputs.rate": "Úroková sazba (% ročně)",
+                "tool.inputs.tenure": "Doba splatnosti úvěru (Roky)",
+                "tool.inputs.type": "Typ úvěru",
+                "tool.loanTypes.home": "Hypoteční úvěr",
+                "tool.loanTypes.car": "Úvěr na auto",
+                "tool.loanTypes.personal": "Osobní úvěr",
+                "tool.loanTypes.education": "Vzdělávací úvěr",
+                "tool.loanTypes.business": "Podnikatelský úvěr",
+                "tool.results.emi": "Měsíční EMI",
+                "tool.results.total": "Celková platba",
+                "tool.results.interest": "Celkový úrok",
+                "tool.results.principal": "Jistina",
+                "tool.results.interestPercent": "Procento úroku",
+                "tool.results.months": "Měsíce",
+                "tool.results.type": "Typ úvěru",
+                "tool.results.summary": "Souhrn úvěru",
+                "tool.chart.title": "Rozbor plateb",
+                "tool.amortization.title": "Splátkový kalendář",
+                "tool.amortization.month": "Měsíc",
+                "tool.amortization.emi": "EMI",
+                "tool.amortization.principal": "Jistina",
+                "tool.amortization.interest": "Úrok",
+                "tool.amortization.balance": "Zůstatek",
+                "tool.calculate": "Vypočítat EMI",
+                "tool.reset": "Resetovat",
+                "tool.share": "Sdílet výsledky",
+                "footer.follow": "SLEDUJTE NÁS",
+                "footer.categories": "Populární kategorie",
+                "footer.categories.pdf": "PDF nástroje",
+                "footer.categories.image": "Obrázkové nástroje",
+                "footer.categories.text": "Textové nástroje",
+                "footer.categories.av": "Audio/Video nástroje",
+                "footer.categories.web": "WebDeveloper nástroje",
+                "footer.categories.calc": "Kalkulačkové nástroje",
+                "footer.categories.util": "Užitečné nástroje",
+                "footer.categories.color": "Barevné nástroje",
+                "footer.quicklinks": "Rychlé odkazy",
+                "footer.links.tools": "Všechny nástroje",
+                "footer.links.faq": "Často kladené otázky",
+                "footer.links.contact": "Kontakt",
+                "footer.links.privacy": "Zásady ochrany osobních údajů",
+                "footer.links.disclaimer": "Odmítnutí odpovědnosti",
+                "footer.links.terms": "Podmínky služby",
+                "footer.copyright": "© 2025 LollyPoPDF. Všechna práva vyhrazena."
+            }
+
+
+        };
+
+        // Function to change language
+        function changeLanguage(langCode) {
+            const langData = translations[langCode];
+            if (!langData) return;
+            
+            // Update all elements with data-i18n attribute
+            document.querySelectorAll('[data-i18n]').forEach(element => {
+                const key = element.getAttribute('data-i18n');
+                if (langData[key]) {
+                    element.textContent = langData[key];
+                }
+            });
+            
+            // Update current language display
+            currentLanguageElement.textContent = languages.find(lang => lang.code === langCode)?.name || 'English';
+            
+            // Save language preference
+            localStorage.setItem('language', langCode);
+        }
+
+        // Initialize language
+        const savedLanguage = localStorage.getItem('language') || 'en';
+        changeLanguage(savedLanguage);
+        
+        // Language selection handler
+        languageDropdown.addEventListener('click', (e) => {
+            if (e.target.classList.contains('language-option')) {
+                const langCode = e.target.getAttribute('data-lang');
+                changeLanguage(langCode);
+            }
+        });
+    </script>
+</body>
+</html>

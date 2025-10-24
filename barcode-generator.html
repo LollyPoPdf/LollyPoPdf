@@ -1,0 +1,3468 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Barcode Generator | LollyPoPdf</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
+    <style>
+        :root {
+            --primary-color: #9370db;
+            --primary-dark: #8a2be2;
+            --secondary-color: #f0ebff;
+            --text-color: #333333;
+            --text-light: #6b7280;
+            --bg-color: #ffffff;
+            --bg-secondary: #f9f9f9;
+            --border-radius: 12px;
+            --transition: all 0.3s ease;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --header-height: 80px;
+            --white: #ffffff;
+            --header-text: #6b7280;
+            --accent-color: #9370db;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --error-color: #ef4444;
+        }
+
+        .dark-mode {
+            --primary-color: #a391f2;
+            --primary-dark: #8a2be2;
+            --secondary-color: #2d2d2d;
+            --text-color: #f0f0f0;
+            --text-light: #a0a0a0;
+            --bg-color: #1a1a1a;
+            --bg-secondary: #2d2d2d;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+            --white: #1a1a1a;
+            --header-text: #a0a0a0;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            transition: var(--transition);
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        ul {
+            list-style: none;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header Styles */
+        header {
+            background-color: var(--white);
+            color: var(--header-text);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+        }
+
+        .logo-icon {
+            position: relative;
+            width: 40px;
+            height: 40px;
+        }
+
+        .logo-circle {
+            width: 40px;
+            height: 40px;
+            border-radius: 40%;
+            background: linear-gradient(to bottom right, #9370db, #8a2be2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .logo-stem {
+            position: absolute;
+            bottom: -17px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 6px;
+            height: 17px;
+            background-color: #8a2be2;
+            border-radius: 0 0 3px 3px;
+        }
+
+        .logo-text {
+            font-size: 24px;
+            font-weight: bold;
+            color: #9370db;
+        }
+
+        nav ul {
+            display: flex;
+            gap: 30px;
+            list-style: none;
+        }
+
+        nav a {
+            font-weight: 500;
+            position: relative;
+            color: var(--header-text);
+            padding: 8px 0;
+            border-radius: 0;
+            transition: var(--transition);
+            text-decoration: none;
+        }
+
+        nav a:hover {
+            color: var(--accent-color);
+        }
+
+        nav a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: var(--accent-color);
+            transition: width 0.3s ease;
+        }
+
+        nav a:hover::after {
+            width: 100%;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .email {
+            font-size: 14px;
+            color: var(--header-text);
+        }
+
+        .theme-toggle {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 20px;
+            color: var(--header-text);
+            padding: 8px;
+            border-radius: 50%;
+            transition: var(--transition);
+        }
+
+        .theme-toggle:hover {
+            background-color: #f0ebff;
+            color: var(--accent-color);
+        }
+
+        .dark-mode .theme-toggle:hover {
+            background-color: #2d3748;
+            color: var(--accent-color);
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--header-text);
+        }
+
+        /* Mobile Menu */
+        .mobile-menu {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            width: 100%;
+            background-color: var(--white);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            z-index: 999;
+        }
+
+        .dark-mode .mobile-menu {
+            background-color: var(--bg-secondary);
+        }
+
+        .mobile-menu.active {
+            display: block;
+        }
+
+        .mobile-menu ul {
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .mobile-menu a {
+            display: block;
+            padding: 10px 0;
+            font-weight: 500;
+            color: var(--header-text);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .dark-mode .mobile-menu a {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .mobile-menu a:hover {
+            color: var(--accent-color);
+        }
+
+        /* Hero Section */
+        .hero {
+            background-color: var(--secondary-color);
+            padding: 60px 0;
+            text-align: center;
+        }
+
+        .dark-mode .hero {
+            background: linear-gradient(135deg, #2a1a4a, #3d2a6d);
+        }
+
+        .hero h1 {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            color: #000;
+        }
+
+        .dark-mode .hero h1 {
+            color: var(--text-color);
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            color: var(--text-color);
+            max-width: 700px;
+            margin: 0 auto 30px;
+        }
+
+        /* How to Use Section */
+        .how-to-section {
+            padding: 80px 0;
+            background-color: var(--bg-color);
+        }
+
+        .dark-mode .how-to-section {
+            background-color: var(--bg-secondary);
+        }
+
+        .section-title {
+            font-size: 2rem;
+            text-align: center;
+            margin-bottom: 40px;
+            color: #000000;
+        }
+
+        .dark-mode .section-title {
+            color: var(--text-color);
+        }
+
+        .steps-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 40px;
+        }
+
+        .step-box {
+            background-color: var(--bg-secondary);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            padding: 30px;
+            min-height: 200px;
+            position: relative;
+        }
+
+        .step-number {
+            width: 40px;
+            height: 40px;
+            background-color: var(--primary-color);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 16px;
+            margin-bottom: 15px;
+        }
+
+        .step-title {
+            font-size: 18px;
+            color: #000000;
+            margin-bottom: 10px;
+        }
+
+        .dark-mode .step-title {
+            color: var(--text-color);
+        }
+
+        .step-description {
+            font-size: 14px;
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        /* Tool Section */
+        .tool-section {
+            padding: 80px 0;
+            background-color: var(--secondary-color);
+        }
+
+        .dark-mode .tool-section {
+            background: linear-gradient(135deg, #2a1a4a, #3d2a6d);
+        }
+
+        .tool-title {
+            font-size: 2.5rem;
+            text-align: center;
+            margin-bottom: 40px;
+            color: #a391f2;
+        }
+
+        .dark-mode .tool-title {
+            color: #a391f2;
+        }
+
+        .tool-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background-color: var(--bg-color);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            padding: 40px;
+        }
+
+        /* Input Section */
+        .input-section {
+            margin-bottom: 30px;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        .input-label {
+            display: block;
+            font-size: 16px;
+            font-weight: 500;
+            margin-bottom: 8px;
+            color: var(--text-color);
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 12px 15px;
+            border-radius: var(--border-radius);
+            border: 1px solid var(--primary-color);
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-size: 16px;
+        }
+
+        .input-field:focus {
+            outline: none;
+            border-color: var(--primary-dark);
+            box-shadow: 0 0 0 3px rgba(147, 112, 219, 0.2);
+        }
+
+        .input-hint {
+            font-size: 14px;
+            color: var(--text-light);
+            margin-top: 5px;
+        }
+
+        /* Customization Section */
+        .customization-section {
+            background-color: var(--bg-secondary);
+            border-radius: var(--border-radius);
+            padding: 25px;
+            margin-bottom: 30px;
+        }
+
+        .customization-title {
+            font-size: 18px;
+            margin-bottom: 20px;
+            color: var(--primary-color);
+        }
+
+        .customization-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .customization-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .customization-label {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-color);
+        }
+
+        .customization-select {
+            padding: 8px 12px;
+            border-radius: var(--border-radius);
+            border: 1px solid var(--primary-color);
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-size: 14px;
+        }
+
+        .color-inputs {
+            display: flex;
+            gap: 10px;
+        }
+
+        .color-input {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .color-preview {
+            width: 100%;
+            height: 30px;
+            border-radius: var(--border-radius);
+            border: 1px solid var(--text-light);
+        }
+
+        .color-input-field {
+            width: 100%;
+            padding: 5px;
+            border-radius: 4px;
+            border: 1px solid var(--text-light);
+            background-color: var(--bg-color);
+            color: var(--text-color);
+        }
+
+        /* Barcode Preview */
+        .preview-section {
+            background-color: var(--bg-secondary);
+            border-radius: var(--border-radius);
+            padding: 25px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .preview-title {
+            font-size: 18px;
+            margin-bottom: 20px;
+            color: var(--primary-color);
+        }
+
+        #barcode-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 200px;
+            background-color: var(--bg-color);
+            border-radius: var(--border-radius);
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        #barcode {
+            max-width: 100%;
+            height: auto;
+        }
+
+        .preview-placeholder {
+            color: var(--text-light);
+            font-style: italic;
+        }
+
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 30px;
+        }
+
+        .action-btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: var(--transition);
+            flex: 1;
+            min-width: 150px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .generate-btn {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .generate-btn:hover {
+            background-color: var(--primary-dark);
+        }
+
+        .generate-btn:disabled {
+            background-color: var(--text-light);
+            cursor: not-allowed;
+        }
+
+        .download-btn {
+            background-color: var(--primary-color);
+            color: white;
+            display: none;
+        }
+
+        .download-btn:hover {
+            background-color: var(--primary-dark);
+        }
+
+        .copy-btn {
+            background-color: white;
+            color: var(--primary-color);
+            border: 2px solid var(--primary-color);
+        }
+
+        .copy-btn:hover {
+            background-color: var(--secondary-color);
+        }
+
+        .clear-btn {
+            background-color: white;
+            color: var(--primary-color);
+            border: 2px solid var(--primary-color);
+        }
+
+        .clear-btn:hover {
+            background-color: var(--secondary-color);
+        }
+
+        /* Format Options */
+        .format-options {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+
+        .format-btn {
+            padding: 8px 15px;
+            background-color: var(--bg-secondary);
+            color: var(--text-color);
+            border: 1px solid var(--primary-color);
+            border-radius: 20px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .format-btn.active {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        /* History Section */
+        .history-section {
+            background-color: var(--bg-secondary);
+            border-radius: var(--border-radius);
+            padding: 25px;
+            margin-top: 30px;
+        }
+
+        .history-title {
+            font-size: 18px;
+            margin-bottom: 20px;
+            color: var(--primary-color);
+        }
+
+        .history-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 15px;
+        }
+
+        .history-item {
+            background-color: var(--bg-color);
+            border-radius: var(--border-radius);
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .history-item:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow);
+        }
+
+        .history-barcode {
+            max-width: 100%;
+            height: 80px;
+            margin-bottom: 10px;
+        }
+
+        .history-text {
+            font-size: 12px;
+            color: var(--text-color);
+            word-break: break-all;
+        }
+
+        .empty-history {
+            text-align: center;
+            color: var(--text-light);
+            font-style: italic;
+            padding: 20px;
+        }
+
+        /* Footer */
+        footer {
+            background-color: #000000;
+            color: white;
+            padding: 60px 0 80px;
+            position: relative;
+        }
+
+        .footer-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 60px;
+        }
+
+        .footer-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            text-decoration: none;
+        }
+
+        .footer-logo .logo-icon {
+            width: 40px;
+            height: 40px;
+        }
+
+        .footer-logo .logo-text {
+            color: #9370db;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .footer-section h3 {
+            color: white;
+            font-weight: 600;
+            font-size: 20px;
+            margin-bottom: 20px;
+        }
+
+        .footer-section h4 {
+            color: #9370db;
+            font-size: 18px;
+            margin-bottom: 15px;
+        }
+
+        .footer-links li {
+            margin-bottom: 10px;
+        }
+
+        .footer-links a {
+            color: white;
+        }
+
+        .footer-links a:hover {
+            color: #9370db;
+        }
+
+        .social-icons {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .social-icon {
+            width: 40px;
+            height: 40px;
+            background-color: #9370db;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+        }
+
+        .social-icon:hover {
+            background-color: #8a2be2;
+            transform: translateY(-3px);
+        }
+
+        .copyright {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            color: #f9f7ff;
+            font-size: 12px;
+        }
+
+        .footer-line {
+            position: absolute;
+            bottom: 50px;
+            left: 0;
+            width: 100%;
+            height: 1px;
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        /* Language Switcher */
+        .language-switcher {
+            position: fixed;
+            bottom: 10px;
+            right: 10px;
+            z-index: 1000;
+        }
+
+        .language-btn {
+            background-color: #9370db;
+            color: white;
+            border: none;
+            border-radius: 30px;
+            padding: 5px 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .language-dropdown {
+            position: absolute;
+            bottom: 100%;
+            right: 0;
+            width: 300px;
+            background-color: white;
+            border-radius: var(--border-radius);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            display: none;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .dark-mode .language-dropdown {
+            background-color: var(--bg-secondary);
+        }
+
+        .language-switcher:hover .language-dropdown {
+            display: grid;
+        }
+
+        .language-option {
+            padding: 8px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            text-align: center;
+            font-size: 14px;
+        }
+
+        .language-option:hover {
+            background-color: white;
+            color: #9370db;
+        }
+
+        .dark-mode .language-option:hover {
+            background-color: var(--bg-color);
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 992px) {
+            .steps-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .footer-container {
+                grid-template-columns: 1fr 1fr;
+            }
+            
+            .customization-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+            
+            .history-list {
+                grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            }
+        }
+
+        @media (max-width: 768px) {
+            nav ul, .email {
+                display: none;
+            }
+            
+            .mobile-menu-btn {
+                display: block;
+            }
+            
+            .hero h1, .tool-title {
+                font-size: 2rem;
+            }
+            
+            .hero p {
+                font-size: 1rem;
+            }
+            
+            .language-dropdown {
+                width: 250px;
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .footer-container {
+                grid-template-columns: 1fr;
+                gap: 40px;
+            }
+            
+            .customization-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+            
+            .action-btn {
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .tool-container {
+                padding: 20px;
+            }
+            
+            .format-options {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .format-btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container header-container">
+            <a href="https://lollypopdf.com" class="logo">
+                <div class="logo-icon">
+                    <div class="logo-circle">LPdf</div>
+                    <div class="logo-stem"></div>
+                </div>
+                <span class="logo-text">LollyPoPdf</span>
+            </a>
+            
+            <nav>
+                <ul>
+                    <li><a href="https://lollypopdf.github.io/LollyPoPdf#home" class="nav-link" data-i18n="nav.home">Home</a></li>
+                    <li><a href="https://lollypopdf.github.io/LollyPoPdf#about" class="nav-link" data-i18n="nav.about">About Us</a></li>
+                    <li><a href="https://lollypopdf.github.io/LollyPoPdf#tools" class="nav-link" data-i18n="nav.tools">Tools</a></li>
+                    <li><a href="contact.html" class="nav-link" data-i18n="nav.contact">Contact</a></li>
+                </ul>
+            </nav>
+            
+            <div class="header-right">
+                <span class="email">lollypoppdf@gmail.com</span>
+                <button class="theme-toggle" id="themeToggle">
+                    <i class="fas fa-moon"></i>
+                </button>
+                <button class="mobile-menu-btn" id="mobileMenuBtn">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </div>
+        
+        <!-- Mobile Menu -->
+        <div class="mobile-menu" id="mobileMenu">
+            <ul>
+                <li><a href="https://lollypopdf.github.io/LollyPoPdf#home" class="nav-link" data-i18n="nav.home">Home</a></li>
+                <li><a href="https://lollypopdf.github.io/LollyPoPdf#about" class="nav-link" data-i18n="nav.about">About Us</a></li>
+                <li><a href="https://lollypopdf.github.io/LollyPoPdf#tools" class="nav-link" data-i18n="nav.tools">Tools</a></li>
+                <li><a href="contact.html" class="nav-link" data-i18n="nav.contact">Contact</a></li>
+            </ul>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <h1 data-i18n="hero.title">Barcode Generator Tool</h1>
+            <p data-i18n="hero.description">Create professional barcodes instantly - generate, customize, and download barcodes for any purpose. All processing happens locally with no file size limits and complete privacy.</p>
+        </div>
+    </section>
+
+    <!-- How to Use Section -->
+    <section class="how-to-section">
+        <div class="container">
+            <h2 class="section-title" data-i18n="howto.title">How to Use the Barcode Generator</h2>
+            <div class="steps-container">
+                <div class="step-box">
+                    <div class="step-number">1</div>
+                    <h3 class="step-title" data-i18n="howto.step1.title">Enter Your Data</h3>
+                    <p class="step-description" data-i18n="howto.step1.description">Type the text, numbers, or product codes you want to encode. The tool supports all major barcode formats including CODE128, EAN-13, UPC, and more.</p>
+                </div>
+                <div class="step-box">
+                    <div class="step-number">2</div>
+                    <h3 class="step-title" data-i18n="howto.step2.title">Customize Appearance</h3>
+                    <p class="step-description" data-i18n="howto.step2.description">Choose your barcode format, adjust colors, size, and display options. Preview changes in real-time as you customize.</p>
+                </div>
+                <div class="step-box">
+                    <div class="step-number">3</div>
+                    <h3 class="step-title" data-i18n="howto.step3.title">Generate Barcode</h3>
+                    <p class="step-description" data-i18n="howto.step3.description">Click "Generate Barcode" to create your customized barcode. The barcode appears instantly with no processing delays.</p>
+                </div>
+                <div class="step-box">
+                    <div class="step-number">4</div>
+                    <h3 class="step-title" data-i18n="howto.step4.title">Download or Copy</h3>
+                    <p class="step-description" data-i18n="howto.step4.description">Download your barcode in PNG, JPG, or SVG format, or copy it directly to your clipboard. All processing happens locally in your browser.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Tool Section -->
+    <section class="tool-section">
+        <div class="container">
+            <h2 class="tool-title" data-i18n="tool.title">Barcode Generator</h2>
+            <div class="tool-container">
+                <!-- Input Section -->
+                <div class="input-section">
+                    <div class="input-group">
+                        <label for="barcodeInput" class="input-label" data-i18n="tool.input.label">Enter text or numbers to encode:</label>
+                        <input type="text" id="barcodeInput" class="input-field" placeholder="Enter your text or numbers here" data-i18n-placeholder="tool.input.placeholder">
+                        <div class="input-hint" data-i18n="tool.input.hint">You can enter product codes, text, numbers, or any data you want to encode.</div>
+                    </div>
+                </div>
+
+                <!-- Customization Section -->
+                <div class="customization-section">
+                    <h3 class="customization-title" data-i18n="tool.customization.title">Customize Your Barcode</h3>
+                    <div class="customization-grid">
+                        <div class="customization-group">
+                            <label for="barcodeType" class="customization-label" data-i18n="tool.customization.type">Barcode Type:</label>
+                            <select id="barcodeType" class="customization-select">
+                                <option value="CODE128">CODE128</option>
+                                <option value="EAN13">EAN-13</option>
+                                <option value="EAN8">EAN-8</option>
+                                <option value="UPC">UPC</option>
+                                <option value="CODE39">CODE39</option>
+                                <option value="ITF">ITF</option>
+                                <option value="MSI">MSI</option>
+                                <option value="pharmacode">Pharmacode</option>
+                            </select>
+                        </div>
+                        
+                        <div class="customization-group">
+                            <label for="barcodeWidth" class="customization-label" data-i18n="tool.customization.width">Width:</label>
+                            <input type="range" id="barcodeWidth" class="customization-select" min="1" max="5" step="0.1" value="2">
+                            <div class="input-hint" id="widthValue">2</div>
+                        </div>
+                        
+                        <div class="customization-group">
+                            <label for="barcodeHeight" class="customization-label" data-i18n="tool.customization.height">Height:</label>
+                            <input type="range" id="barcodeHeight" class="customization-select" min="20" max="200" value="100">
+                            <div class="input-hint" id="heightValue">100px</div>
+                        </div>
+                        
+                        <div class="customization-group">
+                            <label class="customization-label" data-i18n="tool.customization.colors">Colors:</label>
+                            <div class="color-inputs">
+                                <div class="color-input">
+                                    <div class="color-preview" id="lineColorPreview" style="background-color: #000000;"></div>
+                                    <input type="color" id="lineColor" class="color-input-field" value="#000000">
+                                </div>
+                                <div class="color-input">
+                                    <div class="color-preview" id="bgColorPreview" style="background-color: #ffffff;"></div>
+                                    <input type="color" id="bgColor" class="color-input-field" value="#ffffff">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="customization-group">
+                            <label for="displayValue" class="customization-label" data-i18n="tool.customization.display">Display Value:</label>
+                            <select id="displayValue" class="customization-select">
+                                <option value="true">Yes</option>
+                                <option value="false">No</option>
+                            </select>
+                        </div>
+                        
+                        <div class="customization-group">
+                            <label for="fontSize" class="customization-label" data-i18n="tool.customization.fontsize">Font Size:</label>
+                            <input type="range" id="fontSize" class="customization-select" min="10" max="30" value="20">
+                            <div class="input-hint" id="fontSizeValue">20px</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Barcode Preview -->
+                <div class="preview-section">
+                    <h3 class="preview-title" data-i18n="tool.preview.title">Barcode Preview</h3>
+                    <div id="barcode-container">
+                        <div class="preview-placeholder" data-i18n="tool.preview.placeholder">Your barcode will appear here</div>
+                        <svg id="barcode"></svg>
+                    </div>
+                    
+                    <div class="format-options">
+                        <button class="format-btn active" data-format="png">PNG</button>
+                        <button class="format-btn" data-format="jpg">JPG</button>
+                        <button class="format-btn" data-format="svg">SVG</button>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="action-buttons">
+                    <button class="action-btn generate-btn" id="generateBtn" data-i18n="tool.generate">
+                        <i class="fas fa-barcode"></i> Generate Barcode
+                    </button>
+                    <button class="action-btn download-btn" id="downloadBtn" data-i18n="tool.download">
+                        <i class="fas fa-download"></i> Download Barcode
+                    </button>
+                    <button class="action-btn copy-btn" id="copyBtn" data-i18n="tool.copy">
+                        <i class="fas fa-copy"></i> Copy to Clipboard
+                    </button>
+                    <button class="action-btn clear-btn" id="clearBtn" data-i18n="tool.clear">
+                        <i class="fas fa-trash"></i> Clear All
+                    </button>
+                </div>
+
+                <!-- History Section -->
+                <div class="history-section">
+                    <h3 class="history-title" data-i18n="tool.history.title">Recent Barcodes</h3>
+                    <div id="historyList" class="history-list">
+                        <div class="empty-history" data-i18n="tool.history.empty">No barcodes generated yet</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container footer-container">
+            <!-- Left Section -->
+            <div class="footer-section">
+                <a href="https://lollypopdf.com" class="footer-logo">
+                    <div class="logo-icon">
+                        <div class="logo-circle">LPdf</div>
+                        <div class="logo-stem"></div>
+                    </div>
+                    <span class="logo-text">LollyPoPdf</span>
+                </a>
+                <h3 data-i18n="footer.follow">FOLLOW US</h3>
+                <div class="social-icons">
+                    <a href="https://facebook.com/lollypopdf" class="social-icon"><i class="fab fa-facebook-f"></i></a>
+                    <a href="https://linkedin.com/company/lollypopdf" class="social-icon"><i class="fab fa-linkedin-in"></i></a>
+                    <a href="https://twitter.com/lollypopdf" class="social-icon"><i class="fab fa-twitter"></i></a>
+                    <a href="https://instagram.com/lollypopdf" class="social-icon"><i class="fab fa-instagram"></i></a>
+                    <a href="https://pinterest.com/lollypopdf" class="social-icon"><i class="fab fa-pinterest-p"></i></a>
+                </div>
+            </div>
+            
+            <!-- Middle Section - Popular Categories -->
+            <div class="footer-section">
+                <h4 data-i18n="footer.categories">Popular Categories</h4>
+                <ul class="footer-links">
+                    <li><a href="https://lollypopdf.com#pdf-tools" data-i18n="footer.categories.pdf">PDF Tools</a></li>
+                    <li><a href="https://lollypopdf.com#image-tools" data-i18n="footer.categories.image">Image Tools</a></li>
+                    <li><a href="https://lollypopdf.com#text-tools" data-i18n="footer.categories.text">Text Tools</a></li>
+                    <li><a href="https://lollypopdf.com#audio-video-tools" data-i18n="footer.categories.av">Audio/Video Tools</a></li>
+                    <li><a href="https://lollypopdf.com#web-developer-tools" data-i18n="footer.categories.web">WebDeveloper Tools</a></li>
+                    <li><a href="https://lollypopdf.com#calculator-tools" data-i18n="footer.categories.calc">Calculator Tools</a></li>
+                    <li><a href="https://lollypopdf.com#utility-tools" data-i18n="footer.categories.util">Utility Tools</a></li>
+                    <li><a href="https://lollypopdf.com#color-tools" data-i18n="footer.categories.color">Color Tools</a></li>
+                </ul>
+            </div>
+            
+            <!-- Right Section - Quick Links -->
+            <div class="footer-section">
+                <h4 data-i18n="footer.quicklinks">Quick Links</h4>
+                <ul class="footer-links">
+                    <li><a href="https://lollypopdf.github.io/LollyPoPdf#home" data-i18n="nav.home">Home</a></li>
+                    <li><a href="https://lollypopdf.github.io/LollyPoPdf#tools" data-i18n="footer.links.tools">All Tools</a></li>
+                    <li><a href="faq.html" data-i18n="footer.links.faq">FAQ</a></li>
+                    <li><a href="contact.html" data-i18n="footer.links.contact">Contact</a></li>
+                    <li><a href="privacy-policy.html" data-i18n="footer.links.privacy">Privacy Policy</a></li>
+                    <li><a href="disclaimer.html" data-i18n="footer.links.disclaimer">Disclaimer</a></li>
+                    <li><a href="terms.html" data-i18n="footer.links.terms">Terms of Service</a></li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="footer-line"></div>
+        <div class="copyright" data-i18n="footer.copyright">© 2025 LollyPoPDF. All rights reserved.</div>
+    </footer>
+
+    <!-- Language Switcher -->
+    <div class="language-switcher">
+        <button class="language-btn">
+            <i class="fas fa-globe"></i>
+            <span id="currentLanguage">English</span>
+        </button>
+        <div class="language-dropdown">
+            <div class="language-option" data-lang="en">English</div>
+            <div class="language-option" data-lang="es">Español</div>
+            <div class="language-option" data-lang="fr">Français</div>
+            <div class="language-option" data-lang="de">Deutsch</div>
+            <div class="language-option" data-lang="it">Italiano</div>
+            <div class="language-option" data-lang="pt">Português</div>
+            <div class="language-option" data-lang="ja">日本語</div>
+            <div class="language-option" data-lang="ru">Pусский</div>
+            <div class="language-option" data-lang="ko">한국어</div>
+            <div class="language-option" data-lang="zh-CN">中文 (简体)</div>
+            <div class="language-option" data-lang="zh-TW">中文 (繁體)</div>
+            <div class="language-option" data-lang="ar">العربية</div>
+            <div class="language-option" data-lang="fa">فارسی</div>
+            <div class="language-option" data-lang="bg">Български</div>
+            <div class="language-option" data-lang="ca">Català</div>
+            <div class="language-option" data-lang="nl">Nederlands</div>
+            <div class="language-option" data-lang="el">Ελληνικά</div>
+            <div class="language-option" data-lang="hi">हिन्दी</div>
+            <div class="language-option" data-lang="te">తెలుగు</div>
+            <div class="language-option" data-lang="kn">ಕನ್ನಡ</div>
+            <div class="language-option" data-lang="ta">தமிழ்</div>
+            <div class="language-option" data-lang="ml">മലയാളം</div>
+            <div class="language-option" data-lang="id">Bahasa Indonesia</div>
+            <div class="language-option" data-lang="ms">Bahasa Melayu</div>
+            <div class="language-option" data-lang="pl">Polski</div>
+            <div class="language-option" data-lang="th">ภาษาไทย</div>
+            <div class="language-option" data-lang="tr">Türkçe</div>
+            <div class="language-option" data-lang="uk">Українська</div>
+            <div class="language-option" data-lang="vi">Tiếng Việt</div>
+            <div class="language-option" data-lang="is">Íslenska</div>
+            <div class="language-option" data-lang="no">Norsk</div>
+            <div class="language-option" data-lang="sv">Svenska</div>
+            <div class="language-option" data-lang="fi">Suomi</div>
+            <div class="language-option" data-lang="cs">Čeština</div>
+        </div>
+    </div>
+
+    <script>
+        // Theme Toggle
+        const themeToggle = document.getElementById('themeToggle');
+        const body = document.body;
+        
+        // Check for saved theme preference or respect OS preference
+        const savedTheme = localStorage.getItem('theme') || 
+            (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        
+        if (savedTheme === 'dark') {
+            body.classList.add('dark-mode');
+            themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+        }
+        
+        themeToggle.addEventListener('click', () => {
+            body.classList.toggle('dark-mode');
+            const isDarkMode = body.classList.contains('dark-mode');
+            
+            if (isDarkMode) {
+                themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+                localStorage.setItem('theme', 'dark');
+            } else {
+                themeToggle.innerHTML = '<i class="fas fa-moon"></i>';
+                localStorage.setItem('theme', 'light');
+            }
+        });
+
+        // Mobile Menu Toggle
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const mobileMenu = document.getElementById('mobileMenu');
+        
+        mobileMenuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('active');
+            
+            // Change icon based on menu state
+            if (mobileMenu.classList.contains('active')) {
+                mobileMenuBtn.innerHTML = '<i class="fas fa-times"></i>';
+            } else {
+                mobileMenuBtn.innerHTML = '<i class="fas fa-bars"></i>';
+            }
+        });
+
+        // Close mobile menu when clicking on a link
+        const mobileMenuLinks = mobileMenu.querySelectorAll('a');
+        mobileMenuLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                mobileMenu.classList.remove('active');
+                mobileMenuBtn.innerHTML = '<i class="fas fa-bars"></i>';
+            });
+        });
+
+        // Barcode Generator Functionality
+        const barcodeInput = document.getElementById('barcodeInput');
+        const barcodeType = document.getElementById('barcodeType');
+        const barcodeWidth = document.getElementById('barcodeWidth');
+        const barcodeHeight = document.getElementById('barcodeHeight');
+        const lineColor = document.getElementById('lineColor');
+        const bgColor = document.getElementById('bgColor');
+        const displayValue = document.getElementById('displayValue');
+        const fontSize = document.getElementById('fontSize');
+        const generateBtn = document.getElementById('generateBtn');
+        const downloadBtn = document.getElementById('downloadBtn');
+        const copyBtn = document.getElementById('copyBtn');
+        const clearBtn = document.getElementById('clearBtn');
+        const barcodeContainer = document.getElementById('barcode-container');
+        const barcodeSvg = document.getElementById('barcode');
+        const historyList = document.getElementById('historyList');
+        const formatBtns = document.querySelectorAll('.format-btn');
+        
+        // Value displays
+        const widthValue = document.getElementById('widthValue');
+        const heightValue = document.getElementById('heightValue');
+        const fontSizeValue = document.getElementById('fontSizeValue');
+        
+        // Color previews
+        const lineColorPreview = document.getElementById('lineColorPreview');
+        const bgColorPreview = document.getElementById('bgColorPreview');
+        
+        let currentBarcodeData = null;
+        let selectedFormat = 'png';
+        let barcodeHistory = JSON.parse(localStorage.getItem('barcodeHistory')) || [];
+        
+        // Initialize value displays
+        widthValue.textContent = barcodeWidth.value;
+        heightValue.textContent = `${barcodeHeight.value}px`;
+        fontSizeValue.textContent = `${fontSize.value}px`;
+        
+        // Update color previews
+        lineColorPreview.style.backgroundColor = lineColor.value;
+        bgColorPreview.style.backgroundColor = bgColor.value;
+        
+        // Event listeners for customization options
+        barcodeWidth.addEventListener('input', () => {
+            widthValue.textContent = barcodeWidth.value;
+            generateBarcode();
+        });
+        
+        barcodeHeight.addEventListener('input', () => {
+            heightValue.textContent = `${barcodeHeight.value}px`;
+            generateBarcode();
+        });
+        
+        fontSize.addEventListener('input', () => {
+            fontSizeValue.textContent = `${fontSize.value}px`;
+            generateBarcode();
+        });
+        
+        lineColor.addEventListener('input', () => {
+            lineColorPreview.style.backgroundColor = lineColor.value;
+            generateBarcode();
+        });
+        
+        bgColor.addEventListener('input', () => {
+            bgColorPreview.style.backgroundColor = bgColor.value;
+            generateBarcode();
+        });
+        
+        barcodeType.addEventListener('change', generateBarcode);
+        displayValue.addEventListener('change', generateBarcode);
+        
+        // Format selection
+        formatBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                formatBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                selectedFormat = btn.getAttribute('data-format');
+            });
+        });
+        
+        // Generate barcode
+        function generateBarcode() {
+            const inputValue = barcodeInput.value.trim();
+            
+            if (!inputValue) {
+                barcodeSvg.style.display = 'none';
+                barcodeContainer.querySelector('.preview-placeholder').style.display = 'block';
+                downloadBtn.style.display = 'none';
+                copyBtn.style.display = 'none';
+                return;
+            }
+            
+            try {
+                // Hide placeholder and show barcode
+                barcodeContainer.querySelector('.preview-placeholder').style.display = 'none';
+                barcodeSvg.style.display = 'block';
+                
+                // Generate barcode
+                JsBarcode(barcodeSvg, inputValue, {
+                    format: barcodeType.value,
+                    width: parseFloat(barcodeWidth.value),
+                    height: parseInt(barcodeHeight.value),
+                    displayValue: displayValue.value === 'true',
+                    fontOptions: 'bold',
+                    fontSize: parseInt(fontSize.value),
+                    lineColor: lineColor.value,
+                    background: bgColor.value,
+                    margin: 10
+                });
+                
+                // Show download and copy buttons
+                downloadBtn.style.display = 'flex';
+                copyBtn.style.display = 'flex';
+                
+                // Store current barcode data
+                currentBarcodeData = {
+                    value: inputValue,
+                    type: barcodeType.value,
+                    width: parseFloat(barcodeWidth.value),
+                    height: parseInt(barcodeHeight.value),
+                    lineColor: lineColor.value,
+                    bgColor: bgColor.value,
+                    displayValue: displayValue.value === 'true',
+                    fontSize: parseInt(fontSize.value)
+                };
+                
+                // Add to history
+                addToHistory(inputValue, barcodeSvg.outerHTML);
+                
+            } catch (error) {
+                console.error('Barcode generation error:', error);
+                alert('Error generating barcode. Please check your input and try again.');
+            }
+        }
+        
+        // Add barcode to history
+        function addToHistory(value, svg) {
+            // Check if already in history
+            const existingIndex = barcodeHistory.findIndex(item => item.value === value);
+            if (existingIndex !== -1) {
+                barcodeHistory.splice(existingIndex, 1);
+            }
+            
+            // Add to beginning of history
+            barcodeHistory.unshift({
+                value: value,
+                svg: svg,
+                timestamp: new Date().toISOString()
+            });
+            
+            // Keep only last 10 items
+            if (barcodeHistory.length > 10) {
+                barcodeHistory = barcodeHistory.slice(0, 10);
+            }
+            
+            // Save to localStorage
+            localStorage.setItem('barcodeHistory', JSON.stringify(barcodeHistory));
+            
+            // Update history display
+            updateHistoryDisplay();
+        }
+        
+        // Update history display
+        function updateHistoryDisplay() {
+            if (barcodeHistory.length === 0) {
+                historyList.innerHTML = '<div class="empty-history" data-i18n="tool.history.empty">No barcodes generated yet</div>';
+                return;
+            }
+            
+            historyList.innerHTML = '';
+            barcodeHistory.forEach((item, index) => {
+                const historyItem = document.createElement('div');
+                historyItem.className = 'history-item';
+                historyItem.innerHTML = `
+                    <div class="history-barcode">${item.svg}</div>
+                    <div class="history-text">${item.value}</div>
+                `;
+                
+                historyItem.addEventListener('click', () => {
+                    barcodeInput.value = item.value;
+                    generateBarcode();
+                });
+                
+                historyList.appendChild(historyItem);
+            });
+        }
+        
+        // Download barcode
+        function downloadBarcode() {
+            if (!currentBarcodeData) return;
+            
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            const svgData = new XMLSerializer().serializeToString(barcodeSvg);
+            const svgBlob = new Blob([svgData], { type: 'image/svg+xml;charset=utf-8' });
+            const url = URL.createObjectURL(svgBlob);
+            
+            const img = new Image();
+            img.onload = function() {
+                canvas.width = img.width;
+                canvas.height = img.height;
+                ctx.fillStyle = bgColor.value;
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                ctx.drawImage(img, 0, 0);
+                
+                let downloadUrl;
+                let filename = `barcode-${currentBarcodeData.value}.${selectedFormat}`;
+                
+                if (selectedFormat === 'svg') {
+                    downloadUrl = url;
+                } else {
+                    downloadUrl = canvas.toDataURL(`image/${selectedFormat}`);
+                }
+                
+                const a = document.createElement('a');
+                a.href = downloadUrl;
+                a.download = filename;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                
+                URL.revokeObjectURL(url);
+            };
+            
+            img.src = url;
+        }
+        
+        // Copy barcode to clipboard
+        async function copyBarcode() {
+            if (!currentBarcodeData) return;
+            
+            try {
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                const svgData = new XMLSerializer().serializeToString(barcodeSvg);
+                const svgBlob = new Blob([svgData], { type: 'image/svg+xml;charset=utf-8' });
+                const url = URL.createObjectURL(svgBlob);
+                
+                const img = new Image();
+                img.onload = function() {
+                    canvas.width = img.width;
+                    canvas.height = img.height;
+                    ctx.fillStyle = bgColor.value;
+                    ctx.fillRect(0, 0, canvas.width, canvas.height);
+                    ctx.drawImage(img, 0, 0);
+                    
+                    canvas.toBlob(async (blob) => {
+                        try {
+                            await navigator.clipboard.write([
+                                new ClipboardItem({
+                                    [blob.type]: blob
+                                })
+                            ]);
+                            alert('Barcode copied to clipboard!');
+                        } catch (err) {
+                            console.error('Copy failed:', err);
+                            alert('Failed to copy barcode to clipboard. Please try downloading instead.');
+                        }
+                    });
+                };
+                
+                img.src = url;
+            } catch (error) {
+                console.error('Copy error:', error);
+                alert('Failed to copy barcode to clipboard. Please try downloading instead.');
+            }
+        }
+        
+        // Clear all
+        function clearAll() {
+            barcodeInput.value = '';
+            barcodeSvg.style.display = 'none';
+            barcodeContainer.querySelector('.preview-placeholder').style.display = 'block';
+            downloadBtn.style.display = 'none';
+            copyBtn.style.display = 'none';
+            currentBarcodeData = null;
+            
+            // Reset customization options to defaults
+            barcodeWidth.value = 2;
+            barcodeHeight.value = 100;
+            fontSize.value = 20;
+            lineColor.value = '#000000';
+            bgColor.value = '#ffffff';
+            displayValue.value = 'true';
+            
+            // Update displays
+            widthValue.textContent = barcodeWidth.value;
+            heightValue.textContent = `${barcodeHeight.value}px`;
+            fontSizeValue.textContent = `${fontSize.value}px`;
+            lineColorPreview.style.backgroundColor = lineColor.value;
+            bgColorPreview.style.backgroundColor = bgColor.value;
+        }
+        
+        // Event listeners for buttons
+        generateBtn.addEventListener('click', generateBarcode);
+        downloadBtn.addEventListener('click', downloadBarcode);
+        copyBtn.addEventListener('click', copyBarcode);
+        clearBtn.addEventListener('click', clearAll);
+        
+        // Generate barcode on input change (with debounce)
+        let debounceTimer;
+        barcodeInput.addEventListener('input', () => {
+            clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(generateBarcode, 500);
+        });
+        
+        // Initialize history display
+        updateHistoryDisplay();
+        
+        // Language Switcher
+        const languageBtn = document.querySelector('.language-btn');
+        const currentLanguageElement = document.getElementById('currentLanguage');
+        const languageDropdown = document.querySelector('.language-dropdown');
+        
+        const languages = [
+            { code: 'en', name: 'English' },
+            { code: 'es', name: 'Español' },
+            { code: 'fr', name: 'Français' },
+            { code: 'de', name: 'Deutsch' },
+            { code: 'it', name: 'Italiano' },
+            { code: 'pt', name: 'Português' },
+            { code: 'ja', name: '日本語' },
+            { code: 'ru', name: 'Pусский' },
+            { code: 'ko', name: '한국어' },
+            { code: 'zh-CN', name: '中文 (简体)' },
+            { code: 'zh-TW', name: '中文 (繁體)' },
+            { code: 'ar', name: 'العربية' },
+            { code: 'fa', name: 'فارسی' },
+            { code: 'bg', name: 'Български' },
+            { code: 'ca', name: 'Català' },
+            { code: 'nl', name: 'Nederlands' },
+            { code: 'el', name: 'Ελληνικά' },
+            { code: 'hi', name: 'हिन्दी' },
+            { code: 'te', name: 'తెలుగు' },
+            { code: 'kn', name: 'ಕನ್ನಡ' },
+            { code: 'ta', name: 'தமிழ்' },
+            { code: 'ml', name: 'മലയാളം' },
+            { code: 'id', name: 'Bahasa Indonesia' },
+            { code: 'ms', name: 'Bahasa Melayu' }
+        ];
+
+        // Translation data
+        const translations = {
+            en: {
+                "nav.home": "Home",
+                "nav.about": "About Us",
+                "nav.tools": "Tools",
+                "nav.contact": "Contact",
+                "hero.title": "Barcode Generator Tool",
+                "hero.description": "Create professional barcodes instantly - generate, customize, and download barcodes for any purpose. All processing happens locally with no file size limits and complete privacy.",
+                "howto.title": "How to Use the Barcode Generator",
+                "howto.step1.title": "Enter Your Data",
+                "howto.step1.description": "Type the text, numbers, or product codes you want to encode. The tool supports all major barcode formats including CODE128, EAN-13, UPC, and more.",
+                "howto.step2.title": "Customize Appearance",
+                "howto.step2.description": "Choose your barcode format, adjust colors, size, and display options. Preview changes in real-time as you customize.",
+                "howto.step3.title": "Generate Barcode",
+                "howto.step3.description": "Click \"Generate Barcode\" to create your customized barcode. The barcode appears instantly with no processing delays.",
+                "howto.step4.title": "Download or Copy",
+                "howto.step4.description": "Download your barcode in PNG, JPG, or SVG format, or copy it directly to your clipboard. All processing happens locally in your browser.",
+                "tool.title": "Barcode Generator",
+                "tool.input.label": "Enter text or numbers to encode:",
+                "tool.input.placeholder": "Enter your text or numbers here",
+                "tool.input.hint": "You can enter product codes, text, numbers, or any data you want to encode.",
+                "tool.customization.title": "Customize Your Barcode",
+                "tool.customization.type": "Barcode Type:",
+                "tool.customization.width": "Width:",
+                "tool.customization.height": "Height:",
+                "tool.customization.colors": "Colors:",
+                "tool.customization.display": "Display Value:",
+                "tool.customization.fontsize": "Font Size:",
+                "tool.preview.title": "Barcode Preview",
+                "tool.preview.placeholder": "Your barcode will appear here",
+                "tool.generate": "Generate Barcode",
+                "tool.download": "Download Barcode",
+                "tool.copy": "Copy to Clipboard",
+                "tool.clear": "Clear All",
+                "tool.history.title": "Recent Barcodes",
+                "tool.history.empty": "No barcodes generated yet",
+                "footer.follow": "FOLLOW US",
+                "footer.categories": "Popular Categories",
+                "footer.categories.pdf": "PDF Tools",
+                "footer.categories.image": "Image Tools",
+                "footer.categories.text": "Text Tools",
+                "footer.categories.av": "Audio/Video Tools",
+                "footer.categories.web": "WebDeveloper Tools",
+                "footer.categories.calc": "Calculator Tools",
+                "footer.categories.util": "Utility Tools",
+                "footer.categories.color": "Color Tools",
+                "footer.quicklinks": "Quick Links",
+                "footer.links.tools": "All Tools",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Contact",
+                "footer.links.privacy": "Privacy Policy",
+                "footer.links.disclaimer": "Disclaimer",
+                "footer.links.terms": "Terms of Service",
+                "footer.copyright": "© 2025 LollyPoPDF. All rights reserved."
+            },
+            es: {
+                "nav.home": "Inicio",
+                "nav.about": "Sobre Nosotros",
+                "nav.tools": "Herramientas",
+                "nav.contact": "Contacto",
+                "hero.title": "Herramienta Generadora de Códigos de Barras",
+                "hero.description": "Crea códigos de barras profesionales al instante - genera, personaliza y descarga códigos de barras para cualquier propósito. Todo el procesamiento ocurre localmente sin límites de tamaño de archivo y con privacidad completa.",
+                "howto.title": "Cómo Usar el Generador de Códigos de Barras",
+                "howto.step1.title": "Ingresa Tus Datos",
+                "howto.step1.description": "Escribe el texto, números o códigos de producto que deseas codificar. La herramienta soporta todos los formatos principales de códigos de barras incluyendo CODE128, EAN-13, UPC y más.",
+                "howto.step2.title": "Personaliza la Apariencia",
+                "howto.step2.description": "Elige tu formato de código de barras, ajusta colores, tamaño y opciones de visualización. Previsualiza los cambios en tiempo real mientras personalizas.",
+                "howto.step3.title": "Genera el Código de Barras",
+                "howto.step3.description": "Haz clic en \"Generar Código de Barras\" para crear tu código de barras personalizado. El código de barras aparece instantáneamente sin demoras de procesamiento.",
+                "howto.step4.title": "Descarga o Copia",
+                "howto.step4.description": "Descarga tu código de barras en formato PNG, JPG o SVG, o cópialo directamente a tu portapapeles. Todo el procesamiento ocurre localmente en tu navegador.",
+                "tool.title": "Generador de Códigos de Barras",
+                "tool.input.label": "Ingresa texto o números para codificar:",
+                "tool.input.placeholder": "Ingresa tu texto o números aquí",
+                "tool.input.hint": "Puedes ingresar códigos de producto, texto, números o cualquier dato que quieras codificar.",
+                "tool.customization.title": "Personaliza Tu Código de Barras",
+                "tool.customization.type": "Tipo de Código:",
+                "tool.customization.width": "Ancho:",
+                "tool.customization.height": "Altura:",
+                "tool.customization.colors": "Colores:",
+                "tool.customization.display": "Mostrar Valor:",
+                "tool.customization.fontsize": "Tamaño de Fuente:",
+                "tool.preview.title": "Vista Previa del Código de Barras",
+                "tool.preview.placeholder": "Tu código de barras aparecerá aquí",
+                "tool.generate": "Generar Código de Barras",
+                "tool.download": "Descargar Código de Barras",
+                "tool.copy": "Copiar al Portapapeles",
+                "tool.clear": "Limpiar Todo",
+                "tool.history.title": "Códigos de Barras Recientes",
+                "tool.history.empty": "Aún no se han generado códigos de barras",
+                "footer.follow": "SÍGUENOS",
+                "footer.categories": "Categorías Populares",
+                "footer.categories.pdf": "Herramientas PDF",
+                "footer.categories.image": "Herramientas de Imagen",
+                "footer.categories.text": "Herramientas de Texto",
+                "footer.categories.av": "Herramientas de Audio/Video",
+                "footer.categories.web": "Herramientas WebDesarrollador",
+                "footer.categories.calc": "Herramientas de Calculadora",
+                "footer.categories.util": "Herramientas de Utilidad",
+                "footer.categories.color": "Herramientas de Color",
+                "footer.quicklinks": "Enlaces Rápidos",
+                "footer.links.tools": "Todas las Herramientas",
+                "footer.links.faq": "Preguntas Frecuentes",
+                "footer.links.contact": "Contacto",
+                "footer.links.privacy": "Política de Privacidad",
+                "footer.links.disclaimer": "Descargo de Responsabilidad",
+                "footer.links.terms": "Términos de Servicio",
+                "footer.copyright": "© 2025 LollyPoPDF. Todos los derechos reservados."
+            },
+            fr: {
+                "nav.home": "Accueil",
+                "nav.about": "À propos de nous",
+                "nav.tools": "Outils",
+                "nav.contact": "Contact",
+                "hero.title": "Outil de Génération de Codes-barres",
+                "hero.description": "Créez des codes-barres professionnels instantanément - générez, personnalisez et téléchargez des codes-barres pour tout usage. Tout le traitement se fait localement sans limite de taille de fichier et avec une confidentialité totale.",
+                "howto.title": "Comment Utiliser le Générateur de Codes-barres",
+                "howto.step1.title": "Entrez Vos Données",
+                "howto.step1.description": "Tapez le texte, les chiffres ou les codes produit que vous souhaitez encoder. L'outil prend en charge tous les principaux formats de codes-barres, y compris CODE128, EAN-13, UPC, et plus encore.",
+                "howto.step2.title": "Personnalisez l'Apparence",
+                "howto.step2.description": "Choisissez votre format de code-barres, ajustez les couleurs, la taille et les options d'affichage. Prévisualisez les modifications en temps réel pendant que vous personnalisez.",
+                "howto.step3.title": "Générez le Code-barres",
+                "howto.step3.description": "Cliquez sur \"Générer le Code-barres\" pour créer votre code-barres personnalisé. Le code-barres apparaît instantanément sans délai de traitement.",
+                "howto.step4.title": "Téléchargez ou Copiez",
+                "howto.step4.description": "Téléchargez votre code-barres aux formats PNG, JPG ou SVG, ou copiez-le directement dans votre presse-papiers. Tout le traitement se fait localement dans votre navigateur.",
+                "tool.title": "Générateur de Codes-barres",
+                "tool.input.label": "Entrez du texte ou des chiffres à encoder :",
+                "tool.input.placeholder": "Entrez votre texte ou vos chiffres ici",
+                "tool.input.hint": "Vous pouvez entrer des codes produit, du texte, des chiffres ou toute donnée que vous souhaitez encoder.",
+                "tool.customization.title": "Personnalisez Votre Code-barres",
+                "tool.customization.type": "Type de Code-barres :",
+                "tool.customization.width": "Largeur :",
+                "tool.customization.height": "Hauteur :",
+                "tool.customization.colors": "Couleurs :",
+                "tool.customization.display": "Afficher la Valeur :",
+                "tool.customization.fontsize": "Taille de Police :",
+                "tool.preview.title": "Aperçu du Code-barres",
+                "tool.preview.placeholder": "Votre code-barres apparaîtra ici",
+                "tool.generate": "Générer le Code-barres",
+                "tool.download": "Télécharger le Code-barres",
+                "tool.copy": "Copier dans le Presse-papiers",
+                "tool.clear": "Tout Effacer",
+                "tool.history.title": "Codes-barres Récents",
+                "tool.history.empty": "Aucun code-barres généré pour le moment",
+                "footer.follow": "SUIVEZ-NOUS",
+                "footer.categories": "Catégories Populaires",
+                "footer.categories.pdf": "Outils PDF",
+                "footer.categories.image": "Outils d'Image",
+                "footer.categories.text": "Outils de Texte",
+                "footer.categories.av": "Outils Audio/Video",
+                "footer.categories.web": "Outils WebDeveloper",
+                "footer.categories.calc": "Outils de Calculatrice",
+                "footer.categories.util": "Outils d'Utilité",
+                "footer.categories.color": "Outils de Couleur",
+                "footer.quicklinks": "Liens Rapides",
+                "footer.links.tools": "Tous les Outils",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Contact",
+                "footer.links.privacy": "Politique de Confidentialité",
+                "footer.links.disclaimer": "Avertissement",
+                "footer.links.terms": "Conditions d'Utilisation",
+                "footer.copyright": "© 2025 LollyPoPDF. Tous droits réservés."
+            },
+            de: {
+                "nav.home": "Startseite",
+                "nav.about": "Über uns",
+                "nav.tools": "Werkzeuge",
+                "nav.contact": "Kontakt",
+                "hero.title": "Barcode-Generator-Tool",
+                "hero.description": "Erstellen Sie professionelle Barcodes sofort - generieren, personalisieren und laden Sie Barcodes für jeden Zweck herunter. Die gesamte Verarbeitung erfolgt lokal ohne Dateigrößenbeschränkungen und mit vollständiger Privatsphäre.",
+                "howto.title": "So verwenden Sie den Barcode-Generator",
+                "howto.step1.title": "Geben Sie Ihre Daten ein",
+                "howto.step1.description": "Geben Sie den Text, die Zahlen oder Produktcodes ein, die Sie codieren möchten. Das Tool unterstützt alle wichtigen Barcode-Formate, einschließlich CODE128, EAN-13, UPC und mehr.",
+                "howto.step2.title": "Passen Sie das Erscheinungsbild an",
+                "howto.step2.description": "Wählen Sie Ihr Barcode-Format, passen Sie Farben, Größe und Anzeigeoptionen an. Vorschau der Änderungen in Echtzeit während Sie anpassen.",
+                "howto.step3.title": "Barcode generieren",
+                "howto.step3.description": "Klicken Sie auf \"Barcode generieren\", um Ihren personalisierten Barcode zu erstellen. Der Barcode erscheint sofort ohne Verarbeitungsverzögerungen.",
+                "howto.step4.title": "Herunterladen oder Kopieren",
+                "howto.step4.description": "Laden Sie Ihren Barcode im PNG-, JPG- oder SVG-Format herunter oder kopieren Sie ihn direkt in Ihre Zwischenablage. Die gesamte Verarbeitung erfolgt lokal in Ihrem Browser.",
+                "tool.title": "Barcode-Generator",
+                "tool.input.label": "Geben Sie Text oder Zahlen zur Codierung ein:",
+                "tool.input.placeholder": "Geben Sie hier Ihren Text oder Ihre Zahlen ein",
+                "tool.input.hint": "Sie können Produktcodes, Text, Zahlen oder beliebige Daten eingeben, die Sie codieren möchten.",
+                "tool.customization.title": "Passen Sie Ihren Barcode an",
+                "tool.customization.type": "Barcode-Typ:",
+                "tool.customization.width": "Breite:",
+                "tool.customization.height": "Höhe:",
+                "tool.customization.colors": "Farben:",
+                "tool.customization.display": "Wert anzeigen:",
+                "tool.customization.fontsize": "Schriftgröße:",
+                "tool.preview.title": "Barcode-Vorschau",
+                "tool.preview.placeholder": "Ihr Barcode wird hier angezeigt",
+                "tool.generate": "Barcode generieren",
+                "tool.download": "Barcode herunterladen",
+                "tool.copy": "In Zwischenablage kopieren",
+                "tool.clear": "Alles löschen",
+                "tool.history.title": "Kürzliche Barcodes",
+                "tool.history.empty": "Noch keine Barcodes generiert",
+                "footer.follow": "FOLGEN SIE UNS",
+                "footer.categories": "Beliebte Kategorien",
+                "footer.categories.pdf": "PDF-Werkzeuge",
+                "footer.categories.image": "Bildwerkzeuge",
+                "footer.categories.text": "Textwerkzeuge",
+                "footer.categories.av": "Audio/Video-Werkzeuge",
+                "footer.categories.web": "WebDeveloper-Werkzeuge",
+                "footer.categories.calc": "Rechnerwerkzeuge",
+                "footer.categories.util": "Hilfsprogramme",
+                "footer.categories.color": "Farbwerkzeuge",
+                "footer.quicklinks": "Schnelllinks",
+                "footer.links.tools": "Alle Werkzeuge",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Kontakt",
+                "footer.links.privacy": "Datenschutzrichtlinie",
+                "footer.links.disclaimer": "Haftungsausschluss",
+                "footer.links.terms": "Nutzungsbedingungen",
+                "footer.copyright": "© 2025 LollyPoPDF. Alle Rechte vorbehalten."
+            },
+            it: {
+                "nav.home": "Home",
+                "nav.about": "Chi Siamo",
+                "nav.tools": "Strumenti",
+                "nav.contact": "Contatto",
+                "hero.title": "Strumento Generatore di Codici a Barre",
+                "hero.description": "Crea codici a barre professionali all'istante - genera, personalizza e scarica codici a barre per qualsiasi scopo. Tutta l'elaborazione avviene localmente senza limiti di dimensione file e con completa privacy.",
+                "howto.title": "Come Utilizzare il Generatore di Codici a Barre",
+                "howto.step1.title": "Inserisci i Tuoi Dati",
+                "howto.step1.description": "Digita il testo, i numeri o i codici prodotto che desideri codificare. Lo strumento supporta tutti i principali formati di codici a barre inclusi CODE128, EAN-13, UPC e altro.",
+                "howto.step2.title": "Personalizza l'Aspetto",
+                "howto.step2.description": "Scegli il formato del codice a barre, regola colori, dimensioni e opzioni di visualizzazione. Anteprima delle modifiche in tempo reale mentre personalizzi.",
+                "howto.step3.title": "Genera il Codice a Barre",
+                "howto.step3.description": "Clicca \"Genera Codice a Barre\" per creare il tuo codice a barre personalizzato. Il codice a barre appare istantaneamente senza ritardi di elaborazione.",
+                "howto.step4.title": "Scarica o Copia",
+                "howto.step4.description": "Scarica il tuo codice a barre in formato PNG, JPG o SVG, o copialo direttamente negli appunti. Tutta l'elaborazione avviene localmente nel tuo browser.",
+                "tool.title": "Generatore di Codici a Barre",
+                "tool.input.label": "Inserisci testo o numeri da codificare:",
+                "tool.input.placeholder": "Inserisci qui il tuo testo o numeri",
+                "tool.input.hint": "Puoi inserire codici prodotto, testo, numeri o qualsiasi dato che desideri codificare.",
+                "tool.customization.title": "Personalizza il Tuo Codice a Barre",
+                "tool.customization.type": "Tipo di Codice a Barre:",
+                "tool.customization.width": "Larghezza:",
+                "tool.customization.height": "Altezza:",
+                "tool.customization.colors": "Colori:",
+                "tool.customization.display": "Mostra Valore:",
+                "tool.customization.fontsize": "Dimensione Carattere:",
+                "tool.preview.title": "Anteprima Codice a Barre",
+                "tool.preview.placeholder": "Il tuo codice a barre apparirà qui",
+                "tool.generate": "Genera Codice a Barre",
+                "tool.download": "Scarica Codice a Barre",
+                "tool.copy": "Copia negli Appunti",
+                "tool.clear": "Cancella Tutto",
+                "tool.history.title": "Codici a Barre Recenti",
+                "tool.history.empty": "Nessun codice a barre generato ancora",
+                "footer.follow": "SEGUICI",
+                "footer.categories": "Categorie Popolari",
+                "footer.categories.pdf": "Strumenti PDF",
+                "footer.categories.image": "Strumenti Immagine",
+                "footer.categories.text": "Strumenti Testo",
+                "footer.categories.av": "Strumenti Audio/Video",
+                "footer.categories.web": "Strumenti WebDeveloper",
+                "footer.categories.calc": "Strumenti Calcolatrice",
+                "footer.categories.util": "Strumenti Utilità",
+                "footer.categories.color": "Strumenti Colore",
+                "footer.quicklinks": "Link Rapidi",
+                "footer.links.tools": "Tutti gli Strumenti",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Contatto",
+                "footer.links.privacy": "Informativa sulla Privacy",
+                "footer.links.disclaimer": "Disclaimer",
+                "footer.links.terms": "Termini di Servizio",
+                "footer.copyright": "© 2025 LollyPoPDF. Tutti i diritti riservati."
+            },
+            pt: {
+                "nav.home": "Início",
+                "nav.about": "Sobre Nós",
+                "nav.tools": "Ferramentas",
+                "nav.contact": "Contato",
+                "hero.title": "Ferramenta Geradora de Códigos de Barras",
+                "hero.description": "Crie códigos de barras profissionais instantaneamente - gere, personalize e baixe códigos de barras para qualquer finalidade. Todo o processamento acontece localmente sem limites de tamanho de arquivo e com privacidade completa.",
+                "howto.title": "Como Usar o Gerador de Códigos de Barras",
+                "howto.step1.title": "Insira Seus Dados",
+                "howto.step1.description": "Digite o texto, números ou códigos de produto que deseja codificar. A ferramenta suporta todos os principais formatos de código de barras, incluindo CODE128, EAN-13, UPC e mais.",
+                "howto.step2.title": "Personalize a Aparência",
+                "howto.step2.description": "Escolha seu formato de código de barras, ajuste cores, tamanho e opções de exibição. Visualize as alterações em tempo real enquanto personaliza.",
+                "howto.step3.title": "Gere o Código de Barras",
+                "howto.step3.description": "Clique em \"Gerar Código de Barras\" para criar seu código de barras personalizado. O código de barras aparece instantaneamente sem atrasos de processamento.",
+                "howto.step4.title": "Baixe ou Copie",
+                "howto.step4.description": "Baixe seu código de barras nos formatos PNG, JPG ou SVG, ou copie diretamente para sua área de transferência. Todo o processamento acontece localmente no seu navegador.",
+                "tool.title": "Gerador de Códigos de Barras",
+                "tool.input.label": "Insira texto ou números para codificar:",
+                "tool.input.placeholder": "Insira seu texto ou números aqui",
+                "tool.input.hint": "Você pode inserir códigos de produto, texto, números ou qualquer dado que deseja codificar.",
+                "tool.customization.title": "Personalize Seu Código de Barras",
+                "tool.customization.type": "Tipo de Código de Barras:",
+                "tool.customization.width": "Largura:",
+                "tool.customization.height": "Altura:",
+                "tool.customization.colors": "Cores:",
+                "tool.customization.display": "Exibir Valor:",
+                "tool.customization.fontsize": "Tamanho da Fonte:",
+                "tool.preview.title": "Visualização do Código de Barras",
+                "tool.preview.placeholder": "Seu código de barras aparecerá aqui",
+                "tool.generate": "Gerar Código de Barras",
+                "tool.download": "Baixar Código de Barras",
+                "tool.copy": "Copiar para Área de Transferência",
+                "tool.clear": "Limpar Tudo",
+                "tool.history.title": "Códigos de Barras Recentes",
+                "tool.history.empty": "Nenhum código de barras gerado ainda",
+                "footer.follow": "SIGA-NOS",
+                "footer.categories": "Categorias Populares",
+                "footer.categories.pdf": "Ferramentas PDF",
+                "footer.categories.image": "Ferramentas de Imagem",
+                "footer.categories.text": "Ferramentas de Texto",
+                "footer.categories.av": "Ferramentas de Áudio/Video",
+                "footer.categories.web": "Ferramentas WebDeveloper",
+                "footer.categories.calc": "Ferramentas de Calculadora",
+                "footer.categories.util": "Ferramentas de Utilidade",
+                "footer.categories.color": "Ferramentas de Cor",
+                "footer.quicklinks": "Links Rápidos",
+                "footer.links.tools": "Todas as Ferramentas",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Contato",
+                "footer.links.privacy": "Política de Privacidade",
+                "footer.links.disclaimer": "Aviso Legal",
+                "footer.links.terms": "Termos de Serviço",
+                "footer.copyright": "© 2025 LollyPoPDF. Todos os direitos reservados."
+            },
+            ja: {
+                "nav.home": "ホーム",
+                "nav.about": "会社概要",
+                "nav.tools": "ツール",
+                "nav.contact": "お問い合わせ",
+                "hero.title": "バーコード生成ツール",
+                "hero.description": "プロフェッショナルなバーコードを瞬時に作成 - あらゆる目的のためにバーコードを生成、カスタマイズ、ダウンロード。すべての処理はローカルで行われ、ファイルサイズ制限なし、完全なプライバシーを実現。",
+                "howto.title": "バーコードジェネレーターの使い方",
+                "howto.step1.title": "データを入力",
+                "howto.step1.description": "エンコードしたいテキスト、数字、または商品コードを入力してください。このツールはCODE128、EAN-13、UPCなど、すべての主要なバーコード形式をサポートしています。",
+                "howto.step2.title": "外観をカスタマイズ",
+                "howto.step2.description": "バーコード形式を選択し、色、サイズ、表示オプションを調整します。カスタマイズしながらリアルタイムで変更をプレビューできます。",
+                "howto.step3.title": "バーコードを生成",
+                "howto.step3.description": "「バーコード生成」をクリックして、カスタマイズされたバーコードを作成します。バーコードは処理遅延なく瞬時に表示されます。",
+                "howto.step4.title": "ダウンロードまたはコピー",
+                "howto.step4.description": "バーコードをPNG、JPG、またはSVG形式でダウンロードするか、クリップボードに直接コピーします。すべての処理はブラウザ内でローカルに行われます。",
+                "tool.title": "バーコードジェネレーター",
+                "tool.input.label": "エンコードするテキストまたは数字を入力：",
+                "tool.input.placeholder": "ここにテキストまたは数字を入力してください",
+                "tool.input.hint": "商品コード、テキスト、数字、またはエンコードしたい任意のデータを入力できます。",
+                "tool.customization.title": "バーコードをカスタマイズ",
+                "tool.customization.type": "バーコードタイプ：",
+                "tool.customization.width": "幅：",
+                "tool.customization.height": "高さ：",
+                "tool.customization.colors": "色：",
+                "tool.customization.display": "値を表示：",
+                "tool.customization.fontsize": "フォントサイズ：",
+                "tool.preview.title": "バーコードプレビュー",
+                "tool.preview.placeholder": "バーコードがここに表示されます",
+                "tool.generate": "バーコード生成",
+                "tool.download": "バーコードをダウンロード",
+                "tool.copy": "クリップボードにコピー",
+                "tool.clear": "すべてクリア",
+                "tool.history.title": "最近のバーコード",
+                "tool.history.empty": "まだバーコードが生成されていません",
+                "footer.follow": "フォローする",
+                "footer.categories": "人気カテゴリー",
+                "footer.categories.pdf": "PDFツール",
+                "footer.categories.image": "画像ツール",
+                "footer.categories.text": "テキストツール",
+                "footer.categories.av": "音声/動画ツール",
+                "footer.categories.web": "Web開発者ツール",
+                "footer.categories.calc": "電卓ツール",
+                "footer.categories.util": "ユーティリティツール",
+                "footer.categories.color": "カラーツール",
+                "footer.quicklinks": "クイックリンク",
+                "footer.links.tools": "すべてのツール",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "お問い合わせ",
+                "footer.links.privacy": "プライバシーポリシー",
+                "footer.links.disclaimer": "免責事項",
+                "footer.links.terms": "利用規約",
+                "footer.copyright": "© 2025 LollyPoPDF. 全著作権所有。"
+            },
+            ru: {
+                "nav.home": "Главная",
+                "nav.about": "О нас",
+                "nav.tools": "Инструменты",
+                "nav.contact": "Контакты",
+                "hero.title": "Инструмент Генератора Штрих-кодов",
+                "hero.description": "Создавайте профессиональные штрих-коды мгновенно - генерируйте, настраивайте и скачивайте штрих-коды для любых целей. Вся обработка происходит локально без ограничений размера файла и с полной конфиденциальностью.",
+                "howto.title": "Как Использовать Генератор Штрих-кодов",
+                "howto.step1.title": "Введите Ваши Данные",
+                "howto.step1.description": "Введите текст, цифры или коды товаров, которые вы хотите закодировать. Инструмент поддерживает все основные форматы штрих-кодов, включая CODE128, EAN-13, UPC и другие.",
+                "howto.step2.title": "Настройте Внешний Вид",
+                "howto.step2.description": "Выберите формат штрих-кода, настройте цвета, размер и параметры отображения. Просматривайте изменения в реальном времени во время настройки.",
+                "howto.step3.title": "Сгенерируйте Штрих-код",
+                "howto.step3.description": "Нажмите \"Сгенерировать Штрих-код\", чтобы создать ваш настроенный штрих-код. Штрих-код появляется мгновенно без задержек обработки.",
+                "howto.step4.title": "Скачайте или Скопируйте",
+                "howto.step4.description": "Скачайте ваш штрих-код в форматах PNG, JPG или SVG, или скопируйте его прямо в буфер обмена. Вся обработка происходит локально в вашем браузере.",
+                "tool.title": "Генератор Штрих-кодов",
+                "tool.input.label": "Введите текст или цифры для кодирования:",
+                "tool.input.placeholder": "Введите ваш текст или цифры здесь",
+                "tool.input.hint": "Вы можете вводить коды товаров, текст, цифры или любые данные, которые хотите закодировать.",
+                "tool.customization.title": "Настройте Ваш Штрих-код",
+                "tool.customization.type": "Тип Штрих-кода:",
+                "tool.customization.width": "Ширина:",
+                "tool.customization.height": "Высота:",
+                "tool.customization.colors": "Цвета:",
+                "tool.customization.display": "Отображать Значение:",
+                "tool.customization.fontsize": "Размер Шрифта:",
+                "tool.preview.title": "Предпросмотр Штрих-кода",
+                "tool.preview.placeholder": "Ваш штрих-код появится здесь",
+                "tool.generate": "Сгенерировать Штрих-код",
+                "tool.download": "Скачать Штрих-код",
+                "tool.copy": "Копировать в Буфер",
+                "tool.clear": "Очистить Все",
+                "tool.history.title": "Недавние Штрих-коды",
+                "tool.history.empty": "Штрих-коды еще не сгенерированы",
+                "footer.follow": "СЛЕДУЙТЕ ЗА НАМИ",
+                "footer.categories": "Популярные Категории",
+                "footer.categories.pdf": "PDF Инструменты",
+                "footer.categories.image": "Инструменты для Изображений",
+                "footer.categories.text": "Текстовые Инструменты",
+                "footer.categories.av": "Аудио/Видео Инструменты",
+                "footer.categories.web": "Инструменты WebDeveloper",
+                "footer.categories.calc": "Инструменты Калькулятора",
+                "footer.categories.util": "Утилиты",
+                "footer.categories.color": "Инструменты Цвета",
+                "footer.quicklinks": "Быстрые Ссылки",
+                "footer.links.tools": "Все Инструменты",
+                "footer.links.faq": "ЧаВо",
+                "footer.links.contact": "Контакты",
+                "footer.links.privacy": "Политика Конфиденциальности",
+                "footer.links.disclaimer": "Отказ от Ответственности",
+                "footer.links.terms": "Условия Использования",
+                "footer.copyright": "© 2025 LollyPoPDF. Все права защищены."
+            },
+            ko: {
+                "nav.home": "홈",
+                "nav.about": "회사 소개",
+                "nav.tools": "도구",
+                "nav.contact": "연락처",
+                "hero.title": "바코드 생성 도구",
+                "hero.description": "프로페셔널한 바코드를 즉시 생성 - 어떤 목적으로든 바코드를 생성, 사용자 정의 및 다운로드하세요. 모든 처리는 파일 크기 제한 없이 로컬에서 완전한 개인 정보 보호와 함께 이루어집니다.",
+                "howto.title": "바코드 생성기 사용 방법",
+                "howto.step1.title": "데이터 입력",
+                "howto.step1.description": "인코딩하려는 텍스트, 숫자 또는 제품 코드를 입력하세요. 이 도구는 CODE128, EAN-13, UPC 등을 포함한 모든 주요 바코드 형식을 지원합니다.",
+                "howto.step2.title": "외관 사용자 정의",
+                "howto.step2.description": "바코드 형식을 선택하고 색상, 크기 및 표시 옵션을 조정하세요. 사용자 정의하는 동안 실시간으로 변경 사항을 미리 볼 수 있습니다.",
+                "howto.step3.title": "바코드 생성",
+                "howto.step3.description": "사용자 정의된 바코드를 생성하려면 \"바코드 생성\"을 클릭하세요. 바코드는 처리 지연 없이 즉시 나타납니다.",
+                "howto.step4.title": "다운로드 또는 복사",
+                "howto.step4.description": "바코드를 PNG, JPG 또는 SVG 형식으로 다운로드하거나 클립보드에 직접 복사하세요. 모든 처리는 브라우저에서 로컬로 이루어집니다.",
+                "tool.title": "바코드 생성기",
+                "tool.input.label": "인코딩할 텍스트 또는 숫자 입력:",
+                "tool.input.placeholder": "여기에 텍스트 또는 숫자를 입력하세요",
+                "tool.input.hint": "제품 코드, 텍스트, 숫자 또는 인코딩하려는 모든 데이터를 입력할 수 있습니다.",
+                "tool.customization.title": "바코드 사용자 정의",
+                "tool.customization.type": "바코드 유형:",
+                "tool.customization.width": "너비:",
+                "tool.customization.height": "높이:",
+                "tool.customization.colors": "색상:",
+                "tool.customization.display": "값 표시:",
+                "tool.customization.fontsize": "글꼴 크기:",
+                "tool.preview.title": "바코드 미리보기",
+                "tool.preview.placeholder": "바코드가 여기에 표시됩니다",
+                "tool.generate": "바코드 생성",
+                "tool.download": "바코드 다운로드",
+                "tool.copy": "클립보드에 복사",
+                "tool.clear": "모두 지우기",
+                "tool.history.title": "최근 바코드",
+                "tool.history.empty": "아직 생성된 바코드가 없습니다",
+                "footer.follow": "팔로우하기",
+                "footer.categories": "인기 카테고리",
+                "footer.categories.pdf": "PDF 도구",
+                "footer.categories.image": "이미지 도구",
+                "footer.categories.text": "텍스트 도구",
+                "footer.categories.av": "오디오/비디오 도구",
+                "footer.categories.web": "웹 개발자 도구",
+                "footer.categories.calc": "계산기 도구",
+                "footer.categories.util": "유틸리티 도구",
+                "footer.categories.color": "색상 도구",
+                "footer.quicklinks": "빠른 링크",
+                "footer.links.tools": "모든 도구",
+                "footer.links.faq": "자주 묻는 질문",
+                "footer.links.contact": "연락처",
+                "footer.links.privacy": "개인정보 보호정책",
+                "footer.links.disclaimer": "면책 조항",
+                "footer.links.terms": "서비스 약관",
+                "footer.copyright": "© 2025 LollyPoPDF. 모든 권리 보유."
+            },
+            "zh-CN": {
+                "nav.home": "首页",
+                "nav.about": "关于我们",
+                "nav.tools": "工具",
+                "nav.contact": "联系我们",
+                "hero.title": "条码生成工具",
+                "hero.description": "即时创建专业条码 - 生成、自定义和下载任何用途的条码。所有处理都在本地进行，无文件大小限制，完全保护隐私。",
+                "howto.title": "如何使用条码生成器",
+                "howto.step1.title": "输入您的数据",
+                "howto.step1.description": "输入您想要编码的文本、数字或产品代码。该工具支持所有主要条码格式，包括CODE128、EAN-13、UPC等。",
+                "howto.step2.title": "自定义外观",
+                "howto.step2.description": "选择条码格式，调整颜色、大小和显示选项。在自定义时实时预览更改。",
+                "howto.step3.title": "生成条码",
+                "howto.step3.description": "点击\"生成条码\"创建您的自定义条码。条码会立即显示，无处理延迟。",
+                "howto.step4.title": "下载或复制",
+                "howto.step4.description": "以PNG、JPG或SVG格式下载条码，或直接复制到剪贴板。所有处理都在您的浏览器中本地进行。",
+                "tool.title": "条码生成器",
+                "tool.input.label": "输入要编码的文本或数字：",
+                "tool.input.placeholder": "在此输入您的文本或数字",
+                "tool.input.hint": "您可以输入产品代码、文本、数字或任何想要编码的数据。",
+                "tool.customization.title": "自定义您的条码",
+                "tool.customization.type": "条码类型：",
+                "tool.customization.width": "宽度：",
+                "tool.customization.height": "高度：",
+                "tool.customization.colors": "颜色：",
+                "tool.customization.display": "显示值：",
+                "tool.customization.fontsize": "字体大小：",
+                "tool.preview.title": "条码预览",
+                "tool.preview.placeholder": "您的条码将在此显示",
+                "tool.generate": "生成条码",
+                "tool.download": "下载条码",
+                "tool.copy": "复制到剪贴板",
+                "tool.clear": "全部清除",
+                "tool.history.title": "最近条码",
+                "tool.history.empty": "尚未生成任何条码",
+                "footer.follow": "关注我们",
+                "footer.categories": "热门类别",
+                "footer.categories.pdf": "PDF工具",
+                "footer.categories.image": "图像工具",
+                "footer.categories.text": "文本工具",
+                "footer.categories.av": "音频/视频工具",
+                "footer.categories.web": "Web开发工具",
+                "footer.categories.calc": "计算器工具",
+                "footer.categories.util": "实用工具",
+                "footer.categories.color": "颜色工具",
+                "footer.quicklinks": "快速链接",
+                "footer.links.tools": "所有工具",
+                "footer.links.faq": "常见问题",
+                "footer.links.contact": "联系我们",
+                "footer.links.privacy": "隐私政策",
+                "footer.links.disclaimer": "免责声明",
+                "footer.links.terms": "服务条款",
+                "footer.copyright": "© 2025 LollyPoPDF。保留所有权利。"
+            },
+            "zh-TW": {
+                "nav.home": "首頁",
+                "nav.about": "關於我們",
+                "nav.tools": "工具",
+                "nav.contact": "聯絡我們",
+                "hero.title": "條碼生成工具",
+                "hero.description": "即時建立專業條碼 - 生成、自訂和下載任何用途的條碼。所有處理都在本地進行，無檔案大小限制，完全保護隱私。",
+                "howto.title": "如何使用條碼產生器",
+                "howto.step1.title": "輸入您的資料",
+                "howto.step1.description": "輸入您想要編碼的文字、數字或產品代碼。該工具支援所有主要條碼格式，包括CODE128、EAN-13、UPC等。",
+                "howto.step2.title": "自訂外觀",
+                "howto.step2.description": "選擇條碼格式，調整顏色、大小和顯示選項。在自訂時即時預覽變更。",
+                "howto.step3.title": "產生條碼",
+                "howto.step3.description": "點擊\"產生條碼\"建立您的自訂條碼。條碼會立即顯示，無處理延遲。",
+                "howto.step4.title": "下載或複製",
+                "howto.step4.description": "以PNG、JPG或SVG格式下載條碼，或直接複製到剪貼簿。所有處理都在您的瀏覽器中本地進行。",
+                "tool.title": "條碼產生器",
+                "tool.input.label": "輸入要編碼的文字或數字：",
+                "tool.input.placeholder": "在此輸入您的文字或數字",
+                "tool.input.hint": "您可以輸入產品代碼、文字、數字或任何想要編碼的資料。",
+                "tool.customization.title": "自訂您的條碼",
+                "tool.customization.type": "條碼類型：",
+                "tool.customization.width": "寬度：",
+                "tool.customization.height": "高度：",
+                "tool.customization.colors": "顏色：",
+                "tool.customization.display": "顯示值：",
+                "tool.customization.fontsize": "字型大小：",
+                "tool.preview.title": "條碼預覽",
+                "tool.preview.placeholder": "您的條碼將在此顯示",
+                "tool.generate": "產生條碼",
+                "tool.download": "下載條碼",
+                "tool.copy": "複製到剪貼簿",
+                "tool.clear": "全部清除",
+                "tool.history.title": "最近條碼",
+                "tool.history.empty": "尚未產生任何條碼",
+                "footer.follow": "追蹤我們",
+                "footer.categories": "熱門類別",
+                "footer.categories.pdf": "PDF工具",
+                "footer.categories.image": "圖片工具",
+                "footer.categories.text": "文字工具",
+                "footer.categories.av": "音訊/視訊工具",
+                "footer.categories.web": "網頁開發工具",
+                "footer.categories.calc": "計算機工具",
+                "footer.categories.util": "實用工具",
+                "footer.categories.color": "顏色工具",
+                "footer.quicklinks": "快速連結",
+                "footer.links.tools": "所有工具",
+                "footer.links.faq": "常見問題",
+                "footer.links.contact": "聯絡我們",
+                "footer.links.privacy": "隱私權政策",
+                "footer.links.disclaimer": "免責聲明",
+                "footer.links.terms": "服務條款",
+                "footer.copyright": "© 2025 LollyPoPDF。保留所有權利。"
+            },
+            ar: {
+                "nav.home": "الصفحة الرئيسية",
+                "nav.about": "من نحن",
+                "nav.tools": "الأدوات",
+                "nav.contact": "اتصل بنا",
+                "hero.title": "أداة مولد الباركود",
+                "hero.description": "أنشئ باركودات احترافية على الفور - قم بتوليد وتخصيص وتنزيل الباركودات لأي غرض. تتم جميع المعالجة محليًا دون حدود لحجم الملف وبخصوصية كاملة.",
+                "howto.title": "كيفية استخدام مولد الباركود",
+                "howto.step1.title": "أدخل بياناتك",
+                "howto.step1.description": "اكتب النص أو الأرقام أو رموز المنتج التي تريد ترميزها. تدعم الأداة جميع تنسيقات الباركود الرئيسية بما في ذلك CODE128 وEAN-13 وUPC والمزيد.",
+                "howto.step2.title": "خصص المظهر",
+                "howto.step2.description": "اختر تنسيق الباركود الخاص بك، وضبط الألوان والحجم وخيارات العرض. معاينة التغييرات في الوقت الفعلي أثناء التخصيص.",
+                "howto.step3.title": "توليد الباركود",
+                "howto.step3.description": "انقر على \"توليد الباركود\" لإنشاء الباركود المخصص الخاص بك. يظهر الباركود على الفور دون تأخير في المعالجة.",
+                "howto.step4.title": "تحميل أو نسخ",
+                "howto.step4.description": "قم بتنزيل الباركود الخاص بك بتنسيقات PNG أو JPG أو SVG، أو انسخه مباشرة إلى الحافظة. تتم جميع المعالجة محليًا في متصفحك.",
+                "tool.title": "مولد الباركود",
+                "tool.input.label": "أدخل النص أو الأرقام للترميز:",
+                "tool.input.placeholder": "أدخل النص أو الأرقام الخاصة بك هنا",
+                "tool.input.hint": "يمكنك إدخال رموز المنتج أو النص أو الأرقام أو أي بيانات تريد ترميزها.",
+                "tool.customization.title": "خصص الباركود الخاص بك",
+                "tool.customization.type": "نوع الباركود:",
+                "tool.customization.width": "العرض:",
+                "tool.customization.height": "الارتفاع:",
+                "tool.customization.colors": "الألوان:",
+                "tool.customization.display": "عرض القيمة:",
+                "tool.customization.fontsize": "حجم الخط:",
+                "tool.preview.title": "معاينة الباركود",
+                "tool.preview.placeholder": "سيظهر الباركود الخاص بك هنا",
+                "tool.generate": "توليد الباركود",
+                "tool.download": "تحميل الباركود",
+                "tool.copy": "نسخ إلى الحافظة",
+                "tool.clear": "مسح الكل",
+                "tool.history.title": "الباركودات الحديثة",
+                "tool.history.empty": "لم يتم توليد أي باركودات بعد",
+                "footer.follow": "تابعنا",
+                "footer.categories": "الفئات الشائعة",
+                "footer.categories.pdf": "أدوات PDF",
+                "footer.categories.image": "أدوات الصور",
+                "footer.categories.text": "أدوات النص",
+                "footer.categories.av": "أدوات الصوت/الفيديو",
+                "footer.categories.web": "أدوات مطور الويب",
+                "footer.categories.calc": "أدوات الآلة الحاسبة",
+                "footer.categories.util": "أدوات المساعدة",
+                "footer.categories.color": "أدوات الألوان",
+                "footer.quicklinks": "روابط سريعة",
+                "footer.links.tools": "جميع الأدوات",
+                "footer.links.faq": "الأسئلة الشائعة",
+                "footer.links.contact": "اتصل بنا",
+                "footer.links.privacy": "سياسة الخصوصية",
+                "footer.links.disclaimer": "إخلاء المسؤولية",
+                "footer.links.terms": "شروط الخدمة",
+                "footer.copyright": "© 2025 LollyPoPDF. جميع الحقوق محفوظة."
+            },
+            fa: {
+                "nav.home": "صفحه اصلی",
+                "nav.about": "درباره ما",
+                "nav.tools": "ابزارها",
+                "nav.contact": "تماس با ما",
+                "hero.title": "ابزار تولید بارکد",
+                "hero.description": "بلافاصله بارکدهای حرفه ای ایجاد کنید - بارکدها را برای هر منظوری تولید، سفارشی و دانلود کنید. تمام پردازش به صورت محلی و بدون محدودیت اندازه فایل و با حریم خصوصی کامل انجام می شود.",
+                "howto.title": "نحوه استفاده از تولیدکننده بارکد",
+                "howto.step1.title": "داده های خود را وارد کنید",
+                "howto.step1.description": "متن، اعداد یا کدهای محصولی را که می خواهید کدگذاری کنید تایپ کنید. این ابزار از تمام فرمت های اصلی بارکد از جمله CODE128، EAN-13، UPC و موارد دیگر پشتیبانی می کند.",
+                "howto.step2.title": "ظاهر را سفارشی کنید",
+                "howto.step2.description": "فرمت بارکد خود را انتخاب کنید، رنگ ها، اندازه و گزینه های نمایش را تنظیم کنید. تغییرات را در حین سفارشی سازی به صورت زنده پیش نمایش ببینید.",
+                "howto.step3.title": "بارکد تولید کنید",
+                "howto.step3.description": "برای ایجاد بارکد سفارشی خود روی \"تولید بارکد\" کلیک کنید. بارکد بلافاصله و بدون تاخیر در پردازش ظاهر می شود.",
+                "howto.step4.title": "دانلود یا کپی",
+                "howto.step4.description": "بارکد خود را در قالب های PNG، JPG یا SVG دانلود کنید، یا مستقیماً به کلیپ بورد کپی کنید. تمام پردازش به صورت محلی در مرورگر شما انجام می شود.",
+                "tool.title": "تولیدکننده بارکد",
+                "tool.input.label": "متن یا اعداد برای کدگذاری وارد کنید:",
+                "tool.input.placeholder": "متن یا اعداد خود را اینجا وارد کنید",
+                "tool.input.hint": "می توانید کدهای محصول، متن، اعداد یا هر داده ای را که می خواهید کدگذاری کنید وارد کنید.",
+                "tool.customization.title": "بارکد خود را سفارشی کنید",
+                "tool.customization.type": "نوع بارکد:",
+                "tool.customization.width": "عرض:",
+                "tool.customization.height": "ارتفاع:",
+                "tool.customization.colors": "رنگ ها:",
+                "tool.customization.display": "نمایش مقدار:",
+                "tool.customization.fontsize": "اندازه فونت:",
+                "tool.preview.title": "پیش نمایش بارکد",
+                "tool.preview.placeholder": "بارکد شما اینجا نمایش داده می شود",
+                "tool.generate": "تولید بارکد",
+                "tool.download": "دانلود بارکد",
+                "tool.copy": "کپی به کلیپ بورد",
+                "tool.clear": "پاک کردن همه",
+                "tool.history.title": "بارکدهای اخیر",
+                "tool.history.empty": "هنوز هیچ بارکدی تولید نشده است",
+                "footer.follow": "ما را دنبال کنید",
+                "footer.categories": "دسته های محبوب",
+                "footer.categories.pdf": "ابزارهای PDF",
+                "footer.categories.image": "ابزارهای تصویر",
+                "footer.categories.text": "ابزارهای متن",
+                "footer.categories.av": "ابزارهای صوتی/تصویری",
+                "footer.categories.web": "ابزارهای توسعه دهنده وب",
+                "footer.categories.calc": "ابزارهای ماشین حساب",
+                "footer.categories.util": "ابزارهای کمکی",
+                "footer.categories.color": "ابزارهای رنگ",
+                "footer.quicklinks": "لینک های سریع",
+                "footer.links.tools": "همه ابزارها",
+                "footer.links.faq": "سوالات متداول",
+                "footer.links.contact": "تماس با ما",
+                "footer.links.privacy": "سیاست حفظ حریم خصوصی",
+                "footer.links.disclaimer": "سلب مسئولیت",
+                "footer.links.terms": "شرایط استفاده",
+                "footer.copyright": "© 2025 LollyPoPDF. تمامی حقوق محفوظ است."
+            },
+            bg: {
+                "nav.home": "Начало",
+                "nav.about": "За нас",
+                "nav.tools": "Инструменти",
+                "nav.contact": "Контакт",
+                "hero.title": "Инструмент за генериране на баркодове",
+                "hero.description": "Създавайте професионални баркодове мигновено - генерирайте, персонализирайте и изтегляйте баркодове за всякакви цели. Цялата обработка се извършва локално без ограничения на размера на файла и с пълна поверителност.",
+                "howto.title": "Как да използвате генератора на баркодове",
+                "howto.step1.title": "Въведете вашите данни",
+                "howto.step1.description": "Въведете текста, числата или продуктовите кодове, които искате да кодирате. Инструментът поддържа всички основни формати на баркодове, включително CODE128, EAN-13, UPC и други.",
+                "howto.step2.title": "Персонализирайте външния вид",
+                "howto.step2.description": "Изберете вашия баркод формат, регулирайте цветовете, размера и опциите за показване. Преглеждайте промените в реално време, докато персонализирате.",
+                "howto.step3.title": "Генерирайте баркода",
+                "howto.step3.description": "Кликнете върху \"Генерирай баркод\", за да създадете вашия персонализиран баркод. Баркодът се появява мигновено без забавяне на обработката.",
+                "howto.step4.title": "Изтеглете или копирайте",
+                "howto.step4.description": "Изтеглете вашия баркод във формати PNG, JPG или SVG, или го копирайте директно в клипборда. Цялата обработка се извършва локално във вашия браузър.",
+                "tool.title": "Генератор на баркодове",
+                "tool.input.label": "Въведете текст или числа за кодиране:",
+                "tool.input.placeholder": "Въведете вашия текст или числа тук",
+                "tool.input.hint": "Можете да въвеждате продуктови кодове, текст, числа или всякакви данни, които искате да кодирате.",
+                "tool.customization.title": "Персонализирайте вашия баркод",
+                "tool.customization.type": "Тип баркод:",
+                "tool.customization.width": "Ширина:",
+                "tool.customization.height": "Височина:",
+                "tool.customization.colors": "Цветове:",
+                "tool.customization.display": "Показване на стойност:",
+                "tool.customization.fontsize": "Размер на шрифта:",
+                "tool.preview.title": "Преглед на баркода",
+                "tool.preview.placeholder": "Вашият баркод ще се появи тук",
+                "tool.generate": "Генерирай баркод",
+                "tool.download": "Изтегли баркод",
+                "tool.copy": "Копирай в клипборда",
+                "tool.clear": "Изчисти всичко",
+                "tool.history.title": "Скорошни баркодове",
+                "tool.history.empty": "Все още няма генерирани баркодове",
+                "footer.follow": "СЛЕДВАЙТЕ НИ",
+                "footer.categories": "Популярни категории",
+                "footer.categories.pdf": "PDF инструменти",
+                "footer.categories.image": "Инструменти за изображения",
+                "footer.categories.text": "Текстови инструменти",
+                "footer.categories.av": "Аудио/Видео инструменти",
+                "footer.categories.web": "WebDeveloper инструменти",
+                "footer.categories.calc": "Калкулаторни инструменти",
+                "footer.categories.util": "Помощни инструменти",
+                "footer.categories.color": "Цветови инструменти",
+                "footer.quicklinks": "Бързи връзки",
+                "footer.links.tools": "Всички инструменти",
+                "footer.links.faq": "ЧЗВ",
+                "footer.links.contact": "Контакт",
+                "footer.links.privacy": "Политика за поверителност",
+                "footer.links.disclaimer": "Отказ от отговорност",
+                "footer.links.terms": "Условия за ползване",
+                "footer.copyright": "© 2025 LollyPoPDF. Всички права запазени."
+            },
+            ca: {
+                "nav.home": "Inici",
+                "nav.about": "Sobre nosaltres",
+                "nav.tools": "Eines",
+                "nav.contact": "Contacte",
+                "hero.title": "Eina Generadora de Codis de Barres",
+                "hero.description": "Creeu codis de barres professionals instantàniament - genereu, personalitzeu i baixeu codis de barres per a qualsevol propòsit. Tot el processament es realitza localment sense límits de mida de fitxer i amb privadesa completa.",
+                "howto.title": "Com Utilitzar el Generador de Codis de Barres",
+                "howto.step1.title": "Introduïu les vostres dades",
+                "howto.step1.description": "Escriviu el text, números o codis de producte que voleu codificar. L'eina admet tots els formats principals de codis de barres, incloent CODE128, EAN-13, UPC i més.",
+                "howto.step2.title": "Personalitzeu l'aparença",
+                "howto.step2.description": "Trieu el vostre format de codi de barres, ajusteu colors, mida i opcions de visualització. Previsualitzeu els canvis en temps real mentre personalitzeu.",
+                "howto.step3.title": "Genereu el codi de barres",
+                "howto.step3.description": "Feu clic a \"Generar codi de barres\" per crear el vostre codi de barres personalitzat. El codi de barres apareix instantàniament sense retards de processament.",
+                "howto.step4.title": "Baixeu o copieu",
+                "howto.step4.description": "Baixeu el vostre codi de barres en formats PNG, JPG o SVG, o copieu-lo directament al porta-retalls. Tot el processament es realitza localment al vostre navegador.",
+                "tool.title": "Generador de Codis de Barres",
+                "tool.input.label": "Introduïu text o números per codificar:",
+                "tool.input.placeholder": "Introduïu el vostre text o números aquí",
+                "tool.input.hint": "Podeu introduir codis de producte, text, números o qualsevol dada que vulgueu codificar.",
+                "tool.customization.title": "Personalitzeu el vostre codi de barres",
+                "tool.customization.type": "Tipus de codi de barres:",
+                "tool.customization.width": "Amplada:",
+                "tool.customization.height": "Alçada:",
+                "tool.customization.colors": "Colors:",
+                "tool.customization.display": "Mostrar valor:",
+                "tool.customization.fontsize": "Mida de la font:",
+                "tool.preview.title": "Previsualització del codi de barres",
+                "tool.preview.placeholder": "El vostre codi de barres apareixerà aquí",
+                "tool.generate": "Generar codi de barres",
+                "tool.download": "Baixar codi de barres",
+                "tool.copy": "Copiar al porta-retalls",
+                "tool.clear": "Netejar-ho tot",
+                "tool.history.title": "Codis de barres recents",
+                "tool.history.empty": "Encara no s'han generat codis de barres",
+                "footer.follow": "SEGUEIX-NOS",
+                "footer.categories": "Categories populars",
+                "footer.categories.pdf": "Eines PDF",
+                "footer.categories.image": "Eines d'imatge",
+                "footer.categories.text": "Eines de text",
+                "footer.categories.av": "Eines d'Àudio/Video",
+                "footer.categories.web": "Eines WebDeveloper",
+                "footer.categories.calc": "Eines de calculadora",
+                "footer.categories.util": "Eines d'utilitat",
+                "footer.categories.color": "Eines de color",
+                "footer.quicklinks": "Enllaços ràpids",
+                "footer.links.tools": "Totes les eines",
+                "footer.links.faq": "PMF",
+                "footer.links.contact": "Contacte",
+                "footer.links.privacy": "Política de privadesa",
+                "footer.links.disclaimer": "Descàrrec de responsabilitat",
+                "footer.links.terms": "Termes del servei",
+                "footer.copyright": "© 2025 LollyPoPDF. Tots els drets reservats."
+            },
+            nl: {
+                "nav.home": "Home",
+                "nav.about": "Over ons",
+                "nav.tools": "Tools",
+                "nav.contact": "Contact",
+                "hero.title": "Barcode Generator Tool",
+                "hero.description": "Maak professionele streepjescodes direct - genereer, pas aan en download streepjescodes voor elk doel. Alle verwerking gebeurt lokaal zonder bestandsgroottebeperkingen en met volledige privacy.",
+                "howto.title": "Hoe de Barcode Generator te Gebruiken",
+                "howto.step1.title": "Voer uw gegevens in",
+                "howto.step1.description": "Typ de tekst, cijfers of productcodes die u wilt coderen. De tool ondersteunt alle belangrijke streepjescodeformaten, inclusief CODE128, EAN-13, UPC en meer.",
+                "howto.step2.title": "Pas het uiterlijk aan",
+                "howto.step2.description": "Kies uw streepjescodeformaat, pas kleuren, grootte en weergaveopties aan. Bekijk wijzigingen in realtime terwijl u aanpast.",
+                "howto.step3.title": "Genereer streepjescode",
+                "howto.step3.description": "Klik op \"Streepjescode genereren\" om uw aangepaste streepjescode te maken. De streepjescode verschijnt direct zonder verwerkingsvertraging.",
+                "howto.step4.title": "Download of kopieer",
+                "howto.step4.description": "Download uw streepjescode in PNG-, JPG- of SVG-formaat, of kopieer deze direct naar uw klembord. Alle verwerking gebeurt lokaal in uw browser.",
+                "tool.title": "Streepjescode Generator",
+                "tool.input.label": "Voer tekst of cijfers in om te coderen:",
+                "tool.input.placeholder": "Voer hier uw tekst of cijfers in",
+                "tool.input.hint": "U kunt productcodes, tekst, cijfers of alle gegevens die u wilt coderen invoeren.",
+                "tool.customization.title": "Pas uw streepjescode aan",
+                "tool.customization.type": "Streepjescode type:",
+                "tool.customization.width": "Breedte:",
+                "tool.customization.height": "Hoogte:",
+                "tool.customization.colors": "Kleuren:",
+                "tool.customization.display": "Waarde weergeven:",
+                "tool.customization.fontsize": "Lettergrootte:",
+                "tool.preview.title": "Streepjescode Voorbeeld",
+                "tool.preview.placeholder": "Uw streepjescode verschijnt hier",
+                "tool.generate": "Streepjescode genereren",
+                "tool.download": "Streepjescode downloaden",
+                "tool.copy": "Kopiëren naar klembord",
+                "tool.clear": "Alles wissen",
+                "tool.history.title": "Recente streepjescodes",
+                "tool.history.empty": "Nog geen streepjescodes gegenereerd",
+                "footer.follow": "VOLG ONS",
+                "footer.categories": "Populaire categorieën",
+                "footer.categories.pdf": "PDF Tools",
+                "footer.categories.image": "Afbeeldingstools",
+                "footer.categories.text": "Teksttools",
+                "footer.categories.av": "Audio/Video Tools",
+                "footer.categories.web": "WebDeveloper Tools",
+                "footer.categories.calc": "Rekenmachinetools",
+                "footer.categories.util": "Hulpprogramma's",
+                "footer.categories.color": "Kleurentools",
+                "footer.quicklinks": "Snelle links",
+                "footer.links.tools": "Alle tools",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Contact",
+                "footer.links.privacy": "Privacybeleid",
+                "footer.links.disclaimer": "Disclaimer",
+                "footer.links.terms": "Servicevoorwaarden",
+                "footer.copyright": "© 2025 LollyPoPDF. Alle rechten voorbehouden."
+            },
+            el: {
+                "nav.home": "Αρχική",
+                "nav.about": "Σχετικά με εμάς",
+                "nav.tools": "Εργαλεία",
+                "nav.contact": "Επικοινωνία",
+                "hero.title": "Εργαλείο Δημιουργίας Γραμμωτών Κωδίκων",
+                "hero.description": "Δημιουργήστε επαγγελματικούς γραμμωτούς κώδικες αμέσως - δημιουργήστε, προσαρμόστε και κατεβάστε γραμμωτούς κώδικες για οποιονδήποτε σκοπό. Όλη η επεξεργασία γίνεται τοπικά χωρίς όρια μεγέθους αρχείου και με πλήρη ιδιωτικότητα.",
+                "howto.title": "Πώς να Χρησιμοποιήσετε τον Δημιουργό Γραμμωτών Κωδίκων",
+                "howto.step1.title": "Εισάγετε τα δεδομένα σας",
+                "howto.step1.description": "Πληκτρολογήστε το κείμενο, τους αριθμούς ή τους κωδικούς προϊόντων που θέλετε να κωδικοποιήσετε. Το εργαλείο υποστηρίζει όλες τις κύριες μορφές γραμμωτών κωδίκων, συμπεριλαμβανομένων των CODE128, EAN-13, UPC και άλλων.",
+                "howto.step2.title": "Προσαρμόστε την εμφάνιση",
+                "howto.step2.description": "Επιλέξτε τη μορφή του γραμμωτού κώδικα, ρυθμίστε τα χρώματα, το μέγεθος και τις επιλογές εμφάνισης. Προεπισκόπηση αλλαγών σε πραγματικό χρόνο καθώς προσαρμόζετε.",
+                "howto.step3.title": "Δημιουργήστε τον γραμμωτό κώδικα",
+                "howto.step3.description": "Κάντε κλικ στο \"Δημιουργία Γραμμωτού Κώδικα\" για να δημιουργήσετε τον προσαρμοσμένο σας γραμμωτό κώδικα. Ο γραμμωτός κώδικας εμφανίζεται αμέσως χωρίς καθυστέρηση επεξεργασίας.",
+                "howto.step4.title": "Λήψη ή αντιγραφή",
+                "howto.step4.description": "Κατεβάστε τον γραμμωτό σας κώδικα σε μορφές PNG, JPG ή SVG, ή αντιγράψτε τον απευθείας στο πρόχειρο. Όλη η επεξεργασία γίνεται τοπικά στο πρόγραμμα περιήγησής σας.",
+                "tool.title": "Δημιουργός Γραμμωτών Κωδίκων",
+                "tool.input.label": "Εισάγετε κείμενο ή αριθμούς για κωδικοποίηση:",
+                "tool.input.placeholder": "Εισάγετε το κείμενο ή τους αριθμούς σας εδώ",
+                "tool.input.hint": "Μπορείτε να εισάγετε κωδικούς προϊόντων, κείμενο, αριθμούς ή οποιαδήποτε δεδομένα θέλετε να κωδικοποιήσετε.",
+                "tool.customization.title": "Προσαρμόστε τον γραμμωτό σας κώδικα",
+                "tool.customization.type": "Τύπος Γραμμωτού Κώδικα:",
+                "tool.customization.width": "Πλάτος:",
+                "tool.customization.height": "Ύψος:",
+                "tool.customization.colors": "Χρώματα:",
+                "tool.customization.display": "Εμφάνιση Τιμής:",
+                "tool.customization.fontsize": "Μέγεθος Γραμματοσειράς:",
+                "tool.preview.title": "Προεπισκόπηση Γραμμωτού Κώδικα",
+                "tool.preview.placeholder": "Ο γραμμωτός σας κώδικας θα εμφανιστεί εδώ",
+                "tool.generate": "Δημιουργία Γραμμωτού Κώδικα",
+                "tool.download": "Λήψη Γραμμωτού Κώδικα",
+                "tool.copy": "Αντιγραφή στο Πρόχειρο",
+                "tool.clear": "Καθαρισμός Όλων",
+                "tool.history.title": "Πρόσφατοι Γραμμωτοί Κώδικες",
+                "tool.history.empty": "Δεν έχουν δημιουργηθεί ακόμη γραμμωτοί κώδικες",
+                "footer.follow": "ΑΚΟΛΟΥΘΗΣΤΕ ΜΑΣ",
+                "footer.categories": "Δημοφιλείς Κατηγορίες",
+                "footer.categories.pdf": "Εργαλεία PDF",
+                "footer.categories.image": "Εργαλεία Εικόνας",
+                "footer.categories.text": "Εργαλεία Κειμένου",
+                "footer.categories.av": "Εργαλεία Ήχου/Βίντεο",
+                "footer.categories.web": "Εργαλεία WebDeveloper",
+                "footer.categories.calc": "Εργαλεία Αριθμομηχανής",
+                "footer.categories.util": "Βοηθητικά Εργαλεία",
+                "footer.categories.color": "Εργαλεία Χρώματος",
+                "footer.quicklinks": "Γρήγοροι Σύνδεσμοι",
+                "footer.links.tools": "Όλα τα Εργαλεία",
+                "footer.links.faq": "Συχνές Ερωτήσεις",
+                "footer.links.contact": "Επικοινωνία",
+                "footer.links.privacy": "Πολιτική Απορρήτου",
+                "footer.links.disclaimer": "Αποποίηση Ευθυνών",
+                "footer.links.terms": "Όροι Χρήσης",
+                "footer.copyright": "© 2025 LollyPoPDF. Με επιφύλαξη παντός δικαιώματος."
+            },
+            hi: {
+                "nav.home": "होम",
+                "nav.about": "हमारे बारे में",
+                "nav.tools": "टूल्स",
+                "nav.contact": "संपर्क करें",
+                "hero.title": "बारकोड जनरेटर टूल",
+                "hero.description": "पेशेवर बारकोड तुरंत बनाएं - किसी भी उद्देश्य के लिए बारकोड जनरेट, कस्टमाइज़ और डाउनलोड करें। सभी प्रोसेसिंग स्थानीय रूप से होती है, बिना फ़ाइल आकार सीमा के और पूर्ण गोपनीयता के साथ।",
+                "howto.title": "बारकोड जनरेटर का उपयोग कैसे करें",
+                "howto.step1.title": "अपना डेटा दर्ज करें",
+                "howto.step1.description": "वह टेक्स्ट, नंबर या उत्पाद कोड टाइप करें जिसे आप एनकोड करना चाहते हैं। यह टूल CODE128, EAN-13, UPC और अधिक सहित सभी प्रमुख बारकोड फॉर्मेट का समर्थन करता है।",
+                "howto.step2.title": "उपस्थिति अनुकूलित करें",
+                "howto.step2.description": "अपना बारकोड फॉर्मेट चुनें, रंग, आकार और डिस्प्ले विकल्प समायोजित करें। अनुकूलित करते समय रीयल-टाइम में परिवर्तनों का पूर्वावलोकन करें।",
+                "howto.step3.title": "बारकोड जनरेट करें",
+                "howto.step3.description": "अपना कस्टमाइज़्ड बारकोड बनाने के लिए \"बारकोड जनरेट करें\" पर क्लिक करें। बारकोड बिना प्रोसेसिंग देरी के तुरंत दिखाई देता है।",
+                "howto.step4.title": "डाउनलोड या कॉपी करें",
+                "howto.step4.description": "अपना बारकोड PNG, JPG या SVG फॉर्मेट में डाउनलोड करें, या सीधे अपने क्लिपबोर्ड पर कॉपी करें। सभी प्रोसेसिंग आपके ब्राउज़र में स्थानीय रूप से होती है।",
+                "tool.title": "बारकोड जनरेटर",
+                "tool.input.label": "एनकोड करने के लिए टेक्स्ट या नंबर दर्ज करें:",
+                "tool.input.placeholder": "अपना टेक्स्ट या नंबर यहाँ दर्ज करें",
+                "tool.input.hint": "आप उत्पाद कोड, टेक्स्ट, नंबर या कोई भी डेटा दर्ज कर सकते हैं जिसे आप एनकोड करना चाहते हैं।",
+                "tool.customization.title": "अपना बारकोड अनुकूलित करें",
+                "tool.customization.type": "बारकोड प्रकार:",
+                "tool.customization.width": "चौड़ाई:",
+                "tool.customization.height": "ऊंचाई:",
+                "tool.customization.colors": "रंग:",
+                "tool.customization.display": "मान प्रदर्शित करें:",
+                "tool.customization.fontsize": "फ़ॉन्ट आकार:",
+                "tool.preview.title": "बारकोड पूर्वावलोकन",
+                "tool.preview.placeholder": "आपका बारकोड यहाँ दिखाई देगा",
+                "tool.generate": "बारकोड जनरेट करें",
+                "tool.download": "बारकोड डाउनलोड करें",
+                "tool.copy": "क्लिपबोर्ड पर कॉपी करें",
+                "tool.clear": "सब क्लियर करें",
+                "tool.history.title": "हाल के बारकोड",
+                "tool.history.empty": "अभी तक कोई बारकोड जनरेट नहीं हुआ है",
+                "footer.follow": "हमें फॉलो करें",
+                "footer.categories": "लोकप्रिय श्रेणियाँ",
+                "footer.categories.pdf": "PDF टूल्स",
+                "footer.categories.image": "इमेज टूल्स",
+                "footer.categories.text": "टेक्स्ट टूल्स",
+                "footer.categories.av": "ऑडियो/वीडियो टूल्स",
+                "footer.categories.web": "वेबडेवलपर टूल्स",
+                "footer.categories.calc": "कैलकुलेटर टूल्स",
+                "footer.categories.util": "यूटिलिटी टूल्स",
+                "footer.categories.color": "कलर टूल्स",
+                "footer.quicklinks": "त्वरित लिंक",
+                "footer.links.tools": "सभी टूल्स",
+                "footer.links.faq": "सामान्य प्रश्न",
+                "footer.links.contact": "संपर्क करें",
+                "footer.links.privacy": "गोपनीयता नीति",
+                "footer.links.disclaimer": "अस्वीकरण",
+                "footer.links.terms": "सेवा की शर्तें",
+                "footer.copyright": "© 2025 LollyPoPDF। सर्वाधिकार सुरक्षित।"
+            },
+            te: {
+                "nav.home": "హోమ్",
+                "nav.about": "మా గురించి",
+                "nav.tools": "టూల్స్",
+                "nav.contact": "సంప్రదించండి",
+                "hero.title": "బార్కోడ్ జనరేటర్ టూల్",
+                "hero.description": "ప్రొఫెషనల్ బార్కోడ్లను తక్షణంగా సృష్టించండి - ఏదైనా ప్రయోజనం కోసం బార్కోడ్లను జనరేట్ చేయండి, కస్టమైజ్ చేయండి మరియు డౌన్లోడ్ చేయండి. అన్ని ప్రాసెసింగ్ ఫైల్ సైజ్ పరిమితులు లేకుండా మరియు పూర్తి గోప్యతతో స్థానికంగా జరుగుతుంది.",
+                "howto.title": "బార్కోడ్ జనరేటర్ను ఎలా ఉపయోగించాలి",
+                "howto.step1.title": "మీ డేటాను నమోదు చేయండి",
+                "howto.step1.description": "మీరు ఎన్కోడ్ చేయాలనుకుంటున్న టెక్స్ట్, సంఖ్యలు లేదా ఉత్పత్తి కోడ్లను టైప్ చేయండి. ఈ టూల్ CODE128, EAN-13, UPC మరియు మరిన్నితో సహా అన్ని ప్రధాన బార్కోడ్ ఫార్మాట్లను మద్దతు ఇస్తుంది.",
+                "howto.step2.title": "దృశ్యాన్ని కస్టమైజ్ చేయండి",
+                "howto.step2.description": "మీ బార్కోడ్ ఫార్మాట్ను ఎంచుకోండి, రంగులు, పరిమాణం మరియు డిస్ప్లే ఎంపికలను సర్దుబాటు చేయండి. మీరు కస్టమైజ్ చేస్తున్నప్పుడు నిజ సమయంలో మార్పులను ప్రివ్యూ చేయండి.",
+                "howto.step3.title": "బార్కోడ్ను జనరేట్ చేయండి",
+                "howto.step3.description": "మీ కస్టమైజ్ చేసిన బార్కోడ్ను సృష్టించడానికి \"బార్కోడ్ జనరేట్ చేయండి\"పై క్లిక్ చేయండి. బార్కోడ్ ప్రాసెసింగ్ ఆలస్యం లేకుండా తక్షణంగా కనిపిస్తుంది.",
+                "howto.step4.title": "డౌన్లోడ్ లేదా కాపీ చేయండి",
+                "howto.step4.description": "మీ బార్కోడ్ను PNG, JPG లేదా SVG ఫార్మాట్లలో డౌన్లోడ్ చేయండి, లేదా నేరుగా మీ క్లిప్బోర్డ్కు కాపీ చేయండి. అన్ని ప్రాసెసింగ్ మీ బ్రౌజర్లో స్థానికంగా జరుగుతుంది.",
+                "tool.title": "బార్కోడ్ జనరేటర్",
+                "tool.input.label": "ఎన్కోడ్ చేయడానికి టెక్స్ట్ లేదా సంఖ్యలను నమోదు చేయండి:",
+                "tool.input.placeholder": "మీ టెక్స్ట్ లేదా సంఖ్యలను ఇక్కడ నమోదు చేయండి",
+                "tool.input.hint": "మీరు ఉత్పత్తి కోడ్లు, టెక్స్ట్, సంఖ్యలు లేదా మీరు ఎన్కోడ్ చేయాలనుకుంటున్న ఏదైనా డేటాను నమోదు చేయవచ్చు.",
+                "tool.customization.title": "మీ బార్కోడ్ను కస్టమైజ్ చేయండి",
+                "tool.customization.type": "బార్కోడ్ రకం:",
+                "tool.customization.width": "వెడల్పు:",
+                "tool.customization.height": "ఎత్తు:",
+                "tool.customization.colors": "రంగులు:",
+                "tool.customization.display": "విలువను ప్రదర్శించండి:",
+                "tool.customization.fontsize": "ఫాంట్ పరిమాణం:",
+                "tool.preview.title": "బార్కోడ్ ప్రివ్యూ",
+                "tool.preview.placeholder": "మీ బార్కోడ్ ఇక్కడ కనిపిస్తుంది",
+                "tool.generate": "బార్కోడ్ జనరేట్ చేయండి",
+                "tool.download": "బార్కోడ్ డౌన్లోడ్ చేయండి",
+                "tool.copy": "క్లిప్బోర్డ్కు కాపీ చేయండి",
+                "tool.clear": "అన్నీ క్లియర్ చేయండి",
+                "tool.history.title": "ఇటీవలి బార్కోడ్లు",
+                "tool.history.empty": "ఇంకా బార్కోడ్లు జనరేట్ చేయబడలేదు",
+                "footer.follow": "మమ్మల్ని అనుసరించండి",
+                "footer.categories": "జనాదరణ పొందిన వర్గాలు",
+                "footer.categories.pdf": "PDF టూల్స్",
+                "footer.categories.image": "ఇమేజ్ టూల్స్",
+                "footer.categories.text": "టెక్స్ట్ టూల్స్",
+                "footer.categories.av": "ఆడియో/వీడియో టూల్స్",
+                "footer.categories.web": "వెబ్ డెవలపర్ టూల్స్",
+                "footer.categories.calc": "కాలిక్యులేటర్ టూల్స్",
+                "footer.categories.util": "యుటిలిటీ టూల్స్",
+                "footer.categories.color": "కలర్ టూల్స్",
+                "footer.quicklinks": "త్వరిత లింకులు",
+                "footer.links.tools": "అన్ని టూల్స్",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "సంప్రదించండి",
+                "footer.links.privacy": "గోప్యతా విధానం",
+                "footer.links.disclaimer": "డిస్క్లైమర్",
+                "footer.links.terms": "సేవా నిబంధనలు",
+                "footer.copyright": "© 2025 LollyPoPDF. అన్ని హక్కులు ప్రత్యేకించబడినవి."
+            },
+            kn: {
+                "nav.home": "ಮುಖಪುಟ",
+                "nav.about": "ನಮ್ಮ ಬಗ್ಗೆ",
+                "nav.tools": "ಟೂಲ್ಸ್",
+                "nav.contact": "ಸಂಪರ್ಕಿಸಿ",
+                "hero.title": "ಬಾರ್ಕೋಡ್ ಜನರೇಟರ್ ಟೂಲ್",
+                "hero.description": "ವೃತ್ತಿಪರ ಬಾರ್ಕೋಡ್‌ಗಳನ್ನು ತಕ್ಷಣವೇ ರಚಿಸಿ - ಯಾವುದೇ ಉದ್ದೇಶಕ್ಕಾಗಿ ಬಾರ್ಕೋಡ್‌ಗಳನ್ನು ಜನರೇಟ್ ಮಾಡಿ, ಕಸ್ಟಮೈಜ್ ಮಾಡಿ ಮತ್ತು ಡೌನ್‌ಲೋಡ್ ಮಾಡಿ. ಎಲ್ಲಾ ಪ್ರೊಸೆಸಿಂಗ್ ಫೈಲ್ ಗಾತ್ರದ ಮಿತಿಗಳಿಲ್ಲದೆ ಮತ್ತು ಸಂಪೂರ್ಣ ಗೌಪ್ಯತೆಯೊಂದಿಗೆ ಸ್ಥಳೀಯವಾಗಿ ನಡೆಯುತ್ತದೆ.",
+                "howto.title": "ಬಾರ್ಕೋಡ್ ಜನರೇಟರ್ ಅನ್ನು ಹೇಗೆ ಬಳಸುವುದು",
+                "howto.step1.title": "ನಿಮ್ಮ ಡೇಟಾವನ್ನು ನಮೂದಿಸಿ",
+                "howto.step1.description": "ನೀವು ಎನ್ಕೋಡ್ ಮಾಡಲು ಬಯಸುವ ಪಠ್ಯ, ಸಂಖ್ಯೆಗಳು ಅಥವಾ ಉತ್ಪನ್ನ ಕೋಡ್‌ಗಳನ್ನು ಟೈಪ್ ಮಾಡಿ. ಈ ಟೂಲ್ CODE128, EAN-13, UPC ಮತ್ತು ಹೆಚ್ಚಿನವುಗಳನ್ನು ಒಳಗೊಂಡಂತೆ ಎಲ್ಲಾ ಪ್ರಮುಖ ಬಾರ್ಕೋಡ್ ಫಾರ್ಮ್ಯಾಟ್‌ಗಳನ್ನು ಬೆಂಬಲಿಸುತ್ತದೆ.",
+                "howto.step2.title": "ನೋಟವನ್ನು ಕಸ್ಟಮೈಜ್ ಮಾಡಿ",
+                "howto.step2.description": "ನಿಮ್ಮ ಬಾರ್ಕೋಡ್ ಫಾರ್ಮ್ಯಾಟ್ ಅನ್ನು ಆಯ್ಕೆಮಾಡಿ, ಬಣ್ಣಗಳು, ಗಾತ್ರ ಮತ್ತು ಪ್ರದರ್ಶನ ಆಯ್ಕೆಗಳನ್ನು ಸರಿಹೊಂದಿಸಿ. ನೀವು ಕಸ್ಟಮೈಜ್ ಮಾಡುವಾಗ ರಿಯಲ್-ಟೈಮ್‌ನಲ್ಲಿ ಬದಲಾವಣೆಗಳನ್ನು ಪೂರ್ವವೀಕ್ಷಿಸಿ.",
+                "howto.step3.title": "ಬಾರ್ಕೋಡ್ ಅನ್ನು ಜನರೇಟ್ ಮಾಡಿ",
+                "howto.step3.description": "ನಿಮ್ಮ ಕಸ್ಟಮೈಜ್ ಮಾಡಿದ ಬಾರ್ಕೋಡ್ ಅನ್ನು ರಚಿಸಲು \"ಬಾರ್ಕೋಡ್ ಜನರೇಟ್ ಮಾಡಿ\" ಕ್ಲಿಕ್ ಮಾಡಿ. ಬಾರ್ಕೋಡ್ ಪ್ರೊಸೆಸಿಂಗ್ ವಿಳಂಬವಿಲ್ಲದೆ ತಕ್ಷಣವೇ ಕಾಣಿಸಿಕೊಳ್ಳುತ್ತದೆ.",
+                "howto.step4.title": "ಡೌನ್‌ಲೋಡ್ ಅಥವಾ ಕಾಪಿ ಮಾಡಿ",
+                "howto.step4.description": "ನಿಮ್ಮ ಬಾರ್ಕೋಡ್ ಅನ್ನು PNG, JPG ಅಥವಾ SVG ಫಾರ್ಮ್ಯಾಟ್‌ಗಳಲ್ಲಿ ಡೌನ್‌ಲೋಡ್ ಮಾಡಿ, ಅಥವಾ ನೇರವಾಗಿ ನಿಮ್ಮ ಕ್ಲಿಪ್‌ಬೋರ್ಡ್‌ಗೆ ಕಾಪಿ ಮಾಡಿ. ಎಲ್ಲಾ ಪ್ರೊಸೆಸಿಂಗ್ ನಿಮ್ಮ ಬ್ರೌಸರ್‌ನಲ್ಲಿ ಸ್ಥಳೀಯವಾಗಿ ನಡೆಯುತ್ತದೆ.",
+                "tool.title": "ಬಾರ್ಕೋಡ್ ಜನರೇಟರ್",
+                "tool.input.label": "ಎನ್ಕೋಡ್ ಮಾಡಲು ಪಠ್ಯ ಅಥವಾ ಸಂಖ್ಯೆಗಳನ್ನು ನಮೂದಿಸಿ:",
+                "tool.input.placeholder": "ನಿಮ್ಮ ಪಠ್ಯ ಅಥವಾ ಸಂಖ್ಯೆಗಳನ್ನು ಇಲ್ಲಿ ನಮೂದಿಸಿ",
+                "tool.input.hint": "ನೀವು ಉತ್ಪನ್ನ ಕೋಡ್‌ಗಳು, ಪಠ್ಯ, ಸಂಖ್ಯೆಗಳು ಅಥವಾ ನೀವು ಎನ್ಕೋಡ್ ಮಾಡಲು ಬಯಸುವ ಯಾವುದೇ ಡೇಟಾವನ್ನು ನಮೂದಿಸಬಹುದು.",
+                "tool.customization.title": "ನಿಮ್ಮ ಬಾರ್ಕೋಡ್ ಅನ್ನು ಕಸ್ಟಮೈಜ್ ಮಾಡಿ",
+                "tool.customization.type": "ಬಾರ್ಕೋಡ್ ಪ್ರಕಾರ:",
+                "tool.customization.width": "ಅಗಲ:",
+                "tool.customization.height": "ಎತ್ತರ:",
+                "tool.customization.colors": "ಬಣ್ಣಗಳು:",
+                "tool.customization.display": "ಮೌಲ್ಯವನ್ನು ಪ್ರದರ್ಶಿಸಿ:",
+                "tool.customization.fontsize": "ಫಾಂಟ್ ಗಾತ್ರ:",
+                "tool.preview.title": "ಬಾರ್ಕೋಡ್ ಪೂರ್ವವೀಕ್ಷಣೆ",
+                "tool.preview.placeholder": "ನಿಮ್ಮ ಬಾರ್ಕೋಡ್ ಇಲ್ಲಿ ಕಾಣಿಸುತ್ತದೆ",
+                "tool.generate": "ಬಾರ್ಕೋಡ್ ಜನರೇಟ್ ಮಾಡಿ",
+                "tool.download": "ಬಾರ್ಕೋಡ್ ಡೌನ್‌ಲೋಡ್ ಮಾಡಿ",
+                "tool.copy": "ಕ್ಲಿಪ್‌ಬೋರ್ಡ್‌ಗೆ ಕಾಪಿ ಮಾಡಿ",
+                "tool.clear": "ಎಲ್ಲವನ್ನೂ ತೆರವುಗೊಳಿಸಿ",
+                "tool.history.title": "ಇತ್ತೀಚಿನ ಬಾರ್ಕೋಡ್‌ಗಳು",
+                "tool.history.empty": "ಇನ್ನೂ ಬಾರ್ಕೋಡ್‌ಗಳು ಜನರೇಟ್ ಆಗಿಲ್ಲ",
+                "footer.follow": "ನಮ್ಮನ್ನು ಅನುಸರಿಸಿ",
+                "footer.categories": "ಜನಪ್ರಿಯ ವರ್ಗಗಳು",
+                "footer.categories.pdf": "PDF ಟೂಲ್ಸ್",
+                "footer.categories.image": "ಇಮೇಜ್ ಟೂಲ್ಸ್",
+                "footer.categories.text": "ಟೆಕ್ಸ್ಟ್ ಟೂಲ್ಸ್",
+                "footer.categories.av": "ಆಡಿಯೋ/ವೀಡಿಯೋ ಟೂಲ್ಸ್",
+                "footer.categories.web": "ವೆಬ್‌ಡೆವಲಪರ್ ಟೂಲ್ಸ್",
+                "footer.categories.calc": "ಕ್ಯಾಲ್ಕುಲೇಟರ್ ಟೂಲ್ಸ್",
+                "footer.categories.util": "ಯುಟಿಲಿಟಿ ಟೂಲ್ಸ್",
+                "footer.categories.color": "ಕಲರ್ ಟೂಲ್ಸ್",
+                "footer.quicklinks": "ತ್ವರಿತ ಲಿಂಕ್‌ಗಳು",
+                "footer.links.tools": "ಎಲ್ಲಾ ಟೂಲ್ಸ್",
+                "footer.links.faq": "ಸಾಮಾನ್ಯ ಪ್ರಶ್ನೆಗಳು",
+                "footer.links.contact": "ಸಂಪರ್ಕಿಸಿ",
+                "footer.links.privacy": "ಗೌಪ್ಯತಾ ನೀತಿ",
+                "footer.links.disclaimer": "ಡಿಸ್ಕ್ಲೈಮರ್",
+                "footer.links.terms": "ಸೇವಾ ನಿಯಮಗಳು",
+                "footer.copyright": "© 2025 LollyPoPDF. ಎಲ್ಲಾ ಹಕ್ಕುಗಳು ಕಾಯ್ದಿರಿಸಿದೆ."
+            },
+            ta: {
+                "nav.home": "முகப்பு",
+                "nav.about": "எங்களைப் பற்றி",
+                "nav.tools": "கருவிகள்",
+                "nav.contact": "தொடர்பு கொள்ள",
+                "hero.title": "பார்கோட் ஜெனரேட்டர் கருவி",
+                "hero.description": "தொழில்முறை பார்கோட்களை உடனடியாக உருவாக்கவும் - எந்த நோக்கத்திற்காகவும் பார்கோட்களை உருவாக்கவும், தனிப்பயனாக்கவும், பதிவிறக்கவும். அனைத்து செயலாக்கமும் கோப்பு அளவு வரம்புகள் இல்லாமல் மற்றும் முழு தனியுரிமையுடன் உள்நாட்டில் நடைபெறுகிறது.",
+                "howto.title": "பார்கோட் ஜெனரேட்டரை எவ்வாறு பயன்படுத்துவது",
+                "howto.step1.title": "உங்கள் தரவை உள்ளிடவும்",
+                "howto.step1.description": "நீங்கள் குறியாக்கம் செய்ய விரும்பும் உரை, எண்கள் அல்லது தயாரிப்பு குறியீடுகளை தட்டச்சு செய்யவும். இந்த கருவி CODE128, EAN-13, UPC மற்றும் பல உட்பட அனைத்து முக்கிய பார்கோட் வடிவங்களையும் ஆதரிக்கிறது.",
+                "howto.step2.title": "தோற்றத்தை தனிப்பயனாக்கவும்",
+                "howto.step2.description": "உங்கள் பார்கோட் வடிவத்தைத் தேர்ந்தெடுக்கவும், நிறங்கள், அளவு மற்றும் காட்சி விருப்பங்களை சரிசெய்யவும். நீங்கள் தனிப்பயனாக்கும்போது நிகழ்நேரத்தில் மாற்றங்களை முன்னோட்டமிடவும்.",
+                "howto.step3.title": "பார்கோட் உருவாக்கவும்",
+                "howto.step3.description": "உங்கள் தனிப்பயனாக்கப்பட்ட பார்கோடை உருவாக்க \"பார்கோட் உருவாக்கு\" என்பதைக் கிளிக் செய்யவும். பார்கோட் செயலாக்க தாமதம் இல்லாமல் உடனடியாக தோன்றும்.",
+                "howto.step4.title": "பதிவிறக்கம் அல்லது நகலெடுக்கவும்",
+                "howto.step4.description": "உங்கள் பார்கோடை PNG, JPG அல்லது SVG வடிவங்களில் பதிவிறக்கம் செய்யவும், அல்லது நேரடியாக உங்கள் கிளிப்போர்டுக்கு நகலெடுக்கவும். அனைத்து செயலாக்கமும் உங்கள் உலாவியில் உள்நாட்டில் நடைபெறுகிறது.",
+                "tool.title": "பார்கோட் ஜெனரேட்டர்",
+                "tool.input.label": "குறியாக்கம் செய்ய உரை அல்லது எண்களை உள்ளிடவும்:",
+                "tool.input.placeholder": "உங்கள் உரை அல்லது எண்களை இங்கே உள்ளிடவும்",
+                "tool.input.hint": "நீங்கள் தயாரிப்பு குறியீடுகள், உரை, எண்கள் அல்லது நீங்கள் குறியாக்கம் செய்ய விரும்பும் எந்த தரவையும் உள்ளிடலாம்.",
+                "tool.customization.title": "உங்கள் பார்கோடை தனிப்பயனாக்கவும்",
+                "tool.customization.type": "பார்கோட் வகை:",
+                "tool.customization.width": "அகலம்:",
+                "tool.customization.height": "உயரம்:",
+                "tool.customization.colors": "நிறங்கள்:",
+                "tool.customization.display": "மதிப்பைக் காட்டு:",
+                "tool.customization.fontsize": "எழுத்துரு அளவு:",
+                "tool.preview.title": "பார்கோட் முன்னோட்டம்",
+                "tool.preview.placeholder": "உங்கள் பார்கோட் இங்கே தோன்றும்",
+                "tool.generate": "பார்கோட் உருவாக்கு",
+                "tool.download": "பார்கோட் பதிவிறக்கு",
+                "tool.copy": "கிளிப்போர்டுக்கு நகலெடுக்கவும்",
+                "tool.clear": "அனைத்தையும் அழி",
+                "tool.history.title": "சமீபத்திய பார்கோட்கள்",
+                "tool.history.empty": "இன்னும் பார்கோட்கள் உருவாக்கப்படவில்லை",
+                "footer.follow": "எங்களைப் பின்தொடருங்கள்",
+                "footer.categories": "பிரபலமான வகைகள்",
+                "footer.categories.pdf": "PDF கருவிகள்",
+                "footer.categories.image": "பட கருவிகள்",
+                "footer.categories.text": "உரை கருவிகள்",
+                "footer.categories.av": "ஆடியோ/வீடியோ கருவிகள்",
+                "footer.categories.web": "வெப்டெவலப்பர் கருவிகள்",
+                "footer.categories.calc": "கால்குலேட்டர் கருவிகள்",
+                "footer.categories.util": "பயன்பாட்டு கருவிகள்",
+                "footer.categories.color": "நிற கருவிகள்",
+                "footer.quicklinks": "விரைவு இணைப்புகள்",
+                "footer.links.tools": "அனைத்து கருவிகள்",
+                "footer.links.faq": "அடிக்கடி கேட்கப்படும் கேள்விகள்",
+                "footer.links.contact": "தொடர்பு கொள்ள",
+                "footer.links.privacy": "தனியுரிமைக் கொள்கை",
+                "footer.links.disclaimer": "பொறுப்புத் துறப்பு",
+                "footer.links.terms": "சேவை விதிமுறைகள்",
+                "footer.copyright": "© 2025 LollyPoPDF. அனைத்து உரிமைகளும் பாதுகாக்கப்பட்டவை."
+            },
+            ml: {
+                "nav.home": "ഹോം",
+                "nav.about": "ഞങ്ങളെക്കുറിച്ച്",
+                "nav.tools": "ടൂളുകൾ",
+                "nav.contact": "ബന്ധപ്പെടുക",
+                "hero.title": "ബാർകോഡ് ജനറേറ്റർ ടൂൾ",
+                "hero.description": "പ്രൊഫഷണൽ ബാർകോഡുകൾ തൽക്ഷണം സൃഷ്ടിക്കുക - ഏത് ആവശ്യത്തിനും ബാർകോഡുകൾ ജനറേറ്റ് ചെയ്യുക, കസ്റ്റമൈസ് ചെയ്യുക, ഡൗൺലോഡ് ചെയ്യുക. എല്ലാ പ്രോസസ്സിംഗും ഫയൽ വലുപ്പ പരിധികളില്ലാതെയും പൂർണ്ണ സ്വകാര്യതയോടെയും പ്രാദേശികമായി നടക്കുന്നു.",
+                "howto.title": "ബാർകോഡ് ജനറേറ്റർ എങ്ങനെ ഉപയോഗിക്കാം",
+                "howto.step1.title": "നിങ്ങളുടെ ഡാറ്റ നൽകുക",
+                "howto.step1.description": "നിങ്ങൾ എൻകോഡ് ചെയ്യാൻ ആഗ്രഹിക്കുന്ന ടെക്സ്റ്റ്, നമ്പറുകൾ അല്ലെങ്കിൽ ഉൽപ്പന്ന കോഡുകൾ ടൈപ്പ് ചെയ്യുക. CODE128, EAN-13, UPC തുടങ്ങിയ എല്ലാ പ്രധാന ബാർകോഡ് ഫോർമാറ്റുകളും ഈ ടൂൾ പിന്തുണയ്ക്കുന്നു.",
+                "howto.step2.title": "തോന്നുന്ന രീതി കസ്റ്റമൈസ് ചെയ്യുക",
+                "howto.step2.description": "നിങ്ങളുടെ ബാർകോഡ് ഫോർമാറ്റ് തിരഞ്ഞെടുക്കുക, നിറങ്ങൾ, വലുപ്പം, ഡിസ്പ്ലേ ഓപ്ഷനുകൾ ക്രമീകരിക്കുക. നിങ്ങൾ കസ്റ്റമൈസ് ചെയ്യുമ്പോൾ റിയൽ-ടൈമിൽ മാറ്റങ്ങൾ പ്രിവ്യൂ ചെയ്യുക.",
+                "howto.step3.title": "ബാർകോഡ് ജനറേറ്റ് ചെയ്യുക",
+                "howto.step3.description": "നിങ്ങളുടെ കസ്റ്റമൈസ് ചെയ്ത ബാർകോഡ് സൃഷ്ടിക്കാൻ \"ബാർകോഡ് ജനറേറ്റ് ചെയ്യുക\" ക്ലിക്ക് ചെയ്യുക. ബാർകോഡ് പ്രോസസ്സിംഗ് കാലതാമസമില്ലാതെ തൽക്ഷണം പ്രത്യക്ഷപ്പെടുന്നു.",
+                "howto.step4.title": "ഡൗൺലോഡ് അല്ലെങ്കിൽ കോപ്പി ചെയ്യുക",
+                "howto.step4.description": "നിങ്ങളുടെ ബാർകോഡ് PNG, JPG അല്ലെങ്കിൽ SVG ഫോർമാറ്റുകളിൽ ഡൗൺലോഡ് ചെയ്യുക, അല്ലെങ്കിൽ നേരിട്ട് നിങ്ങളുടെ ക്ലിപ്പ്ബോർഡിലേക്ക് കോപ്പി ചെയ്യുക. എല്ലാ പ്രോസസ്സിംഗും നിങ്ങളുടെ ബ്രൗസറിൽ പ്രാദേശികമായി നടക്കുന്നു.",
+                "tool.title": "ബാർകോഡ് ജനറേറ്റർ",
+                "tool.input.label": "എൻകോഡ് ചെയ്യാൻ ടെക്സ്റ്റ് അല്ലെങ്കിൽ നമ്പറുകൾ നൽകുക:",
+                "tool.input.placeholder": "നിങ്ങളുടെ ടെക്സ്റ്റ് അല്ലെങ്കിൽ നമ്പറുകൾ ഇവിടെ നൽകുക",
+                "tool.input.hint": "നിങ്ങൾക്ക് ഉൽപ്പന്ന കോഡുകൾ, ടെക്സ്റ്റ്, നമ്പറുകൾ അല്ലെങ്കിൽ നിങ്ങൾ എൻകോഡ് ചെയ്യാൻ ആഗ്രഹിക്കുന്ന ഏതെങ്കിലും ഡാറ്റ നൽകാം.",
+                "tool.customization.title": "നിങ്ങളുടെ ബാർകോഡ് കസ്റ്റമൈസ് ചെയ്യുക",
+                "tool.customization.type": "ബാർകോഡ് തരം:",
+                "tool.customization.width": "വീതി:",
+                "tool.customization.height": "ഉയരം:",
+                "tool.customization.colors": "നിറങ്ങൾ:",
+                "tool.customization.display": "മൂല്യം പ്രദർശിപ്പിക്കുക:",
+                "tool.customization.fontsize": "ഫോണ്ട് വലുപ്പം:",
+                "tool.preview.title": "ബാർകോഡ് പ്രിവ്യൂ",
+                "tool.preview.placeholder": "നിങ്ങളുടെ ബാർകോഡ് ഇവിടെ പ്രത്യക്ഷപ്പെടും",
+                "tool.generate": "ബാർകോഡ് ജനറേറ്റ് ചെയ്യുക",
+                "tool.download": "ബാർകോഡ് ഡൗൺലോഡ് ചെയ്യുക",
+                "tool.copy": "ക്ലിപ്പ്ബോർഡിലേക്ക് കോപ്പി ചെയ്യുക",
+                "tool.clear": "എല്ലാം മായ്ക്കുക",
+                "tool.history.title": "സമീപകാല ബാർകോഡുകൾ",
+                "tool.history.empty": "ഇതുവരെ ബാർകോഡുകൾ ജനറേറ്റ് ചെയ്തിട്ടില്ല",
+                "footer.follow": "ഞങ്ങളെ പിന്തുടരുക",
+                "footer.categories": "ജനപ്രിയ വിഭാഗങ്ങൾ",
+                "footer.categories.pdf": "PDF ടൂളുകൾ",
+                "footer.categories.image": "ഇമേജ് ടൂളുകൾ",
+                "footer.categories.text": "ടെക്സ്റ്റ് ടൂളുകൾ",
+                "footer.categories.av": "ഓഡിയോ/വീഡിയോ ടൂളുകൾ",
+                "footer.categories.web": "വെബ്ഡെവലപ്പർ ടൂളുകൾ",
+                "footer.categories.calc": "കാൽക്കുലേറ്റർ ടൂളുകൾ",
+                "footer.categories.util": "യൂട്ടിലിറ്റി ടൂളുകൾ",
+                "footer.categories.color": "കളർ ടൂളുകൾ",
+                "footer.quicklinks": "ദ്രുത ലിങ്കുകൾ",
+                "footer.links.tools": "എല്ലാ ടൂളുകളും",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "ബന്ധപ്പെടുക",
+                "footer.links.privacy": "സ്വകാര്യതാ നയം",
+                "footer.links.disclaimer": "ഡിസ്ക്ലെയിമർ",
+                "footer.links.terms": "സേവന നിബന്ധനകൾ",
+                "footer.copyright": "© 2025 LollyPoPDF. എല്ലാ അവകാശങ്ങളും നിക്ഷിപ്തം."
+            },
+            id: {
+                "nav.home": "Beranda",
+                "nav.about": "Tentang Kami",
+                "nav.tools": "Alat",
+                "nav.contact": "Kontak",
+                "hero.title": "Alat Pembuat Barcode",
+                "hero.description": "Buat barcode profesional secara instan - hasilkan, sesuaikan, dan unduh barcode untuk tujuan apa pun. Semua pemrosesan terjadi secara lokal tanpa batasan ukuran file dan dengan privasi lengkap.",
+                "howto.title": "Cara Menggunakan Pembuat Barcode",
+                "howto.step1.title": "Masukkan Data Anda",
+                "howto.step1.description": "Ketik teks, angka, atau kode produk yang ingin Anda enkode. Alat ini mendukung semua format barcode utama termasuk CODE128, EAN-13, UPC, dan lainnya.",
+                "howto.step2.title": "Sesuaikan Tampilan",
+                "howto.step2.description": "Pilih format barcode Anda, sesuaikan warna, ukuran, dan opsi tampilan. Pratinjau perubahan secara real-time saat Anda menyesuaikan.",
+                "howto.step3.title": "Hasilkan Barcode",
+                "howto.step3.description": "Klik \"Hasilkan Barcode\" untuk membuat barcode yang disesuaikan. Barcode muncul secara instan tanpa penundaan pemrosesan.",
+                "howto.step4.title": "Unduh atau Salin",
+                "howto.step4.description": "Unduh barcode Anda dalam format PNG, JPG, atau SVG, atau salin langsung ke papan klip. Semua pemrosesan terjadi secara lokal di browser Anda.",
+                "tool.title": "Pembuat Barcode",
+                "tool.input.label": "Masukkan teks atau angka untuk dienkode:",
+                "tool.input.placeholder": "Masukkan teks atau angka Anda di sini",
+                "tool.input.hint": "Anda dapat memasukkan kode produk, teks, angka, atau data apa pun yang ingin Anda enkode.",
+                "tool.customization.title": "Sesuaikan Barcode Anda",
+                "tool.customization.type": "Jenis Barcode:",
+                "tool.customization.width": "Lebar:",
+                "tool.customization.height": "Tinggi:",
+                "tool.customization.colors": "Warna:",
+                "tool.customization.display": "Tampilkan Nilai:",
+                "tool.customization.fontsize": "Ukuran Font:",
+                "tool.preview.title": "Pratinjau Barcode",
+                "tool.preview.placeholder": "Barcode Anda akan muncul di sini",
+                "tool.generate": "Hasilkan Barcode",
+                "tool.download": "Unduh Barcode",
+                "tool.copy": "Salin ke Papan Klip",
+                "tool.clear": "Hapus Semua",
+                "tool.history.title": "Barcode Terbaru",
+                "tool.history.empty": "Belum ada barcode yang dihasilkan",
+                "footer.follow": "IKUTI KAMI",
+                "footer.categories": "Kategori Populer",
+                "footer.categories.pdf": "Alat PDF",
+                "footer.categories.image": "Alat Gambar",
+                "footer.categories.text": "Alat Teks",
+                "footer.categories.av": "Alat Audio/Video",
+                "footer.categories.web": "Alat WebDeveloper",
+                "footer.categories.calc": "Alat Kalkulator",
+                "footer.categories.util": "Alat Utilitas",
+                "footer.categories.color": "Alat Warna",
+                "footer.quicklinks": "Tautan Cepat",
+                "footer.links.tools": "Semua Alat",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Kontak",
+                "footer.links.privacy": "Kebijakan Privasi",
+                "footer.links.disclaimer": "Penafian",
+                "footer.links.terms": "Syarat Layanan",
+                "footer.copyright": "© 2025 LollyPoPDF. Hak Cipta Dilindungi."
+            },
+            ms: {
+                "nav.home": "Laman Utama",
+                "nav.about": "Tentang Kami",
+                "nav.tools": "Alat",
+                "nav.contact": "Hubungi",
+                "hero.title": "Alat Penjana Kod Bar",
+                "hero.description": "Buat kod bar profesional serta-merta - jana, sesuaikan dan muat turun kod bar untuk sebarang tujuan. Semua pemprosesan berlaku secara tempatan tanpa had saiz fail dan dengan privasi lengkap.",
+                "howto.title": "Cara Menggunakan Penjana Kod Bar",
+                "howto.step1.title": "Masukkan Data Anda",
+                "howto.step1.description": "Taip teks, nombor atau kod produk yang anda ingin enkod. Alat ini menyokong semua format kod bar utama termasuk CODE128, EAN-13, UPC dan banyak lagi.",
+                "howto.step2.title": "Sesuaikan Penampilan",
+                "howto.step2.description": "Pilih format kod bar anda, laraskan warna, saiz dan pilihan paparan. Pratonton perubahan secara masa nyata semasa anda menyesuaikan.",
+                "howto.step3.title": "Jana Kod Bar",
+                "howto.step3.description": "Klik \"Jana Kod Bar\" untuk mencipta kod bar tersuai anda. Kod bar muncul serta-merta tanpa kelewatan pemprosesan.",
+                "howto.step4.title": "Muat Turun atau Salin",
+                "howto.step4.description": "Muat turun kod bar anda dalam format PNG, JPG atau SVG, atau salin terus ke papan keratan. Semua pemprosesan berlaku secara tempatan dalam pelayar anda.",
+                "tool.title": "Penjana Kod Bar",
+                "tool.input.label": "Masukkan teks atau nombor untuk enkod:",
+                "tool.input.placeholder": "Masukkan teks atau nombor anda di sini",
+                "tool.input.hint": "Anda boleh memasukkan kod produk, teks, nombor atau sebarang data yang anda ingin enkod.",
+                "tool.customization.title": "Sesuaikan Kod Bar Anda",
+                "tool.customization.type": "Jenis Kod Bar:",
+                "tool.customization.width": "Lebar:",
+                "tool.customization.height": "Tinggi:",
+                "tool.customization.colors": "Warna:",
+                "tool.customization.display": "Paparkan Nilai:",
+                "tool.customization.fontsize": "Saiz Fon:",
+                "tool.preview.title": "Pratonton Kod Bar",
+                "tool.preview.placeholder": "Kod bar anda akan muncul di sini",
+                "tool.generate": "Jana Kod Bar",
+                "tool.download": "Muat Turun Kod Bar",
+                "tool.copy": "Salin ke Papan Keratan",
+                "tool.clear": "Kosongkan Semua",
+                "tool.history.title": "Kod Bar Terkini",
+                "tool.history.empty": "Tiada kod bar dijana lagi",
+                "footer.follow": "IKUTI KAMI",
+                "footer.categories": "Kategori Popular",
+                "footer.categories.pdf": "Alat PDF",
+                "footer.categories.image": "Alat Imej",
+                "footer.categories.text": "Alat Teks",
+                "footer.categories.av": "Alat Audio/Video",
+                "footer.categories.web": "Alat WebDeveloper",
+                "footer.categories.calc": "Alat Kalkulator",
+                "footer.categories.util": "Alat Utiliti",
+                "footer.categories.color": "Alat Warna",
+                "footer.quicklinks": "Pautan Pantas",
+                "footer.links.tools": "Semua Alat",
+                "footer.links.faq": "Soalan Lazim",
+                "footer.links.contact": "Hubungi",
+                "footer.links.privacy": "Dasar Privasi",
+                "footer.links.disclaimer": "Penafian",
+                "footer.links.terms": "Syarat Perkhidmatan",
+                "footer.copyright": "© 2025 LollyPoPDF. Hak Cipta Terpelihara."
+            },
+            pl: {
+                "nav.home": "Strona główna",
+                "nav.about": "O nas",
+                "nav.tools": "Narzędzia",
+                "nav.contact": "Kontakt",
+                "hero.title": "Generator Kodów Kreskowych",
+                "hero.description": "Twórz profesjonalne kody kreskowe natychmiast - generuj, dostosowuj i pobieraj kody kreskowe do dowolnego celu. Wszystkie przetwarzanie odbywa się lokalnie bez ograniczeń rozmiaru pliku i z pełną prywatnością.",
+                "howto.title": "Jak używać generatora kodów kreskowych",
+                "howto.step1.title": "Wprowadź swoje dane",
+                "howto.step1.description": "Wpisz tekst, liczby lub kody produktów, które chcesz zakodować. Narzędzie obsługuje wszystkie główne formaty kodów kreskowych, w tym CODE128, EAN-13, UPC i inne.",
+                "howto.step2.title": "Dostosuj wygląd",
+                "howto.step2.description": "Wybierz format kodu kreskowego, dostosuj kolory, rozmiar i opcje wyświetlania. Podglądaj zmiany w czasie rzeczywistym podczas dostosowywania.",
+                "howto.step3.title": "Wygeneruj kod kreskowy",
+                "howto.step3.description": "Kliknij \"Wygeneruj kod kreskowy\", aby utworzyć dostosowany kod kreskowy. Kod kreskowy pojawia się natychmiast bez opóźnień przetwarzania.",
+                "howto.step4.title": "Pobierz lub skopiuj",
+                "howto.step4.description": "Pobierz kod kreskowy w formatach PNG, JPG lub SVG lub skopiuj go bezpośrednio do schowka. Wszystkie przetwarzanie odbywa się lokalnie w przeglądarce.",
+                "tool.title": "Generator Kodów Kreskowych",
+                "tool.input.label": "Wprowadź tekst lub liczby do zakodowania:",
+                "tool.input.placeholder": "Wprowadź swój tekst lub liczby tutaj",
+                "tool.input.hint": "Możesz wprowadzać kody produktów, tekst, liczby lub dowolne dane, które chcesz zakodować.",
+                "tool.customization.title": "Dostosuj swój kod kreskowy",
+                "tool.customization.type": "Typ kodu kreskowego:",
+                "tool.customization.width": "Szerokość:",
+                "tool.customization.height": "Wysokość:",
+                "tool.customization.colors": "Kolory:",
+                "tool.customization.display": "Wyświetl wartość:",
+                "tool.customization.fontsize": "Rozmiar czcionki:",
+                "tool.preview.title": "Podgląd kodu kreskowego",
+                "tool.preview.placeholder": "Twój kod kreskowy pojawi się tutaj",
+                "tool.generate": "Wygeneruj kod kreskowy",
+                "tool.download": "Pobierz kod kreskowy",
+                "tool.copy": "Kopiuj do schowka",
+                "tool.clear": "Wyczyść wszystko",
+                "tool.history.title": "Ostatnie kody kreskowe",
+                "tool.history.empty": "Jeszcze nie wygenerowano kodów kreskowych",
+                "footer.follow": "OBSERWUJ NAS",
+                "footer.categories": "Popularne kategorie",
+                "footer.categories.pdf": "Narzędzia PDF",
+                "footer.categories.image": "Narzędzia obrazów",
+                "footer.categories.text": "Narzędzia tekstowe",
+                "footer.categories.av": "Narzędzia audio/wideo",
+                "footer.categories.web": "Narzędzia WebDevelopera",
+                "footer.categories.calc": "Narzędzia kalkulatora",
+                "footer.categories.util": "Narzędzia użytkowe",
+                "footer.categories.color": "Narzędzia kolorów",
+                "footer.quicklinks": "Szybkie linki",
+                "footer.links.tools": "Wszystkie narzędzia",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Kontakt",
+                "footer.links.privacy": "Polityka prywatności",
+                "footer.links.disclaimer": "Zastrzeżenie",
+                "footer.links.terms": "Warunki usługi",
+                "footer.copyright": "© 2025 LollyPoPDF. Wszelkie prawa zastrzeżone."
+            },
+            th: {
+                "nav.home": "หน้าหลัก",
+                "nav.about": "เกี่ยวกับเรา",
+                "nav.tools": "เครื่องมือ",
+                "nav.contact": "ติดต่อ",
+                "hero.title": "เครื่องมือสร้างบาร์โค้ด",
+                "hero.description": "สร้างบาร์โค้ดระดับมืออาชีพได้ทันที - สร้าง ปรับแต่ง และดาวน์โหลดบาร์โค้ดสำหรับทุกวัตถุประสงค์ การประมวลผลทั้งหมดเกิดขึ้นในเครื่องโดยไม่มีข้อจำกัดขนาดไฟล์และความเป็นส่วนตัวสมบูรณ์",
+                "howto.title": "วิธีใช้เครื่องมือสร้างบาร์โค้ด",
+                "howto.step1.title": "ป้อนข้อมูลของคุณ",
+                "howto.step1.description": "พิมพ์ข้อความ ตัวเลข หรือรหัสสินค้าที่คุณต้องการเข้ารหัส เครื่องมือนี้รองรับรูปแบบบาร์โค้ดหลักทั้งหมดรวมถึง CODE128, EAN-13, UPC และอื่นๆ",
+                "howto.step2.title": "ปรับแต่งลักษณะที่ปรากฏ",
+                "howto.step2.description": "เลือกรูปแบบบาร์โค้ดของคุณ ปรับสี ขนาด และตัวเลือกการแสดงผล ดูตัวอย่างการเปลี่ยนแปลงแบบเรียลไทม์ขณะที่คุณปรับแต่ง",
+                "howto.step3.title": "สร้างบาร์โค้ด",
+                "howto.step3.description": "คลิก \"สร้างบาร์โค้ด\" เพื่อสร้างบาร์โค้ดที่ปรับแต่งของคุณ บาร์โค้ดจะปรากฏขึ้นทันทีโดยไม่มีการหน่วงเวลาการประมวลผล",
+                "howto.step4.title": "ดาวน์โหลดหรือคัดลอก",
+                "howto.step4.description": "ดาวน์โหลดบาร์โค้ดของคุณในรูปแบบ PNG, JPG หรือ SVG หรือคัดลอกไปยังคลิปบอร์ดโดยตรง การประมวลผลทั้งหมดเกิดขึ้นในเบราว์เซอร์ของคุณ",
+                "tool.title": "เครื่องมือสร้างบาร์โค้ด",
+                "tool.input.label": "ป้อนข้อความหรือตัวเลขเพื่อเข้ารหัส:",
+                "tool.input.placeholder": "ป้อนข้อความหรือตัวเลขของคุณที่นี่",
+                "tool.input.hint": "คุณสามารถป้อนรหัสสินค้า ข้อความ ตัวเลข หรือข้อมูลใดๆ ที่คุณต้องการเข้ารหัส",
+                "tool.customization.title": "ปรับแต่งบาร์โค้ดของคุณ",
+                "tool.customization.type": "ประเภทบาร์โค้ด:",
+                "tool.customization.width": "ความกว้าง:",
+                "tool.customization.height": "ความสูง:",
+                "tool.customization.colors": "สี:",
+                "tool.customization.display": "แสดงค่า:",
+                "tool.customization.fontsize": "ขนาดฟอนต์:",
+                "tool.preview.title": "ตัวอย่างบาร์โค้ด",
+                "tool.preview.placeholder": "บาร์โค้ดของคุณจะปรากฏที่นี่",
+                "tool.generate": "สร้างบาร์โค้ด",
+                "tool.download": "ดาวน์โหลดบาร์โค้ด",
+                "tool.copy": "คัดลอกไปยังคลิปบอร์ด",
+                "tool.clear": "ล้างทั้งหมด",
+                "tool.history.title": "บาร์โค้ดล่าสุด",
+                "tool.history.empty": "ยังไม่มีบาร์โค้ดที่สร้าง",
+                "footer.follow": "ติดตามเรา",
+                "footer.categories": "หมวดหมู่ยอดนิยม",
+                "footer.categories.pdf": "เครื่องมือ PDF",
+                "footer.categories.image": "เครื่องมือรูปภาพ",
+                "footer.categories.text": "เครื่องมือข้อความ",
+                "footer.categories.av": "เครื่องมือเสียง/วิดีโอ",
+                "footer.categories.web": "เครื่องมือ WebDeveloper",
+                "footer.categories.calc": "เครื่องมือเครื่องคิดเลข",
+                "footer.categories.util": "เครื่องมืออรรถประโยชน์",
+                "footer.categories.color": "เครื่องมือสี",
+                "footer.quicklinks": "ลิงก์ด่วน",
+                "footer.links.tools": "เครื่องมือทั้งหมด",
+                "footer.links.faq": "คำถามที่พบบ่อย",
+                "footer.links.contact": "ติดต่อ",
+                "footer.links.privacy": "นโยบายความเป็นส่วนตัว",
+                "footer.links.disclaimer": "ข้อจำกัดความรับผิดชอบ",
+                "footer.links.terms": "ข้อกำหนดการให้บริการ",
+                "footer.copyright": "© 2025 LollyPoPDF. สงวนลิขสิทธิ์"
+            },
+            tr: {
+                "nav.home": "Ana Sayfa",
+                "nav.about": "Hakkımızda",
+                "nav.tools": "Araçlar",
+                "nav.contact": "İletişim",
+                "hero.title": "Barkod Oluşturucu Aracı",
+                "hero.description": "Profesyonel barkodları anında oluşturun - herhangi bir amaç için barkodları oluşturun, özelleştirin ve indirin. Tüm işlemler dosya boyutu sınırlaması olmadan ve tam gizlilikle yerel olarak gerçekleşir.",
+                "howto.title": "Barkod Oluşturucu Nasıl Kullanılır",
+                "howto.step1.title": "Verilerinizi Girin",
+                "howto.step1.description": "Kodlamak istediğiniz metni, sayıları veya ürün kodlarını yazın. Araç, CODE128, EAN-13, UPC ve daha fazlası dahil tüm ana barkod formatlarını destekler.",
+                "howto.step2.title": "Görünümü Özelleştirin",
+                "howto.step2.description": "Barkod formatınızı seçin, renkleri, boyutu ve görüntüleme seçeneklerini ayarlayın. Özelleştirirken değişiklikleri gerçek zamanlı olarak önizleyin.",
+                "howto.step3.title": "Barkod Oluşturun",
+                "howto.step3.description": "Özelleştirilmiş barkodunuzu oluşturmak için \"Barkod Oluştur\"a tıklayın. Barkod, işlem gecikmesi olmadan anında görünür.",
+                "howto.step4.title": "İndirin veya Kopyalayın",
+                "howto.step4.description": "Barkodunuzu PNG, JPG veya SVG formatlarında indirin veya doğrudan panonuza kopyalayın. Tüm işlemler tarayıcınızda yerel olarak gerçekleşir.",
+                "tool.title": "Barkod Oluşturucu",
+                "tool.input.label": "Kodlamak için metin veya sayı girin:",
+                "tool.input.placeholder": "Metninizi veya sayılarınızı buraya girin",
+                "tool.input.hint": "Ürün kodları, metin, sayılar veya kodlamak istediğiniz herhangi bir veri girebilirsiniz.",
+                "tool.customization.title": "Barkodunuzu Özelleştirin",
+                "tool.customization.type": "Barkod Türü:",
+                "tool.customization.width": "Genişlik:",
+                "tool.customization.height": "Yükseklik:",
+                "tool.customization.colors": "Renkler:",
+                "tool.customization.display": "Değeri Görüntüle:",
+                "tool.customization.fontsize": "Yazı Tipi Boyutu:",
+                "tool.preview.title": "Barkod Önizleme",
+                "tool.preview.placeholder": "Barkodunuz burada görünecek",
+                "tool.generate": "Barkod Oluştur",
+                "tool.download": "Barkodu İndir",
+                "tool.copy": "Panoya Kopyala",
+                "tool.clear": "Tümünü Temizle",
+                "tool.history.title": "Son Barkodlar",
+                "tool.history.empty": "Henüz barkod oluşturulmadı",
+                "footer.follow": "BİZİ TAKİP EDİN",
+                "footer.categories": "Popüler Kategoriler",
+                "footer.categories.pdf": "PDF Araçları",
+                "footer.categories.image": "Görüntü Araçları",
+                "footer.categories.text": "Metin Araçları",
+                "footer.categories.av": "Ses/Video Araçları",
+                "footer.categories.web": "WebGeliştirici Araçları",
+                "footer.categories.calc": "Hesap Makinesi Araçları",
+                "footer.categories.util": "Yardımcı Araçlar",
+                "footer.categories.color": "Renk Araçları",
+                "footer.quicklinks": "Hızlı Bağlantılar",
+                "footer.links.tools": "Tüm Araçlar",
+                "footer.links.faq": "SSS",
+                "footer.links.contact": "İletişim",
+                "footer.links.privacy": "Gizlilik Politikası",
+                "footer.links.disclaimer": "Feragatname",
+                "footer.links.terms": "Hizmet Şartları",
+                "footer.copyright": "© 2025 LollyPoPDF. Tüm hakları saklıdır."
+            },
+            uk: {
+                "nav.home": "Головна",
+                "nav.about": "Про нас",
+                "nav.tools": "Інструменти",
+                "nav.contact": "Контакт",
+                "hero.title": "Інструмент Генератора Штрих-кодів",
+                "hero.description": "Створюйте професійні штрих-коди миттєво - генеруйте, налаштовуйте та завантажуйте штрих-коди для будь-яких цілей. Вся обробка відбувається локально без обмежень розміру файлу та з повною конфіденційністю.",
+                "howto.title": "Як Використовувати Генератор Штрих-кодів",
+                "howto.step1.title": "Введіть Ваші Дані",
+                "howto.step1.description": "Введіть текст, цифри або коди товарів, які ви хочете закодувати. Інструмент підтримує всі основні формати штрих-кодів, включаючи CODE128, EAN-13, UPC та інші.",
+                "howto.step2.title": "Налаштуйте Зовнішній Вигляд",
+                "howto.step2.description": "Виберіть формат штрих-коду, налаштуйте кольори, розмір та параметри відображення. Переглядайте зміни в реальному часі під час налаштування.",
+                "howto.step3.title": "Згенеруйте Штрих-код",
+                "howto.step3.description": "Натисніть \"Згенерувати Штрих-код\", щоб створити ваш налаштований штрих-код. Штрих-код з'являється миттєво без затримок обробки.",
+                "howto.step4.title": "Завантажте або Скопіюйте",
+                "howto.step4.description": "Завантажте ваш штрих-код у форматах PNG, JPG або SVG, або скопіюйте його прямо в буфер обміну. Вся обробка відбувається локально у вашому браузері.",
+                "tool.title": "Генератор Штрих-кодів",
+                "tool.input.label": "Введіть текст або цифри для кодування:",
+                "tool.input.placeholder": "Введіть ваш текст або цифри тут",
+                "tool.input.hint": "Ви можете вводити коди товарів, текст, цифри або будь-які дані, які ви хочете закодувати.",
+                "tool.customization.title": "Налаштуйте Ваш Штрих-код",
+                "tool.customization.type": "Тип Штрих-коду:",
+                "tool.customization.width": "Ширина:",
+                "tool.customization.height": "Висота:",
+                "tool.customization.colors": "Кольори:",
+                "tool.customization.display": "Відображати Значення:",
+                "tool.customization.fontsize": "Розмір Шрифту:",
+                "tool.preview.title": "Попередній Перегляд Штрих-коду",
+                "tool.preview.placeholder": "Ваш штрих-код з'явиться тут",
+                "tool.generate": "Згенерувати Штрих-код",
+                "tool.download": "Завантажити Штрих-код",
+                "tool.copy": "Копіювати в Буфер",
+                "tool.clear": "Очистити Все",
+                "tool.history.title": "Останні Штрих-коди",
+                "tool.history.empty": "Штрих-коди ще не згенеровані",
+                "footer.follow": "СЛІДКУЙТЕ ЗА НАМИ",
+                "footer.categories": "Популярні Категорії",
+                "footer.categories.pdf": "PDF Інструменти",
+                "footer.categories.image": "Інструменти для Зображень",
+                "footer.categories.text": "Текстові Інструменти",
+                "footer.categories.av": "Аудіо/Відео Інструменти",
+                "footer.categories.web": "Інструменти WebDeveloper",
+                "footer.categories.calc": "Інструменти Калькулятора",
+                "footer.categories.util": "Утиліти",
+                "footer.categories.color": "Інструменти Кольору",
+                "footer.quicklinks": "Швидкі Посилання",
+                "footer.links.tools": "Всі Інструменти",
+                "footer.links.faq": "ЧаПи",
+                "footer.links.contact": "Контакт",
+                "footer.links.privacy": "Політика Конфіденційності",
+                "footer.links.disclaimer": "Відмова від Відповідальності",
+                "footer.links.terms": "Умови Використання",
+                "footer.copyright": "© 2025 LollyPoPDF. Всі права захищені."
+            },
+            vi: {
+                "nav.home": "Trang chủ",
+                "nav.about": "Về chúng tôi",
+                "nav.tools": "Công cụ",
+                "nav.contact": "Liên hệ",
+                "hero.title": "Công cụ Tạo Mã vạch",
+                "hero.description": "Tạo mã vạch chuyên nghiệp ngay lập tức - tạo, tùy chỉnh và tải xuống mã vạch cho mọi mục đích. Tất cả xử lý diễn ra cục bộ không giới hạn kích thước tệp và bảo mật hoàn toàn.",
+                "howto.title": "Cách sử dụng Trình tạo Mã vạch",
+                "howto.step1.title": "Nhập Dữ liệu của Bạn",
+                "howto.step1.description": "Nhập văn bản, số hoặc mã sản phẩm bạn muốn mã hóa. Công cụ hỗ trợ tất cả các định dạng mã vạch chính bao gồm CODE128, EAN-13, UPC và nhiều hơn nữa.",
+                "howto.step2.title": "Tùy chỉnh Giao diện",
+                "howto.step2.description": "Chọn định dạng mã vạch của bạn, điều chỉnh màu sắc, kích thước và tùy chọn hiển thị. Xem trước các thay đổi trong thời gian thực khi bạn tùy chỉnh.",
+                "howto.step3.title": "Tạo Mã vạch",
+                "howto.step3.description": "Nhấp \"Tạo Mã vạch\" để tạo mã vạch tùy chỉnh của bạn. Mã vạch xuất hiện ngay lập tức không có độ trễ xử lý.",
+                "howto.step4.title": "Tải xuống hoặc Sao chép",
+                "howto.step4.description": "Tải xuống mã vạch của bạn ở định dạng PNG, JPG hoặc SVG, hoặc sao chép trực tiếp vào clipboard. Tất cả xử lý diễn ra cục bộ trong trình duyệt của bạn.",
+                "tool.title": "Trình tạo Mã vạch",
+                "tool.input.label": "Nhập văn bản hoặc số để mã hóa:",
+                "tool.input.placeholder": "Nhập văn bản hoặc số của bạn tại đây",
+                "tool.input.hint": "Bạn có thể nhập mã sản phẩm, văn bản, số hoặc bất kỳ dữ liệu nào bạn muốn mã hóa.",
+                "tool.customization.title": "Tùy chỉnh Mã vạch của Bạn",
+                "tool.customization.type": "Loại Mã vạch:",
+                "tool.customization.width": "Chiều rộng:",
+                "tool.customization.height": "Chiều cao:",
+                "tool.customization.colors": "Màu sắc:",
+                "tool.customization.display": "Hiển thị Giá trị:",
+                "tool.customization.fontsize": "Kích thước Phông chữ:",
+                "tool.preview.title": "Xem trước Mã vạch",
+                "tool.preview.placeholder": "Mã vạch của bạn sẽ xuất hiện ở đây",
+                "tool.generate": "Tạo Mã vạch",
+                "tool.download": "Tải xuống Mã vạch",
+                "tool.copy": "Sao chép vào Clipboard",
+                "tool.clear": "Xóa Tất cả",
+                "tool.history.title": "Mã vạch Gần đây",
+                "tool.history.empty": "Chưa có mã vạch nào được tạo",
+                "footer.follow": "THEO DÕI CHÚNG TÔI",
+                "footer.categories": "Danh mục Phổ biến",
+                "footer.categories.pdf": "Công cụ PDF",
+                "footer.categories.image": "Công cụ Hình ảnh",
+                "footer.categories.text": "Công cụ Văn bản",
+                "footer.categories.av": "Công cụ Âm thanh/Video",
+                "footer.categories.web": "Công cụ WebDeveloper",
+                "footer.categories.calc": "Công cụ Máy tính",
+                "footer.categories.util": "Công cụ Tiện ích",
+                "footer.categories.color": "Công cụ Màu sắc",
+                "footer.quicklinks": "Liên kết Nhanh",
+                "footer.links.tools": "Tất cả Công cụ",
+                "footer.links.faq": "Câu hỏi Thường gặp",
+                "footer.links.contact": "Liên hệ",
+                "footer.links.privacy": "Chính sách Riêng tư",
+                "footer.links.disclaimer": "Từ chối Trách nhiệm",
+                "footer.links.terms": "Điều khoản Dịch vụ",
+                "footer.copyright": "© 2025 LollyPoPDF. Đã đăng ký bản quyền."
+            },
+            is: {
+                "nav.home": "Heim",
+                "nav.about": "Um Okkur",
+                "nav.tools": "Verkfæri",
+                "nav.contact": "Hafa Samband",
+                "hero.title": "Strikamerkjabúnaður",
+                "hero.description": "Búðu til fagleg strikamerkji augnablikks - búðu til, sérsníddu og halaðu niður strikamerkjum fyrir hvaða tilgang sem er. Öll vinnsla fer fram staðværlega án skráastærðartakmarkana og með fullri næði.",
+                "howto.title": "Hvernig á að nota Striamerkjabúann",
+                "howto.step1.title": "Sláðu inn gögnin þín",
+                "howto.step1.description": "Skrifaðu textann, tölurnar eða vörunúmerin sem þú vilt kóða. Tóllinn styður allar helstu strikamerkjaform, þar á meðal CODE128, EAN-13, UPC og fleira.",
+                "howto.step2.title": "Sérsníddu útlitið",
+                "howto.step2.description": "Veldu strikamerkjaformið þitt, stilltu litum, stærð og sýnileika valkosti. Forskoðaðu breytingar í rauntíma þegar þú sérsníður.",
+                "howto.step3.title": "Búðu til strikamerkji",
+                "howto.step3.description": "Smelltu á \"Búa til strikamerkji\" til að búa til sérsniðna strikamerkjann þinn. Striamerkið birtist augnablikslega án vinnslutafa.",
+                "howto.step4.title": "Hala niður eða afrita",
+                "howto.step4.description": "Halaðu niður strikamerkjunum þínum í PNG, JPG eða SVG formi, eða afritaðu þau beint á klippiborðið þitt. Öll vinnsla fer fram staðværlega í vafranum þínum.",
+                "tool.title": "Strikamerkjabúi",
+                "tool.input.label": "Sláðu inn texta eða tölur til að kóða:",
+                "tool.input.placeholder": "Sláðu inn textann eða tölurnar þínar hér",
+                "tool.input.hint": "Þú getur slegið inn vörunúmer, texta, tölur eða hvaða gögn sem þú vilt kóða.",
+                "tool.customization.title": "Sérsníddu strikamerkjann þinn",
+                "tool.customization.type": "Tegund strikamerkis:",
+                "tool.customization.width": "Breidd:",
+                "tool.customization.height": "Hæð:",
+                "tool.customization.colors": "Litur:",
+                "tool.customization.display": "Sýna gildi:",
+                "tool.customization.fontsize": "Leturstærð:",
+                "tool.preview.title": "Forskoðun strikamerkis",
+                "tool.preview.placeholder": "Strikamerkjið þitt birtist hér",
+                "tool.generate": "Búa til strikamerkji",
+                "tool.download": "Hala niður strikamerkji",
+                "tool.copy": "Afrita á klippiborð",
+                "tool.clear": "Hreinsa allt",
+                "tool.history.title": "Nýleg strikamerkji",
+                "tool.history.empty": "Engin strikamerkji búin til ennþá",
+                "footer.follow": "FYLGDU OKKUR",
+                "footer.categories": "Vinsælar flokkar",
+                "footer.categories.pdf": "PDF verkfæri",
+                "footer.categories.image": "Myndverkfæri",
+                "footer.categories.text": "Textaverkfæri",
+                "footer.categories.av": "Hljóð-/myndbandaverkfæri",
+                "footer.categories.web": "Vefþróunarverkfæri",
+                "footer.categories.calc": "Reiknivélarverkfæri",
+                "footer.categories.util": "Gagnleg verkfæri",
+                "footer.categories.color": "Litverkfæri",
+                "footer.quicklinks": "Flýtileiðir",
+                "footer.links.tools": "Öll verkfæri",
+                "footer.links.faq": "Algengar spurningar",
+                "footer.links.contact": "Hafa samband",
+                "footer.links.privacy": "Meðferðarstefna",
+                "footer.links.disclaimer": "Fyrirvari",
+                "footer.links.terms": "Þjónustuskilmálar",
+                "footer.copyright": "© 2025 LollyPoPDF. Allur réttur áskilinn."
+            },
+            no: {
+                "nav.home": "Hjem",
+                "nav.about": "Om Oss",
+                "nav.tools": "Verktøy",
+                "nav.contact": "Kontakt",
+                "hero.title": "Strekkodegenerator Verktøy",
+                "hero.description": "Lag profesjonelle strekkoder umiddelbart - generer, tilpass og last ned strekkoder for ethvert formål. All behandling skjer lokalt uten filstørrelsesbegrensninger og med fullstendig personvern.",
+                "howto.title": "Hvordan Bruke Strekkodegeneratoren",
+                "howto.step1.title": "Skriv inn dine data",
+                "howto.step1.description": "Skriv teksten, tallene eller produktkodene du ønsker å kode. Verktøyet støtter alle store strekkodeformater inkludert CODE128, EAN-13, UPC og mer.",
+                "howto.step2.title": "Tilpass utseendet",
+                "howto.step2.description": "Velg strekkodeformatet ditt, juster farger, størrelse og visningsalternativer. Forhåndsvis endringer i sanntid mens du tilpasser.",
+                "howto.step3.title": "Generer strekkode",
+                "howto.step3.description": "Klikk \"Generer strekkode\" for å opprette din tilpassede strekkode. Strekkoden vises umiddelbart uten behandlingsforsinkelser.",
+                "howto.step4.title": "Last ned eller kopier",
+                "howto.step4.description": "Last ned strekkoden din i PNG, JPG eller SVG-format, eller kopier den direkte til utklippstavlen. All behandling skjer lokalt i nettleseren din.",
+                "tool.title": "Strekkodegenerator",
+                "tool.input.label": "Skriv inn tekst eller tall for å kode:",
+                "tool.input.placeholder": "Skriv inn teksten eller tallene dine her",
+                "tool.input.hint": "Du kan skrive inn produktkoder, tekst, tall eller alle data du ønsker å kode.",
+                "tool.customization.title": "Tilpass strekkoden din",
+                "tool.customization.type": "Strekkodetype:",
+                "tool.customization.width": "Bredde:",
+                "tool.customization.height": "Høyde:",
+                "tool.customization.colors": "Farger:",
+                "tool.customization.display": "Vis verdi:",
+                "tool.customization.fontsize": "Skriftstørrelse:",
+                "tool.preview.title": "Forhåndsvisning av strekkode",
+                "tool.preview.placeholder": "Strekkoden din vises her",
+                "tool.generate": "Generer strekkode",
+                "tool.download": "Last ned strekkode",
+                "tool.copy": "Kopier til utklippstavle",
+                "tool.clear": "Tøm alt",
+                "tool.history.title": "Nylige strekkoder",
+                "tool.history.empty": "Ingen strekkoder generert ennå",
+                "footer.follow": "FØLG OSS",
+                "footer.categories": "Populære kategorier",
+                "footer.categories.pdf": "PDF-verktøy",
+                "footer.categories.image": "Bildeverktøy",
+                "footer.categories.text": "Tekstverktøy",
+                "footer.categories.av": "Lyd-/videoverktøy",
+                "footer.categories.web": "Nettutviklerverktøy",
+                "footer.categories.calc": "Kalkulatorverktøy",
+                "footer.categories.util": "Nyttige verktøy",
+                "footer.categories.color": "Fargeverktøy",
+                "footer.quicklinks": "Hurtiglenker",
+                "footer.links.tools": "Alle verktøy",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Kontakt",
+                "footer.links.privacy": "Personvernregler",
+                "footer.links.disclaimer": "Ansvarsfraskrivelse",
+                "footer.links.terms": "Tjenestevilkår",
+                "footer.copyright": "© 2025 LollyPoPDF. Alle rettigheter forbeholdt."
+            },
+            sv: {
+                "nav.home": "Hem",
+                "nav.about": "Om Oss",
+                "nav.tools": "Verktyg",
+                "nav.contact": "Kontakt",
+                "hero.title": "Streckkodsgenerator Verktyg",
+                "hero.description": "Skapa professionella streckkoder direkt - generera, anpassa och ladda ner streckkoder för alla ändamål. All bearbetning sker lokalt utan filstorleksbegränsningar och med fullständigt sekretess.",
+                "howto.title": "Hur man använder Streckkodsgeneratorn",
+                "howto.step1.title": "Ange dina data",
+                "howto.step1.description": "Skriv texten, siffrorna eller produktkoderna du vill koda. Verktyget stöder alla större streckkodsformat inklusive CODE128, EAN-13, UPC och mer.",
+                "howto.step2.title": "Anpassa utseendet",
+                "howto.step2.description": "Välj ditt streckkodsformat, justera färger, storlek och visningsalternativ. Förhandsgranska ändringar i realtid när du anpassar.",
+                "howto.step3.title": "Generera streckkod",
+                "howto.step3.description": "Klicka på \"Generera streckkod\" för att skapa din anpassade streckkod. Streckkoden visas omedelbart utan fördröjningar i bearbetningen.",
+                "howto.step4.title": "Ladda ner eller kopiera",
+                "howto.step4.description": "Ladda ner din streckkod i PNG, JPG eller SVG-format, eller kopiera den direkt till ditt urklipp. All bearbetning sker lokalt i din webbläsare.",
+                "tool.title": "Streckkodsgenerator",
+                "tool.input.label": "Ange text eller siffror för att koda:",
+                "tool.input.placeholder": "Ange din text eller siffror här",
+                "tool.input.hint": "Du kan ange produktkoder, text, siffror eller alla data du vill koda.",
+                "tool.customization.title": "Anpassa din streckkod",
+                "tool.customization.type": "Streckkodstyp:",
+                "tool.customization.width": "Bredd:",
+                "tool.customization.height": "Höjd:",
+                "tool.customization.colors": "Färger:",
+                "tool.customization.display": "Visa värde:",
+                "tool.customization.fontsize": "Teckenstorlek:",
+                "tool.preview.title": "Förhandsgranskning av streckkod",
+                "tool.preview.placeholder": "Din streckkod visas här",
+                "tool.generate": "Generera streckkod",
+                "tool.download": "Ladda ner streckkod",
+                "tool.copy": "Kopiera till urklipp",
+                "tool.clear": "Rensa allt",
+                "tool.history.title": "Senaste streckkoder",
+                "tool.history.empty": "Inga streckkoder genererade ännu",
+                "footer.follow": "FÖLJ OSS",
+                "footer.categories": "Populära kategorier",
+                "footer.categories.pdf": "PDF-verktyg",
+                "footer.categories.image": "Bildverktyg",
+                "footer.categories.text": "Textverktyg",
+                "footer.categories.av": "Ljud-/videoverktyg",
+                "footer.categories.web": "Webbutvecklarverktyg",
+                "footer.categories.calc": "Kalkylatorverktyg",
+                "footer.categories.util": "Användbara verktyg",
+                "footer.categories.color": "Färgverktyg",
+                "footer.quicklinks": "Snabblänkar",
+                "footer.links.tools": "Alla verktyg",
+                "footer.links.faq": "Vanliga frågor",
+                "footer.links.contact": "Kontakt",
+                "footer.links.privacy": "Integritetspolicy",
+                "footer.links.disclaimer": "Ansvarsfriskrivning",
+                "footer.links.terms": "Användarvillkor",
+                "footer.copyright": "© 2025 LollyPoPDF. Alla rättigheter förbehållna."
+            },
+            fi: {
+                "nav.home": "Koti",
+                "nav.about": "Tietoa Meistä",
+                "nav.tools": "Työkalut",
+                "nav.contact": "Yhteystiedot",
+                "hero.title": "Viivakoodigeneraattori Työkalu",
+                "hero.description": "Luo ammattimaisia viivakoodeja heti - generoi, mukauta ja lataa viivakoodeja mihin tahansa tarkoitukseen. Kaikki käsittely tapahtuu paikallisesti ilman tiedostokokorajoituksia ja täydellisen yksityisyyden kanssa.",
+                "howto.title": "Kuinka Käyttää Viivakoodigeneraattoria",
+                "howto.step1.title": "Syötä tietosi",
+                "howto.step1.description": "Kirjoita teksti, numerot tai tuotekoodit, jotka haluat koodata. Työkalu tukee kaikkia suuria viivakoodimuotoja mukaan lukien CODE128, EAN-13, UPC ja enemmän.",
+                "howto.step2.title": "Mukauta ulkonäköä",
+                "howto.step2.description": "Valitse viivakoodimuotosi, säädä värejä, kokoa ja näyttövaihtoehtoja. Esikatsele muutoksia reaaliaikaisesti mukauttaessasi.",
+                "howto.step3.title": "Generoi viivakoodi",
+                "howto.step3.description": "Napsauta \"Generoi viivakoodi\" luodaksesi mukautetun viivakoodisi. Viivakoodi ilmestyy välittömästi ilman käsittelyviiveitä.",
+                "howto.step4.title": "Lataa tai kopioi",
+                "howto.step4.description": "Lataa viivakoodisi PNG, JPG tai SVG-muodossa, tai kopioi se suoraan leikepöydälle. Kaikki käsittely tapahtuu paikallisesti selaimeesi.",
+                "tool.title": "Viivakoodigeneraattori",
+                "tool.input.label": "Syötä tekstiä tai numeroita koodattavaksi:",
+                "tool.input.placeholder": "Syötä teksti tai numerosi tähän",
+                "tool.input.hint": "Voit syöttää tuotekoodeja, tekstiä, numeroita tai mitä tahansa tietoja, joita haluat koodata.",
+                "tool.customization.title": "Mukauta viivakoodiasi",
+                "tool.customization.type": "Viivakoodityyppi:",
+                "tool.customization.width": "Leveys:",
+                "tool.customization.height": "Korkeus:",
+                "tool.customization.colors": "Värit:",
+                "tool.customization.display": "Näytä arvo:",
+                "tool.customization.fontsize": "Fonttikoko:",
+                "tool.preview.title": "Viivakoodin esikatselu",
+                "tool.preview.placeholder": "Viivakoodisi näkyy tässä",
+                "tool.generate": "Generoi viivakoodi",
+                "tool.download": "Lataa viivakoodi",
+                "tool.copy": "Kopioi leikepöydälle",
+                "tool.clear": "Tyhjennä kaikki",
+                "tool.history.title": "Viimeisimmät viivakoodit",
+                "tool.history.empty": "Viivakoodeja ei ole vielä luotu",
+                "footer.follow": "SEURA MEITÄ",
+                "footer.categories": "Suositut kategoriat",
+                "footer.categories.pdf": "PDF-työkalut",
+                "footer.categories.image": "Kuvatyökalut",
+                "footer.categories.text": "Tekstityökalut",
+                "footer.categories.av": "Ääni-/videotyökalut",
+                "footer.categories.web": "Web-kehitystyökalut",
+                "footer.categories.calc": "Laskurityökalut",
+                "footer.categories.util": "Hyödylliset työkalut",
+                "footer.categories.color": "Värityökalut",
+                "footer.quicklinks": "Pikalinkit",
+                "footer.links.tools": "Kaikki työkalut",
+                "footer.links.faq": "UKK",
+                "footer.links.contact": "Yhteystiedot",
+                "footer.links.privacy": "Tietosuojakäytäntö",
+                "footer.links.disclaimer": "Vastuuvapauslauseke",
+                "footer.links.terms": "Käyttöehdot",
+                "footer.copyright": "© 2025 LollyPoPDF. Kaikki oikeudet pidätetään."
+            },
+            cs: {
+                "nav.home": "Domů",
+                "nav.about": "O Nás",
+                "nav.tools": "Nástroje",
+                "nav.contact": "Kontakt",
+                "hero.title": "Generátor Čárových Kódů",
+                "hero.description": "Vytvářejte profesionální čárové kódy okamžitě - generujte, přizpůsobujte a stahujte čárové kódy pro jakýkoli účel. Veškeré zpracování probíhá lokálně bez omezení velikosti souborů a s úplným soukromím.",
+                "howto.title": "Jak Používat Generátor Čárových Kódů",
+                "howto.step1.title": "Zadejte svá data",
+                "howto.step1.description": "Napište text, čísla nebo produktové kódy, které chcete zakódovat. Nástroj podporuje všechny hlavní formáty čárových kódů včetně CODE128, EAN-13, UPC a další.",
+                "howto.step2.title": "Přizpůsobte vzhled",
+                "howto.step2.description": "Vyberte formát čárového kódu, upravte barvy, velikost a možnosti zobrazení. Náhled změn v reálném čase při přizpůsobování.",
+                "howto.step3.title": "Generujte čárový kód",
+                "howto.step3.description": "Klikněte na \"Generovat čárový kód\" pro vytvoření vašeho přizpůsobeného čárového kódu. Čárový kód se zobrazí okamžitě bez zpoždění zpracování.",
+                "howto.step4.title": "Stáhněte nebo zkopírujte",
+                "howto.step4.description": "Stáhněte si čárový kód ve formátu PNG, JPG nebo SVG, nebo jej zkopírujte přímo do schránky. Veškeré zpracování probíhá lokálně ve vašem prohlížeči.",
+                "tool.title": "Generátor Čárových Kódů",
+                "tool.input.label": "Zadejte text nebo čísla pro zakódování:",
+                "tool.input.placeholder": "Zadejte svůj text nebo čísla zde",
+                "tool.input.hint": "Můžete zadat produktové kódy, text, čísla nebo jakákoli data, která chcete zakódovat.",
+                "tool.customization.title": "Přizpůsobte svůj čárový kód",
+                "tool.customization.type": "Typ čárového kódu:",
+                "tool.customization.width": "Šířka:",
+                "tool.customization.height": "Výška:",
+                "tool.customization.colors": "Barvy:",
+                "tool.customization.display": "Zobrazit hodnotu:",
+                "tool.customization.fontsize": "Velikost písma:",
+                "tool.preview.title": "Náhled čárového kódu",
+                "tool.preview.placeholder": "Váš čárový kód se zobrazí zde",
+                "tool.generate": "Generovat čárový kód",
+                "tool.download": "Stáhnout čárový kód",
+                "tool.copy": "Kopírovat do schránky",
+                "tool.clear": "Vymazat vše",
+                "tool.history.title": "Nedávné čárové kódy",
+                "tool.history.empty": "Zatím nebyly vygenerovány žádné čárové kódy",
+                "footer.follow": "SLEDUJTE NÁS",
+                "footer.categories": "Populární kategorie",
+                "footer.categories.pdf": "PDF nástroje",
+                "footer.categories.image": "Obrázkové nástroje",
+                "footer.categories.text": "Textové nástroje",
+                "footer.categories.av": "Audio/video nástroje",
+                "footer.categories.web": "Webové nástroje",
+                "footer.categories.calc": "Kalkulační nástroje",
+                "footer.categories.util": "Užitečné nástroje",
+                "footer.categories.color": "Barevné nástroje",
+                "footer.quicklinks": "Rychlé odkazy",
+                "footer.links.tools": "Všechny nástroje",
+                "footer.links.faq": "Často kladené otázky",
+                "footer.links.contact": "Kontakt",
+                "footer.links.privacy": "Zásady ochrany osobních údajů",
+                "footer.links.disclaimer": "Odmítnutí odpovědnosti",
+                "footer.links.terms": "Podmínky služby",
+                "footer.copyright": "© 2025 LollyPoPDF. Všechna práva vyhrazena."
+            }
+             
+
+        };
+
+        // Function to change language
+        function changeLanguage(langCode) {
+            const langData = translations[langCode];
+            if (!langData) return;
+            
+            // Update all elements with data-i18n attribute
+            document.querySelectorAll('[data-i18n]').forEach(element => {
+                const key = element.getAttribute('data-i18n');
+                if (langData[key]) {
+                    element.textContent = langData[key];
+                }
+            });
+            
+            // Update placeholder attributes
+            document.querySelectorAll('[data-i18n-placeholder]').forEach(element => {
+                const key = element.getAttribute('data-i18n-placeholder');
+                if (langData[key]) {
+                    element.setAttribute('placeholder', langData[key]);
+                }
+            });
+            
+            // Update current language display
+            currentLanguageElement.textContent = languages.find(lang => lang.code === langCode)?.name || 'English';
+            
+            // Save language preference
+            localStorage.setItem('language', langCode);
+        }
+
+        // Initialize language
+        const savedLanguage = localStorage.getItem('language') || 'en';
+        changeLanguage(savedLanguage);
+        
+        // Language selection handler
+        languageDropdown.addEventListener('click', (e) => {
+            if (e.target.classList.contains('language-option')) {
+                const langCode = e.target.getAttribute('data-lang');
+                changeLanguage(langCode);
+            }
+        });
+    </script>
+</body>
+</html>

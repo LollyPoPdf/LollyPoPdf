@@ -1,0 +1,3677 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gradient Generator | LollyPoPdf</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/color-convert@2.0.1/index.min.js"></script>
+    <style>
+        :root {
+            --primary-color: #9370db;
+            --primary-dark: #8a2be2;
+            --secondary-color: #f0ebff;
+            --text-color: #333333;
+            --text-light: #6b7280;
+            --bg-color: #ffffff;
+            --bg-secondary: #f9f9f9;
+            --border-radius: 12px;
+            --transition: all 0.3s ease;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --header-height: 80px;
+            --white: #ffffff;
+            --header-text: #6b7280;
+            --accent-color: #9370db;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --error-color: #ef4444;
+        }
+
+        .dark-mode {
+            --primary-color: #a391f2;
+            --primary-dark: #8a2be2;
+            --secondary-color: #2d2d2d;
+            --text-color: #f0f0f0;
+            --text-light: #a0a0a0;
+            --bg-color: #1a1a1a;
+            --bg-secondary: #2d2d2d;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+            --white: #1a1a1a;
+            --header-text: #a0a0a0;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            transition: var(--transition);
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        ul {
+            list-style: none;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header Styles */
+        header {
+            background-color: var(--white);
+            color: var(--header-text);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+        }
+
+        .logo-icon {
+            position: relative;
+            width: 40px;
+            height: 40px;
+        }
+
+        .logo-circle {
+            width: 40px;
+            height: 40px;
+            border-radius: 40%;
+            background: linear-gradient(to bottom right, #9370db, #8a2be2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .logo-stem {
+            position: absolute;
+            bottom: -17px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 6px;
+            height: 17px;
+            background-color: #8a2be2;
+            border-radius: 0 0 3px 3px;
+        }
+
+        .logo-text {
+            font-size: 24px;
+            font-weight: bold;
+            color: #9370db;
+        }
+
+        nav ul {
+            display: flex;
+            gap: 30px;
+            list-style: none;
+        }
+
+        nav a {
+            font-weight: 500;
+            position: relative;
+            color: var(--header-text);
+            padding: 8px 0;
+            border-radius: 0;
+            transition: var(--transition);
+            text-decoration: none;
+        }
+
+        nav a:hover {
+            color: var(--accent-color);
+        }
+
+        nav a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: var(--accent-color);
+            transition: width 0.3s ease;
+        }
+
+        nav a:hover::after {
+            width: 100%;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .email {
+            font-size: 14px;
+            color: var(--header-text);
+        }
+
+        .theme-toggle {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 20px;
+            color: var(--header-text);
+            padding: 8px;
+            border-radius: 50%;
+            transition: var(--transition);
+        }
+
+        .theme-toggle:hover {
+            background-color: #f0ebff;
+            color: var(--accent-color);
+        }
+
+        .dark-mode .theme-toggle:hover {
+            background-color: #2d3748;
+            color: var(--accent-color);
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--header-text);
+        }
+
+        /* Mobile Menu */
+        .mobile-menu {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            width: 100%;
+            background-color: var(--white);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            z-index: 999;
+        }
+
+        .dark-mode .mobile-menu {
+            background-color: var(--bg-secondary);
+        }
+
+        .mobile-menu.active {
+            display: block;
+        }
+
+        .mobile-menu ul {
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .mobile-menu a {
+            display: block;
+            padding: 10px 0;
+            font-weight: 500;
+            color: var(--header-text);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .dark-mode .mobile-menu a {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .mobile-menu a:hover {
+            color: var(--accent-color);
+        }
+
+        /* Hero Section */
+        .hero {
+            background-color: var(--secondary-color);
+            padding: 60px 0;
+            text-align: center;
+        }
+
+        .dark-mode .hero {
+            background: linear-gradient(135deg, #2a1a4a, #3d2a6d);
+        }
+
+        .hero h1 {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            color: #000;
+        }
+
+        .dark-mode .hero h1 {
+            color: var(--text-color);
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            color: var(--text-color);
+            max-width: 700px;
+            margin: 0 auto 30px;
+        }
+
+        /* How to Use Section */
+        .how-to-section {
+            padding: 80px 0;
+            background-color: var(--bg-color);
+        }
+
+        .dark-mode .how-to-section {
+            background-color: var(--bg-secondary);
+        }
+
+        .section-title {
+            font-size: 2rem;
+            text-align: center;
+            margin-bottom: 40px;
+            color: #000000;
+        }
+
+        .dark-mode .section-title {
+            color: var(--text-color);
+        }
+
+        .steps-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 40px;
+        }
+
+        .step-box {
+            background-color: var(--bg-secondary);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            padding: 30px;
+            min-height: 200px;
+            position: relative;
+        }
+
+        .step-number {
+            width: 40px;
+            height: 40px;
+            background-color: var(--primary-color);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 16px;
+            margin-bottom: 15px;
+        }
+
+        .step-title {
+            font-size: 18px;
+            color: #000000;
+            margin-bottom: 10px;
+        }
+
+        .dark-mode .step-title {
+            color: var(--text-color);
+        }
+
+        .step-description {
+            font-size: 14px;
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        /* Tool Section */
+        .tool-section {
+            padding: 80px 0;
+            background-color: var(--secondary-color);
+        }
+
+        .dark-mode .tool-section {
+            background: linear-gradient(135deg, #2a1a4a, #3d2a6d);
+        }
+
+        .tool-title {
+            font-size: 2.5rem;
+            text-align: center;
+            margin-bottom: 40px;
+            color: #a391f2;
+        }
+
+        .dark-mode .tool-title {
+            color: #a391f2;
+        }
+
+        .tool-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background-color: var(--bg-color);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            padding: 40px;
+        }
+
+        /* Gradient Preview */
+        .gradient-preview {
+            height: 200px;
+            border-radius: var(--border-radius);
+            margin-bottom: 30px;
+            box-shadow: var(--shadow);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .gradient-preview canvas {
+            width: 100%;
+            height: 100%;
+            border-radius: var(--border-radius);
+        }
+
+        /* Controls Section */
+        .controls-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        @media (max-width: 768px) {
+            .controls-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .control-panel {
+            background-color: var(--bg-secondary);
+            border-radius: var(--border-radius);
+            padding: 20px;
+            box-shadow: var(--shadow);
+        }
+
+        .panel-title {
+            font-size: 18px;
+            margin-bottom: 15px;
+            color: var(--primary-color);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Gradient Type Selector */
+        .gradient-type-selector {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .gradient-type-btn {
+            flex: 1;
+            padding: 10px;
+            background-color: var(--bg-color);
+            border: 1px solid var(--primary-color);
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            text-align: center;
+            transition: var(--transition);
+        }
+
+        .gradient-type-btn.active {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        /* Color Stops */
+        .color-stops-container {
+            margin-bottom: 20px;
+        }
+
+        .color-stop {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+            padding: 10px;
+            background-color: var(--bg-color);
+            border-radius: var(--border-radius);
+        }
+
+        .color-preview {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            border: 2px solid var(--text-light);
+            cursor: pointer;
+        }
+
+        .color-input {
+            flex: 1;
+            padding: 8px 12px;
+            border-radius: var(--border-radius);
+            border: 1px solid var(--primary-color);
+            background-color: var(--bg-color);
+            color: var(--text-color);
+        }
+
+        .color-position {
+            width: 60px;
+            padding: 8px;
+            border-radius: var(--border-radius);
+            border: 1px solid var(--primary-color);
+            background-color: var(--bg-color);
+            color: var(--text-color);
+        }
+
+        .color-stop-actions {
+            display: flex;
+            gap: 5px;
+        }
+
+        .color-stop-btn {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            border: none;
+            background-color: var(--primary-color);
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .add-color-btn {
+            width: 100%;
+            padding: 10px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        /* Gradient Controls */
+        .gradient-controls {
+            margin-bottom: 20px;
+        }
+
+        .control-group {
+            margin-bottom: 15px;
+        }
+
+        .control-label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+
+        .control-input {
+            width: 100%;
+            padding: 8px 12px;
+            border-radius: var(--border-radius);
+            border: 1px solid var(--primary-color);
+            background-color: var(--bg-color);
+            color: var(--text-color);
+        }
+
+        .range-input {
+            width: 100%;
+        }
+
+        .range-value {
+            text-align: center;
+            margin-top: 5px;
+            font-size: 14px;
+            color: var(--text-light);
+        }
+
+        /* CSS Output */
+        .css-output-container {
+            margin-bottom: 30px;
+        }
+
+        .css-output {
+            width: 100%;
+            height: 120px;
+            padding: 15px;
+            border-radius: var(--border-radius);
+            border: 1px solid var(--primary-color);
+            background-color: var(--bg-secondary);
+            color: var(--text-color);
+            font-family: monospace;
+            resize: vertical;
+        }
+
+        .output-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .output-btn {
+            flex: 1;
+            padding: 10px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+        }
+
+        /* Presets */
+        .presets-container {
+            margin-bottom: 30px;
+        }
+
+        .presets-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .preset-item {
+            height: 60px;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+        }
+
+        .preset-item:hover::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.1);
+        }
+
+        /* Export Options */
+        .export-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .export-btn {
+            padding: 12px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .action-btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: var(--transition);
+            flex: 1;
+            min-width: 150px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .generate-btn {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .generate-btn:hover {
+            background-color: var(--primary-dark);
+        }
+
+        .clear-btn {
+            background-color: white;
+            color: var(--primary-color);
+            border: 2px solid var(--primary-color);
+        }
+
+        .clear-btn:hover {
+            background-color: var(--secondary-color);
+        }
+
+        /* Footer */
+        footer {
+            background-color: #000000;
+            color: white;
+            padding: 60px 0 80px;
+            position: relative;
+        }
+
+        .footer-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 60px;
+        }
+
+        .footer-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            text-decoration: none;
+        }
+
+        .footer-logo .logo-icon {
+            width: 40px;
+            height: 40px;
+        }
+
+        .footer-logo .logo-text {
+            color: #9370db;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .footer-section h3 {
+            color: white;
+            font-weight: 600;
+            font-size: 20px;
+            margin-bottom: 20px;
+        }
+
+        .footer-section h4 {
+            color: #9370db;
+            font-size: 18px;
+            margin-bottom: 15px;
+        }
+
+        .footer-links li {
+            margin-bottom: 10px;
+        }
+
+        .footer-links a {
+            color: white;
+        }
+
+        .footer-links a:hover {
+            color: #9370db;
+        }
+
+        .social-icons {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .social-icon {
+            width: 40px;
+            height: 40px;
+            background-color: #9370db;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+        }
+
+        .social-icon:hover {
+            background-color: #8a2be2;
+            transform: translateY(-3px);
+        }
+
+        .copyright {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            color: #f9f7ff;
+            font-size: 12px;
+        }
+
+        .footer-line {
+            position: absolute;
+            bottom: 50px;
+            left: 0;
+            width: 100%;
+            height: 1px;
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        /* Language Switcher */
+        .language-switcher {
+            position: fixed;
+            bottom: 10px;
+            right: 10px;
+            z-index: 1000;
+        }
+
+        .language-btn {
+            background-color: #9370db;
+            color: white;
+            border: none;
+            border-radius: 30px;
+            padding: 5px 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .language-dropdown {
+            position: absolute;
+            bottom: 100%;
+            right: 0;
+            width: 300px;
+            background-color: white;
+            border-radius: var(--border-radius);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            display: none;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .dark-mode .language-dropdown {
+            background-color: var(--bg-secondary);
+        }
+
+        .language-switcher:hover .language-dropdown {
+            display: grid;
+        }
+
+        .language-option {
+            padding: 8px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            text-align: center;
+            font-size: 14px;
+        }
+
+        .language-option:hover {
+            background-color: white;
+            color: #9370db;
+        }
+
+        .dark-mode .language-option:hover {
+            background-color: var(--bg-color);
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 992px) {
+            .steps-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .footer-container {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            nav ul, .email {
+                display: none;
+            }
+            
+            .mobile-menu-btn {
+                display: block;
+            }
+            
+            .hero h1, .tool-title {
+                font-size: 2rem;
+            }
+            
+            .hero p {
+                font-size: 1rem;
+            }
+            
+            .language-dropdown {
+                width: 250px;
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .footer-container {
+                grid-template-columns: 1fr;
+                gap: 40px;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .tool-container {
+                padding: 20px;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+            
+            .action-btn {
+                width: 100%;
+            }
+            
+            .export-options {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container header-container">
+            <a href="https://lollypopdf.com" class="logo">
+                <div class="logo-icon">
+                    <div class="logo-circle">LPdf</div>
+                    <div class="logo-stem"></div>
+                </div>
+                <span class="logo-text">LollyPoPdf</span>
+            </a>
+            
+            <nav>
+                <ul>
+                    <li><a href="https://lollypopdf.github.io/LollyPoPdf#home" class="nav-link" data-i18n="nav.home">Home</a></li>
+                    <li><a href="https://lollypopdf.github.io/LollyPoPdf#about" class="nav-link" data-i18n="nav.about">About Us</a></li>
+                    <li><a href="https://lollypopdf.github.io/LollyPoPdf#tools" class="nav-link" data-i18n="nav.tools">Tools</a></li>
+                    <li><a href="contact.html" class="nav-link" data-i18n="nav.contact">Contact</a></li>
+                </ul>
+            </nav>
+            
+            <div class="header-right">
+                <span class="email">lollypoppdf@gmail.com</span>
+                <button class="theme-toggle" id="themeToggle">
+                    <i class="fas fa-moon"></i>
+                </button>
+                <button class="mobile-menu-btn" id="mobileMenuBtn">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </div>
+        
+        <!-- Mobile Menu -->
+        <div class="mobile-menu" id="mobileMenu">
+            <ul>
+                <li><a href="https://lollypopdf.github.io/LollyPoPdf#home" class="nav-link" data-i18n="nav.home">Home</a></li>
+                <li><a href="https://lollypopdf.github.io/LollyPoPdf#about" class="nav-link" data-i18n="nav.about">About Us</a></li>
+                <li><a href="https://lollypopdf.github.io/LollyPoPdf#tools" class="nav-link" data-i18n="nav.tools">Tools</a></li>
+                <li><a href="contact.html" class="nav-link" data-i18n="nav.contact">Contact</a></li>
+            </ul>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <h1 data-i18n="hero.title">Gradient Generator Tool</h1>
+            <p data-i18n="hero.description">Create beautiful gradients with our advanced tool. Customize colors, direction, and type, then export as CSS, image, or JSON. All processing happens locally with no file size limits and complete privacy.</p>
+        </div>
+    </section>
+
+    <!-- How to Use Section -->
+    <section class="how-to-section">
+        <div class="container">
+            <h2 class="section-title" data-i18n="howto.title">How to Use the Gradient Generator</h2>
+            <div class="steps-container">
+                <div class="step-box">
+                    <div class="step-number">1</div>
+                    <h3 class="step-title" data-i18n="howto.step1.title">Choose Gradient Type</h3>
+                    <p class="step-description" data-i18n="howto.step1.description">Select from linear, radial, or conic gradients. Each type creates different visual effects and can be customized with various parameters.</p>
+                </div>
+                <div class="step-box">
+                    <div class="step-number">2</div>
+                    <h3 class="step-title" data-i18n="howto.step2.title">Add Color Stops</h3>
+                    <p class="step-description" data-i18n="howto.step2.description">Add multiple color stops and customize their positions. Use the color picker or input values in HEX, RGB, or HSL format for precise control.</p>
+                </div>
+                <div class="step-box">
+                    <div class="step-number">3</div>
+                    <h3 class="step-title" data-i18n="howto.step3.title">Customize Settings</h3>
+                    <p class="step-description" data-i18n="howto.step3.description">Adjust direction, angle, shape, and other parameters to fine-tune your gradient. See changes in real-time on the preview canvas.</p>
+                </div>
+                <div class="step-box">
+                    <div class="step-number">4</div>
+                    <h3 class="step-title" data-i18n="howto.step4.title">Export & Use</h3>
+                    <p class="step-description" data-i18n="howto.step4.description">Copy the CSS code, download as image, or export as JSON. All processing happens locally in your browser - your designs never leave your device.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Tool Section -->
+    <section class="tool-section">
+        <div class="container">
+            <h2 class="tool-title" data-i18n="tool.title">Gradient Generator</h2>
+            <div class="tool-container">
+                <!-- Gradient Preview -->
+                <div class="gradient-preview">
+                    <canvas id="gradientCanvas"></canvas>
+                </div>
+
+                <!-- Controls Section -->
+                <div class="controls-container">
+                    <!-- Left Panel: Color Stops -->
+                    <div class="control-panel">
+                        <h3 class="panel-title"><i class="fas fa-palette"></i> <span data-i18n="tool.colors.title">Color Stops</span></h3>
+                        
+                        <div class="gradient-type-selector">
+                            <button class="gradient-type-btn active" data-type="linear">Linear</button>
+                            <button class="gradient-type-btn" data-type="radial">Radial</button>
+                            <button class="gradient-type-btn" data-type="conic">Conic</button>
+                        </div>
+                        
+                        <div class="color-stops-container" id="colorStopsContainer">
+                            <!-- Color stops will be added here dynamically -->
+                        </div>
+                        
+                        <button class="add-color-btn" id="addColorBtn">
+                            <i class="fas fa-plus"></i> <span data-i18n="tool.colors.add">Add Color Stop</span>
+                        </button>
+                    </div>
+                    
+                    <!-- Right Panel: Gradient Controls -->
+                    <div class="control-panel">
+                        <h3 class="panel-title"><i class="fas fa-sliders-h"></i> <span data-i18n="tool.controls.title">Gradient Controls</span></h3>
+                        
+                        <div class="gradient-controls">
+                            <div class="control-group">
+                                <label class="control-label" data-i18n="tool.controls.angle">Angle/Direction:</label>
+                                <input type="range" id="angleRange" class="range-input" min="0" max="360" value="90">
+                                <div class="range-value" id="angleValue">90°</div>
+                            </div>
+                            
+                            <div class="control-group">
+                                <label class="control-label" data-i18n="tool.controls.shape">Shape (Radial):</label>
+                                <select id="shapeSelect" class="control-input">
+                                    <option value="circle">Circle</option>
+                                    <option value="ellipse">Ellipse</option>
+                                </select>
+                            </div>
+                            
+                            <div class="control-group">
+                                <label class="control-label" data-i18n="tool.controls.size">Size (Radial):</label>
+                                <select id="sizeSelect" class="control-input">
+                                    <option value="farthest-corner">Farthest Corner</option>
+                                    <option value="farthest-side">Farthest Side</option>
+                                    <option value="closest-corner">Closest Corner</option>
+                                    <option value="closest-side">Closest Side</option>
+                                </select>
+                            </div>
+                            
+                            <div class="control-group">
+                                <label class="control-label" data-i18n="tool.controls.position">Position (Radial):</label>
+                                <input type="text" id="positionInput" class="control-input" value="center">
+                            </div>
+                        </div>
+                        
+                        <h3 class="panel-title"><i class="fas fa-magic"></i> <span data-i18n="tool.presets.title">Quick Presets</span></h3>
+                        <div class="presets-container">
+                            <div class="presets-grid" id="presetsGrid">
+                                <!-- Presets will be added here dynamically -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CSS Output -->
+                <div class="css-output-container">
+                    <h3 class="panel-title"><i class="fas fa-code"></i> <span data-i18n="tool.output.title">CSS Code</span></h3>
+                    <textarea class="css-output" id="cssOutput" readonly></textarea>
+                    <div class="output-actions">
+                        <button class="output-btn" id="copyCssBtn">
+                            <i class="fas fa-copy"></i> <span data-i18n="tool.output.copy">Copy CSS</span>
+                        </button>
+                        <button class="output-btn" id="copyTailwindBtn">
+                            <i class="fas fa-copy"></i> <span data-i18n="tool.output.tailwind">Copy Tailwind</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Export Options -->
+                <div class="export-options">
+                    <button class="export-btn" id="exportPngBtn">
+                        <i class="fas fa-download"></i> <span data-i18n="tool.export.png">PNG Image</span>
+                    </button>
+                    <button class="export-btn" id="exportJpgBtn">
+                        <i class="fas fa-download"></i> <span data-i18n="tool.export.jpg">JPG Image</span>
+                    </button>
+                    <button class="export-btn" id="exportSvgBtn">
+                        <i class="fas fa-download"></i> <span data-i18n="tool.export.svg">SVG Image</span>
+                    </button>
+                    <button class="export-btn" id="exportJsonBtn">
+                        <i class="fas fa-download"></i> <span data-i18n="tool.export.json">JSON Data</span>
+                    </button>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="action-buttons">
+                    <button class="action-btn generate-btn" id="generateRandomBtn">
+                        <i class="fas fa-random"></i> <span data-i18n="tool.generate.random">Random Gradient</span>
+                    </button>
+                    <button class="action-btn clear-btn" id="clearAllBtn">
+                        <i class="fas fa-trash"></i> <span data-i18n="tool.clear">Clear All</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container footer-container">
+            <!-- Left Section -->
+            <div class="footer-section">
+                <a href="https://lollypopdf.com" class="footer-logo">
+                    <div class="logo-icon">
+                        <div class="logo-circle">LPdf</div>
+                        <div class="logo-stem"></div>
+                    </div>
+                    <span class="logo-text">LollyPoPdf</span>
+                </a>
+                <h3 data-i18n="footer.follow">FOLLOW US</h3>
+                <div class="social-icons">
+                    <a href="https://facebook.com/lollypopdf" class="social-icon"><i class="fab fa-facebook-f"></i></a>
+                    <a href="https://linkedin.com/company/lollypopdf" class="social-icon"><i class="fab fa-linkedin-in"></i></a>
+                    <a href="https://twitter.com/lollypopdf" class="social-icon"><i class="fab fa-twitter"></i></a>
+                    <a href="https://instagram.com/lollypopdf" class="social-icon"><i class="fab fa-instagram"></i></a>
+                    <a href="https://pinterest.com/lollypopdf" class="social-icon"><i class="fab fa-pinterest-p"></i></a>
+                </div>
+            </div>
+            
+            <!-- Middle Section - Popular Categories -->
+            <div class="footer-section">
+                <h4 data-i18n="footer.categories">Popular Categories</h4>
+                <ul class="footer-links">
+                    <li><a href="https://lollypopdf.com#pdf-tools" data-i18n="footer.categories.pdf">PDF Tools</a></li>
+                    <li><a href="https://lollypopdf.com#image-tools" data-i18n="footer.categories.image">Image Tools</a></li>
+                    <li><a href="https://lollypopdf.com#text-tools" data-i18n="footer.categories.text">Text Tools</a></li>
+                    <li><a href="https://lollypopdf.com#audio-video-tools" data-i18n="footer.categories.av">Audio/Video Tools</a></li>
+                    <li><a href="https://lollypopdf.com#web-developer-tools" data-i18n="footer.categories.web">WebDeveloper Tools</a></li>
+                    <li><a href="https://lollypopdf.com#calculator-tools" data-i18n="footer.categories.calc">Calculator Tools</a></li>
+                    <li><a href="https://lollypopdf.com#utility-tools" data-i18n="footer.categories.util">Utility Tools</a></li>
+                    <li><a href="https://lollypopdf.com#color-tools" data-i18n="footer.categories.color">Color Tools</a></li>
+                </ul>
+            </div>
+            
+            <!-- Right Section - Quick Links -->
+            <div class="footer-section">
+                <h4 data-i18n="footer.quicklinks">Quick Links</h4>
+                <ul class="footer-links">
+                    <li><a href="https://lollypopdf.github.io/LollyPoPdf#home" data-i18n="nav.home">Home</a></li>
+                    <li><a href="https://lollypopdf.github.io/LollyPoPdf#tools" data-i18n="footer.links.tools">All Tools</a></li>
+                    <li><a href="faq.html" data-i18n="footer.links.faq">FAQ</a></li>
+                    <li><a href="contact.html" data-i18n="footer.links.contact">Contact</a></li>
+                    <li><a href="privacy-policy.html" data-i18n="footer.links.privacy">Privacy Policy</a></li>
+                    <li><a href="disclaimer.html" data-i18n="footer.links.disclaimer">Disclaimer</a></li>
+                    <li><a href="terms.html" data-i18n="footer.links.terms">Terms of Service</a></li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="footer-line"></div>
+        <div class="copyright" data-i18n="footer.copyright">© 2025 LollyPoPDF. All rights reserved.</div>
+    </footer>
+
+    <!-- Language Switcher -->
+    <div class="language-switcher">
+        <button class="language-btn">
+            <i class="fas fa-globe"></i>
+            <span id="currentLanguage">English</span>
+        </button>
+        <div class="language-dropdown">
+            <div class="language-option" data-lang="en">English</div>
+            <div class="language-option" data-lang="es">Español</div>
+            <div class="language-option" data-lang="fr">Français</div>
+            <div class="language-option" data-lang="de">Deutsch</div>
+            <div class="language-option" data-lang="it">Italiano</div>
+            <div class="language-option" data-lang="pt">Português</div>
+            <div class="language-option" data-lang="ja">日本語</div>
+            <div class="language-option" data-lang="ru">Pусский</div>
+            <div class="language-option" data-lang="ko">한국어</div>
+            <div class="language-option" data-lang="zh-CN">中文 (简体)</div>
+            <div class="language-option" data-lang="zh-TW">中文 (繁體)</div>
+            <div class="language-option" data-lang="ar">العربية</div>
+            <div class="language-option" data-lang="fa">فارسی</div>
+            <div class="language-option" data-lang="bg">Български</div>
+            <div class="language-option" data-lang="ca">Català</div>
+            <div class="language-option" data-lang="nl">Nederlands</div>
+            <div class="language-option" data-lang="el">Ελληνικά</div>
+            <div class="language-option" data-lang="hi">हिन्दी</div>
+            <div class="language-option" data-lang="te">తెలుగు</div>
+            <div class="language-option" data-lang="kn">ಕನ್ನಡ</div>
+            <div class="language-option" data-lang="ta">தமிழ்</div>
+            <div class="language-option" data-lang="ml">മലയാളം</div>
+            <div class="language-option" data-lang="id">Bahasa Indonesia</div>
+            <div class="language-option" data-lang="ms">Bahasa Melayu</div>
+            <div class="language-option" data-lang="pl">Polski</div>
+            <div class="language-option" data-lang="th">ภาษาไทย</div>
+            <div class="language-option" data-lang="tr">Türkçe</div>
+            <div class="language-option" data-lang="uk">Українська</div>
+            <div class="language-option" data-lang="vi">Tiếng Việt</div>
+            <div class="language-option" data-lang="is">Íslenska</div>
+            <div class="language-option" data-lang="no">Norsk</div>
+            <div class="language-option" data-lang="sv">Svenska</div>
+            <div class="language-option" data-lang="fi">Suomi</div>
+            <div class="language-option" data-lang="cs">Čeština</div>
+        </div>
+    </div>
+
+    <script>
+        // Theme Toggle
+        const themeToggle = document.getElementById('themeToggle');
+        const body = document.body;
+        
+        // Check for saved theme preference or respect OS preference
+        const savedTheme = localStorage.getItem('theme') || 
+            (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        
+        if (savedTheme === 'dark') {
+            body.classList.add('dark-mode');
+            themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+        }
+        
+        themeToggle.addEventListener('click', () => {
+            body.classList.toggle('dark-mode');
+            const isDarkMode = body.classList.contains('dark-mode');
+            
+            if (isDarkMode) {
+                themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+                localStorage.setItem('theme', 'dark');
+            } else {
+                themeToggle.innerHTML = '<i class="fas fa-moon"></i>';
+                localStorage.setItem('theme', 'light');
+            }
+        });
+
+        // Mobile Menu Toggle
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const mobileMenu = document.getElementById('mobileMenu');
+        
+        mobileMenuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('active');
+            
+            // Change icon based on menu state
+            if (mobileMenu.classList.contains('active')) {
+                mobileMenuBtn.innerHTML = '<i class="fas fa-times"></i>';
+            } else {
+                mobileMenuBtn.innerHTML = '<i class="fas fa-bars"></i>';
+            }
+        });
+
+        // Close mobile menu when clicking on a link
+        const mobileMenuLinks = mobileMenu.querySelectorAll('a');
+        mobileMenuLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                mobileMenu.classList.remove('active');
+                mobileMenuBtn.innerHTML = '<i class="fas fa-bars"></i>';
+            });
+        });
+
+        // Gradient Generator Functionality
+        const canvas = document.getElementById('gradientCanvas');
+        const ctx = canvas.getContext('2d');
+        const colorStopsContainer = document.getElementById('colorStopsContainer');
+        const addColorBtn = document.getElementById('addColorBtn');
+        const gradientTypeBtns = document.querySelectorAll('.gradient-type-btn');
+        const angleRange = document.getElementById('angleRange');
+        const angleValue = document.getElementById('angleValue');
+        const shapeSelect = document.getElementById('shapeSelect');
+        const sizeSelect = document.getElementById('sizeSelect');
+        const positionInput = document.getElementById('positionInput');
+        const cssOutput = document.getElementById('cssOutput');
+        const copyCssBtn = document.getElementById('copyCssBtn');
+        const copyTailwindBtn = document.getElementById('copyTailwindBtn');
+        const exportPngBtn = document.getElementById('exportPngBtn');
+        const exportJpgBtn = document.getElementById('exportJpgBtn');
+        const exportSvgBtn = document.getElementById('exportSvgBtn');
+        const exportJsonBtn = document.getElementById('exportJsonBtn');
+        const generateRandomBtn = document.getElementById('generateRandomBtn');
+        const clearAllBtn = document.getElementById('clearAllBtn');
+        const presetsGrid = document.getElementById('presetsGrid');
+
+        // Initialize canvas size
+        function initCanvas() {
+            const container = canvas.parentElement;
+            canvas.width = container.clientWidth;
+            canvas.height = container.clientHeight;
+        }
+
+        // Gradient state
+        let gradientState = {
+            type: 'linear',
+            angle: 90,
+            shape: 'circle',
+            size: 'farthest-corner',
+            position: 'center',
+            colorStops: [
+                { color: '#9370db', position: 0 },
+                { color: '#8a2be2', position: 100 }
+            ]
+        };
+
+        // Initialize the gradient
+        function initGradient() {
+            // Add initial color stops
+            gradientState.colorStops.forEach((stop, index) => {
+                addColorStop(stop.color, stop.position, index);
+            });
+            
+            // Render initial gradient
+            renderGradient();
+            
+            // Generate CSS
+            updateCssOutput();
+            
+            // Load presets
+            loadPresets();
+        }
+
+        // Add a color stop
+        function addColorStop(color = '#000000', position = 0, index = null) {
+            const colorStop = document.createElement('div');
+            colorStop.className = 'color-stop';
+            
+            const colorPreview = document.createElement('div');
+            colorPreview.className = 'color-preview';
+            colorPreview.style.backgroundColor = color;
+            colorPreview.dataset.color = color;
+            
+            const colorInput = document.createElement('input');
+            colorInput.type = 'text';
+            colorInput.className = 'color-input';
+            colorInput.value = color;
+            colorInput.placeholder = '#000000 or rgb(0,0,0)';
+            
+            const positionInput = document.createElement('input');
+            positionInput.type = 'number';
+            positionInput.className = 'color-position';
+            positionInput.value = position;
+            positionInput.min = 0;
+            positionInput.max = 100;
+            
+            const actionsDiv = document.createElement('div');
+            actionsDiv.className = 'color-stop-actions';
+            
+            const deleteBtn = document.createElement('button');
+            deleteBtn.className = 'color-stop-btn';
+            deleteBtn.innerHTML = '<i class="fas fa-trash"></i>';
+            
+            const moveUpBtn = document.createElement('button');
+            moveUpBtn.className = 'color-stop-btn';
+            moveUpBtn.innerHTML = '<i class="fas fa-arrow-up"></i>';
+            
+            const moveDownBtn = document.createElement('button');
+            moveDownBtn.className = 'color-stop-btn';
+            moveDownBtn.innerHTML = '<i class="fas fa-arrow-down"></i>';
+            
+            actionsDiv.appendChild(moveUpBtn);
+            actionsDiv.appendChild(moveDownBtn);
+            actionsDiv.appendChild(deleteBtn);
+            
+            colorStop.appendChild(colorPreview);
+            colorStop.appendChild(colorInput);
+            colorStop.appendChild(positionInput);
+            colorStop.appendChild(actionsDiv);
+            
+            if (index !== null) {
+                colorStopsContainer.insertBefore(colorStop, colorStopsContainer.children[index]);
+            } else {
+                colorStopsContainer.appendChild(colorStop);
+            }
+            
+            // Add event listeners
+            colorPreview.addEventListener('click', () => {
+                const newColor = prompt('Enter color in HEX, RGB, or HSL format:', colorInput.value);
+                if (newColor && isValidColor(newColor)) {
+                    colorInput.value = newColor;
+                    colorPreview.style.backgroundColor = newColor;
+                    colorPreview.dataset.color = newColor;
+                    updateGradientFromUI();
+                }
+            });
+            
+            colorInput.addEventListener('change', () => {
+                if (isValidColor(colorInput.value)) {
+                    colorPreview.style.backgroundColor = colorInput.value;
+                    colorPreview.dataset.color = colorInput.value;
+                    updateGradientFromUI();
+                }
+            });
+            
+            positionInput.addEventListener('change', () => {
+                updateGradientFromUI();
+            });
+            
+            deleteBtn.addEventListener('click', () => {
+                if (colorStopsContainer.children.length > 2) {
+                    colorStop.remove();
+                    updateGradientFromUI();
+                } else {
+                    alert('At least two color stops are required.');
+                }
+            });
+            
+            moveUpBtn.addEventListener('click', () => {
+                const prev = colorStop.previousElementSibling;
+                if (prev) {
+                    colorStopsContainer.insertBefore(colorStop, prev);
+                    updateGradientFromUI();
+                }
+            });
+            
+            moveDownBtn.addEventListener('click', () => {
+                const next = colorStop.nextElementSibling;
+                if (next) {
+                    colorStopsContainer.insertBefore(next, colorStop);
+                    updateGradientFromUI();
+                }
+            });
+        }
+
+        // Check if a color string is valid
+        function isValidColor(color) {
+            const s = new Option().style;
+            s.color = color;
+            return s.color !== '';
+        }
+
+        // Update gradient state from UI
+        function updateGradientFromUI() {
+            // Update color stops
+            gradientState.colorStops = [];
+            const colorStops = colorStopsContainer.querySelectorAll('.color-stop');
+            
+            colorStops.forEach(stop => {
+                const colorInput = stop.querySelector('.color-input');
+                const positionInput = stop.querySelector('.color-position');
+                
+                gradientState.colorStops.push({
+                    color: colorInput.value,
+                    position: parseInt(positionInput.value)
+                });
+            });
+            
+            // Update gradient type
+            const activeTypeBtn = document.querySelector('.gradient-type-btn.active');
+            gradientState.type = activeTypeBtn.dataset.type;
+            
+            // Update angle
+            gradientState.angle = parseInt(angleRange.value);
+            
+            // Update shape, size, and position for radial gradients
+            gradientState.shape = shapeSelect.value;
+            gradientState.size = sizeSelect.value;
+            gradientState.position = positionInput.value;
+            
+            // Render the gradient
+            renderGradient();
+            
+            // Update CSS output
+            updateCssOutput();
+        }
+
+        // Render the gradient on canvas
+        function renderGradient() {
+            initCanvas(); // Ensure canvas is properly sized
+            
+            const width = canvas.width;
+            const height = canvas.height;
+            
+            let gradient;
+            
+            if (gradientState.type === 'linear') {
+                // Convert angle to coordinates
+                const angleRad = (gradientState.angle * Math.PI) / 180;
+                const x1 = width / 2 - (width / 2) * Math.cos(angleRad);
+                const y1 = height / 2 - (height / 2) * Math.sin(angleRad);
+                const x2 = width / 2 + (width / 2) * Math.cos(angleRad);
+                const y2 = height / 2 + (height / 2) * Math.sin(angleRad);
+                
+                gradient = ctx.createLinearGradient(x1, y1, x2, y2);
+            } else if (gradientState.type === 'radial') {
+                gradient = ctx.createRadialGradient(
+                    width / 2, height / 2, 0,
+                    width / 2, height / 2, Math.min(width, height) / 2
+                );
+            } else if (gradientState.type === 'conic') {
+                // Conic gradients aren't directly supported in Canvas API
+                // We'll approximate with a radial gradient for visualization
+                gradient = ctx.createRadialGradient(
+                    width / 2, height / 2, 0,
+                    width / 2, height / 2, Math.min(width, height) / 2
+                );
+            }
+            
+            // Add color stops
+            gradientState.colorStops.forEach(stop => {
+                gradient.addColorStop(stop.position / 100, stop.color);
+            });
+            
+            // Fill canvas with gradient
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, width, height);
+        }
+
+        // Update CSS output
+        function updateCssOutput() {
+            let cssCode = '';
+            
+            if (gradientState.type === 'linear') {
+                cssCode = `background: linear-gradient(${gradientState.angle}deg, `;
+            } else if (gradientState.type === 'radial') {
+                cssCode = `background: radial-gradient(${gradientState.shape} ${gradientState.size} at ${gradientState.position}, `;
+            } else if (gradientState.type === 'conic') {
+                cssCode = `background: conic-gradient(from ${gradientState.angle}deg, `;
+            }
+            
+            gradientState.colorStops.forEach((stop, index) => {
+                cssCode += `${stop.color} ${stop.position}%`;
+                if (index < gradientState.colorStops.length - 1) {
+                    cssCode += ', ';
+                }
+            });
+            
+            cssCode += ');';
+            
+            cssOutput.value = cssCode;
+        }
+
+        // Generate Tailwind CSS
+        function generateTailwindCss() {
+            // This is a simplified version - real implementation would need more complex mapping
+            let tailwindCode = '/* Tailwind CSS approximation */\n';
+            
+            if (gradientState.type === 'linear') {
+                tailwindCode += 'bg-gradient-to-';
+                
+                // Map angle to Tailwind directions
+                const angle = gradientState.angle;
+                if (angle >= 0 && angle < 45) tailwindCode += 'r';
+                else if (angle >= 45 && angle < 135) tailwindCode += 'b';
+                else if (angle >= 135 && angle < 225) tailwindCode += 'l';
+                else if (angle >= 225 && angle < 315) tailwindCode += 't';
+                else tailwindCode += 'r';
+                
+                tailwindCode += ' from-[color:var(--tw-from)] via-[color:var(--tw-via)] to-[color:var(--tw-to)]';
+            } else {
+                tailwindCode += '/* Complex gradients may require custom CSS */';
+            }
+            
+            return tailwindCode;
+        }
+
+        // Load gradient presets
+        function loadPresets() {
+            const presets = [
+                { name: 'Sunset', colors: ['#ff9a9e', '#fad0c4'] },
+                { name: 'Ocean', colors: ['#a1c4fd', '#c2e9fb'] },
+                { name: 'Forest', colors: ['#56ab2f', '#a8e6cf'] },
+                { name: 'Purple', colors: ['#667eea', '#764ba2'] },
+                { name: 'Sunrise', colors: ['#ffecd2', '#fcb69f'] },
+                { name: 'Twilight', colors: ['#0c2461', '#6a89cc'] },
+                { name: 'Mint', colors: ['#4facfe', '#00f2fe'] },
+                { name: 'Coral', colors: ['#ff6b6b', '#ffa8a8'] },
+                { name: 'Lavender', colors: ['#e0c3fc', '#8ec5fc'] },
+                { name: 'Peach', colors: ['#ffecd2', '#fcb69f'] },
+                { name: 'Sky', colors: ['#89f7fe', '#66a6ff'] },
+                { name: 'Berry', colors: ['#f78ca0', '#f1c6d3'] }
+            ];
+            
+            presetsGrid.innerHTML = '';
+            
+            presets.forEach(preset => {
+                const presetItem = document.createElement('div');
+                presetItem.className = 'preset-item';
+                presetItem.style.background = `linear-gradient(135deg, ${preset.colors[0]}, ${preset.colors[1]})`;
+                presetItem.title = preset.name;
+                
+                presetItem.addEventListener('click', () => {
+                    // Clear existing color stops
+                    colorStopsContainer.innerHTML = '';
+                    
+                    // Add new color stops based on preset
+                    preset.colors.forEach((color, index) => {
+                        const position = index === 0 ? 0 : 100;
+                        addColorStop(color, position);
+                    });
+                    
+                    updateGradientFromUI();
+                });
+                
+                presetsGrid.appendChild(presetItem);
+            });
+        }
+
+        // Generate random gradient
+        function generateRandomGradient() {
+            // Clear existing color stops
+            colorStopsContainer.innerHTML = '';
+            
+            // Generate 2-4 random colors
+            const numColors = Math.floor(Math.random() * 3) + 2;
+            const colors = [];
+            
+            for (let i = 0; i < numColors; i++) {
+                const r = Math.floor(Math.random() * 256);
+                const g = Math.floor(Math.random() * 256);
+                const b = Math.floor(Math.random() * 256);
+                colors.push(`rgb(${r}, ${g}, ${b})`);
+            }
+            
+            // Add color stops
+            colors.forEach((color, index) => {
+                const position = Math.round((index / (numColors - 1)) * 100);
+                addColorStop(color, position);
+            });
+            
+            // Randomize gradient type
+            const types = ['linear', 'radial', 'conic'];
+            const randomType = types[Math.floor(Math.random() * types.length)];
+            
+            document.querySelectorAll('.gradient-type-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.type === randomType);
+            });
+            
+            // Randomize angle for linear gradients
+            if (randomType === 'linear') {
+                const randomAngle = Math.floor(Math.random() * 360);
+                angleRange.value = randomAngle;
+                angleValue.textContent = `${randomAngle}°`;
+            }
+            
+            updateGradientFromUI();
+        }
+
+        // Export gradient as image
+        function exportAsImage(format) {
+            const link = document.createElement('a');
+            let mimeType;
+            
+            if (format === 'png') {
+                mimeType = 'image/png';
+            } else if (format === 'jpg') {
+                mimeType = 'image/jpeg';
+            } else if (format === 'svg') {
+                // For SVG, we'll create a simple representation
+                const svgContent = `
+                    <svg width="${canvas.width}" height="${canvas.height}" xmlns="http://www.w3.org/2000/svg">
+                        <defs>
+                            <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                                ${gradientState.colorStops.map(stop => 
+                                    `<stop offset="${stop.position}%" stop-color="${stop.color}" />`
+                                ).join('')}
+                            </linearGradient>
+                        </defs>
+                        <rect width="100%" height="100%" fill="url(#gradient)" />
+                    </svg>
+                `;
+                
+                const blob = new Blob([svgContent], { type: 'image/svg+xml' });
+                link.href = URL.createObjectURL(blob);
+                link.download = 'gradient.svg';
+                link.click();
+                return;
+            }
+            
+            // For PNG and JPG, use canvas
+            link.download = `gradient.${format}`;
+            canvas.toBlob(blob => {
+                link.href = URL.createObjectURL(blob);
+                link.click();
+            }, mimeType);
+        }
+
+        // Export gradient as JSON
+        function exportAsJson() {
+            const gradientData = {
+                type: gradientState.type,
+                angle: gradientState.angle,
+                shape: gradientState.shape,
+                size: gradientState.size,
+                position: gradientState.position,
+                colorStops: gradientState.colorStops
+            };
+            
+            const dataStr = JSON.stringify(gradientData, null, 2);
+            const blob = new Blob([dataStr], { type: 'application/json' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = 'gradient.json';
+            link.click();
+        }
+
+        // Clear all settings
+        function clearAll() {
+            // Reset to default gradient
+            colorStopsContainer.innerHTML = '';
+            
+            gradientState = {
+                type: 'linear',
+                angle: 90,
+                shape: 'circle',
+                size: 'farthest-corner',
+                position: 'center',
+                colorStops: [
+                    { color: '#9370db', position: 0 },
+                    { color: '#8a2be2', position: 100 }
+                ]
+            };
+            
+            // Reset UI elements
+            document.querySelectorAll('.gradient-type-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.type === 'linear');
+            });
+            
+            angleRange.value = 90;
+            angleValue.textContent = '90°';
+            shapeSelect.value = 'circle';
+            sizeSelect.value = 'farthest-corner';
+            positionInput.value = 'center';
+            
+            // Reinitialize gradient
+            initGradient();
+        }
+
+        // Event Listeners
+        window.addEventListener('resize', () => {
+            renderGradient();
+        });
+
+        addColorBtn.addEventListener('click', () => {
+            // Find the middle position between existing stops
+            let newPosition = 50;
+            if (gradientState.colorStops.length > 1) {
+                const positions = gradientState.colorStops.map(stop => stop.position);
+                const maxPos = Math.max(...positions);
+                const minPos = Math.min(...positions);
+                newPosition = Math.round((maxPos + minPos) / 2);
+            }
+            
+            // Generate a random color
+            const r = Math.floor(Math.random() * 256);
+            const g = Math.floor(Math.random() * 256);
+            const b = Math.floor(Math.random() * 256);
+            const newColor = `rgb(${r}, ${g}, ${b})`;
+            
+            addColorStop(newColor, newPosition);
+            updateGradientFromUI();
+        });
+
+        gradientTypeBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                gradientTypeBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                updateGradientFromUI();
+            });
+        });
+
+        angleRange.addEventListener('input', () => {
+            angleValue.textContent = `${angleRange.value}°`;
+            updateGradientFromUI();
+        });
+
+        shapeSelect.addEventListener('change', updateGradientFromUI);
+        sizeSelect.addEventListener('change', updateGradientFromUI);
+        positionInput.addEventListener('change', updateGradientFromUI);
+
+        copyCssBtn.addEventListener('click', () => {
+            cssOutput.select();
+            document.execCommand('copy');
+            
+            // Show feedback
+            const originalText = copyCssBtn.innerHTML;
+            copyCssBtn.innerHTML = '<i class="fas fa-check"></i> Copied!';
+            setTimeout(() => {
+                copyCssBtn.innerHTML = originalText;
+            }, 2000);
+        });
+
+        copyTailwindBtn.addEventListener('click', () => {
+            const tailwindCode = generateTailwindCss();
+            const tempTextarea = document.createElement('textarea');
+            tempTextarea.value = tailwindCode;
+            document.body.appendChild(tempTextarea);
+            tempTextarea.select();
+            document.execCommand('copy');
+            document.body.removeChild(tempTextarea);
+            
+            // Show feedback
+            const originalText = copyTailwindBtn.innerHTML;
+            copyTailwindBtn.innerHTML = '<i class="fas fa-check"></i> Copied!';
+            setTimeout(() => {
+                copyTailwindBtn.innerHTML = originalText;
+            }, 2000);
+        });
+
+        exportPngBtn.addEventListener('click', () => exportAsImage('png'));
+        exportJpgBtn.addEventListener('click', () => exportAsImage('jpg'));
+        exportSvgBtn.addEventListener('click', () => exportAsImage('svg'));
+        exportJsonBtn.addEventListener('click', exportAsJson);
+
+        generateRandomBtn.addEventListener('click', generateRandomGradient);
+        clearAllBtn.addEventListener('click', clearAll);
+
+        // Initialize the tool
+        initCanvas();
+        initGradient();
+
+        // Language Switcher
+        const languageBtn = document.querySelector('.language-btn');
+        const currentLanguageElement = document.getElementById('currentLanguage');
+        const languageDropdown = document.querySelector('.language-dropdown');
+        
+        const languages = [
+            { code: 'en', name: 'English' },
+            { code: 'es', name: 'Español' },
+            { code: 'fr', name: 'Français' },
+            { code: 'de', name: 'Deutsch' },
+            { code: 'it', name: 'Italiano' },
+            { code: 'pt', name: 'Português' },
+            { code: 'ja', name: '日本語' },
+            { code: 'ru', name: 'Pусский' },
+            { code: 'ko', name: '한국어' },
+            { code: 'zh-CN', name: '中文 (简体)' },
+            { code: 'zh-TW', name: '中文 (繁體)' },
+            { code: 'ar', name: 'العربية' },
+            { code: 'fa', name: 'فارسی' },
+            { code: 'bg', name: 'Български' },
+            { code: 'ca', name: 'Català' },
+            { code: 'nl', name: 'Nederlands' },
+            { code: 'el', name: 'Ελληνικά' },
+            { code: 'hi', name: 'हिन्दी' },
+            { code: 'te', name: 'తెలుగు' },
+            { code: 'kn', name: 'ಕನ್ನಡ' },
+            { code: 'ta', name: 'தமிழ்' },
+            { code: 'ml', name: 'മലയാളം' },
+            { code: 'id', name: 'Bahasa Indonesia' },
+            { code: 'ms', name: 'Bahasa Melayu' },
+            { code: 'pl', name: 'Polski' },
+            { code: 'th', name: 'ภาษาไทย' },
+            { code: 'tr', name: 'Türkçe' },
+            { code: 'uk', name: 'Українська' },
+            { code: 'vi', name: 'Tiếng Việt' },
+            { code: 'is', name: 'Íslenska' },
+            { code: 'no', name: 'Norsk' },
+            { code: 'sv', name: 'Svenska' },
+            { code: 'fi', name: 'Suomi' },
+            { code: 'cs', name: 'Čeština' }
+        ];
+
+        // Translation data
+        const translations = {
+            en: {
+                "nav.home": "Home",
+                "nav.about": "About Us",
+                "nav.tools": "Tools",
+                "nav.contact": "Contact",
+                "hero.title": "Gradient Generator Tool",
+                "hero.description": "Create beautiful gradients with our advanced tool. Customize colors, direction, and type, then export as CSS, image, or JSON. All processing happens locally with no file size limits and complete privacy.",
+                "howto.title": "How to Use the Gradient Generator",
+                "howto.step1.title": "Choose Gradient Type",
+                "howto.step1.description": "Select from linear, radial, or conic gradients. Each type creates different visual effects and can be customized with various parameters.",
+                "howto.step2.title": "Add Color Stops",
+                "howto.step2.description": "Add multiple color stops and customize their positions. Use the color picker or input values in HEX, RGB, or HSL format for precise control.",
+                "howto.step3.title": "Customize Settings",
+                "howto.step3.description": "Adjust direction, angle, shape, and other parameters to fine-tune your gradient. See changes in real-time on the preview canvas.",
+                "howto.step4.title": "Export & Use",
+                "howto.step4.description": "Copy the CSS code, download as image, or export as JSON. All processing happens locally in your browser - your designs never leave your device.",
+                "tool.title": "Gradient Generator",
+                "tool.colors.title": "Color Stops",
+                "tool.colors.add": "Add Color Stop",
+                "tool.controls.title": "Gradient Controls",
+                "tool.controls.angle": "Angle/Direction:",
+                "tool.controls.shape": "Shape (Radial):",
+                "tool.controls.size": "Size (Radial):",
+                "tool.controls.position": "Position (Radial):",
+                "tool.presets.title": "Quick Presets",
+                "tool.output.title": "CSS Code",
+                "tool.output.copy": "Copy CSS",
+                "tool.output.tailwind": "Copy Tailwind",
+                "tool.export.png": "PNG Image",
+                "tool.export.jpg": "JPG Image",
+                "tool.export.svg": "SVG Image",
+                "tool.export.json": "JSON Data",
+                "tool.generate.random": "Random Gradient",
+                "tool.clear": "Clear All",
+                "footer.follow": "FOLLOW US",
+                "footer.categories": "Popular Categories",
+                "footer.categories.pdf": "PDF Tools",
+                "footer.categories.image": "Image Tools",
+                "footer.categories.text": "Text Tools",
+                "footer.categories.av": "Audio/Video Tools",
+                "footer.categories.web": "WebDeveloper Tools",
+                "footer.categories.calc": "Calculator Tools",
+                "footer.categories.util": "Utility Tools",
+                "footer.categories.color": "Color Tools",
+                "footer.quicklinks": "Quick Links",
+                "footer.links.tools": "All Tools",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Contact",
+                "footer.links.privacy": "Privacy Policy",
+                "footer.links.disclaimer": "Disclaimer",
+                "footer.links.terms": "Terms of Service",
+                "footer.copyright": "© 2025 LollyPoPDF. All rights reserved."
+            },
+            es: {
+                "nav.home": "Inicio",
+                "nav.about": "Sobre Nosotros",
+                "nav.tools": "Herramientas",
+                "nav.contact": "Contacto",
+                "hero.title": "Generador de Gradientes",
+                "hero.description": "Crea hermosos gradientes con nuestra herramienta avanzada. Personaliza colores, dirección y tipo, luego exporta como CSS, imagen o JSON. Todo el procesamiento ocurre localmente sin límites de tamaño de archivo y con privacidad completa.",
+                "howto.title": "Cómo Usar el Generador de Gradientes",
+                "howto.step1.title": "Elige el Tipo de Gradiente",
+                "howto.step1.description": "Selecciona entre gradientes lineales, radiales o cónicos. Cada tipo crea diferentes efectos visuales y se puede personalizar con varios parámetros.",
+                "howto.step2.title": "Añade Paradas de Color",
+                "howto.step2.description": "Añade múltiples paradas de color y personaliza sus posiciones. Usa el selector de color o ingresa valores en formato HEX, RGB o HSL para un control preciso.",
+                "howto.step3.title": "Personaliza Configuraciones",
+                "howto.step3.description": "Ajusta dirección, ángulo, forma y otros parámetros para afinar tu gradiente. Ve los cambios en tiempo real en el lienzo de vista previa.",
+                "howto.step4.title": "Exporta y Usa",
+                "howto.step4.description": "Copia el código CSS, descarga como imagen o exporta como JSON. Todo el procesamiento ocurre localmente en tu navegador - tus diseños nunca salen de tu dispositivo.",
+                "tool.title": "Generador de Gradientes",
+                "tool.colors.title": "Paradas de Color",
+                "tool.colors.add": "Añadir Parada de Color",
+                "tool.controls.title": "Controles de Gradiente",
+                "tool.controls.angle": "Ángulo/Dirección:",
+                "tool.controls.shape": "Forma (Radial):",
+                "tool.controls.size": "Tamaño (Radial):",
+                "tool.controls.position": "Posición (Radial):",
+                "tool.presets.title": "Preajustes Rápidos",
+                "tool.output.title": "Código CSS",
+                "tool.output.copy": "Copiar CSS",
+                "tool.output.tailwind": "Copiar Tailwind",
+                "tool.export.png": "Imagen PNG",
+                "tool.export.jpg": "Imagen JPG",
+                "tool.export.svg": "Imagen SVG",
+                "tool.export.json": "Datos JSON",
+                "tool.generate.random": "Gradiente Aleatorio",
+                "tool.clear": "Limpiar Todo",
+                "footer.follow": "SÍGUENOS",
+                "footer.categories": "Categorías Populares",
+                "footer.categories.pdf": "Herramientas PDF",
+                "footer.categories.image": "Herramientas de Imagen",
+                "footer.categories.text": "Herramientas de Texto",
+                "footer.categories.av": "Herramientas de Audio/Video",
+                "footer.categories.web": "Herramientas WebDesarrollador",
+                "footer.categories.calc": "Herramientas de Calculadora",
+                "footer.categories.util": "Herramientas de Utilidad",
+                "footer.categories.color": "Herramientas de Color",
+                "footer.quicklinks": "Enlaces Rápidos",
+                "footer.links.tools": "Todas las Herramientas",
+                "footer.links.faq": "Preguntas Frecuentes",
+                "footer.links.contact": "Contacto",
+                "footer.links.privacy": "Política de Privacidad",
+                "footer.links.disclaimer": "Descargo de Responsabilidad",
+                "footer.links.terms": "Términos de Servicio",
+                "footer.copyright": "© 2025 LollyPoPDF. Todos los derechos reservados."
+            },
+            fr: {
+                "nav.home": "Accueil",
+                "nav.about": "À propos de nous",
+                "nav.tools": "Outils",
+                "nav.contact": "Contact",
+                "hero.title": "Outil Générateur de Dégradés",
+                "hero.description": "Créez de beaux dégradés avec notre outil avancé. Personnalisez les couleurs, la direction et le type, puis exportez en CSS, image ou JSON. Tout le traitement se fait localement sans limites de taille de fichier et avec une confidentialité totale.",
+                "howto.title": "Comment utiliser le Générateur de Dégradés",
+                "howto.step1.title": "Choisissez le Type de Dégradé",
+                "howto.step1.description": "Sélectionnez parmi les dégradés linéaires, radiaux ou coniques. Chaque type crée des effets visuels différents et peut être personnalisé avec divers paramètres.",
+                "howto.step2.title": "Ajoutez des Arrêts de Couleur",
+                "howto.step2.description": "Ajoutez plusieurs arrêts de couleur et personnalisez leurs positions. Utilisez le sélecteur de couleur ou saisissez des valeurs au format HEX, RGB ou HSL pour un contrôle précis.",
+                "howto.step3.title": "Personnalisez les Paramètres",
+                "howto.step3.description": "Ajustez la direction, l'angle, la forme et d'autres paramètres pour affiner votre dégradé. Voyez les changements en temps réel sur le canevas de prévisualisation.",
+                "howto.step4.title": "Exportez et Utilisez",
+                "howto.step4.description": "Copiez le code CSS, téléchargez en tant qu'image ou exportez en JSON. Tout le traitement se fait localement dans votre navigateur - vos conceptions ne quittent jamais votre appareil.",
+                "tool.title": "Générateur de Dégradés",
+                "tool.colors.title": "Arrêts de Couleur",
+                "tool.colors.add": "Ajouter un Arrêt de Couleur",
+                "tool.controls.title": "Contrôles de Dégradé",
+                "tool.controls.angle": "Angle/Direction:",
+                "tool.controls.shape": "Forme (Radial):",
+                "tool.controls.size": "Taille (Radial):",
+                "tool.controls.position": "Position (Radial):",
+                "tool.presets.title": "Préréglages Rapides",
+                "tool.output.title": "Code CSS",
+                "tool.output.copy": "Copier CSS",
+                "tool.output.tailwind": "Copier Tailwind",
+                "tool.export.png": "Image PNG",
+                "tool.export.jpg": "Image JPG",
+                "tool.export.svg": "Image SVG",
+                "tool.export.json": "Données JSON",
+                "tool.generate.random": "Dégradé Aléatoire",
+                "tool.clear": "Tout Effacer",
+                "footer.follow": "SUIVEZ-NOUS",
+                "footer.categories": "Catégories Populaires",
+                "footer.categories.pdf": "Outils PDF",
+                "footer.categories.image": "Outils d'Image",
+                "footer.categories.text": "Outils de Texte",
+                "footer.categories.av": "Outils Audio/Video",
+                "footer.categories.web": "Outils WebDeveloper",
+                "footer.categories.calc": "Outils de Calculatrice",
+                "footer.categories.util": "Outils d'Utilité",
+                "footer.categories.color": "Outils de Couleur",
+                "footer.quicklinks": "Liens Rapides",
+                "footer.links.tools": "Tous les Outils",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Contact",
+                "footer.links.privacy": "Politique de Confidentialité",
+                "footer.links.disclaimer": "Avertissement",
+                "footer.links.terms": "Conditions d'Utilisation",
+                "footer.copyright": "© 2025 LollyPoPDF. Tous droits réservés."
+            },
+            de: {
+                "nav.home": "Startseite",
+                "nav.about": "Über uns",
+                "nav.tools": "Werkzeuge",
+                "nav.contact": "Kontakt",
+                "hero.title": "Farbverlauf-Generator Werkzeug",
+                "hero.description": "Erstellen Sie schöne Farbverläufe mit unserem fortschrittlichen Werkzeug. Passen Sie Farben, Richtung und Typ an und exportieren Sie dann als CSS, Bild oder JSON. Die gesamte Verarbeitung erfolgt lokal ohne Dateigrößenbeschränkungen und mit vollständiger Privatsphäre.",
+                "howto.title": "So verwenden Sie den Farbverlauf-Generator",
+                "howto.step1.title": "Wählen Sie den Verlaufstyp",
+                "howto.step1.description": "Wählen Sie aus linearen, radialen oder konischen Verläufen. Jeder Typ erzeugt unterschiedliche visuelle Effekte und kann mit verschiedenen Parametern angepasst werden.",
+                "howto.step2.title": "Fügen Sie Farbstopps hinzu",
+                "howto.step2.description": "Fügen Sie mehrere Farbstopps hinzu und passen Sie deren Positionen an. Verwenden Sie die Farbauswahl oder geben Sie Werte im HEX-, RGB- oder HSL-Format für eine präzise Steuerung ein.",
+                "howto.step3.title": "Passen Sie die Einstellungen an",
+                "howto.step3.description": "Passen Sie Richtung, Winkel, Form und andere Parameter an, um Ihren Verlauf zu verfeinern. Sehen Sie Änderungen in Echtzeit auf der Vorschau-Leinwand.",
+                "howto.step4.title": "Exportieren und Verwenden",
+                "howto.step4.description": "Kopieren Sie den CSS-Code, laden Sie als Bild herunter oder exportieren Sie als JSON. Die gesamte Verarbeitung erfolgt lokal in Ihrem Browser - Ihre Entwürfe verlassen niemals Ihr Gerät.",
+                "tool.title": "Farbverlauf-Generator",
+                "tool.colors.title": "Farbstopps",
+                "tool.colors.add": "Farbstopp hinzufügen",
+                "tool.controls.title": "Farbverlauf-Steuerung",
+                "tool.controls.angle": "Winkel/Richtung:",
+                "tool.controls.shape": "Form (Radial):",
+                "tool.controls.size": "Größe (Radial):",
+                "tool.controls.position": "Position (Radial):",
+                "tool.presets.title": "Schnellvoreinstellungen",
+                "tool.output.title": "CSS-Code",
+                "tool.output.copy": "CSS kopieren",
+                "tool.output.tailwind": "Tailwind kopieren",
+                "tool.export.png": "PNG-Bild",
+                "tool.export.jpg": "JPG-Bild",
+                "tool.export.svg": "SVG-Bild",
+                "tool.export.json": "JSON-Daten",
+                "tool.generate.random": "Zufälliger Verlauf",
+                "tool.clear": "Alles löschen",
+                "footer.follow": "FOLGEN SIE UNS",
+                "footer.categories": "Beliebte Kategorien",
+                "footer.categories.pdf": "PDF-Werkzeuge",
+                "footer.categories.image": "Bildwerkzeuge",
+                "footer.categories.text": "Textwerkzeuge",
+                "footer.categories.av": "Audio/Video-Werkzeuge",
+                "footer.categories.web": "WebDeveloper-Werkzeuge",
+                "footer.categories.calc": "Rechnerwerkzeuge",
+                "footer.categories.util": "Hilfsprogramme",
+                "footer.categories.color": "Farbwerkzeuge",
+                "footer.quicklinks": "Schnelllinks",
+                "footer.links.tools": "Alle Werkzeuge",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Kontakt",
+                "footer.links.privacy": "Datenschutzrichtlinie",
+                "footer.links.disclaimer": "Haftungsausschluss",
+                "footer.links.terms": "Nutzungsbedingungen",
+                "footer.copyright": "© 2025 LollyPoPDF. Alle Rechte vorbehalten."
+            },
+            it: {
+                "nav.home": "Home",
+                "nav.about": "Chi siamo",
+                "nav.tools": "Strumenti",
+                "nav.contact": "Contatto",
+                "hero.title": "Strumento Generatore di Gradienti",
+                "hero.description": "Crea bellissimi gradienti con il nostro strumento avanzato. Personalizza colori, direzione e tipo, quindi esporta come CSS, immagine o JSON. Tutta l'elaborazione avviene localmente senza limiti di dimensione file e con completa privacy.",
+                "howto.title": "Come utilizzare il Generatore di Gradienti",
+                "howto.step1.title": "Scegli il Tipo di Gradiente",
+                "howto.step1.description": "Seleziona tra gradienti lineari, radiali o conici. Ogni tipo crea effetti visivi diversi e può essere personalizzato con vari parametri.",
+                "howto.step2.title": "Aggiungi Fermate Colore",
+                "howto.step2.description": "Aggiungi multiple fermate colore e personalizza le loro posizioni. Usa il selettore colore o inserisci valori in formato HEX, RGB o HSL per un controllo preciso.",
+                "howto.step3.title": "Personalizza le Impostazioni",
+                "howto.step3.description": "Regola direzione, angolo, forma e altri parametri per perfezionare il tuo gradiente. Vedi i cambiamenti in tempo reale sull'anteprima canvas.",
+                "howto.step4.title": "Esporta e Usa",
+                "howto.step4.description": "Copia il codice CSS, scarica come immagine o esporta come JSON. Tutta l'elaborazione avviene localmente nel tuo browser - i tuoi progetti non lasciano mai il tuo dispositivo.",
+                "tool.title": "Generatore di Gradienti",
+                "tool.colors.title": "Fermate Colore",
+                "tool.colors.add": "Aggiungi Fermata Colore",
+                "tool.controls.title": "Controlli Gradiente",
+                "tool.controls.angle": "Angolo/Direzione:",
+                "tool.controls.shape": "Forma (Radiale):",
+                "tool.controls.size": "Dimensione (Radiale):",
+                "tool.controls.position": "Posizione (Radiale):",
+                "tool.presets.title": "Preimpostazioni Rapide",
+                "tool.output.title": "Codice CSS",
+                "tool.output.copy": "Copia CSS",
+                "tool.output.tailwind": "Copia Tailwind",
+                "tool.export.png": "Immagine PNG",
+                "tool.export.jpg": "Immagine JPG",
+                "tool.export.svg": "Immagine SVG",
+                "tool.export.json": "Dati JSON",
+                "tool.generate.random": "Gradiente Casuale",
+                "tool.clear": "Cancella Tutto",
+                "footer.follow": "SEGUICI",
+                "footer.categories": "Categorie Popolari",
+                "footer.categories.pdf": "Strumenti PDF",
+                "footer.categories.image": "Strumenti Immagine",
+                "footer.categories.text": "Strumenti Testo",
+                "footer.categories.av": "Strumenti Audio/Video",
+                "footer.categories.web": "Strumenti WebDeveloper",
+                "footer.categories.calc": "Strumenti Calcolatrice",
+                "footer.categories.util": "Strumenti Utilità",
+                "footer.categories.color": "Strumenti Colore",
+                "footer.quicklinks": "Link Rapidi",
+                "footer.links.tools": "Tutti gli Strumenti",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Contatto",
+                "footer.links.privacy": "Informativa sulla Privacy",
+                "footer.links.disclaimer": "Disclaimer",
+                "footer.links.terms": "Termini di Servizio",
+                "footer.copyright": "© 2025 LollyPoPDF. Tutti i diritti riservati."
+            },
+            pt: {
+                "nav.home": "Início",
+                "nav.about": "Sobre Nós",
+                "nav.tools": "Ferramentas",
+                "nav.contact": "Contato",
+                "hero.title": "Ferramenta Geradora de Gradientes",
+                "hero.description": "Crie gradientes bonitos com nossa ferramenta avançada. Personalize cores, direção e tipo, depois exporte como CSS, imagem ou JSON. Todo o processamento acontece localmente sem limites de tamanho de arquivo e com privacidade completa.",
+                "howto.title": "Como Usar o Gerador de Gradientes",
+                "howto.step1.title": "Escolha o Tipo de Gradiente",
+                "howto.step1.description": "Selecione entre gradientes lineares, radiais ou cônicos. Cada tipo cria efeitos visuais diferentes e pode ser personalizado com vários parâmetros.",
+                "howto.step2.title": "Adicione Paradas de Cor",
+                "howto.step2.description": "Adicione múltiplas paradas de cor e personalize suas posições. Use o seletor de cor ou insira valores em formato HEX, RGB ou HSL para controle preciso.",
+                "howto.step3.title": "Personalize Configurações",
+                "howto.step3.description": "Ajuste direção, ângulo, forma e outros parâmetros para refinar seu gradiente. Veja mudanças em tempo real na tela de visualização.",
+                "howto.step4.title": "Exporte e Use",
+                "howto.step4.description": "Copie o código CSS, baixe como imagem ou exporte como JSON. Todo o processamento acontece localmente no seu navegador - seus designs nunca saem do seu dispositivo.",
+                "tool.title": "Gerador de Gradientes",
+                "tool.colors.title": "Paradas de Cor",
+                "tool.colors.add": "Adicionar Parada de Cor",
+                "tool.controls.title": "Controles de Gradiente",
+                "tool.controls.angle": "Ângulo/Direção:",
+                "tool.controls.shape": "Forma (Radial):",
+                "tool.controls.size": "Tamanho (Radial):",
+                "tool.controls.position": "Posição (Radial):",
+                "tool.presets.title": "Predefinições Rápidas",
+                "tool.output.title": "Código CSS",
+                "tool.output.copy": "Copiar CSS",
+                "tool.output.tailwind": "Copiar Tailwind",
+                "tool.export.png": "Imagem PNG",
+                "tool.export.jpg": "Imagem JPG",
+                "tool.export.svg": "Imagem SVG",
+                "tool.export.json": "Dados JSON",
+                "tool.generate.random": "Gradiente Aleatório",
+                "tool.clear": "Limpar Tudo",
+                "footer.follow": "SIGA-NOS",
+                "footer.categories": "Categorias Populares",
+                "footer.categories.pdf": "Ferramentas PDF",
+                "footer.categories.image": "Ferramentas de Imagem",
+                "footer.categories.text": "Ferramentas de Texto",
+                "footer.categories.av": "Ferramentas de Áudio/Video",
+                "footer.categories.web": "Ferramentas WebDeveloper",
+                "footer.categories.calc": "Ferramentas de Calculadora",
+                "footer.categories.util": "Ferramentas de Utilidade",
+                "footer.categories.color": "Ferramentas de Cor",
+                "footer.quicklinks": "Links Rápidos",
+                "footer.links.tools": "Todas as Ferramentas",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Contato",
+                "footer.links.privacy": "Política de Privacidade",
+                "footer.links.disclaimer": "Aviso Legal",
+                "footer.links.terms": "Termos de Serviço",
+                "footer.copyright": "© 2025 LollyPoPDF. Todos os direitos reservados."
+            },
+            ja: {
+                "nav.home": "ホーム",
+                "nav.about": "私たちについて",
+                "nav.tools": "ツール",
+                "nav.contact": "お問い合わせ",
+                "hero.title": "グラデーション生成ツール",
+                "hero.description": "高度なツールで美しいグラデーションを作成します。色、方向、タイプをカスタマイズし、CSS、画像、またはJSONとしてエクスポートできます。すべての処理はローカルで行われ、ファイルサイズ制限なしで完全なプライバシーを実現します。",
+                "howto.title": "グラデーションジェネレーターの使用方法",
+                "howto.step1.title": "グラデーションタイプを選択",
+                "howto.step1.description": "線形、放射状、円錐グラデーションから選択します。各タイプは異なる視覚効果を作成し、さまざまなパラメータでカスタマイズできます。",
+                "howto.step2.title": "カラーストップを追加",
+                "howto.step2.description": "複数のカラーストップを追加し、その位置をカスタマイズします。カラーピッカーを使用するか、HEX、RGB、またはHSL形式で値を入力して精密に制御します。",
+                "howto.step3.title": "設定をカスタマイズ",
+                "howto.step3.description": "方向、角度、形状、その他のパラメータを調整してグラデーションを微調整します。プレビューキャンバスで変更をリアルタイムで確認します。",
+                "howto.step4.title": "エクスポートと使用",
+                "howto.step4.description": "CSSコードをコピーし、画像としてダウンロードするか、JSONとしてエクスポートします。すべての処理はブラウザでローカルに行われます - あなたのデザインがデバイスから離れることはありません。",
+                "tool.title": "グラデーションジェネレーター",
+                "tool.colors.title": "カラーストップ",
+                "tool.colors.add": "カラーストップを追加",
+                "tool.controls.title": "グラデーションコントロール",
+                "tool.controls.angle": "角度/方向:",
+                "tool.controls.shape": "形状（放射状）:",
+                "tool.controls.size": "サイズ（放射状）:",
+                "tool.controls.position": "位置（放射状）:",
+                "tool.presets.title": "クイックプリセット",
+                "tool.output.title": "CSSコード",
+                "tool.output.copy": "CSSをコピー",
+                "tool.output.tailwind": "Tailwindをコピー",
+                "tool.export.png": "PNG画像",
+                "tool.export.jpg": "JPG画像",
+                "tool.export.svg": "SVG画像",
+                "tool.export.json": "JSONデータ",
+                "tool.generate.random": "ランダムグラデーション",
+                "tool.clear": "すべてクリア",
+                "footer.follow": "フォローする",
+                "footer.categories": "人気カテゴリ",
+                "footer.categories.pdf": "PDFツール",
+                "footer.categories.image": "画像ツール",
+                "footer.categories.text": "テキストツール",
+                "footer.categories.av": "オーディオ/ビデオツール",
+                "footer.categories.web": "WebDeveloperツール",
+                "footer.categories.calc": "電卓ツール",
+                "footer.categories.util": "ユーティリティツール",
+                "footer.categories.color": "カラーツール",
+                "footer.quicklinks": "クイックリンク",
+                "footer.links.tools": "すべてのツール",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "お問い合わせ",
+                "footer.links.privacy": "プライバシーポリシー",
+                "footer.links.disclaimer": "免責事項",
+                "footer.links.terms": "利用規約",
+                "footer.copyright": "© 2025 LollyPoPDF. 全著作権所有。"
+            },
+            ru: {
+                "nav.home": "Главная",
+                "nav.about": "О нас",
+                "nav.tools": "Инструменты",
+                "nav.contact": "Контакты",
+                "hero.title": "Инструмент Генератора Градиентов",
+                "hero.description": "Создавайте красивые градиенты с помощью нашего продвинутого инструмента. Настраивайте цвета, направление и тип, затем экспортируйте как CSS, изображение или JSON. Вся обработка происходит локально без ограничений размера файла и с полной конфиденциальностью.",
+                "howto.title": "Как использовать Генератор Градиентов",
+                "howto.step1.title": "Выберите Тип Градиента",
+                "howto.step1.description": "Выберите из линейных, радиальных или конических градиентов. Каждый тип создает различные визуальные эффекты и может быть настроен с различными параметрами.",
+                "howto.step2.title": "Добавьте Цветовые Остановки",
+                "howto.step2.description": "Добавьте несколько цветовых остановок и настройте их позиции. Используйте цветовую палитру или вводите значения в формате HEX, RGB или HSL для точного контроля.",
+                "howto.step3.title": "Настройте Параметры",
+                "howto.step3.description": "Настройте направление, угол, форму и другие параметры для точной настройки вашего градиента. Смотрите изменения в реальном времени на холсте предварительного просмотра.",
+                "howto.step4.title": "Экспортируйте и Используйте",
+                "howto.step4.description": "Скопируйте код CSS, скачайте как изображение или экспортируйте как JSON. Вся обработка происходит локально в вашем браузере - ваши дизайны никогда не покидают ваше устройство.",
+                "tool.title": "Генератор Градиентов",
+                "tool.colors.title": "Цветовые Остановки",
+                "tool.colors.add": "Добавить Цветовую Остановку",
+                "tool.controls.title": "Управление Градиентом",
+                "tool.controls.angle": "Угол/Направление:",
+                "tool.controls.shape": "Форма (Радиальная):",
+                "tool.controls.size": "Размер (Радиальный):",
+                "tool.controls.position": "Позиция (Радиальная):",
+                "tool.presets.title": "Быстрые Пресеты",
+                "tool.output.title": "CSS Код",
+                "tool.output.copy": "Копировать CSS",
+                "tool.output.tailwind": "Копировать Tailwind",
+                "tool.export.png": "PNG Изображение",
+                "tool.export.jpg": "JPG Изображение",
+                "tool.export.svg": "SVG Изображение",
+                "tool.export.json": "JSON Данные",
+                "tool.generate.random": "Случайный Градиент",
+                "tool.clear": "Очистить Все",
+                "footer.follow": "СЛЕДУЙТЕ ЗА НАМИ",
+                "footer.categories": "Популярные Категории",
+                "footer.categories.pdf": "PDF Инструменты",
+                "footer.categories.image": "Инструменты для Изображений",
+                "footer.categories.text": "Текстовые Инструменты",
+                "footer.categories.av": "Аудио/Видео Инструменты",
+                "footer.categories.web": "Инструменты WebDeveloper",
+                "footer.categories.calc": "Инструменты Калькулятора",
+                "footer.categories.util": "Утилиты",
+                "footer.categories.color": "Цветовые Инструменты",
+                "footer.quicklinks": "Быстрые Ссылки",
+                "footer.links.tools": "Все Инструменты",
+                "footer.links.faq": "ЧаВо",
+                "footer.links.contact": "Контакты",
+                "footer.links.privacy": "Политика Конфиденциальности",
+                "footer.links.disclaimer": "Отказ от Ответственности",
+                "footer.links.terms": "Условия Использования",
+                "footer.copyright": "© 2025 LollyPoPDF. Все права защищены."
+            },
+            ko: {
+                "nav.home": "홈",
+                "nav.about": "회사 소개",
+                "nav.tools": "도구",
+                "nav.contact": "연락처",
+                "hero.title": "그라데이션 생성 도구",
+                "hero.description": "고급 도구로 아름다운 그라데이션을 만드세요. 색상, 방향 및 유형을 사용자 정의한 다음 CSS, 이미지 또는 JSON으로 내보냅니다. 모든 처리는 파일 크기 제한 없이 로컬에서 이루어지며 완전한 개인 정보 보호를 제공합니다.",
+                "howto.title": "그라데이션 생성기 사용 방법",
+                "howto.step1.title": "그라데이션 유형 선택",
+                "howto.step1.description": "선형, 방사형 또는 원뿔형 그라데이션 중에서 선택하세요. 각 유형은 다양한 시각적 효과를 생성하며 다양한 매개변수로 사용자 정의할 수 있습니다.",
+                "howto.step2.title": "색상 정지점 추가",
+                "howto.step2.description": "여러 색상 정지점을 추가하고 위치를 사용자 정의하세요. 색상 선택기를 사용하거나 HEX, RGB 또는 HSL 형식으로 값을 입력하여 정밀하게 제어할 수 있습니다.",
+                "howto.step3.title": "설정 사용자 정의",
+                "howto.step3.description": "방향, 각도, 모양 및 기타 매개변수를 조정하여 그라데이션을 미세 조정하세요. 미리보기 캔버스에서 실시간으로 변경 사항을 확인하세요.",
+                "howto.step4.title": "내보내기 및 사용",
+                "howto.step4.description": "CSS 코드를 복사하고, 이미지로 다운로드하거나 JSON으로 내보냅니다. 모든 처리는 브라우저에서 로컬로 이루어집니다 - 여러분의 디자인은 기기를 떠나지 않습니다.",
+                "tool.title": "그라데이션 생성기",
+                "tool.colors.title": "색상 정지점",
+                "tool.colors.add": "색상 정지점 추가",
+                "tool.controls.title": "그라데이션 컨트롤",
+                "tool.controls.angle": "각도/방향:",
+                "tool.controls.shape": "모양 (방사형):",
+                "tool.controls.size": "크기 (방사형):",
+                "tool.controls.position": "위치 (방사형):",
+                "tool.presets.title": "빠른 사전 설정",
+                "tool.output.title": "CSS 코드",
+                "tool.output.copy": "CSS 복사",
+                "tool.output.tailwind": "Tailwind 복사",
+                "tool.export.png": "PNG 이미지",
+                "tool.export.jpg": "JPG 이미지",
+                "tool.export.svg": "SVG 이미지",
+                "tool.export.json": "JSON 데이터",
+                "tool.generate.random": "무작위 그라데이션",
+                "tool.clear": "모두 지우기",
+                "footer.follow": "팔로우하기",
+                "footer.categories": "인기 카테고리",
+                "footer.categories.pdf": "PDF 도구",
+                "footer.categories.image": "이미지 도구",
+                "footer.categories.text": "텍스트 도구",
+                "footer.categories.av": "오디오/비디오 도구",
+                "footer.categories.web": "WebDeveloper 도구",
+                "footer.categories.calc": "계산기 도구",
+                "footer.categories.util": "유틸리티 도구",
+                "footer.categories.color": "색상 도구",
+                "footer.quicklinks": "빠른 링크",
+                "footer.links.tools": "모든 도구",
+                "footer.links.faq": "자주 묻는 질문",
+                "footer.links.contact": "연락처",
+                "footer.links.privacy": "개인정보 보호정책",
+                "footer.links.disclaimer": "면책 조항",
+                "footer.links.terms": "서비스 약관",
+                "footer.copyright": "© 2025 LollyPoPDF. 모든 권리 보유."
+            },
+            "zh-CN": {
+                "nav.home": "首页",
+                "nav.about": "关于我们",
+                "nav.tools": "工具",
+                "nav.contact": "联系我们",
+                "hero.title": "渐变生成器工具",
+                "hero.description": "使用我们的高级工具创建美丽的渐变。自定义颜色、方向和类型，然后导出为CSS、图像或JSON。所有处理都在本地进行，没有文件大小限制，完全保护隐私。",
+                "howto.title": "如何使用渐变生成器",
+                "howto.step1.title": "选择渐变类型",
+                "howto.step1.description": "从线性、径向或圆锥渐变中选择。每种类型创建不同的视觉效果，并可以使用各种参数进行自定义。",
+                "howto.step2.title": "添加颜色停止点",
+                "howto.step2.description": "添加多个颜色停止点并自定义它们的位置。使用颜色选择器或以HEX、RGB或HSL格式输入值进行精确控制。",
+                "howto.step3.title": "自定义设置",
+                "howto.step3.description": "调整方向、角度、形状和其他参数以微调您的渐变。在预览画布上实时查看更改。",
+                "howto.step4.title": "导出和使用",
+                "howto.step4.description": "复制CSS代码，下载为图像或导出为JSON。所有处理都在您的浏览器本地进行 - 您的设计永远不会离开您的设备。",
+                "tool.title": "渐变生成器",
+                "tool.colors.title": "颜色停止点",
+                "tool.colors.add": "添加颜色停止点",
+                "tool.controls.title": "渐变控制",
+                "tool.controls.angle": "角度/方向:",
+                "tool.controls.shape": "形状（径向）:",
+                "tool.controls.size": "大小（径向）:",
+                "tool.controls.position": "位置（径向）:",
+                "tool.presets.title": "快速预设",
+                "tool.output.title": "CSS代码",
+                "tool.output.copy": "复制CSS",
+                "tool.output.tailwind": "复制Tailwind",
+                "tool.export.png": "PNG图像",
+                "tool.export.jpg": "JPG图像",
+                "tool.export.svg": "SVG图像",
+                "tool.export.json": "JSON数据",
+                "tool.generate.random": "随机渐变",
+                "tool.clear": "清除全部",
+                "footer.follow": "关注我们",
+                "footer.categories": "热门类别",
+                "footer.categories.pdf": "PDF工具",
+                "footer.categories.image": "图像工具",
+                "footer.categories.text": "文本工具",
+                "footer.categories.av": "音频/视频工具",
+                "footer.categories.web": "WebDeveloper工具",
+                "footer.categories.calc": "计算器工具",
+                "footer.categories.util": "实用工具",
+                "footer.categories.color": "颜色工具",
+                "footer.quicklinks": "快速链接",
+                "footer.links.tools": "所有工具",
+                "footer.links.faq": "常见问题",
+                "footer.links.contact": "联系我们",
+                "footer.links.privacy": "隐私政策",
+                "footer.links.disclaimer": "免责声明",
+                "footer.links.terms": "服务条款",
+                "footer.copyright": "© 2025 LollyPoPDF. 保留所有权利。"
+            },
+            "zh-TW": {
+                "nav.home": "首頁",
+                "nav.about": "關於我們",
+                "nav.tools": "工具",
+                "nav.contact": "聯絡我們",
+                "hero.title": "漸層產生器工具",
+                "hero.description": "使用我們的高級工具創建美麗的漸層。自訂顏色、方向和類型，然後匯出為CSS、圖像或JSON。所有處理都在本地進行，沒有檔案大小限制，完全保護隱私。",
+                "howto.title": "如何使用漸層產生器",
+                "howto.step1.title": "選擇漸層類型",
+                "howto.step1.description": "從線性、徑向或圓錐漸層中選擇。每種類型創建不同的視覺效果，並可以使用各種參數進行自訂。",
+                "howto.step2.title": "添加顏色停止點",
+                "howto.step2.description": "添加多個顏色停止點並自訂它們的位置。使用顏色選擇器或以HEX、RGB或HSL格式輸入值進行精確控制。",
+                "howto.step3.title": "自訂設定",
+                "howto.step3.description": "調整方向、角度、形狀和其他參數以微調您的漸層。在預覽畫布上即時查看變更。",
+                "howto.step4.title": "匯出和使用",
+                "howto.step4.description": "複製CSS代碼，下載為圖像或匯出為JSON。所有處理都在您的瀏覽器本地進行 - 您的設計永遠不會離開您的裝置。",
+                "tool.title": "漸層產生器",
+                "tool.colors.title": "顏色停止點",
+                "tool.colors.add": "添加顏色停止點",
+                "tool.controls.title": "漸層控制",
+                "tool.controls.angle": "角度/方向:",
+                "tool.controls.shape": "形狀（徑向）:",
+                "tool.controls.size": "大小（徑向）:",
+                "tool.controls.position": "位置（徑向）:",
+                "tool.presets.title": "快速預設",
+                "tool.output.title": "CSS代碼",
+                "tool.output.copy": "複製CSS",
+                "tool.output.tailwind": "複製Tailwind",
+                "tool.export.png": "PNG圖像",
+                "tool.export.jpg": "JPG圖像",
+                "tool.export.svg": "SVG圖像",
+                "tool.export.json": "JSON數據",
+                "tool.generate.random": "隨機漸層",
+                "tool.clear": "清除全部",
+                "footer.follow": "關注我們",
+                "footer.categories": "熱門類別",
+                "footer.categories.pdf": "PDF工具",
+                "footer.categories.image": "圖像工具",
+                "footer.categories.text": "文字工具",
+                "footer.categories.av": "音訊/視訊工具",
+                "footer.categories.web": "WebDeveloper工具",
+                "footer.categories.calc": "計算機工具",
+                "footer.categories.util": "實用工具",
+                "footer.categories.color": "顏色工具",
+                "footer.quicklinks": "快速連結",
+                "footer.links.tools": "所有工具",
+                "footer.links.faq": "常見問題",
+                "footer.links.contact": "聯絡我們",
+                "footer.links.privacy": "隱私政策",
+                "footer.links.disclaimer": "免責聲明",
+                "footer.links.terms": "服務條款",
+                "footer.copyright": "© 2025 LollyPoPDF. 保留所有權利。"
+            },
+            ar: {
+                "nav.home": "الرئيسية",
+                "nav.about": "من نحن",
+                "nav.tools": "الأدوات",
+                "nav.contact": "اتصل بنا",
+                "hero.title": "أداة مولد التدرج اللوني",
+                "hero.description": "أنشئ تدرجات لونية جميلة باستخدام أداتنا المتقدمة. قم بتخصيص الألوان والاتجاه والنوع، ثم قم بالتصدير كـ CSS أو صورة أو JSON. تتم جميع المعالجة محليًا بدون حدود لحجم الملف وبخصوصية كاملة.",
+                "howto.title": "كيفية استخدام مولد التدرج اللوني",
+                "howto.step1.title": "اختر نوع التدرج",
+                "howto.step1.description": "اختر من بين التدرجات الخطية أو الشعاعية أو المخروطية. كل نوع يخلق تأثيرات بصرية مختلفة ويمكن تخصيصه بمعلمات متنوعة.",
+                "howto.step2.title": "أضف نقاط توقف الألوان",
+                "howto.step2.description": "أضف نقاط توقف ألوان متعددة وقم بتخصيص مواقعها. استخدم منتقي الألوان أو أدخل القيم بتنسيق HEX أو RGB أو HSL للتحكم الدقيق.",
+                "howto.step3.title": "قم بتخصيص الإعدادات",
+                "howto.step3.description": "اضبط الاتجاه والزاوية والشكل والمعلمات الأخرى لتحسين تدرجك. شاهد التغييرات في الوقت الفعلي على لوحة المعاينة.",
+                "howto.step4.title": "قم بالتصدير والاستخدام",
+                "howto.step4.description": "انسخ كود CSS، أو حمّل كصورة، أو قم بالتصدير كـ JSON. تتم جميع المعالجة محليًا في متصفحك - لا تترك تصامينك جهازك أبدًا.",
+                "tool.title": "مولد التدرج اللوني",
+                "tool.colors.title": "نقاط توقف الألوان",
+                "tool.colors.add": "إضافة نقطة توقف لون",
+                "tool.controls.title": "عناصر تحكم التدرج",
+                "tool.controls.angle": "الزاوية/الاتجاه:",
+                "tool.controls.shape": "الشكل (شعاعي):",
+                "tool.controls.size": "الحجم (شعاعي):",
+                "tool.controls.position": "الموضع (شعاعي):",
+                "tool.presets.title": "الإعدادات المسبقة السريعة",
+                "tool.output.title": "كود CSS",
+                "tool.output.copy": "نسخ CSS",
+                "tool.output.tailwind": "نسخ Tailwind",
+                "tool.export.png": "صورة PNG",
+                "tool.export.jpg": "صورة JPG",
+                "tool.export.svg": "صورة SVG",
+                "tool.export.json": "بيانات JSON",
+                "tool.generate.random": "تدرج عشوائي",
+                "tool.clear": "مسح الكل",
+                "footer.follow": "تابعنا",
+                "footer.categories": "الفئات الشائعة",
+                "footer.categories.pdf": "أدوات PDF",
+                "footer.categories.image": "أدوات الصور",
+                "footer.categories.text": "أدوات النص",
+                "footer.categories.av": "أدوات الصوت/الفيديو",
+                "footer.categories.web": "أدوات WebDeveloper",
+                "footer.categories.calc": "أدوات الآلة الحاسبة",
+                "footer.categories.util": "أدوات المساعدة",
+                "footer.categories.color": "أدوات الألوان",
+                "footer.quicklinks": "روابط سريعة",
+                "footer.links.tools": "جميع الأدوات",
+                "footer.links.faq": "الأسئلة الشائعة",
+                "footer.links.contact": "اتصل بنا",
+                "footer.links.privacy": "سياسة الخصوصية",
+                "footer.links.disclaimer": "إخلاء المسؤولية",
+                "footer.links.terms": "شروط الخدمة",
+                "footer.copyright": "© 2025 LollyPoPDF. جميع الحقوق محفوظة."
+            },
+            fa: {
+                "nav.home": "خانه",
+                "nav.about": "درباره ما",
+                "nav.tools": "ابزارها",
+                "nav.contact": "تماس با ما",
+                "hero.title": "ابزار تولید گرادیان",
+                "hero.description": "با ابزار پیشرفته ما گرادیان های زیبا ایجاد کنید. رنگ ها، جهت و نوع را سفارشی کنید، سپس به عنوان CSS، تصویر یا JSON صادر کنید. تمام پردازش به صورت محلی و بدون محدودیت اندازه فایل و با حریم خصوصی کامل انجام می شود.",
+                "howto.title": "نحوه استفاده از تولیدکننده گرادیان",
+                "howto.step1.title": "نوع گرادیان را انتخاب کنید",
+                "howto.step1.description": "از بین گرادیان های خطی، شعاعی یا مخروطی انتخاب کنید. هر نوع اثرات بصری مختلفی ایجاد می کند و می تواند با پارامترهای مختلف سفارشی شود.",
+                "howto.step2.title": "توقف های رنگ را اضافه کنید",
+                "howto.step2.description": "چندین توقف رنگ اضافه کنید و موقعیت آنها را سفارشی کنید. از انتخابگر رنگ استفاده کنید یا مقادیر را با فرمت HEX، RGB یا HSL برای کنترل دقیق وارد کنید.",
+                "howto.step3.title": "تنظیمات را سفارشی کنید",
+                "howto.step3.description": "جهت، زاویه، شکل و سایر پارامترها را برای تنظیم دقیق گرادیان خود تنظیم کنید. تغییرات را به صورت زنده روی بوم پیش نمایش مشاهده کنید.",
+                "howto.step4.title": "صادر کرده و استفاده کنید",
+                "howto.step4.description": "کد CSS را کپی کنید، به عنوان تصویر دانلود کنید یا به عنوان JSON صادر کنید. تمام پردازش به صورت محلی در مرورگر شما انجام می شود - طراحی های شما هرگز دستگاه شما را ترک نمی کنند.",
+                "tool.title": "تولیدکننده گرادیان",
+                "tool.colors.title": "توقف های رنگ",
+                "tool.colors.add": "افزودن توقف رنگ",
+                "tool.controls.title": "کنترل های گرادیان",
+                "tool.controls.angle": "زاویه/جهت:",
+                "tool.controls.shape": "شکل (شعاعی):",
+                "tool.controls.size": "اندازه (شعاعی):",
+                "tool.controls.position": "موقعیت (شعاعی):",
+                "tool.presets.title": "پیش تنظیمات سریع",
+                "tool.output.title": "کد CSS",
+                "tool.output.copy": "کپی CSS",
+                "tool.output.tailwind": "کپی Tailwind",
+                "tool.export.png": "تصویر PNG",
+                "tool.export.jpg": "تصویر JPG",
+                "tool.export.svg": "تصویر SVG",
+                "tool.export.json": "داده JSON",
+                "tool.generate.random": "گرادیان تصادفی",
+                "tool.clear": "پاک کردن همه",
+                "footer.follow": "ما را دنبال کنید",
+                "footer.categories": "دسته بندی های محبوب",
+                "footer.categories.pdf": "ابزارهای PDF",
+                "footer.categories.image": "ابزارهای تصویر",
+                "footer.categories.text": "ابزارهای متن",
+                "footer.categories.av": "ابزارهای صوتی/تصویری",
+                "footer.categories.web": "ابزارهای WebDeveloper",
+                "footer.categories.calc": "ابزارهای ماشین حساب",
+                "footer.categories.util": "ابزارهای کمکی",
+                "footer.categories.color": "ابزارهای رنگ",
+                "footer.quicklinks": "لینک های سریع",
+                "footer.links.tools": "همه ابزارها",
+                "footer.links.faq": "سوالات متداول",
+                "footer.links.contact": "تماس با ما",
+                "footer.links.privacy": "سیاست حفظ حریم خصوصی",
+                "footer.links.disclaimer": "سلب مسئولیت",
+                "footer.links.terms": "شرایط استفاده",
+                "footer.copyright": "© 2025 LollyPoPDF. تمامی حقوق محفوظ است."
+            },
+            bg: {
+                "nav.home": "Начало",
+                "nav.about": "За нас",
+                "nav.tools": "Инструменти",
+                "nav.contact": "Контакт",
+                "hero.title": "Инструмент за генериране на градиенти",
+                "hero.description": "Създавайте красиви градиенти с нашия усъвършенстван инструмент. Персонализирайте цветове, посока и тип, след което експортирайте като CSS, изображение или JSON. Цялата обработка се извършва локално без ограничения на размера на файла и с пълна поверителност.",
+                "howto.title": "Как да използвате генератора на градиенти",
+                "howto.step1.title": "Изберете тип градиент",
+                "howto.step1.description": "Изберете от линейни, радиални или конични градиенти. Всеки тип създава различни визуални ефекти и може да бъде персонализиран с различни параметри.",
+                "howto.step2.title": "Добавете цветови стъпки",
+                "howto.step2.description": "Добавете множество цветови стъпки и персонализирайте техните позиции. Използвайте избирача на цвят или въведете стойности във формат HEX, RGB или HSL за прецизен контрол.",
+                "howto.step3.title": "Персонализирайте настройките",
+                "howto.step3.description": "Регулирайте посоката, ъгъла, формата и други параметри, за да настроите градиента си. Наблюдавайте промените в реално време на платното за преглед.",
+                "howto.step4.title": "Експортирайте и използвайте",
+                "howto.step4.description": "Копирайте CSS кода, изтеглете като изображение или експортирайте като JSON. Цялата обработка се извършва локално във вашия браузър - вашите дизайни никога не напускат вашето устройство.",
+                "tool.title": "Генератор на градиенти",
+                "tool.colors.title": "Цветови стъпки",
+                "tool.colors.add": "Добавяне на цветова стъпка",
+                "tool.controls.title": "Контроли на градиента",
+                "tool.controls.angle": "Ъгъл/Посока:",
+                "tool.controls.shape": "Форма (Радиална):",
+                "tool.controls.size": "Размер (Радиален):",
+                "tool.controls.position": "Позиция (Радиална):",
+                "tool.presets.title": "Бързи предварителни настройки",
+                "tool.output.title": "CSS код",
+                "tool.output.copy": "Копиране на CSS",
+                "tool.output.tailwind": "Копиране на Tailwind",
+                "tool.export.png": "PNG изображение",
+                "tool.export.jpg": "JPG изображение",
+                "tool.export.svg": "SVG изображение",
+                "tool.export.json": "JSON данни",
+                "tool.generate.random": "Случаен градиент",
+                "tool.clear": "Изчисти всичко",
+                "footer.follow": "СЛЕДВАЙТЕ НИ",
+                "footer.categories": "Популярни категории",
+                "footer.categories.pdf": "PDF инструменти",
+                "footer.categories.image": "Инструменти за изображения",
+                "footer.categories.text": "Текстови инструменти",
+                "footer.categories.av": "Аудио/Видео инструменти",
+                "footer.categories.web": "WebDeveloper инструменти",
+                "footer.categories.calc": "Калкулаторни инструменти",
+                "footer.categories.util": "Помощни инструменти",
+                "footer.categories.color": "Цветови инструменти",
+                "footer.quicklinks": "Бързи връзки",
+                "footer.links.tools": "Всички инструменти",
+                "footer.links.faq": "ЧЗВ",
+                "footer.links.contact": "Контакт",
+                "footer.links.privacy": "Политика за поверителност",
+                "footer.links.disclaimer": "Отказ от отговорност",
+                "footer.links.terms": "Условия за ползване",
+                "footer.copyright": "© 2025 LollyPoPDF. Всички права запазени."
+            },
+            ca: {
+                "nav.home": "Inici",
+                "nav.about": "Sobre nosaltres",
+                "nav.tools": "Eines",
+                "nav.contact": "Contacte",
+                "hero.title": "Eina Generadora de Degradats",
+                "hero.description": "Creeu degradats bonics amb la nostra eina avançada. Personalitzeu colors, direcció i tipus, després exporteu com a CSS, imatge o JSON. Tot el processament es realitza localment sense límits de mida de fitxer i amb privacitat completa.",
+                "howto.title": "Com utilitzar el Generador de Degradats",
+                "howto.step1.title": "Trieu el Tipus de Degradat",
+                "howto.step1.description": "Seleccioneu entre degradats lineals, radials o cònics. Cada tipus crea diferents efectes visuals i es pot personalitzar amb diversos paràmetres.",
+                "howto.step2.title": "Afegiu Punts d'Aturada de Color",
+                "howto.step2.description": "Afegiu múltiples punts d'aturada de color i personalitzeu les seves posicions. Utilitzeu el selector de color o introduïu valors en format HEX, RGB o HSL per a un control precís.",
+                "howto.step3.title": "Personalitzeu la Configuració",
+                "howto.step3.description": "Ajusteu la direcció, angle, forma i altres paràmetres per afinar el vostre degradat. Vegeu els canvis en temps real a la lona de previsualització.",
+                "howto.step4.title": "Exporteu i Utilitzeu",
+                "howto.step4.description": "Copieu el codi CSS, baixeu com a imatge o exporteu com a JSON. Tot el processament es realitza localment al vostre navegador - els vostres dissenys mai surten del vostre dispositiu.",
+                "tool.title": "Generador de Degradats",
+                "tool.colors.title": "Punts d'Aturada de Color",
+                "tool.colors.add": "Afegir Punt d'Aturada de Color",
+                "tool.controls.title": "Controls del Degradat",
+                "tool.controls.angle": "Angle/Direcció:",
+                "tool.controls.shape": "Forma (Radial):",
+                "tool.controls.size": "Mida (Radial):",
+                "tool.controls.position": "Posició (Radial):",
+                "tool.presets.title": "Predefinits Ràpids",
+                "tool.output.title": "Codi CSS",
+                "tool.output.copy": "Copiar CSS",
+                "tool.output.tailwind": "Copiar Tailwind",
+                "tool.export.png": "Imatge PNG",
+                "tool.export.jpg": "Imatge JPG",
+                "tool.export.svg": "Imatge SVG",
+                "tool.export.json": "Dades JSON",
+                "tool.generate.random": "Degradat Aleatori",
+                "tool.clear": "Netejar Tot",
+                "footer.follow": "SEGUEIX-NOS",
+                "footer.categories": "Categories Populars",
+                "footer.categories.pdf": "Eines PDF",
+                "footer.categories.image": "Eines d'Imatge",
+                "footer.categories.text": "Eines de Text",
+                "footer.categories.av": "Eines d'Àudio/Video",
+                "footer.categories.web": "Eines WebDeveloper",
+                "footer.categories.calc": "Eines de Calculadora",
+                "footer.categories.util": "Eines d'Utilitat",
+                "footer.categories.color": "Eines de Color",
+                "footer.quicklinks": "Enllaços Ràpids",
+                "footer.links.tools": "Totes les Eines",
+                "footer.links.faq": "PMF",
+                "footer.links.contact": "Contacte",
+                "footer.links.privacy": "Política de Privadesa",
+                "footer.links.disclaimer": "Avís Legal",
+                "footer.links.terms": "Termes de Servei",
+                "footer.copyright": "© 2025 LollyPoPDF. Tots els drets reservats."
+            },
+            nl: {
+                "nav.home": "Home",
+                "nav.about": "Over ons",
+                "nav.tools": "Tools",
+                "nav.contact": "Contact",
+                "hero.title": "Gradient Generator Tool",
+                "hero.description": "Maak prachtige verlooptinten met onze geavanceerde tool. Pas kleuren, richting en type aan en exporteer vervolgens als CSS, afbeelding of JSON. Alle verwerking gebeurt lokaal zonder bestandsgroottebeperkingen en met volledige privacy.",
+                "howto.title": "Hoe de Gradient Generator te gebruiken",
+                "howto.step1.title": "Kies Verlooptype",
+                "howto.step1.description": "Kies uit lineaire, radiale of conische verlopen. Elk type creëert verschillende visuele effecten en kan worden aangepast met verschillende parameters.",
+                "howto.step2.title": "Voeg Kleurstops toe",
+                "howto.step2.description": "Voeg meerdere kleurstops toe en pas hun posities aan. Gebruik de kleurkipper of voer waarden in HEX-, RGB- of HSL-formaat in voor precieze controle.",
+                "howto.step3.title": "Pas Instellingen aan",
+                "howto.step3.description": "Pas richting, hoek, vorm en andere parameters aan om uw verloop te verfijnen. Zie wijzigingen in realtime op het voorbeeldcanvas.",
+                "howto.step4.title": "Exporteer en Gebruik",
+                "howto.step4.description": "Kopieer de CSS-code, download als afbeelding of exporteer als JSON. Alle verwerking gebeurt lokaal in uw browser - uw ontwerpen verlaten nooit uw apparaat.",
+                "tool.title": "Gradient Generator",
+                "tool.colors.title": "Kleurstops",
+                "tool.colors.add": "Kleurstop toevoegen",
+                "tool.controls.title": "Verloopbediening",
+                "tool.controls.angle": "Hoek/Richting:",
+                "tool.controls.shape": "Vorm (Radiaal):",
+                "tool.controls.size": "Grootte (Radiaal):",
+                "tool.controls.position": "Positie (Radiaal):",
+                "tool.presets.title": "Snelle Voorinstellingen",
+                "tool.output.title": "CSS-code",
+                "tool.output.copy": "Kopieer CSS",
+                "tool.output.tailwind": "Kopieer Tailwind",
+                "tool.export.png": "PNG-afbeelding",
+                "tool.export.jpg": "JPG-afbeelding",
+                "tool.export.svg": "SVG-afbeelding",
+                "tool.export.json": "JSON-gegevens",
+                "tool.generate.random": "Willekeurig Verloop",
+                "tool.clear": "Alles Wissen",
+                "footer.follow": "VOLG ONS",
+                "footer.categories": "Populaire Categorieën",
+                "footer.categories.pdf": "PDF Tools",
+                "footer.categories.image": "Afbeeldingstools",
+                "footer.categories.text": "Teksttools",
+                "footer.categories.av": "Audio/Video Tools",
+                "footer.categories.web": "WebDeveloper Tools",
+                "footer.categories.calc": "Rekenmachinetools",
+                "footer.categories.util": "Hulpprogramma's",
+                "footer.categories.color": "Kleurentools",
+                "footer.quicklinks": "Snelle Links",
+                "footer.links.tools": "Alle Tools",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Contact",
+                "footer.links.privacy": "Privacybeleid",
+                "footer.links.disclaimer": "Disclaimer",
+                "footer.links.terms": "Servicevoorwaarden",
+                "footer.copyright": "© 2025 LollyPoPDF. Alle rechten voorbehouden."
+            },
+            el: {
+                "nav.home": "Αρχική",
+                "nav.about": "Σχετικά με εμάς",
+                "nav.tools": "Εργαλεία",
+                "nav.contact": "Επικοινωνία",
+                "hero.title": "Εργαλείο Δημιουργίας Βαθμίδων",
+                "hero.description": "Δημιουργήστε όμορφες βαθμίδες με το προηγμένο μας εργαλείο. Προσαρμόστε χρώματα, κατεύθυνση και τύπο, μετά εξάγετε ως CSS, εικόνα ή JSON. Όλη η επεξεργασία γίνεται τοπικά χωρίς όρια μεγέθους αρχείου και με πλήρη ιδιωτικότητα.",
+                "howto.title": "Πώς να χρησιμοποιήσετε τον Δημιουργό Βαθμίδων",
+                "howto.step1.title": "Επιλέξτε Τύπο Βαθμίδας",
+                "howto.step1.description": "Επιλέξτε από γραμμικές, ακτινικές ή κωνικές βαθμίδες. Κάθε τύπος δημιουργεί διαφορετικά οπτικά εφέ και μπορεί να προσαρμοστεί με διάφορες παραμέτρους.",
+                "howto.step2.title": "Προσθέστε Σημεία Χρώματος",
+                "howto.step2.description": "Προσθέστε πολλαπλά σημεία χρώματος και προσαρμόστε τις θέσεις τους. Χρησιμοποιήστε τον επιλογέα χρώματος ή εισαγάγετε τιμές σε μορφή HEX, RGB ή HSL για ακριβέστερο έλεγχο.",
+                "howto.step3.title": "Προσαρμόστε Ρυθμίσεις",
+                "howto.step3.description": "Ρυθμίστε κατεύθυνση, γωνία, σχήμα και άλλες παραμέτρους για να τελειοποιήσετε τη βαθμίδα σας. Δείτε αλλαγές σε πραγματικό χρόνο στον καμβά προεπισκόπησης.",
+                "howto.step4.title": "Εξαγωγή και Χρήση",
+                "howto.step4.description": "Αντιγράψτε τον κώδικα CSS, κατεβάστε ως εικόνα ή εξάγετε ως JSON. Όλη η επεξεργασία γίνεται τοπικά στο πρόγραμμα περιήγησής σας - τα σχέδιά σας δεν φεύγουν ποτέ από τη συσκευή σας.",
+                "tool.title": "Δημιουργός Βαθμίδων",
+                "tool.colors.title": "Σημεία Χρώματος",
+                "tool.colors.add": "Προσθήκη Σημείου Χρώματος",
+                "tool.controls.title": "Έλεγχοι Βαθμίδας",
+                "tool.controls.angle": "Γωνία/Κατεύθυνση:",
+                "tool.controls.shape": "Σχήμα (Ακτινικό):",
+                "tool.controls.size": "Μέγεθος (Ακτινικό):",
+                "tool.controls.position": "Θέση (Ακτινικό):",
+                "tool.presets.title": "Γρήγορες Προεπιλογές",
+                "tool.output.title": "Κώδικας CSS",
+                "tool.output.copy": "Αντιγραφή CSS",
+                "tool.output.tailwind": "Αντιγραφή Tailwind",
+                "tool.export.png": "Εικόνα PNG",
+                "tool.export.jpg": "Εικόνα JPG",
+                "tool.export.svg": "Εικόνα SVG",
+                "tool.export.json": "Δεδομένα JSON",
+                "tool.generate.random": "Τυχαία Βαθμίδα",
+                "tool.clear": "Καθαρισμός Όλων",
+                "footer.follow": "ΑΚΟΛΟΥΘΗΣΤΕ ΜΑΣ",
+                "footer.categories": "Δημοφιλείς Κατηγορίες",
+                "footer.categories.pdf": "Εργαλεία PDF",
+                "footer.categories.image": "Εργαλεία Εικόνας",
+                "footer.categories.text": "Εργαλεία Κειμένου",
+                "footer.categories.av": "Εργαλεία Ήχου/Βίντεο",
+                "footer.categories.web": "Εργαλεία WebDeveloper",
+                "footer.categories.calc": "Εργαλεία Αριθμομηχανής",
+                "footer.categories.util": "Εργαλεία Χρησιμότητας",
+                "footer.categories.color": "Εργαλεία Χρώματος",
+                "footer.quicklinks": "Γρήγοροι Σύνδεσμοι",
+                "footer.links.tools": "Όλα τα Εργαλεία",
+                "footer.links.faq": "Συχνές Ερωτήσεις",
+                "footer.links.contact": "Επικοινωνία",
+                "footer.links.privacy": "Πολιτική Απορρήτου",
+                "footer.links.disclaimer": "Αποποίηση Ευθυνών",
+                "footer.links.terms": "Όροι Χρήσης",
+                "footer.copyright": "© 2025 LollyPoPDF. Με επιφύλαξη παντός δικαιώματος."
+            },
+            hi: {
+                "nav.home": "होम",
+                "nav.about": "हमारे बारे में",
+                "nav.tools": "टूल्स",
+                "nav.contact": "संपर्क करें",
+                "hero.title": "ग्रेडिएंट जनरेटर टूल",
+                "hero.description": "हमारे उन्नत टूल से सुंदर ग्रेडिएंट बनाएं। रंग, दिशा और प्रकार को कस्टमाइज़ करें, फिर CSS, इमेज या JSON के रूप में एक्सपोर्ट करें। सभी प्रोसेसिंग स्थानीय रूप से होती है बिना फ़ाइल आकार सीमा के और पूर्ण गोपनीयता के साथ।",
+                "howto.title": "ग्रेडिएंट जनरेटर का उपयोग कैसे करें",
+                "howto.step1.title": "ग्रेडिएंट प्रकार चुनें",
+                "howto.step1.description": "लीनियर, रेडियल या कोनिक ग्रेडिएंट में से चुनें। प्रत्येक प्रकार विभिन्न दृश्य प्रभाव बनाता है और विभिन्न पैरामीटर के साथ कस्टमाइज़ किया जा सकता है।",
+                "howto.step2.title": "कलर स्टॉप जोड़ें",
+                "howto.step2.description": "एकाधिक कलर स्टॉप जोड़ें और उनकी स्थिति को कस्टमाइज़ करें। सटीक नियंत्रण के लिए कलर पिकर का उपयोग करें या HEX, RGB या HSL फॉर्मेट में मान दर्ज करें।",
+                "howto.step3.title": "सेटिंग्स कस्टमाइज़ करें",
+                "howto.step3.description": "अपने ग्रेडिएंट को परिष्कृत करने के लिए दिशा, कोण, आकार और अन्य पैरामीटर समायोजित करें। प्रीव्यू कैनवास पर रियल-टाइम में परिवर्तन देखें।",
+                "howto.step4.title": "एक्सपोर्ट और उपयोग करें",
+                "howto.step4.description": "CSS कोड कॉपी करें, इमेज के रूप में डाउनलोड करें या JSON के रूप में एक्सपोर्ट करें। सभी प्रोसेसिंग आपके ब्राउज़र में स्थानीय रूप से होती है - आपके डिज़ाइन कभी भी आपके डिवाइस को नहीं छोड़ते।",
+                "tool.title": "ग्रेडिएंट जनरेटर",
+                "tool.colors.title": "कलर स्टॉप",
+                "tool.colors.add": "कलर स्टॉप जोड़ें",
+                "tool.controls.title": "ग्रेडिएंट कंट्रोल्स",
+                "tool.controls.angle": "कोण/दिशा:",
+                "tool.controls.shape": "आकार (रेडियल):",
+                "tool.controls.size": "आकार (रेडियल):",
+                "tool.controls.position": "स्थिति (रेडियल):",
+                "tool.presets.title": "त्वरित प्रीसेट",
+                "tool.output.title": "CSS कोड",
+                "tool.output.copy": "CSS कॉपी करें",
+                "tool.output.tailwind": "Tailwind कॉपी करें",
+                "tool.export.png": "PNG इमेज",
+                "tool.export.jpg": "JPG इमेज",
+                "tool.export.svg": "SVG इमेज",
+                "tool.export.json": "JSON डेटा",
+                "tool.generate.random": "यादृच्छिक ग्रेडिएंट",
+                "tool.clear": "सभी साफ करें",
+                "footer.follow": "हमें फॉलो करें",
+                "footer.categories": "लोकप्रिय श्रेणियाँ",
+                "footer.categories.pdf": "PDF टूल्स",
+                "footer.categories.image": "इमेज टूल्स",
+                "footer.categories.text": "टेक्स्ट टूल्स",
+                "footer.categories.av": "ऑडियो/वीडियो टूल्स",
+                "footer.categories.web": "WebDeveloper टूल्स",
+                "footer.categories.calc": "कैलकुलेटर टूल्स",
+                "footer.categories.util": "यूटिलिटी टूल्स",
+                "footer.categories.color": "कलर टूल्स",
+                "footer.quicklinks": "त्वरित लिंक",
+                "footer.links.tools": "सभी टूल्स",
+                "footer.links.faq": "सामान्य प्रश्न",
+                "footer.links.contact": "संपर्क करें",
+                "footer.links.privacy": "गोपनीयता नीति",
+                "footer.links.disclaimer": "अस्वीकरण",
+                "footer.links.terms": "सेवा की शर्तें",
+                "footer.copyright": "© 2025 LollyPoPDF. सर्वाधिकार सुरक्षित।"
+            },
+            te: {
+                "nav.home": "హోమ్",
+                "nav.about": "మా గురించి",
+                "nav.tools": "టూల్స్",
+                "nav.contact": "సంప్రదించండి",
+                "hero.title": "గ్రేడియంట్ జనరేటర్ టూల్",
+                "hero.description": "మా అధునాతన టూల్‌తో అందమైన గ్రేడియంట్లను సృష్టించండి. రంగులు, దిశ మరియు రకాన్ని కస్టమైజ్ చేసి, తర్వాత CSS, ఇమేజ్ లేదా JSONగా ఎగుమతి చేయండి. అన్ని ప్రాసెసింగ్ ఫైల్ సైజ్ పరిమితులు లేకుండా మరియు పూర్తి గోప్యతతో స్థానికంగా జరుగుతుంది.",
+                "howto.title": "గ్రేడియంట్ జనరేటర్ ఎలా ఉపయోగించాలి",
+                "howto.step1.title": "గ్రేడియంట్ రకాన్ని ఎంచుకోండి",
+                "howto.step1.description": "లీనియర్, రేడియల్ లేదా కోనిక్ గ్రేడియంట్ల నుండి ఎంచుకోండి. ప్రతి రకం విభిన్న దృశ్య ప్రభావాలను సృష్టిస్తుంది మరియు వివిధ పారామితులతో కస్టమైజ్ చేయబడుతుంది.",
+                "howto.step2.title": "కలర్ స్టాప్లను జోడించండి",
+                "howto.step2.description": "బహుళ కలర్ స్టాప్లను జోడించి వాటి స్థానాలను కస్టమైజ్ చేయండి. ఖచ్చితమైన నియంత్రణ కోసం కలర్ పికర్ ఉపయోగించండి లేదా HEX, RGB లేదా HSL ఫార్మాట్‌లో విలువలను నమోదు చేయండి.",
+                "howto.step3.title": "సెట్టింగ్లను కస్టమైజ్ చేయండి",
+                "howto.step3.description": "మీ గ్రేడియంట్‌ను ఫైన్-ట్యూన్ చేయడానికి దిశ, కోణం, ఆకారం మరియు ఇతర పారామితులను సర్దుబాటు చేయండి. ప్రివ్యూ కెన్వాస్‌లో నిజ-సమయంలో మార్పులను చూడండి.",
+                "howto.step4.title": "ఎగుమతి మరియు ఉపయోగం",
+                "howto.step4.description": "CSS కోడ్‌ను కాపీ చేయండి, ఇమేజ్‌గా డౌన్‌లోడ్ చేయండి లేదా JSONగా ఎగుమతి చేయండి. అన్ని ప్రాసెసింగ్ మీ బ్రౌజర్‌లో స్థానికంగా జరుగుతుంది - మీ డిజైన్లు మీ పరికరాన్ని ఎప్పుడూ విడిచిపెట్టవు.",
+                "tool.title": "గ్రేడియంట్ జనరేటర్",
+                "tool.colors.title": "కలర్ స్టాప్లు",
+                "tool.colors.add": "కలర్ స్టాప్ జోడించండి",
+                "tool.controls.title": "గ్రేడియంట్ నియంత్రణలు",
+                "tool.controls.angle": "కోణం/దిశ:",
+                "tool.controls.shape": "ఆకారం (రేడియల్):",
+                "tool.controls.size": "పరిమాణం (రేడియల్):",
+                "tool.controls.position": "స్థానం (రేడియల్):",
+                "tool.presets.title": "త్వరిత ప్రీసెట్లు",
+                "tool.output.title": "CSS కోడ్",
+                "tool.output.copy": "CSS కాపీ చేయండి",
+                "tool.output.tailwind": "Tailwind కాపీ చేయండి",
+                "tool.export.png": "PNG ఇమేజ్",
+                "tool.export.jpg": "JPG ఇమేజ్",
+                "tool.export.svg": "SVG ఇమేజ్",
+                "tool.export.json": "JSON డేటా",
+                "tool.generate.random": "యాదృచ్ఛిక గ్రేడియంట్",
+                "tool.clear": "అన్నీ క్లియర్ చేయండి",
+                "footer.follow": "మమ్మల్ని అనుసరించండి",
+                "footer.categories": "జనాదరణ పొందిన వర్గాలు",
+                "footer.categories.pdf": "PDF టూల్స్",
+                "footer.categories.image": "ఇమేజ్ టూల్స్",
+                "footer.categories.text": "టెక్స్ట్ టూల్స్",
+                "footer.categories.av": "ఆడియో/వీడియో టూల్స్",
+                "footer.categories.web": "WebDeveloper టూల్స్",
+                "footer.categories.calc": "కాలిక్యులేటర్ టూల్స్",
+                "footer.categories.util": "యుటిలిటీ టూల్స్",
+                "footer.categories.color": "కలర్ టూల్స్",
+                "footer.quicklinks": "త్వరిత లింకులు",
+                "footer.links.tools": "అన్ని టూల్స్",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "సంప్రదించండి",
+                "footer.links.privacy": "గోప్యతా విధానం",
+                "footer.links.disclaimer": "డిస్క్లైమర్",
+                "footer.links.terms": "సేవా నిబంధనలు",
+                "footer.copyright": "© 2025 LollyPoPDF. అన్ని హక్కులు ప్రత్యేకించబడినవి."
+            },
+            kn: {
+                "nav.home": "ಮುಖಪುಟ",
+                "nav.about": "ನಮ್ಮ ಬಗ್ಗೆ",
+                "nav.tools": "ಉಪಕರಣಗಳು",
+                "nav.contact": "ಸಂಪರ್ಕಿಸಿ",
+                "hero.title": "ಗ್ರೇಡಿಯಂಟ್ ಜನರೇಟರ್ ಟೂಲ್",
+                "hero.description": "ನಮ್ಮ ಸುಧಾರಿತ ಉಪಕರಣದೊಂದಿಗೆ ಸುಂದರವಾದ ಗ್ರೇಡಿಯಂಟ್‌ಗಳನ್ನು ರಚಿಸಿ. ಬಣ್ಣಗಳು, ದಿಕ್ಕು ಮತ್ತು ಪ್ರಕಾರವನ್ನು ಕಸ್ಟಮೈಸ್ ಮಾಡಿ, ನಂತರ CSS, ಚಿತ್ರ ಅಥವಾ JSON ಆಗಿ ರಫ್ತು ಮಾಡಿ. ಎಲ್ಲಾ ಪ್ರಕ್ರಿಯೆಯು ಫೈಲ್ ಗಾತ್ರದ ಮಿತಿಗಳಿಲ್ಲದೆ ಮತ್ತು ಸಂಪೂರ್ಣ ಗೌಪ್ಯತೆಯೊಂದಿಗೆ ಸ್ಥಳೀಯವಾಗಿ ನಡೆಯುತ್ತದೆ.",
+                "howto.title": "ಗ್ರೇಡಿಯಂಟ್ ಜನರೇಟರ್ ಅನ್ನು ಹೇಗೆ ಬಳಸುವುದು",
+                "howto.step1.title": "ಗ್ರೇಡಿಯಂಟ್ ಪ್ರಕಾರವನ್ನು ಆಯ್ಕೆಮಾಡಿ",
+                "howto.step1.description": "ರೇಖೀಯ, ರೇಡಿಯಲ್ ಅಥವಾ ಕೋನಿಕ್ ಗ್ರೇಡಿಯಂಟ್‌ಗಳಿಂದ ಆಯ್ಕೆಮಾಡಿ. ಪ್ರತಿಯೊಂದು ಪ್ರಕಾರವು ವಿಭಿನ್ನ ದೃಶ್ಯ ಪರಿಣಾಮಗಳನ್ನು ಸೃಷ್ಟಿಸುತ್ತದೆ ಮತ್ತು ವಿವಿಧ ನಿಯತಾಂಕಗಳೊಂದಿಗೆ ಕಸ್ಟಮೈಸ್ ಮಾಡಬಹುದು.",
+                "howto.step2.title": "ಬಣ್ಣದ ಸ್ಟಾಪ್‌ಗಳನ್ನು ಸೇರಿಸಿ",
+                "howto.step2.description": "ಬಹು ಬಣ್ಣದ ಸ್ಟಾಪ್‌ಗಳನ್ನು ಸೇರಿಸಿ ಮತ್ತು ಅವುಗಳ ಸ್ಥಾನಗಳನ್ನು ಕಸ್ಟಮೈಸ್ ಮಾಡಿ. ನಿಖರವಾದ ನಿಯಂತ್ರಣಕ್ಕಾಗಿ ಬಣ್ಣದ ಪಿಕರ್ ಅನ್ನು ಬಳಸಿ ಅಥವಾ HEX, RGB ಅಥವಾ HSL ಫಾರ್ಮ್ಯಾಟ್‌ನಲ್ಲಿ ಮೌಲ್ಯಗಳನ್ನು ನಮೂದಿಸಿ.",
+                "howto.step3.title": "ಸೆಟ್ಟಿಂಗ್‌ಗಳನ್ನು ಕಸ್ಟಮೈಸ್ ಮಾಡಿ",
+                "howto.step3.description": "ನಿಮ್ಮ ಗ್ರೇಡಿಯಂಟ್ ಅನ್ನು ಫೈನ್-ಟ್ಯೂನ್ ಮಾಡಲು ದಿಕ್ಕು, ಕೋನ, ಆಕಾರ ಮತ್ತು ಇತರ ನಿಯತಾಂಕಗಳನ್ನು ಸರಿಹೊಂದಿಸಿ. ಪೂರ್ವವೀಕ್ಷಣೆ ಕ್ಯಾನ್ವಾಸ್‌ನಲ್ಲಿ ನೈಜ-ಸಮಯದಲ್ಲಿ ಬದಲಾವಣೆಗಳನ್ನು ನೋಡಿ.",
+                "howto.step4.title": "ರಫ್ತು ಮಾಡಿ ಮತ್ತು ಬಳಸಿ",
+                "howto.step4.description": "CSS ಕೋಡ್ ಅನ್ನು ನಕಲಿಸಿ, ಚಿತ್ರವಾಗಿ ಡೌನ್‌ಲೋಡ್ ಮಾಡಿ ಅಥವಾ JSON ಆಗಿ ರಫ್ತು ಮಾಡಿ. ಎಲ್ಲಾ ಪ್ರಕ್ರಿಯೆಯು ನಿಮ್ಮ ಬ್ರೌಸರ್‌ನಲ್ಲಿ ಸ್ಥಳೀಯವಾಗಿ ನಡೆಯುತ್ತದೆ - ನಿಮ್ಮ ವಿನ್ಯಾಸಗಳು ಎಂದಿಗೂ ನಿಮ್ಮ ಸಾಧನವನ್ನು ಬಿಡುವುದಿಲ್ಲ.",
+                "tool.title": "ಗ್ರೇಡಿಯಂಟ್ ಜನರೇಟರ್",
+                "tool.colors.title": "ಬಣ್ಣದ ಸ್ಟಾಪ್‌ಗಳು",
+                "tool.colors.add": "ಬಣ್ಣದ ಸ್ಟಾಪ್ ಸೇರಿಸಿ",
+                "tool.controls.title": "ಗ್ರೇಡಿಯಂಟ್ ನಿಯಂತ್ರಣಗಳು",
+                "tool.controls.angle": "ಕೋನ/ದಿಕ್ಕು:",
+                "tool.controls.shape": "ಆಕಾರ (ರೇಡಿಯಲ್):",
+                "tool.controls.size": "ಗಾತ್ರ (ರೇಡಿಯಲ್):",
+                "tool.controls.position": "ಸ್ಥಾನ (ರೇಡಿಯಲ್):",
+                "tool.presets.title": "ತ್ವರಿತ ಪ್ರೀಸೆಟ್‌ಗಳು",
+                "tool.output.title": "CSS ಕೋಡ್",
+                "tool.output.copy": "CSS ನಕಲಿಸಿ",
+                "tool.output.tailwind": "Tailwind ನಕಲಿಸಿ",
+                "tool.export.png": "PNG ಚಿತ್ರ",
+                "tool.export.jpg": "JPG ಚಿತ್ರ",
+                "tool.export.svg": "SVG ಚಿತ್ರ",
+                "tool.export.json": "JSON ಡೇಟಾ",
+                "tool.generate.random": "ಯಾದೃಚ್ಛಿಕ ಗ್ರೇಡಿಯಂಟ್",
+                "tool.clear": "ಎಲ್ಲಾ ತೆರವುಗೊಳಿಸಿ",
+                "footer.follow": "ನಮ್ಮನ್ನು ಅನುಸರಿಸಿ",
+                "footer.categories": "ಜನಪ್ರಿಯ ವರ್ಗಗಳು",
+                "footer.categories.pdf": "PDF ಉಪಕರಣಗಳು",
+                "footer.categories.image": "ಚಿತ್ರ ಉಪಕರಣಗಳು",
+                "footer.categories.text": "ಪಠ್ಯ ಉಪಕರಣಗಳು",
+                "footer.categories.av": "ಆಡಿಯೋ/ವೀಡಿಯೊ ಉಪಕರಣಗಳು",
+                "footer.categories.web": "WebDeveloper ಉಪಕರಣಗಳು",
+                "footer.categories.calc": "ಕ್ಯಾಲ್ಕುಲೇಟರ್ ಉಪಕರಣಗಳು",
+                "footer.categories.util": "ಯುಟಿಲಿಟಿ ಉಪಕರಣಗಳು",
+                "footer.categories.color": "ಬಣ್ಣ ಉಪಕರಣಗಳು",
+                "footer.quicklinks": "ತ್ವರಿತ ಲಿಂಕ್‌ಗಳು",
+                "footer.links.tools": "ಎಲ್ಲಾ ಉಪಕರಣಗಳು",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "ಸಂಪರ್ಕಿಸಿ",
+                "footer.links.privacy": "ಗೌಪ್ಯತಾ ನೀತಿ",
+                "footer.links.disclaimer": "ಡಿಸ್ಕ್ಲೈಮರ್",
+                "footer.links.terms": "ಸೇವಾ ನಿಯಮಗಳು",
+                "footer.copyright": "© 2025 LollyPoPDF. ಎಲ್ಲಾ ಹಕ್ಕುಗಳು ಕಾಯ್ದಿರಿಸಿವೆ."
+            },
+            ta: {
+                "nav.home": "முகப்பு",
+                "nav.about": "எங்களைப் பற்றி",
+                "nav.tools": "கருவிகள்",
+                "nav.contact": "தொடர்பு கொள்ள",
+                "hero.title": "கிரேடியன்ட் ஜெனரேட்டர் கருவி",
+                "hero.description": "எங்கள் மேம்பட்ட கருவியைப் பயன்படுத்தி அழகான கிரேடியன்ட்களை உருவாக்கவும். நிறங்கள், திசை மற்றும் வகையைத் தனிப்பயனாக்கி, பின்னர் CSS, படம் அல்லது JSON ஆக ஏற்றுமதி செய்யவும். அனைத்து செயலாக்கமும் கோப்பு அளவு வரம்புகள் இல்லாமல் மற்றும் முழுமையான தனியுரிமையுடன் உள்ளூரில் நடைபெறுகிறது.",
+                "howto.title": "கிரேடியன்ட் ஜெனரேட்டரை எவ்வாறு பயன்படுத்துவது",
+                "howto.step1.title": "கிரேடியன்ட் வகையைத் தேர்ந்தெடுக்கவும்",
+                "howto.step1.description": "நேரியல், ஆர அல்லது கூம்பு கிரேடியன்ட்களில் இருந்து தேர்ந்தெடுக்கவும். ஒவ்வொரு வகையும் வெவ்வேறு காட்சி விளைவுகளை உருவாக்குகிறது மற்றும் பல்வேறு அளவுருக்களுடன் தனிப்பயனாக்கப்படலாம்.",
+                "howto.step2.title": "நிற நிறுத்தங்களைச் சேர்க்கவும்",
+                "howto.step2.description": "பல நிற நிறுத்தங்களைச் சேர்த்து அவற்றின் நிலைகளைத் தனிப்பயனாக்கவும். துல்லியமான கட்டுப்பாட்டிற்கு நிற தேர்வியைப் பயன்படுத்தவும் அல்லது HEX, RGB அல்லது HSL வடிவமைப்பில் மதிப்புகளை உள்ளிடவும்.",
+                "howto.step3.title": "அமைப்புகளைத் தனிப்பயனாக்கவும்",
+                "howto.step3.description": "உங்கள் கிரேடியன்ட்டை சரிசெய்ய திசை, கோணம், வடிவம் மற்றும் பிற அளவுருக்களை சரிசெய்யவும். முன்னோட்ட கேன்வாஸில் நிகழ்நேர மாற்றங்களைக் காண்க.",
+                "howto.step4.title": "ஏற்றுமதி மற்றும் பயன்பாடு",
+                "howto.step4.description": "CSS குறியீட்டை நகலெடுக்கவும், படமாகப் பதிவிறக்கவும் அல்லது JSON ஆக ஏற்றுமதி செய்யவும். அனைத்து செயலாக்கமும் உங்கள் உலாவியில் உள்ளூரில் நடைபெறுகிறது - உங்கள் வடிவமைப்புகள் உங்கள் சாதனத்தை விட்டு வெளியேறாது.",
+                "tool.title": "கிரேடியன்ட் ஜெனரேட்டர்",
+                "tool.colors.title": "நிற நிறுத்தங்கள்",
+                "tool.colors.add": "நிற நிறுத்தத்தைச் சேர்க்கவும்",
+                "tool.controls.title": "கிரேடியன்ட் கட்டுப்பாடுகள்",
+                "tool.controls.angle": "கோணம்/திசை:",
+                "tool.controls.shape": "வடிவம் (ஆர):",
+                "tool.controls.size": "அளவு (ஆர):",
+                "tool.controls.position": "நிலை (ஆர):",
+                "tool.presets.title": "விரைவு முன்னமைவுகள்",
+                "tool.output.title": "CSS குறியீடு",
+                "tool.output.copy": "CSS ஐ நகலெடுக்கவும்",
+                "tool.output.tailwind": "Tailwind ஐ நகலெடுக்கவும்",
+                "tool.export.png": "PNG படம்",
+                "tool.export.jpg": "JPG படம்",
+                "tool.export.svg": "SVG படம்",
+                "tool.export.json": "JSON தரவு",
+                "tool.generate.random": "சீரற்ற கிரேடியன்ட்",
+                "tool.clear": "அனைத்தையும் அழிக்கவும்",
+                "footer.follow": "எங்களைப் பின்தொடரவும்",
+                "footer.categories": "பிரபலமான வகைகள்",
+                "footer.categories.pdf": "PDF கருவிகள்",
+                "footer.categories.image": "பட கருவிகள்",
+                "footer.categories.text": "உரை கருவிகள்",
+                "footer.categories.av": "ஆடியோ/வீடியோ கருவிகள்",
+                "footer.categories.web": "WebDeveloper கருவிகள்",
+                "footer.categories.calc": "கால்குலேட்டர் கருவிகள்",
+                "footer.categories.util": "பயன்பாட்டு கருவிகள்",
+                "footer.categories.color": "நிற கருவிகள்",
+                "footer.quicklinks": "விரைவு இணைப்புகள்",
+                "footer.links.tools": "அனைத்து கருவிகள்",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "தொடர்பு கொள்ள",
+                "footer.links.privacy": "தனியுரிமைக் கொள்கை",
+                "footer.links.disclaimer": "பொறுப்புத் துறப்பு",
+                "footer.links.terms": "சேவை விதிமுறைகள்",
+                "footer.copyright": "© 2025 LollyPoPDF. அனைத்து உரிமைகளும் பாதுகாக்கப்பட்டவை."
+            },
+            ml: {
+                "nav.home": "ഹോം",
+                "nav.about": "ഞങ്ങളെക്കുറിച്ച്",
+                "nav.tools": "ടൂളുകൾ",
+                "nav.contact": "ബന്ധപ്പെടുക",
+                "hero.title": "ഗ്രേഡിയന്റ് ജനറേറ്റർ ടൂൾ",
+                "hero.description": "ഞങ്ങളുടെ അഡ്വാൻസ്ഡ് ടൂൾ ഉപയോഗിച്ച് മനോഹരമായ ഗ്രേഡിയന്റുകൾ സൃഷ്ടിക്കുക. നിറങ്ങൾ, ദിശ, തരം എന്നിവ ഇഷ്ടാനുസൃതമാക്കി, തുടർന്ന് CSS, ഇമേജ് അല്ലെങ്കിൽ JSON ആയി എക്സ്പോർട്ട് ചെയ്യുക. എല്ലാ പ്രോസസ്സിംഗും ഫയൽ വലുപ്പ പരിധികളില്ലാതെയും പൂർണ്ണ സ്വകാര്യതയോടെയും പ്രാദേശികമായി നടക്കുന്നു.",
+                "howto.title": "ഗ്രേഡിയന്റ് ജനറേറ്റർ എങ്ങനെ ഉപയോഗിക്കാം",
+                "howto.step1.title": "ഗ്രേഡിയന്റ് തരം തിരഞ്ഞെടുക്കുക",
+                "howto.step1.description": "ലീനിയർ, റേഡിയൽ അല്ലെങ്കിൽ കോണിക് ഗ്രേഡിയന്റുകളിൽ നിന്ന് തിരഞ്ഞെടുക്കുക. ഓരോ തരവും വ്യത്യസ്ത വിഷ്വൽ ഇഫക്റ്റുകൾ സൃഷ്ടിക്കുന്നു, വിവിധ പാരാമീറ്ററുകൾ ഉപയോഗിച്ച് ഇഷ്ടാനുസൃതമാക്കാവുന്നതാണ്.",
+                "howto.step2.title": "കളർ സ്റ്റോപ്പുകൾ ചേർക്കുക",
+                "howto.step2.description": "ഒന്നിലധികം കളർ സ്റ്റോപ്പുകൾ ചേർത്ത് അവയുടെ സ്ഥാനങ്ങൾ ഇഷ്ടാനുസൃതമാക്കുക. കൃത്യമായ നിയന്ത്രണത്തിനായി കളർ പിക്കർ ഉപയോഗിക്കുക അല്ലെങ്കിൽ HEX, RGB അല്ലെങ്കിൽ HSL ഫോർമാറ്റിൽ മൂല്യങ്ങൾ നൽകുക.",
+                "howto.step3.title": "സെറ്റിംഗുകൾ ഇഷ്ടാനുസൃതമാക്കുക",
+                "howto.step3.description": "നിങ്ങളുടെ ഗ്രേഡിയന്റ് ഫൈൻ-ട്യൂൺ ചെയ്യുന്നതിന് ദിശ, കോൺ, ആകൃതി, മറ്റ് പാരാമീറ്ററുകൾ ക്രമീകരിക്കുക. പ്രിവ്യൂ കാൻവാസിൽ റിയൽ-ടൈമിൽ മാറ്റങ്ങൾ കാണുക.",
+                "howto.step4.title": "എക്സ്പോർട്ട് ചെയ്ത് ഉപയോഗിക്കുക",
+                "howto.step4.description": "CSS കോഡ് കോപ്പി ചെയ്യുക, ഇമേജായി ഡൗൺലോഡ് ചെയ്യുക അല്ലെങ്കിൽ JSON ആയി എക്സ്പോർട്ട് ചെയ്യുക. എല്ലാ പ്രോസസ്സിംഗും നിങ്ങളുടെ ബ്രൗസറിൽ പ്രാദേശികമായി നടക്കുന്നു - നിങ്ങളുടെ ഡിസൈനുകൾ നിങ്ങളുടെ ഉപകരണം ഒരിക്കലും വിടുന്നില്ല.",
+                "tool.title": "ഗ്രേഡിയന്റ് ജനറേറ്റർ",
+                "tool.colors.title": "കളർ സ്റ്റോപ്പുകൾ",
+                "tool.colors.add": "കളർ സ്റ്റോപ്പ് ചേർക്കുക",
+                "tool.controls.title": "ഗ്രേഡിയന്റ് നിയന്ത്രണങ്ങൾ",
+                "tool.controls.angle": "കോൺ/ദിശ:",
+                "tool.controls.shape": "ആകൃതി (റേഡിയൽ):",
+                "tool.controls.size": "വലുപ്പം (റേഡിയൽ):",
+                "tool.controls.position": "സ്ഥാനം (റേഡിയൽ):",
+                "tool.presets.title": "ദ്രുത പ്രീസെറ്റുകൾ",
+                "tool.output.title": "CSS കോഡ്",
+                "tool.output.copy": "CSS കോപ്പി ചെയ്യുക",
+                "tool.output.tailwind": "Tailwind കോപ്പി ചെയ്യുക",
+                "tool.export.png": "PNG ഇമേജ്",
+                "tool.export.jpg": "JPG ഇമേജ്",
+                "tool.export.svg": "SVG ഇമേജ്",
+                "tool.export.json": "JSON ഡാറ്റ",
+                "tool.generate.random": "റാൻഡം ഗ്രേഡിയന്റ്",
+                "tool.clear": "എല്ലാം മായ്‌ക്കുക",
+                "footer.follow": "ഞങ്ങളെ പിന്തുടരുക",
+                "footer.categories": "ജനപ്രിയ വിഭാഗങ്ങൾ",
+                "footer.categories.pdf": "PDF ടൂളുകൾ",
+                "footer.categories.image": "ഇമേജ് ടൂളുകൾ",
+                "footer.categories.text": "ടെക്സ്റ്റ് ടൂളുകൾ",
+                "footer.categories.av": "ഓഡിയോ/വീഡിയോ ടൂളുകൾ",
+                "footer.categories.web": "WebDeveloper ടൂളുകൾ",
+                "footer.categories.calc": "കാൽക്കുലേറ്റർ ടൂളുകൾ",
+                "footer.categories.util": "യൂട്ടിലിറ്റി ടൂളുകൾ",
+                "footer.categories.color": "കളർ ടൂളുകൾ",
+                "footer.quicklinks": "ദ്രുത ലിങ്കുകൾ",
+                "footer.links.tools": "എല്ലാ ടൂളുകളും",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "ബന്ധപ്പെടുക",
+                "footer.links.privacy": "സ്വകാര്യതാ നയം",
+                "footer.links.disclaimer": "ഡിസ്ക്ലെയിമർ",
+                "footer.links.terms": "സേവന നിബന്ധനകൾ",
+                "footer.copyright": "© 2025 LollyPoPDF. എല്ലാ അവകാശങ്ങളും നിക്ഷിപ്തം."
+            },
+            id: {
+                "nav.home": "Beranda",
+                "nav.about": "Tentang Kami",
+                "nav.tools": "Alat",
+                "nav.contact": "Kontak",
+                "hero.title": "Alat Pembuat Gradien",
+                "hero.description": "Buat gradien yang indah dengan alat canggih kami. Sesuaikan warna, arah, dan jenis, lalu ekspor sebagai CSS, gambar, atau JSON. Semua pemrosesan terjadi secara lokal tanpa batas ukuran file dan dengan privasi lengkap.",
+                "howto.title": "Cara Menggunakan Pembuat Gradien",
+                "howto.step1.title": "Pilih Jenis Gradien",
+                "howto.step1.description": "Pilih dari gradien linier, radial, atau kerucut. Setiap jenis menciptakan efek visual yang berbeda dan dapat disesuaikan dengan berbagai parameter.",
+                "howto.step2.title": "Tambahkan Titik Warna",
+                "howto.step2.description": "Tambahkan beberapa titik warna dan sesuaikan posisinya. Gunakan pemilih warna atau masukkan nilai dalam format HEX, RGB, atau HSL untuk kontrol yang tepat.",
+                "howto.step3.title": "Sesuaikan Pengaturan",
+                "howto.step3.description": "Sesuaikan arah, sudut, bentuk, dan parameter lainnya untuk menyempurnakan gradien Anda. Lihat perubahan secara real-time di kanvas pratinjau.",
+                "howto.step4.title": "Ekspor dan Gunakan",
+                "howto.step4.description": "Salin kode CSS, unduh sebagai gambar, atau ekspor sebagai JSON. Semua pemrosesan terjadi secara lokal di browser Anda - desain Anda tidak pernah meninggalkan perangkat Anda.",
+                "tool.title": "Pembuat Gradien",
+                "tool.colors.title": "Titik Warna",
+                "tool.colors.add": "Tambahkan Titik Warna",
+                "tool.controls.title": "Kontrol Gradien",
+                "tool.controls.angle": "Sudut/Arah:",
+                "tool.controls.shape": "Bentuk (Radial):",
+                "tool.controls.size": "Ukuran (Radial):",
+                "tool.controls.position": "Posisi (Radial):",
+                "tool.presets.title": "Praset Cepat",
+                "tool.output.title": "Kode CSS",
+                "tool.output.copy": "Salin CSS",
+                "tool.output.tailwind": "Salin Tailwind",
+                "tool.export.png": "Gambar PNG",
+                "tool.export.jpg": "Gambar JPG",
+                "tool.export.svg": "Gambar SVG",
+                "tool.export.json": "Data JSON",
+                "tool.generate.random": "Gradien Acak",
+                "tool.clear": "Hapus Semua",
+                "footer.follow": "IKUTI KAMI",
+                "footer.categories": "Kategori Populer",
+                "footer.categories.pdf": "Alat PDF",
+                "footer.categories.image": "Alat Gambar",
+                "footer.categories.text": "Alat Teks",
+                "footer.categories.av": "Alat Audio/Video",
+                "footer.categories.web": "Alat WebDeveloper",
+                "footer.categories.calc": "Alat Kalkulator",
+                "footer.categories.util": "Alat Utilitas",
+                "footer.categories.color": "Alat Warna",
+                "footer.quicklinks": "Tautan Cepat",
+                "footer.links.tools": "Semua Alat",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Kontak",
+                "footer.links.privacy": "Kebijakan Privasi",
+                "footer.links.disclaimer": "Penafian",
+                "footer.links.terms": "Syarat Layanan",
+                "footer.copyright": "© 2025 LollyPoPDF. Hak Cipta Dilindungi."
+            },
+            ms: {
+                "nav.home": "Laman Utama",
+                "nav.about": "Tentang Kami",
+                "nav.tools": "Alat",
+                "nav.contact": "Hubungi",
+                "hero.title": "Alat Penjana Gradien",
+                "hero.description": "Ciptakan gradien yang cantik dengan alat lanjutan kami. Sesuaikan warna, arah dan jenis, kemudian eksport sebagai CSS, imej atau JSON. Semua pemprosesan berlaku secara tempatan tanpa had saiz fail dan dengan privasi lengkap.",
+                "howto.title": "Cara Menggunakan Penjana Gradien",
+                "howto.step1.title": "Pilih Jenis Gradien",
+                "howto.step1.description": "Pilih dari gradien linear, jejari atau kon. Setiap jenis mencipta kesan visual yang berbeza dan boleh disesuaikan dengan pelbagai parameter.",
+                "howto.step2.title": "Tambah Titik Warna",
+                "howto.step2.description": "Tambah beberapa titik warna dan sesuaikan kedudukannya. Gunakan pemilih warna atau masukkan nilai dalam format HEX, RGB atau HSL untuk kawalan yang tepat.",
+                "howto.step3.title": "Sesuaikan Tetapan",
+                "howto.step3.description": "Laraskan arah, sudut, bentuk dan parameter lain untuk menyesuaikan gradien anda. Lihat perubahan secara masa nyata pada kanvas pratonton.",
+                "howto.step4.title": "Eksport dan Gunakan",
+                "howto.step4.description": "Salin kod CSS, muat turun sebagai imej atau eksport sebagai JSON. Semua pemprosesan berlaku secara tempatan dalam pelayar anda - reka bentuk anda tidak pernah meninggalkan peranti anda.",
+                "tool.title": "Penjana Gradien",
+                "tool.colors.title": "Titik Warna",
+                "tool.colors.add": "Tambah Titik Warna",
+                "tool.controls.title": "Kawalan Gradien",
+                "tool.controls.angle": "Sudut/Arah:",
+                "tool.controls.shape": "Bentuk (Jejari):",
+                "tool.controls.size": "Saiz (Jejari):",
+                "tool.controls.position": "Kedudukan (Jejari):",
+                "tool.presets.title": "Praset Pantas",
+                "tool.output.title": "Kod CSS",
+                "tool.output.copy": "Salin CSS",
+                "tool.output.tailwind": "Salin Tailwind",
+                "tool.export.png": "Imej PNG",
+                "tool.export.jpg": "Imej JPG",
+                "tool.export.svg": "Imej SVG",
+                "tool.export.json": "Data JSON",
+                "tool.generate.random": "Gradien Rawak",
+                "tool.clear": "Kosongkan Semua",
+                "footer.follow": "IKUTI KAMI",
+                "footer.categories": "Kategori Popular",
+                "footer.categories.pdf": "Alat PDF",
+                "footer.categories.image": "Alat Imej",
+                "footer.categories.text": "Alat Teks",
+                "footer.categories.av": "Alat Audio/Video",
+                "footer.categories.web": "Alat WebDeveloper",
+                "footer.categories.calc": "Alat Kalkulator",
+                "footer.categories.util": "Alat Utiliti",
+                "footer.categories.color": "Alat Warna",
+                "footer.quicklinks": "Pautan Pantas",
+                "footer.links.tools": "Semua Alat",
+                "footer.links.faq": "Soalan Lazim",
+                "footer.links.contact": "Hubungi",
+                "footer.links.privacy": "Dasar Privasi",
+                "footer.links.disclaimer": "Penafian",
+                "footer.links.terms": "Syarat Perkhidmatan",
+                "footer.copyright": "© 2025 LollyPoPDF. Hak Cipta Terpelihara."
+            },
+            pl: {
+                "nav.home": "Strona główna",
+                "nav.about": "O nas",
+                "nav.tools": "Narzędzia",
+                "nav.contact": "Kontakt",
+                "hero.title": "Generator gradientów",
+                "hero.description": "Twórz piękne gradienty za pomocą naszego zaawansowanego narzędzia. Dostosuj kolory, kierunek i typ, a następnie eksportuj jako CSS, obraz lub JSON. Wszystkie przetwarzania odbywają się lokalnie bez ograniczeń rozmiaru pliku i z pełną prywatnością.",
+                "howto.title": "Jak korzystać z generatora gradientów",
+                "howto.step1.title": "Wybierz typ gradientu",
+                "howto.step1.description": "Wybierz spośród gradientów liniowych, promieniowych lub stożkowych. Każdy typ tworzy różne efekty wizualne i można go dostosować za pomocą różnych parametrów.",
+                "howto.step2.title": "Dodaj punkty kolorów",
+                "howto.step2.description": "Dodaj wiele punktów kolorów i dostosuj ich pozycje. Użyj selektora kolorów lub wprowadź wartości w formacie HEX, RGB lub HSL dla precyzyjnej kontroli.",
+                "howto.step3.title": "Dostosuj ustawienia",
+                "howto.step3.description": "Dostosuj kierunek, kąt, kształt i inne parametry, aby dostroić swój gradient. Obserwuj zmiany w czasie rzeczywistym na podglądzie płótna.",
+                "howto.step4.title": "Eksportuj i używaj",
+                "howto.step4.description": "Skopiuj kod CSS, pobierz jako obraz lub wyeksportuj jako JSON. Wszystkie przetwarzania odbywają się lokalnie w twojej przeglądarce - twoje projekty nigdy nie opuszczają twojego urządzenia.",
+                "tool.title": "Generator gradientów",
+                "tool.colors.title": "Punkty kolorów",
+                "tool.colors.add": "Dodaj punkt koloru",
+                "tool.controls.title": "Kontrolki gradientu",
+                "tool.controls.angle": "Kąt/Kierunek:",
+                "tool.controls.shape": "Kształt (Promieniowy):",
+                "tool.controls.size": "Rozmiar (Promieniowy):",
+                "tool.controls.position": "Pozycja (Promieniowy):",
+                "tool.presets.title": "Szybkie ustawienia",
+                "tool.output.title": "Kod CSS",
+                "tool.output.copy": "Kopiuj CSS",
+                "tool.output.tailwind": "Kopiuj Tailwind",
+                "tool.export.png": "Obraz PNG",
+                "tool.export.jpg": "Obraz JPG",
+                "tool.export.svg": "Obraz SVG",
+                "tool.export.json": "Dane JSON",
+                "tool.generate.random": "Losowy gradient",
+                "tool.clear": "Wyczyść wszystko",
+                "footer.follow": "OBSERWUJ NAS",
+                "footer.categories": "Popularne kategorie",
+                "footer.categories.pdf": "Narzędzia PDF",
+                "footer.categories.image": "Narzędzia obrazów",
+                "footer.categories.text": "Narzędzia tekstu",
+                "footer.categories.av": "Narzędzia audio/wideo",
+                "footer.categories.web": "Narzędzia WebDeveloper",
+                "footer.categories.calc": "Narzędzia kalkulatora",
+                "footer.categories.util": "Narzędzia użytkowe",
+                "footer.categories.color": "Narzędzia kolorów",
+                "footer.quicklinks": "Szybkie linki",
+                "footer.links.tools": "Wszystkie narzędzia",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Kontakt",
+                "footer.links.privacy": "Polityka prywatności",
+                "footer.links.disclaimer": "Zastrzeżenie",
+                "footer.links.terms": "Warunki usługi",
+                "footer.copyright": "© 2025 LollyPoPDF. Wszelkie prawa zastrzeżone."
+            },
+            th: {
+                "nav.home": "หน้าแรก",
+                "nav.about": "เกี่ยวกับเรา",
+                "nav.tools": "เครื่องมือ",
+                "nav.contact": "ติดต่อ",
+                "hero.title": "เครื่องมือสร้างเกรเดียนต์",
+                "hero.description": "สร้างเกรเดียนต์ที่สวยงามด้วยเครื่องมือขั้นสูงของเรา ปรับแต่งสี ทิศทาง และประเภท จากนั้นส่งออกเป็น CSS ภาพ หรือ JSON การประมวลผลทั้งหมดเกิดขึ้นในเครื่องโดยไม่มีขีดจำกัดขนาดไฟล์และมีความเป็นส่วนตัวสมบูรณ์",
+                "howto.title": "วิธีใช้เครื่องมือสร้างเกรเดียนต์",
+                "howto.step1.title": "เลือกประเภทเกรเดียนต์",
+                "howto.step1.description": "เลือกจากเกรเดียนต์เชิงเส้น เรเดียล หรือโคนิก แต่ละประเภทสร้างเอฟเฟกต์ภาพที่แตกต่างกันและสามารถปรับแต่งด้วยพารามิเตอร์ต่างๆ",
+                "howto.step2.title": "เพิ่มจุดสี",
+                "howto.step2.description": "เพิ่มจุดสีหลายจุดและปรับแต่งตำแหน่งของพวกเขา ใช้เครื่องมือเลือกสีหรือป้อนค่าในรูปแบบ HEX, RGB หรือ HSL สำหรับการควบคุมที่แม่นยำ",
+                "howto.step3.title": "ปรับแต่งการตั้งค่า",
+                "howto.step3.description": "ปรับทิศทาง มุม รูปร่าง และพารามิเตอร์อื่นๆ เพื่อปรับแต่งเกรเดียนต์ของคุณ ดูการเปลี่ยนแปลงแบบเรียลไทม์บนแคนวาสแสดงตัวอย่าง",
+                "howto.step4.title": "ส่งออกและใช้งาน",
+                "howto.step4.description": "คัดลอกรหัส CSS ดาวน์โหลดเป็นภาพ หรือส่งออกเป็น JSON การประมวลผลทั้งหมดเกิดขึ้นในเบราว์เซอร์ของคุณ - การออกแบบของคุณไม่เคยออกจากอุปกรณ์ของคุณ",
+                "tool.title": "เครื่องมือสร้างเกรเดียนต์",
+                "tool.colors.title": "จุดสี",
+                "tool.colors.add": "เพิ่มจุดสี",
+                "tool.controls.title": "การควบคุมเกรเดียนต์",
+                "tool.controls.angle": "มุม/ทิศทาง:",
+                "tool.controls.shape": "รูปร่าง (เรเดียล):",
+                "tool.controls.size": "ขนาด (เรเดียล):",
+                "tool.controls.position": "ตำแหน่ง (เรเดียล):",
+                "tool.presets.title": "ค่าที่ตั้งไว้ล่วงหน้า",
+                "tool.output.title": "รหัส CSS",
+                "tool.output.copy": "คัดลอก CSS",
+                "tool.output.tailwind": "คัดลอก Tailwind",
+                "tool.export.png": "ภาพ PNG",
+                "tool.export.jpg": "ภาพ JPG",
+                "tool.export.svg": "ภาพ SVG",
+                "tool.export.json": "ข้อมูล JSON",
+                "tool.generate.random": "เกรเดียนต์แบบสุ่ม",
+                "tool.clear": "ล้างทั้งหมด",
+                "footer.follow": "ติดตามเรา",
+                "footer.categories": "หมวดหมู่ยอดนิยม",
+                "footer.categories.pdf": "เครื่องมือ PDF",
+                "footer.categories.image": "เครื่องมือภาพ",
+                "footer.categories.text": "เครื่องมือข้อความ",
+                "footer.categories.av": "เครื่องมือเสียง/วิดีโอ",
+                "footer.categories.web": "เครื่องมือ WebDeveloper",
+                "footer.categories.calc": "เครื่องมือเครื่องคิดเลข",
+                "footer.categories.util": "เครื่องมืออรรถประโยชน์",
+                "footer.categories.color": "เครื่องมือสี",
+                "footer.quicklinks": "ลิงก์ด่วน",
+                "footer.links.tools": "เครื่องมือทั้งหมด",
+                "footer.links.faq": "คำถามที่พบบ่อย",
+                "footer.links.contact": "ติดต่อ",
+                "footer.links.privacy": "นโยบายความเป็นส่วนตัว",
+                "footer.links.disclaimer": "ข้อปฏิเสธความรับผิดชอบ",
+                "footer.links.terms": "ข้อกำหนดการให้บริการ",
+                "footer.copyright": "© 2025 LollyPoPDF. สงวนลิขสิทธิ์."
+            },
+            tr: {
+                "nav.home": "Ana Sayfa",
+                "nav.about": "Hakkımızda",
+                "nav.tools": "Araçlar",
+                "nav.contact": "İletişim",
+                "hero.title": "Gradyan Oluşturucu Aracı",
+                "hero.description": "Gelişmiş aracımızla güzel gradyanlar oluşturun. Renkleri, yönü ve türü özelleştirin, ardından CSS, resim veya JSON olarak dışa aktarın. Tüm işlemler dosya boyutu sınırlaması olmadan ve tam gizlilikle yerel olarak gerçekleşir.",
+                "howto.title": "Gradyan Oluşturucu Nasıl Kullanılır",
+                "howto.step1.title": "Gradyan Türünü Seçin",
+                "howto.step1.description": "Doğrusal, radyal veya konik gradyanlar arasından seçim yapın. Her tür farklı görsel efektler oluşturur ve çeşitli parametrelerle özelleştirilebilir.",
+                "howto.step2.title": "Renk Durakları Ekleyin",
+                "howto.step2.description": "Birden fazla renk durağı ekleyin ve konumlarını özelleştirin. Hassas kontrol için renk seçiciyi kullanın veya HEX, RGB veya HSL formatında değerler girin.",
+                "howto.step3.title": "Ayarları Özelleştirin",
+                "howto.step3.description": "Gradyanınızı hassas bir şekilde ayarlamak için yön, açı, şekil ve diğer parametreleri ayarlayın. Önizleme tuvalinde değişiklikleri gerçek zamanlı olarak görün.",
+                "howto.step4.title": "Dışa Aktarın ve Kullanın",
+                "howto.step4.description": "CSS kodunu kopyalayın, resim olarak indirin veya JSON olarak dışa aktarın. Tüm işlemler tarayıcınızda yerel olarak gerçekleşir - tasarımlarınız cihazınızı asla terk etmez.",
+                "tool.title": "Gradyan Oluşturucu",
+                "tool.colors.title": "Renk Durakları",
+                "tool.colors.add": "Renk Durağı Ekle",
+                "tool.controls.title": "Gradyan Kontrolleri",
+                "tool.controls.angle": "Açı/Yön:",
+                "tool.controls.shape": "Şekil (Radyal):",
+                "tool.controls.size": "Boyut (Radyal):",
+                "tool.controls.position": "Konum (Radyal):",
+                "tool.presets.title": "Hızlı Ön Ayarlar",
+                "tool.output.title": "CSS Kodu",
+                "tool.output.copy": "CSS'yi Kopyala",
+                "tool.output.tailwind": "Tailwind'i Kopyala",
+                "tool.export.png": "PNG Resmi",
+                "tool.export.jpg": "JPG Resmi",
+                "tool.export.svg": "SVG Resmi",
+                "tool.export.json": "JSON Verisi",
+                "tool.generate.random": "Rastgele Gradyan",
+                "tool.clear": "Tümünü Temizle",
+                "footer.follow": "BİZİ TAKİP EDİN",
+                "footer.categories": "Popüler Kategoriler",
+                "footer.categories.pdf": "PDF Araçları",
+                "footer.categories.image": "Resim Araçları",
+                "footer.categories.text": "Metin Araçları",
+                "footer.categories.av": "Ses/Video Araçları",
+                "footer.categories.web": "WebDeveloper Araçları",
+                "footer.categories.calc": "Hesap Makinesi Araçları",
+                "footer.categories.util": "Yardımcı Araçlar",
+                "footer.categories.color": "Renk Araçları",
+                "footer.quicklinks": "Hızlı Bağlantılar",
+                "footer.links.tools": "Tüm Araçlar",
+                "footer.links.faq": "SSS",
+                "footer.links.contact": "İletişim",
+                "footer.links.privacy": "Gizlilik Politikası",
+                "footer.links.disclaimer": "Feragatname",
+                "footer.links.terms": "Hizmet Şartları",
+                "footer.copyright": "© 2025 LollyPoPDF. Tüm hakları saklıdır."
+            },
+            uk: {
+                "nav.home": "Головна",
+                "nav.about": "Про нас",
+                "nav.tools": "Інструменти",
+                "nav.contact": "Контакт",
+                "hero.title": "Інструмент Генератора Градієнтів",
+                "hero.description": "Створюйте красиві градієнти за допомогою нашого розширеного інструменту. Налаштуйте кольори, напрямок і тип, потім експортуйте як CSS, зображення або JSON. Вся обробка відбувається локально без обмежень розміру файлу та з повною конфіденційністю.",
+                "howto.title": "Як використовувати Генератор Градієнтів",
+                "howto.step1.title": "Виберіть Тип Градієнта",
+                "howto.step1.description": "Виберіть з лінійних, радіальних або конічних градієнтів. Кожен тип створює різні візуальні ефекти і може бути налаштований різними параметрами.",
+                "howto.step2.title": "Додайте Кольорові Зупинки",
+                "howto.step2.description": "Додайте кілька кольорових зупинок і налаштуйте їх позиції. Використовуйте колірний пікер або введіть значення у форматі HEX, RGB або HSL для точного контролю.",
+                "howto.step3.title": "Налаштуйте Параметри",
+                "howto.step3.description": "Налаштуйте напрямок, кут, форму та інші параметри для точного налаштування вашого градієнта. Дивіться зміни в реальному часі на полотні попереднього перегляду.",
+                "howto.step4.title": "Експортуйте та Використовуйте",
+                "howto.step4.description": "Скопіюйте код CSS, завантажте як зображення або експортуйте як JSON. Вся обробка відбувається локально у вашому браузері - ваші дизайни ніколи не залишають ваш пристрій.",
+                "tool.title": "Генератор Градієнтів",
+                "tool.colors.title": "Кольорові Зупинки",
+                "tool.colors.add": "Додати Кольорову Зупинку",
+                "tool.controls.title": "Керування Градієнтом",
+                "tool.controls.angle": "Кут/Напрямок:",
+                "tool.controls.shape": "Форма (Радіальна):",
+                "tool.controls.size": "Розмір (Радіальний):",
+                "tool.controls.position": "Позиція (Радіальна):",
+                "tool.presets.title": "Швидкі Пресети",
+                "tool.output.title": "CSS Код",
+                "tool.output.copy": "Копіювати CSS",
+                "tool.output.tailwind": "Копіювати Tailwind",
+                "tool.export.png": "Зображення PNG",
+                "tool.export.jpg": "Зображення JPG",
+                "tool.export.svg": "Зображення SVG",
+                "tool.export.json": "Дані JSON",
+                "tool.generate.random": "Випадковий Градієнт",
+                "tool.clear": "Очистити Все",
+                "footer.follow": "СЛІДКУЙТЕ ЗА НАМИ",
+                "footer.categories": "Популярні Категорії",
+                "footer.categories.pdf": "PDF Інструменти",
+                "footer.categories.image": "Інструменти для Зображень",
+                "footer.categories.text": "Текстові Інструменти",
+                "footer.categories.av": "Аудіо/Відео Інструменти",
+                "footer.categories.web": "WebDeveloper Інструменти",
+                "footer.categories.calc": "Інструменти Калькулятора",
+                "footer.categories.util": "Утиліти",
+                "footer.categories.color": "Кольорові Інструменти",
+                "footer.quicklinks": "Швидкі Посилання",
+                "footer.links.tools": "Всі Інструменти",
+                "footer.links.faq": "ЧаПи",
+                "footer.links.contact": "Контакт",
+                "footer.links.privacy": "Політика Конфіденційності",
+                "footer.links.disclaimer": "Відмова від Відповідальності",
+                "footer.links.terms": "Умови Використання",
+                "footer.copyright": "© 2025 LollyPoPDF. Всі права захищені."
+            },
+            vi: {
+                "nav.home": "Trang chủ",
+                "nav.about": "Về chúng tôi",
+                "nav.tools": "Công cụ",
+                "nav.contact": "Liên hệ",
+                "hero.title": "Công cụ Tạo Gradient",
+                "hero.description": "Tạo gradient đẹp với công cụ tiên tiến của chúng tôi. Tùy chỉnh màu sắc, hướng và loại, sau đó xuất dưới dạng CSS, hình ảnh hoặc JSON. Tất cả xử lý diễn ra cục bộ không giới hạn kích thước tệp và với quyền riêng tư hoàn toàn.",
+                "howto.title": "Cách sử dụng Trình tạo Gradient",
+                "howto.step1.title": "Chọn Loại Gradient",
+                "howto.step1.description": "Chọn từ gradient tuyến tính, xuyên tâm hoặc hình nón. Mỗi loại tạo hiệu ứng hình ảnh khác nhau và có thể tùy chỉnh với các tham số khác nhau.",
+                "howto.step2.title": "Thêm Điểm Dừng Màu",
+                "howto.step2.description": "Thêm nhiều điểm dừng màu và tùy chỉnh vị trí của chúng. Sử dụng bộ chọn màu hoặc nhập giá trị ở định dạng HEX, RGB hoặc HSL để kiểm soát chính xác.",
+                "howto.step3.title": "Tùy chỉnh Cài đặt",
+                "howto.step3.description": "Điều chỉnh hướng, góc, hình dạng và các tham số khác để tinh chỉnh gradient của bạn. Xem thay đổi trong thời gian thực trên canvas xem trước.",
+                "howto.step4.title": "Xuất và Sử dụng",
+                "howto.step4.description": "Sao chép mã CSS, tải xuống dưới dạng hình ảnh hoặc xuất dưới dạng JSON. Tất cả xử lý diễn ra cục bộ trong trình duyệt của bạn - thiết kế của bạn không bao giờ rời khỏi thiết bị của bạn.",
+                "tool.title": "Trình tạo Gradient",
+                "tool.colors.title": "Điểm Dừng Màu",
+                "tool.colors.add": "Thêm Điểm Dừng Màu",
+                "tool.controls.title": "Điều khiển Gradient",
+                "tool.controls.angle": "Góc/Hướng:",
+                "tool.controls.shape": "Hình dạng (Xuyên tâm):",
+                "tool.controls.size": "Kích thước (Xuyên tâm):",
+                "tool.controls.position": "Vị trí (Xuyên tâm):",
+                "tool.presets.title": "Cài đặt trước Nhanh",
+                "tool.output.title": "Mã CSS",
+                "tool.output.copy": "Sao chép CSS",
+                "tool.output.tailwind": "Sao chép Tailwind",
+                "tool.export.png": "Hình ảnh PNG",
+                "tool.export.jpg": "Hình ảnh JPG",
+                "tool.export.svg": "Hình ảnh SVG",
+                "tool.export.json": "Dữ liệu JSON",
+                "tool.generate.random": "Gradient Ngẫu nhiên",
+                "tool.clear": "Xóa Tất cả",
+                "footer.follow": "THEO DÕI CHÚNG TÔI",
+                "footer.categories": "Danh mục Phổ biến",
+                "footer.categories.pdf": "Công cụ PDF",
+                "footer.categories.image": "Công cụ Hình ảnh",
+                "footer.categories.text": "Công cụ Văn bản",
+                "footer.categories.av": "Công cụ Âm thanh/Video",
+                "footer.categories.web": "Công cụ WebDeveloper",
+                "footer.categories.calc": "Công cụ Máy tính",
+                "footer.categories.util": "Công cụ Tiện ích",
+                "footer.categories.color": "Công cụ Màu sắc",
+                "footer.quicklinks": "Liên kết Nhanh",
+                "footer.links.tools": "Tất cả Công cụ",
+                "footer.links.faq": "Câu hỏi Thường gặp",
+                "footer.links.contact": "Liên hệ",
+                "footer.links.privacy": "Chính sách Riêng tư",
+                "footer.links.disclaimer": "Tuyên bố Miễn trừ Trách nhiệm",
+                "footer.links.terms": "Điều khoản Dịch vụ",
+                "footer.copyright": "© 2025 LollyPoPDF. Đã đăng ký Bản quyền."
+            },
+            is: {
+                "nav.home": "Heim",
+                "nav.about": "Um okkur",
+                "nav.tools": "Verkfæri",
+                "nav.contact": "Hafa samband",
+                "hero.title": "Gradient Generator Tól",
+                "hero.description": "Búðu til falleg gradient með háþróuðu tóli okkar. Sérsníddu liti, stefnu og tegund, og flytdu síðan út sem CSS, mynd eða JSON. Öll vinnsla á sér stað staðbundin án skráarstærðartakmarkana og með fullri næði.",
+                "howto.title": "Hvernig á að nota Gradient Generator",
+                "howto.step1.title": "Veldu Gradient Tegund",
+                "howto.step1.description": "Veldu úr línulegum, geisla eða keilulaga gradient. Hver tegund býr til mismunandi sjónræn áhrif og er hægt að sérsníða með ýmsum breytum.",
+                "howto.step2.title": "Bættu við Litastöðvum",
+                "howto.step2.description": "Bættu við mörgum litastöðvum og sérsníddu stöður þeirra. Notaðu litavöl eða sláðu inn gildi í HEX, RGB eða HSL sniði fyrir nákvæma stjórnun.",
+                "howto.step3.title": "Sérsníddu Stillingar",
+                "howto.step3.description": "Stilltu stefnu, horn, lögun og aðrar breytur til að fínstilla gradient þinn. Sjáðu breytingar í rauntíma á forskoðunartjaldi.",
+                "howto.step4.title": "Flytja út og Nota",
+                "howto.step4.description": "Afritaðu CSS kóða, halaðu niður sem mynd eða flyttu út sem JSON. Öll vinnsla á sér stað staðbundin í vafranum þínum - hönnun þín yfirgefur aldrei tækið þitt.",
+                "tool.title": "Gradient Generator",
+                "tool.colors.title": "Litastöðvar",
+                "tool.colors.add": "Bæta við Litastöð",
+                "tool.controls.title": "Gradient Stjórnun",
+                "tool.controls.angle": "Horn/Stefna:",
+                "tool.controls.shape": "Lögun (Geisli):",
+                "tool.controls.size": "Stærð (Geisli):",
+                "tool.controls.position": "Staðsetning (Geisli):",
+                "tool.presets.title": "Fljótleg Forsnið",
+                "tool.output.title": "CSS Kóði",
+                "tool.output.copy": "Afrita CSS",
+                "tool.output.tailwind": "Afrita Tailwind",
+                "tool.export.png": "PNG Mynd",
+                "tool.export.jpg": "JPG Mynd",
+                "tool.export.svg": "SVG Mynd",
+                "tool.export.json": "JSON Gögn",
+                "tool.generate.random": "Handahófs Gradient",
+                "tool.clear": "Hreinsa Allt",
+                "footer.follow": "FYLGDU OKKUR",
+                "footer.categories": "Vinsælar Flokkar",
+                "footer.categories.pdf": "PDF Tól",
+                "footer.categories.image": "Mynd Tól",
+                "footer.categories.text": "Texti Tól",
+                "footer.categories.av": "Hljóð/Myndband Tól",
+                "footer.categories.web": "WebDeveloper Tól",
+                "footer.categories.calc": "Reiknivél Tól",
+                "footer.categories.util": "Gagnleg Tól",
+                "footer.categories.color": "Lit Tól",
+                "footer.quicklinks": "Fljótlegar Tenglar",
+                "footer.links.tools": "Öll Tól",
+                "footer.links.faq": "Algengar Spurningar",
+                "footer.links.contact": "Hafa Samband",
+                "footer.links.privacy": "Meðferðarstefna",
+                "footer.links.disclaimer": "Fyrirvari",
+                "footer.links.terms": "Þjónustuskilmálar",
+                "footer.copyright": "© 2025 LollyPoPDF. Öll réttindi áskilin."
+            },
+            no: {
+                "nav.home": "Hjem",
+                "nav.about": "Om oss",
+                "nav.tools": "Verktøy",
+                "nav.contact": "Kontakt",
+                "hero.title": "Gradient Generator Verktøy",
+                "hero.description": "Lag vakre gradienter med vårt avanserte verktøy. Tilpass farger, retning og type, og eksporter deretter som CSS, bilde eller JSON. All behandling skjer lokalt uten filstørrelsesbegrensninger og med fullstendig personvern.",
+                "howto.title": "Hvordan bruke Gradient Generator",
+                "howto.step1.title": "Velg Gradient Type",
+                "howto.step1.description": "Velg mellom lineære, radiale eller koniske gradienter. Hver type skaper forskjellige visuelle effekter og kan tilpasses med ulike parametere.",
+                "howto.step2.title": "Legg til Fargestopp",
+                "howto.step2.description": "Legg til flere fargestopp og tilpass deres posisjoner. Bruk fargevelgeren eller skriv inn verdier i HEX, RGB eller HSL format for presis kontroll.",
+                "howto.step3.title": "Tilpass Innstillinger",
+                "howto.step3.description": "Juster retning, vinkel, form og andre parametere for å finjustere gradienten din. Se endringer i sanntid på forhåndsvisningslerretet.",
+                "howto.step4.title": "Eksporter og Bruk",
+                "howto.step4.description": "Kopier CSS-koden, last ned som bilde eller eksporter som JSON. All behandling skjer lokalt i nettleseren din - designene dine forlater aldri enheten din.",
+                "tool.title": "Gradient Generator",
+                "tool.colors.title": "Fargestopp",
+                "tool.colors.add": "Legg til Fargestopp",
+                "tool.controls.title": "Gradient Kontroller",
+                "tool.controls.angle": "Vinkel/Retning:",
+                "tool.controls.shape": "Form (Radial):",
+                "tool.controls.size": "Størrelse (Radial):",
+                "tool.controls.position": "Posisjon (Radial):",
+                "tool.presets.title": "Raske Forhåndsinnstillinger",
+                "tool.output.title": "CSS Kode",
+                "tool.output.copy": "Kopier CSS",
+                "tool.output.tailwind": "Kopier Tailwind",
+                "tool.export.png": "PNG Bilde",
+                "tool.export.jpg": "JPG Bilde",
+                "tool.export.svg": "SVG Bilde",
+                "tool.export.json": "JSON Data",
+                "tool.generate.random": "Tilfeldig Gradient",
+                "tool.clear": "Tøm Alt",
+                "footer.follow": "FØLG OSS",
+                "footer.categories": "Populære Kategorier",
+                "footer.categories.pdf": "PDF Verktøy",
+                "footer.categories.image": "Bildeverktøy",
+                "footer.categories.text": "Tekstverktøy",
+                "footer.categories.av": "Lyd/Video Verktøy",
+                "footer.categories.web": "WebDeveloper Verktøy",
+                "footer.categories.calc": "Kalkulator Verktøy",
+                "footer.categories.util": "Nyttige Verktøy",
+                "footer.categories.color": "Fargeverktøy",
+                "footer.quicklinks": "Hurtiglenker",
+                "footer.links.tools": "Alle Verktøy",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Kontakt",
+                "footer.links.privacy": "Personvernerklæring",
+                "footer.links.disclaimer": "Ansvarsfraskrivelse",
+                "footer.links.terms": "Tjenestevilkår",
+                "footer.copyright": "© 2025 LollyPoPDF. Alle rettigheter forbeholdt."
+            },
+            sv: {
+                "nav.home": "Hem",
+                "nav.about": "Om oss",
+                "nav.tools": "Verktyg",
+                "nav.contact": "Kontakt",
+                "hero.title": "Gradient Generator Verktyg",
+                "hero.description": "Skapa vackra gradienter med vårt avancerade verktyg. Anpassa färger, riktning och typ, och exportera sedan som CSS, bild eller JSON. All bearbetning sker lokalt utan filstorleksbegränsningar och med fullständig integritet.",
+                "howto.title": "Hur man använder Gradient Generator",
+                "howto.step1.title": "Välj Gradient Typ",
+                "howto.step1.description": "Välj mellan linjära, radiella eller koniska gradienter. Varje typ skapar olika visuella effekter och kan anpassas med olika parametrar.",
+                "howto.step2.title": "Lägg till Färgstopp",
+                "howto.step2.description": "Lägg till flera färgstopp och anpassa deras positioner. Använd färgväljaren eller mata in värden i HEX, RGB eller HSL format för exakt kontroll.",
+                "howto.step3.title": "Anpassa Inställningar",
+                "howto.step3.description": "Justera riktning, vinkel, form och andra parametrar för att finjustera din gradient. Se förändringar i realtid på förhandsgranskningsduken.",
+                "howto.step4.title": "Exportera och Använd",
+                "howto.step4.description": "Kopiera CSS-koden, ladda ner som bild eller exportera som JSON. All bearbetning sker lokalt i din webbläsare - dina design lämnar aldrig din enhet.",
+                "tool.title": "Gradient Generator",
+                "tool.colors.title": "Färgstopp",
+                "tool.colors.add": "Lägg till Färgstopp",
+                "tool.controls.title": "Gradient Kontroller",
+                "tool.controls.angle": "Vinkel/Riktning:",
+                "tool.controls.shape": "Form (Radiell):",
+                "tool.controls.size": "Storlek (Radiell):",
+                "tool.controls.position": "Position (Radiell):",
+                "tool.presets.title": "Snabba Förinställningar",
+                "tool.output.title": "CSS Kod",
+                "tool.output.copy": "Kopiera CSS",
+                "tool.output.tailwind": "Kopiera Tailwind",
+                "tool.export.png": "PNG Bild",
+                "tool.export.jpg": "JPG Bild",
+                "tool.export.svg": "SVG Bild",
+                "tool.export.json": "JSON Data",
+                "tool.generate.random": "Slumpmässig Gradient",
+                "tool.clear": "Rensa Allt",
+                "footer.follow": "FÖLJ OSS",
+                "footer.categories": "Populära Kategorier",
+                "footer.categories.pdf": "PDF Verktyg",
+                "footer.categories.image": "Bildverktyg",
+                "footer.categories.text": "Textverktyg",
+                "footer.categories.av": "Ljud/Video Verktyg",
+                "footer.categories.web": "WebDeveloper Verktyg",
+                "footer.categories.calc": "Kalkylator Verktyg",
+                "footer.categories.util": "Verktyg för Verktyg",
+                "footer.categories.color": "Färgverktyg",
+                "footer.quicklinks": "Snabblänkar",
+                "footer.links.tools": "Alla Verktyg",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Kontakt",
+                "footer.links.privacy": "Integritetspolicy",
+                "footer.links.disclaimer": "Ansvarsfriskrivning",
+                "footer.links.terms": "Användarvillkor",
+                "footer.copyright": "© 2025 LollyPoPDF. Alla rättigheter förbehållna."
+            },
+            fi: {
+                "nav.home": "Koti",
+                "nav.about": "Meistä",
+                "nav.tools": "Työkalut",
+                "nav.contact": "Yhteystiedot",
+                "hero.title": "Gradienttigeneraattori Työkalu",
+                "hero.description": "Luo kauniita gradientteja kehittyneellä työkalullamme. Mukauta värejä, suuntaa ja tyyppiä, ja vie sitten CSS:nä, kuvana tai JSON:na. Kaikki käsittely tapahtuu paikallisesti ilman tiedostokokorajoituksia ja täydellisellä yksityisyydellä.",
+                "howto.title": "Kuinka käyttää Gradienttigeneraattoria",
+                "howto.step1.title": "Valitse Gradientin Tyyppi",
+                "howto.step1.description": "Valitse lineaarisista, radiaalisista tai kartiomaisista gradienteista. Jokainen tyyppi luo erilaisia visuaalisia vaikutelmia ja voidaan mukauttaa eri parametreilla.",
+                "howto.step2.title": "Lisää Väripysähdyksiä",
+                "howto.step2.description": "Lisää useita väripysähdyksiä ja mukauta niiden sijainteja. Käytä värinvalitsinta tai syötä arvot HEX-, RGB- tai HSL-muodossa tarkkaa hallintaa varten.",
+                "howto.step3.title": "Mukauta Asetuksia",
+                "howto.step3.description": "Säädä suuntaa, kulmaa, muotoa ja muita parametreja hienosäätääksesi gradienttiasi. Näe muutokset reaaliaikaisesti esikatselukankaalla.",
+                "howto.step4.title": "Vie ja Käytä",
+                "howto.step4.description": "Kopioi CSS-koodi, lataa kuvana tai vie JSON:na. Kaikki käsittely tapahtuu paikallisesti selaimeesi - suunnitelmasi eivät koskaan jätä laitetta.",
+                "tool.title": "Gradienttigeneraattori",
+                "tool.colors.title": "Väripysähdykset",
+                "tool.colors.add": "Lisää Väripysähdys",
+                "tool.controls.title": "Gradientin Säätimet",
+                "tool.controls.angle": "Kulma/Suunta:",
+                "tool.controls.shape": "Muoto (Radiaalinen):",
+                "tool.controls.size": "Koko (Radiaalinen):",
+                "tool.controls.position": "Sijainti (Radiaalinen):",
+                "tool.presets.title": "Nopeat Esiasetukset",
+                "tool.output.title": "CSS-koodi",
+                "tool.output.copy": "Kopioi CSS",
+                "tool.output.tailwind": "Kopioi Tailwind",
+                "tool.export.png": "PNG-kuva",
+                "tool.export.jpg": "JPG-kuva",
+                "tool.export.svg": "SVG-kuva",
+                "tool.export.json": "JSON-data",
+                "tool.generate.random": "Satunnainen Gradientti",
+                "tool.clear": "Tyhjennä Kaikki",
+                "footer.follow": "SEURA MEITÄ",
+                "footer.categories": "Suositut Kategoriat",
+                "footer.categories.pdf": "PDF-työkalut",
+                "footer.categories.image": "Kuvatyökalut",
+                "footer.categories.text": "Tekstityökalut",
+                "footer.categories.av": "Ääni/Video-työkalut",
+                "footer.categories.web": "WebDeveloper-työkalut",
+                "footer.categories.calc": "Laskurityökalut",
+                "footer.categories.util": "Aputyökalut",
+                "footer.categories.color": "Värityökalut",
+                "footer.quicklinks": "Pikalinkit",
+                "footer.links.tools": "Kaikki Työkalut",
+                "footer.links.faq": "Usein Kysytyt Kysymykset",
+                "footer.links.contact": "Yhteystiedot",
+                "footer.links.privacy": "Tietosuojakäytäntö",
+                "footer.links.disclaimer": "Vastuuvapauslauseke",
+                "footer.links.terms": "Käyttöehdot",
+                "footer.copyright": "© 2025 LollyPoPDF. Kaikki oikeudet pidätetään."
+            },
+            cs: {
+                "nav.home": "Domů",
+                "nav.about": "O nás",
+                "nav.tools": "Nástroje",
+                "nav.contact": "Kontakt",
+                "hero.title": "Nástroj Generátor Přechodů",
+                "hero.description": "Vytvářejte krásné přechody s naším pokročilým nástrojem. Přizpůsobte barvy, směr a typ, poté exportujte jako CSS, obrázek nebo JSON. Veškeré zpracování probíhá lokálně bez omezení velikosti souboru a s úplným soukromím.",
+                "howto.title": "Jak používat Generátor Přechodů",
+                "howto.step1.title": "Zvolte Typ Přechodu",
+                "howto.step1.description": "Vyberte z lineárních, radiálních nebo kuželových přechodů. Každý typ vytváří různé vizuální efekty a lze je přizpůsobit různými parametry.",
+                "howto.step2.title": "Přidejte Barevné Zastávky",
+                "howto.step2.description": "Přidejte více barevných zastávek a přizpůsobte jejich pozice. Použijte výběr barev nebo zadejte hodnoty ve formátu HEX, RGB nebo HSL pro přesnou kontrolu.",
+                "howto.step3.title": "Přizpůsobte Nastavení",
+                "howto.step3.description": "Upravte směr, úhel, tvar a další parametry pro doladění vašeho přechodu. Sledujte změny v reálném čase na náhledovém plátně.",
+                "howto.step4.title": "Exportujte a Použijte",
+                "howto.step4.description": "Zkopírujte CSS kód, stáhněte jako obrázek nebo exportujte jako JSON. Veškeré zpracování probíhá lokálně ve vašem prohlížeči - vaše designy nikdy neopustí vaše zařízení.",
+                "tool.title": "Generátor Přechodů",
+                "tool.colors.title": "Barevné Zastávky",
+                "tool.colors.add": "Přidat Barevnou Zastávku",
+                "tool.controls.title": "Ovládání Přechodu",
+                "tool.controls.angle": "Úhel/Směr:",
+                "tool.controls.shape": "Tvar (Radiální):",
+                "tool.controls.size": "Velikost (Radiální):",
+                "tool.controls.position": "Pozice (Radiální):",
+                "tool.presets.title": "Rychlá Přednastavení",
+                "tool.output.title": "CSS Kód",
+                "tool.output.copy": "Kopírovat CSS",
+                "tool.output.tailwind": "Kopírovat Tailwind",
+                "tool.export.png": "Obrázek PNG",
+                "tool.export.jpg": "Obrázek JPG",
+                "tool.export.svg": "Obrázek SVG",
+                "tool.export.json": "JSON Data",
+                "tool.generate.random": "Náhodný Přechod",
+                "tool.clear": "Vymazat Vše",
+                "footer.follow": "SLEDUJTE NÁS",
+                "footer.categories": "Populární Kategorie",
+                "footer.categories.pdf": "PDF Nástroje",
+                "footer.categories.image": "Obrázkové Nástroje",
+                "footer.categories.text": "Textové Nástroje",
+                "footer.categories.av": "Audio/Video Nástroje",
+                "footer.categories.web": "WebDeveloper Nástroje",
+                "footer.categories.calc": "Kalkulačkové Nástroje",
+                "footer.categories.util": "Užitečné Nástroje",
+                "footer.categories.color": "Barevné Nástroje",
+                "footer.quicklinks": "Rychlé Odkazy",
+                "footer.links.tools": "Všechny Nástroje",
+                "footer.links.faq": "Časté Otázky",
+                "footer.links.contact": "Kontakt",
+                "footer.links.privacy": "Zásady Ochrany Osobních Údajů",
+                "footer.links.disclaimer": "Odmítnutí Odpovědnosti",
+                "footer.links.terms": "Podmínky Služby",
+                "footer.copyright": "© 2025 LollyPoPDF. Všechna práva vyhrazena."
+            }
+
+        };
+
+        // Function to change language
+        function changeLanguage(langCode) {
+            const langData = translations[langCode];
+            if (!langData) return;
+            
+            // Update all elements with data-i18n attribute
+            document.querySelectorAll('[data-i18n]').forEach(element => {
+                const key = element.getAttribute('data-i18n');
+                if (langData[key]) {
+                    element.textContent = langData[key];
+                }
+            });
+            
+            // Update current language display
+            currentLanguageElement.textContent = languages.find(lang => lang.code === langCode)?.name || 'English';
+            
+            // Save language preference
+            localStorage.setItem('language', langCode);
+        }
+
+        // Initialize language
+        const savedLanguage = localStorage.getItem('language') || 'en';
+        changeLanguage(savedLanguage);
+        
+        // Language selection handler
+        languageDropdown.addEventListener('click', (e) => {
+            if (e.target.classList.contains('language-option')) {
+                const langCode = e.target.getAttribute('data-lang');
+                changeLanguage(langCode);
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,3518 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PDF to JPG Converter | LollyPoPdf</title>
+    <meta name="description" content="Free online tool to convert PDF files to JPG images. No registration required, client-side processing, unlimited use.">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
+    <script>
+        // Set up PDF.js worker
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
+    </script>
+    <style>
+        :root {
+            --primary-color: #9370db;
+            --primary-dark: #8a2be2;
+            --secondary-color: #f0ebff;
+            --text-color: #333333;
+            --text-light: #6b7280;
+            --bg-color: #ffffff;
+            --bg-secondary: #f9f9f9;
+            --border-radius: 12px;
+            --transition: all 0.3s ease;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --header-height: 80px;
+            --white: #ffffff;
+            --header-text: #6b7280;
+            --accent-color: #9370db;
+        }
+
+        .dark-mode {
+            --primary-color: #a391f2;
+            --primary-dark: #8a2be2;
+            --secondary-color: #2d2d2d;
+            --text-color: #f0f0f0;
+            --text-light: #a0a0a0;
+            --bg-color: #1a1a1a;
+            --bg-secondary: #2d2d2d;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+            --white: #1a1a1a;
+            --header-text: #a0a0a0;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            transition: var(--transition);
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        ul {
+            list-style: none;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header Styles */
+        header {
+            background-color: var(--white);
+            color: var(--header-text);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+        }
+
+        .logo-icon {
+            position: relative;
+            width: 40px;
+            height: 40px;
+        }
+
+        .logo-circle {
+            width: 40px;
+            height: 40px;
+            border-radius: 40%;
+            background: linear-gradient(to bottom right, #9370db, #8a2be2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .logo-stem {
+            position: absolute;
+            bottom: -17px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 6px;
+            height: 17px;
+            background-color: #8a2be2;
+            border-radius: 0 0 3px 3px;
+        }
+
+        .logo-text {
+            font-size: 24px;
+            font-weight: bold;
+            color: #9370db;
+        }
+
+        nav ul {
+            display: flex;
+            gap: 30px;
+            list-style: none;
+        }
+
+        nav a {
+            font-weight: 500;
+            position: relative;
+            color: var(--header-text);
+            padding: 8px 0;
+            border-radius: 0;
+            transition: var(--transition);
+            text-decoration: none;
+        }
+
+        nav a:hover {
+            color: var(--accent-color);
+        }
+
+        nav a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: var(--accent-color);
+            transition: width 0.3s ease;
+        }
+
+        nav a:hover::after {
+            width: 100%;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .email {
+            font-size: 14px;
+            color: var(--header-text);
+        }
+
+        .theme-toggle {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 20px;
+            color: var(--header-text);
+            padding: 8px;
+            border-radius: 50%;
+            transition: var(--transition);
+        }
+
+        .theme-toggle:hover {
+            background-color: #f0ebff;
+            color: var(--accent-color);
+        }
+
+        .dark-mode .theme-toggle:hover {
+            background-color: #2d3748;
+            color: var(--accent-color);
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--header-text);
+        }
+
+        /* Mobile Menu */
+        .mobile-menu {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            width: 100%;
+            background-color: var(--white);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            z-index: 999;
+        }
+
+        .dark-mode .mobile-menu {
+            background-color: var(--bg-secondary);
+        }
+
+        .mobile-menu.active {
+            display: block;
+        }
+
+        .mobile-menu ul {
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .mobile-menu a {
+            display: block;
+            padding: 10px 0;
+            font-weight: 500;
+            color: var(--header-text);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .dark-mode .mobile-menu a {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .mobile-menu a:hover {
+            color: var(--accent-color);
+        }
+
+        /* Hero Section */
+        .hero {
+            background-color: var(--secondary-color);
+            padding: 60px 0;
+            text-align: center;
+        }
+
+        .dark-mode .hero {
+            background: linear-gradient(135deg, #2a1a4a, #3d2a6d);
+        }
+
+        .hero h1 {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            color: #000;
+        }
+
+        .dark-mode .hero h1 {
+            color: var(--text-color);
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            color: var(--text-color);
+            max-width: 700px;
+            margin: 0 auto 30px;
+        }
+
+        /* How to Convert Section */
+        .how-to-section {
+            padding: 80px 0;
+            background-color: var(--bg-color);
+        }
+
+        .dark-mode .how-to-section {
+            background-color: var(--bg-secondary);
+        }
+
+        .section-title {
+            font-size: 2rem;
+            text-align: center;
+            margin-bottom: 40px;
+            color: #000000;
+        }
+
+        .dark-mode .section-title {
+            color: var(--text-color);
+        }
+
+        .steps-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 40px;
+        }
+
+        .step-box {
+            background-color: var(--bg-secondary);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            padding: 30px;
+            min-height: 200px;
+            position: relative;
+        }
+
+        .step-number {
+            width: 40px;
+            height: 40px;
+            background-color: var(--primary-color);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 16px;
+            margin-bottom: 15px;
+        }
+
+        .step-title {
+            font-size: 18px;
+            color: #000000;
+            margin-bottom: 10px;
+        }
+
+        .dark-mode .step-title {
+            color: var(--text-color);
+        }
+
+        .step-description {
+            font-size: 14px;
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        /* Converter Tool */
+        .converter-section {
+            padding: 80px 0;
+            background-color: var(--secondary-color);
+        }
+
+        .dark-mode .converter-section {
+            background: linear-gradient(135deg, #2a1a4a, #3d2a6d);
+        }
+
+        .converter-title {
+            font-size: 2.5rem;
+            text-align: center;
+            margin-bottom: 40px;
+            color: #a391f2;
+        }
+
+        .dark-mode .converter-title {
+            color: #a391f2;
+        }
+
+        .converter-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background-color: var(--bg-color);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            padding: 40px;
+        }
+
+        .upload-area {
+            border: 2px dashed var(--primary-color);
+            border-radius: var(--border-radius);
+            padding: 40px 20px;
+            text-align: center;
+            margin-bottom: 30px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .upload-area:hover {
+            background-color: var(--secondary-color);
+        }
+
+        .upload-icon {
+            font-size: 48px;
+            color: var(--primary-color);
+            margin-bottom: 15px;
+        }
+
+        .upload-text {
+            margin-bottom: 15px;
+        }
+
+        .upload-btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: var(--transition);
+        }
+
+        .upload-btn:hover {
+            background-color: var(--primary-dark);
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        .settings-selection {
+            margin-bottom: 30px;
+            display: none;
+        }
+
+        .settings-title {
+            margin-bottom: 15px;
+            color: var(--primary-color);
+        }
+
+        .settings-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .setting-group {
+            margin-bottom: 15px;
+        }
+
+        .setting-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: var(--text-color);
+        }
+
+        .setting-input, .setting-select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid var(--primary-color);
+            border-radius: var(--border-radius);
+            background-color: var(--bg-secondary);
+            color: var(--text-color);
+            font-size: 16px;
+        }
+
+        .setting-input:focus, .setting-select:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(147, 112, 219, 0.3);
+        }
+
+        .page-selection {
+            margin-top: 20px;
+            display: none;
+        }
+
+        .page-selection-title {
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        .pages-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .page-checkbox {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .preview-container {
+            display: none;
+            margin-bottom: 30px;
+        }
+
+        .preview-title {
+            margin-bottom: 15px;
+            color: var(--primary-color);
+        }
+
+        .preview-images {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .preview-box {
+            text-align: center;
+            border: 1px solid var(--primary-color);
+            border-radius: var(--border-radius);
+            padding: 15px;
+            background-color: var(--bg-secondary);
+        }
+
+        .preview-label {
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        .preview-img {
+            max-width: 100%;
+            max-height: 200px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+        }
+
+        .file-info {
+            margin-top: 10px;
+            font-size: 14px;
+            color: var(--text-light);
+        }
+
+        .action-buttons {
+            display: none;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .action-btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: var(--transition);
+            flex: 1;
+            min-width: 150px;
+        }
+
+        .convert-btn {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .convert-btn:hover {
+            background-color: var(--primary-dark);
+        }
+
+        .download-btn {
+            background-color: white;
+            color: var(--primary-color);
+            border: 2px solid var(--primary-color);
+        }
+
+        .download-btn:hover {
+            background-color: var(--secondary-color);
+        }
+
+        .reset-btn {
+            background-color: var(--text-light);
+            color: white;
+        }
+
+        .reset-btn:hover {
+            background-color: #5a6268;
+        }
+
+        .processing {
+            display: none;
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .spinner {
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            border-left-color: var(--primary-color);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background-color: var(--bg-secondary);
+            border-radius: 4px;
+            margin: 15px 0;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background-color: var(--primary-color);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .progress-text {
+            font-size: 14px;
+            color: var(--text-light);
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Footer */
+        footer {
+            background-color: #000000;
+            color: white;
+            padding: 60px 0 80px;
+            position: relative;
+        }
+
+        .footer-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 60px;
+        }
+
+        .footer-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            text-decoration: none;
+        }
+
+        .footer-logo .logo-icon {
+            width: 40px;
+            height: 40px;
+        }
+
+        .footer-logo .logo-text {
+            color: #9370db;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .footer-section h3 {
+            color: white;
+            font-weight: 600;
+            font-size: 20px;
+            margin-bottom: 20px;
+        }
+
+        .footer-section h4 {
+            color: #9370db;
+            font-size: 18px;
+            margin-bottom: 15px;
+        }
+
+        .footer-links li {
+            margin-bottom: 10px;
+        }
+
+        .footer-links a {
+            color: white;
+        }
+
+        .footer-links a:hover {
+            color: #9370db;
+        }
+
+        .social-icons {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .social-icon {
+            width: 40px;
+            height: 40px;
+            background-color: #9370db;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+        }
+
+        .social-icon:hover {
+            background-color: #8a2be2;
+            transform: translateY(-3px);
+        }
+
+        .copyright {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            color: #f9f7ff;
+            font-size: 12px;
+        }
+
+        .footer-line {
+            position: absolute;
+            bottom: 50px;
+            left: 0;
+            width: 100%;
+            height: 1px;
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        /* Language Switcher */
+        .language-switcher {
+            position: fixed;
+            bottom: 10px;
+            right: 10px;
+            z-index: 1000;
+        }
+
+        .language-btn {
+            background-color: #9370db;
+            color: white;
+            border: none;
+            border-radius: 30px;
+            padding: 5px 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .language-dropdown {
+            position: absolute;
+            bottom: 100%;
+            right: 0;
+            width: 300px;
+            background-color: white;
+            border-radius: var(--border-radius);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            display: none;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .dark-mode .language-dropdown {
+            background-color: var(--bg-secondary);
+        }
+
+        .language-switcher:hover .language-dropdown {
+            display: grid;
+        }
+
+        .language-option {
+            padding: 8px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            text-align: center;
+            font-size: 14px;
+        }
+
+        .language-option:hover {
+            background-color: white;
+            color: #9370db;
+        }
+
+        .dark-mode .language-option:hover {
+            background-color: var(--bg-color);
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 992px) {
+            .steps-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .footer-container {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            nav ul, .email {
+                display: none;
+            }
+            
+            .mobile-menu-btn {
+                display: block;
+            }
+            
+            .hero h1, .converter-title {
+                font-size: 2rem;
+            }
+            
+            .hero p {
+                font-size: 1rem;
+            }
+            
+            .settings-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .preview-images {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            }
+            
+            .language-dropdown {
+                width: 250px;
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .footer-container {
+                grid-template-columns: 1fr;
+                gap: 40px;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .converter-container {
+                padding: 20px;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+            
+            .action-btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container header-container">
+            <a href="https://lollypopdf.com" class="logo">
+                <div class="logo-icon">
+                    <div class="logo-circle">LPdf</div>
+                    <div class="logo-stem"></div>
+                </div>
+                <span class="logo-text">LollyPoPdf</span>
+            </a>
+            
+            <nav>
+                <ul>
+                    <li><a href="https://lollypopdf.com#home" class="nav-link" data-i18n="nav.home">Home</a></li>
+                    <li><a href="https://lollypopdf.com#about" class="nav-link" data-i18n="nav.about">About Us</a></li>
+                    <li><a href="https://lollypopdf.com#tools" class="nav-link" data-i18n="nav.tools">Tools</a></li>
+                    <li><a href="https://lollypopdf.com#contact" class="nav-link" data-i18n="nav.contact">Contact</a></li>
+                </ul>
+            </nav>
+            
+            <div class="header-right">
+                <span class="email">lollypoppdf@gmail.com</span>
+                <button class="theme-toggle" id="themeToggle">
+                    <i class="fas fa-moon"></i>
+                </button>
+                <button class="mobile-menu-btn" id="mobileMenuBtn">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </div>
+        
+        <!-- Mobile Menu -->
+        <div class="mobile-menu" id="mobileMenu">
+            <ul>
+                <li><a href="https://lollypopdf.com#home" class="nav-link" data-i18n="nav.home">Home</a></li>
+                <li><a href="https://lollypopdf.com#about" class="nav-link" data-i18n="nav.about">About Us</a></li>
+                <li><a href="https://lollypopdf.com#tools" class="nav-link" data-i18n="nav.tools">Tools</a></li>
+                <li><a href="https://lollypopdf.com#contact" class="nav-link" data-i18n="nav.contact">Contact</a></li>
+            </ul>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <h1 data-i18n="hero.title">Free PDF to JPG Converter</h1>
+            <p data-i18n="hero.description">Convert PDF files to high-quality JPG images instantly. Extract all pages or select specific ones. No registration required, 100% client-side processing.</p>
+        </div>
+    </section>
+
+    <!-- How to Convert Section -->
+    <section class="how-to-section">
+        <div class="container">
+            <h2 class="section-title" data-i18n="howto.title">How to Convert PDF to JPG</h2>
+            <div class="steps-container">
+                <div class="step-box">
+                    <div class="step-number">1</div>
+                    <h3 class="step-title" data-i18n="howto.step1.title">Upload Your PDF</h3>
+                    <p class="step-description" data-i18n="howto.step1.description">Click the upload area or drag and drop your PDF file. We support all standard PDF formats.</p>
+                </div>
+                <div class="step-box">
+                    <div class="step-number">2</div>
+                    <h3 class="step-title" data-i18n="howto.step2.title">Select Pages & Quality</h3>
+                    <p class="step-description" data-i18n="howto.step2.description">Choose which pages to convert and set the image quality. Select all pages or specific ones.</p>
+                </div>
+                <div class="step-box">
+                    <div class="step-number">3</div>
+                    <h3 class="step-title" data-i18n="howto.step3.title">Convert to JPG</h3>
+                    <p class="step-description" data-i18n="howto.step3.description">Click the convert button to process your PDF. All processing happens in your browser.</p>
+                </div>
+                <div class="step-box">
+                    <div class="step-number">4</div>
+                    <h3 class="step-title" data-i18n="howto.step4.title">Download Images</h3>
+                    <p class="step-description" data-i18n="howto.step4.description">Download individual JPG images or get all images in a ZIP file. No watermarks, no registration.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Converter Tool -->
+    <section class="converter-section">
+        <div class="container">
+            <h2 class="converter-title" data-i18n="converter.title">PDF to JPG Converter</h2>
+            <div class="converter-container">
+                <div class="upload-area" id="uploadArea">
+                    <i class="fas fa-file-pdf upload-icon"></i>
+                    <p class="upload-text" data-i18n="converter.upload.text">Drag & drop your PDF here or click to browse</p>
+                    <button class="upload-btn" data-i18n="converter.upload.button">Select PDF</button>
+                    <input type="file" id="fileInput" class="file-input" accept=".pdf">
+                </div>
+                
+                <div class="settings-selection" id="settingsSelection">
+                    <h3 class="settings-title" data-i18n="converter.settings.title">Conversion Settings</h3>
+                    <div class="settings-grid">
+                        <div class="setting-group">
+                            <label class="setting-label" for="qualitySelect" data-i18n="converter.settings.quality">Image Quality</label>
+                            <select id="qualitySelect" class="setting-select">
+                                <option value="0.7" data-i18n="converter.settings.quality.high">High (Recommended)</option>
+                                <option value="0.9" data-i18n="converter.settings.quality.maximum">Maximum</option>
+                                <option value="0.5" data-i18n="converter.settings.quality.medium">Medium</option>
+                                <option value="0.3" data-i18n="converter.settings.quality.low">Low</option>
+                            </select>
+                        </div>
+                        <div class="setting-group">
+                            <label class="setting-label" for="scaleSelect" data-i18n="converter.settings.scale">Image Scale</label>
+                            <select id="scaleSelect" class="setting-select">
+                                <option value="1.5" data-i18n="converter.settings.scale.high">High (1.5x)</option>
+                                <option value="2" data-i18n="converter.settings.scale.maximum">Maximum (2x)</option>
+                                <option value="1" data-i18n="converter.settings.scale.normal">Normal (1x)</option>
+                                <option value="0.75" data-i18n="converter.settings.scale.low">Low (0.75x)</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="page-selection" id="pageSelection">
+                        <h4 class="page-selection-title" data-i18n="converter.settings.pages">Select Pages to Convert</h4>
+                        <div class="pages-container" id="pagesContainer">
+                            <!-- Pages will be added here dynamically -->
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="preview-container" id="previewContainer">
+                    <h3 class="preview-title" data-i18n="converter.preview.title">Preview</h3>
+                    <div class="preview-images" id="previewImages">
+                        <!-- Preview images will be added here dynamically -->
+                    </div>
+                </div>
+                
+                <div class="processing" id="processing">
+                    <div class="spinner"></div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progressFill"></div>
+                    </div>
+                    <p class="progress-text" id="progressText" data-i18n="converter.processing">Processing: 0%</p>
+                </div>
+                
+                <div class="action-buttons" id="actionButtons">
+                    <button class="action-btn convert-btn" id="convertBtn" data-i18n="converter.convert">Convert to JPG</button>
+                    <button class="action-btn download-btn" id="downloadBtn" data-i18n="converter.download">Download All</button>
+                    <button class="action-btn reset-btn" id="resetBtn" data-i18n="converter.reset">Reset</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container footer-container">
+            <!-- Left Section -->
+            <div class="footer-section">
+                <a href="https://lollypopdf.com" class="footer-logo">
+                    <div class="logo-icon">
+                        <div class="logo-circle">LPdf</div>
+                        <div class="logo-stem"></div>
+                    </div>
+                    <span class="logo-text">LollyPoPdf</span>
+                </a>
+                <h3 data-i18n="footer.follow">FOLLOW US</h3>
+                <div class="social-icons">
+                    <a href="https://facebook.com/lollypopdf" class="social-icon"><i class="fab fa-facebook-f"></i></a>
+                    <a href="https://linkedin.com/company/lollypopdf" class="social-icon"><i class="fab fa-linkedin-in"></i></a>
+                    <a href="https://twitter.com/lollypopdf" class="social-icon"><i class="fab fa-twitter"></i></a>
+                    <a href="https://instagram.com/lollypopdf" class="social-icon"><i class="fab fa-instagram"></i></a>
+                    <a href="https://pinterest.com/lollypopdf" class="social-icon"><i class="fab fa-pinterest-p"></i></a>
+                </div>
+            </div>
+            
+            <!-- Middle Section - Popular Categories -->
+            <div class="footer-section">
+                <h4 data-i18n="footer.categories">Popular Categories</h4>
+                <ul class="footer-links">
+                    <li><a href="https://lollypopdf.com#pdf-tools" data-i18n="footer.categories.pdf">PDF Tools</a></li>
+                    <li><a href="https://lollypopdf.com#image-tools" data-i18n="footer.categories.image">Image Tools</a></li>
+                    <li><a href="https://lollypopdf.com#text-tools" data-i18n="footer.categories.text">Text Tools</a></li>
+                    <li><a href="https://lollypopdf.com#audio-video-tools" data-i18n="footer.categories.av">Audio/Video Tools</a></li>
+                    <li><a href="https://lollypopdf.com#web-developer-tools" data-i18n="footer.categories.web">WebDeveloper Tools</a></li>
+                    <li><a href="https://lollypopdf.com#calculator-tools" data-i18n="footer.categories.calc">Calculator Tools</a></li>
+                    <li><a href="https://lollypopdf.com#utility-tools" data-i18n="footer.categories.util">Utility Tools</a></li>
+                    <li><a href="https://lollypopdf.com#color-tools" data-i18n="footer.categories.color">Color Tools</a></li>
+                </ul>
+            </div>
+            
+            <!-- Right Section - Quick Links -->
+            <div class="footer-section">
+                <h4 data-i18n="footer.quicklinks">Quick Links</h4>
+                <ul class="footer-links">
+                    <li><a href="https://lollypopdf.com#home" data-i18n="nav.home">Home</a></li>
+                    <li><a href="tools.html" data-i18n="footer.links.tools">All Tools</a></li>
+                    <li><a href="faq.html" data-i18n="footer.links.faq">FAQ</a></li>
+                    <li><a href="contact.html" data-i18n="footer.links.contact">Contact</a></li>
+                    <li><a href="privacy-policy.html" data-i18n="footer.links.privacy">Privacy Policy</a></li>
+                    <li><a href="disclaimer.html" data-i18n="footer.links.disclaimer">Disclaimer</a></li>
+                    <li><a href="terms.html" data-i18n="footer.links.terms">Terms of Service</a></li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="footer-line"></div>
+        <div class="copyright" data-i18n="footer.copyright">© 2025 LollyPoPDF. All rights reserved.</div>
+    </footer>
+
+    <!-- Language Switcher -->
+    <div class="language-switcher">
+        <button class="language-btn">
+            <i class="fas fa-globe"></i>
+            <span id="currentLanguage">English</span>
+        </button>
+        <div class="language-dropdown">
+            <div class="language-option" data-lang="en">English</div>
+            <div class="language-option" data-lang="es">Español</div>
+            <div class="language-option" data-lang="fr">Français</div>
+            <div class="language-option" data-lang="de">Deutsch</div>
+            <div class="language-option" data-lang="it">Italiano</div>
+            <div class="language-option" data-lang="pt">Português</div>
+            <div class="language-option" data-lang="ja">日本語</div>
+            <div class="language-option" data-lang="ru">Pусский</div>
+            <div class="language-option" data-lang="ko">한국어</div>
+            <div class="language-option" data-lang="zh-CN">中文 (简体)</div>
+            <div class="language-option" data-lang="zh-TW">中文 (繁體)</div>
+            <div class="language-option" data-lang="ar">العربية</div>
+            <div class="language-option" data-lang="fa">فارسی</div>
+            <div class="language-option" data-lang="bg">Български</div>
+            <div class="language-option" data-lang="ca">Català</div>
+            <div class="language-option" data-lang="nl">Nederlands</div>
+            <div class="language-option" data-lang="el">Ελληνικά</div>
+            <div class="language-option" data-lang="hi">हिन्दी</div>
+            <div class="language-option" data-lang="te">తెలుగు</div>
+            <div class="language-option" data-lang="kn">ಕನ್ನಡ</div>
+            <div class="language-option" data-lang="ta">தமிழ்</div>
+            <div class="language-option" data-lang="ml">മലയാളം</div>
+            <div class="language-option" data-lang="id">Bahasa Indonesia</div>
+            <div class="language-option" data-lang="ms">Bahasa Melayu</div>
+            <div class="language-option" data-lang="pl">Polski</div>
+            <div class="language-option" data-lang="th">ภาษาไทย</div>
+            <div class="language-option" data-lang="tr">Türkçe</div>
+            <div class="language-option" data-lang="uk">Українська</div>
+            <div class="language-option" data-lang="vi">Tiếng Việt</div>
+            <div class="language-option" data-lang="is">Íslenska</div>
+            <div class="language-option" data-lang="no">Norsk</div>
+            <div class="language-option" data-lang="sv">Svenska</div>
+            <div class="language-option" data-lang="fi">Suomi</div>
+            <div class="language-option" data-lang="cs">Čeština</div>
+        </div>
+    </div>
+
+    <script>
+        // Theme Toggle
+        const themeToggle = document.getElementById('themeToggle');
+        const body = document.body;
+        
+        // Check for saved theme preference or respect OS preference
+        const savedTheme = localStorage.getItem('theme') || 
+            (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        
+        if (savedTheme === 'dark') {
+            body.classList.add('dark-mode');
+            themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+        }
+        
+        themeToggle.addEventListener('click', () => {
+            body.classList.toggle('dark-mode');
+            const isDarkMode = body.classList.contains('dark-mode');
+            
+            if (isDarkMode) {
+                themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+                localStorage.setItem('theme', 'dark');
+            } else {
+                themeToggle.innerHTML = '<i class="fas fa-moon"></i>';
+                localStorage.setItem('theme', 'light');
+            }
+        });
+
+        // Mobile Menu Toggle
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const mobileMenu = document.getElementById('mobileMenu');
+        
+        mobileMenuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('active');
+            
+            // Change icon based on menu state
+            if (mobileMenu.classList.contains('active')) {
+                mobileMenuBtn.innerHTML = '<i class="fas fa-times"></i>';
+            } else {
+                mobileMenuBtn.innerHTML = '<i class="fas fa-bars"></i>';
+            }
+        });
+
+        // Close mobile menu when clicking on a link
+        const mobileMenuLinks = mobileMenu.querySelectorAll('a');
+        mobileMenuLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                mobileMenu.classList.remove('active');
+                mobileMenuBtn.innerHTML = '<i class="fas fa-bars"></i>';
+            });
+        });
+
+        // PDF to JPG Converter Functionality
+        const uploadArea = document.getElementById('uploadArea');
+        const fileInput = document.getElementById('fileInput');
+        const previewImages = document.getElementById('previewImages');
+        const previewContainer = document.getElementById('previewContainer');
+        const convertBtn = document.getElementById('convertBtn');
+        const downloadBtn = document.getElementById('downloadBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        const processing = document.getElementById('processing');
+        const progressFill = document.getElementById('progressFill');
+        const progressText = document.getElementById('progressText');
+        const settingsSelection = document.getElementById('settingsSelection');
+        const actionButtons = document.getElementById('actionButtons');
+        const qualitySelect = document.getElementById('qualitySelect');
+        const scaleSelect = document.getElementById('scaleSelect');
+        const pageSelection = document.getElementById('pageSelection');
+        const pagesContainer = document.getElementById('pagesContainer');
+        
+        let currentFile = null;
+        let pdfDoc = null;
+        let totalPages = 0;
+        let convertedImages = [];
+        let selectedPages = [];
+        
+        // Upload area click handler
+        uploadArea.addEventListener('click', () => {
+            fileInput.click();
+        });
+        
+        // File input change handler
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                handleFile(e.target.files[0]);
+            }
+        });
+        
+        // Drag and drop functionality
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.style.backgroundColor = 'var(--secondary-color)';
+        });
+        
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.style.backgroundColor = '';
+        });
+        
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.style.backgroundColor = '';
+            
+            if (e.dataTransfer.files.length > 0) {
+                handleFile(e.dataTransfer.files[0]);
+            }
+        });
+        
+        // Handle the selected file
+        function handleFile(file) {
+            // Check if file is a PDF
+            if (!file.type.includes('pdf') && !file.name.toLowerCase().endsWith('.pdf')) {
+                alert('Please select a PDF file');
+                return;
+            }
+            
+            // Check file size (limit to 50MB)
+            if (file.size > 50 * 1024 * 1024) {
+                alert('File size too large. Please select a PDF smaller than 50MB.');
+                return;
+            }
+            
+            currentFile = file;
+            
+            // Load the PDF
+            const fileReader = new FileReader();
+            fileReader.onload = function() {
+                const typedarray = new Uint8Array(this.result);
+                
+                // Load PDF document
+                pdfjsLib.getDocument(typedarray).promise.then((pdf) => {
+                    pdfDoc = pdf;
+                    totalPages = pdf.numPages;
+                    
+                    // Show settings and page selection
+                    settingsSelection.style.display = 'block';
+                    pageSelection.style.display = 'block';
+                    actionButtons.style.display = 'flex';
+                    
+                    // Create page selection checkboxes
+                    createPageSelection();
+                    
+                    // Show first page as preview
+                    renderPagePreview(1);
+                }).catch(error => {
+                    console.error('Error loading PDF:', error);
+                    alert('Error loading PDF. Please make sure it\'s a valid PDF file.');
+                });
+            };
+            fileReader.readAsArrayBuffer(file);
+        }
+        
+        // Create page selection checkboxes
+        function createPageSelection() {
+            pagesContainer.innerHTML = '';
+            selectedPages = [];
+            
+            // Create "Select All" checkbox
+            const selectAllDiv = document.createElement('div');
+            selectAllDiv.className = 'page-checkbox';
+            const selectAllCheckbox = document.createElement('input');
+            selectAllCheckbox.type = 'checkbox';
+            selectAllCheckbox.id = 'selectAll';
+            selectAllCheckbox.checked = true;
+            selectAllCheckbox.addEventListener('change', function() {
+                const checkboxes = document.querySelectorAll('.page-checkbox input');
+                checkboxes.forEach(checkbox => {
+                    checkbox.checked = this.checked;
+                });
+                updateSelectedPages();
+            });
+            
+            const selectAllLabel = document.createElement('label');
+            selectAllLabel.htmlFor = 'selectAll';
+            selectAllLabel.textContent = 'Select All';
+            selectAllLabel.setAttribute('data-i18n', 'converter.settings.selectAll');
+            
+            selectAllDiv.appendChild(selectAllCheckbox);
+            selectAllDiv.appendChild(selectAllLabel);
+            pagesContainer.appendChild(selectAllDiv);
+            
+            // Create checkboxes for each page
+            for (let i = 1; i <= totalPages; i++) {
+                const pageDiv = document.createElement('div');
+                pageDiv.className = 'page-checkbox';
+                
+                const checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.id = `page${i}`;
+                checkbox.value = i;
+                checkbox.checked = true;
+                checkbox.addEventListener('change', updateSelectedPages);
+                
+                const label = document.createElement('label');
+                label.htmlFor = `page${i}`;
+                label.textContent = `Page ${i}`;
+                
+                pageDiv.appendChild(checkbox);
+                pageDiv.appendChild(label);
+                pagesContainer.appendChild(pageDiv);
+                
+                selectedPages.push(i);
+            }
+        }
+        
+        // Update selected pages array
+        function updateSelectedPages() {
+            selectedPages = [];
+            const checkboxes = document.querySelectorAll('.page-checkbox input:not(#selectAll)');
+            checkboxes.forEach(checkbox => {
+                if (checkbox.checked) {
+                    selectedPages.push(parseInt(checkbox.value));
+                }
+            });
+            
+            // Update "Select All" checkbox
+            const selectAllCheckbox = document.getElementById('selectAll');
+            selectAllCheckbox.checked = selectedPages.length === totalPages;
+        }
+        
+        // Render a page as preview
+        function renderPagePreview(pageNumber) {
+            pdfDoc.getPage(pageNumber).then((page) => {
+                const viewport = page.getViewport({ scale: 1 });
+                const canvas = document.createElement('canvas');
+                const context = canvas.getContext('2d');
+                
+                canvas.height = viewport.height;
+                canvas.width = viewport.width;
+                
+                const renderContext = {
+                    canvasContext: context,
+                    viewport: viewport
+                };
+                
+                page.render(renderContext).promise.then(() => {
+                    // Create preview box
+                    const previewBox = document.createElement('div');
+                    previewBox.className = 'preview-box';
+                    
+                    const previewLabel = document.createElement('div');
+                    previewLabel.className = 'preview-label';
+                    previewLabel.textContent = `Page ${pageNumber}`;
+                    
+                    const previewImg = document.createElement('img');
+                    previewImg.className = 'preview-img';
+                    previewImg.src = canvas.toDataURL('image/jpeg', 0.5);
+                    
+                    const fileInfo = document.createElement('div');
+                    fileInfo.className = 'file-info';
+                    fileInfo.textContent = `${Math.round(viewport.width)}×${Math.round(viewport.height)}`;
+                    
+                    previewBox.appendChild(previewLabel);
+                    previewBox.appendChild(previewImg);
+                    previewBox.appendChild(fileInfo);
+                    
+                    // Clear previous preview and add new one
+                    previewImages.innerHTML = '';
+                    previewImages.appendChild(previewBox);
+                    previewContainer.style.display = 'block';
+                });
+            });
+        }
+        
+        // Convert PDF to JPG
+        function convertPDFtoJPG() {
+            if (!pdfDoc || selectedPages.length === 0) {
+                alert('Please select a PDF and pages to convert');
+                return;
+            }
+            
+            processing.style.display = 'block';
+            convertBtn.disabled = true;
+            convertedImages = [];
+            
+            // Reset progress
+            updateProgress(0);
+            
+            // Convert each selected page
+            let completed = 0;
+            const total = selectedPages.length;
+            
+            selectedPages.forEach((pageNumber, index) => {
+                pdfDoc.getPage(pageNumber).then((page) => {
+                    const scale = parseFloat(scaleSelect.value);
+                    const viewport = page.getViewport({ scale: scale });
+                    const canvas = document.createElement('canvas');
+                    const context = canvas.getContext('2d');
+                    
+                    canvas.height = viewport.height;
+                    canvas.width = viewport.width;
+                    
+                    const renderContext = {
+                        canvasContext: context,
+                        viewport: viewport
+                    };
+                    
+                    return page.render(renderContext).promise.then(() => {
+                        const quality = parseFloat(qualitySelect.value);
+                        const imageData = canvas.toDataURL('image/jpeg', quality);
+                        
+                        convertedImages.push({
+                            page: pageNumber,
+                            data: imageData,
+                            width: viewport.width,
+                            height: viewport.height
+                        });
+                        
+                        completed++;
+                        updateProgress(Math.round((completed / total) * 100));
+                        
+                        // If all pages are converted, show previews
+                        if (completed === total) {
+                            processing.style.display = 'none';
+                            convertBtn.disabled = false;
+                            showConvertedPreviews();
+                        }
+                    });
+                }).catch(error => {
+                    console.error('Error converting page:', error);
+                    completed++;
+                    updateProgress(Math.round((completed / total) * 100));
+                    
+                    if (completed === total) {
+                        processing.style.display = 'none';
+                        convertBtn.disabled = false;
+                        if (convertedImages.length > 0) {
+                            showConvertedPreviews();
+                        } else {
+                            alert('Error converting PDF. Please try again.');
+                        }
+                    }
+                });
+            });
+        }
+        
+        // Update progress bar and text
+        function updateProgress(percent) {
+            progressFill.style.width = `${percent}%`;
+            progressText.textContent = `Processing: ${percent}%`;
+        }
+        
+        // Show converted previews
+        function showConvertedPreviews() {
+            previewImages.innerHTML = '';
+            
+            convertedImages.forEach((image, index) => {
+                const previewBox = document.createElement('div');
+                previewBox.className = 'preview-box';
+                
+                const previewLabel = document.createElement('div');
+                previewLabel.className = 'preview-label';
+                previewLabel.textContent = `Page ${image.page}`;
+                
+                const previewImg = document.createElement('img');
+                previewImg.className = 'preview-img';
+                previewImg.src = image.data;
+                
+                const fileInfo = document.createElement('div');
+                fileInfo.className = 'file-info';
+                fileInfo.textContent = `${Math.round(image.width)}×${Math.round(image.height)}`;
+                
+                const downloadBtn = document.createElement('button');
+                downloadBtn.className = 'upload-btn';
+                downloadBtn.style.marginTop = '10px';
+                downloadBtn.textContent = 'Download';
+                downloadBtn.addEventListener('click', () => {
+                    downloadSingleImage(image, image.page);
+                });
+                
+                previewBox.appendChild(previewLabel);
+                previewBox.appendChild(previewImg);
+                previewBox.appendChild(fileInfo);
+                previewBox.appendChild(downloadBtn);
+                
+                previewImages.appendChild(previewBox);
+            });
+            
+            previewContainer.style.display = 'block';
+        }
+        
+        // Download a single image
+        function downloadSingleImage(image, pageNumber) {
+            const a = document.createElement('a');
+            a.href = image.data;
+            a.download = `page_${pageNumber}.jpg`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        }
+        
+        // Download all images as ZIP
+        function downloadAllImages() {
+            if (convertedImages.length === 0) {
+                alert('Please convert the PDF first');
+                return;
+            }
+            
+            const zip = new JSZip();
+            const folder = zip.folder("pdf_images");
+            
+            convertedImages.forEach((image, index) => {
+                // Convert data URL to blob
+                const byteString = atob(image.data.split(',')[1]);
+                const mimeString = image.data.split(',')[0].split(':')[1].split(';')[0];
+                const ab = new ArrayBuffer(byteString.length);
+                const ia = new Uint8Array(ab);
+                for (let i = 0; i < byteString.length; i++) {
+                    ia[i] = byteString.charCodeAt(i);
+                }
+                const blob = new Blob([ab], { type: mimeString });
+                
+                // Add to ZIP
+                folder.file(`page_${image.page}.jpg`, blob);
+            });
+            
+            // Generate and download ZIP
+            zip.generateAsync({ type: "blob" }).then((content) => {
+                saveAs(content, "pdf_images.zip");
+            });
+        }
+        
+        // Reset button handler
+        resetBtn.addEventListener('click', () => {
+            currentFile = null;
+            pdfDoc = null;
+            fileInput.value = '';
+            previewImages.innerHTML = '';
+            previewContainer.style.display = 'none';
+            processing.style.display = 'none';
+            convertBtn.disabled = false;
+            
+            // Hide settings and action buttons
+            settingsSelection.style.display = 'none';
+            pageSelection.style.display = 'none';
+            actionButtons.style.display = 'none';
+            
+            // Reset progress
+            updateProgress(0);
+            
+            // Clear converted images
+            convertedImages = [];
+            selectedPages = [];
+        });
+        
+        // Convert button handler
+        convertBtn.addEventListener('click', convertPDFtoJPG);
+        
+        // Download button handler
+        downloadBtn.addEventListener('click', downloadAllImages);
+
+        // Language Switcher
+        const languageBtn = document.querySelector('.language-btn');
+        const currentLanguageElement = document.getElementById('currentLanguage');
+        const languageDropdown = document.querySelector('.language-dropdown');
+        
+        const languages = [
+            { code: 'en', name: 'English' },
+            { code: 'es', name: 'Español' },
+            { code: 'fr', name: 'Français' },
+            { code: 'de', name: 'Deutsch' },
+            { code: 'it', name: 'Italiano' },
+            { code: 'pt', name: 'Português' },
+            { code: 'ja', name: '日本語' },
+            { code: 'ru', name: 'Pусский' },
+            { code: 'ko', name: '한국어' },
+            { code: 'zh-CN', name: '中文 (简体)' },
+            { code: 'zh-TW', name: '中文 (繁體)' },
+            { code: 'ar', name: 'العربية' },
+            { code: 'fa', name: 'فارسی' },
+            { code: 'bg', name: 'Български' },
+            { code: 'ca', name: 'Català' },
+            { code: 'nl', name: 'Nederlands' },
+            { code: 'el', name: 'Ελληνικά' },
+            { code: 'hi', name: 'हिन्दी' },
+            { code: 'te', name: 'తెలుగు' },
+            { code: 'kn', name: 'ಕನ್ನಡ' },
+            { code: 'ta', name: 'தமிழ்' },
+            { code: 'ml', name: 'മലയാളം' },
+            { code: 'id', name: 'Bahasa Indonesia' },
+            { code: 'ms', name: 'Bahasa Melayu' },
+            { code: 'pl', name: 'Polski' },
+            { code: 'th', name: 'ภาษาไทย' },
+            { code: 'tr', name: 'Türkçe' },
+            { code: 'uk', name: 'Українська' },
+            { code: 'vi', name: 'Tiếng Việt' },
+            { code: 'is', name: 'Íslenska' },
+            { code: 'no', name: 'Norsk' },
+            { code: 'sv', name: 'Svenska' },
+            { code: 'fi', name: 'Suomi' },
+            { code: 'cs', name: 'Čeština' }
+        ];
+        
+        // Translation data
+        const translations = {
+            en: {
+                "nav.home": "Home",
+                "nav.about": "About Us",
+                "nav.tools": "Tools",
+                "nav.contact": "Contact",
+                "hero.title": "Free PDF to JPG Converter",
+                "hero.description": "Convert PDF files to high-quality JPG images instantly. Extract all pages or select specific ones. No registration required, 100% client-side processing.",
+                "howto.title": "How to Convert PDF to JPG",
+                "howto.step1.title": "Upload Your PDF",
+                "howto.step1.description": "Click the upload area or drag and drop your PDF file. We support all standard PDF formats.",
+                "howto.step2.title": "Select Pages & Quality",
+                "howto.step2.description": "Choose which pages to convert and set the image quality. Select all pages or specific ones.",
+                "howto.step3.title": "Convert to JPG",
+                "howto.step3.description": "Click the convert button to process your PDF. All processing happens in your browser.",
+                "howto.step4.title": "Download Images",
+                "howto.step4.description": "Download individual JPG images or get all images in a ZIP file. No watermarks, no registration.",
+                "converter.title": "PDF to JPG Converter",
+                "converter.upload.text": "Drag & drop your PDF here or click to browse",
+                "converter.upload.button": "Select PDF",
+                "converter.settings.title": "Conversion Settings",
+                "converter.settings.quality": "Image Quality",
+                "converter.settings.quality.high": "High (Recommended)",
+                "converter.settings.quality.maximum": "Maximum",
+                "converter.settings.quality.medium": "Medium",
+                "converter.settings.quality.low": "Low",
+                "converter.settings.scale": "Image Scale",
+                "converter.settings.scale.high": "High (1.5x)",
+                "converter.settings.scale.maximum": "Maximum (2x)",
+                "converter.settings.scale.normal": "Normal (1x)",
+                "converter.settings.scale.low": "Low (0.75x)",
+                "converter.settings.pages": "Select Pages to Convert",
+                "converter.settings.selectAll": "Select All",
+                "converter.preview.title": "Preview",
+                "converter.processing": "Processing: 0%",
+                "converter.convert": "Convert to JPG",
+                "converter.download": "Download All",
+                "converter.reset": "Reset",
+                "footer.follow": "FOLLOW US",
+                "footer.categories": "Popular Categories",
+                "footer.categories.pdf": "PDF Tools",
+                "footer.categories.image": "Image Tools",
+                "footer.categories.text": "Text Tools",
+                "footer.categories.av": "Audio/Video Tools",
+                "footer.categories.web": "WebDeveloper Tools",
+                "footer.categories.calc": "Calculator Tools",
+                "footer.categories.util": "Utility Tools",
+                "footer.categories.color": "Color Tools",
+                "footer.quicklinks": "Quick Links",
+                "footer.links.tools": "All Tools",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Contact",
+                "footer.links.privacy": "Privacy Policy",
+                "footer.links.disclaimer": "Disclaimer",
+                "footer.links.terms": "Terms of Service",
+                "footer.copyright": "© 2025 LollyPoPDF. All rights reserved."
+            },
+            es: {
+                "nav.home": "Inicio",
+                "nav.about": "Sobre Nosotros",
+                "nav.tools": "Herramientas",
+                "nav.contact": "Contacto",
+                "hero.title": "Conversor Gratuito de PDF a JPG",
+                "hero.description": "Convierte archivos PDF a imágenes JPG de alta calidad al instante. Extrae todas las páginas o selecciona específicas. No se requiere registro, procesamiento 100% en el cliente.",
+                "howto.title": "Cómo Convertir PDF a JPG",
+                "howto.step1.title": "Sube Tu PDF",
+                "howto.step1.description": "Haz clic en el área de carga o arrastra y suelta tu archivo PDF. Admitimos todos los formatos PDF estándar.",
+                "howto.step2.title": "Selecciona Páginas y Calidad",
+                "howto.step2.description": "Elige qué páginas convertir y establece la calidad de imagen. Selecciona todas las páginas o específicas.",
+                "howto.step3.title": "Convertir a JPG",
+                "howto.step3.description": "Haz clic en el botón convertir para procesar tu PDF. Todo el procesamiento ocurre en tu navegador.",
+                "howto.step4.title": "Descargar Imágenes",
+                "howto.step4.description": "Descarga imágenes JPG individuales o obtén todas en un archivo ZIP. Sin marcas de agua, sin registro.",
+                "converter.title": "Conversor de PDF a JPG",
+                "converter.upload.text": "Arrastra y suelta tu PDF aquí o haz clic para buscar",
+                "converter.upload.button": "Seleccionar PDF",
+                "converter.settings.title": "Configuración de Conversión",
+                "converter.settings.quality": "Calidad de Imagen",
+                "converter.settings.quality.high": "Alta (Recomendado)",
+                "converter.settings.quality.maximum": "Máxima",
+                "converter.settings.quality.medium": "Media",
+                "converter.settings.quality.low": "Baja",
+                "converter.settings.scale": "Escala de Imagen",
+                "converter.settings.scale.high": "Alta (1.5x)",
+                "converter.settings.scale.maximum": "Máxima (2x)",
+                "converter.settings.scale.normal": "Normal (1x)",
+                "converter.settings.scale.low": "Baja (0.75x)",
+                "converter.settings.pages": "Seleccionar Páginas a Convertir",
+                "converter.settings.selectAll": "Seleccionar Todo",
+                "converter.preview.title": "Vista Previa",
+                "converter.processing": "Procesando: 0%",
+                "converter.convert": "Convertir a JPG",
+                "converter.download": "Descargar Todo",
+                "converter.reset": "Restablecer",
+                "footer.follow": "SÍGUENOS",
+                "footer.categories": "Categorías Populares",
+                "footer.categories.pdf": "Herramientas PDF",
+                "footer.categories.image": "Herramientas de Imagen",
+                "footer.categories.text": "Herramientas de Texto",
+                "footer.categories.av": "Herramientas de Audio/Video",
+                "footer.categories.web": "Herramientas WebDesarrollador",
+                "footer.categories.calc": "Herramientas de Calculadora",
+                "footer.categories.util": "Herramientas de Utilidad",
+                "footer.categories.color": "Herramientas de Color",
+                "footer.quicklinks": "Enlaces Rápidos",
+                "footer.links.tools": "Todas las Herramientas",
+                "footer.links.faq": "Preguntas Frecuentes",
+                "footer.links.contact": "Contacto",
+                "footer.links.privacy": "Política de Privacidad",
+                "footer.links.disclaimer": "Descargo de Responsabilidad",
+                "footer.links.terms": "Términos de Servicio",
+                "footer.copyright": "© 2025 LollyPoPDF. Todos los derechos reservados."
+            },
+            fr: {
+                "nav.home": "Accueil",
+                "nav.about": "À propos",
+                "nav.tools": "Outils",
+                "nav.contact": "Contact",
+                "hero.title": "Convertisseur PDF en JPG Gratuit",
+                "hero.description": "Convertissez des fichiers PDF en images JPG de haute qualité instantanément. Extrayez toutes les pages ou sélectionnez des pages spécifiques. Aucune inscription requise, traitement 100% côté client.",
+                "howto.title": "Comment Convertir PDF en JPG",
+                "howto.step1.title": "Téléchargez Votre PDF",
+                "howto.step1.description": "Cliquez sur la zone de téléchargement ou faites glisser et déposez votre fichier PDF. Nous prenons en charge tous les formats PDF standard.",
+                "howto.step2.title": "Sélectionnez les Pages et la Qualité",
+                "howto.step2.description": "Choisissez les pages à convertir et définissez la qualité d'image. Sélectionnez toutes les pages ou des pages spécifiques.",
+                "howto.step3.title": "Convertir en JPG",
+                "howto.step3.description": "Cliquez sur le bouton de conversion pour traiter votre PDF. Tout le traitement se fait dans votre navigateur.",
+                "howto.step4.title": "Télécharger les Images",
+                "howto.step4.description": "Téléchargez des images JPG individuelles ou obtenez toutes les images dans un fichier ZIP. Sans filigrane, sans inscription.",
+                "converter.title": "Convertisseur PDF en JPG",
+                "converter.upload.text": "Glissez-déposez votre PDF ici ou cliquez pour parcourir",
+                "converter.upload.button": "Sélectionner PDF",
+                "converter.settings.title": "Paramètres de Conversion",
+                "converter.settings.quality": "Qualité d'Image",
+                "converter.settings.quality.high": "Élevée (Recommandé)",
+                "converter.settings.quality.maximum": "Maximale",
+                "converter.settings.quality.medium": "Moyenne",
+                "converter.settings.quality.low": "Faible",
+                "converter.settings.scale": "Échelle d'Image",
+                "converter.settings.scale.high": "Élevée (1.5x)",
+                "converter.settings.scale.maximum": "Maximale (2x)",
+                "converter.settings.scale.normal": "Normale (1x)",
+                "converter.settings.scale.low": "Faible (0.75x)",
+                "converter.settings.pages": "Sélectionner les Pages à Convertir",
+                "converter.settings.selectAll": "Tout Sélectionner",
+                "converter.preview.title": "Aperçu",
+                "converter.processing": "Traitement: 0%",
+                "converter.convert": "Convertir en JPG",
+                "converter.download": "Tout Télécharger",
+                "converter.reset": "Réinitialiser",
+                "footer.follow": "SUIVEZ-NOUS",
+                "footer.categories": "Catégories Populaires",
+                "footer.categories.pdf": "Outils PDF",
+                "footer.categories.image": "Outils d'Image",
+                "footer.categories.text": "Outils de Texte",
+                "footer.categories.av": "Outils Audio/Video",
+                "footer.categories.web": "Outils WebDéveloppeur",
+                "footer.categories.calc": "Outils de Calculatrice",
+                "footer.categories.util": "Outils d'Utilité",
+                "footer.categories.color": "Outils de Couleur",
+                "footer.quicklinks": "Liens Rapides",
+                "footer.links.tools": "Tous les Outils",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Contact",
+                "footer.links.privacy": "Politique de Confidentialité",
+                "footer.links.disclaimer": "Avertissement",
+                "footer.links.terms": "Conditions d'Utilisation",
+                "footer.copyright": "© 2025 LollyPoPDF. Tous droits réservés."
+            },
+            de: {
+                "nav.home": "Startseite",
+                "nav.about": "Über uns",
+                "nav.tools": "Werkzeuge",
+                "nav.contact": "Kontakt",
+                "hero.title": "Kostenloser PDF zu JPG Konverter",
+                "hero.description": "Konvertieren Sie PDF-Dateien sofort in hochwertige JPG-Bilder. Extrahieren Sie alle Seiten oder wählen Sie bestimmte aus. Keine Registrierung erforderlich, 100% clientseitige Verarbeitung.",
+                "howto.title": "Wie man PDF in JPG konvertiert",
+                "howto.step1.title": "Laden Sie Ihr PDF hoch",
+                "howto.step1.description": "Klicken Sie auf den Upload-Bereich oder ziehen Sie Ihre PDF-Datei per Drag & Drop. Wir unterstützen alle Standard-PDF-Formate.",
+                "howto.step2.title": "Seiten und Qualität auswählen",
+                "howto.step2.description": "Wählen Sie aus, welche Seiten konvertiert werden sollen und stellen Sie die Bildqualität ein. Wählen Sie alle Seiten oder bestimmte aus.",
+                "howto.step3.title": "In JPG konvertieren",
+                "howto.step3.description": "Klicken Sie auf die Schaltfläche Konvertieren, um Ihr PDF zu verarbeiten. Die gesamte Verarbeitung erfolgt in Ihrem Browser.",
+                "howto.step4.title": "Bilder herunterladen",
+                "howto.step4.description": "Laden Sie einzelne JPG-Bilder herunter oder erhalten Sie alle Bilder in einer ZIP-Datei. Keine Wasserzeichen, keine Registrierung.",
+                "converter.title": "PDF zu JPG Konverter",
+                "converter.upload.text": "Ziehen Sie Ihr PDF hierher oder klicken Sie, um zu durchsuchen",
+                "converter.upload.button": "PDF auswählen",
+                "converter.settings.title": "Konvertierungseinstellungen",
+                "converter.settings.quality": "Bildqualität",
+                "converter.settings.quality.high": "Hoch (Empfohlen)",
+                "converter.settings.quality.maximum": "Maximal",
+                "converter.settings.quality.medium": "Mittel",
+                "converter.settings.quality.low": "Niedrig",
+                "converter.settings.scale": "Bildskalierung",
+                "converter.settings.scale.high": "Hoch (1.5x)",
+                "converter.settings.scale.maximum": "Maximal (2x)",
+                "converter.settings.scale.normal": "Normal (1x)",
+                "converter.settings.scale.low": "Niedrig (0.75x)",
+                "converter.settings.pages": "Seiten zum Konvertieren auswählen",
+                "converter.settings.selectAll": "Alle auswählen",
+                "converter.preview.title": "Vorschau",
+                "converter.processing": "Verarbeitung: 0%",
+                "converter.convert": "In JPG konvertieren",
+                "converter.download": "Alle herunterladen",
+                "converter.reset": "Zurücksetzen",
+                "footer.follow": "FOLGEN SIE UNS",
+                "footer.categories": "Beliebte Kategorien",
+                "footer.categories.pdf": "PDF-Werkzeuge",
+                "footer.categories.image": "Bildwerkzeuge",
+                "footer.categories.text": "Textwerkzeuge",
+                "footer.categories.av": "Audio/Video-Werkzeuge",
+                "footer.categories.web": "WebEntwickler-Werkzeuge",
+                "footer.categories.calc": "Rechnerwerkzeuge",
+                "footer.categories.util": "Hilfsprogramme",
+                "footer.categories.color": "Farbwerkzeuge",
+                "footer.quicklinks": "Schnelllinks",
+                "footer.links.tools": "Alle Werkzeuge",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Kontakt",
+                "footer.links.privacy": "Datenschutzrichtlinie",
+                "footer.links.disclaimer": "Haftungsausschluss",
+                "footer.links.terms": "Nutzungsbedingungen",
+                "footer.copyright": "© 2025 LollyPoPDF. Alle Rechte vorbehalten."
+            },
+            it: {
+                "nav.home": "Home",
+                "nav.about": "Chi Siamo",
+                "nav.tools": "Strumenti",
+                "nav.contact": "Contatto",
+                "hero.title": "Convertitore PDF to JPG Gratuito",
+                "hero.description": "Converti file PDF in immagini JPG di alta qualità all'istante. Estrai tutte le pagine o seleziona quelle specifiche. Nessuna registrazione richiesta, elaborazione 100% lato client.",
+                "howto.title": "Come Convertire PDF in JPG",
+                "howto.step1.title": "Carica il Tuo PDF",
+                "howto.step1.description": "Clicca sull'area di caricamento o trascina e rilascia il tuo file PDF. Supportiamo tutti i formati PDF standard.",
+                "howto.step2.title": "Seleziona Pagine e Qualità",
+                "howto.step2.description": "Sceggi quali pagine convertire e imposta la qualità dell'immagine. Seleziona tutte le pagine o quelle specifiche.",
+                "howto.step3.title": "Converti in JPG",
+                "howto.step3.description": "Clicca sul pulsante converti per elaborare il tuo PDF. Tutta l'elaborazione avviene nel tuo browser.",
+                "howto.step4.title": "Scarica le Immagini",
+                "howto.step4.description": "Scarica singole immagini JPG o ottieni tutte le immagini in un file ZIP. Nessuna filigrana, nessuna registrazione.",
+                "converter.title": "Convertitore PDF to JPG",
+                "converter.upload.text": "Trascina e rilascia il tuo PDF qui o clicca per sfogliare",
+                "converter.upload.button": "Seleziona PDF",
+                "converter.settings.title": "Impostazioni di Conversione",
+                "converter.settings.quality": "Qualità Immagine",
+                "converter.settings.quality.high": "Alta (Raccomandato)",
+                "converter.settings.quality.maximum": "Massima",
+                "converter.settings.quality.medium": "Media",
+                "converter.settings.quality.low": "Bassa",
+                "converter.settings.scale": "Scala Immagine",
+                "converter.settings.scale.high": "Alta (1.5x)",
+                "converter.settings.scale.maximum": "Massima (2x)",
+                "converter.settings.scale.normal": "Normale (1x)",
+                "converter.settings.scale.low": "Bassa (0.75x)",
+                "converter.settings.pages": "Seleziona Pagine da Convertire",
+                "converter.settings.selectAll": "Seleziona Tutto",
+                "converter.preview.title": "Anteprima",
+                "converter.processing": "Elaborazione: 0%",
+                "converter.convert": "Converti in JPG",
+                "converter.download": "Scarica Tutto",
+                "converter.reset": "Ripristina",
+                "footer.follow": "SEGUICI",
+                "footer.categories": "Categorie Popolari",
+                "footer.categories.pdf": "Strumenti PDF",
+                "footer.categories.image": "Strumenti Immagine",
+                "footer.categories.text": "Strumenti Testo",
+                "footer.categories.av": "Strumenti Audio/Video",
+                "footer.categories.web": "Strumenti Sviluppatore Web",
+                "footer.categories.calc": "Strumenti Calcolatrice",
+                "footer.categories.util": "Strumenti Utilità",
+                "footer.categories.color": "Strumenti Colore",
+                "footer.quicklinks": "Link Rapidi",
+                "footer.links.tools": "Tutti gli Strumenti",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Contatto",
+                "footer.links.privacy": "Privacy Policy",
+                "footer.links.disclaimer": "Disclaimer",
+                "footer.links.terms": "Termini di Servizio",
+                "footer.copyright": "© 2025 LollyPoPDF. Tutti i diritti riservati."
+            },
+            pt: {
+                "nav.home": "Início",
+                "nav.about": "Sobre Nós",
+                "nav.tools": "Ferramentas",
+                "nav.contact": "Contato",
+                "hero.title": "Conversor de PDF para JPG Gratuito",
+                "hero.description": "Converta arquivos PDF em imagens JPG de alta qualidade instantaneamente. Extraia todas as páginas ou selecione específicas. Nenhum registro necessário, processamento 100% no cliente.",
+                "howto.title": "Como Converter PDF para JPG",
+                "howto.step1.title": "Carregue Seu PDF",
+                "howto.step1.description": "Clique na área de upload ou arraste e solte seu arquivo PDF. Suportamos todos os formatos PDF padrão.",
+                "howto.step2.title": "Selecione Páginas e Qualidade",
+                "howto.step2.description": "Escolha quais páginas converter e defina a qualidade da imagem. Selecione todas as páginas ou específicas.",
+                "howto.step3.title": "Converter para JPG",
+                "howto.step3.description": "Clique no botão converter para processar seu PDF. Todo o processamento acontece no seu navegador.",
+                "howto.step4.title": "Baixar Imagens",
+                "howto.step4.description": "Baixe imagens JPG individuais ou obtenha todas as imagens em um arquivo ZIP. Sem marcas d'água, sem registro.",
+                "converter.title": "Conversor de PDF para JPG",
+                "converter.upload.text": "Arraste e solte seu PDF aqui ou clique para procurar",
+                "converter.upload.button": "Selecionar PDF",
+                "converter.settings.title": "Configurações de Conversão",
+                "converter.settings.quality": "Qualidade da Imagem",
+                "converter.settings.quality.high": "Alta (Recomendado)",
+                "converter.settings.quality.maximum": "Máxima",
+                "converter.settings.quality.medium": "Média",
+                "converter.settings.quality.low": "Baixa",
+                "converter.settings.scale": "Escala da Imagem",
+                "converter.settings.scale.high": "Alta (1.5x)",
+                "converter.settings.scale.maximum": "Máxima (2x)",
+                "converter.settings.scale.normal": "Normal (1x)",
+                "converter.settings.scale.low": "Baixa (0.75x)",
+                "converter.settings.pages": "Selecionar Páginas para Converter",
+                "converter.settings.selectAll": "Selecionar Tudo",
+                "converter.preview.title": "Pré-visualização",
+                "converter.processing": "Processando: 0%",
+                "converter.convert": "Converter para JPG",
+                "converter.download": "Baixar Tudo",
+                "converter.reset": "Redefinir",
+                "footer.follow": "SIGA-NOS",
+                "footer.categories": "Categorias Populares",
+                "footer.categories.pdf": "Ferramentas PDF",
+                "footer.categories.image": "Ferramentas de Imagem",
+                "footer.categories.text": "Ferramentas de Texto",
+                "footer.categories.av": "Ferramentas de Áudio/Video",
+                "footer.categories.web": "Ferramentas WebDesenvolvedor",
+                "footer.categories.calc": "Ferramentas de Calculadora",
+                "footer.categories.util": "Ferramentas de Utilidade",
+                "footer.categories.color": "Ferramentas de Cor",
+                "footer.quicklinks": "Links Rápidos",
+                "footer.links.tools": "Todas as Ferramentas",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Contato",
+                "footer.links.privacy": "Política de Privacidade",
+                "footer.links.disclaimer": "Aviso Legal",
+                "footer.links.terms": "Termos de Serviço",
+                "footer.copyright": "© 2025 LollyPoPDF. Todos os direitos reservados."
+            },
+            ja: {
+                "nav.home": "ホーム",
+                "nav.about": "会社概要",
+                "nav.tools": "ツール",
+                "nav.contact": "お問い合わせ",
+                "hero.title": "無料PDFからJPG変換ツール",
+                "hero.description": "PDFファイルを高品質なJPG画像に即座に変換します。すべてのページを抽出するか、特定のページを選択できます。登録不要、100%クライアント側処理。",
+                "howto.title": "PDFをJPGに変換する方法",
+                "howto.step1.title": "PDFをアップロード",
+                "howto.step1.description": "アップロードエリアをクリックするか、PDFファイルをドラッグ＆ドロップしてください。すべての標準PDF形式をサポートしています。",
+                "howto.step2.title": "ページと品質を選択",
+                "howto.step2.description": "変換するページを選択し、画像品質を設定します。すべてのページまたは特定のページを選択できます。",
+                "howto.step3.title": "JPGに変換",
+                "howto.step3.description": "変換ボタンをクリックしてPDFを処理します。すべての処理はブラウザで行われます。",
+                "howto.step4.title": "画像をダウンロード",
+                "howto.step4.description": "個別のJPG画像をダウンロードするか、すべての画像をZIPファイルで取得できます。透かしなし、登録不要。",
+                "converter.title": "PDFからJPG変換ツール",
+                "converter.upload.text": "PDFをここにドラッグ＆ドロップするか、クリックして参照",
+                "converter.upload.button": "PDFを選択",
+                "converter.settings.title": "変換設定",
+                "converter.settings.quality": "画質",
+                "converter.settings.quality.high": "高（推奨）",
+                "converter.settings.quality.maximum": "最高",
+                "converter.settings.quality.medium": "中",
+                "converter.settings.quality.low": "低",
+                "converter.settings.scale": "画像スケール",
+                "converter.settings.scale.high": "高（1.5倍）",
+                "converter.settings.scale.maximum": "最高（2倍）",
+                "converter.settings.scale.normal": "標準（1倍）",
+                "converter.settings.scale.low": "低（0.75倍）",
+                "converter.settings.pages": "変換するページを選択",
+                "converter.settings.selectAll": "すべて選択",
+                "converter.preview.title": "プレビュー",
+                "converter.processing": "処理中: 0%",
+                "converter.convert": "JPGに変換",
+                "converter.download": "すべてダウンロード",
+                "converter.reset": "リセット",
+                "footer.follow": "フォローする",
+                "footer.categories": "人気カテゴリ",
+                "footer.categories.pdf": "PDFツール",
+                "footer.categories.image": "画像ツール",
+                "footer.categories.text": "テキストツール",
+                "footer.categories.av": "オーディオ/ビデオツール",
+                "footer.categories.web": "Web開発者ツール",
+                "footer.categories.calc": "電卓ツール",
+                "footer.categories.util": "ユーティリティツール",
+                "footer.categories.color": "カラーツール",
+                "footer.quicklinks": "クイックリンク",
+                "footer.links.tools": "すべてのツール",
+                "footer.links.faq": "よくある質問",
+                "footer.links.contact": "お問い合わせ",
+                "footer.links.privacy": "プライバシーポリシー",
+                "footer.links.disclaimer": "免責事項",
+                "footer.links.terms": "利用規約",
+                "footer.copyright": "© 2025 LollyPoPDF. All rights reserved."
+            },
+            ru: {
+                "nav.home": "Главная",
+                "nav.about": "О нас",
+                "nav.tools": "Инструменты",
+                "nav.contact": "Контакты",
+                "hero.title": "Бесплатный Конвертер PDF в JPG",
+                "hero.description": "Конвертируйте файлы PDF в высококачественные изображения JPG мгновенно. Извлекайте все страницы или выберите определенные. Без регистрации, 100% обработка на стороне клиента.",
+                "howto.title": "Как Конвертировать PDF в JPG",
+                "howto.step1.title": "Загрузите Ваш PDF",
+                "howto.step1.description": "Нажмите на область загрузки или перетащите ваш PDF-файл. Мы поддерживаем все стандартные форматы PDF.",
+                "howto.step2.title": "Выберите Страницы и Качество",
+                "howto.step2.description": "Выберите, какие страницы конвертировать и установите качество изображения. Выберите все страницы или определенные.",
+                "howto.step3.title": "Конвертировать в JPG",
+                "howto.step3.description": "Нажмите кнопку конвертировать для обработки вашего PDF. Вся обработка происходит в вашем браузере.",
+                "howto.step4.title": "Скачать Изображения",
+                "howto.step4.description": "Скачайте отдельные изображения JPG или получите все изображения в ZIP-файле. Без водяных знаков, без регистрации.",
+                "converter.title": "Конвертер PDF в JPG",
+                "converter.upload.text": "Перетащите ваш PDF сюда или нажмите для просмотра",
+                "converter.upload.button": "Выбрать PDF",
+                "converter.settings.title": "Настройки Конвертации",
+                "converter.settings.quality": "Качество Изображения",
+                "converter.settings.quality.high": "Высокое (Рекомендуется)",
+                "converter.settings.quality.maximum": "Максимальное",
+                "converter.settings.quality.medium": "Среднее",
+                "converter.settings.quality.low": "Низкое",
+                "converter.settings.scale": "Масштаб Изображения",
+                "converter.settings.scale.high": "Высокий (1.5x)",
+                "converter.settings.scale.maximum": "Максимальный (2x)",
+                "converter.settings.scale.normal": "Нормальный (1x)",
+                "converter.settings.scale.low": "Низкий (0.75x)",
+                "converter.settings.pages": "Выберите Страницы для Конвертации",
+                "converter.settings.selectAll": "Выбрать Все",
+                "converter.preview.title": "Предпросмотр",
+                "converter.processing": "Обработка: 0%",
+                "converter.convert": "Конвертировать в JPG",
+                "converter.download": "Скачать Все",
+                "converter.reset": "Сбросить",
+                "footer.follow": "СЛЕДУЙТЕ ЗА НАМИ",
+                "footer.categories": "Популярные Категории",
+                "footer.categories.pdf": "PDF Инструменты",
+                "footer.categories.image": "Инструменты для Изображений",
+                "footer.categories.text": "Текстовые Инструменты",
+                "footer.categories.av": "Аудио/Видео Инструменты",
+                "footer.categories.web": "Инструменты Веб-Разработчика",
+                "footer.categories.calc": "Инструменты Калькулятора",
+                "footer.categories.util": "Утилиты",
+                "footer.categories.color": "Инструменты для Цвета",
+                "footer.quicklinks": "Быстрые Ссылки",
+                "footer.links.tools": "Все Инструменты",
+                "footer.links.faq": "ЧаВо",
+                "footer.links.contact": "Контакты",
+                "footer.links.privacy": "Политика Конфиденциальности",
+                "footer.links.disclaimer": "Отказ от Ответственности",
+                "footer.links.terms": "Условия Использования",
+                "footer.copyright": "© 2025 LollyPoPDF. Все права защищены."
+            },
+            ko: {
+                "nav.home": "홈",
+                "nav.about": "회사 소개",
+                "nav.tools": "도구",
+                "nav.contact": "연락처",
+                "hero.title": "무료 PDF to JPG 변환기",
+                "hero.description": "PDF 파일을 고품질 JPG 이미지로 즉시 변환하세요. 모든 페이지를 추출하거나 특정 페이지를 선택할 수 있습니다. 등록 불필요, 100% 클라이언트 측 처리.",
+                "howto.title": "PDF를 JPG로 변환하는 방법",
+                "howto.step1.title": "PDF 업로드",
+                "howto.step1.description": "업로드 영역을 클릭하거나 PDF 파일을 드래그 앤 드롭하세요. 모든 표준 PDF 형식을 지원합니다.",
+                "howto.step2.title": "페이지 및 품질 선택",
+                "howto.step2.description": "변환할 페이지를 선택하고 이미지 품질을 설정하세요. 모든 페이지 또는 특정 페이지를 선택할 수 있습니다.",
+                "howto.step3.title": "JPG로 변환",
+                "howto.step3.description": "변환 버튼을 클릭하여 PDF를 처리하세요. 모든 처리는 브라우저에서 이루어집니다.",
+                "howto.step4.title": "이미지 다운로드",
+                "howto.step4.description": "개별 JPG 이미지를 다운로드하거나 모든 이미지를 ZIP 파일로 받으세요. 워터마크 없음, 등록 불필요.",
+                "converter.title": "PDF to JPG 변환기",
+                "converter.upload.text": "PDF를 여기에 드래그 앤 드롭하거나 클릭하여 탐색",
+                "converter.upload.button": "PDF 선택",
+                "converter.settings.title": "변환 설정",
+                "converter.settings.quality": "이미지 품질",
+                "converter.settings.quality.high": "높음 (권장)",
+                "converter.settings.quality.maximum": "최대",
+                "converter.settings.quality.medium": "중간",
+                "converter.settings.quality.low": "낮음",
+                "converter.settings.scale": "이미지 스케일",
+                "converter.settings.scale.high": "높음 (1.5x)",
+                "converter.settings.scale.maximum": "최대 (2x)",
+                "converter.settings.scale.normal": "보통 (1x)",
+                "converter.settings.scale.low": "낮음 (0.75x)",
+                "converter.settings.pages": "변환할 페이지 선택",
+                "converter.settings.selectAll": "모두 선택",
+                "converter.preview.title": "미리보기",
+                "converter.processing": "처리 중: 0%",
+                "converter.convert": "JPG로 변환",
+                "converter.download": "모두 다운로드",
+                "converter.reset": "재설정",
+                "footer.follow": "팔로우하기",
+                "footer.categories": "인기 카테고리",
+                "footer.categories.pdf": "PDF 도구",
+                "footer.categories.image": "이미지 도구",
+                "footer.categories.text": "텍스트 도구",
+                "footer.categories.av": "오디오/비디오 도구",
+                "footer.categories.web": "웹개발자 도구",
+                "footer.categories.calc": "계산기 도구",
+                "footer.categories.util": "유틸리티 도구",
+                "footer.categories.color": "색상 도구",
+                "footer.quicklinks": "빠른 링크",
+                "footer.links.tools": "모든 도구",
+                "footer.links.faq": "자주 묻는 질문",
+                "footer.links.contact": "연락처",
+                "footer.links.privacy": "개인정보 보호정책",
+                "footer.links.disclaimer": "면책 조항",
+                "footer.links.terms": "이용약관",
+                "footer.copyright": "© 2025 LollyPoPDF. All rights reserved."
+            },
+            "zh-CN": {
+                "nav.home": "首页",
+                "nav.about": "关于我们",
+                "nav.tools": "工具",
+                "nav.contact": "联系我们",
+                "hero.title": "免费PDF转JPG转换器",
+                "hero.description": "立即将PDF文件转换为高质量的JPG图像。提取所有页面或选择特定页面。无需注册，100%客户端处理。",
+                "howto.title": "如何将PDF转换为JPG",
+                "howto.step1.title": "上传您的PDF",
+                "howto.step1.description": "点击上传区域或拖放您的PDF文件。我们支持所有标准PDF格式。",
+                "howto.step2.title": "选择页面和质量",
+                "howto.step2.description": "选择要转换的页面并设置图像质量。选择所有页面或特定页面。",
+                "howto.step3.title": "转换为JPG",
+                "howto.step3.description": "点击转换按钮处理您的PDF。所有处理都在您的浏览器中进行。",
+                "howto.step4.title": "下载图像",
+                "howto.step4.description": "下载单个JPG图像或在ZIP文件中获取所有图像。无水印，无需注册。",
+                "converter.title": "PDF转JPG转换器",
+                "converter.upload.text": "将PDF拖放到此处或点击浏览",
+                "converter.upload.button": "选择PDF",
+                "converter.settings.title": "转换设置",
+                "converter.settings.quality": "图像质量",
+                "converter.settings.quality.high": "高（推荐）",
+                "converter.settings.quality.maximum": "最高",
+                "converter.settings.quality.medium": "中",
+                "converter.settings.quality.low": "低",
+                "converter.settings.scale": "图像缩放",
+                "converter.settings.scale.high": "高（1.5倍）",
+                "converter.settings.scale.maximum": "最高（2倍）",
+                "converter.settings.scale.normal": "正常（1倍）",
+                "converter.settings.scale.low": "低（0.75倍）",
+                "converter.settings.pages": "选择要转换的页面",
+                "converter.settings.selectAll": "全选",
+                "converter.preview.title": "预览",
+                "converter.processing": "处理中: 0%",
+                "converter.convert": "转换为JPG",
+                "converter.download": "全部下载",
+                "converter.reset": "重置",
+                "footer.follow": "关注我们",
+                "footer.categories": "热门类别",
+                "footer.categories.pdf": "PDF工具",
+                "footer.categories.image": "图像工具",
+                "footer.categories.text": "文本工具",
+                "footer.categories.av": "音频/视频工具",
+                "footer.categories.web": "Web开发工具",
+                "footer.categories.calc": "计算器工具",
+                "footer.categories.util": "实用工具",
+                "footer.categories.color": "颜色工具",
+                "footer.quicklinks": "快速链接",
+                "footer.links.tools": "所有工具",
+                "footer.links.faq": "常见问题",
+                "footer.links.contact": "联系我们",
+                "footer.links.privacy": "隐私政策",
+                "footer.links.disclaimer": "免责声明",
+                "footer.links.terms": "服务条款",
+                "footer.copyright": "© 2025 LollyPoPDF. 保留所有权利。"
+            },
+            "zh-TW": {
+                "nav.home": "首頁",
+                "nav.about": "關於我們",
+                "nav.tools": "工具",
+                "nav.contact": "聯絡我們",
+                "hero.title": "免費PDF轉JPG轉換器",
+                "hero.description": "立即將PDF檔案轉換為高品質的JPG影像。擷取所有頁面或選擇特定頁面。無需註冊，100%客戶端處理。",
+                "howto.title": "如何將PDF轉換為JPG",
+                "howto.step1.title": "上傳您的PDF",
+                "howto.step1.description": "點擊上傳區域或拖放您的PDF檔案。我們支援所有標準PDF格式。",
+                "howto.step2.title": "選擇頁面和品質",
+                "howto.step2.description": "選擇要轉換的頁面並設定影像品質。選擇所有頁面或特定頁面。",
+                "howto.step3.title": "轉換為JPG",
+                "howto.step3.description": "點擊轉換按鈕處理您的PDF。所有處理都在您的瀏覽器中進行。",
+                "howto.step4.title": "下載影像",
+                "howto.step4.description": "下載單個JPG影像或在ZIP檔案中取得所有影像。無浮水印，無需註冊。",
+                "converter.title": "PDF轉JPG轉換器",
+                "converter.upload.text": "將PDF拖放到此處或點擊瀏覽",
+                "converter.upload.button": "選擇PDF",
+                "converter.settings.title": "轉換設定",
+                "converter.settings.quality": "影像品質",
+                "converter.settings.quality.high": "高（推薦）",
+                "converter.settings.quality.maximum": "最高",
+                "converter.settings.quality.medium": "中",
+                "converter.settings.quality.low": "低",
+                "converter.settings.scale": "影像縮放",
+                "converter.settings.scale.high": "高（1.5倍）",
+                "converter.settings.scale.maximum": "最高（2倍）",
+                "converter.settings.scale.normal": "正常（1倍）",
+                "converter.settings.scale.low": "低（0.75倍）",
+                "converter.settings.pages": "選擇要轉換的頁面",
+                "converter.settings.selectAll": "全選",
+                "converter.preview.title": "預覽",
+                "converter.processing": "處理中: 0%",
+                "converter.convert": "轉換為JPG",
+                "converter.download": "全部下載",
+                "converter.reset": "重設",
+                "footer.follow": "關注我們",
+                "footer.categories": "熱門類別",
+                "footer.categories.pdf": "PDF工具",
+                "footer.categories.image": "影像工具",
+                "footer.categories.text": "文字工具",
+                "footer.categories.av": "音訊/視訊工具",
+                "footer.categories.web": "Web開發工具",
+                "footer.categories.calc": "計算機工具",
+                "footer.categories.util": "實用工具",
+                "footer.categories.color": "顏色工具",
+                "footer.quicklinks": "快速連結",
+                "footer.links.tools": "所有工具",
+                "footer.links.faq": "常見問題",
+                "footer.links.contact": "聯絡我們",
+                "footer.links.privacy": "隱私政策",
+                "footer.links.disclaimer": "免責聲明",
+                "footer.links.terms": "服務條款",
+                "footer.copyright": "© 2025 LollyPoPDF. 版權所有。"
+            },
+            ar: {
+                "nav.home": "الرئيسية",
+                "nav.about": "من نحن",
+                "nav.tools": "الأدوات",
+                "nav.contact": "اتصل بنا",
+                "hero.title": "محول PDF إلى JPG مجاني",
+                "hero.description": "قم بتحويل ملفات PDF إلى صور JPG عالية الجودة على الفور. استخرج جميع الصفحات أو اختر صفحات محددة. لا يلزم التسجيل، معالجة 100% على جانب العميل.",
+                "howto.title": "كيفية تحويل PDF إلى JPG",
+                "howto.step1.title": "قم بتحميل PDF الخاص بك",
+                "howto.step1.description": "انقر على منطقة التحميل أو اسحب وأفلت ملف PDF الخاص بك. نحن ندعم جميع تنسيقات PDF القياسية.",
+                "howto.step2.title": "حدد الصفحات والجودة",
+                "howto.step2.description": "اختر الصفحات المراد تحويلها وضبط جودة الصورة. حدد جميع الصفحات أو صفحات محددة.",
+                "howto.step3.title": "تحويل إلى JPG",
+                "howto.step3.description": "انقر على زر التحويل لمعالجة PDF الخاص بك. كل المعالجة تتم في متصفحك.",
+                "howto.step4.title": "تنزيل الصور",
+                "howto.step4.description": "قم بتنزيل صور JPG فردية أو احصل على جميع الصور في ملف ZIP. لا توجد علامات مائية، لا يلزم التسجيل.",
+                "converter.title": "محول PDF إلى JPG",
+                "converter.upload.text": "اسحب وأفلت PDF الخاص بك هنا أو انقر للتصفح",
+                "converter.upload.button": "اختر PDF",
+                "converter.settings.title": "إعدادات التحويل",
+                "converter.settings.quality": "جودة الصورة",
+                "converter.settings.quality.high": "عالية (موصى به)",
+                "converter.settings.quality.maximum": "قصوى",
+                "converter.settings.quality.medium": "متوسطة",
+                "converter.settings.quality.low": "منخفضة",
+                "converter.settings.scale": "مقياس الصورة",
+                "converter.settings.scale.high": "عالية (1.5x)",
+                "converter.settings.scale.maximum": "قصوى (2x)",
+                "converter.settings.scale.normal": "عادية (1x)",
+                "converter.settings.scale.low": "منخفضة (0.75x)",
+                "converter.settings.pages": "حدد الصفحات المراد تحويلها",
+                "converter.settings.selectAll": "اختر الكل",
+                "converter.preview.title": "معاينة",
+                "converter.processing": "جاري المعالجة: 0%",
+                "converter.convert": "تحويل إلى JPG",
+                "converter.download": "تنزيل الكل",
+                "converter.reset": "إعادة تعيين",
+                "footer.follow": "تابعنا",
+                "footer.categories": "الفئات الشائعة",
+                "footer.categories.pdf": "أدوات PDF",
+                "footer.categories.image": "أدوات الصور",
+                "footer.categories.text": "أدوات النص",
+                "footer.categories.av": "أدوات الصوت/الفيديو",
+                "footer.categories.web": "أدوات مطور الويب",
+                "footer.categories.calc": "أدوات الآلة الحاسبة",
+                "footer.categories.util": "أدوات المساعدة",
+                "footer.categories.color": "أدوات الألوان",
+                "footer.quicklinks": "روابط سريعة",
+                "footer.links.tools": "جميع الأدوات",
+                "footer.links.faq": "الأسئلة الشائعة",
+                "footer.links.contact": "اتصل بنا",
+                "footer.links.privacy": "سياسة الخصوصية",
+                "footer.links.disclaimer": "إخلاء المسؤولية",
+                "footer.links.terms": "شروط الخدمة",
+                "footer.copyright": "© 2025 LollyPoPDF. جميع الحقوق محفوظة."
+            },
+            fa: {
+                "nav.home": "خانه",
+                "nav.about": "درباره ما",
+                "nav.tools": "ابزارها",
+                "nav.contact": "تماس با ما",
+                "hero.title": "مبدل رایگان PDF به JPG",
+                "hero.description": "فایل‌های PDF را فوراً به تصاویر JPG با کیفیت بالا تبدیل کنید. همه صفحات را استخراج کنید یا صفحات خاصی را انتخاب کنید. بدون نیاز به ثبت‌نام، پردازش 100% سمت کاربر.",
+                "howto.title": "نحوه تبدیل PDF به JPG",
+                "howto.step1.title": "PDF خود را آپلود کنید",
+                "howto.step1.description": "روی منطقه آپلود کلیک کنید یا فایل PDF خود را بکشید و رها کنید. ما از همه فرمت‌های استاندارد PDF پشتیبانی می‌کنیم.",
+                "howto.step2.title": "صفحات و کیفیت را انتخاب کنید",
+                "howto.step2.description": "صفحاتی را که می‌خواهید تبدیل کنید انتخاب کنید و کیفیت تصویر را تنظیم کنید. همه صفحات یا صفحات خاص را انتخاب کنید.",
+                "howto.step3.title": "تبدیل به JPG",
+                "howto.step3.description": "روی دکمه تبدیل کلیک کنید تا PDF شما پردازش شود. همه پردازش در مرورگر شما انجام می‌شود.",
+                "howto.step4.title": "دانلود تصاویر",
+                "howto.step4.description": "تصاویر JPG جداگانه را دانلود کنید یا همه تصاویر را در یک فایل ZIP دریافت کنید. بدون واترمارک، بدون ثبت‌نام.",
+                "converter.title": "مبدل PDF به JPG",
+                "converter.upload.text": "PDF خود را اینجا بکشید و رها کنید یا برای مرور کلیک کنید",
+                "converter.upload.button": "انتخاب PDF",
+                "converter.settings.title": "تنظیمات تبدیل",
+                "converter.settings.quality": "کیفیت تصویر",
+                "converter.settings.quality.high": "بالا (توصیه شده)",
+                "converter.settings.quality.maximum": "حداکثر",
+                "converter.settings.quality.medium": "متوسط",
+                "converter.settings.quality.low": "پایین",
+                "converter.settings.scale": "مقیاس تصویر",
+                "converter.settings.scale.high": "بالا (1.5x)",
+                "converter.settings.scale.maximum": "حداکثر (2x)",
+                "converter.settings.scale.normal": "معمولی (1x)",
+                "converter.settings.scale.low": "پایین (0.75x)",
+                "converter.settings.pages": "صفحات برای تبدیل را انتخاب کنید",
+                "converter.settings.selectAll": "انتخاب همه",
+                "converter.preview.title": "پیش‌نمایش",
+                "converter.processing": "در حال پردازش: 0%",
+                "converter.convert": "تبدیل به JPG",
+                "converter.download": "دانلود همه",
+                "converter.reset": "بازنشانی",
+                "footer.follow": "ما را دنبال کنید",
+                "footer.categories": "دسته‌بندی‌های محبوب",
+                "footer.categories.pdf": "ابزارهای PDF",
+                "footer.categories.image": "ابزارهای تصویر",
+                "footer.categories.text": "ابزارهای متن",
+                "footer.categories.av": "ابزارهای صدا/ویدیو",
+                "footer.categories.web": "ابزارهای توسعه دهنده وب",
+                "footer.categories.calc": "ابزارهای ماشین حساب",
+                "footer.categories.util": "ابزارهای کمکی",
+                "footer.categories.color": "ابزارهای رنگ",
+                "footer.quicklinks": "لینک‌های سریع",
+                "footer.links.tools": "همه ابزارها",
+                "footer.links.faq": "سوالات متداول",
+                "footer.links.contact": "تماس با ما",
+                "footer.links.privacy": "سیاست حفظ حریم خصوصی",
+                "footer.links.disclaimer": "سلب مسئولیت",
+                "footer.links.terms": "شرایط استفاده",
+                "footer.copyright": "© 2025 LollyPoPDF. تمامی حقوق محفوظ است."
+            },
+            bg: {
+                "nav.home": "Начало",
+                "nav.about": "За нас",
+                "nav.tools": "Инструменти",
+                "nav.contact": "Контакт",
+                "hero.title": "Безплатен конвертор от PDF към JPG",
+                "hero.description": "Конвертирайте PDF файлове във висококачествени JPG изображения мигновено. Извлечете всички страници или изберете конкретни. Не се изисква регистрация, 100% обработка на клиентска страна.",
+                "howto.title": "Как да конвертирате PDF в JPG",
+                "howto.step1.title": "Качете вашия PDF",
+                "howto.step1.description": "Кликнете върху зоната за качване или плъзнете и пуснете вашия PDF файл. Поддържаме всички стандартни PDF формати.",
+                "howto.step2.title": "Изберете страници и качество",
+                "howto.step2.description": "Изберете кои страници да конвертирате и задайте качеството на изображението. Изберете всички страници или конкретни.",
+                "howto.step3.title": "Конвертирайте в JPG",
+                "howto.step3.description": "Кликнете върху бутона за конвертиране, за да обработите вашия PDF. Цялата обработка се извършва във вашия браузър.",
+                "howto.step4.title": "Изтеглете изображенията",
+                "howto.step4.description": "Изтеглете отделни JPG изображения или вземете всички изображения в ZIP файл. Без водни знаци, без регистрация.",
+                "converter.title": "Конвертор от PDF към JPG",
+                "converter.upload.text": "Плъзнете и пуснете вашия PDF тук или кликнете за разглеждане",
+                "converter.upload.button": "Изберете PDF",
+                "converter.settings.title": "Настройки за конвертиране",
+                "converter.settings.quality": "Качество на изображението",
+                "converter.settings.quality.high": "Високо (Препоръчително)",
+                "converter.settings.quality.maximum": "Максимално",
+                "converter.settings.quality.medium": "Средно",
+                "converter.settings.quality.low": "Ниско",
+                "converter.settings.scale": "Мащаб на изображението",
+                "converter.settings.scale.high": "Висок (1.5x)",
+                "converter.settings.scale.maximum": "Максимален (2x)",
+                "converter.settings.scale.normal": "Нормален (1x)",
+                "converter.settings.scale.low": "Нисък (0.75x)",
+                "converter.settings.pages": "Изберете страници за конвертиране",
+                "converter.settings.selectAll": "Изберете всички",
+                "converter.preview.title": "Преглед",
+                "converter.processing": "Обработване: 0%",
+                "converter.convert": "Конвертирайте в JPG",
+                "converter.download": "Изтеглете всички",
+                "converter.reset": "Нулиране",
+                "footer.follow": "СЛЕДВАЙТЕ НИ",
+                "footer.categories": "Популярни категории",
+                "footer.categories.pdf": "PDF инструменти",
+                "footer.categories.image": "Инструменти за изображения",
+                "footer.categories.text": "Текстови инструменти",
+                "footer.categories.av": "Аудио/Видео инструменти",
+                "footer.categories.web": "Инструменти за уеб разработчици",
+                "footer.categories.calc": "Калкулаторни инструменти",
+                "footer.categories.util": "Помощни инструменти",
+                "footer.categories.color": "Инструменти за цветове",
+                "footer.quicklinks": "Бързи връзки",
+                "footer.links.tools": "Всички инструменти",
+                "footer.links.faq": "ЧЗВ",
+                "footer.links.contact": "Контакт",
+                "footer.links.privacy": "Политика за поверителност",
+                "footer.links.disclaimer": "Отказ от отговорност",
+                "footer.links.terms": "Условия за ползване",
+                "footer.copyright": "© 2025 LollyPoPDF. Всички права запазени."
+            },
+            ca: {
+                "nav.home": "Inici",
+                "nav.about": "Sobre nosaltres",
+                "nav.tools": "Eines",
+                "nav.contact": "Contacte",
+                "hero.title": "Convertidor gratuït de PDF a JPG",
+                "hero.description": "Converteix fitxers PDF en imatges JPG d'alta qualitat instantàniament. Extreu totes les pàgines o selecciona-ne d'específiques. No cal registre, processament 100% al costat del client.",
+                "howto.title": "Com convertir PDF a JPG",
+                "howto.step1.title": "Puja el teu PDF",
+                "howto.step1.description": "Fes clic a l'àrea de pujada o arrossega i deixa anar el teu fitxer PDF. Donem suport a tots els formats PDF estàndard.",
+                "howto.step2.title": "Selecciona pàgines i qualitat",
+                "howto.step2.description": "Tria quines pàgines convertir i estableix la qualitat de la imatge. Selecciona totes les pàgines o específiques.",
+                "howto.step3.title": "Converteix a JPG",
+                "howto.step3.description": "Fes clic al botó de conversió per processar el teu PDF. Tot el processament es realitza al teu navegador.",
+                "howto.step4.title": "Descarrega les imatges",
+                "howto.step4.description": "Descarrega imatges JPG individuals o obtén totes les imatges en un fitxer ZIP. Sense marques d'aigua, sense registre.",
+                "converter.title": "Convertidor de PDF a JPG",
+                "converter.upload.text": "Arrossega i deixa anar el teu PDF aquí o fes clic per navegar",
+                "converter.upload.button": "Selecciona PDF",
+                "converter.settings.title": "Configuració de conversió",
+                "converter.settings.quality": "Qualitat de la imatge",
+                "converter.settings.quality.high": "Alta (Recomanat)",
+                "converter.settings.quality.maximum": "Màxima",
+                "converter.settings.quality.medium": "Mitjana",
+                "converter.settings.quality.low": "Baixa",
+                "converter.settings.scale": "Escala de la imatge",
+                "converter.settings.scale.high": "Alta (1.5x)",
+                "converter.settings.scale.maximum": "Màxima (2x)",
+                "converter.settings.scale.normal": "Normal (1x)",
+                "converter.settings.scale.low": "Baixa (0.75x)",
+                "converter.settings.pages": "Selecciona pàgines per convertir",
+                "converter.settings.selectAll": "Selecciona-ho tot",
+                "converter.preview.title": "Vista prèvia",
+                "converter.processing": "Processant: 0%",
+                "converter.convert": "Converteix a JPG",
+                "converter.download": "Descarrega-ho tot",
+                "converter.reset": "Restableix",
+                "footer.follow": "SEGUEIX-NOS",
+                "footer.categories": "Categories populars",
+                "footer.categories.pdf": "Eines PDF",
+                "footer.categories.image": "Eines d'imatge",
+                "footer.categories.text": "Eines de text",
+                "footer.categories.av": "Eines d'Àudio/Video",
+                "footer.categories.web": "Eines de Desenvolupador Web",
+                "footer.categories.calc": "Eines de Calculadora",
+                "footer.categories.util": "Eines d'Utilitat",
+                "footer.categories.color": "Eines de Color",
+                "footer.quicklinks": "Enllaços ràpids",
+                "footer.links.tools": "Totes les eines",
+                "footer.links.faq": "PMF",
+                "footer.links.contact": "Contacte",
+                "footer.links.privacy": "Política de privadesa",
+                "footer.links.disclaimer": "Descàrrec de responsabilitat",
+                "footer.links.terms": "Termes del servei",
+                "footer.copyright": "© 2025 LollyPoPDF. Tots els drets reservats."
+            },
+            nl: {
+                "nav.home": "Home",
+                "nav.about": "Over ons",
+                "nav.tools": "Tools",
+                "nav.contact": "Contact",
+                "hero.title": "Gratis PDF naar JPG Converter",
+                "hero.description": "Converteer PDF-bestanden direct naar hoogwaardige JPG-afbeeldingen. Extraheer alle pagina's of selecteer specifieke. Geen registratie vereist, 100% client-side verwerking.",
+                "howto.title": "Hoe PDF naar JPG te converteren",
+                "howto.step1.title": "Upload uw PDF",
+                "howto.step1.description": "Klik op het uploadgebied of sleep en zet uw PDF-bestand neer. We ondersteunen alle standaard PDF-formaten.",
+                "howto.step2.title": "Selecteer Pagina's en Kwaliteit",
+                "howto.step2.description": "Kies welke pagina's te converteren en stel de beeldkwaliteit in. Selecteer alle pagina's of specifieke.",
+                "howto.step3.title": "Converteer naar JPG",
+                "howto.step3.description": "Klik op de conversieknop om uw PDF te verwerken. Alle verwerking gebeurt in uw browser.",
+                "howto.step4.title": "Download Afbeeldingen",
+                "howto.step4.description": "Download individuele JPG-afbeeldingen of krijg alle afbeeldingen in een ZIP-bestand. Geen watermerken, geen registratie.",
+                "converter.title": "PDF naar JPG Converter",
+                "converter.upload.text": "Sleep en zet uw PDF hier neer of klik om te bladeren",
+                "converter.upload.button": "Selecteer PDF",
+                "converter.settings.title": "Conversie-instellingen",
+                "converter.settings.quality": "Beeldkwaliteit",
+                "converter.settings.quality.high": "Hoog (Aanbevolen)",
+                "converter.settings.quality.maximum": "Maximaal",
+                "converter.settings.quality.medium": "Gemiddeld",
+                "converter.settings.quality.low": "Laag",
+                "converter.settings.scale": "Beeldschaal",
+                "converter.settings.scale.high": "Hoog (1.5x)",
+                "converter.settings.scale.maximum": "Maximaal (2x)",
+                "converter.settings.scale.normal": "Normaal (1x)",
+                "converter.settings.scale.low": "Laag (0.75x)",
+                "converter.settings.pages": "Selecteer Pagina's om te Converteren",
+                "converter.settings.selectAll": "Alles Selecteren",
+                "converter.preview.title": "Voorbeeld",
+                "converter.processing": "Verwerken: 0%",
+                "converter.convert": "Converteer naar JPG",
+                "converter.download": "Alles Downloaden",
+                "converter.reset": "Resetten",
+                "footer.follow": "VOLG ONS",
+                "footer.categories": "Populaire Categorieën",
+                "footer.categories.pdf": "PDF Tools",
+                "footer.categories.image": "Afbeelding Tools",
+                "footer.categories.text": "Tekst Tools",
+                "footer.categories.av": "Audio/Video Tools",
+                "footer.categories.web": "WebDeveloper Tools",
+                "footer.categories.calc": "Rekenmachine Tools",
+                "footer.categories.util": "Hulpprogramma's",
+                "footer.categories.color": "Kleur Tools",
+                "footer.quicklinks": "Snelle Links",
+                "footer.links.tools": "Alle Tools",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Contact",
+                "footer.links.privacy": "Privacybeleid",
+                "footer.links.disclaimer": "Disclaimer",
+                "footer.links.terms": "Servicevoorwaarden",
+                "footer.copyright": "© 2025 LollyPoPDF. Alle rechten voorbehouden."
+            },
+            el: {
+                "nav.home": "Αρχική",
+                "nav.about": "Σχετικά με εμάς",
+                "nav.tools": "Εργαλεία",
+                "nav.contact": "Επικοινωνία",
+                "hero.title": "Δωρεάν Μετατροπέας PDF σε JPG",
+                "hero.description": "Μετατρέψτε αρχεία PDF σε εικόνες JPG υψηλής ποιότητας αμέσως. Εξάγετε όλες τις σελίδες ή επιλέξτε συγκεκριμένες. Δεν απαιτείται εγγραφή, 100% επεξεργασία από την πλευρά του client.",
+                "howto.title": "Πώς να Μετατρέψετε PDF σε JPG",
+                "howto.step1.title": "Ανεβάστε το PDF σας",
+                "howto.step1.description": "Κάντε κλικ στην περιοχή μεταφόρτωσης ή σύρετε και αφήστε το αρχείο PDF σας. Υποστηρίζουμε όλες τις τυπικές μορφές PDF.",
+                "howto.step2.title": "Επιλέξτε Σελίδες και Ποιότητα",
+                "howto.step2.description": "Επιλέξτε ποιες σελίδες να μετατρέψετε και ρυθμίστε την ποιότητα εικόνας. Επιλέξτε όλες τις σελίδες ή συγκεκριμένες.",
+                "howto.step3.title": "Μετατροπή σε JPG",
+                "howto.step3.description": "Κάντε κλικ στο κουμπί μετατροπής για να επεξεργαστείτε το PDF σας. Όλη η επεξεργασία γίνεται στο πρόγραμμα περιήγησής σας.",
+                "howto.step4.title": "Λήψη Εικόνων",
+                "howto.step4.description": "Κατεβάστε μεμονωμένες εικόνες JPG ή λάβετε όλες τις εικόνες σε ένα αρχείο ZIP. Χωρίς υδατογραφήματα, χωρίς εγγραφή.",
+                "converter.title": "Μετατροπέας PDF σε JPG",
+                "converter.upload.text": "Σύρετε και αφήστε το PDF σας εδώ ή κάντε κλικ για περιήγηση",
+                "converter.upload.button": "Επιλέξτε PDF",
+                "converter.settings.title": "Ρυθμίσεις Μετατροπής",
+                "converter.settings.quality": "Ποιότητα Εικόνας",
+                "converter.settings.quality.high": "Υψηλή (Συνιστάται)",
+                "converter.settings.quality.maximum": "Μέγιστη",
+                "converter.settings.quality.medium": "Μεσαία",
+                "converter.settings.quality.low": "Χαμηλή",
+                "converter.settings.scale": "Κλίμακα Εικόνας",
+                "converter.settings.scale.high": "Υψηλή (1.5x)",
+                "converter.settings.scale.maximum": "Μέγιστη (2x)",
+                "converter.settings.scale.normal": "Κανονική (1x)",
+                "converter.settings.scale.low": "Χαμηλή (0.75x)",
+                "converter.settings.pages": "Επιλέξτε Σελίδες για Μετατροπή",
+                "converter.settings.selectAll": "Επιλογή Όλων",
+                "converter.preview.title": "Προεπισκόπηση",
+                "converter.processing": "Επεξεργασία: 0%",
+                "converter.convert": "Μετατροπή σε JPG",
+                "converter.download": "Λήψη Όλων",
+                "converter.reset": "Επαναφορά",
+                "footer.follow": "ΑΚΟΛΟΥΘΗΣΤΕ ΜΑΣ",
+                "footer.categories": "Δημοφιλείς Κατηγορίες",
+                "footer.categories.pdf": "Εργαλεία PDF",
+                "footer.categories.image": "Εργαλεία Εικόνας",
+                "footer.categories.text": "Εργαλεία Κειμένου",
+                "footer.categories.av": "Εργαλεία Ήχου/Βίντεο",
+                "footer.categories.web": "Εργαλεία WebDeveloper",
+                "footer.categories.calc": "Εργαλεία Αριθμομηχανής",
+                "footer.categories.util": "Εργαλεία Χρησιμότητας",
+                "footer.categories.color": "Εργαλεία Χρώματος",
+                "footer.quicklinks": "Γρήγοροι Σύνδεσμοι",
+                "footer.links.tools": "Όλα τα Εργαλεία",
+                "footer.links.faq": "Συχνές Ερωτήσεις",
+                "footer.links.contact": "Επικοινωνία",
+                "footer.links.privacy": "Πολιτική Απορρήτου",
+                "footer.links.disclaimer": "Αποποίηση Ευθυνών",
+                "footer.links.terms": "Όροι Χρήσης",
+                "footer.copyright": "© 2025 LollyPoPDF. Με επιφύλαξη παντός δικαιώματος."
+            },
+            hi: {
+                "nav.home": "होम",
+                "nav.about": "हमारे बारे में",
+                "nav.tools": "टूल्स",
+                "nav.contact": "संपर्क करें",
+                "hero.title": "मुफ्त PDF से JPG कन्वर्टर",
+                "hero.description": "PDF फाइलों को हाई-क्वालिटी JPG इमेज में तुरंत कन्वर्ट करें। सभी पेज निकालें या विशिष्ट पेज चुनें। कोई पंजीकरण आवश्यक नहीं, 100% क्लाइंट-साइड प्रोसेसिंग।",
+                "howto.title": "PDF को JPG में कैसे कन्वर्ट करें",
+                "howto.step1.title": "अपना PDF अपलोड करें",
+                "howto.step1.description": "अपलोड एरिया पर क्लिक करें या अपनी PDF फाइल को ड्रैग और ड्रॉप करें। हम सभी स्टैंडर्ड PDF फॉर्मेट सपोर्ट करते हैं।",
+                "howto.step2.title": "पेज और क्वालिटी चुनें",
+                "howto.step2.description": "चुनें कि कौन से पेज कन्वर्ट करने हैं और इमेज क्वालिटी सेट करें। सभी पेज या विशिष्ट पेज चुनें।",
+                "howto.step3.title": "JPG में कन्वर्ट करें",
+                "howto.step3.description": "अपने PDF को प्रोसेस करने के लिए कन्वर्ट बटन पर क्लिक करें। सभी प्रोसेसिंग आपके ब्राउज़र में होती है।",
+                "howto.step4.title": "इमेज डाउनलोड करें",
+                "howto.step4.description": "अलग-अलग JPG इमेज डाउनलोड करें या सभी इमेज एक ZIP फाइल में प्राप्त करें। कोई वॉटरमार्क नहीं, कोई पंजीकरण नहीं।",
+                "converter.title": "PDF से JPG कन्वर्टर",
+                "converter.upload.text": "अपना PDF यहां ड्रैग और ड्रॉप करें या ब्राउज़ करने के लिए क्लिक करें",
+                "converter.upload.button": "PDF चुनें",
+                "converter.settings.title": "कन्वर्जन सेटिंग्स",
+                "converter.settings.quality": "इमेज क्वालिटी",
+                "converter.settings.quality.high": "हाई (सुझाया गया)",
+                "converter.settings.quality.maximum": "मैक्सिमम",
+                "converter.settings.quality.medium": "मीडियम",
+                "converter.settings.quality.low": "लो",
+                "converter.settings.scale": "इमेज स्केल",
+                "converter.settings.scale.high": "हाई (1.5x)",
+                "converter.settings.scale.maximum": "मैक्सिमम (2x)",
+                "converter.settings.scale.normal": "नॉर्मल (1x)",
+                "converter.settings.scale.low": "लो (0.75x)",
+                "converter.settings.pages": "कन्वर्ट करने के लिए पेज चुनें",
+                "converter.settings.selectAll": "सभी चुनें",
+                "converter.preview.title": "प्रीव्यू",
+                "converter.processing": "प्रोसेसिंग: 0%",
+                "converter.convert": "JPG में कन्वर्ट करें",
+                "converter.download": "सभी डाउनलोड करें",
+                "converter.reset": "रीसेट",
+                "footer.follow": "हमें फॉलो करें",
+                "footer.categories": "लोकप्रिय श्रेणियां",
+                "footer.categories.pdf": "PDF टूल्स",
+                "footer.categories.image": "इमेज टूल्स",
+                "footer.categories.text": "टेक्स्ट टूल्स",
+                "footer.categories.av": "ऑडियो/वीडियो टूल्स",
+                "footer.categories.web": "वेबडेवलपर टूल्स",
+                "footer.categories.calc": "कैलकुलेटर टूल्स",
+                "footer.categories.util": "यूटिलिटी टूल्स",
+                "footer.categories.color": "कलर टूल्स",
+                "footer.quicklinks": "क्विक लिंक्स",
+                "footer.links.tools": "सभी टूल्स",
+                "footer.links.faq": "सामान्य प्रश्न",
+                "footer.links.contact": "संपर्क करें",
+                "footer.links.privacy": "गोपनीयता नीति",
+                "footer.links.disclaimer": "अस्वीकरण",
+                "footer.links.terms": "सेवा की शर्तें",
+                "footer.copyright": "© 2025 LollyPoPDF. सर्वाधिकार सुरक्षित।"
+            },
+            te: {
+                "nav.home": "హోమ్",
+                "nav.about": "మా గురించి",
+                "nav.tools": "టూల్స్",
+                "nav.contact": "సంప్రదించండి",
+                "hero.title": "ఉచిత PDF నుండి JPG కన్వర్టర్",
+                "hero.description": "PDF ఫైళ్లను హై-క్వాలిటీ JPG ఇమేజీలుగా తక్షణంగా కన్వర్ట్ చేయండి. అన్ని పేజీలను ఎక్స్ట్రాక్ట్ చేయండి లేదా నిర్దిష్ట పేజీలను ఎంచుకోండి. రిజిస్ట్రేషన్ అవసరం లేదు, 100% క్లయింట్-సైడ్ ప్రాసెసింగ్.",
+                "howto.title": "PDFని JPGగా ఎలా కన్వర్ట్ చేయాలి",
+                "howto.step1.title": "మీ PDFని అప్లోడ్ చేయండి",
+                "howto.step1.description": "అప్లోడ్ ప్రాంతంపై క్లిక్ చేయండి లేదా మీ PDF ఫైల్ను డ్రాగ్ మరియు డ్రాప్ చేయండి. మేము అన్ని స్టాండర్డ్ PDF ఫార్మాట్లను సపోర్ట్ చేస్తాము.",
+                "howto.step2.title": "పేజీలు మరియు క్వాలిటీని ఎంచుకోండి",
+                "howto.step2.description": "ఏ పేజీలను కన్వర్ట్ చేయాలో ఎంచుకుని, ఇమేజ్ క్వాలిటీని సెట్ చేయండి. అన్ని పేజీలు లేదా నిర్దిష్ట పేజీలను ఎంచుకోండి.",
+                "howto.step3.title": "JPGగా కన్వర్ట్ చేయండి",
+                "howto.step3.description": "మీ PDFని ప్రాసెస్ చేయడానికి కన్వర్ట్ బటన్పై క్లిక్ చేయండి. అన్ని ప్రాసెసింగ్ మీ బ్రౌజర్లో జరుగుతుంది.",
+                "howto.step4.title": "ఇమేజీలను డౌన్లోడ్ చేయండి",
+                "howto.step4.description": "వ్యక్తిగత JPG ఇమేజీలను డౌన్లోడ్ చేయండి లేదా అన్ని ఇమేజీలను ZIP ఫైల్లో పొందండి. వాటర్మార్క్లు లేవు, రిజిస్ట్రేషన్ లేదు.",
+                "converter.title": "PDF నుండి JPG కన్వర్టర్",
+                "converter.upload.text": "మీ PDFని ఇక్కడ డ్రాగ్ మరియు డ్రాప్ చేయండి లేదా బ్రౌజ్ చేయడానికి క్లిక్ చేయండి",
+                "converter.upload.button": "PDF ఎంచుకోండి",
+                "converter.settings.title": "కన్వర్షన్ సెట్టింగులు",
+                "converter.settings.quality": "ఇమేజ్ క్వాలిటీ",
+                "converter.settings.quality.high": "హై (సిఫార్సు చేయబడింది)",
+                "converter.settings.quality.maximum": "గరిష్ట",
+                "converter.settings.quality.medium": "మీడియం",
+                "converter.settings.quality.low": "లో",
+                "converter.settings.scale": "ఇమేజ్ స్కేల్",
+                "converter.settings.scale.high": "హై (1.5x)",
+                "converter.settings.scale.maximum": "గరిష్ట (2x)",
+                "converter.settings.scale.normal": "నార్మల్ (1x)",
+                "converter.settings.scale.low": "లో (0.75x)",
+                "converter.settings.pages": "కన్వర్ట్ చేయడానికి పేజీలను ఎంచుకోండి",
+                "converter.settings.selectAll": "అన్నీ ఎంచుకోండి",
+                "converter.preview.title": "ప్రివ్యూ",
+                "converter.processing": "ప్రాసెసింగ్: 0%",
+                "converter.convert": "JPGగా కన్వర్ట్ చేయండి",
+                "converter.download": "అన్నీ డౌన్లోడ్ చేయండి",
+                "converter.reset": "రీసెట్",
+                "footer.follow": "మమ్మల్ని ఫాలో అవ్వండి",
+                "footer.categories": "జనాదరణ పొందిన కేటగిరీలు",
+                "footer.categories.pdf": "PDF టూల్స్",
+                "footer.categories.image": "ఇమేజ్ టూల్స్",
+                "footer.categories.text": "టెక్స్ట్ టూల్స్",
+                "footer.categories.av": "ఆడియో/వీడియో టూల్స్",
+                "footer.categories.web": "వెబ్ డెవలపర్ టూల్స్",
+                "footer.categories.calc": "కాలిక్యులేటర్ టూల్స్",
+                "footer.categories.util": "యుటిలిటీ టూల్స్",
+                "footer.categories.color": "కలర్ టూల్స్",
+                "footer.quicklinks": "త్వరిత లింకులు",
+                "footer.links.tools": "అన్ని టూల్స్",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "సంప్రదించండి",
+                "footer.links.privacy": "గోప్యతా విధానం",
+                "footer.links.disclaimer": "డిస్క్లైమర్",
+                "footer.links.terms": "సేవా నిబంధనలు",
+                "footer.copyright": "© 2025 LollyPoPDF. అన్ని హక్కులు ప్రత్యేకించి సంరక్షించబడినవి."
+            },
+            kn: {
+                "nav.home": "ಮುಖಪುಟ",
+                "nav.about": "ನಮ್ಮ ಬಗ್ಗೆ",
+                "nav.tools": "ಉಪಕರಣಗಳು",
+                "nav.contact": "ಸಂಪರ್ಕಿಸಿ",
+                "hero.title": "ಉಚಿತ PDF to JPG ಪರಿವರ್ತಕ",
+                "hero.description": "PDF ಫೈಲ್ಗಳನ್ನು ಹೈ-ಕ್ವಾಲಿಟಿ JPG ಚಿತ್ರಗಳಾಗಿ ತಕ್ಷಣ ಪರಿವರ್ತಿಸಿ. ಎಲ್ಲಾ ಪುಟಗಳನ್ನು ಹೊರತೆಗೆಯಿರಿ ಅಥವಾ ನಿರ್ದಿಷ್ಟ ಪುಟಗಳನ್ನು ಆಯ್ಕೆಮಾಡಿ. ನೋಂದಣಿ ಅಗತ್ಯವಿಲ್ಲ, 100% ಕ್ಲೈಂಟ್-ಸೈಡ್ ಪ್ರೊಸೆಸಿಂಗ್.",
+                "howto.title": "PDF ಅನ್ನು JPG ಆಗಿ ಹೇಗೆ ಪರಿವರ್ತಿಸುವುದು",
+                "howto.step1.title": "ನಿಮ್ಮ PDF ಅನ್ನು ಅಪ್ಲೋಡ್ ಮಾಡಿ",
+                "howto.step1.description": "ಅಪ್ಲೋಡ್ ಪ್ರದೇಶದ ಮೇಲೆ ಕ್ಲಿಕ್ ಮಾಡಿ ಅಥವಾ ನಿಮ್ಮ PDF ಫೈಲ್ ಅನ್ನು ಎಳೆದು ಬಿಡಿ. ನಾವು ಎಲ್ಲಾ ಸ್ಟ್ಯಾಂಡರ್ಡ್ PDF ಫಾರ್ಮ್ಯಾಟ್ಗಳನ್ನು ಬೆಂಬಲಿಸುತ್ತೇವೆ.",
+                "howto.step2.title": "ಪುಟಗಳು ಮತ್ತು ಗುಣಮಟ್ಟವನ್ನು ಆಯ್ಕೆಮಾಡಿ",
+                "howto.step2.description": "ಯಾವ ಪುಟಗಳನ್ನು ಪರಿವರ್ತಿಸಬೇಕು ಎಂಬುದನ್ನು ಆಯ್ಕೆಮಾಡಿ ಮತ್ತು ಚಿತ್ರದ ಗುಣಮಟ್ಟವನ್ನು ಹೊಂದಿಸಿ. ಎಲ್ಲಾ ಪುಟಗಳು ಅಥವಾ ನಿರ್ದಿಷ್ಟ ಪುಟಗಳನ್ನು ಆಯ್ಕೆಮಾಡಿ.",
+                "howto.step3.title": "JPG ಗೆ ಪರಿವರ್ತಿಸಿ",
+                "howto.step3.description": "ನಿಮ್ಮ PDF ಅನ್ನು ಪ್ರೊಸೆಸ್ ಮಾಡಲು ಕನ್ವರ್ಟ್ ಬಟನ್ ಕ್ಲಿಕ್ ಮಾಡಿ. ಎಲ್ಲಾ ಪ್ರೊಸೆಸಿಂಗ್ ನಿಮ್ಮ ಬ್ರೌಸರ್ನಲ್ಲಿ ನಡೆಯುತ್ತದೆ.",
+                "howto.step4.title": "ಚಿತ್ರಗಳನ್ನು ಡೌನ್ಲೋಡ್ ಮಾಡಿ",
+                "howto.step4.description": "ವೈಯಕ್ತಿಕ JPG ಚಿತ್ರಗಳನ್ನು ಡೌನ್ಲೋಡ್ ಮಾಡಿ ಅಥವಾ ಎಲ್ಲಾ ಚಿತ್ರಗಳನ್ನು ZIP ಫೈಲ್ನಲ್ಲಿ ಪಡೆಯಿರಿ. ವಾಟರ್ಮಾರ್ಕ್ಗಳಿಲ್ಲ, ನೋಂದಣಿ ಇಲ್ಲ.",
+                "converter.title": "PDF to JPG ಪರಿವರ್ತಕ",
+                "converter.upload.text": "ನಿಮ್ಮ PDF ಅನ್ನು ಇಲ್ಲಿ ಎಳೆದು ಬಿಡಿ ಅಥವಾ ಬ್ರೌಸ್ ಮಾಡಲು ಕ್ಲಿಕ್ ಮಾಡಿ",
+                "converter.upload.button": "PDF ಆಯ್ಕೆಮಾಡಿ",
+                "converter.settings.title": "ಪರಿವರ್ತನೆ ಸettings",
+                "converter.settings.quality": "ಚಿತ್ರ ಗುಣಮಟ್ಟ",
+                "converter.settings.quality.high": "ಹೈ (ಶಿಫಾರಸು ಮಾಡಲಾಗಿದೆ)",
+                "converter.settings.quality.maximum": "ಗರಿಷ್ಠ",
+                "converter.settings.quality.medium": "ಮಧ್ಯಮ",
+                "converter.settings.quality.low": "ಕಡಿಮೆ",
+                "converter.settings.scale": "ಚಿತ್ರ ಸ್ಕೇಲ್",
+                "converter.settings.scale.high": "ಹೈ (1.5x)",
+                "converter.settings.scale.maximum": "ಗರಿಷ್ಠ (2x)",
+                "converter.settings.scale.normal": "ಸಾಮಾನ್ಯ (1x)",
+                "converter.settings.scale.low": "ಕಡಿಮೆ (0.75x)",
+                "converter.settings.pages": "ಪರಿವರ್ತಿಸಲು ಪುಟಗಳನ್ನು ಆಯ್ಕೆಮಾಡಿ",
+                "converter.settings.selectAll": "ಎಲ್ಲಾ ಆಯ್ಕೆಮಾಡಿ",
+                "converter.preview.title": "ಪೂರ್ವವೀಕ್ಷಣೆ",
+                "converter.processing": "ಪ್ರೊಸೆಸಿಂಗ್: 0%",
+                "converter.convert": "JPG ಗೆ ಪರಿವರ್ತಿಸಿ",
+                "converter.download": "ಎಲ್ಲಾ ಡೌನ್ಲೋಡ್ ಮಾಡಿ",
+                "converter.reset": "ರೀಸೆಟ್ ಮಾಡಿ",
+                "footer.follow": "ನಮ್ಮನ್ನು ಅನುಸರಿಸಿ",
+                "footer.categories": "ಜನಪ್ರಿಯ ವರ್ಗಗಳು",
+                "footer.categories.pdf": "PDF ಉಪಕರಣಗಳು",
+                "footer.categories.image": "ಚಿತ್ರ ಉಪಕರಣಗಳು",
+                "footer.categories.text": "ಟೆಕ್ಸ್ಟ್ ಉಪಕರಣಗಳು",
+                "footer.categories.av": "ಆಡಿಯೋ/ವೀಡಿಯೋ ಉಪಕರಣಗಳು",
+                "footer.categories.web": "ವೆಬ್ ಡೆವಲಪರ್ ಉಪಕರಣಗಳು",
+                "footer.categories.calc": "ಕ್ಯಾಲ್ಕುಲೇಟರ್ ಉಪಕರಣಗಳು",
+                "footer.categories.util": "ಯುಟಿಲಿಟಿ ಉಪಕರಣಗಳು",
+                "footer.categories.color": "ಬಣ್ಣ ಉಪಕರಣಗಳು",
+                "footer.quicklinks": "ತ್ವರಿತ ಲಿಂಕ್ಗಳು",
+                "footer.links.tools": "ಎಲ್ಲಾ ಉಪಕರಣಗಳು",
+                "footer.links.faq": "ಸಾಮಾನ್ಯ ಪ್ರಶ್ನೆಗಳು",
+                "footer.links.contact": "ಸಂಪರ್ಕಿಸಿ",
+                "footer.links.privacy": "ಗೌಪ್ಯತಾ ನೀತಿ",
+                "footer.links.disclaimer": "ಡಿಸ್ಕ್ಲೈಮರ್",
+                "footer.links.terms": "ಸೇವಾ ನಿಯಮಗಳು",
+                "footer.copyright": "© 2025 LollyPoPDF. ಎಲ್ಲಾ ಹಕ್ಕುಗಳು ಕಾಯ್ದಿರಿಸಲ್ಪಟ್ಟಿವೆ."
+            },
+            ta: {
+                "nav.home": "முகப்பு",
+                "nav.about": "எங்களைப் பற்றி",
+                "nav.tools": "கருவிகள்",
+                "nav.contact": "தொடர்பு கொள்ள",
+                "hero.title": "இலவச PDF to JPG மாற்றி",
+                "hero.description": "PDF கோப்புகளை உயர்-தரமான JPG படங்களாக உடனடியாக மாற்றவும். அனைத்து பக்கங்களையும் பிரித்தெடுக்கவும் அல்லது குறிப்பிட்ட பக்கங்களைத் தேர்ந்தெடுக்கவும். பதிவு தேவையில்லை, 100% கிளையண்ட்-சைட் செயலாக்கம்.",
+                "howto.title": "PDFஐ JPG ஆக மாற்றுவது எப்படி",
+                "howto.step1.title": "உங்கள் PDFஐ பதிவேற்றவும்",
+                "howto.step1.description": "பதிவேற்ற பகுதியைக் கிளிக் செய்யவும் அல்லது உங்கள் PDF கோப்பை இழுத்து விடவும். எல்லா நிலையான PDF வடிவங்களையும் நாங்கள் ஆதரிக்கிறோம்.",
+                "howto.step2.title": "பக்கங்கள் மற்றும் தரத்தைத் தேர்ந்தெடுக்கவும்",
+                "howto.step2.description": "எந்த பக்கங்களை மாற்றுவது என்பதைத் தேர்ந்தெடுத்து, படத்தின் தரத்தை அமைக்கவும். அனைத்து பக்கங்களையும் அல்லது குறிப்பிட்ட பக்கங்களையும் தேர்ந்தெடுக்கவும்.",
+                "howto.step3.title": "JPG ஆக மாற்றவும்",
+                "howto.step3.description": "உங்கள் PDFஐ செயலாக்க மாற்று பொத்தானைக் கிளிக் செய்யவும். அனைத்து செயலாக்கமும் உங்கள் உலாவியில் நடக்கும்.",
+                "howto.step4.title": "படங்களைப் பதிவிறக்கவும்",
+                "howto.step4.description": "தனிப்பட்ட JPG படங்களைப் பதிவிறக்கவும் அல்லது அனைத்து படங்களையும் ZIP கோப்பில் பெறவும். நீர்முத்திரைகள் இல்லை, பதிவு இல்லை.",
+                "converter.title": "PDF to JPG மாற்றி",
+                "converter.upload.text": "உங்கள் PDFஐ இங்கே இழுத்து விடவும் அல்லது உலாவ கிளிக் செய்யவும்",
+                "converter.upload.button": "PDFஐத் தேர்ந்தெடுக்கவும்",
+                "converter.settings.title": "மாற்றும் அமைப்புகள்",
+                "converter.settings.quality": "படத்தின் தரம்",
+                "converter.settings.quality.high": "உயர் (பரிந்துரைக்கப்படுகிறது)",
+                "converter.settings.quality.maximum": "அதிகபட்சம்",
+                "converter.settings.quality.medium": "நடுத்தர",
+                "converter.settings.quality.low": "குறைந்த",
+                "converter.settings.scale": "பட அளவு",
+                "converter.settings.scale.high": "உயர் (1.5x)",
+                "converter.settings.scale.maximum": "அதிகபட்ச (2x)",
+                "converter.settings.scale.normal": "சாதாரண (1x)",
+                "converter.settings.scale.low": "குறைந்த (0.75x)",
+                "converter.settings.pages": "மாற்ற வேண்டிய பக்கங்களைத் தேர்ந்தெடுக்கவும்",
+                "converter.settings.selectAll": "அனைத்தையும் தேர்ந்தெடுக்கவும்",
+                "converter.preview.title": "முன்னோட்ட",
+                "converter.processing": "செயலாக்கம்: 0%",
+                "converter.convert": "JPG ஆக மாற்றவும்",
+                "converter.download": "அனைத்தையும் பதிவிறக்கவும்",
+                "converter.reset": "மீட்டமைக்க",
+                "footer.follow": "எங்களைப் பின்தொடரவும்",
+                "footer.categories": "பிரபலமான வகைகள்",
+                "footer.categories.pdf": "PDF கருவிகள்",
+                "footer.categories.image": "பட கருவிகள்",
+                "footer.categories.text": "உரை கருவிகள்",
+                "footer.categories.av": "ஆடியோ/வீடியோ கருவிகள்",
+                "footer.categories.web": "வலை டெவலப்பர் கருவிகள்",
+                "footer.categories.calc": "கால்குலேட்டர் கருவிகள்",
+                "footer.categories.util": "பயன்பாட்டு கருவிகள்",
+                "footer.categories.color": "நிற கருவிகள்",
+                "footer.quicklinks": "விரைவு இணைப்புகள்",
+                "footer.links.tools": "அனைத்து கருவிகள்",
+                "footer.links.faq": "அடிக்கடி கேட்கப்படும் கேள்விகள்",
+                "footer.links.contact": "தொடர்பு கொள்ள",
+                "footer.links.privacy": "தனியுரிமைக் கொள்கை",
+                "footer.links.disclaimer": "பொறுப்புத் துறப்பு",
+                "footer.links.terms": "சேவை விதிமுறைகள்",
+                "footer.copyright": "© 2025 LollyPoPDF. அனைத்து உரிமைகளும் பாதுகாக்கப்பட்டவை."
+            },
+            ml: {
+                "nav.home": "ഹോം",
+                "nav.about": "ഞങ്ങളെക്കുറിച്ച്",
+                "nav.tools": "ടൂളുകൾ",
+                "nav.contact": "ബന്ധപ്പെടുക",
+                "hero.title": "സ free ജന്യ PDF to JPG കൺവെർട്ടർ",
+                "hero.description": "PDF ഫയലുകൾ ഉയർന്ന നിലവാരമുള്ള JPG ഇമേജുകളാക്കി തൽക്ഷണം പരിവർത്തനം ചെയ്യുക. എല്ലാ പേജുകളും എക്‌സ്‌ട്രാക്റ്റ് ചെയ്യുക അല്ലെങ്കിൽ നിർദ്ദിഷ്ട പേജുകൾ തിരഞ്ഞെടുക്കുക. രജിസ്ട്രേഷൻ ആവശ്യമില്ല, 100% ക്ലയന്റ്-സൈഡ് പ്രോസസ്സിംഗ്.",
+                "howto.title": "PDF എങ്ങനെ JPG ആക്കി മാറ്റാം",
+                "howto.step1.title": "നിങ്ങളുടെ PDF അപ്‌ലോഡ് ചെയ്യുക",
+                "howto.step1.description": "അപ്‌ലോഡ് ഏരിയയിൽ ക്ലിക്ക് ചെയ്യുക അല്ലെങ്കിൽ നിങ്ങളുടെ PDF ഫയൽ വലിച്ചിടുക. ഞങ്ങൾ എല്ലാ സ്റ്റാൻഡേർഡ് PDF ഫോർമാറ്റുകളെയും പിന്തുണയ്ക്കുന്നു.",
+                "howto.step2.title": "പേജുകളും ഗുണനിലവാരവും തിരഞ്ഞെടുക്കുക",
+                "howto.step2.description": "ഏത് പേജുകൾ പരിവർത്തനം ചെയ്യണമെന്ന് തിരഞ്ഞെടുത്ത് ഇമേജ് ഗുണനിലവാരം സജ്ജമാക്കുക. എല്ലാ പേജുകളും അല്ലെങ്കിൽ നിർദ്ദിഷ്ട പേജുകൾ തിരഞ്ഞെടുക്കുക.",
+                "howto.step3.title": "JPG ആക്കി മാറ്റുക",
+                "howto.step3.description": "നിങ്ങളുടെ PDF പ്രോസസ്സ് ചെയ്യാൻ കൺവെർട്ട് ബട്ടൺ ക്ലിക്ക് ചെയ്യുക. എല്ലാ പ്രോസസ്സിംഗും നിങ്ങളുടെ ബ്രൗസറിൽ നടക്കുന്നു.",
+                "howto.step4.title": "ഇമേജുകൾ ഡൗൺലോഡ് ചെയ്യുക",
+                "howto.step4.description": "വ്യക്തിഗത JPG ഇമേജുകൾ ഡൗൺലോഡ് ചെയ്യുക അല്ലെങ്കിൽ എല്ലാ ഇമേജുകളും ഒരു ZIP ഫയലിൽ നേടുക. വാട്ടർമാർക്കുകളില്ല, രജിസ്ട്രേഷൻ ഇല്ല.",
+                "converter.title": "PDF to JPG കൺവെർട്ടർ",
+                "converter.upload.text": "നിങ്ങളുടെ PDF ഇവിടെ വലിച്ചിടുക അല്ലെങ്കിൽ ബ്രൗസ് ചെയ്യാൻ ക്ലിക്ക് ചെയ്യുക",
+                "converter.upload.button": "PDF തിരഞ്ഞെടുക്കുക",
+                "converter.settings.title": "പരിവർത്തന ക്രമീകരണങ്ങൾ",
+                "converter.settings.quality": "ഇമേജ് ഗുണനിലവാരം",
+                "converter.settings.quality.high": "ഉയർന്ന (ശുപാർശ ചെയ്യുന്നു)",
+                "converter.settings.quality.maximum": "പരമാവധി",
+                "converter.settings.quality.medium": "ഇടത്തരം",
+                "converter.settings.quality.low": "കുറഞ്ഞ",
+                "converter.settings.scale": "ഇമേജ് സ്കെയിൽ",
+                "converter.settings.scale.high": "ഉയർന്ന (1.5x)",
+                "converter.settings.scale.maximum": "പരമാവധി (2x)",
+                "converter.settings.scale.normal": "സാധാരണ (1x)",
+                "converter.settings.scale.low": "കുറഞ്ഞ (0.75x)",
+                "converter.settings.pages": "പരിവർത്തനം ചെയ്യാൻ പേജുകൾ തിരഞ്ഞെടുക്കുക",
+                "converter.settings.selectAll": "എല്ലാം തിരഞ്ഞെടുക്കുക",
+                "converter.preview.title": "പ്രിവ്യൂ",
+                "converter.processing": "പ്രോസസ്സിംഗ്: 0%",
+                "converter.convert": "JPG ആക്കി മാറ്റുക",
+                "converter.download": "എല്ലാം ഡൗൺലോഡ് ചെയ്യുക",
+                "converter.reset": "റീസെറ്റ് ചെയ്യുക",
+                "footer.follow": "ഞങ്ങളെ പിന്തുടരുക",
+                "footer.categories": "ജനപ്രിയ വിഭാഗങ്ങൾ",
+                "footer.categories.pdf": "PDF ടൂളുകൾ",
+                "footer.categories.image": "ഇമേജ് ടൂളുകൾ",
+                "footer.categories.text": "ടെക്‌സ്റ്റ് ടൂളുകൾ",
+                "footer.categories.av": "ഓഡിയോ/വീഡിയോ ടൂളുകൾ",
+                "footer.categories.web": "വെബ് ഡവലപ്പർ ടൂളുകൾ",
+                "footer.categories.calc": "കാൽക്കുലേറ്റർ ടൂളുകൾ",
+                "footer.categories.util": "യൂട്ടിലിറ്റി ടൂളുകൾ",
+                "footer.categories.color": "കളർ ടൂളുകൾ",
+                "footer.quicklinks": "ദ്രുത ലിങ്കുകൾ",
+                "footer.links.tools": "എല്ലാ ടൂളുകളും",
+                "footer.links.faq": "പതിവുചോദ്യങ്ങൾ",
+                "footer.links.contact": "ബന്ധപ്പെടുക",
+                "footer.links.privacy": "സ്വകാര്യതാ നയം",
+                "footer.links.disclaimer": "അസ്വീകാര്യത",
+                "footer.links.terms": "സേവന നിബന്ധനകൾ",
+                "footer.copyright": "© 2025 LollyPoPDF. എല്ലാ അവകാശങ്ങളും നിക്ഷിപ്തം."
+            },
+            id: {
+                "nav.home": "Beranda",
+                "nav.about": "Tentang Kami",
+                "nav.tools": "Alat",
+                "nav.contact": "Kontak",
+                "hero.title": "Pengonversi PDF ke JPG Gratis",
+                "hero.description": "Konversi file PDF ke gambar JPG berkualitas tinggi secara instan. Ekstrak semua halaman atau pilih halaman tertentu. Tidak perlu pendaftaran, pemrosesan 100% sisi klien.",
+                "howto.title": "Cara Mengonversi PDF ke JPG",
+                "howto.step1.title": "Unggah PDF Anda",
+                "howto.step1.description": "Klik area unggah atau seret dan lepas file PDF Anda. Kami mendukung semua format PDF standar.",
+                "howto.step2.title": "Pilih Halaman & Kualitas",
+                "howto.step2.description": "Pilih halaman mana yang akan dikonversi dan atur kualitas gambar. Pilih semua halaman atau halaman tertentu.",
+                "howto.step3.title": "Konversi ke JPG",
+                "howto.step3.description": "Klik tombol konversi untuk memproses PDF Anda. Semua pemrosesan terjadi di browser Anda.",
+                "howto.step4.title": "Unduh Gambar",
+                "howto.step4.description": "Unduh gambar JPG individual atau dapatkan semua gambar dalam file ZIP. Tanpa watermark, tanpa pendaftaran.",
+                "converter.title": "Pengonversi PDF ke JPG",
+                "converter.upload.text": "Seret dan lepas PDF Anda di sini atau klik untuk menjelajahi",
+                "converter.upload.button": "Pilih PDF",
+                "converter.settings.title": "Pengaturan Konversi",
+                "converter.settings.quality": "Kualitas Gambar",
+                "converter.settings.quality.high": "Tinggi (Direkomendasikan)",
+                "converter.settings.quality.maximum": "Maksimum",
+                "converter.settings.quality.medium": "Sedang",
+                "converter.settings.quality.low": "Rendah",
+                "converter.settings.scale": "Skala Gambar",
+                "converter.settings.scale.high": "Tinggi (1.5x)",
+                "converter.settings.scale.maximum": "Maksimum (2x)",
+                "converter.settings.scale.normal": "Normal (1x)",
+                "converter.settings.scale.low": "Rendah (0.75x)",
+                "converter.settings.pages": "Pilih Halaman untuk Dikonversi",
+                "converter.settings.selectAll": "Pilih Semua",
+                "converter.preview.title": "Pratinjau",
+                "converter.processing": "Memproses: 0%",
+                "converter.convert": "Konversi ke JPG",
+                "converter.download": "Unduh Semua",
+                "converter.reset": "Atur Ulang",
+                "footer.follow": "IKUTI KAMI",
+                "footer.categories": "Kategori Populer",
+                "footer.categories.pdf": "Alat PDF",
+                "footer.categories.image": "Alat Gambar",
+                "footer.categories.text": "Alat Teks",
+                "footer.categories.av": "Alat Audio/Video",
+                "footer.categories.web": "Alat WebDeveloper",
+                "footer.categories.calc": "Alat Kalkulator",
+                "footer.categories.util": "Alat Utilitas",
+                "footer.categories.color": "Alat Warna",
+                "footer.quicklinks": "Tautan Cepat",
+                "footer.links.tools": "Semua Alat",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Kontak",
+                "footer.links.privacy": "Kebijakan Privasi",
+                "footer.links.disclaimer": "Penafian",
+                "footer.links.terms": "Syarat Layanan",
+                "footer.copyright": "© 2025 LollyPoPDF. Hak cipta dilindungi."
+            },
+            ms: {
+                "nav.home": "Laman Utama",
+                "nav.about": "Tentang Kami",
+                "nav.tools": "Alat",
+                "nav.contact": "Hubungi",
+                "hero.title": "Penukar PDF ke JPG Percuma",
+                "hero.description": "Tukar fail PDF kepada imej JPG berkualiti tinggi serta-merta. Ekstrak semua halaman atau pilih halaman tertentu. Tiada pendaftaran diperlukan, pemprosesan 100% sebelah pelanggan.",
+                "howto.title": "Cara Menukar PDF kepada JPG",
+                "howto.step1.title": "Muat Naik PDF Anda",
+                "howto.step1.description": "Klik kawasan muat naik atau seret dan lepaskan fail PDF anda. Kami menyokong semua format PDF standard.",
+                "howto.step2.title": "Pilih Halaman & Kualiti",
+                "howto.step2.description": "Pilih halaman mana yang hendak ditukar dan tetapkan kualiti imej. Pilih semua halaman atau halaman tertentu.",
+                "howto.step3.title": "Tukar kepada JPG",
+                "howto.step3.description": "Klik butang tukar untuk memproses PDF anda. Semua pemprosesan berlaku dalam pelayar anda.",
+                "howto.step4.title": "Muat Turun Imej",
+                "howto.step4.description": "Muat turun imej JPG individu atau dapatkan semua imej dalam fail ZIP. Tiada tanda air, tiada pendaftaran.",
+                "converter.title": "Penukar PDF ke JPG",
+                "converter.upload.text": "Seret dan lepaskan PDF anda di sini atau klik untuk melayari",
+                "converter.upload.button": "Pilih PDF",
+                "converter.settings.title": "Tetapan Penukaran",
+                "converter.settings.quality": "Kualiti Imej",
+                "converter.settings.quality.high": "Tinggi (Disyorkan)",
+                "converter.settings.quality.maximum": "Maksimum",
+                "converter.settings.quality.medium": "Sederhana",
+                "converter.settings.quality.low": "Rendah",
+                "converter.settings.scale": "Skala Imej",
+                "converter.settings.scale.high": "Tinggi (1.5x)",
+                "converter.settings.scale.maximum": "Maksimum (2x)",
+                "converter.settings.scale.normal": "Normal (1x)",
+                "converter.settings.scale.low": "Rendah (0.75x)",
+                "converter.settings.pages": "Pilih Halaman untuk Ditukar",
+                "converter.settings.selectAll": "Pilih Semua",
+                "converter.preview.title": "Pratonton",
+                "converter.processing": "Memproses: 0%",
+                "converter.convert": "Tukar kepada JPG",
+                "converter.download": "Muat Turun Semua",
+                "converter.reset": "Tetapkan Semula",
+                "footer.follow": "IKUTI KAMI",
+                "footer.categories": "Kategori Popular",
+                "footer.categories.pdf": "Alat PDF",
+                "footer.categories.image": "Alat Imej",
+                "footer.categories.text": "Alat Teks",
+                "footer.categories.av": "Alat Audio/Video",
+                "footer.categories.web": "Alat WebDeveloper",
+                "footer.categories.calc": "Alat Kalkulator",
+                "footer.categories.util": "Alat Utiliti",
+                "footer.categories.color": "Alat Warna",
+                "footer.quicklinks": "Pautan Pantas",
+                "footer.links.tools": "Semua Alat",
+                "footer.links.faq": "Soalan Lazim",
+                "footer.links.contact": "Hubungi",
+                "footer.links.privacy": "Dasar Privasi",
+                "footer.links.disclaimer": "Penafian",
+                "footer.links.terms": "Terma Perkhidmatan",
+                "footer.copyright": "© 2025 LollyPoPDF. Hak cipta terpelihara."
+            },
+            pl: {
+                "nav.home": "Strona główna",
+                "nav.about": "O nas",
+                "nav.tools": "Narzędzia",
+                "nav.contact": "Kontakt",
+                "hero.title": "Darmowy konwerter PDF na JPG",
+                "hero.description": "Konwertuj pliki PDF na wysokiej jakości obrazy JPG natychmiast. Wyodrębnij wszystkie strony lub wybierz określone. Bez rejestracji, przetwarzanie w 100% po stronie klienta.",
+                "howto.title": "Jak przekonwertować PDF na JPG",
+                "howto.step1.title": "Prześlij swój PDF",
+                "howto.step1.description": "Kliknij obszar przesyłania lub przeciągnij i upuść plik PDF. Obsługujemy wszystkie standardowe formaty PDF.",
+                "howto.step2.title": "Wybierz strony i jakość",
+                "howto.step2.description": "Wybierz, które strony przekonwertować i ustaw jakość obrazu. Wybierz wszystkie strony lub określone.",
+                "howto.step3.title": "Konwertuj na JPG",
+                "howto.step3.description": "Kliknij przycisk konwersji, aby przetworzyć plik PDF. Wszystkie przetwarzanie odbywa się w przeglądarce.",
+                "howto.step4.title": "Pobierz obrazy",
+                "howto.step4.description": "Pobierz pojedyncze obrazy JPG lub pobierz wszystkie obrazy w pliku ZIP. Bez znaków wodnych, bez rejestracji.",
+                "converter.title": "Konwerter PDF na JPG",
+                "converter.upload.text": "Przeciągnij i upuść swój PDF tutaj lub kliknij, aby przeglądać",
+                "converter.upload.button": "Wybierz PDF",
+                "converter.settings.title": "Ustawienia konwersji",
+                "converter.settings.quality": "Jakość obrazu",
+                "converter.settings.quality.high": "Wysoka (Zalecane)",
+                "converter.settings.quality.maximum": "Maksymalna",
+                "converter.settings.quality.medium": "Średnia",
+                "converter.settings.quality.low": "Niska",
+                "converter.settings.scale": "Skala obrazu",
+                "converter.settings.scale.high": "Wysoka (1.5x)",
+                "converter.settings.scale.maximum": "Maksymalna (2x)",
+                "converter.settings.scale.normal": "Normalna (1x)",
+                "converter.settings.scale.low": "Niska (0.75x)",
+                "converter.settings.pages": "Wybierz strony do konwersji",
+                "converter.settings.selectAll": "Wybierz wszystkie",
+                "converter.preview.title": "Podgląd",
+                "converter.processing": "Przetwarzanie: 0%",
+                "converter.convert": "Konwertuj na JPG",
+                "converter.download": "Pobierz wszystkie",
+                "converter.reset": "Resetuj",
+                "footer.follow": "OBSERWUJ NAS",
+                "footer.categories": "Popularne kategorie",
+                "footer.categories.pdf": "Narzędzia PDF",
+                "footer.categories.image": "Narzędzia obrazu",
+                "footer.categories.text": "Narzędzia tekstu",
+                "footer.categories.av": "Narzędzia audio/wideo",
+                "footer.categories.web": "Narzędzia WebDevelopera",
+                "footer.categories.calc": "Narzędzia kalkulatora",
+                "footer.categories.util": "Narzędzia użytkowe",
+                "footer.categories.color": "Narzędzia kolorów",
+                "footer.quicklinks": "Szybkie linki",
+                "footer.links.tools": "Wszystkie narzędzia",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Kontakt",
+                "footer.links.privacy": "Polityka prywatności",
+                "footer.links.disclaimer": "Zastrzeżenie",
+                "footer.links.terms": "Warunki usługi",
+                "footer.copyright": "© 2025 LollyPoPDF. Wszelkie prawa zastrzeżone."
+            },
+            th: {
+                "nav.home": "หน้าแรก",
+                "nav.about": "เกี่ยวกับเรา",
+                "nav.tools": "เครื่องมือ",
+                "nav.contact": "ติดต่อ",
+                "hero.title": "ตัวแปลง PDF เป็น JPG ฟรี",
+                "hero.description": "แปลงไฟล์ PDF เป็นภาพ JPG คุณภาพสูงทันที แยกหน้าทั้งหมดหรือเลือกหน้าเฉพาะ ไม่ต้องลงทะเบียน ประมวลผล 100% ฝั่งไคลเอ็นต์",
+                "howto.title": "วิธีแปลง PDF เป็น JPG",
+                "howto.step1.title": "อัปโหลด PDF ของคุณ",
+                "howto.step1.description": "คลิกพื้นที่อัปโหลดหรือลากและวางไฟล์ PDF ของคุณ เรารองรับรูปแบบ PDF มาตรฐานทั้งหมด",
+                "howto.step2.title": "เลือกหน้าและคุณภาพ",
+                "howto.step2.description": "เลือกหน้าที่จะแปลงและตั้งค่าคุณภาพภาพ เลือกหน้าทั้งหมดหรือหน้าเฉพาะ",
+                "howto.step3.title": "แปลงเป็น JPG",
+                "howto.step3.description": "คลิกปุ่มแปลงเพื่อประมวลผล PDF ของคุณ การประมวลผลทั้งหมดเกิดขึ้นในเบราว์เซอร์ของคุณ",
+                "howto.step4.title": "ดาวน์โหลดภาพ",
+                "howto.step4.description": "ดาวน์โหลดภาพ JPG แต่ละภาพหรือรับภาพทั้งหมดในไฟล์ ZIP ไม่มีลายน้ำ ไม่ต้องลงทะเบียน",
+                "converter.title": "ตัวแปลง PDF เป็น JPG",
+                "converter.upload.text": "ลากและวาง PDF ของคุณที่นี่หรือคลิกเพื่อเรียกดู",
+                "converter.upload.button": "เลือก PDF",
+                "converter.settings.title": "การตั้งค่าการแปลง",
+                "converter.settings.quality": "คุณภาพภาพ",
+                "converter.settings.quality.high": "สูง (แนะนำ)",
+                "converter.settings.quality.maximum": "สูงสุด",
+                "converter.settings.quality.medium": "ปานกลาง",
+                "converter.settings.quality.low": "ต่ำ",
+                "converter.settings.scale": "ขนาดภาพ",
+                "converter.settings.scale.high": "สูง (1.5x)",
+                "converter.settings.scale.maximum": "สูงสุด (2x)",
+                "converter.settings.scale.normal": "ปกติ (1x)",
+                "converter.settings.scale.low": "ต่ำ (0.75x)",
+                "converter.settings.pages": "เลือกหน้าที่จะแปลง",
+                "converter.settings.selectAll": "เลือกทั้งหมด",
+                "converter.preview.title": "ดูตัวอย่าง",
+                "converter.processing": "กำลังประมวลผล: 0%",
+                "converter.convert": "แปลงเป็น JPG",
+                "converter.download": "ดาวน์โหลดทั้งหมด",
+                "converter.reset": "รีเซ็ต",
+                "footer.follow": "ติดตามเรา",
+                "footer.categories": "หมวดหมู่ยอดนิยม",
+                "footer.categories.pdf": "เครื่องมือ PDF",
+                "footer.categories.image": "เครื่องมือภาพ",
+                "footer.categories.text": "เครื่องมือข้อความ",
+                "footer.categories.av": "เครื่องมือเสียง/วิดีโอ",
+                "footer.categories.web": "เครื่องมือนักพัฒนาเว็บ",
+                "footer.categories.calc": "เครื่องมือเครื่องคิดเลข",
+                "footer.categories.util": "เครื่องมืออรรถประโยชน์",
+                "footer.categories.color": "เครื่องมือสี",
+                "footer.quicklinks": "ลิงก์ด่วน",
+                "footer.links.tools": "เครื่องมือทั้งหมด",
+                "footer.links.faq": "คำถามที่พบบ่อย",
+                "footer.links.contact": "ติดต่อ",
+                "footer.links.privacy": "นโยบายความเป็นส่วนตัว",
+                "footer.links.disclaimer": "ข้อจำกัดความรับผิดชอบ",
+                "footer.links.terms": "เงื่อนไขการให้บริการ",
+                "footer.copyright": "© 2025 LollyPoPDF. สงวนลิขสิทธิ์."
+            },
+            tr: {
+                "nav.home": "Ana Sayfa",
+                "nav.about": "Hakkımızda",
+                "nav.tools": "Araçlar",
+                "nav.contact": "İletişim",
+                "hero.title": "Ücretsiz PDF'den JPG'ye Dönüştürücü",
+                "hero.description": "PDF dosyalarını anında yüksek kaliteli JPG görüntülerine dönüştürün. Tüm sayfaları çıkarın veya belirli sayfaları seçin. Kayıt gerekmez, %100 istemci tarafında işleme.",
+                "howto.title": "PDF'den JPG'ye Nasıl Dönüştürülür",
+                "howto.step1.title": "PDF'nizi Yükleyin",
+                "howto.step1.description": "Yükleme alanını tıklayın veya PDF dosyanızı sürükleyip bırakın. Tüm standart PDF formatlarını destekliyoruz.",
+                "howto.step2.title": "Sayfaları ve Kaliteyi Seçin",
+                "howto.step2.description": "Hangi sayfaların dönüştürüleceğini seçin ve görüntü kalitesini ayarlayın. Tüm sayfaları veya belirli sayfaları seçin.",
+                "howto.step3.title": "JPG'ye Dönüştür",
+                "howto.step3.description": "PDF'nizi işlemek için dönüştür düğmesini tıklayın. Tüm işleme tarayıcınızda gerçekleşir.",
+                "howto.step4.title": "Görüntüleri İndir",
+                "howto.step4.description": "Tek tek JPG görüntülerini indirin veya tüm görüntüleri bir ZIP dosyasında alın. Filigran yok, kayıt yok.",
+                "converter.title": "PDF'den JPG'ye Dönüştürücü",
+                "converter.upload.text": "PDF'nizi buraya sürükleyip bırakın veya göz atmak için tıklayın",
+                "converter.upload.button": "PDF Seç",
+                "converter.settings.title": "Dönüşüm Ayarları",
+                "converter.settings.quality": "Görüntü Kalitesi",
+                "converter.settings.quality.high": "Yüksek (Önerilen)",
+                "converter.settings.quality.maximum": "Maksimum",
+                "converter.settings.quality.medium": "Orta",
+                "converter.settings.quality.low": "Düşük",
+                "converter.settings.scale": "Görüntü Ölçeği",
+                "converter.settings.scale.high": "Yüksek (1.5x)",
+                "converter.settings.scale.maximum": "Maksimum (2x)",
+                "converter.settings.scale.normal": "Normal (1x)",
+                "converter.settings.scale.low": "Düşük (0.75x)",
+                "converter.settings.pages": "Dönüştürülecek Sayfaları Seçin",
+                "converter.settings.selectAll": "Tümünü Seç",
+                "converter.preview.title": "Önizleme",
+                "converter.processing": "İşleniyor: 0%",
+                "converter.convert": "JPG'ye Dönüştür",
+                "converter.download": "Tümünü İndir",
+                "converter.reset": "Sıfırla",
+                "footer.follow": "BİZİ TAKİP EDİN",
+                "footer.categories": "Popüler Kategoriler",
+                "footer.categories.pdf": "PDF Araçları",
+                "footer.categories.image": "Görüntü Araçları",
+                "footer.categories.text": "Metin Araçları",
+                "footer.categories.av": "Ses/Video Araçları",
+                "footer.categories.web": "WebGeliştirici Araçları",
+                "footer.categories.calc": "Hesap Makinesi Araçları",
+                "footer.categories.util": "Yardımcı Araçlar",
+                "footer.categories.color": "Renk Araçları",
+                "footer.quicklinks": "Hızlı Bağlantılar",
+                "footer.links.tools": "Tüm Araçlar",
+                "footer.links.faq": "SSS",
+                "footer.links.contact": "İletişim",
+                "footer.links.privacy": "Gizlilik Politikası",
+                "footer.links.disclaimer": "Feragatname",
+                "footer.links.terms": "Hizmet Şartları",
+                "footer.copyright": "© 2025 LollyPoPDF. Tüm hakları saklıdır."
+            },
+            uk: {
+                "nav.home": "Головна",
+                "nav.about": "Про нас",
+                "nav.tools": "Інструменти",
+                "nav.contact": "Контакти",
+                "hero.title": "Безкоштовний конвертер PDF у JPG",
+                "hero.description": "Конвертуйте файли PDF у високоякісні зображення JPG миттєво. Витягніть усі сторінки або виберіть конкретні. Реєстрація не потрібна, 100% обробка на стороні клієнта.",
+                "howto.title": "Як конвертувати PDF у JPG",
+                "howto.step1.title": "Завантажте ваш PDF",
+                "howto.step1.description": "Натисніть на область завантаження або перетягніть ваш PDF-файл. Ми підтримуємо всі стандартні формати PDF.",
+                "howto.step2.title": "Виберіть сторінки та якість",
+                "howto.step2.description": "Виберіть, які сторінки конвертувати, і встановіть якість зображення. Виберіть усі сторінки або конкретні.",
+                "howto.step3.title": "Конвертувати у JPG",
+                "howto.step3.description": "Натисніть кнопку конвертувати, щоб обробити ваш PDF. Вся обробка відбувається у вашому браузері.",
+                "howto.step4.title": "Завантажити зображення",
+                "howto.step4.description": "Завантажте окремі зображення JPG або отримайте всі зображення у ZIP-файлі. Без водяних знаків, без реєстрації.",
+                "converter.title": "Конвертер PDF у JPG",
+                "converter.upload.text": "Перетягніть ваш PDF сюди або натисніть для перегляду",
+                "converter.upload.button": "Вибрати PDF",
+                "converter.settings.title": "Налаштування конвертації",
+                "converter.settings.quality": "Якість зображення",
+                "converter.settings.quality.high": "Висока (Рекомендовано)",
+                "converter.settings.quality.maximum": "Максимальна",
+                "converter.settings.quality.medium": "Середня",
+                "converter.settings.quality.low": "Низька",
+                "converter.settings.scale": "Масштаб зображення",
+                "converter.settings.scale.high": "Високий (1.5x)",
+                "converter.settings.scale.maximum": "Максимальний (2x)",
+                "converter.settings.scale.normal": "Нормальний (1x)",
+                "converter.settings.scale.low": "Низький (0.75x)",
+                "converter.settings.pages": "Виберіть сторінки для конвертації",
+                "converter.settings.selectAll": "Вибрати всі",
+                "converter.preview.title": "Попередній перегляд",
+                "converter.processing": "Обробка: 0%",
+                "converter.convert": "Конвертувати у JPG",
+                "converter.download": "Завантажити все",
+                "converter.reset": "Скинути",
+                "footer.follow": "СЛІДКУЙТЕ ЗА НАМИ",
+                "footer.categories": "Популярні категорії",
+                "footer.categories.pdf": "PDF Інструменти",
+                "footer.categories.image": "Інструменти для зображень",
+                "footer.categories.text": "Текстові інструменти",
+                "footer.categories.av": "Аудіо/Відео інструменти",
+                "footer.categories.web": "Інструменти веб-розробника",
+                "footer.categories.calc": "Інструменти калькулятора",
+                "footer.categories.util": "Утиліти",
+                "footer.categories.color": "Інструменти для кольору",
+                "footer.quicklinks": "Швидкі посилання",
+                "footer.links.tools": "Всі інструменти",
+                "footer.links.faq": "Часті запитання",
+                "footer.links.contact": "Контакти",
+                "footer.links.privacy": "Політика конфіденційності",
+                "footer.links.disclaimer": "Відмова від відповідальності",
+                "footer.links.terms": "Умови використання",
+                "footer.copyright": "© 2025 LollyPoPDF. Всі права захищені."
+            },
+            vi: {
+                "nav.home": "Trang chủ",
+                "nav.about": "Về chúng tôi",
+                "nav.tools": "Công cụ",
+                "nav.contact": "Liên hệ",
+                "hero.title": "Chuyển đổi PDF sang JPG Miễn phí",
+                "hero.description": "Chuyển đổi file PDF thành hình ảnh JPG chất lượng cao ngay lập tức. Trích xuất tất cả các trang hoặc chọn trang cụ thể. Không cần đăng ký, xử lý 100% phía máy khách.",
+                "howto.title": "Cách chuyển đổi PDF sang JPG",
+                "howto.step1.title": "Tải lên PDF của bạn",
+                "howto.step1.description": "Nhấp vào khu vực tải lên hoặc kéo và thả file PDF của bạn. Chúng tôi hỗ trợ tất cả các định dạng PDF tiêu chuẩn.",
+                "howto.step2.title": "Chọn Trang & Chất lượng",
+                "howto.step2.description": "Chọn trang nào để chuyển đổi và đặt chất lượng hình ảnh. Chọn tất cả các trang hoặc trang cụ thể.",
+                "howto.step3.title": "Chuyển đổi sang JPG",
+                "howto.step3.description": "Nhấp vào nút chuyển đổi để xử lý PDF của bạn. Tất cả xử lý diễn ra trong trình duyệt của bạn.",
+                "howto.step4.title": "Tải xuống Hình ảnh",
+                "howto.step4.description": "Tải xuống hình ảnh JPG riêng lẻ hoặc nhận tất cả hình ảnh trong file ZIP. Không có hình mờ, không đăng ký.",
+                "converter.title": "Chuyển đổi PDF sang JPG",
+                "converter.upload.text": "Kéo và thả PDF của bạn vào đây hoặc nhấp để duyệt",
+                "converter.upload.button": "Chọn PDF",
+                "converter.settings.title": "Cài đặt chuyển đổi",
+                "converter.settings.quality": "Chất lượng Hình ảnh",
+                "converter.settings.quality.high": "Cao (Đề xuất)",
+                "converter.settings.quality.maximum": "Tối đa",
+                "converter.settings.quality.medium": "Trung bình",
+                "converter.settings.quality.low": "Thấp",
+                "converter.settings.scale": "Tỷ lệ Hình ảnh",
+                "converter.settings.scale.high": "Cao (1.5x)",
+                "converter.settings.scale.maximum": "Tối đa (2x)",
+                "converter.settings.scale.normal": "Bình thường (1x)",
+                "converter.settings.scale.low": "Thấp (0.75x)",
+                "converter.settings.pages": "Chọn Trang để Chuyển đổi",
+                "converter.settings.selectAll": "Chọn Tất cả",
+                "converter.preview.title": "Xem trước",
+                "converter.processing": "Đang xử lý: 0%",
+                "converter.convert": "Chuyển đổi sang JPG",
+                "converter.download": "Tải xuống Tất cả",
+                "converter.reset": "Đặt lại",
+                "footer.follow": "THEO DÕI CHÚNG TÔI",
+                "footer.categories": "Danh mục Phổ biến",
+                "footer.categories.pdf": "Công cụ PDF",
+                "footer.categories.image": "Công cụ Hình ảnh",
+                "footer.categories.text": "Công cụ Văn bản",
+                "footer.categories.av": "Công cụ Âm thanh/Video",
+                "footer.categories.web": "Công cụ WebDeveloper",
+                "footer.categories.calc": "Công cụ Máy tính",
+                "footer.categories.util": "Công cụ Tiện ích",
+                "footer.categories.color": "Công cụ Màu sắc",
+                "footer.quicklinks": "Liên kết Nhanh",
+                "footer.links.tools": "Tất cả Công cụ",
+                "footer.links.faq": "Câu hỏi Thường gặp",
+                "footer.links.contact": "Liên hệ",
+                "footer.links.privacy": "Chính sách Riêng tư",
+                "footer.links.disclaimer": "Tuyên bố Miễn trừ",
+                "footer.links.terms": "Điều khoản Dịch vụ",
+                "footer.copyright": "© 2025 LollyPoPDF. Đã đăng ký bản quyền."
+            },
+            is: {
+                "nav.home": "Heim",
+                "nav.about": "Um okkur",
+                "nav.tools": "Verkfæri",
+                "nav.contact": "Hafa samband",
+                "hero.title": "Ókeypis PDF í JPG Umbreytir",
+                "hero.description": "Umbreyttu PDF skrám í hágæða JPG myndir augnabliklega. Draga út allar síður eða veldu tilteknar. Engin skráning krafist, 100% vinnsla hjá viðskiptavinum.",
+                "howto.title": "Hvernig á að umbreyta PDF í JPG",
+                "howto.step1.title": "Hladdu upp PDF þínu",
+                "howto.step1.description": "Smelltu á upphleðslusvæðið eða dragðu og slepptu PDF skránni þinni. Við styðjum allar staðlaðar PDF snið.",
+                "howto.step2.title": "Veldu Síður og Gæði",
+                "howto.step2.description": "Veldu hvaða síður á að umbreyta og stilltu myndgæði. Veldu allar síður eða tilteknar.",
+                "howto.step3.title": "Umbreyta í JPG",
+                "howto.step3.description": "Smelltu á umbreytingarhnappinn til að vinna úr PDF þínu. Öll vinnsla fer fram í vafranum þínum.",
+                "howto.step4.title": "Sækja Myndir",
+                "howto.step4.description": "Sækja einstakar JPG myndir eða fá allar myndir í ZIP skrá. Engin vatnsmerki, engin skráning.",
+                "converter.title": "PDF í JPG Umbreytir",
+                "converter.upload.text": "Dragðu og slepptu PDF þínu hér eða smelltu til að skoða",
+                "converter.upload.button": "Veldu PDF",
+                "converter.settings.title": "Umbreytingarstillingar",
+                "converter.settings.quality": "Myndgæði",
+                "converter.settings.quality.high": "Há (Mælt með)",
+                "converter.settings.quality.maximum": "Hámark",
+                "converter.settings.quality.medium": "Miðlungs",
+                "converter.settings.quality.low": "Lágt",
+                "converter.settings.scale": "Myndskali",
+                "converter.settings.scale.high": "Há (1.5x)",
+                "converter.settings.scale.maximum": "Hámark (2x)",
+                "converter.settings.scale.normal": "Venjulegt (1x)",
+                "converter.settings.scale.low": "Lágt (0.75x)",
+                "converter.settings.pages": "Veldu Síður til að Umbreyta",
+                "converter.settings.selectAll": "Velja Allt",
+                "converter.preview.title": "Forskoðun",
+                "converter.processing": "Vinnsla: 0%",
+                "converter.convert": "Umbreyta í JPG",
+                "converter.download": "Sækja Allt",
+                "converter.reset": "Endurstilla",
+                "footer.follow": "FYLGDU OKKUR",
+                "footer.categories": "Vinsælar Flokkar",
+                "footer.categories.pdf": "PDF Verkfæri",
+                "footer.categories.image": "Myndverkfæri",
+                "footer.categories.text": "Textaverkfæri",
+                "footer.categories.av": "Hljóð/Myndband Verkfæri",
+                "footer.categories.web": "Vefþróunaraðili Verkfæri",
+                "footer.categories.calc": "Reiknivél Verkfæri",
+                "footer.categories.util": "Gagnleg Verkfæri",
+                "footer.categories.color": "Litverkfæri",
+                "footer.quicklinks": "Flýtilankar",
+                "footer.links.tools": "Öll Verkfæri",
+                "footer.links.faq": "Algengar Spurningar",
+                "footer.links.contact": "Hafa Samband",
+                "footer.links.privacy": "Meðferðarskilmálar",
+                "footer.links.disclaimer": "Fyrirvari",
+                "footer.links.terms": "Þjónustuskilmálar",
+                "footer.copyright": "© 2025 LollyPoPDF. Allur réttur áskilinn."
+            },
+            no: {
+                "nav.home": "Hjem",
+                "nav.about": "Om oss",
+                "nav.tools": "Verktøy",
+                "nav.contact": "Kontakt",
+                "hero.title": "Gratis PDF til JPG Konverter",
+                "hero.description": "Konverter PDF-filer til høykvalitets JPG-bilder umiddelbart. Trekk ut alle sider eller velg spesifikke. Ingen registrering kreves, 100% klientsidebehandling.",
+                "howto.title": "Hvordan konvertere PDF til JPG",
+                "howto.step1.title": "Last opp PDF-en din",
+                "howto.step1.description": "Klikk på opplastingsområdet eller dra og slipp PDF-filen din. Vi støtter alle standard PDF-formater.",
+                "howto.step2.title": "Velg Sider og Kvalitet",
+                "howto.step2.description": "Velg hvilke sider som skal konverteres og angi bildekvaliteten. Velg alle sider eller spesifikke.",
+                "howto.step3.title": "Konverter til JPG",
+                "howto.step3.description": "Klikk på konverteringsknappen for å behandle PDF-en din. All behandling skjer i nettleseren din.",
+                "howto.step4.title": "Last ned Bilder",
+                "howto.step4.description": "Last ned enkelte JPG-bilder eller få alle bildene i en ZIP-fil. Ingen vannmerker, ingen registrering.",
+                "converter.title": "PDF til JPG Konverter",
+                "converter.upload.text": "Dra og slipp PDF-en din her eller klikk for å bla",
+                "converter.upload.button": "Velg PDF",
+                "converter.settings.title": "Konverteringsinnstillinger",
+                "converter.settings.quality": "Bildekvalitet",
+                "converter.settings.quality.high": "Høy (Anbefalt)",
+                "converter.settings.quality.maximum": "Maksimum",
+                "converter.settings.quality.medium": "Middels",
+                "converter.settings.quality.low": "Lav",
+                "converter.settings.scale": "Bildeskala",
+                "converter.settings.scale.high": "Høy (1.5x)",
+                "converter.settings.scale.maximum": "Maksimum (2x)",
+                "converter.settings.scale.normal": "Normal (1x)",
+                "converter.settings.scale.low": "Lav (0.75x)",
+                "converter.settings.pages": "Velg Sider å Konvertere",
+                "converter.settings.selectAll": "Velg Alle",
+                "converter.preview.title": "Forhåndsvisning",
+                "converter.processing": "Behandler: 0%",
+                "converter.convert": "Konverter til JPG",
+                "converter.download": "Last ned Alle",
+                "converter.reset": "Tilbakestill",
+                "footer.follow": "FØLG OSS",
+                "footer.categories": "Populære Kategorier",
+                "footer.categories.pdf": "PDF Verktøy",
+                "footer.categories.image": "Bildeverktøy",
+                "footer.categories.text": "Tekstverktøy",
+                "footer.categories.av": "Lyd/Video Verktøy",
+                "footer.categories.web": "WebUtvikler Verktøy",
+                "footer.categories.calc": "Kalkulator Verktøy",
+                "footer.categories.util": "Nytteverktøy",
+                "footer.categories.color": "Fargeverktøy",
+                "footer.quicklinks": "Hurtiglenker",
+                "footer.links.tools": "Alle Verktøy",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Kontakt",
+                "footer.links.privacy": "Personvernregler",
+                "footer.links.disclaimer": "Ansvarsfraskrivelse",
+                "footer.links.terms": "Tjenestevilkår",
+                "footer.copyright": "© 2025 LollyPoPDF. Alle rettigheter forbeholdt."
+            },
+            sv: {
+                "nav.home": "Hem",
+                "nav.about": "Om oss",
+                "nav.tools": "Verktyg",
+                "nav.contact": "Kontakt",
+                "hero.title": "Gratis PDF till JPG Konverterare",
+                "hero.description": "Konvertera PDF-filer till högkvalitativa JPG-bilder omedelbart. Extrahera alla sidor eller välj specifika. Ingen registrering krävs, 100% klientsidebearbetning.",
+                "howto.title": "Hur man konverterar PDF till JPG",
+                "howto.step1.title": "Ladda upp din PDF",
+                "howto.step1.description": "Klicka på uppladdningsområdet eller dra och släpp din PDF-fil. Vi stöder alla standard PDF-format.",
+                "howto.step2.title": "Välj Sidor och Kvalitet",
+                "howto.step2.description": "Välj vilka sidor som ska konverteras och ställ in bildkvaliteten. Välj alla sidor eller specifika.",
+                "howto.step3.title": "Konvertera till JPG",
+                "howto.step3.description": "Klicka på konverteringsknappen för att bearbeta din PDF. All bearbetning sker i din webbläsare.",
+                "howto.step4.title": "Ladda ner Bilder",
+                "howto.step4.description": "Ladda ner enskilda JPG-bilder eller få alla bilder i en ZIP-fil. Inga vattenstämplar, ingen registrering.",
+                "converter.title": "PDF till JPG Konverterare",
+                "converter.upload.text": "Dra och släpp din PDF här eller klicka för att bläddra",
+                "converter.upload.button": "Välj PDF",
+                "converter.settings.title": "Konverteringsinställningar",
+                "converter.settings.quality": "Bildkvalitet",
+                "converter.settings.quality.high": "Hög (Rekommenderas)",
+                "converter.settings.quality.maximum": "Maximal",
+                "converter.settings.quality.medium": "Medium",
+                "converter.settings.quality.low": "Låg",
+                "converter.settings.scale": "Bildskala",
+                "converter.settings.scale.high": "Hög (1.5x)",
+                "converter.settings.scale.maximum": "Maximal (2x)",
+                "converter.settings.scale.normal": "Normal (1x)",
+                "converter.settings.scale.low": "Låg (0.75x)",
+                "converter.settings.pages": "Välj Sidor att Konvertera",
+                "converter.settings.selectAll": "Välj Alla",
+                "converter.preview.title": "Förhandsvisning",
+                "converter.processing": "Bearbetar: 0%",
+                "converter.convert": "Konvertera till JPG",
+                "converter.download": "Ladda ner Alla",
+                "converter.reset": "Återställ",
+                "footer.follow": "FÖLJ OSS",
+                "footer.categories": "Populära Kategorier",
+                "footer.categories.pdf": "PDF Verktyg",
+                "footer.categories.image": "Bildverktyg",
+                "footer.categories.text": "Textverktyg",
+                "footer.categories.av": "Ljud/Video Verktyg",
+                "footer.categories.web": "Webbutvecklare Verktyg",
+                "footer.categories.calc": "Kalkylator Verktyg",
+                "footer.categories.util": "Verktyg för Verktyg",
+                "footer.categories.color": "Färgverktyg",
+                "footer.quicklinks": "Snabblänkar",
+                "footer.links.tools": "Alla Verktyg",
+                "footer.links.faq": "Vanliga Frågor",
+                "footer.links.contact": "Kontakt",
+                "footer.links.privacy": "Integritetspolicy",
+                "footer.links.disclaimer": "Ansvarsfriskrivning",
+                "footer.links.terms": "Användarvillkor",
+                "footer.copyright": "© 2025 LollyPoPDF. Alla rättigheter förbehållna."
+            },
+            fi: {
+                "nav.home": "Koti",
+                "nav.about": "Tietoa meistä",
+                "nav.tools": "Työkalut",
+                "nav.contact": "Ota yhteyttä",
+                "hero.title": "Ilmainen PDF JPG-muunnin",
+                "hero.description": "Muunna PDF-tiedostot korkealaatuisiin JPG-kuviin välittömästi. Pura kaikki sivut tai valitse tiettyjä. Rekisteröintiä ei tarvita, 100% asiakaspuolen käsittely.",
+                "howto.title": "Kuinka muuntaa PDF JPG:ksi",
+                "howto.step1.title": "Lataa PDF-tiedostosi",
+                "howto.step1.description": "Napsauta latausaluetta tai vedä ja pudota PDF-tiedostosi. Tukemme kaikkia standardi PDF-muotoja.",
+                "howto.step2.title": "Valitse Sivut ja Laatu",
+                "howto.step2.description": "Valitse, mitkä sivut muunnetaan ja aseta kuvanlaatu. Valitse kaikki sivut tai tiettyjä.",
+                "howto.step3.title": "Muunna JPG:ksi",
+                "howto.step3.description": "Napsauta muunnospainiketta käsitelläksesi PDF-tiedostoasi. Kaikki käsittely tapahtuu selaimesi sisällä.",
+                "howto.step4.title": "Lataa Kuvat",
+                "howto.step4.description": "Lataa yksittäisiä JPG-kuvia tai saat kaikki kuvat ZIP-tiedostossa. Ei vesileimoja, ei rekisteröintiä.",
+                "converter.title": "PDF JPG-muunnin",
+                "converter.upload.text": "Vedä ja pudota PDF-tiedostosi tähän tai napsauta selataksesi",
+                "converter.upload.button": "Valitse PDF",
+                "converter.settings.title": "Muunnosasetukset",
+                "converter.settings.quality": "Kuvanlaatu",
+                "converter.settings.quality.high": "Korkea (Suositeltu)",
+                "converter.settings.quality.maximum": "Maksimi",
+                "converter.settings.quality.medium": "Keskitaso",
+                "converter.settings.quality.low": "Matala",
+                "converter.settings.scale": "Kuvan mittakaava",
+                "converter.settings.scale.high": "Korkea (1.5x)",
+                "converter.settings.scale.maximum": "Maksimi (2x)",
+                "converter.settings.scale.normal": "Normaali (1x)",
+                "converter.settings.scale.low": "Matala (0.75x)",
+                "converter.settings.pages": "Valitse Muunnettavat Sivut",
+                "converter.settings.selectAll": "Valitse Kaikki",
+                "converter.preview.title": "Esikatselu",
+                "converter.processing": "Käsitellään: 0%",
+                "converter.convert": "Muunna JPG:ksi",
+                "converter.download": "Lataa Kaikki",
+                "converter.reset": "Nollaa",
+                "footer.follow": "SEURA MEITÄ",
+                "footer.categories": "Suositut Luokat",
+                "footer.categories.pdf": "PDF-työkalut",
+                "footer.categories.image": "Kuvatyökalut",
+                "footer.categories.text": "Tekstityökalut",
+                "footer.categories.av": "Ääni/Video-työkalut",
+                "footer.categories.web": "Web-kehittäjätyökalut",
+                "footer.categories.calc": "Laskinityökalut",
+                "footer.categories.util": "Aputyökalut",
+                "footer.categories.color": "Värityökalut",
+                "footer.quicklinks": "Pikalinkit",
+                "footer.links.tools": "Kaikki Työkalut",
+                "footer.links.faq": "UKK",
+                "footer.links.contact": "Ota Yhteyttä",
+                "footer.links.privacy": "Tietosuojakäytäntö",
+                "footer.links.disclaimer": "Vastuuvapauslauseke",
+                "footer.links.terms": "Käyttöehdot",
+                "footer.copyright": "© 2025 LollyPoPDF. Kaikki oikeudet pidätetään."
+            },
+            cs: {
+                "nav.home": "Domů",
+                "nav.about": "O nás",
+                "nav.tools": "Nástroje",
+                "nav.contact": "Kontakt",
+                "hero.title": "Zdarma převodník PDF na JPG",
+                "hero.description": "Převádějte soubory PDF na vysoce kvalitní obrázky JPG okamžitě. Extrahujte všechny stránky nebo vyberte konkrétní. Bez registrace, 100% zpracování na straně klienta.",
+                "howto.title": "Jak převést PDF na JPG",
+                "howto.step1.title": "Nahrajte své PDF",
+                "howto.step1.description": "Klikněte na oblast nahrávání nebo přetáhněte svůj soubor PDF. Podporujeme všechny standardní formáty PDF.",
+                "howto.step2.title": "Vyberte Stránky a Kvalitu",
+                "howto.step2.description": "Zvolte, které stránky převést a nastavte kvalitu obrazu. Vyberte všechny stránky nebo konkrétní.",
+                "howto.step3.title": "Převést na JPG",
+                "howto.step3.description": "Klikněte na tlačítko převést pro zpracování vašeho PDF. Veškeré zpracování probíhá ve vašem prohlížeči.",
+                "howto.step4.title": "Stáhnout Obrázky",
+                "howto.step4.description": "Stáhněte jednotlivé obrázky JPG nebo získejte všechny obrázky v souboru ZIP. Žádné vodoznaky, žádná registrace.",
+                "converter.title": "Převodník PDF na JPG",
+                "converter.upload.text": "Přetáhněte své PDF sem nebo klikněte pro procházení",
+                "converter.upload.button": "Vybrat PDF",
+                "converter.settings.title": "Nastavení převodu",
+                "converter.settings.quality": "Kvalita Obrazu",
+                "converter.settings.quality.high": "Vysoká (Doporučeno)",
+                "converter.settings.quality.maximum": "Maximální",
+                "converter.settings.quality.medium": "Střední",
+                "converter.settings.quality.low": "Nízká",
+                "converter.settings.scale": "Měřítko Obrazu",
+                "converter.settings.scale.high": "Vysoké (1.5x)",
+                "converter.settings.scale.maximum": "Maximální (2x)",
+                "converter.settings.scale.normal": "Normální (1x)",
+                "converter.settings.scale.low": "Nízké (0.75x)",
+                "converter.settings.pages": "Vyberte Stránky k Převodu",
+                "converter.settings.selectAll": "Vybrat Vše",
+                "converter.preview.title": "Náhled",
+                "converter.processing": "Zpracovávání: 0%",
+                "converter.convert": "Převést na JPG",
+                "converter.download": "Stáhnout Vše",
+                "converter.reset": "Obnovit",
+                "footer.follow": "SLEDUJTE NÁS",
+                "footer.categories": "Populární Kategorie",
+                "footer.categories.pdf": "PDF Nástroje",
+                "footer.categories.image": "Obrazové Nástroje",
+                "footer.categories.text": "Textové Nástroje",
+                "footer.categories.av": "Audio/Video Nástroje",
+                "footer.categories.web": "Webový Vývojář Nástroje",
+                "footer.categories.calc": "Kalkulačka Nástroje",
+                "footer.categories.util": "Užitečné Nástroje",
+                "footer.categories.color": "Barevné Nástroje",
+                "footer.quicklinks": "Rychlé Odkazy",
+                "footer.links.tools": "Všechny Nástroje",
+                "footer.links.faq": "Často Kladené Otázky",
+                "footer.links.contact": "Kontakt",
+                "footer.links.privacy": "Zásady Ochrany Osobních Údajů",
+                "footer.links.disclaimer": "Odmítnutí Odpovědnosti",
+                "footer.links.terms": "Podmínky Služby",
+                "footer.copyright": "© 2025 LollyPoPDF. Všechna práva vyhrazena."
+            }
+
+        };
+
+        // Function to change language
+        function changeLanguage(langCode) {
+            const langData = translations[langCode];
+            if (!langData) return;
+            
+            // Update all elements with data-i18n attribute
+            document.querySelectorAll('[data-i18n]').forEach(element => {
+                const key = element.getAttribute('data-i18n');
+                if (langData[key]) {
+                    element.textContent = langData[key];
+                }
+            });
+            
+            // Update current language display
+            currentLanguageElement.textContent = languages.find(lang => lang.code === langCode)?.name || 'English';
+            
+            // Save language preference
+            localStorage.setItem('language', langCode);
+        }
+
+        // Initialize language
+        const savedLanguage = localStorage.getItem('language') || 'en';
+        changeLanguage(savedLanguage);
+        
+        // Language selection handler
+        languageDropdown.addEventListener('click', (e) => {
+            if (e.target.classList.contains('language-option')) {
+                const langCode = e.target.getAttribute('data-lang');
+                changeLanguage(langCode);
+            }
+        });
+    </script>
+</body>
+</html>

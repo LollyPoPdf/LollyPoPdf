@@ -1213,7 +1213,7 @@
             themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
         }
         
-        themeToggle.addEventListener('click', () => {
+        themeToggle.addEventListener('click', function() {
             body.classList.toggle('dark-mode');
             const isDarkMode = body.classList.contains('dark-mode');
             
@@ -1230,7 +1230,7 @@
         const mobileMenuBtn = document.getElementById('mobileMenuBtn');
         const mobileMenu = document.getElementById('mobileMenu');
         
-        mobileMenuBtn.addEventListener('click', () => {
+        mobileMenuBtn.addEventListener('click', function() {
             mobileMenu.classList.toggle('active');
             
             // Change icon based on menu state
@@ -1243,8 +1243,8 @@
 
         // Close mobile menu when clicking on a link
         const mobileMenuLinks = mobileMenu.querySelectorAll('a');
-        mobileMenuLinks.forEach(link => {
-            link.addEventListener('click', () => {
+        mobileMenuLinks.forEach(function(link) {
+            link.addEventListener('click', function() {
                 mobileMenu.classList.remove('active');
                 mobileMenuBtn.innerHTML = '<i class="fas fa-bars"></i>';
             });
@@ -1254,16 +1254,18 @@
         const tabBtns = document.querySelectorAll('.tab-btn');
         const tabContents = document.querySelectorAll('.tab-content');
         
-        tabBtns.forEach(btn => {
-            btn.addEventListener('click', () => {
+        tabBtns.forEach(function(btn) {
+            btn.addEventListener('click', function() {
                 const tabId = btn.getAttribute('data-tab');
                 
                 // Update active tab button
-                tabBtns.forEach(b => b.classList.remove('active'));
+                tabBtns.forEach(function(b) {
+                    b.classList.remove('active');
+                });
                 btn.classList.add('active');
                 
                 // Update active tab content
-                tabContents.forEach(content => {
+                tabContents.forEach(function(content) {
                     content.classList.remove('active');
                     if (content.id === tabId) {
                         content.classList.add('active');
@@ -1291,27 +1293,29 @@
         let compressedFile = null;
         
         // Set compression level
-        levelOptions.forEach(option => {
-            option.addEventListener('click', () => {
-                levelOptions.forEach(opt => opt.classList.remove('active'));
+        levelOptions.forEach(function(option) {
+            option.addEventListener('click', function() {
+                levelOptions.forEach(function(opt) {
+                    opt.classList.remove('active');
+                });
                 option.classList.add('active');
                 selectedLevel = option.getAttribute('data-level');
             });
         });
         
-        // File upload handling - FIXED: Single event listener
+        // File upload handling
         fileInput.addEventListener('change', handleFileSelection);
         
-        uploadArea.addEventListener('dragover', (e) => {
+        uploadArea.addEventListener('dragover', function(e) {
             e.preventDefault();
             uploadArea.classList.add('drag-over');
         });
         
-        uploadArea.addEventListener('dragleave', () => {
+        uploadArea.addEventListener('dragleave', function() {
             uploadArea.classList.remove('drag-over');
         });
         
-        uploadArea.addEventListener('drop', (e) => {
+        uploadArea.addEventListener('drop', function(e) {
             e.preventDefault();
             uploadArea.classList.remove('drag-over');
             
@@ -1334,7 +1338,7 @@
             
             uploadedFile = file;
             const fileSize = (file.size / (1024 * 1024)).toFixed(2);
-            originalSize.textContent = `${fileSize} MB`;
+            originalSize.textContent = fileSize + ' MB';
             
             fileInfo.style.display = 'block';
             compressedSize.textContent = '-';
@@ -1342,17 +1346,16 @@
             downloadBtn.style.display = 'none';
             
             // Update upload area text
-            uploadArea.innerHTML = `
-                <div class="upload-icon">
-                    <i class="fas fa-file-pdf"></i>
-                </div>
-                <div class="upload-text">${file.name}</div>
-                <p>Size: ${fileSize} MB</p>
-                <label for="fileInput" class="file-label">
-                    <i class="fas fa-sync"></i> <span data-i18n="tool.compressor.change">Change File</span>
-                </label>
-                <input type="file" id="fileInput" class="file-input" accept=".pdf">
-            `;
+            uploadArea.innerHTML = 
+                '<div class="upload-icon">' +
+                    '<i class="fas fa-file-pdf"></i>' +
+                '</div>' +
+                '<div class="upload-text">' + file.name + '</div>' +
+                '<p>Size: ' + fileSize + ' MB</p>' +
+                '<label for="fileInput" class="file-label">' +
+                    '<i class="fas fa-sync"></i> <span data-i18n="tool.compressor.change">Change File</span>' +
+                '</label>' +
+                '<input type="file" id="fileInput" class="file-input" accept=".pdf">';
             
             // Re-attach event listener to the new file input
             const newFileInput = document.getElementById('fileInput');
@@ -1363,7 +1366,7 @@
         }
         
         // Compress PDF
-        compressBtn.addEventListener('click', async () => {
+        compressBtn.addEventListener('click', function() {
             if (!uploadedFile) {
                 alert('Please upload a PDF file first.');
                 return;
@@ -1375,58 +1378,62 @@
             
             try {
                 // Read the uploaded file
-                const arrayBuffer = await readFileAsArrayBuffer(uploadedFile);
-                
-                // Load the PDF
-                const pdfDoc = await PDFLib.PDFDocument.load(arrayBuffer);
-                
-                // Simulate compression process with progress
-                let progress = 0;
-                const interval = setInterval(() => {
-                    progress += 5;
-                    progressBar.style.width = `${progress}%`;
-                    
-                    if (progress >= 100) {
-                        clearInterval(interval);
+                readFileAsArrayBuffer(uploadedFile).then(function(arrayBuffer) {
+                    // Load the PDF
+                    return PDFLib.PDFDocument.load(arrayBuffer);
+                }).then(function(pdfDoc) {
+                    // Simulate compression process with progress
+                    let progress = 0;
+                    const interval = setInterval(function() {
+                        progress += 5;
+                        progressBar.style.width = progress + '%';
                         
-                        // Calculate compression result
-                        const originalSizeMB = parseFloat(originalSize.textContent);
-                        let compressedSizeMB;
-                        
-                        switch(selectedLevel) {
-                            case 'low':
-                                compressedSizeMB = originalSizeMB * 0.8; // 20% reduction
-                                break;
-                            case 'medium':
-                                compressedSizeMB = originalSizeMB * 0.6; // 40% reduction
-                                break;
-                            case 'high':
-                                compressedSizeMB = originalSizeMB * 0.4; // 60% reduction
-                                break;
+                        if (progress >= 100) {
+                            clearInterval(interval);
+                            
+                            // Calculate compression result
+                            const originalSizeMB = parseFloat(originalSize.textContent);
+                            let compressedSizeMB;
+                            
+                            switch(selectedLevel) {
+                                case 'low':
+                                    compressedSizeMB = originalSizeMB * 0.8; // 20% reduction
+                                    break;
+                                case 'medium':
+                                    compressedSizeMB = originalSizeMB * 0.6; // 40% reduction
+                                    break;
+                                case 'high':
+                                    compressedSizeMB = originalSizeMB * 0.4; // 60% reduction
+                                    break;
+                            }
+                            
+                            const reductionPercent = ((originalSizeMB - compressedSizeMB) / originalSizeMB * 100).toFixed(1);
+                            
+                            compressedSize.textContent = compressedSizeMB.toFixed(2) + ' MB';
+                            reduction.textContent = reductionPercent + '%';
+                            
+                            // Create a compressed file (simulated)
+                            compressedFile = new File([uploadedFile], 'compressed_' + uploadedFile.name, {
+                                type: 'application/pdf'
+                            });
+                            
+                            // Enable download button
+                            downloadBtn.style.display = 'flex';
+                            
+                            // Save to history
+                            saveToHistory(uploadedFile.name, originalSizeMB, compressedSizeMB, reductionPercent);
+                            
+                            // Hide progress bar
+                            setTimeout(function() {
+                                progressContainer.style.display = 'none';
+                            }, 1000);
                         }
-                        
-                        const reductionPercent = ((originalSizeMB - compressedSizeMB) / originalSizeMB * 100).toFixed(1);
-                        
-                        compressedSize.textContent = `${compressedSizeMB.toFixed(2)} MB`;
-                        reduction.textContent = `${reductionPercent}%`;
-                        
-                        // Create a compressed file (simulated)
-                        compressedFile = new File([uploadedFile], `compressed_${uploadedFile.name}`, {
-                            type: 'application/pdf'
-                        });
-                        
-                        // Enable download button
-                        downloadBtn.style.display = 'flex';
-                        
-                        // Save to history
-                        saveToHistory(uploadedFile.name, originalSizeMB, compressedSizeMB, reductionPercent);
-                        
-                        // Hide progress bar
-                        setTimeout(() => {
-                            progressContainer.style.display = 'none';
-                        }, 1000);
-                    }
-                }, 100);
+                    }, 100);
+                }).catch(function(error) {
+                    console.error('Compression error:', error);
+                    alert('Error compressing PDF. Please try again.');
+                    progressContainer.style.display = 'none';
+                });
             } catch (error) {
                 console.error('Compression error:', error);
                 alert('Error compressing PDF. Please try again.');
@@ -1436,16 +1443,16 @@
         
         // Helper function to read file as ArrayBuffer
         function readFileAsArrayBuffer(file) {
-            return new Promise((resolve, reject) => {
+            return new Promise(function(resolve, reject) {
                 const reader = new FileReader();
-                reader.onload = () => resolve(reader.result);
+                reader.onload = function() { resolve(reader.result); };
                 reader.onerror = reject;
                 reader.readAsArrayBuffer(file);
             });
         }
         
         // Download compressed PDF
-        downloadBtn.addEventListener('click', () => {
+        downloadBtn.addEventListener('click', function() {
             if (!compressedFile) return;
             
             // Create a blob URL for download
@@ -1463,22 +1470,21 @@
         });
         
         // Clear compressor
-        clearCompressorBtn.addEventListener('click', () => {
+        clearCompressorBtn.addEventListener('click', function() {
             uploadedFile = null;
             compressedFile = null;
             fileInput.value = '';
             
             // Reset upload area
-            uploadArea.innerHTML = `
-                <div class="upload-icon">
-                    <i class="fas fa-file-pdf"></i>
-                </div>
-                <div class="upload-text" data-i18n="tool.compressor.upload">Drag & drop your PDF file here or click to browse</div>
-                <input type="file" id="fileInput" class="file-input" accept=".pdf">
-                <label for="fileInput" class="file-label">
-                    <i class="fas fa-upload"></i> <span data-i18n="tool.compressor.uploadbtn">Choose PDF File</span>
-                </label>
-            `;
+            uploadArea.innerHTML = 
+                '<div class="upload-icon">' +
+                    '<i class="fas fa-file-pdf"></i>' +
+                '</div>' +
+                '<div class="upload-text" data-i18n="tool.compressor.upload">Drag & drop your PDF file here or click to browse</div>' +
+                '<input type="file" id="fileInput" class="file-input" accept=".pdf">' +
+                '<label for="fileInput" class="file-label">' +
+                    '<i class="fas fa-upload"></i> <span data-i18n="tool.compressor.uploadbtn">Choose PDF File</span>' +
+                '</label>';
             
             // Re-attach event listeners
             const newFileInput = document.getElementById('fileInput');
@@ -1532,29 +1538,28 @@
             
             historyList.innerHTML = '';
             
-            pdfHistory.forEach(item => {
+            pdfHistory.forEach(function(item) {
                 const historyItem = document.createElement('div');
                 historyItem.className = 'history-item';
                 
-                historyItem.innerHTML = `
-                    <div class="history-pdf">
-                        <i class="fas fa-file-pdf"></i>
-                    </div>
-                    <div class="history-text">${item.filename}</div>
-                    <div class="history-text">${item.originalSize.toFixed(2)} MB → ${item.compressedSize.toFixed(2)} MB (${item.reduction}%)</div>
-                    <div class="history-actions">
-                        <button class="history-btn delete-btn" data-id="${item.id}">
-                            <i class="fas fa-trash"></i>
-                        </button>
-                    </div>
-                `;
+                historyItem.innerHTML = 
+                    '<div class="history-pdf">' +
+                        '<i class="fas fa-file-pdf"></i>' +
+                    '</div>' +
+                    '<div class="history-text">' + item.filename + '</div>' +
+                    '<div class="history-text">' + item.originalSize.toFixed(2) + ' MB → ' + item.compressedSize.toFixed(2) + ' MB (' + item.reduction + '%)</div>' +
+                    '<div class="history-actions">' +
+                        '<button class="history-btn delete-btn" data-id="' + item.id + '">' +
+                            '<i class="fas fa-trash"></i>' +
+                        '</button>' +
+                    '</div>';
                 
                 historyList.appendChild(historyItem);
             });
             
             // Add event listeners for history buttons
-            document.querySelectorAll('.delete-btn').forEach(btn => {
-                btn.addEventListener('click', () => {
+            document.querySelectorAll('.delete-btn').forEach(function(btn) {
+                btn.addEventListener('click', function() {
                     const id = parseInt(btn.getAttribute('data-id'));
                     deleteHistoryItem(id);
                 });
@@ -1563,13 +1568,15 @@
         
         // Delete history item
         function deleteHistoryItem(id) {
-            pdfHistory = pdfHistory.filter(item => item.id !== id);
+            pdfHistory = pdfHistory.filter(function(item) { 
+                return item.id !== id; 
+            });
             localStorage.setItem('pdfHistory', JSON.stringify(pdfHistory));
             renderHistory();
         }
         
         // Clear history
-        clearHistoryBtn.addEventListener('click', () => {
+        clearHistoryBtn.addEventListener('click', function() {
             if (confirm('Are you sure you want to clear all history?')) {
                 pdfHistory = [];
                 localStorage.setItem('pdfHistory', JSON.stringify(pdfHistory));
@@ -1750,7 +1757,7 @@
                 "hero.title": "Outil de Compression PDF",
                 "hero.description": "Réduisez la taille de vos fichiers PDF sans compromettre la qualité. Rapide, sécurisé et entièrement gratuit ! Tout le traitement se fait localement sans limites de taille de fichier et avec une confidentialité totale.",
                 "howto.title": "Comment Utiliser le Compresseur PDF",
-                "howto.step1.title": "Téléchargez votre PDF",
+                "howto.step1.title": "Téléchargez Votre PDF",
                 "howto.step1.description": "Glissez-déposez votre fichier PDF ou cliquez pour parcourir. L'outil prend en charge tous les fichiers PDF quelle que soit leur taille.",
                 "howto.step2.title": "Choisissez le Niveau de Compression",
                 "howto.step2.description": "Sélectionnez parmi les niveaux de compression faible, moyen ou élevé en fonction de vos exigences de qualité.",
@@ -1762,8 +1769,8 @@
                 "tool.tabs.compressor": "Compresseur",
                 "tool.tabs.history": "Historique",
                 "tool.compressor.upload": "Glissez-déposez votre fichier PDF ici ou cliquez pour parcourir",
-                "tool.compressor.uploadbtn": "Choisir un fichier PDF",
-                "tool.compressor.change": "Changer de fichier",
+                "tool.compressor.uploadbtn": "Choisir un Fichier PDF",
+                "tool.compressor.change": "Changer de Fichier",
                 "tool.compressor.level": "Niveau de Compression",
                 "tool.compressor.low": "Compression Faible",
                 "tool.compressor.lowdesc": "Meilleure qualité, réduction de taille plus petite",
@@ -1775,7 +1782,7 @@
                 "tool.compressor.download": "Télécharger PDF Compressé",
                 "tool.compressor.clear": "Effacer",
                 "tool.compressor.info": "Informations sur le Fichier",
-                "tool.compressor.originalsize": "Taille Originale:",
+                "tool.compressor.originalsize": "Taille d'Origine:",
                 "tool.compressor.compressed": "Taille Compressée:",
                 "tool.compressor.reduction": "Réduction:",
                 "tool.compressor.progress": "Compression de votre PDF...",
@@ -1790,7 +1797,7 @@
                 "footer.categories.av": "Outils Audio/Video",
                 "footer.categories.web": "Outils WebDéveloppeur",
                 "footer.categories.calc": "Outils de Calculatrice",
-                "footer.categories.util": "Outils Utilitaires",
+                "footer.categories.util": "Outils d'Utilité",
                 "footer.categories.color": "Outils de Couleur",
                 "footer.quicklinks": "Liens Rapides",
                 "footer.links.tools": "Tous les Outils",
@@ -1800,1247 +1807,7 @@
                 "footer.links.disclaimer": "Avertissement",
                 "footer.links.terms": "Conditions d'Utilisation",
                 "footer.copyright": "© 2025 LollyPoPDF. Tous droits réservés."
-            },
-            de: {
-                "nav.home": "Startseite",
-                "nav.about": "Über uns",
-                "nav.tools": "Werkzeuge",
-                "nav.contact": "Kontakt",
-                "hero.title": "PDF-Komprimierungstool",
-                "hero.description": "Reduzieren Sie die Größe Ihrer PDF-Dateien ohne Qualitätsverlust. Schnell, sicher und völlig kostenlos! Die gesamte Verarbeitung erfolgt lokal ohne Dateigrößenbeschränkungen und mit vollständiger Privatsphäre.",
-                "howto.title": "So verwenden Sie den PDF-Kompressor",
-                "howto.step1.title": "Laden Sie Ihr PDF hoch",
-                "howto.step1.description": "Ziehen Sie Ihre PDF-Datei per Drag & Drop oder klicken Sie, um zu suchen. Das Tool unterstützt alle PDF-Dateien unabhängig von der Größe.",
-                "howto.step2.title": "Wählen Sie die Komprimierungsstufe",
-                "howto.step2.description": "Wählen Sie je nach Ihren Qualitätsanforderungen zwischen niedriger, mittlerer oder hoher Komprimierung.",
-                "howto.step3.title": "Komprimieren und Herunterladen",
-                "howto.step3.description": "Klicken Sie auf die Schaltfläche Komprimieren und laden Sie Ihre optimierte PDF-Datei mit reduzierter Größe herunter.",
-                "howto.step4.title": "Speichern und Verwalten",
-                "howto.step4.description": "Greifen Sie auf Ihre komprimierten PDF-Dateien im Verlauf zu. Alle Daten werden lokal in Ihrem Browser gespeichert, um die Privatsphäre zu wahren.",
-                "tool.title": "PDF-Kompressor",
-                "tool.tabs.compressor": "Kompressor",
-                "tool.tabs.history": "Verlauf",
-                "tool.compressor.upload": "Ziehen Sie Ihre PDF-Datei hierher oder klicken Sie, um zu suchen",
-                "tool.compressor.uploadbtn": "PDF-Datei auswählen",
-                "tool.compressor.change": "Datei ändern",
-                "tool.compressor.level": "Komprimierungsstufe",
-                "tool.compressor.low": "Geringe Komprimierung",
-                "tool.compressor.lowdesc": "Beste Qualität, geringere Größenreduzierung",
-                "tool.compressor.medium": "Mittlere Komprimierung",
-                "tool.compressor.mediumdesc": "Gutes Gleichgewicht zwischen Qualität und Größe",
-                "tool.compressor.high": "Hohe Komprimierung",
-                "tool.compressor.highdesc": "Maximale Größenreduzierung",
-                "tool.compressor.compress": "PDF komprimieren",
-                "tool.compressor.download": "Komprimierte PDF herunterladen",
-                "tool.compressor.clear": "Löschen",
-                "tool.compressor.info": "Dateiinformationen",
-                "tool.compressor.originalsize": "Originalgröße:",
-                "tool.compressor.compressed": "Komprimierte Größe:",
-                "tool.compressor.reduction": "Reduzierung:",
-                "tool.compressor.progress": "Ihre PDF wird komprimiert...",
-                "tool.history.title": "Komprimierte PDF-Dateien",
-                "tool.history.clear": "Verlauf löschen",
-                "tool.history.empty": "Noch keine PDF-Dateien im Verlauf",
-                "footer.follow": "FOLGEN SIE UNS",
-                "footer.categories": "Beliebte Kategorien",
-                "footer.categories.pdf": "PDF-Tools",
-                "footer.categories.image": "Bild-Tools",
-                "footer.categories.text": "Text-Tools",
-                "footer.categories.av": "Audio/Video-Tools",
-                "footer.categories.web": "WebEntwickler-Tools",
-                "footer.categories.calc": "Rechner-Tools",
-                "footer.categories.util": "Dienstprogramme",
-                "footer.categories.color": "Farb-Tools",
-                "footer.quicklinks": "Schnelllinks",
-                "footer.links.tools": "Alle Tools",
-                "footer.links.faq": "FAQ",
-                "footer.links.contact": "Kontakt",
-                "footer.links.privacy": "Datenschutzrichtlinie",
-                "footer.links.disclaimer": "Haftungsausschluss",
-                "footer.links.terms": "Nutzungsbedingungen",
-                "footer.copyright": "© 2025 LollyPoPDF. Alle Rechte vorbehalten."
-            },
-            it: {
-                "nav.home": "Home",
-                "nav.about": "Chi Siamo",
-                "nav.tools": "Strumenti",
-                "nav.contact": "Contatto",
-                "hero.title": "Strumento di Compressione PDF",
-                "hero.description": "Riduci le dimensioni dei tuoi file PDF senza compromettere la qualità. Veloce, sicuro e completamente gratuito! Tutta l'elaborazione avviene localmente senza limiti di dimensione del file e completa privacy.",
-                "howto.title": "Come Utilizzare il Compressore PDF",
-                "howto.step1.title": "Carica il tuo PDF",
-                "howto.step1.description": "Trascina e rilascia il tuo file PDF o clicca per sfogliare. Lo strumento supporta tutti i file PDF indipendentemente dalle dimensioni.",
-                "howto.step2.title": "Scegli il Livello di Compressione",
-                "howto.step2.description": "Seleziona tra livelli di compressione bassi, medi o alti in base alle tue esigenze di qualità.",
-                "howto.step3.title": "Comprimi e Scarica",
-                "howto.step3.description": "Clicca il pulsante di compressione e scarica il tuo file PDF ottimizzato con dimensioni ridotte.",
-                "howto.step4.title": "Salva e Gestisci",
-                "howto.step4.description": "Accedi ai tuoi file PDF compressi dalla sezione cronologia. Tutti i dati sono memorizzati localmente nel tuo browser per la privacy.",
-                "tool.title": "Compressore PDF",
-                "tool.tabs.compressor": "Compressore",
-                "tool.tabs.history": "Cronologia",
-                "tool.compressor.upload": "Trascina e rilascia il tuo file PDF qui o clicca per sfogliare",
-                "tool.compressor.uploadbtn": "Scegli File PDF",
-                "tool.compressor.change": "Cambia File",
-                "tool.compressor.level": "Livello di Compressione",
-                "tool.compressor.low": "Compressione Bassa",
-                "tool.compressor.lowdesc": "Migliore qualità, riduzione dimensioni minore",
-                "tool.compressor.medium": "Compressione Media",
-                "tool.compressor.mediumdesc": "Buon equilibrio tra qualità e dimensioni",
-                "tool.compressor.high": "Compressione Alta",
-                "tool.compressor.highdesc": "Riduzione dimensioni massima",
-                "tool.compressor.compress": "Comprimi PDF",
-                "tool.compressor.download": "Scarica PDF Compresso",
-                "tool.compressor.clear": "Cancella",
-                "tool.compressor.info": "Informazioni File",
-                "tool.compressor.originalsize": "Dimensione Originale:",
-                "tool.compressor.compressed": "Dimensione Compressa:",
-                "tool.compressor.reduction": "Riduzione:",
-                "tool.compressor.progress": "Compressione del tuo PDF...",
-                "tool.history.title": "File PDF Compressi",
-                "tool.history.clear": "Cancella Cronologia",
-                "tool.history.empty": "Nessun file PDF nella cronologia ancora",
-                "footer.follow": "SEGUICI",
-                "footer.categories": "Categorie Popolari",
-                "footer.categories.pdf": "Strumenti PDF",
-                "footer.categories.image": "Strumenti Immagine",
-                "footer.categories.text": "Strumenti Testo",
-                "footer.categories.av": "Strumenti Audio/Video",
-                "footer.categories.web": "Strumenti Sviluppatore Web",
-                "footer.categories.calc": "Strumenti Calcolatrice",
-                "footer.categories.util": "Strumenti Utilità",
-                "footer.categories.color": "Strumenti Colore",
-                "footer.quicklinks": "Link Rapidi",
-                "footer.links.tools": "Tutti gli Strumenti",
-                "footer.links.faq": "FAQ",
-                "footer.links.contact": "Contatto",
-                "footer.links.privacy": "Informativa sulla Privacy",
-                "footer.links.disclaimer": "Disclaimer",
-                "footer.links.terms": "Termini di Servizio",
-                "footer.copyright": "© 2025 LollyPoPDF. Tutti i diritti riservati."
-            },
-            pt: {
-                "nav.home": "Início",
-                "nav.about": "Sobre Nós",
-                "nav.tools": "Ferramentas",
-                "nav.contact": "Contato",
-                "hero.title": "Ferramenta de Compressão PDF",
-                "hero.description": "Reduza o tamanho dos seus arquivos PDF sem comprometer a qualidade. Rápido, seguro e completamente gratuito! Todo o processamento acontece localmente sem limites de tamanho de arquivo e com privacidade completa.",
-                "howto.title": "Como Usar o Compressor PDF",
-                "howto.step1.title": "Faça Upload do seu PDF",
-                "howto.step1.description": "Arraste e solte seu arquivo PDF ou clique para procurar. A ferramenta suporta todos os arquivos PDF, independentemente do tamanho.",
-                "howto.step2.title": "Escolha o Nível de Compressão",
-                "howto.step2.description": "Selecione entre níveis de compressão baixo, médio ou alto com base em seus requisitos de qualidade.",
-                "howto.step3.title": "Comprima e Baixe",
-                "howto.step3.description": "Clique no botão comprimir e baixe seu arquivo PDF otimizado com tamanho reduzido.",
-                "howto.step4.title": "Salve e Gerencie",
-                "howto.step4.description": "Acesse seus arquivos PDF compactados na seção de histórico. Todos os dados são armazenados localmente no seu navegador para privacidade.",
-                "tool.title": "Compressor PDF",
-                "tool.tabs.compressor": "Compressor",
-                "tool.tabs.history": "Histórico",
-                "tool.compressor.upload": "Arraste e solte seu arquivo PDF aqui ou clique para procurar",
-                "tool.compressor.uploadbtn": "Escolher Arquivo PDF",
-                "tool.compressor.change": "Alterar Arquivo",
-                "tool.compressor.level": "Nível de Compressão",
-                "tool.compressor.low": "Compressão Baixa",
-                "tool.compressor.lowdesc": "Melhor qualidade, redução de tamanho menor",
-                "tool.compressor.medium": "Compressão Média",
-                "tool.compressor.mediumdesc": "Bom equilíbrio entre qualidade e tamanho",
-                "tool.compressor.high": "Compressão Alta",
-                "tool.compressor.highdesc": "Redução de tamanho máxima",
-                "tool.compressor.compress": "Comprimir PDF",
-                "tool.compressor.download": "Baixar PDF Comprimido",
-                "tool.compressor.clear": "Limpar",
-                "tool.compressor.info": "Informações do Arquivo",
-                "tool.compressor.originalsize": "Tamanho Original:",
-                "tool.compressor.compressed": "Tamanho Comprimido:",
-                "tool.compressor.reduction": "Redução:",
-                "tool.compressor.progress": "Comprimindo seu PDF...",
-                "tool.history.title": "Arquivos PDF Comprimidos",
-                "tool.history.clear": "Limpar Histórico",
-                "tool.history.empty": "Nenhum arquivo PDF no histórico ainda",
-                "footer.follow": "SIGA-NOS",
-                "footer.categories": "Categorias Populares",
-                "footer.categories.pdf": "Ferramentas PDF",
-                "footer.categories.image": "Ferramentas de Imagem",
-                "footer.categories.text": "Ferramentas de Texto",
-                "footer.categories.av": "Ferramentas de Áudio/Video",
-                "footer.categories.web": "Ferramentas WebDesenvolvedor",
-                "footer.categories.calc": "Ferramentas de Calculadora",
-                "footer.categories.util": "Ferramentas de Utilidade",
-                "footer.categories.color": "Ferramentas de Cor",
-                "footer.quicklinks": "Links Rápidos",
-                "footer.links.tools": "Todas as Ferramentas",
-                "footer.links.faq": "FAQ",
-                "footer.links.contact": "Contato",
-                "footer.links.privacy": "Política de Privacidade",
-                "footer.links.disclaimer": "Aviso Legal",
-                "footer.links.terms": "Termos de Serviço",
-                "footer.copyright": "© 2025 LollyPoPDF. Todos os direitos reservados."
-            },
-            ja: {
-                "nav.home": "ホーム",
-                "nav.about": "会社概要",
-                "nav.tools": "ツール",
-                "nav.contact": "お問い合わせ",
-                "hero.title": "PDF圧縮ツール",
-                "hero.description": "品質を損なうことなくPDFファイルのサイズを縮小します。高速、安全、完全無料！すべての処理はローカルで行われ、ファイルサイズ制限なし、完全なプライバシーを実現。",
-                "howto.title": "PDFコンプレッサーの使用方法",
-                "howto.step1.title": "PDFをアップロード",
-                "howto.step1.description": "PDFファイルをドラッグ＆ドロップするか、クリックして参照します。このツールはサイズに関係なくすべてのPDFファイルをサポートします。",
-                "howto.step2.title": "圧縮レベルを選択",
-                "howto.step2.description": "品質要件に基づいて、低、中、高の圧縮レベルから選択します。",
-                "howto.step3.title": "圧縮とダウンロード",
-                "howto.step3.description": "圧縮ボタンをクリックし、サイズが縮小された最適化されたPDFファイルをダウンロードします。",
-                "howto.step4.title": "保存と管理",
-                "howto.step4.description": "履歴セクションから圧縮されたPDFファイルにアクセスします。すべてのデータはプライバシー保護のためブラウザにローカルに保存されます。",
-                "tool.title": "PDFコンプレッサー",
-                "tool.tabs.compressor": "コンプレッサー",
-                "tool.tabs.history": "履歴",
-                "tool.compressor.upload": "PDFファイルをここにドラッグ＆ドロップするか、クリックして参照",
-                "tool.compressor.uploadbtn": "PDFファイルを選択",
-                "tool.compressor.change": "ファイルを変更",
-                "tool.compressor.level": "圧縮レベル",
-                "tool.compressor.low": "低圧縮",
-                "tool.compressor.lowdesc": "最高品質、サイズ縮小は少なめ",
-                "tool.compressor.medium": "中圧縮",
-                "tool.compressor.mediumdesc": "品質とサイズの良いバランス",
-                "tool.compressor.high": "高圧縮",
-                "tool.compressor.highdesc": "最大のサイズ縮小",
-                "tool.compressor.compress": "PDFを圧縮",
-                "tool.compressor.download": "圧縮PDFをダウンロード",
-                "tool.compressor.clear": "クリア",
-                "tool.compressor.info": "ファイル情報",
-                "tool.compressor.originalsize": "元のサイズ:",
-                "tool.compressor.compressed": "圧縮サイズ:",
-                "tool.compressor.reduction": "削減率:",
-                "tool.compressor.progress": "PDFを圧縮中...",
-                "tool.history.title": "圧縮PDFファイル",
-                "tool.history.clear": "履歴をクリア",
-                "tool.history.empty": "履歴にPDFファイルはまだありません",
-                "footer.follow": "フォローする",
-                "footer.categories": "人気カテゴリ",
-                "footer.categories.pdf": "PDFツール",
-                "footer.categories.image": "画像ツール",
-                "footer.categories.text": "テキストツール",
-                "footer.categories.av": "オーディオ/ビデオツール",
-                "footer.categories.web": "Web開発者ツール",
-                "footer.categories.calc": "電卓ツール",
-                "footer.categories.util": "ユーティリティツール",
-                "footer.categories.color": "カラーツール",
-                "footer.quicklinks": "クイックリンク",
-                "footer.links.tools": "すべてのツール",
-                "footer.links.faq": "FAQ",
-                "footer.links.contact": "お問い合わせ",
-                "footer.links.privacy": "プライバシーポリシー",
-                "footer.links.disclaimer": "免責事項",
-                "footer.links.terms": "利用規約",
-                "footer.copyright": "© 2025 LollyPoPDF. All rights reserved."
-            },
-            ru: {
-                "nav.home": "Главная",
-                "nav.about": "О нас",
-                "nav.tools": "Инструменты",
-                "nav.contact": "Контакты",
-                "hero.title": "Инструмент сжатия PDF",
-                "hero.description": "Уменьшите размер ваших PDF-файлов без потери качества. Быстро, безопасно и совершенно бесплатно! Вся обработка происходит локально без ограничений размера файла и с полной конфиденциальностью.",
-                "howto.title": "Как использовать компрессор PDF",
-                "howto.step1.title": "Загрузите ваш PDF",
-                "howto.step1.description": "Перетащите ваш PDF-файл или нажмите для просмотра. Инструмент поддерживает все PDF-файлы независимо от размера.",
-                "howto.step2.title": "Выберите уровень сжатия",
-                "howto.step2.description": "Выберите из низкого, среднего или высокого уровня сжатия в зависимости от ваших требований к качеству.",
-                "howto.step3.title": "Сожмите и скачайте",
-                "howto.step3.description": "Нажмите кнопку сжатия и скачайте ваш оптимизированный PDF-файл с уменьшенным размером.",
-                "howto.step4.title": "Сохраните и управляйте",
-                "howto.step4.description": "Доступ к вашим сжатым PDF-файлам из раздела истории. Все данные хранятся локально в вашем браузере для конфиденциальности.",
-                "tool.title": "Компрессор PDF",
-                "tool.tabs.compressor": "Компрессор",
-                "tool.tabs.history": "История",
-                "tool.compressor.upload": "Перетащите ваш PDF-файл сюда или нажмите для просмотра",
-                "tool.compressor.uploadbtn": "Выбрать PDF-файл",
-                "tool.compressor.change": "Изменить файл",
-                "tool.compressor.level": "Уровень сжатия",
-                "tool.compressor.low": "Низкое сжатие",
-                "tool.compressor.lowdesc": "Лучшее качество, меньшее уменьшение размера",
-                "tool.compressor.medium": "Среднее сжатие",
-                "tool.compressor.mediumdesc": "Хороший баланс качества и размера",
-                "tool.compressor.high": "Высокое сжатие",
-                "tool.compressor.highdesc": "Максимальное уменьшение размера",
-                "tool.compressor.compress": "Сжать PDF",
-                "tool.compressor.download": "Скачать сжатый PDF",
-                "tool.compressor.clear": "Очистить",
-                "tool.compressor.info": "Информация о файле",
-                "tool.compressor.originalsize": "Исходный размер:",
-                "tool.compressor.compressed": "Сжатый размер:",
-                "tool.compressor.reduction": "Сокращение:",
-                "tool.compressor.progress": "Сжатие вашего PDF...",
-                "tool.history.title": "Сжатые PDF-файлы",
-                "tool.history.clear": "Очистить историю",
-                "tool.history.empty": "В истории пока нет PDF-файлов",
-                "footer.follow": "СЛЕДУЙТЕ ЗА НАМИ",
-                "footer.categories": "Популярные категории",
-                "footer.categories.pdf": "PDF-инструменты",
-                "footer.categories.image": "Инструменты для изображений",
-                "footer.categories.text": "Текстовые инструменты",
-                "footer.categories.av": "Аудио/Видео инструменты",
-                "footer.categories.web": "Инструменты веб-разработчика",
-                "footer.categories.calc": "Инструменты калькулятора",
-                "footer.categories.util": "Утилиты",
-                "footer.categories.color": "Цветовые инструменты",
-                "footer.quicklinks": "Быстрые ссылки",
-                "footer.links.tools": "Все инструменты",
-                "footer.links.faq": "ЧаВо",
-                "footer.links.contact": "Контакты",
-                "footer.links.privacy": "Политика конфиденциальности",
-                "footer.links.disclaimer": "Отказ от ответственности",
-                "footer.links.terms": "Условия использования",
-                "footer.copyright": "© 2025 LollyPoPDF. Все права защищены."
-            },
-            ko: {
-                "nav.home": "홈",
-                "nav.about": "회사 소개",
-                "nav.tools": "도구",
-                "nav.contact": "연락처",
-                "hero.title": "PDF 압축 도구",
-                "hero.description": "품질을 저하시키지 않고 PDF 파일 크기를 줄이세요. 빠르고 안전하며 완전 무료! 모든 처리는 파일 크기 제한 없이 로컬에서 이루어지며 완전한 개인 정보 보호를 제공합니다.",
-                "howto.title": "PDF 압축기 사용 방법",
-                "howto.step1.title": "PDF 업로드",
-                "howto.step1.description": "PDF 파일을 끌어다 놓거나 클릭하여 탐색하세요. 이 도구는 크기에 관계없이 모든 PDF 파일을 지원합니다.",
-                "howto.step2.title": "압축 수준 선택",
-                "howto.step2.description": "품질 요구 사항에 따라 낮음, 중간 또는 높음 압축 수준 중에서 선택하세요.",
-                "howto.step3.title": "압축 및 다운로드",
-                "howto.step3.description": "압축 버튼을 클릭하고 크기가 줄어든 최적화된 PDF 파일을 다운로드하세요.",
-                "howto.step4.title": "저장 및 관리",
-                "howto.step4.description": "히스토리 섹션에서 압축된 PDF 파일에 액세스하세요. 모든 데이터는 개인 정보 보호를 위해 브라우저에 로컬로 저장됩니다.",
-                "tool.title": "PDF 압축기",
-                "tool.tabs.compressor": "압축기",
-                "tool.tabs.history": "히스토리",
-                "tool.compressor.upload": "PDF 파일을 여기에 끌어다 놓거나 클릭하여 탐색",
-                "tool.compressor.uploadbtn": "PDF 파일 선택",
-                "tool.compressor.change": "파일 변경",
-                "tool.compressor.level": "압축 수준",
-                "tool.compressor.low": "낮은 압축",
-                "tool.compressor.lowdesc": "최고 품질, 적은 크기 감소",
-                "tool.compressor.medium": "중간 압축",
-                "tool.compressor.mediumdesc": "품질과 크기의 좋은 균형",
-                "tool.compressor.high": "높은 압축",
-                "tool.compressor.highdesc": "최대 크기 감소",
-                "tool.compressor.compress": "PDF 압축",
-                "tool.compressor.download": "압축 PDF 다운로드",
-                "tool.compressor.clear": "지우기",
-                "tool.compressor.info": "파일 정보",
-                "tool.compressor.originalsize": "원본 크기:",
-                "tool.compressor.compressed": "압축 크기:",
-                "tool.compressor.reduction": "감소율:",
-                "tool.compressor.progress": "PDF 압축 중...",
-                "tool.history.title": "압축 PDF 파일",
-                "tool.history.clear": "히스토리 지우기",
-                "tool.history.empty": "아직 히스토리에 PDF 파일이 없습니다",
-                "footer.follow": "팔로우하기",
-                "footer.categories": "인기 카테고리",
-                "footer.categories.pdf": "PDF 도구",
-                "footer.categories.image": "이미지 도구",
-                "footer.categories.text": "텍스트 도구",
-                "footer.categories.av": "오디오/비디오 도구",
-                "footer.categories.web": "웹 개발자 도구",
-                "footer.categories.calc": "계산기 도구",
-                "footer.categories.util": "유틸리티 도구",
-                "footer.categories.color": "색상 도구",
-                "footer.quicklinks": "빠른 링크",
-                "footer.links.tools": "모든 도구",
-                "footer.links.faq": "자주 묻는 질문",
-                "footer.links.contact": "연락처",
-                "footer.links.privacy": "개인정보 처리방침",
-                "footer.links.disclaimer": "면책 조항",
-                "footer.links.terms": "서비스 약관",
-                "footer.copyright": "© 2025 LollyPoPDF. All rights reserved."
-            },
-            "zh-CN": {
-                "nav.home": "首页",
-                "nav.about": "关于我们",
-                "nav.tools": "工具",
-                "nav.contact": "联系我们",
-                "hero.title": "PDF压缩工具",
-                "hero.description": "在不影响质量的情况下减小PDF文件大小。快速、安全且完全免费！所有处理都在本地进行，无文件大小限制，完全保护隐私。",
-                "howto.title": "如何使用PDF压缩器",
-                "howto.step1.title": "上传您的PDF",
-                "howto.step1.description": "拖放您的PDF文件或点击浏览。该工具支持所有PDF文件，无论大小如何。",
-                "howto.step2.title": "选择压缩级别",
-                "howto.step2.description": "根据您的质量要求选择低、中或高压缩级别。",
-                "howto.step3.title": "压缩和下载",
-                "howto.step3.description": "点击压缩按钮并下载优化后的PDF文件，文件大小已减小。",
-                "howto.step4.title": "保存和管理",
-                "howto.step4.description": "从历史记录部分访问您压缩的PDF文件。所有数据都存储在您的浏览器本地以确保隐私。",
-                "tool.title": "PDF压缩器",
-                "tool.tabs.compressor": "压缩器",
-                "tool.tabs.history": "历史记录",
-                "tool.compressor.upload": "将PDF文件拖放到此处或点击浏览",
-                "tool.compressor.uploadbtn": "选择PDF文件",
-                "tool.compressor.change": "更改文件",
-                "tool.compressor.level": "压缩级别",
-                "tool.compressor.low": "低压缩",
-                "tool.compressor.lowdesc": "最佳质量，较小的尺寸减小",
-                "tool.compressor.medium": "中压缩",
-                "tool.compressor.mediumdesc": "质量和大小的良好平衡",
-                "tool.compressor.high": "高压缩",
-                "tool.compressor.highdesc": "最大尺寸减小",
-                "tool.compressor.compress": "压缩PDF",
-                "tool.compressor.download": "下载压缩PDF",
-                "tool.compressor.clear": "清除",
-                "tool.compressor.info": "文件信息",
-                "tool.compressor.originalsize": "原始大小:",
-                "tool.compressor.compressed": "压缩大小:",
-                "tool.compressor.reduction": "减少:",
-                "tool.compressor.progress": "正在压缩您的PDF...",
-                "tool.history.title": "已压缩的PDF文件",
-                "tool.history.clear": "清除历史记录",
-                "tool.history.empty": "历史记录中尚无PDF文件",
-                "footer.follow": "关注我们",
-                "footer.categories": "热门类别",
-                "footer.categories.pdf": "PDF工具",
-                "footer.categories.image": "图像工具",
-                "footer.categories.text": "文本工具",
-                "footer.categories.av": "音频/视频工具",
-                "footer.categories.web": "Web开发工具",
-                "footer.categories.calc": "计算器工具",
-                "footer.categories.util": "实用工具",
-                "footer.categories.color": "颜色工具",
-                "footer.quicklinks": "快速链接",
-                "footer.links.tools": "所有工具",
-                "footer.links.faq": "常见问题",
-                "footer.links.contact": "联系我们",
-                "footer.links.privacy": "隐私政策",
-                "footer.links.disclaimer": "免责声明",
-                "footer.links.terms": "服务条款",
-                "footer.copyright": "© 2025 LollyPoPDF. 版权所有。"
-            },
-            "zh-TW": {
-                "nav.home": "首頁",
-                "nav.about": "關於我們",
-                "nav.tools": "工具",
-                "nav.contact": "聯絡我們",
-                "hero.title": "PDF壓縮工具",
-                "hero.description": "在不影響品質的情況下減小PDF檔案大小。快速、安全且完全免費！所有處理都在本地進行，無檔案大小限制，完全保護隱私。",
-                "howto.title": "如何使用PDF壓縮器",
-                "howto.step1.title": "上傳您的PDF",
-                "howto.step1.description": "拖放您的PDF檔案或點擊瀏覽。該工具支援所有PDF檔案，無論大小如何。",
-                "howto.step2.title": "選擇壓縮級別",
-                "howto.step2.description": "根據您的品質要求選擇低、中或高壓縮級別。",
-                "howto.step3.title": "壓縮和下載",
-                "howto.step3.description": "點擊壓縮按鈕並下載優化後的PDF檔案，檔案大小已減小。",
-                "howto.step4.title": "儲存和管理",
-                "howto.step4.description": "從歷史記錄部分存取您壓縮的PDF檔案。所有資料都儲存在您的瀏覽器本地以確保隱私。",
-                "tool.title": "PDF壓縮器",
-                "tool.tabs.compressor": "壓縮器",
-                "tool.tabs.history": "歷史記錄",
-                "tool.compressor.upload": "將PDF檔案拖放到此處或點擊瀏覽",
-                "tool.compressor.uploadbtn": "選擇PDF檔案",
-                "tool.compressor.change": "更改檔案",
-                "tool.compressor.level": "壓縮級別",
-                "tool.compressor.low": "低壓縮",
-                "tool.compressor.lowdesc": "最佳品質，較小的尺寸減小",
-                "tool.compressor.medium": "中壓縮",
-                "tool.compressor.mediumdesc": "品質和尺寸的良好平衡",
-                "tool.compressor.high": "高壓縮",
-                "tool.compressor.highdesc": "最大尺寸減小",
-                "tool.compressor.compress": "壓縮PDF",
-                "tool.compressor.download": "下載壓縮PDF",
-                "tool.compressor.clear": "清除",
-                "tool.compressor.info": "檔案資訊",
-                "tool.compressor.originalsize": "原始大小:",
-                "tool.compressor.compressed": "壓縮大小:",
-                "tool.compressor.reduction": "減少:",
-                "tool.compressor.progress": "正在壓縮您的PDF...",
-                "tool.history.title": "已壓縮的PDF檔案",
-                "tool.history.clear": "清除歷史記錄",
-                "tool.history.empty": "歷史記錄中尚無PDF檔案",
-                "footer.follow": "關注我們",
-                "footer.categories": "熱門類別",
-                "footer.categories.pdf": "PDF工具",
-                "footer.categories.image": "影像工具",
-                "footer.categories.text": "文字工具",
-                "footer.categories.av": "音訊/視訊工具",
-                "footer.categories.web": "網頁開發工具",
-                "footer.categories.calc": "計算機工具",
-                "footer.categories.util": "實用工具",
-                "footer.categories.color": "色彩工具",
-                "footer.quicklinks": "快速連結",
-                "footer.links.tools": "所有工具",
-                "footer.links.faq": "常見問題",
-                "footer.links.contact": "聯絡我們",
-                "footer.links.privacy": "隱私權政策",
-                "footer.links.disclaimer": "免責聲明",
-                "footer.links.terms": "服務條款",
-                "footer.copyright": "© 2025 LollyPoPDF. 版權所有。"
-            },
-            ar: {
-                "nav.home": "الصفحة الرئيسية",
-                "nav.about": "من نحن",
-                "nav.tools": "الأدوات",
-                "nav.contact": "اتصل بنا",
-                "hero.title": "أداة ضغط PDF",
-                "hero.description": "قلل حجم ملفات PDF الخاصة بك دون المساس بالجودة. سريع وآمن ومجاني تمامًا! تتم جميع المعالجة محليًا دون حدود لحجم الملف وبخصوصية كاملة.",
-                "howto.title": "كيفية استخدام ضاغط PDF",
-                "howto.step1.title": "قم بتحميل ملف PDF الخاص بك",
-                "howto.step1.description": "اسحب وأفلت ملف PDF الخاص بك أو انقر للتصفح. تدعم الأداة جميع ملفات PDF بغض النظر عن الحجم.",
-                "howto.step2.title": "اختر مستوى الضغط",
-                "howto.step2.description": "اختر من بين مستويات الضغط المنخفضة أو المتوسطة أو العالية بناءً على متطلبات الجودة الخاصة بك.",
-                "howto.step3.title": "اضغط وتنزيل",
-                "howto.step3.description": "انقر على زر الضغط وقم بتنزيل ملف PDF المحسن الخاص بك مع تقليل حجم الملف.",
-                "howto.step4.title": "احفظ وادارك",
-                "howto.step4.description": "الوصول إلى ملفات PDF المضغوطة الخاصة بك من قسم السجل. يتم تخزين جميع البيانات محليًا في متصفحك للخصوصية.",
-                "tool.title": "ضاغط PDF",
-                "tool.tabs.compressor": "الضاغط",
-                "tool.tabs.history": "السجل",
-                "tool.compressor.upload": "اسحب وأفلت ملف PDF الخاص بك هنا أو انقر للتصفح",
-                "tool.compressor.uploadbtn": "اختر ملف PDF",
-                "tool.compressor.change": "تغيير الملف",
-                "tool.compressor.level": "مستوى الضغط",
-                "tool.compressor.low": "ضغط منخفض",
-                "tool.compressor.lowdesc": "أفضل جودة، تقليل حجم أصغر",
-                "tool.compressor.medium": "ضغط متوسط",
-                "tool.compressor.mediumdesc": "توازن جيد بين الجودة والحجم",
-                "tool.compressor.high": "ضغط عالي",
-                "tool.compressor.highdesc": "أقصى تقليل للحجم",
-                "tool.compressor.compress": "ضغط PDF",
-                "tool.compressor.download": "تنزيل PDF المضغوط",
-                "tool.compressor.clear": "مسح",
-                "tool.compressor.info": "معلومات الملف",
-                "tool.compressor.originalsize": "الحجم الأصلي:",
-                "tool.compressor.compressed": "الحجم المضغوط:",
-                "tool.compressor.reduction": "التخفيض:",
-                "tool.compressor.progress": "جاري ضغط ملف PDF الخاص بك...",
-                "tool.history.title": "ملفات PDF المضغوطة",
-                "tool.history.clear": "مسح السجل",
-                "tool.history.empty": "لا توجد ملفات PDF في السجل بعد",
-                "footer.follow": "تابعنا",
-                "footer.categories": "الفئات الشائعة",
-                "footer.categories.pdf": "أدوات PDF",
-                "footer.categories.image": "أدوات الصور",
-                "footer.categories.text": "أدوات النص",
-                "footer.categories.av": "أدوات الصوت/الفيديو",
-                "footer.categories.web": "أدوات مطور الويب",
-                "footer.categories.calc": "أدوات الآلة الحاسبة",
-                "footer.categories.util": "أدوات المساعدة",
-                "footer.categories.color": "أدوات الألوان",
-                "footer.quicklinks": "روابط سريعة",
-                "footer.links.tools": "جميع الأدوات",
-                "footer.links.faq": "الأسئلة الشائعة",
-                "footer.links.contact": "اتصل بنا",
-                "footer.links.privacy": "سياسة الخصوصية",
-                "footer.links.disclaimer": "إخلاء المسؤولية",
-                "footer.links.terms": "شروط الخدمة",
-                "footer.copyright": "© 2025 LollyPoPDF. جميع الحقوق محفوظة."
-            },
-            fa: {
-                "nav.home": "خانه",
-                "nav.about": "درباره ما",
-                "nav.tools": "ابزارها",
-                "nav.contact": "تماس با ما",
-                "hero.title": "ابزار فشرده سازی PDF",
-                "hero.description": "اندازه فایل های PDF خود را بدون به خطر انداختن کیفیت کاهش دهید. سریع، امن و کاملا رایگان! تمام پردازش به صورت محلی و بدون محدودیت اندازه فایل و با حریم خصوصی کامل انجام می شود.",
-                "howto.title": "نحوه استفاده از فشرده ساز PDF",
-                "howto.step1.title": "PDF خود را آپلود کنید",
-                "howto.step1.description": "فایل PDF خود را بکشید و رها کنید یا برای جستجو کلیک کنید. این ابزار از تمام فایل های PDF بدون توجه به اندازه پشتیبانی می کند.",
-                "howto.step2.title": "سطح فشرده سازی را انتخاب کنید",
-                "howto.step2.description": "با توجه به نیازهای کیفی خود از بین سطوح فشرده سازی کم، متوسط یا زیاد انتخاب کنید.",
-                "howto.step3.title": "فشرده سازی و دانلود",
-                "howto.step3.description": "دکمه فشرده سازی را کلیک کنید و فایل PDF بهینه شده خود را با اندازه کاهش یافته دانلود کنید.",
-                "howto.step4.title": "ذخیره و مدیریت",
-                "howto.step4.description": "به فایل های PDF فشرده شده خود از بخش تاریخچه دسترسی پیدا کنید. تمام داده ها برای حفظ حریم خصوصی به صورت محلی در مرورگر شما ذخیره می شوند.",
-                "tool.title": "فشرده ساز PDF",
-                "tool.tabs.compressor": "فشرده ساز",
-                "tool.tabs.history": "تاریخچه",
-                "tool.compressor.upload": "فایل PDF خود را اینجا بکشید و رها کنید یا برای جستجو کلیک کنید",
-                "tool.compressor.uploadbtn": "انتخاب فایل PDF",
-                "tool.compressor.change": "تغییر فایل",
-                "tool.compressor.level": "سطح فشرده سازی",
-                "tool.compressor.low": "فشرده سازی کم",
-                "tool.compressor.lowdesc": "بهترین کیفیت، کاهش اندازه کمتر",
-                "tool.compressor.medium": "فشرده سازی متوسط",
-                "tool.compressor.mediumdesc": "تعادل خوب بین کیفیت و اندازه",
-                "tool.compressor.high": "فشرده سازی زیاد",
-                "tool.compressor.highdesc": "حداکثر کاهش اندازه",
-                "tool.compressor.compress": "فشرده سازی PDF",
-                "tool.compressor.download": "دانلود PDF فشرده",
-                "tool.compressor.clear": "پاک کردن",
-                "tool.compressor.info": "اطلاعات فایل",
-                "tool.compressor.originalsize": "اندازه اصلی:",
-                "tool.compressor.compressed": "اندازه فشرده:",
-                "tool.compressor.reduction": "کاهش:",
-                "tool.compressor.progress": "در حال فشرده سازی PDF شما...",
-                "tool.history.title": "فایل های PDF فشرده",
-                "tool.history.clear": "پاک کردن تاریخچه",
-                "tool.history.empty": "هنوز فایل PDF در تاریخچه وجود ندارد",
-                "footer.follow": "ما را دنبال کنید",
-                "footer.categories": "دسته بندی های محبوب",
-                "footer.categories.pdf": "ابزارهای PDF",
-                "footer.categories.image": "ابزارهای تصویر",
-                "footer.categories.text": "ابزارهای متن",
-                "footer.categories.av": "ابزارهای صدا/ویدیو",
-                "footer.categories.web": "ابزارهای توسعه دهنده وب",
-                "footer.categories.calc": "ابزارهای ماشین حساب",
-                "footer.categories.util": "ابزارهای کمکی",
-                "footer.categories.color": "ابزارهای رنگ",
-                "footer.quicklinks": "لینک های سریع",
-                "footer.links.tools": "تمام ابزارها",
-                "footer.links.faq": "سوالات متداول",
-                "footer.links.contact": "تماس با ما",
-                "footer.links.privacy": "سیاست حفظ حریم خصوصی",
-                "footer.links.disclaimer": "سلب مسئولیت",
-                "footer.links.terms": "شرایط استفاده",
-                "footer.copyright": "© 2025 LollyPoPDF. تمامی حقوق محفوظ است."
-            },
-            bg: {
-                "nav.home": "Начало",
-                "nav.about": "За нас",
-                "nav.tools": "Инструменти",
-                "nav.contact": "Контакт",
-                "hero.title": "Инструмент за компресиране на PDF",
-                "hero.description": "Намалете размера на вашите PDF файлове без компромис с качеството. Бързо, сигурно и напълно безплатно! Цялата обработка се извършва локално без ограничения на размера на файла и с пълна поверителност.",
-                "howto.title": "Как да използвате PDF компресора",
-                "howto.step1.title": "Качете вашия PDF",
-                "howto.step1.description": "Плъзнете и пуснете вашия PDF файл или щракнете, за да прегледате. Инструментът поддържа всички PDF файлове независимо от размера.",
-                "howto.step2.title": "Изберете ниво на компресиране",
-                "howto.step2.description": "Изберете от ниско, средно или високо ниво на компресиране въз основа на вашите изисквания за качество.",
-                "howto.step3.title": "Компресирайте и изтеглете",
-                "howto.step3.description": "Щракнете върху бутона за компресиране и изтеглете оптимизирания си PDF файл с намален размер.",
-                "howto.step4.title": "Запазете и управлявайте",
-                "howto.step4.description": "Достъпвайте компресираните си PDF файлове от секцията с история. Всички данни се съхраняват локално във вашия браузър за поверителност.",
-                "tool.title": "PDF компресор",
-                "tool.tabs.compressor": "Компресор",
-                "tool.tabs.history": "История",
-                "tool.compressor.upload": "Плъзнете и пуснете вашия PDF файл тук или щракнете, за да прегледате",
-                "tool.compressor.uploadbtn": "Изберете PDF файл",
-                "tool.compressor.change": "Промяна на файл",
-                "tool.compressor.level": "Ниво на компресиране",
-                "tool.compressor.low": "Ниско компресиране",
-                "tool.compressor.lowdesc": "Най-добро качество, по-малко намаляване на размера",
-                "tool.compressor.medium": "Средно компресиране",
-                "tool.compressor.mediumdesc": "Добър баланс между качество и размер",
-                "tool.compressor.high": "Високо компресиране",
-                "tool.compressor.highdesc": "Максимално намаляване на размера",
-                "tool.compressor.compress": "Компресирай PDF",
-                "tool.compressor.download": "Изтегли компресиран PDF",
-                "tool.compressor.clear": "Изчисти",
-                "tool.compressor.info": "Информация за файла",
-                "tool.compressor.originalsize": "Оригинален размер:",
-                "tool.compressor.compressed": "Компресиран размер:",
-                "tool.compressor.reduction": "Намаление:",
-                "tool.compressor.progress": "Компресиране на вашия PDF...",
-                "tool.history.title": "Компресирани PDF файлове",
-                "tool.history.clear": "Изчисти история",
-                "tool.history.empty": "Все още няма PDF файлове в историята",
-                "footer.follow": "СЛЕДВАЙТЕ НИ",
-                "footer.categories": "Популярни категории",
-                "footer.categories.pdf": "PDF инструменти",
-                "footer.categories.image": "Инструменти за изображения",
-                "footer.categories.text": "Текстови инструменти",
-                "footer.categories.av": "Аудио/Видео инструменти",
-                "footer.categories.web": "Инструменти за уеб разработчици",
-                "footer.categories.calc": "Калкулаторни инструменти",
-                "footer.categories.util": "Помощни инструменти",
-                "footer.categories.color": "Цветови инструменти",
-                "footer.quicklinks": "Бързи връзки",
-                "footer.links.tools": "Всички инструменти",
-                "footer.links.faq": "ЧЗВ",
-                "footer.links.contact": "Контакт",
-                "footer.links.privacy": "Политика за поверителност",
-                "footer.links.disclaimer": "Отказ от отговорност",
-                "footer.links.terms": "Условия за ползване",
-                "footer.copyright": "© 2025 LollyPoPDF. Всички права запазени."
-            },
-            ca: {
-                "nav.home": "Inici",
-                "nav.about": "Sobre nosaltres",
-                "nav.tools": "Eines",
-                "nav.contact": "Contacte",
-                "hero.title": "Eina de compressió PDF",
-                "hero.description": "Redueix la mida dels teus fitxers PDF sense comprometre la qualitat. Ràpid, segur i completament gratuït! Tot el processament es realitza localment sense límits de mida de fitxer i amb privacitat completa.",
-                "howto.title": "Com utilitzar el compressor PDF",
-                "howto.step1.title": "Puja el teu PDF",
-                "howto.step1.description": "Arrossega i deixa anar el teu fitxer PDF o fes clic per navegar. L'eina admet tots els fitxers PDF independentment de la mida.",
-                "howto.step2.title": "Tria el nivell de compressió",
-                "howto.step2.description": "Selecciona entre nivells de compressió baixos, mitjans o alts segons els teus requisits de qualitat.",
-                "howto.step3.title": "Comprimeix i descarrega",
-                "howto.step3.description": "Fes clic al botó de compressió i descarrega el teu fitxer PDF optimitzat amb mida reduïda.",
-                "howto.step4.title": "Desa i gestiona",
-                "howto.step4.description": "Accedeix als teus fitxers PDF comprimits des de la secció d'historial. Totes les dades s'emmagatzemen localment al teu navegador per a la privacitat.",
-                "tool.title": "Compressor PDF",
-                "tool.tabs.compressor": "Compressor",
-                "tool.tabs.history": "Historial",
-                "tool.compressor.upload": "Arrossega i deixa anar el teu fitxer PDF aquí o fes clic per navegar",
-                "tool.compressor.uploadbtn": "Tria fitxer PDF",
-                "tool.compressor.change": "Canvia fitxer",
-                "tool.compressor.level": "Nivell de compressió",
-                "tool.compressor.low": "Compressió baixa",
-                "tool.compressor.lowdesc": "Millor qualitat, menor reducció de mida",
-                "tool.compressor.medium": "Compressió mitjana",
-                "tool.compressor.mediumdesc": "Bon equilibri entre qualitat i mida",
-                "tool.compressor.high": "Compressió alta",
-                "tool.compressor.highdesc": "Reducció de mida màxima",
-                "tool.compressor.compress": "Comprimeix PDF",
-                "tool.compressor.download": "Descarrega PDF comprimit",
-                "tool.compressor.clear": "Neteja",
-                "tool.compressor.info": "Informació del fitxer",
-                "tool.compressor.originalsize": "Mida original:",
-                "tool.compressor.compressed": "Mida comprimida:",
-                "tool.compressor.reduction": "Reducció:",
-                "tool.compressor.progress": "Comprimint el teu PDF...",
-                "tool.history.title": "Fitxers PDF comprimits",
-                "tool.history.clear": "Neteja historial",
-                "tool.history.empty": "Encara no hi ha fitxers PDF a l'historial",
-                "footer.follow": "SEGUEIX-NOS",
-                "footer.categories": "Categories populars",
-                "footer.categories.pdf": "Eines PDF",
-                "footer.categories.image": "Eines d'imatge",
-                "footer.categories.text": "Eines de text",
-                "footer.categories.av": "Eines d'àudio/vídeo",
-                "footer.categories.web": "Eines de desenvolupador web",
-                "footer.categories.calc": "Eines de calculadora",
-                "footer.categories.util": "Eines d'utilitat",
-                "footer.categories.color": "Eines de color",
-                "footer.quicklinks": "Enllaços ràpids",
-                "footer.links.tools": "Totes les eines",
-                "footer.links.faq": "PMF",
-                "footer.links.contact": "Contacte",
-                "footer.links.privacy": "Política de privadesa",
-                "footer.links.disclaimer": "Avís legal",
-                "footer.links.terms": "Termes del servei",
-                "footer.copyright": "© 2025 LollyPoPDF. Tots els drets reservats."
-            },
-            nl: {
-                "nav.home": "Home",
-                "nav.about": "Over ons",
-                "nav.tools": "Tools",
-                "nav.contact": "Contact",
-                "hero.title": "PDF-compressietool",
-                "hero.description": "Verklein de grootte van uw PDF-bestanden zonder kwaliteitsverlies. Snel, veilig en volledig gratis! Alle verwerking gebeurt lokaal zonder bestandsgroottebeperkingen en met volledige privacy.",
-                "howto.title": "Hoe de PDF-compressor te gebruiken",
-                "howto.step1.title": "Upload uw PDF",
-                "howto.step1.description": "Sleep en zet uw PDF-bestand neer of klik om te bladeren. De tool ondersteunt alle PDF-bestanden, ongeacht de grootte.",
-                "howto.step2.title": "Kies compressieniveau",
-                "howto.step2.description": "Selecteer laag, gemiddeld of hoog compressieniveau op basis van uw kwaliteitseisen.",
-                "howto.step3.title": "Comprimeer en download",
-                "howto.step3.description": "Klik op de knop comprimeren en download uw geoptimaliseerde PDF-bestand met verkleinde grootte.",
-                "howto.step4.title": "Bewaar en beheer",
-                "howto.step4.description": "Toegang tot uw gecomprimeerde PDF-bestanden vanuit de geschiedenissectie. Alle gegevens worden lokaal in uw browser opgeslagen voor privacy.",
-                "tool.title": "PDF-compressor",
-                "tool.tabs.compressor": "Compressor",
-                "tool.tabs.history": "Geschiedenis",
-                "tool.compressor.upload": "Sleep en zet uw PDF-bestand hier neer of klik om te bladeren",
-                "tool.compressor.uploadbtn": "Kies PDF-bestand",
-                "tool.compressor.change": "Wijzig bestand",
-                "tool.compressor.level": "Compressieniveau",
-                "tool.compressor.low": "Lage compressie",
-                "tool.compressor.lowdesc": "Beste kwaliteit, kleinere groottereductie",
-                "tool.compressor.medium": "Gemiddelde compressie",
-                "tool.compressor.mediumdesc": "Goede balans tussen kwaliteit en grootte",
-                "tool.compressor.high": "Hoge compressie",
-                "tool.compressor.highdesc": "Maximale groottereductie",
-                "tool.compressor.compress": "Comprimeer PDF",
-                "tool.compressor.download": "Download gecomprimeerde PDF",
-                "tool.compressor.clear": "Wissen",
-                "tool.compressor.info": "Bestandsinformatie",
-                "tool.compressor.originalsize": "Originele grootte:",
-                "tool.compressor.compressed": "Gecomprimeerde grootte:",
-                "tool.compressor.reduction": "Reductie:",
-                "tool.compressor.progress": "Uw PDF wordt gecomprimeerd...",
-                "tool.history.title": "Gecomprimeerde PDF-bestanden",
-                "tool.history.clear": "Geschiedenis wissen",
-                "tool.history.empty": "Nog geen PDF-bestanden in geschiedenis",
-                "footer.follow": "VOLG ONS",
-                "footer.categories": "Populaire categorieën",
-                "footer.categories.pdf": "PDF-tools",
-                "footer.categories.image": "Afbeeldingstools",
-                "footer.categories.text": "Teksttools",
-                "footer.categories.av": "Audio/Video-tools",
-                "footer.categories.web": "Webontwikkelaarstools",
-                "footer.categories.calc": "Rekenmachinetools",
-                "footer.categories.util": "Hulpprogramma's",
-                "footer.categories.color": "Kleurentools",
-                "footer.quicklinks": "Snelle links",
-                "footer.links.tools": "Alle tools",
-                "footer.links.faq": "FAQ",
-                "footer.links.contact": "Contact",
-                "footer.links.privacy": "Privacybeleid",
-                "footer.links.disclaimer": "Disclaimer",
-                "footer.links.terms": "Servicevoorwaarden",
-                "footer.copyright": "© 2025 LollyPoPDF. Alle rechten voorbehouden."
-            },
-            el: {
-                "nav.home": "Αρχική",
-                "nav.about": "Σχετικά με εμάς",
-                "nav.tools": "Εργαλεία",
-                "nav.contact": "Επικοινωνία",
-                "hero.title": "Εργαλείο Συμπίεσης PDF",
-                "hero.description": "Μειώστε το μέγεθος των αρχείων PDF σας χωρίς να θυσιάζεται η ποιότητα. Γρήγορο, ασφαλές και εντελώς δωρεάν! Όλη η επεξεργασία γίνεται τοπικά χωρίς περιορισμούς μεγέθους αρχείου και με πλήρη ιδιωτικότητα.",
-                "howto.title": "Πώς να χρησιμοποιήσετε τον συμπιεστή PDF",
-                "howto.step1.title": "Ανεβάστε το PDF σας",
-                "howto.step1.description": "Σύρετε και αποθέστε το αρχείο PDF σας ή κάντε κλικ για περιήγηση. Το εργαλείο υποστηρίζει όλα τα αρχεία PDF ανεξάρτητα από το μέγεθος.",
-                "howto.step2.title": "Επιλέξτε Επίπεδο Συμπίεσης",
-                "howto.step2.description": "Επιλέξτε από χαμηλή, μέση ή υψηλή συμπίεση με βάση τις απαιτήσεις ποιότητας σας.",
-                "howto.step3.title": "Συμπίεση και Λήψη",
-                "howto.step3.description": "Κάντε κλικ στο κουμπί συμπίεσης και κατεβάστε το βελτιστοποιημένο αρχείο PDF σας με μειωμένο μέγεθος.",
-                "howto.step4.title": "Αποθήκευση και Διαχείριση",
-                "howto.step4.description": "Πρόσβαση στα συμπιεσμένα αρχεία PDF σας από την ενότητα ιστορικού. Όλα τα δεδομένα αποθηκεύονται τοπικά στο πρόγραμμα περιήγησής σας για ιδιωτικότητα.",
-                "tool.title": "Συμπιεστής PDF",
-                "tool.tabs.compressor": "Συμπιεστής",
-                "tool.tabs.history": "Ιστορικό",
-                "tool.compressor.upload": "Σύρετε και αποθέστε το αρχείο PDF σας εδώ ή κάντε κλικ για περιήγηση",
-                "tool.compressor.uploadbtn": "Επιλέξτε Αρχείο PDF",
-                "tool.compressor.change": "Αλλαγή Αρχείου",
-                "tool.compressor.level": "Επίπεδο Συμπίεσης",
-                "tool.compressor.low": "Χαμηλή Συμπίεση",
-                "tool.compressor.lowdesc": "Καλύτερη ποιότητα, μικρότερη μείωση μεγέθους",
-                "tool.compressor.medium": "Μέση Συμπίεση",
-                "tool.compressor.mediumdesc": "Καλή ισορροπία ποιότητας και μεγέθους",
-                "tool.compressor.high": "Υψηλή Συμπίεση",
-                "tool.compressor.highdesc": "Μέγιστη μείωση μεγέθους",
-                "tool.compressor.compress": "Συμπίεση PDF",
-                "tool.compressor.download": "Λήψη Συμπιεσμένου PDF",
-                "tool.compressor.clear": "Καθαρισμός",
-                "tool.compressor.info": "Πληροφορίες Αρχείου",
-                "tool.compressor.originalsize": "Αρχικό Μέγεθος:",
-                "tool.compressor.compressed": "Συμπιεσμένο Μέγεθος:",
-                "tool.compressor.reduction": "Μείωση:",
-                "tool.compressor.progress": "Συμπίεση του PDF σας...",
-                "tool.history.title": "Συμπιεσμένα Αρχεία PDF",
-                "tool.history.clear": "Καθαρισμός Ιστορικού",
-                "tool.history.empty": "Δεν υπάρχουν ακόμη αρχεία PDF στο ιστορικό",
-                "footer.follow": "ΑΚΟΛΟΥΘΗΣΤΕ ΜΑΣ",
-                "footer.categories": "Δημοφιλείς Κατηγορίες",
-                "footer.categories.pdf": "Εργαλεία PDF",
-                "footer.categories.image": "Εργαλεία Εικόνας",
-                "footer.categories.text": "Εργαλεία Κειμένου",
-                "footer.categories.av": "Εργαλεία Ήχου/Βίντεο",
-                "footer.categories.web": "Εργαλεία Web Developer",
-                "footer.categories.calc": "Εργαλεία Αριθμομηχανής",
-                "footer.categories.util": "Εργαλεία Χρησιμότητας",
-                "footer.categories.color": "Εργαλεία Χρώματος",
-                "footer.quicklinks": "Γρήγοροι Σύνδεσμοι",
-                "footer.links.tools": "Όλα τα Εργαλεία",
-                "footer.links.faq": "Συχνές Ερωτήσεις",
-                "footer.links.contact": "Επικοινωνία",
-                "footer.links.privacy": "Πολιτική Απορρήτου",
-                "footer.links.disclaimer": "Αποποίηση Ευθυνών",
-                "footer.links.terms": "Όροι Χρήσης",
-                "footer.copyright": "© 2025 LollyPoPDF. Με επιφύλαξη παντός δικαιώματος."
-            },
-            hi: {
-                "nav.home": "होम",
-                "nav.about": "हमारे बारे में",
-                "nav.tools": "टूल्स",
-                "nav.contact": "संपर्क करें",
-                "hero.title": "PDF कंप्रेसर टूल",
-                "hero.description": "गुणवत्ता से समझौता किए बिना अपनी PDF फ़ाइलों का आकार कम करें। तेज़, सुरक्षित और पूरी तरह से मुफ्त! सभी प्रोसेसिंग स्थानीय रूप से होती है बिना फ़ाइल आकार सीमा के और पूर्ण गोपनीयता के साथ।",
-                "howto.title": "PDF कंप्रेसर का उपयोग कैसे करें",
-                "howto.step1.title": "अपनी PDF अपलोड करें",
-                "howto.step1.description": "अपनी PDF फ़ाइल को ड्रैग और ड्रॉप करें या ब्राउज़ करने के लिए क्लिक करें। यह टूल सभी PDF फ़ाइलों को आकार की परवाह किए बिना सपोर्ट करता है।",
-                "howto.step2.title": "कंप्रेशन लेवल चुनें",
-                "howto.step2.description": "अपनी गुणवत्ता आवश्यकताओं के आधार पर कम, मध्यम या उच्च कंप्रेशन लेवल में से चुनें।",
-                "howto.step3.title": "कंप्रेस और डाउनलोड",
-                "howto.step3.description": "कंप्रेस बटन पर क्लिक करें और कम आकार वाली अपनी ऑप्टिमाइज़्ड PDF फ़ाइल डाउनलोड करें।",
-                "howto.step4.title": "सेव और मैनेज",
-                "howto.step4.description": "हिस्ट्री सेक्शन से अपनी कंप्रेस्ड PDF फ़ाइलों तक पहुंचें। सभी डेटा गोपनीयता के लिए आपके ब्राउज़र में स्थानीय रूप से संग्रहीत किया जाता है।",
-                "tool.title": "PDF कंप्रेसर",
-                "tool.tabs.compressor": "कंप्रेसर",
-                "tool.tabs.history": "इतिहास",
-                "tool.compressor.upload": "अपनी PDF फ़ाइल को यहां ड्रैग और ड्रॉप करें या ब्राउज़ करने के लिए क्लिक करें",
-                "tool.compressor.uploadbtn": "PDF फ़ाइल चुनें",
-                "tool.compressor.change": "फ़ाइल बदलें",
-                "tool.compressor.level": "कंप्रेशन लेवल",
-                "tool.compressor.low": "कम कंप्रेशन",
-                "tool.compressor.lowdesc": "सर्वोत्तम गुणवत्ता, छोटा आकार कमी",
-                "tool.compressor.medium": "मध्यम कंप्रेशन",
-                "tool.compressor.mediumdesc": "गुणवत्ता और आकार का अच्छा संतुलन",
-                "tool.compressor.high": "उच्च कंप्रेशन",
-                "tool.compressor.highdesc": "अधिकतम आकार कमी",
-                "tool.compressor.compress": "PDF कंप्रेस करें",
-                "tool.compressor.download": "कंप्रेस्ड PDF डाउनलोड करें",
-                "tool.compressor.clear": "साफ़ करें",
-                "tool.compressor.info": "फ़ाइल जानकारी",
-                "tool.compressor.originalsize": "मूल आकार:",
-                "tool.compressor.compressed": "कंप्रेस्ड आकार:",
-                "tool.compressor.reduction": "कमी:",
-                "tool.compressor.progress": "आपकी PDF कंप्रेस हो रही है...",
-                "tool.history.title": "कंप्रेस्ड PDF फ़ाइलें",
-                "tool.history.clear": "इतिहास साफ़ करें",
-                "tool.history.empty": "अभी तक इतिहास में कोई PDF फ़ाइलें नहीं हैं",
-                "footer.follow": "हमें फॉलो करें",
-                "footer.categories": "लोकप्रिय श्रेणियां",
-                "footer.categories.pdf": "PDF टूल्स",
-                "footer.categories.image": "इमेज टूल्स",
-                "footer.categories.text": "टेक्स्ट टूल्स",
-                "footer.categories.av": "ऑडियो/वीडियो टूल्स",
-                "footer.categories.web": "वेब डेवलपर टूल्स",
-                "footer.categories.calc": "कैलकुलेटर टूल्स",
-                "footer.categories.util": "यूटिलिटी टूल्स",
-                "footer.categories.color": "कलर टूल्स",
-                "footer.quicklinks": "त्वरित लिंक",
-                "footer.links.tools": "सभी टूल्स",
-                "footer.links.faq": "सामान्य प्रश्न",
-                "footer.links.contact": "संपर्क करें",
-                "footer.links.privacy": "गोपनीयता नीति",
-                "footer.links.disclaimer": "अस्वीकरण",
-                "footer.links.terms": "सेवा की शर्तें",
-                "footer.copyright": "© 2025 LollyPoPDF. सर्वाधिकार सुरक्षित।"
-            },
-            te: {
-                "nav.home": "హోమ్",
-                "nav.about": "మా గురించి",
-                "nav.tools": "టూల్స్",
-                "nav.contact": "సంప్రదించండి",
-                "hero.title": "PDF కంప్రెసర్ టూల్",
-                "hero.description": "నాణ్యతను తగ్గించకుండా మీ PDF ఫైళ్ల పరిమాణాన్ని తగ్గించండి. వేగంగా, సురక్షితంగా మరియు పూర్తిగా ఉచితం! అన్ని ప్రాసెసింగ్ ఫైల్ పరిమాణ పరిమితులు లేకుండా మరియు పూర్తి గోప్యతతో స్థానికంగా జరుగుతుంది.",
-                "howto.title": "PDF కంప్రెసర్ ఎలా ఉపయోగించాలి",
-                "howto.step1.title": "మీ PDFను అప్లోడ్ చేయండి",
-                "howto.step1.description": "మీ PDF ఫైల్ను డ్రాగ్ మరియు డ్రాప్ చేయండి లేదా బ్రౌజ్ చేయడానికి క్లిక్ చేయండి. ఈ టూల్ పరిమాణం లెక్కించకుండా అన్ని PDF ఫైళ్లకు మద్దతు ఇస్తుంది.",
-                "howto.step2.title": "కంప్రెషన్ స్థాయిని ఎంచుకోండి",
-                "howto.step2.description": "మీ నాణ్యత అవసరాల ఆధారంగా తక్కువ, మధ్యస్థ లేదా అధిక కంప్రెషన్ స్థాయిల నుండి ఎంచుకోండి.",
-                "howto.step3.title": "కంప్రెస్ మరియు డౌన్లోడ్",
-                "howto.step3.description": "కంప్రెస్ బటన్పై క్లిక్ చేసి, తగ్గిన పరిమాణంతో మీ ఆప్టిమైజ్డ్ PDF ఫైల్ను డౌన్లోడ్ చేయండి.",
-                "howto.step4.title": "సేవ్ మరియు మేనేజ్",
-                "howto.step4.description": "హిస్టరీ విభాగం నుండి మీ కంప్రెస్డ్ PDF ఫైళ్లకు ప్రాప్యత పొందండి. అన్ని డేటా గోప్యత కోసం మీ బ్రౌజర్లో స్థానికంగా నిల్వ చేయబడుతుంది.",
-                "tool.title": "PDF కంప్రెసర్",
-                "tool.tabs.compressor": "కంప్రెసర్",
-                "tool.tabs.history": "చరిత్ర",
-                "tool.compressor.upload": "మీ PDF ఫైల్ను ఇక్కడ డ్రాగ్ మరియు డ్రాప్ చేయండి లేదా బ్రౌజ్ చేయడానికి క్లిక్ చేయండి",
-                "tool.compressor.uploadbtn": "PDF ఫైల్ను ఎంచుకోండి",
-                "tool.compressor.change": "ఫైల్ మార్చండి",
-                "tool.compressor.level": "కంప్రెషన్ స్థాయి",
-                "tool.compressor.low": "తక్కువ కంప్రెషన్",
-                "tool.compressor.lowdesc": "ఉత్తమ నాణ్యత, చిన్న పరిమాణం తగ్గింపు",
-                "tool.compressor.medium": "మధ్యస్థ కంప్రెషన్",
-                "tool.compressor.mediumdesc": "నాణ్యత మరియు పరిమాణం మధ్య మంచి సమతుల్యత",
-                "tool.compressor.high": "అధిక కంప్రెషన్",
-                "tool.compressor.highdesc": "గరిష్ట పరిమాణం తగ్గింపు",
-                "tool.compressor.compress": "PDF కంప్రెస్ చేయండి",
-                "tool.compressor.download": "కంప్రెస్డ్ PDF డౌన్లోడ్ చేయండి",
-                "tool.compressor.clear": "క్లియర్",
-                "tool.compressor.info": "ఫైల్ సమాచారం",
-                "tool.compressor.originalsize": "అసలు పరిమాణం:",
-                "tool.compressor.compressed": "కంప్రెస్డ్ పరిమాణం:",
-                "tool.compressor.reduction": "తగ్గింపు:",
-                "tool.compressor.progress": "మీ PDF కంప్రెస్ అవుతోంది...",
-                "tool.history.title": "కంప్రెస్డ్ PDF ఫైళ్లు",
-                "tool.history.clear": "చరిత్రను క్లియర్ చేయండి",
-                "tool.history.empty": "చరిత్రలో ఇంకా PDF ఫైళ్లు లేవు",
-                "footer.follow": "మమ్మల్ని అనుసరించండి",
-                "footer.categories": "జనాదరణ పొందిన వర్గాలు",
-                "footer.categories.pdf": "PDF టూల్స్",
-                "footer.categories.image": "ఇమేజ్ టూల్స్",
-                "footer.categories.text": "టెక్స్ట్ టూల్స్",
-                "footer.categories.av": "ఆడియో/వీడియో టూల్స్",
-                "footer.categories.web": "వెబ్ డెవలపర్ టూల్స్",
-                "footer.categories.calc": "కాలిక్యులేటర్ టూల్స్",
-                "footer.categories.util": "యుటిలిటీ టూల్స్",
-                "footer.categories.color": "కలర్ టూల్స్",
-                "footer.quicklinks": "త్వరిత లింకులు",
-                "footer.links.tools": "అన్ని టూల్స్",
-                "footer.links.faq": "FAQ",
-                "footer.links.contact": "సంప్రదించండి",
-                "footer.links.privacy": "గోప్యతా విధానం",
-                "footer.links.disclaimer": "డిస్క్లెయిమర్",
-                "footer.links.terms": "సేవా నిబంధనలు",
-                "footer.copyright": "© 2025 LollyPoPDF. అన్ని హక్కులు ప్రత్యేకించబడినవి."
-            },
-            kn: {
-                "nav.home": "ಮುಖಪುಟ",
-                "nav.about": "ನಮ್ಮ ಬಗ್ಗೆ",
-                "nav.tools": "ಸಾಧನಗಳು",
-                "nav.contact": "ಸಂಪರ್ಕಿಸಿ",
-                "hero.title": "PDF ಕಂಪ್ರೆಸರ್ ಟೂಲ್",
-                "hero.description": "ಗುಣಮಟ್ಟವನ್ನು ತ್ಯಾಗ ಮಾಡದೆ ನಿಮ್ಮ PDF ಫೈಲ್‌ಗಳ ಗಾತ್ರವನ್ನು ಕಡಿಮೆ ಮಾಡಿ. ವೇಗವಾಗಿ, ಸುರಕ್ಷಿತ ಮತ್ತು ಸಂಪೂರ್ಣವಾಗಿ ಉಚಿತ! ಎಲ್ಲಾ ಪ್ರಕ್ರಿಯೆ ಫೈಲ್ ಗಾತ್ರದ ಮಿತಿಗಳಿಲ್ಲದೆ ಮತ್ತು ಸಂಪೂರ್ಣ ಗೌಪ್ಯತೆಯೊಂದಿಗೆ ಸ್ಥಳೀಯವಾಗಿ ನಡೆಯುತ್ತದೆ.",
-                "howto.title": "PDF ಕಂಪ್ರೆಸರ್ ಅನ್ನು ಹೇಗೆ ಬಳಸುವುದು",
-                "howto.step1.title": "ನಿಮ್ಮ PDF ಅನ್ನು ಅಪ್‌ಲೋಡ್ ಮಾಡಿ",
-                "howto.step1.description": "ನಿಮ್ಮ PDF ಫೈಲ್ ಅನ್ನು ಎಳೆಯಿರಿ ಮತ್ತು ಬಿಡಿ ಅಥವಾ ಬ್ರೌಸ್ ಮಾಡಲು ಕ್ಲಿಕ್ ಮಾಡಿ. ಈ ಸಾಧನವು ಗಾತ್ರವನ್ನು ಲೆಕ್ಕಿಸದೆ ಎಲ್ಲಾ PDF ಫೈಲ್‌ಗಳನ್ನು ಬೆಂಬಲಿಸುತ್ತದೆ.",
-                "howto.step2.title": "ಕಂಪ್ರೆಷನ್ ಮಟ್ಟವನ್ನು ಆಯ್ಕೆಮಾಡಿ",
-                "howto.step2.description": "ನಿಮ್ಮ ಗುಣಮಟ್ಟದ ಅವಶ್ಯಕತೆಗಳ ಆಧಾರದ ಮೇಲೆ ಕಡಿಮೆ, ಮಧ್ಯಮ ಅಥವಾ ಹೆಚ್ಚಿನ ಕಂಪ್ರೆಷನ್ ಮಟ್ಟಗಳಿಂದ ಆಯ್ಕೆಮಾಡಿ.",
-                "howto.step3.title": "ಕಂಪ್ರೆಸ್ ಮತ್ತು ಡೌನ್‌ಲೋಡ್",
-                "howto.step3.description": "ಕಂಪ್ರೆಸ್ ಬಟನ್ ಕ್ಲಿಕ್ ಮಾಡಿ ಮತ್ತು ಕಡಿಮೆ ಗಾತ್ರದೊಂದಿಗೆ ನಿಮ್ಮ ಆಪ್ಟಿಮೈಜ್ ಮಾಡಿದ PDF ಫೈಲ್ ಅನ್ನು ಡೌನ್‌ಲೋಡ್ ಮಾಡಿ.",
-                "howto.step4.title": "ಸೇವ್ ಮತ್ತು ಮ್ಯಾನೇಜ್",
-                "howto.step4.description": "ಹಿಸ್ಟರಿ ವಿಭಾಗದಿಂದ ನಿಮ್ಮ ಕಂಪ್ರೆಸ್ಡ್ PDF ಫೈಲ್‌ಗಳನ್ನು ಪ್ರವೇಶಿಸಿ. ಎಲ್ಲಾ ಡೇಟಾ ಗೌಪ್ಯತೆಗಾಗಿ ನಿಮ್ಮ ಬ್ರೌಸರ್‌ನಲ್ಲಿ ಸ್ಥಳೀಯವಾಗಿ ಸಂಗ್ರಹವಾಗುತ್ತದೆ.",
-                "tool.title": "PDF ಕಂಪ್ರೆಸರ್",
-                "tool.tabs.compressor": "ಕಂಪ್ರೆಸರ್",
-                "tool.tabs.history": "ಇತಿಹಾಸ",
-                "tool.compressor.upload": "ನಿಮ್ಮ PDF ಫೈಲ್ ಅನ್ನು ಇಲ್ಲಿ ಎಳೆಯಿರಿ ಮತ್ತು ಬಿಡಿ ಅಥವಾ ಬ್ರೌಸ್ ಮಾಡಲು ಕ್ಲಿಕ್ ಮಾಡಿ",
-                "tool.compressor.uploadbtn": "PDF ಫೈಲ್ ಆಯ್ಕೆಮಾಡಿ",
-                "tool.compressor.change": "ಫೈಲ್ ಬದಲಾಯಿಸಿ",
-                "tool.compressor.level": "ಕಂಪ್ರೆಷನ್ ಮಟ್ಟ",
-                "tool.compressor.low": "ಕಡಿಮೆ ಕಂಪ್ರೆಷನ್",
-                "tool.compressor.lowdesc": "ಉತ್ತಮ ಗುಣಮಟ್ಟ, ಸಣ್ಣ ಗಾತ್ರ ಕಡಿತ",
-                "tool.compressor.medium": "ಮಧ್ಯಮ ಕಂಪ್ರೆಷನ್",
-                "tool.compressor.mediumdesc": "ಗುಣಮಟ್ಟ ಮತ್ತು ಗಾತ್ರದ ಉತ್ತಮ ಸಮತೋಲನ",
-                "tool.compressor.high": "ಹೆಚ್ಚಿನ ಕಂಪ್ರೆಷನ್",
-                "tool.compressor.highdesc": "ಗರಿಷ್ಠ ಗಾತ್ರ ಕಡಿತ",
-                "tool.compressor.compress": "PDF ಕಂಪ್ರೆಸ್ ಮಾಡಿ",
-                "tool.compressor.download": "ಕಂಪ್ರೆಸ್ಡ್ PDF ಡೌನ್‌ಲೋಡ್ ಮಾಡಿ",
-                "tool.compressor.clear": "ಕ್ಲಿಯರ್",
-                "tool.compressor.info": "ಫೈಲ್ ಮಾಹಿತಿ",
-                "tool.compressor.originalsize": "ಮೂಲ ಗಾತ್ರ:",
-                "tool.compressor.compressed": "ಕಂಪ್ರೆಸ್ಡ್ ಗಾತ್ರ:",
-                "tool.compressor.reduction": "ಕಡಿತ:",
-                "tool.compressor.progress": "ನಿಮ್ಮ PDF ಅನ್ನು ಕಂಪ್ರೆಸ್ ಮಾಡಲಾಗುತ್ತಿದೆ...",
-                "tool.history.title": "ಕಂಪ್ರೆಸ್ಡ್ PDF ಫೈಲ್‌ಗಳು",
-                "tool.history.clear": "ಇತಿಹಾಸವನ್ನು ಕ್ಲಿಯರ್ ಮಾಡಿ",
-                "tool.history.empty": "ಇತಿಹಾಸದಲ್ಲಿ ಇನ್ನೂ PDF ಫೈಲ್‌ಗಳಿಲ್ಲ",
-                "footer.follow": "ನಮ್ಮನ್ನು ಅನುಸರಿಸಿ",
-                "footer.categories": "ಜನಪ್ರಿಯ ವರ್ಗಗಳು",
-                "footer.categories.pdf": "PDF ಟೂಲ್‌ಗಳು",
-                "footer.categories.image": "ಇಮೇಜ್ ಟೂಲ್‌ಗಳು",
-                "footer.categories.text": "ಟೆಕ್ಸ್ಟ್ ಟೂಲ್‌ಗಳು",
-                "footer.categories.av": "ಆಡಿಯೋ/ವೀಡಿಯೋ ಟೂಲ್‌ಗಳು",
-                "footer.categories.web": "ವೆಬ್ ಡೆವಲಪರ್ ಟೂಲ್‌ಗಳು",
-                "footer.categories.calc": "ಕ್ಯಾಲ್ಕುಲೇಟರ್ ಟೂಲ್‌ಗಳು",
-                "footer.categories.util": "ಯುಟಿಲಿಟಿ ಟೂಲ್‌ಗಳು",
-                "footer.categories.color": "ಕಲರ್ ಟೂಲ್‌ಗಳು",
-                "footer.quicklinks": "ತ್ವರಿತ ಲಿಂಕ್‌ಗಳು",
-                "footer.links.tools": "ಎಲ್ಲಾ ಟೂಲ್‌ಗಳು",
-                "footer.links.faq": "ಸಾಮಾನ್ಯ ಪ್ರಶ್ನೆಗಳು",
-                "footer.links.contact": "ಸಂಪರ್ಕಿಸಿ",
-                "footer.links.privacy": "ಗೌಪ್ಯತಾ ನೀತಿ",
-                "footer.links.disclaimer": "ಡಿಸ್ಕ್ಲೇಮರ್",
-                "footer.links.terms": "ಸೇವಾ ನಿಯಮಗಳು",
-                "footer.copyright": "© 2025 LollyPoPDF. ಎಲ್ಲಾ ಹಕ್ಕುಗಳು ಕಾಯ್ದಿರಿಸಿದೆ."
-            },
-            ta: {
-                "nav.home": "முகப்பு",
-                "nav.about": "எங்களைப் பற்றி",
-                "nav.tools": "கருவிகள்",
-                "nav.contact": "தொடர்பு கொள்ள",
-                "hero.title": "PDF சுருக்கு கருவி",
-                "hero.description": "தரத்தைக் குறைக்காமல் உங்கள் PDF கோப்புகளின் அளவைக் குறைக்கவும். வேகமான, பாதுகாப்பான மற்றும் முற்றிலும் இலவசம்! அனைத்து செயலாக்கமும் கோப்பு அளவு வரம்புகள் இல்லாமல் மற்றும் முழு தனியுரிமையுடன் உள்நாட்டில் நடைபெறுகிறது.",
-                "howto.title": "PDF சுருக்கியை如何使用",
-                "howto.step1.title": "உங்கள் PDF ஐ பதிவேற்றவும்",
-                "howto.step1.description": "உங்கள் PDF கோப்பை இழுத்து விடவும் அல்லது உலாவ கிளிக் செய்யவும். இந்த கருவி அளவைப் பொருட்படுத்தாமல் அனைத்து PDF கோப்புகளையும் ஆதரிக்கிறது.",
-                "howto.step2.title": "சுருக்க அளவைத் தேர்ந்தெடுக்கவும்",
-                "howto.step2.description": "உங்கள் தரத் தேவைகளின் அடிப்படையில் குறைந்த, நடுத்தர அல்லது உயர் சுருக்க அளவுகளிலிருந்து தேர்ந்தெடுக்கவும்.",
-                "howto.step3.title": "சுருக்கவும் மற்றும் பதிவிறக்கவும்",
-                "howto.step3.description": "சுருக்கு பொத்தானைக் கிளிக் செய்து, குறைக்கப்பட்ட அளவுள்ள உங்கள் மேம்படுத்தப்பட்ட PDF கோப்பைப் பதிவிறக்கவும்.",
-                "howto.step4.title": "சேமிக்கவும் மற்றும் நிர்வகிக்கவும்",
-                "howto.step4.description": "வரலாறு பிரிவிலிருந்து உங்கள் சுருக்கப்பட்ட PDF கோப்புகளை அணுகவும். அனைத்து தரவும் தனியுரிமைக்காக உங்கள் உலாவியில் உள்நாட்டில் சேமிக்கப்படுகிறது.",
-                "tool.title": "PDF சுருக்கி",
-                "tool.tabs.compressor": "சுருக்கி",
-                "tool.tabs.history": "வரலாறு",
-                "tool.compressor.upload": "உங்கள் PDF கோப்பை இங்கே இழுத்து விடவும் அல்லது உலாவ கிளிக் செய்யவும்",
-                "tool.compressor.uploadbtn": "PDF கோப்பைத் தேர்ந்தெடுக்கவும்",
-                "tool.compressor.change": "கோப்பை மாற்றவும்",
-                "tool.compressor.level": "சுருக்க அளவு",
-                "tool.compressor.low": "குறைந்த சுருக்கம்",
-                "tool.compressor.lowdesc": "சிறந்த தரம், சிறிய அளவு குறைப்பு",
-                "tool.compressor.medium": "நடுத்தர சுருக்கம்",
-                "tool.compressor.mediumdesc": "தரம் மற்றும் அளவு இடையே நல்ல சமநிலை",
-                "tool.compressor.high": "உயர் சுருக்கம்",
-                "tool.compressor.highdesc": "அதிகபட்ச அளவு குறைப்பு",
-                "tool.compressor.compress": "PDF ஐ சுருக்கவும்",
-                "tool.compressor.download": "சுருக்கப்பட்ட PDF ஐ பதிவிறக்கவும்",
-                "tool.compressor.clear": "துடைக்க",
-                "tool.compressor.info": "கோப்பு தகவல்",
-                "tool.compressor.originalsize": "அசல் அளவு:",
-                "tool.compressor.compressed": "சுருக்கப்பட்ட அளவு:",
-                "tool.compressor.reduction": "குறைப்பு:",
-                "tool.compressor.progress": "உங்கள் PDF சுருக்கப்படுகிறது...",
-                "tool.history.title": "சுருக்கப்பட்ட PDF கோப்புகள்",
-                "tool.history.clear": "வரலாற்றை துடைக்க",
-                "tool.history.empty": "வரலாற்றில் இன்னும் PDF கோப்புகள் இல்லை",
-                "footer.follow": "எங்களைப் பின்தொடரவும்",
-                "footer.categories": "பிரபலமான வகைகள்",
-                "footer.categories.pdf": "PDF கருவிகள்",
-                "footer.categories.image": "பட கருவிகள்",
-                "footer.categories.text": "உரை கருவிகள்",
-                "footer.categories.av": "ஆடியோ/வீடியோ கருவிகள்",
-                "footer.categories.web": "வெப் டெவலப்பர் கருவிகள்",
-                "footer.categories.calc": "கால்குலேட்டர் கருவிகள்",
-                "footer.categories.util": "பயன்பாட்டு கருவிகள்",
-                "footer.categories.color": "நிற கருவிகள்",
-                "footer.quicklinks": "விரைவு இணைப்புகள்",
-                "footer.links.tools": "அனைத்து கருவிகள்",
-                "footer.links.faq": "FAQ",
-                "footer.links.contact": "தொடர்பு கொள்ள",
-                "footer.links.privacy": "தனியுரிமைக் கொள்கை",
-                "footer.links.disclaimer": "மறுப்பு",
-                "footer.links.terms": "சேவை விதிமுறைகள்",
-                "footer.copyright": "© 2025 LollyPoPDF. அனைத்து உரிமைகளும் பாதுகாக்கப்பட்டவை."
-            },
-            ml: {
-                "nav.home": "ഹോം",
-                "nav.about": "ഞങ്ങളെക്കുറിച്ച്",
-                "nav.tools": "ടൂളുകൾ",
-                "nav.contact": "ബന്ധപ്പെടുക",
-                "hero.title": "PDF കംപ്രസർ ടൂൾ",
-                "hero.description": "നിലവാരം കുറയ്ക്കാതെ നിങ്ങളുടെ PDF ഫയലുകളുടെ വലുപ്പം കുറയ്ക്കുക. വേഗതയുള്ള, സുരക്ഷിതമായ, പൂർണ്ണമായും സ free ജന്യം! എല്ലാ പ്രോസസ്സിംഗും ഫയൽ വലുപ്പ പരിധികളില്ലാതെയും പൂർണ്ണ സ്വകാര്യതയോടെയും പ്രാദേശികമായി നടക്കുന്നു.",
-                "howto.title": "PDF കംപ്രസർ എങ്ങനെ ഉപയോഗിക്കാം",
-                "howto.step1.title": "നിങ്ങളുടെ PDF അപ്‌ലോഡ് ചെയ്യുക",
-                "howto.step1.description": "നിങ്ങളുടെ PDF ഫയൽ വലിച്ചിടുക അല്ലെങ്കിൽ ബ്രൗസ് ചെയ്യാൻ ക്ലിക്ക് ചെയ്യുക. വലുപ്പം പരിഗണിക്കാതെ എല്ലാ PDF ഫയലുകളെയും ഈ ഉപകരണം പിന്തുണയ്ക്കുന്നു.",
-                "howto.step2.title": "കംപ്രഷൻ ലെവൽ തിരഞ്ഞെടുക്കുക",
-                "howto.step2.description": "നിങ്ങളുടെ നിലവാര ആവശ്യകതകളെ അടിസ്ഥാനമാക്കി കുറഞ്ഞ, ഇടത്തരം അല്ലെങ്കിൽ ഉയർന്ന കംപ്രഷൻ ലെവലുകളിൽ നിന്ന് തിരഞ്ഞെടുക്കുക.",
-                "howto.step3.title": "കംപ്രസ് ചെയ്ത് ഡൗൺലോഡ് ചെയ്യുക",
-                "howto.step3.description": "കംപ്രസ് ബട്ടൺ ക്ലിക്ക് ചെയ്ത് കുറഞ്ഞ വലുപ്പമുള്ള നിങ്ങളുടെ ഒപ്റ്റിമൈസ് ചെയ്ത PDF ഫയൽ ഡൗൺലോഡ് ചെയ്യുക.",
-                "howto.step4.title": "സംരക്ഷിക്കുകയും മാനേജ് ചെയ്യുകയും ചെയ്യുക",
-                "howto.step4.description": "ചരിത്ര വിഭാഗത്തിൽ നിന്ന് നിങ്ങളുടെ കംപ്രസ്ഡ് PDF ഫയലുകൾ ആക്‌സസ് ചെയ്യുക. സ്വകാര്യതയ്‌ക്കായി എല്ലാ ഡാറ്റയും നിങ്ങളുടെ ബ്രൗസറിൽ പ്രാദേശികമായി സംഭരിച്ചിരിക്കുന്നു.",
-                "tool.title": "PDF കംപ്രസർ",
-                "tool.tabs.compressor": "കംപ്രസർ",
-                "tool.tabs.history": "ചരിത്രം",
-                "tool.compressor.upload": "നിങ്ങളുടെ PDF ഫയൽ ഇവിടെ വലിച്ചിടുക അല്ലെങ്കിൽ ബ്രൗസ് ചെയ്യാൻ ക്ലിക്ക് ചെയ്യുക",
-                "tool.compressor.uploadbtn": "PDF ഫയൽ തിരഞ്ഞെടുക്കുക",
-                "tool.compressor.change": "ഫയൽ മാറ്റുക",
-                "tool.compressor.level": "കംപ്രഷൻ ലെവൽ",
-                "tool.compressor.low": "കുറഞ്ഞ കംപ്രഷൻ",
-                "tool.compressor.lowdesc": "മികച്ച നിലവാരം, ചെറിയ വലുപ്പം കുറയ്ക്കൽ",
-                "tool.compressor.medium": "ഇടത്തരം കംപ്രഷൻ",
-                "tool.compressor.mediumdesc": "നിലവാരവും വലുപ്പവും തമ്മിലുള്ള നല്ല ബാലൻസ്",
-                "tool.compressor.high": "ഉയർന്ന കംപ്രഷൻ",
-                "tool.compressor.highdesc": "പരമാവധി വലുപ്പം കുറയ്ക്കൽ",
-                "tool.compressor.compress": "PDF കംപ്രസ് ചെയ്യുക",
-                "tool.compressor.download": "കംപ്രസ്ഡ് PDF ഡൗൺലോഡ് ചെയ്യുക",
-                "tool.compressor.clear": "മായ്‌ക്കുക",
-                "tool.compressor.info": "ഫയൽ വിവരങ്ങൾ",
-                "tool.compressor.originalsize": "യഥാർത്ഥ വലുപ്പം:",
-                "tool.compressor.compressed": "കംപ്രസ്ഡ് വലുപ്പം:",
-                "tool.compressor.reduction": "കുറയ്ക്കൽ:",
-                "tool.compressor.progress": "നിങ്ങളുടെ PDF കംപ്രസ് ചെയ്യുന്നു...",
-                "tool.history.title": "കംപ്രസ്ഡ് PDF ഫയലുകൾ",
-                "tool.history.clear": "ചരിത്രം മായ്‌ക്കുക",
-                "tool.history.empty": "ചരിത്രത്തിൽ ഇതുവരെ PDF ഫയലുകളൊന്നുമില്ല",
-                "footer.follow": "ഞങ്ങളെ പിന്തുടരുക",
-                "footer.categories": "ജനപ്രിയ വിഭാഗങ്ങൾ",
-                "footer.categories.pdf": "PDF ടൂളുകൾ",
-                "footer.categories.image": "ഇമേജ് ടൂളുകൾ",
-                "footer.categories.text": "ടെക്‌സ്റ്റ് ടൂളുകൾ",
-                "footer.categories.av": "ഓഡിയോ/വീഡിയോ ടൂളുകൾ",
-                "footer.categories.web": "വെബ് ഡവലപ്പർ ടൂളുകൾ",
-                "footer.categories.calc": "കാൽക്കുലേറ്റർ ടൂളുകൾ",
-                "footer.categories.util": "യൂട്ടിലിറ്റി ടൂളുകൾ",
-                "footer.categories.color": "കളർ ടൂളുകൾ",
-                "footer.quicklinks": "ദ്രുത ലിങ്കുകൾ",
-                "footer.links.tools": "എല്ലാ ടൂളുകളും",
-                "footer.links.faq": "പതിവുചോദ്യങ്ങൾ",
-                "footer.links.contact": "ബന്ധപ്പെടുക",
-                "footer.links.privacy": "സ്വകാര്യതാ നയം",
-                "footer.links.disclaimer": "അസ്വീകാര്യത",
-                "footer.links.terms": "സേവന നിബന്ധനകൾ",
-                "footer.copyright": "© 2025 LollyPoPDF. എല്ലാ അവകാശങ്ങളും നിക്ഷിപ്തം."
-            },
-            id: {
-                "nav.home": "Beranda",
-                "nav.about": "Tentang Kami",
-                "nav.tools": "Alat",
-                "nav.contact": "Kontak",
-                "hero.title": "Alat Kompresor PDF",
-                "hero.description": "Perkecil ukuran file PDF Anda tanpa mengorbankan kualitas. Cepat, aman, dan sepenuhnya gratis! Semua pemrosesan terjadi secara lokal tanpa batasan ukuran file dan privasi lengkap.",
-                "howto.title": "Cara Menggunakan Kompresor PDF",
-                "howto.step1.title": "Unggah PDF Anda",
-                "howto.step1.description": "Seret dan lepas file PDF Anda atau klik untuk menelusuri. Alat ini mendukung semua file PDF terlepas dari ukurannya.",
-                "howto.step2.title": "Pilih Tingkat Kompresi",
-                "howto.step2.description": "Pilih dari tingkat kompresi rendah, menengah, atau tinggi berdasarkan kebutuhan kualitas Anda.",
-                "howto.step3.title": "Kompres & Unduh",
-                "howto.step3.description": "Klik tombol kompres dan unduh file PDF yang dioptimalkan dengan ukuran berkurang.",
-                "howto.step4.title": "Simpan & Kelola",
-                "howto.step4.description": "Akses file PDF terkompresi Anda dari bagian riwayat. Semua data disimpan secara lokal di browser Anda untuk privasi.",
-                "tool.title": "Kompresor PDF",
-                "tool.tabs.compressor": "Kompresor",
-                "tool.tabs.history": "Riwayat",
-                "tool.compressor.upload": "Seret dan lepas file PDF Anda di sini atau klik untuk menelusuri",
-                "tool.compressor.uploadbtn": "Pilih File PDF",
-                "tool.compressor.change": "Ubah File",
-                "tool.compressor.level": "Tingkat Kompresi",
-                "tool.compressor.low": "Kompresi Rendah",
-                "tool.compressor.lowdesc": "Kualitas terbaik, pengurangan ukuran lebih kecil",
-                "tool.compressor.medium": "Kompresi Sedang",
-                "tool.compressor.mediumdesc": "Keseimbangan bagus antara kualitas dan ukuran",
-                "tool.compressor.high": "Kompresi Tinggi",
-                "tool.compressor.highdesc": "Pengurangan ukuran maksimal",
-                "tool.compressor.compress": "Kompres PDF",
-                "tool.compressor.download": "Unduh PDF Terkompresi",
-                "tool.compressor.clear": "Hapus",
-                "tool.compressor.info": "Informasi File",
-                "tool.compressor.originalsize": "Ukuran Asli:",
-                "tool.compressor.compressed": "Ukuran Terkompresi:",
-                "tool.compressor.reduction": "Pengurangan:",
-                "tool.compressor.progress": "Mengompresi PDF Anda...",
-                "tool.history.title": "File PDF Terkompresi",
-                "tool.history.clear": "Hapus Riwayat",
-                "tool.history.empty": "Belum ada file PDF dalam riwayat",
-                "footer.follow": "IKUTI KAMI",
-                "footer.categories": "Kategori Populer",
-                "footer.categories.pdf": "Alat PDF",
-                "footer.categories.image": "Alat Gambar",
-                "footer.categories.text": "Alat Teks",
-                "footer.categories.av": "Alat Audio/Video",
-                "footer.categories.web": "Alat Pengembang Web",
-                "footer.categories.calc": "Alat Kalkulator",
-                "footer.categories.util": "Alat Utilitas",
-                "footer.categories.color": "Alat Warna",
-                "footer.quicklinks": "Tautan Cepat",
-                "footer.links.tools": "Semua Alat",
-                "footer.links.faq": "FAQ",
-                "footer.links.contact": "Kontak",
-                "footer.links.privacy": "Kebijakan Privasi",
-                "footer.links.disclaimer": "Penafian",
-                "footer.links.terms": "Syarat Layanan",
-                "footer.copyright": "© 2025 LollyPoPDF. Hak cipta dilindungi."
-            },
-            ms: {
-                "nav.home": "Laman Utama",
-                "nav.about": "Tentang Kami",
-                "nav.tools": "Alat",
-                "nav.contact": "Hubungi",
-                "hero.title": "Alat Pemampat PDF",
-                "hero.description": "Kurangkan saiz fail PDF anda tanpa menjejaskan kualiti. Pantas, selamat dan percuma sepenuhnya! Semua pemprosesan berlaku secara tempatan tanpa had saiz fail dan privasi lengkap.",
-                "howto.title": "Cara Menggunakan Pemampat PDF",
-                "howto.step1.title": "Muat Naik PDF Anda",
-                "howto.step1.description": "Seret dan lepaskan fail PDF anda atau klik untuk melayari. Alat ini menyokong semua fail PDF tanpa mengira saiz.",
-                "howto.step2.title": "Pilih Tahap Mampatan",
-                "howto.step2.description": "Pilih dari tahap mampatan rendah, sederhana atau tinggi berdasarkan keperluan kualiti anda.",
-                "howto.step3.title": "Mampat & Muat Turun",
-                "howto.step3.description": "Klik butang mampat dan muat turun fail PDF dioptimumkan anda dengan saiz yang dikurangkan.",
-                "howto.step4.title": "Simpan & Urus",
-                "howto.step4.description": "Akses fail PDF termampat anda dari bahagian sejarah. Semua data disimpan secara tempatan dalam pelayar anda untuk privasi.",
-                "tool.title": "Pemampat PDF",
-                "tool.tabs.compressor": "Pemampat",
-                "tool.tabs.history": "Sejarah",
-                "tool.compressor.upload": "Seret dan lepaskan fail PDF anda di sini atau klik untuk melayari",
-                "tool.compressor.uploadbtn": "Pilih Fail PDF",
-                "tool.compressor.change": "Tukar Fail",
-                "tool.compressor.level": "Tahap Mampatan",
-                "tool.compressor.low": "Mampatan Rendah",
-                "tool.compressor.lowdesc": "Kualiti terbaik, pengurangan saiz lebih kecil",
-                "tool.compressor.medium": "Mampatan Sederhana",
-                "tool.compressor.mediumdesc": "Keseimbangan baik antara kualiti dan saiz",
-                "tool.compressor.high": "Mampatan Tinggi",
-                "tool.compressor.highdesc": "Pengurangan saiz maksimum",
-                "tool.compressor.compress": "Mampat PDF",
-                "tool.compressor.download": "Muat Turun PDF Termampat",
-                "tool.compressor.clear": "Kosongkan",
-                "tool.compressor.info": "Maklumat Fail",
-                "tool.compressor.originalsize": "Saiz Asal:",
-                "tool.compressor.compressed": "Saiz Termampat:",
-                "tool.compressor.reduction": "Pengurangan:",
-                "tool.compressor.progress": "Memampatkan PDF anda...",
-                "tool.history.title": "Fail PDF Termampat",
-                "tool.history.clear": "Kosongkan Sejarah",
-                "tool.history.empty": "Tiada fail PDF dalam sejarah lagi",
-                "footer.follow": "IKUTI KAMI",
-                "footer.categories": "Kategori Popular",
-                "footer.categories.pdf": "Alat PDF",
-                "footer.categories.image": "Alat Imej",
-                "footer.categories.text": "Alat Teks",
-                "footer.categories.av": "Alat Audio/Video",
-                "footer.categories.web": "Alat Pembangun Web",
-                "footer.categories.calc": "Alat Kalkulator",
-                "footer.categories.util": "Alat Utiliti",
-                "footer.categories.color": "Alat Warna",
-                "footer.quicklinks": "Pautan Pantas",
-                "footer.links.tools": "Semua Alat",
-                "footer.links.faq": "Soalan Lazim",
-                "footer.links.contact": "Hubungi",
-                "footer.links.privacy": "Dasar Privasi",
-                "footer.links.disclaimer": "Penafian",
-                "footer.links.terms": "Syarat Perkhidmatan",
-                "footer.copyright": "© 2025 LollyPoPDF. Hak cipta terpelihara."
             }
-
         };
 
         // Function to change language
@@ -3049,23 +1816,18 @@
             if (!langData) return;
             
             // Update all elements with data-i18n attribute
-            document.querySelectorAll('[data-i18n]').forEach(element => {
+            document.querySelectorAll('[data-i18n]').forEach(function(element) {
                 const key = element.getAttribute('data-i18n');
                 if (langData[key]) {
                     element.textContent = langData[key];
                 }
             });
             
-            // Update placeholder attributes
-            document.querySelectorAll('[data-i18n-placeholder]').forEach(element => {
-                const key = element.getAttribute('data-i18n-placeholder');
-                if (langData[key]) {
-                    element.setAttribute('placeholder', langData[key]);
-                }
-            });
-            
             // Update current language display
-            currentLanguageElement.textContent = languages.find(lang => lang.code === langCode)?.name || 'English';
+            const currentLang = languages.find(function(lang) { 
+                return lang.code === langCode; 
+            });
+            currentLanguageElement.textContent = currentLang ? currentLang.name : 'English';
             
             // Save language preference
             localStorage.setItem('language', langCode);
@@ -3091,7 +1853,7 @@
         changeLanguage(savedLanguage);
         
         // Language selection handler
-        languageDropdown.addEventListener('click', (e) => {
+        languageDropdown.addEventListener('click', function(e) {
             if (e.target.classList.contains('language-option')) {
                 const langCode = e.target.getAttribute('data-lang');
                 changeLanguage(langCode);

@@ -674,6 +674,30 @@
             min-height: 20px;
         }
 
+        .voice-commands {
+            margin-top: 15px;
+            font-size: 14px;
+            color: var(--text-light);
+            text-align: left;
+            background-color: rgba(147, 112, 219, 0.1);
+            padding: 15px;
+            border-radius: var(--border-radius);
+        }
+
+        .voice-commands h4 {
+            margin-bottom: 10px;
+            color: var(--primary-color);
+        }
+
+        .voice-commands ul {
+            list-style-type: disc;
+            padding-left: 20px;
+        }
+
+        .voice-commands li {
+            margin-bottom: 5px;
+        }
+
         /* Healthy Gut Section */
         .gut-tips-container {
             display: grid;
@@ -1275,6 +1299,17 @@
                             <i class="fas fa-play"></i> <span data-i18n="tool.voice.resume">Resume Output</span>
                         </button>
                         <div class="voice-status" id="voiceStatus"></div>
+                        
+                        <div class="voice-commands">
+                            <h4>Voice Commands Examples:</h4>
+                            <ul>
+                                <li><strong>Metric:</strong> "My weight is 70 kilograms and height is 175 centimeters"</li>
+                                <li><strong>Imperial:</strong> "My weight is 150 pounds and height is 5 feet 9 inches"</li>
+                                <li><strong>Simple:</strong> "70 kilograms 175 centimeters" or "150 pounds 5 feet 9 inches"</li>
+                                <li><strong>Calculate:</strong> "Calculate my BMI"</li>
+                                <li><strong>Reset:</strong> "Reset the form"</li>
+                            </ul>
+                        </div>
                     </div>
 
                     <!-- BMI Result -->
@@ -2120,7 +2155,7 @@
         // Initialize real-time calculation
         setupRealTimeCalculation();
         
-        // Voice Control
+        // Voice Control - FIXED VERSION
         const voiceBtn = document.getElementById('voiceBtn');
         const stopVoiceBtn = document.getElementById('stopVoiceBtn');
         const pauseVoiceBtn = document.getElementById('pauseVoiceBtn');
@@ -2129,15 +2164,28 @@
         
         let recognition = null;
         let isListening = false;
+        let recognitionTimeout = null;
+        let permissionRequested = false;
         
-        // Check if browser supports speech recognition
-        if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+        // Initialize speech recognition
+        function initializeSpeechRecognition() {
+            // Check browser support
+            if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+                voiceStatus.textContent = 'Speech recognition not supported in this browser.';
+                voiceBtn.disabled = true;
+                return false;
+            }
+            
             const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
             recognition = new SpeechRecognition();
+            
+            // Configure recognition settings for better accuracy
             recognition.continuous = false;
             recognition.interimResults = false;
             recognition.lang = 'en-US';
+            recognition.maxAlternatives = 1; // Get only the best result
             
+            // Event handlers
             recognition.onstart = () => {
                 isListening = true;
                 voiceBtn.style.display = 'none';
@@ -2145,26 +2193,69 @@
                 pauseVoiceBtn.style.display = 'inline-flex';
                 voiceStatus.textContent = 'Listening... Speak now.';
                 voiceBtn.classList.add('listening');
+                
+                // Set timeout to automatically stop after 25 seconds
+                recognitionTimeout = setTimeout(() => {
+                    if (isListening) {
+                        stopListening();
+                        voiceStatus.textContent = 'Listening timed out after 25 seconds. Click the microphone to try again.';
+                    }
+                }, 25000); // 25 seconds timeout
             };
             
             recognition.onresult = (event) => {
+                clearTimeout(recognitionTimeout);
+                
+                // Get the transcript
                 const transcript = event.results[0][0].transcript.toLowerCase();
-                voiceStatus.textContent = `Heard: "${transcript}"`;
+                
+                // Fixed confidence calculation - some browsers don't provide confidence
+                const confidence = event.results[0][0].confidence || 0.8; // Default to 80% if not provided
+                
+                voiceStatus.textContent = `Heard: "${transcript}" (${Math.round(confidence * 100)}% confidence)`;
                 processVoiceCommand(transcript);
             };
             
             recognition.onerror = (event) => {
+                clearTimeout(recognitionTimeout);
                 console.error('Speech recognition error', event.error);
-                voiceStatus.textContent = `Error: ${event.error}`;
+                
+                let errorMessage = 'Error: ';
+                switch(event.error) {
+                    case 'no-speech':
+                        errorMessage += 'No speech was detected.';
+                        break;
+                    case 'audio-capture':
+                        errorMessage += 'No microphone was found.';
+                        break;
+                    case 'not-allowed':
+                        errorMessage += 'Microphone permission was denied.';
+                        permissionRequested = true;
+                        break;
+                    case 'network':
+                        errorMessage += 'Network error occurred.';
+                        break;
+                    default:
+                        errorMessage += event.error;
+                }
+                
+                voiceStatus.textContent = errorMessage;
                 stopListening();
             };
             
             recognition.onend = () => {
+                clearTimeout(recognitionTimeout);
                 if (isListening) {
                     // If recognition ended but we're still supposed to be listening, restart it
                     setTimeout(() => {
                         if (isListening) {
-                            recognition.start();
+                            try {
+                                recognition.start();
+                            } catch (error) {
+                                console.error('Error restarting speech recognition:', error);
+                                stopListening();
+                                voiceStatus.textContent = 'Error restarting voice recognition. Please try again.';
+                            }
                         }
                     }, 500);
                 } else {
@@ -2176,40 +2267,30 @@
                 }
             };
             
-            voiceBtn.addEventListener('click', () => {
-                startListening();
-            });
-            
-            stopVoiceBtn.addEventListener('click', () => {
-                stopListening();
-            });
-            
-            pauseVoiceBtn.addEventListener('click', () => {
-                pauseVoiceOutput();
-                pauseVoiceBtn.style.display = 'none';
-                resumeVoiceBtn.style.display = 'inline-flex';
-                voiceStatus.textContent = 'Voice output paused. Say "continue" to resume.';
-            });
-            
-            resumeVoiceBtn.addEventListener('click', () => {
-                resumeVoiceOutput();
-                resumeVoiceBtn.style.display = 'none';
-                pauseVoiceBtn.style.display = 'inline-flex';
-                voiceStatus.textContent = 'Voice output resumed.';
-            });
-        } else {
-            voiceBtn.disabled = true;
-            voiceStatus.textContent = 'Speech recognition not supported in this browser.';
+            return true;
         }
         
         // Start listening function
         function startListening() {
-            if (recognition && !isListening) {
+            if (!recognition) {
+                if (!initializeSpeechRecognition()) {
+                    return;
+                }
+            }
+            
+            if (!isListening) {
                 try {
                     recognition.start();
+                    permissionRequested = true;
                 } catch (error) {
                     console.error('Error starting speech recognition:', error);
                     voiceStatus.textContent = 'Error starting voice recognition. Please try again.';
+                    
+                    // Try to reinitialize if there's an error
+                    setTimeout(() => {
+                        initializeSpeechRecognition();
+                        startListening();
+                    }, 1000);
                 }
             }
         }
@@ -2217,7 +2298,11 @@
         // Stop listening function
         function stopListening() {
             if (recognition && isListening) {
-                recognition.stop();
+                try {
+                    recognition.stop();
+                } catch (error) {
+                    console.error('Error stopping speech recognition:', error);
+                }
                 isListening = false;
                 voiceBtn.style.display = 'inline-flex';
                 stopVoiceBtn.style.display = 'none';
@@ -2228,7 +2313,7 @@
             }
         }
         
-        // Process voice commands
+        // Process voice commands with improved accuracy
         function processVoiceCommand(transcript) {
             // Check for voice output control commands first
             if (transcript.includes('stop') || transcript.includes('pause')) {
@@ -2247,81 +2332,171 @@
                 return;
             }
             
-            // Extract numbers from the transcript
-            const numbers = transcript.match(/\d+(\.\d+)?/g);
-            
-            if (!numbers || numbers.length === 0) {
-                if (transcript.includes('calculate') || transcript.includes('compute')) {
-                    isVoiceOutputEnabled = true;
-                    calculateBMI();
-                } else if (transcript.includes('reset') || transcript.includes('clear')) {
-                    resetBtn.click();
-                }
-                return;
-            }
+            // Extract numbers from the transcript with improved pattern matching
+            const numberPattern = /\d+(\.\d+)?/g;
+            const numbers = transcript.match(numberPattern);
             
             // Check if using metric or imperial
             const isMetric = metricBtn.classList.contains('active');
             
+            // Improved command processing with better pattern matching
             if (isMetric) {
                 // For metric system
-                if (numbers.length >= 2) {
-                    // Assume first number is weight, second is height
-                    weightKg.value = parseFloat(numbers[0]);
-                    heightCm.value = parseFloat(numbers[1]);
-                    voiceStatus.textContent = `Set weight to ${numbers[0]} kg and height to ${numbers[1]} cm`;
-                    
-                    // Auto-calculate after a short delay
-                    setTimeout(() => {
-                        isVoiceOutputEnabled = true;
-                        calculateBMI();
-                    }, 1000);
-                } else if (transcript.includes('weight')) {
-                    weightKg.value = parseFloat(numbers[0]);
-                    voiceStatus.textContent = `Set weight to ${numbers[0]} kg`;
-                } else if (transcript.includes('height')) {
-                    heightCm.value = parseFloat(numbers[0]);
-                    voiceStatus.textContent = `Set height to ${numbers[0]} cm`;
-                }
+                processMetricCommand(transcript, numbers);
             } else {
                 // For imperial system
-                if (transcript.includes('weight') || transcript.includes('pound') || transcript.includes('lb')) {
-                    weightLbs.value = parseFloat(numbers[0]);
-                    voiceStatus.textContent = `Set weight to ${numbers[0]} lbs`;
-                } else if (transcript.includes('height') || transcript.includes('feet') || transcript.includes('inch')) {
-                    if (numbers.length >= 2) {
-                        // Assume first number is feet, second is inches
-                        heightFt.value = parseFloat(numbers[0]);
-                        heightIn.value = parseFloat(numbers[1]);
-                        voiceStatus.textContent = `Set height to ${numbers[0]} feet ${numbers[1]} inches`;
-                    } else if (numbers.length === 1) {
-                        // If only one number, assume it's feet
-                        heightFt.value = parseFloat(numbers[0]);
-                        heightIn.value = 0;
-                        voiceStatus.textContent = `Set height to ${numbers[0]} feet`;
-                    }
-                }
-                
-                // Auto-calculate if we have both weight and height
-                if (weightLbs.value && heightFt.value) {
-                    setTimeout(() => {
-                        isVoiceOutputEnabled = true;
-                        calculateBMI();
-                    }, 1000);
-                }
+                processImperialCommand(transcript, numbers);
             }
             
             // Check for calculate command
-            if (transcript.includes('calculate') || transcript.includes('compute')) {
-                isVoiceOutputEnabled = true;
-                calculateBMI();
+            if (transcript.includes('calculate') || transcript.includes('compute') || 
+                transcript.includes('bmi') || transcript.includes('result')) {
+                setTimeout(() => {
+                    isVoiceOutputEnabled = true;
+                    calculateBMI();
+                }, 500);
             }
             
             // Check for reset command
-            if (transcript.includes('reset') || transcript.includes('clear')) {
-                resetBtn.click();
+            if (transcript.includes('reset') || transcript.includes('clear') || 
+                transcript.includes('start over')) {
+                setTimeout(() => {
+                    resetBtn.click();
+                }, 500);
             }
         }
+        
+        // Process metric system voice commands
+        function processMetricCommand(transcript, numbers) {
+            if (!numbers || numbers.length === 0) return;
+            
+            // Pattern for weight and height in metric
+            const weightPattern = /(\d+(?:\.\d+)?)\s*(?:kilos?|kilograms?|kg)/i;
+            const heightPattern = /(\d+(?:\.\d+)?)\s*(?:centimeters?|cm|meters?|m)/i;
+            
+            const weightMatch = transcript.match(weightPattern);
+            const heightMatch = transcript.match(heightPattern);
+            
+            // If specific patterns found, use them
+            if (weightMatch && weightMatch[1]) {
+                weightKg.value = parseFloat(weightMatch[1]);
+                voiceStatus.textContent = `Set weight to ${weightMatch[1]} kg`;
+            }
+            
+            if (heightMatch && heightMatch[1]) {
+                let heightValue = parseFloat(heightMatch[1]);
+                // Convert meters to centimeters if needed
+                if (transcript.includes('meter') || transcript.includes('m ') && !transcript.includes('cm')) {
+                    heightValue = heightValue * 100;
+                }
+                heightCm.value = heightValue;
+                voiceStatus.textContent = `Set height to ${heightValue} cm`;
+            }
+            
+            // If no specific patterns but we have numbers, use positional logic
+            if (!weightMatch && !heightMatch && numbers.length >= 2) {
+                // Assume first number is weight, second is height
+                weightKg.value = parseFloat(numbers[0]);
+                heightCm.value = parseFloat(numbers[1]);
+                voiceStatus.textContent = `Set weight to ${numbers[0]} kg and height to ${numbers[1]} cm`;
+            }
+            
+            // Auto-calculate if we have both weight and height
+            if (weightKg.value && heightCm.value) {
+                setTimeout(() => {
+                    isVoiceOutputEnabled = true;
+                    calculateBMI();
+                }, 1000);
+            }
+        }
+        
+        // Process imperial system voice commands
+        function processImperialCommand(transcript, numbers) {
+            if (!numbers || numbers.length === 0) return;
+            
+            // Pattern for weight in imperial
+            const weightPattern = /(\d+(?:\.\d+)?)\s*(?:pounds?|lbs?)/i;
+            const weightMatch = transcript.match(weightPattern);
+            
+            // Pattern for height in feet and inches
+            const feetPattern = /(\d+)\s*(?:feet|ft|foot)/i;
+            const inchesPattern = /(\d+)\s*(?:inches?|in)/i;
+            const heightPattern = /(\d+)\s*(?:feet|ft|foot)\s*(\d+)?\s*(?:inches?|in)?/i;
+            
+            const feetMatch = transcript.match(feetPattern);
+            const inchesMatch = transcript.match(inchesPattern);
+            const heightMatch = transcript.match(heightPattern);
+            
+            // Process weight
+            if (weightMatch && weightMatch[1]) {
+                weightLbs.value = parseFloat(weightMatch[1]);
+                voiceStatus.textContent = `Set weight to ${weightMatch[1]} lbs`;
+            } else if (numbers.length > 0 && (transcript.includes('pound') || transcript.includes('lb'))) {
+                weightLbs.value = parseFloat(numbers[0]);
+                voiceStatus.textContent = `Set weight to ${numbers[0]} lbs`;
+            }
+            
+            // Process height
+            if (heightMatch) {
+                heightFt.value = parseFloat(heightMatch[1]);
+                if (heightMatch[2]) {
+                    heightIn.value = parseFloat(heightMatch[2]);
+                    voiceStatus.textContent = `Set height to ${heightMatch[1]} feet ${heightMatch[2]} inches`;
+                } else {
+                    heightIn.value = 0;
+                    voiceStatus.textContent = `Set height to ${heightMatch[1]} feet`;
+                }
+            } else if (feetMatch && inchesMatch) {
+                heightFt.value = parseFloat(feetMatch[1]);
+                heightIn.value = parseFloat(inchesMatch[1]);
+                voiceStatus.textContent = `Set height to ${feetMatch[1]} feet ${inchesMatch[1]} inches`;
+            } else if (feetMatch) {
+                heightFt.value = parseFloat(feetMatch[1]);
+                heightIn.value = 0;
+                voiceStatus.textContent = `Set height to ${feetMatch[1]} feet`;
+            } else if (inchesMatch && numbers.length >= 2) {
+                // If only inches mentioned but we have multiple numbers
+                heightFt.value = parseFloat(numbers[0]);
+                heightIn.value = parseFloat(inchesMatch[1]);
+                voiceStatus.textContent = `Set height to ${numbers[0]} feet ${inchesMatch[1]} inches`;
+            }
+            
+            // Auto-calculate if we have both weight and height
+            if (weightLbs.value && heightFt.value) {
+                setTimeout(() => {
+                    isVoiceOutputEnabled = true;
+                    calculateBMI();
+                }, 1000);
+            }
+        }
+        
+        // Initialize voice recognition
+        voiceBtn.addEventListener('click', () => {
+            startListening();
+        });
+        
+        stopVoiceBtn.addEventListener('click', () => {
+            stopListening();
+        });
+        
+        pauseVoiceBtn.addEventListener('click', () => {
+            pauseVoiceOutput();
+            pauseVoiceBtn.style.display = 'none';
+            resumeVoiceBtn.style.display = 'inline-flex';
+            voiceStatus.textContent = 'Voice output paused. Say "continue" to resume.';
+        });
+        
+        resumeVoiceBtn.addEventListener('click', () => {
+            resumeVoiceOutput();
+            resumeVoiceBtn.style.display = 'none';
+            pauseVoiceBtn.style.display = 'inline-flex';
+            voiceStatus.textContent = 'Voice output resumed.';
+        });
+        
+        // Initialize speech recognition on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            initializeSpeechRecognition();
+        });
 
         // Language Switcher
         const languageBtn = document.querySelector('.language-btn');

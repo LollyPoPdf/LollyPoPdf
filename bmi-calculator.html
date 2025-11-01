@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BMI Calculator & Healthy Gut | LollyPoPdf</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root {
             --primary-color: #9370db;
@@ -927,6 +928,108 @@
             pointer-events: none;
         }
 
+        /* New Styles for Enhanced Features */
+        .input-label-with-unit {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+
+        .unit-btn-small {
+            padding: 4px 8px;
+            background-color: var(--bg-secondary);
+            border: 1px solid var(--primary-color);
+            border-radius: 4px;
+            cursor: pointer;
+            color: var(--text-color);
+            font-size: 12px;
+        }
+
+        .unit-btn-small.active {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .bmi-chart-container {
+            margin: 30px 0;
+            background-color: var(--bg-secondary);
+            border-radius: var(--border-radius);
+            padding: 20px;
+        }
+
+        .ideal-weight-container {
+            background-color: var(--bg-secondary);
+            border-radius: var(--border-radius);
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .ideal-weight-title {
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+            color: var(--primary-color);
+        }
+
+        .ideal-weight-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--text-color);
+        }
+
+        .history-container {
+            background-color: var(--bg-secondary);
+            border-radius: var(--border-radius);
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .history-title {
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+            color: var(--primary-color);
+        }
+
+        .history-list {
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .history-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .dark-mode .history-item {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .history-date {
+            font-size: 14px;
+            color: var(--text-light);
+        }
+
+        .history-bmi {
+            font-weight: bold;
+        }
+
+        .clear-history-btn {
+            background-color: var(--error-color);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 8px 12px;
+            cursor: pointer;
+            margin-top: 10px;
+            font-size: 14px;
+        }
+
+        .clear-history-btn:hover {
+            background-color: #dc2626;
+        }
+
         /* Responsive Styles */
         @media (max-width: 992px) {
             .steps-container {
@@ -1104,12 +1207,20 @@
                     <div id="metricInputs">
                         <div class="input-group">
                             <div class="input-with-unit">
-                                <label for="weightKg" class="input-label" data-i18n="tool.bmi.weight">Weight:</label>
+                                <div class="input-label-with-unit">
+                                    <label for="weightKg" class="input-label" data-i18n="tool.bmi.weight">Weight:</label>
+                                    <button class="unit-btn-small active" data-unit="kg">kg</button>
+                                    <button class="unit-btn-small" data-unit="lbs">lbs</button>
+                                </div>
                                 <input type="number" id="weightKg" class="input-field" placeholder="Enter weight" min="1" max="300">
                                 <span class="unit-indicator">kg</span>
                             </div>
                             <div class="input-with-unit">
-                                <label for="heightCm" class="input-label" data-i18n="tool.bmi.height">Height:</label>
+                                <div class="input-label-with-unit">
+                                    <label for="heightCm" class="input-label" data-i18n="tool.bmi.height">Height:</label>
+                                    <button class="unit-btn-small active" data-unit="cm">cm</button>
+                                    <button class="unit-btn-small" data-unit="ft">ft</button>
+                                </div>
                                 <input type="number" id="heightCm" class="input-field" placeholder="Enter height" min="50" max="250">
                                 <span class="unit-indicator">cm</span>
                             </div>
@@ -1120,19 +1231,27 @@
                     <div id="imperialInputs" style="display: none;">
                         <div class="input-group">
                             <div class="input-with-unit">
-                                <label for="weightLbs" class="input-label" data-i18n="tool.bmi.weight">Weight:</label>
+                                <div class="input-label-with-unit">
+                                    <label for="weightLbs" class="input-label" data-i18n="tool.bmi.weight">Weight:</label>
+                                    <button class="unit-btn-small" data-unit="kg">kg</button>
+                                    <button class="unit-btn-small active" data-unit="lbs">lbs</button>
+                                </div>
                                 <input type="number" id="weightLbs" class="input-field" placeholder="Enter weight" min="1" max="660">
                                 <span class="unit-indicator">lbs</span>
                             </div>
                         </div>
                         <div class="input-group">
                             <div class="input-with-unit">
-                                <label for="heightFt" class="input-label" data-i18n="tool.bmi.height">Height:</label>
+                                <div class="input-label-with-unit">
+                                    <label for="heightFt" class="input-label" data-i18n="tool.bmi.height">Height:</label>
+                                    <button class="unit-btn-small" data-unit="cm">cm</button>
+                                    <button class="unit-btn-small active" data-unit="ft">ft</button>
+                                </div>
                                 <input type="number" id="heightFt" class="input-field" placeholder="Feet" min="1" max="8">
                                 <span class="unit-indicator">ft</span>
                             </div>
                             <div class="input-with-unit">
-                                <label for="heightIn" class="input-label" data-i18n="tool.bmi.height">Height:</label>
+                                <label for="heightIn" class="input-label" data-i18n="tool.bmi.height">Inches:</label>
                                 <input type="number" id="heightIn" class="input-field" placeholder="Inches" min="0" max="11">
                                 <span class="unit-indicator">in</span>
                             </div>
@@ -1172,6 +1291,26 @@
                             <span>Obese</span>
                         </div>
                         <div class="bmi-advice" id="bmiAdvice"></div>
+                    </div>
+
+                    <!-- Ideal Weight Range -->
+                    <div class="ideal-weight-container" id="idealWeightContainer" style="display: none;">
+                        <h3 class="ideal-weight-title">Ideal Weight Range</h3>
+                        <div class="ideal-weight-value" id="idealWeightValue"></div>
+                    </div>
+
+                    <!-- BMI Chart -->
+                    <div class="bmi-chart-container" id="bmiChartContainer" style="display: none;">
+                        <canvas id="bmiChart"></canvas>
+                    </div>
+
+                    <!-- BMI History -->
+                    <div class="history-container" id="historyContainer" style="display: none;">
+                        <h3 class="history-title">BMI History</h3>
+                        <div class="history-list" id="historyList">
+                            <!-- History items will be added here -->
+                        </div>
+                        <button class="clear-history-btn" id="clearHistoryBtn">Clear History</button>
                     </div>
 
                     <!-- Health Tips -->
@@ -1391,6 +1530,20 @@
             imperialBtn.classList.remove('active');
             metricInputs.style.display = 'block';
             imperialInputs.style.display = 'none';
+            
+            // Update small unit buttons
+            document.querySelectorAll('.unit-btn-small[data-unit="kg"]').forEach(btn => {
+                btn.classList.add('active');
+            });
+            document.querySelectorAll('.unit-btn-small[data-unit="lbs"]').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.querySelectorAll('.unit-btn-small[data-unit="cm"]').forEach(btn => {
+                btn.classList.add('active');
+            });
+            document.querySelectorAll('.unit-btn-small[data-unit="ft"]').forEach(btn => {
+                btn.classList.remove('active');
+            });
         });
         
         imperialBtn.addEventListener('click', () => {
@@ -1398,6 +1551,35 @@
             metricBtn.classList.remove('active');
             imperialInputs.style.display = 'block';
             metricInputs.style.display = 'none';
+            
+            // Update small unit buttons
+            document.querySelectorAll('.unit-btn-small[data-unit="kg"]').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.querySelectorAll('.unit-btn-small[data-unit="lbs"]').forEach(btn => {
+                btn.classList.add('active');
+            });
+            document.querySelectorAll('.unit-btn-small[data-unit="cm"]').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.querySelectorAll('.unit-btn-small[data-unit="ft"]').forEach(btn => {
+                btn.classList.add('active');
+            });
+        });
+
+        // Small unit button functionality
+        document.querySelectorAll('.unit-btn-small').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const unit = this.getAttribute('data-unit');
+                const isMetric = metricBtn.classList.contains('active');
+                
+                // Toggle between metric and imperial
+                if (unit === 'kg' || unit === 'cm') {
+                    metricBtn.click();
+                } else if (unit === 'lbs' || unit === 'ft') {
+                    imperialBtn.click();
+                }
+            });
         });
 
         // BMI Calculator
@@ -1411,6 +1593,12 @@
         const healthTips = document.getElementById('healthTips');
         const healthTipsList = document.getElementById('healthTipsList');
         const dynamicGutTips = document.getElementById('dynamicGutTips');
+        const idealWeightContainer = document.getElementById('idealWeightContainer');
+        const idealWeightValue = document.getElementById('idealWeightValue');
+        const bmiChartContainer = document.getElementById('bmiChartContainer');
+        const historyContainer = document.getElementById('historyContainer');
+        const historyList = document.getElementById('historyList');
+        const clearHistoryBtn = document.getElementById('clearHistoryBtn');
         
         // Input fields
         const weightKg = document.getElementById('weightKg');
@@ -1426,6 +1614,12 @@
         let currentSpeechUtterance = null;
         let speechPausedAt = 0;
         let isSpeechPaused = false;
+        
+        // BMI chart
+        let bmiChart = null;
+        
+        // BMI history
+        let bmiHistory = JSON.parse(localStorage.getItem('bmiHistory')) || [];
         
         // Health tips database
         const healthTipsData = {
@@ -1513,6 +1707,9 @@
                         stopVoiceOutput();
                         bmiResult.classList.remove('active');
                         healthTips.classList.remove('active');
+                        idealWeightContainer.style.display = 'none';
+                        bmiChartContainer.style.display = 'none';
+                        historyContainer.style.display = 'none';
                     }
                 });
             });
@@ -1631,12 +1828,24 @@
             // Show result
             bmiResult.classList.add('active');
             healthTips.classList.add('active');
+            idealWeightContainer.style.display = 'block';
+            bmiChartContainer.style.display = 'block';
+            historyContainer.style.display = 'block';
+            
+            // Calculate and display ideal weight range
+            calculateIdealWeight(height);
             
             // Update health tips
             updateHealthTips(category);
             
             // Update gut tips in Healthy Gut tab
             updateGutTips(category);
+            
+            // Update BMI chart
+            updateBmiChart(bmi, category);
+            
+            // Add to history
+            addToHistory(bmi, category);
             
             // Speak result only if Calculate button was clicked
             if (isVoiceOutputEnabled) {
@@ -1649,6 +1858,129 @@
                 }
             }
         }
+        
+        // Calculate ideal weight range
+        function calculateIdealWeight(height) {
+            // Calculate ideal BMI range (18.5 to 24.9)
+            const minWeight = 18.5 * height * height;
+            const maxWeight = 24.9 * height * height;
+            
+            // Round to 1 decimal place
+            const roundedMin = Math.round(minWeight * 10) / 10;
+            const roundedMax = Math.round(maxWeight * 10) / 10;
+            
+            idealWeightValue.textContent = `${roundedMin} - ${roundedMax} kg`;
+        }
+        
+        // Update BMI chart
+        function updateBmiChart(bmi, category) {
+            const ctx = document.getElementById('bmiChart').getContext('2d');
+            
+            // Destroy existing chart if it exists
+            if (bmiChart) {
+                bmiChart.destroy();
+            }
+            
+            // Create new chart
+            bmiChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Your BMI'],
+                    datasets: [{
+                        label: 'Your BMI',
+                        data: [bmi],
+                        backgroundColor: getCategoryColor(category),
+                        borderColor: getCategoryColor(category),
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'BMI Value'
+                            },
+                            max: Math.max(bmi + 5, 30)
+                        }
+                    },
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Your BMI Result'
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return `Your BMI: ${bmi} (${category})`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+        
+        // Helper function to get category color
+        function getCategoryColor(category) {
+            switch(category) {
+                case 'Underweight': return 'rgba(59, 130, 246, 0.7)';
+                case 'Normal': return 'rgba(16, 185, 129, 0.7)';
+                case 'Overweight': return 'rgba(245, 158, 11, 0.7)';
+                case 'Obese': return 'rgba(239, 68, 68, 0.7)';
+                default: return 'rgba(147, 112, 219, 0.7)';
+            }
+        }
+        
+        // Add BMI to history
+        function addToHistory(bmi, category) {
+            const now = new Date();
+            const dateString = now.toLocaleDateString() + ' ' + now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+            
+            bmiHistory.unshift({
+                date: dateString,
+                bmi: bmi,
+                category: category
+            });
+            
+            // Keep only last 10 entries
+            if (bmiHistory.length > 10) {
+                bmiHistory = bmiHistory.slice(0, 10);
+            }
+            
+            // Save to localStorage
+            localStorage.setItem('bmiHistory', JSON.stringify(bmiHistory));
+            
+            // Update history display
+            updateHistoryDisplay();
+        }
+        
+        // Update history display
+        function updateHistoryDisplay() {
+            historyList.innerHTML = '';
+            
+            bmiHistory.forEach(entry => {
+                const historyItem = document.createElement('div');
+                historyItem.className = 'history-item';
+                historyItem.innerHTML = `
+                    <div class="history-date">${entry.date}</div>
+                    <div class="history-bmi">${entry.bmi} (${entry.category})</div>
+                `;
+                historyList.appendChild(historyItem);
+            });
+        }
+        
+        // Clear history
+        clearHistoryBtn.addEventListener('click', () => {
+            bmiHistory = [];
+            localStorage.setItem('bmiHistory', JSON.stringify(bmiHistory));
+            updateHistoryDisplay();
+        });
+        
+        // Initialize history display
+        updateHistoryDisplay();
         
         // Speak result using speech synthesis
         function speakResult(text) {
@@ -1754,6 +2086,9 @@
             heightIn.value = '';
             bmiResult.classList.remove('active');
             healthTips.classList.remove('active');
+            idealWeightContainer.style.display = 'none';
+            bmiChartContainer.style.display = 'none';
+            historyContainer.style.display = 'none';
             
             // Stop any ongoing voice output
             stopVoiceOutput();
@@ -1763,6 +2098,12 @@
             
             // Reset gut tips to default
             updateGutTips('Normal');
+            
+            // Destroy chart if it exists
+            if (bmiChart) {
+                bmiChart.destroy();
+                bmiChart = null;
+            }
         });
         
         // Calculate button click handler
@@ -1793,7 +2134,7 @@
         if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
             const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
             recognition = new SpeechRecognition();
-            recognition.continuous = true;
+            recognition.continuous = false;
             recognition.interimResults = false;
             recognition.lang = 'en-US';
             
@@ -1803,10 +2144,11 @@
                 stopVoiceBtn.style.display = 'inline-flex';
                 pauseVoiceBtn.style.display = 'inline-flex';
                 voiceStatus.textContent = 'Listening... Speak now.';
+                voiceBtn.classList.add('listening');
             };
             
             recognition.onresult = (event) => {
-                const transcript = event.results[event.results.length - 1][0].transcript.toLowerCase();
+                const transcript = event.results[0][0].transcript.toLowerCase();
                 voiceStatus.textContent = `Heard: "${transcript}"`;
                 processVoiceCommand(transcript);
             };
@@ -1820,7 +2162,17 @@
             recognition.onend = () => {
                 if (isListening) {
                     // If recognition ended but we're still supposed to be listening, restart it
-                    recognition.start();
+                    setTimeout(() => {
+                        if (isListening) {
+                            recognition.start();
+                        }
+                    }, 500);
+                } else {
+                    voiceBtn.style.display = 'inline-flex';
+                    stopVoiceBtn.style.display = 'none';
+                    pauseVoiceBtn.style.display = 'none';
+                    resumeVoiceBtn.style.display = 'none';
+                    voiceBtn.classList.remove('listening');
                 }
             };
             
@@ -1853,7 +2205,12 @@
         // Start listening function
         function startListening() {
             if (recognition && !isListening) {
-                recognition.start();
+                try {
+                    recognition.start();
+                } catch (error) {
+                    console.error('Error starting speech recognition:', error);
+                    voiceStatus.textContent = 'Error starting voice recognition. Please try again.';
+                }
             }
         }
         
@@ -1867,6 +2224,7 @@
                 pauseVoiceBtn.style.display = 'none';
                 resumeVoiceBtn.style.display = 'none';
                 voiceStatus.textContent = 'Voice input stopped. Click the microphone to start again.';
+                voiceBtn.classList.remove('listening');
             }
         }
         
@@ -2110,1638 +2468,6 @@
                 "footer.links.disclaimer": "Descargo de Responsabilidad",
                 "footer.links.terms": "Términos de Servicio",
                 "footer.copyright": "© 2025 LollyPoPDF. Todos los derechos reservados."
-            },
-            fr: {
-                "nav.home": "Accueil",
-                "nav.about": "À propos",
-                "nav.tools": "Outils",
-                "nav.contact": "Contact",
-                "hero.title": "Calculateur d'IMC et Santé Intestinale",
-                "hero.description": "Calculez votre IMC en temps réel, obtenez des conseils de santé personnalisés et apprenez à améliorer votre santé intestinale. Tout traitement se fait localement avec une confidentialité totale.",
-                "howto.title": "Comment Utiliser l'Outil de Santé",
-                "howto.step1.title": "Calculez Votre IMC",
-                "howto.step1.description": "Entrez votre taille et votre poids en utilisant les unités métriques ou impériales. L'outil calculera instantanément votre IMC et affichera votre catégorie de santé.",
-                "howto.step2.title": "Utilisez le Contrôle Vocal",
-                "howto.step2.description": "Cliquez sur le bouton du microphone et prononcez vos mesures. L'outil reconnaîtra votre voix et saisira automatiquement les valeurs.",
-                "howto.step3.title": "Obtenez des Conseils de Santé",
-                "howto.step3.description": "En fonction de votre IMC, recevez des conseils personnalisés pour améliorer votre santé, avec un accent particulier sur la santé intestinale et le bien-être général.",
-                "howto.step4.title": "Apprenez sur la Santé Intestinale",
-                "howto.step4.description": "Explorez notre collection de conseils sur la santé intestinale et de recommandations de mode de vie pour améliorer votre santé digestive et votre bien-être général.",
-                "tool.title": "Calculateur d'IMC et Santé Intestinale",
-                "tool.tabs.bmi": "Calculateur d'IMC",
-                "tool.tabs.gut": "Santé Intestinale",
-                "tool.bmi.weight": "Poids:",
-                "tool.bmi.height": "Taille:",
-                "tool.bmi.calculate": "Calculer l'IMC",
-                "tool.bmi.reset": "Réinitialiser",
-                "tool.tips.title": "Conseils de Santé Personnalisés",
-                "tool.voice.title": "Contrôle Vocal",
-                "tool.voice.description": "Cliquez sur le microphone et prononcez vos mesures",
-                "tool.voice.start": "Démarrer la Saisie Vocale",
-                "tool.voice.stop": "Arrêter la Saisie Vocale",
-                "tool.voice.pause": "Suspendre la Sortie",
-                "tool.voice.resume": "Reprendre la Sortie",
-                "tool.gut.title": "Améliorez Votre Santé Intestinale",
-                "tool.gut.description": "Un intestin sain est essentiel pour le bien-être général. Voici quelques conseils pour améliorer votre santé digestive:",
-                "footer.follow": "SUIVEZ-NOUS",
-                "footer.categories": "Catégories Populaires",
-                "footer.categories.pdf": "Outils PDF",
-                "footer.categories.image": "Outils d'Image",
-                "footer.categories.text": "Outils de Texte",
-                "footer.categories.av": "Outils Audio/Video",
-                "footer.categories.web": "Outils WebDeveloper",
-                "footer.categories.calc": "Outils de Calculatrice",
-                "footer.categories.util": "Outils Utilitaires",
-                "footer.categories.color": "Outils de Couleur",
-                "footer.quicklinks": "Liens Rapides",
-                "footer.links.tools": "Tous les Outils",
-                "footer.links.faq": "FAQ",
-                "footer.links.contact": "Contact",
-                "footer.links.privacy": "Politique de Confidentialité",
-                "footer.links.disclaimer": "Avertissement",
-                "footer.links.terms": "Conditions d'Utilisation",
-                "footer.copyright": "© 2025 LollyPoPDF. Tous droits réservés."
-            },
-            de: {
-                "nav.home": "Startseite",
-                "nav.about": "Über uns",
-                "nav.tools": "Werkzeuge",
-                "nav.contact": "Kontakt",
-                "hero.title": "BMI-Rechner & Gesunder Darm",
-                "hero.description": "Berechnen Sie Ihren BMI in Echtzeit, erhalten Sie personalisierte Gesundheitsberatung und erfahren Sie, wie Sie Ihre Darmgesundheit verbessern können. Alle Verarbeitungen erfolgen lokal mit vollständiger Privatsphäre.",
-                "howto.title": "So verwenden Sie das Gesundheitswerkzeug",
-                "howto.step1.title": "Berechnen Sie Ihren BMI",
-                "howto.step1.description": "Geben Sie Ihre Größe und Ihr Gewicht in metrischen oder imperialen Einheiten ein. Das Werkzeug berechnet sofort Ihren BMI und zeigt Ihre Gesundheitskategorie an.",
-                "howto.step2.title": "Verwenden Sie die Sprachsteuerung",
-                "howto.step2.description": "Klicken Sie auf die Mikrofon-Taste und sprechen Sie Ihre Maße. Das Werkzeug erkennt Ihre Stimme und gibt die Werte automatisch ein.",
-                "howto.step3.title": "Erhalten Sie Gesundheitsberatung",
-                "howto.step3.description": "Basierend auf Ihrem BMI erhalten Sie personalisierte Ratschläge zur Verbesserung Ihrer Gesundheit, mit besonderem Fokus auf Darmgesundheit und allgemeines Wohlbefinden.",
-                "howto.step4.title": "Erfahren Sie mehr über Darmgesundheit",
-                "howto.step4.description": "Entdecken Sie unsere Sammlung von Tipps zur Darmgesundheit und Lebensstil-Empfehlungen zur Verbesserung Ihrer Verdauungsgesundheit und Ihres allgemeinen Wohlbefindens.",
-                "tool.title": "BMI-Rechner & Gesunder Darm",
-                "tool.tabs.bmi": "BMI-Rechner",
-                "tool.tabs.gut": "Gesunder Darm",
-                "tool.bmi.weight": "Gewicht:",
-                "tool.bmi.height": "Größe:",
-                "tool.bmi.calculate": "BMI berechnen",
-                "tool.bmi.reset": "Zurücksetzen",
-                "tool.tips.title": "Personalisierte Gesundheitstipps",
-                "tool.voice.title": "Sprachsteuerung",
-                "tool.voice.description": "Klicken Sie auf das Mikrofon und sprechen Sie Ihre Maße",
-                "tool.voice.start": "Spracheingabe starten",
-                "tool.voice.stop": "Spracheingabe stoppen",
-                "tool.voice.pause": "Ausgabe pausieren",
-                "tool.voice.resume": "Ausgabe fortsetzen",
-                "tool.gut.title": "Verbessern Sie Ihre Darmgesundheit",
-                "tool.gut.description": "Ein gesunder Darm ist für das allgemeine Wohlbefinden unerlässlich. Hier sind einige Tipps zur Verbesserung Ihrer Verdauungsgesundheit:",
-                "footer.follow": "FOLGEN SIE UNS",
-                "footer.categories": "Beliebte Kategorien",
-                "footer.categories.pdf": "PDF-Werkzeuge",
-                "footer.categories.image": "Bildwerkzeuge",
-                "footer.categories.text": "Textwerkzeuge",
-                "footer.categories.av": "Audio/Video-Werkzeuge",
-                "footer.categories.web": "WebDeveloper-Werkzeuge",
-                "footer.categories.calc": "Rechnerwerkzeuge",
-                "footer.categories.util": "Dienstprogramme",
-                "footer.categories.color": "Farbwerkzeuge",
-                "footer.quicklinks": "Schnelllinks",
-                "footer.links.tools": "Alle Werkzeuge",
-                "footer.links.faq": "FAQ",
-                "footer.links.contact": "Kontakt",
-                "footer.links.privacy": "Datenschutzrichtlinie",
-                "footer.links.disclaimer": "Haftungsausschluss",
-                "footer.links.terms": "Nutzungsbedingungen",
-                "footer.copyright": "© 2025 LollyPoPDF. Alle Rechte vorbehalten."
-            },
-            it: {
-                "nav.home": "Home",
-                "nav.about": "Chi Siamo",
-                "nav.tools": "Strumenti",
-                "nav.contact": "Contatto",
-                "hero.title": "Calcolatore BMI e Intestino Sano",
-                "hero.description": "Calcola il tuo BMI in tempo reale, ricevi consigli sulla salute personalizzati e impara come migliorare la salute del tuo intestino. Tutte le elaborazioni avvengono localmente con completa privacy.",
-                "howto.title": "Come Utilizzare lo Strumento di Salute",
-                "howto.step1.title": "Calcola il Tuo BMI",
-                "howto.step1.description": "Inserisci la tua altezza e peso utilizzando unità metriche o imperiali. Lo strumento calcolerà istantaneamente il tuo BMI e mostrerà la tua categoria di salute.",
-                "howto.step2.title": "Usa il Controllo Vocale",
-                "howto.step2.description": "Clicca il pulsante del microfono e pronuncia le tue misure. Lo strumento riconoscerà la tua voce e inserirà automaticamente i valori.",
-                "howto.step3.title": "Ricevi Consigli sulla Salute",
-                "howto.step3.description": "In base al tuo BMI, ricevi consigli personalizzati per migliorare la tua salute, con un focus speciale sulla salute intestinale e il benessere generale.",
-                "howto.step4.title": "Impara sulla Salute Intestinale",
-                "howto.step4.description": "Esplora la nostra collezione di consigli sulla salute intestinale e raccomandazioni sullo stile di vita per migliorare la tua salute digestiva e il benessere generale.",
-                "tool.title": "Calcolatore BMI e Intestino Sano",
-                "tool.tabs.bmi": "Calcolatore BMI",
-                "tool.tabs.gut": "Intestino Sano",
-                "tool.bmi.weight": "Peso:",
-                "tool.bmi.height": "Altezza:",
-                "tool.bmi.calculate": "Calcola BMI",
-                "tool.bmi.reset": "Ripristina",
-                "tool.tips.title": "Consigli di Salute Personalizzati",
-                "tool.voice.title": "Controllo Vocale",
-                "tool.voice.description": "Clicca sul microfono e pronuncia le tue misure",
-                "tool.voice.start": "Avvia Inserimento Vocale",
-                "tool.voice.stop": "Ferma Inserimento Vocale",
-                "tool.voice.pause": "Metti in Pausa l'Uscita",
-                "tool.voice.resume": "Riprendi l'Uscita",
-                "tool.gut.title": "Migliora la Tua Salute Intestinale",
-                "tool.gut.description": "Un intestino sano è essenziale per il benessere generale. Ecco alcuni consigli per migliorare la tua salute digestiva:",
-                "footer.follow": "SEGUICI",
-                "footer.categories": "Categorie Popolari",
-                "footer.categories.pdf": "Strumenti PDF",
-                "footer.categories.image": "Strumenti Immagine",
-                "footer.categories.text": "Strumenti Testo",
-                "footer.categories.av": "Strumenti Audio/Video",
-                "footer.categories.web": "Strumenti WebDeveloper",
-                "footer.categories.calc": "Strumenti Calcolatrice",
-                "footer.categories.util": "Strumenti Utilità",
-                "footer.categories.color": "Strumenti Colore",
-                "footer.quicklinks": "Link Rapidi",
-                "footer.links.tools": "Tutti gli Strumenti",
-                "footer.links.faq": "FAQ",
-                "footer.links.contact": "Contatto",
-                "footer.links.privacy": "Informativa sulla Privacy",
-                "footer.links.disclaimer": "Disclaimer",
-                "footer.links.terms": "Termini di Servizio",
-                "footer.copyright": "© 2025 LollyPoPDF. Tutti i diritti riservati."
-            },
-            pt: {
-                "nav.home": "Início",
-                "nav.about": "Sobre Nós",
-                "nav.tools": "Ferramentas",
-                "nav.contact": "Contato",
-                "hero.title": "Calculadora de IMC e Intestino Saudável",
-                "hero.description": "Calcule seu IMC em tempo real, receba conselhos de saúde personalizados e aprenda como melhorar sua saúde intestinal. Todo processamento ocorre localmente com privacidade completa.",
-                "howto.title": "Como Usar a Ferramenta de Saúde",
-                "howto.step1.title": "Calcule Seu IMC",
-                "howto.step1.description": "Insira sua altura e peso usando unidades métricas ou imperiais. A ferramenta calculará instantaneamente seu IMC e mostrará sua categoria de saúde.",
-                "howto.step2.title": "Use o Controle de Voz",
-                "howto.step2.description": "Clique no botão do microfone e fale suas medidas. A ferramenta reconhecerá sua voz e inserirá os valores automaticamente.",
-                "howto.step3.title": "Obtenha Conselhos de Saúde",
-                "howto.step3.description": "Com base no seu IMC, receba conselhos personalizados para melhorar sua saúde, com foco especial na saúde intestinal e bem-estar geral.",
-                "howto.step4.title": "Aprenda Sobre Saúde Intestinal",
-                "howto.step4.description": "Explore nossa coleção de dicas de saúde intestinal e recomendações de estilo de vida para melhorar sua saúde digestiva e bem-estar geral.",
-                "tool.title": "Calculadora de IMC e Intestino Saudável",
-                "tool.tabs.bmi": "Calculadora de IMC",
-                "tool.tabs.gut": "Intestino Saudável",
-                "tool.bmi.weight": "Peso:",
-                "tool.bmi.height": "Altura:",
-                "tool.bmi.calculate": "Calcular IMC",
-                "tool.bmi.reset": "Redefinir",
-                "tool.tips.title": "Dicas de Saúde Personalizadas",
-                "tool.voice.title": "Controle de Voz",
-                "tool.voice.description": "Clique no microfone e fale suas medidas",
-                "tool.voice.start": "Iniciar Entrada de Voz",
-                "tool.voice.stop": "Parar Entrada de Voz",
-                "tool.voice.pause": "Pausar Saída",
-                "tool.voice.resume": "Retomar Saída",
-                "tool.gut.title": "Melhore Sua Saúde Intestinal",
-                "tool.gut.description": "Um intestino saudável é essencial para o bem-estar geral. Aqui estão algumas dicas para melhorar sua saúde digestiva:",
-                "footer.follow": "SIGA-NOS",
-                "footer.categories": "Categorias Populares",
-                "footer.categories.pdf": "Ferramentas PDF",
-                "footer.categories.image": "Ferramentas de Imagem",
-                "footer.categories.text": "Ferramentas de Texto",
-                "footer.categories.av": "Ferramentas de Áudio/Video",
-                "footer.categories.web": "Ferramentas WebDeveloper",
-                "footer.categories.calc": "Ferramentas de Calculadora",
-                "footer.categories.util": "Ferramentas de Utilidade",
-                "footer.categories.color": "Ferramentas de Cor",
-                "footer.quicklinks": "Links Rápidos",
-                "footer.links.tools": "Todas as Ferramentas",
-                "footer.links.faq": "FAQ",
-                "footer.links.contact": "Contato",
-                "footer.links.privacy": "Política de Privacidade",
-                "footer.links.disclaimer": "Aviso Legal",
-                "footer.links.terms": "Termos de Serviço",
-                "footer.copyright": "© 2025 LollyPoPDF. Todos os direitos reservados."
-            },
-            ja: {
-                "nav.home": "ホーム",
-                "nav.about": "会社概要",
-                "nav.tools": "ツール",
-                "nav.contact": "お問い合わせ",
-                "hero.title": "BMI計算機と健康な腸",
-                "hero.description": "リアルタイムでBMIを計算し、個別の健康アドバイスを受け、腸の健康を改善する方法を学びましょう。すべての処理は完全なプライバシーでローカルで行われます。",
-                "howto.title": "健康ツールの使い方",
-                "howto.step1.title": "BMIを計算する",
-                "howto.step1.description": "メートル法またはヤード・ポンド法を使用して身長と体重を入力します。ツールは即座にBMIを計算し、健康カテゴリーを表示します。",
-                "howto.step2.title": "音声コントロールを使用する",
-                "howto.step2.description": "マイクボタンをクリックして測定値を話します。ツールはあなたの声を認識し、自動的に値を入力します。",
-                "howto.step3.title": "健康アドバイスを受ける",
-                "howto.step3.description": "あなたのBMIに基づいて、腸の健康と全体的な健康に特に焦点を当てた、健康改善のための個別のアドバイスを受け取ります。",
-                "howto.step4.title": "腸の健康について学ぶ",
-                "howto.step4.description": "腸の健康のヒントとライフスタイルの推奨事項のコレクションを探索して、消化器の健康と全体的な健康を改善しましょう。",
-                "tool.title": "BMI計算機と健康な腸",
-                "tool.tabs.bmi": "BMI計算機",
-                "tool.tabs.gut": "健康な腸",
-                "tool.bmi.weight": "体重:",
-                "tool.bmi.height": "身長:",
-                "tool.bmi.calculate": "BMIを計算",
-                "tool.bmi.reset": "リセット",
-                "tool.tips.title": "個別の健康ヒント",
-                "tool.voice.title": "音声コントロール",
-                "tool.voice.description": "マイクをクリックして測定値を話してください",
-                "tool.voice.start": "音声入力を開始",
-                "tool.voice.stop": "音声入力を停止",
-                "tool.voice.pause": "出力を一時停止",
-                "tool.voice.resume": "出力を再開",
-                "tool.gut.title": "腸の健康を改善する",
-                "tool.gut.description": "健康な腸は全体的な健康に不可欠です。消化器の健康を改善するためのヒントをいくつか紹介します:",
-                "footer.follow": "フォローする",
-                "footer.categories": "人気カテゴリー",
-                "footer.categories.pdf": "PDFツール",
-                "footer.categories.image": "画像ツール",
-                "footer.categories.text": "テキストツール",
-                "footer.categories.av": "オーディオ/ビデオツール",
-                "footer.categories.web": "Web開発者ツール",
-                "footer.categories.calc": "計算機ツール",
-                "footer.categories.util": "ユーティリティツール",
-                "footer.categories.color": "カラーツール",
-                "footer.quicklinks": "クイックリンク",
-                "footer.links.tools": "すべてのツール",
-                "footer.links.faq": "FAQ",
-                "footer.links.contact": "お問い合わせ",
-                "footer.links.privacy": "プライバシーポリシー",
-                "footer.links.disclaimer": "免責事項",
-                "footer.links.terms": "利用規約",
-                "footer.copyright": "© 2025 LollyPoPDF. 無断複写・転載を禁じます。"
-            },
-            ru: {
-                "nav.home": "Главная",
-                "nav.about": "О нас",
-                "nav.tools": "Инструменты",
-                "nav.contact": "Контакты",
-                "hero.title": "Калькулятор ИМТ и Здоровый Кишечник",
-                "hero.description": "Рассчитайте свой ИМТ в реальном времени, получите персонализированные рекомендации по здоровью и узнайте, как улучшить здоровье кишечника. Вся обработка происходит локально с полной конфиденциальностью.",
-                "howto.title": "Как использовать инструмент здоровья",
-                "howto.step1.title": "Рассчитайте свой ИМТ",
-                "howto.step1.description": "Введите свой рост и вес, используя метрические или имперские единицы. Инструмент мгновенно рассчитает ваш ИМТ и покажет вашу категорию здоровья.",
-                "howto.step2.title": "Используйте голосовое управление",
-                "howto.step2.description": "Нажмите кнопку микрофона и произнесите свои измерения. Инструмент распознает ваш голос и автоматически введет значения.",
-                "howto.step3.title": "Получите рекомендации по здоровью",
-                "howto.step3.description": "На основе вашего ИМТ получите персонализированные советы по улучшению здоровья, с особым акцентом на здоровье кишечника и общее благополучие.",
-                "howto.step4.title": "Узнайте о здоровье кишечника",
-                "howto.step4.description": "Изучите нашу коллекцию советов по здоровью кишечника и рекомендаций по образу жизни для улучшения здоровья пищеварительной системы и общего благополучия.",
-                "tool.title": "Калькулятор ИМТ и Здоровый Кишечник",
-                "tool.tabs.bmi": "Калькулятор ИМТ",
-                "tool.tabs.gut": "Здоровый Кишечник",
-                "tool.bmi.weight": "Вес:",
-                "tool.bmi.height": "Рост:",
-                "tool.bmi.calculate": "Рассчитать ИМТ",
-                "tool.bmi.reset": "Сбросить",
-                "tool.tips.title": "Персонализированные советы по здоровью",
-                "tool.voice.title": "Голосовое управление",
-                "tool.voice.description": "Нажмите на микрофон и произнесите свои измерения",
-                "tool.voice.start": "Начать голосовой ввод",
-                "tool.voice.stop": "Остановить голосовой ввод",
-                "tool.voice.pause": "Приостановить вывод",
-                "tool.voice.resume": "Возобновить вывод",
-                "tool.gut.title": "Улучшите здоровье своего кишечника",
-                "tool.gut.description": "Здоровый кишечник необходим для общего благополучия. Вот несколько советов по улучшению здоровья пищеварительной системы:",
-                "footer.follow": "СЛЕДУЙТЕ ЗА НАМИ",
-                "footer.categories": "Популярные категории",
-                "footer.categories.pdf": "PDF инструменты",
-                "footer.categories.image": "Инструменты для изображений",
-                "footer.categories.text": "Текстовые инструменты",
-                "footer.categories.av": "Аудио/Видео инструменты",
-                "footer.categories.web": "Инструменты WebDeveloper",
-                "footer.categories.calc": "Калькуляторные инструменты",
-                "footer.categories.util": "Утилиты",
-                "footer.categories.color": "Цветовые инструменты",
-                "footer.quicklinks": "Быстрые ссылки",
-                "footer.links.tools": "Все инструменты",
-                "footer.links.faq": "Часто задаваемые вопросы",
-                "footer.links.contact": "Контакты",
-                "footer.links.privacy": "Политика конфиденциальности",
-                "footer.links.disclaimer": "Отказ от ответственности",
-                "footer.links.terms": "Условия обслуживания",
-                "footer.copyright": "© 2025 LollyPoPDF. Все права защищены."
-            },
-            ko: {
-                "nav.home": "홈",
-                "nav.about": "회사 소개",
-                "nav.tools": "도구",
-                "nav.contact": "연락처",
-                "hero.title": "BMI 계산기 및 건강한 장",
-                "hero.description": "실시간으로 BMI를 계산하고, 맞춤형 건강 조언을 받으며, 장 건강을 개선하는 방법을 배우세요. 모든 처리는 완전한 개인 정보 보호와 함께 로컬에서 이루어집니다.",
-                "howto.title": "건강 도구 사용 방법",
-                "howto.step1.title": "BMI 계산하기",
-                "howto.step1.description": "미터법 또는 야드파운드법을 사용하여 키와 체중을 입력하세요. 도구는 즉시 BMI를 계산하고 건강 범주를 표시합니다.",
-                "howto.step2.title": "음성 제어 사용하기",
-                "howto.step2.description": "마이크 버튼을 클릭하고 측정값을 말하세요. 도구는 음성을 인식하고 자동으로 값을 입력합니다.",
-                "howto.step3.title": "건강 조언 받기",
-                "howto.step3.description": "BMI를 기반으로 장 건강과 전반적인 웰빙에 특히 초점을 맞춘 건강 개선을 위한 맞춤형 조언을 받으세요.",
-                "howto.step4.title": "장 건강에 대해 배우기",
-                "howto.step4.description": "장 건강 팁과 생활 방식 권장 사항 컬렉션을 탐색하여 소화 기능 건강과 전반적인 웰빙을 개선하세요.",
-                "tool.title": "BMI 계산기 및 건강한 장",
-                "tool.tabs.bmi": "BMI 계산기",
-                "tool.tabs.gut": "건강한 장",
-                "tool.bmi.weight": "체중:",
-                "tool.bmi.height": "키:",
-                "tool.bmi.calculate": "BMI 계산",
-                "tool.bmi.reset": "재설정",
-                "tool.tips.title": "맞춤형 건강 팁",
-                "tool.voice.title": "음성 제어",
-                "tool.voice.description": "마이크를 클릭하고 측정값을 말하세요",
-                "tool.voice.start": "음성 입력 시작",
-                "tool.voice.stop": "음성 입력 중지",
-                "tool.voice.pause": "출력 일시 중지",
-                "tool.voice.resume": "출력 재개",
-                "tool.gut.title": "장 건강 개선하기",
-                "tool.gut.description": "건강한 장은 전반적인 웰빙에 필수적입니다. 소화 기능 건강을 개선하기 위한 몇 가지 팁은 다음과 같습니다:",
-                "footer.follow": "팔로우하기",
-                "footer.categories": "인기 카테고리",
-                "footer.categories.pdf": "PDF 도구",
-                "footer.categories.image": "이미지 도구",
-                "footer.categories.text": "텍스트 도구",
-                "footer.categories.av": "오디오/비디오 도구",
-                "footer.categories.web": "웹 개발자 도구",
-                "footer.categories.calc": "계산기 도구",
-                "footer.categories.util": "유틸리티 도구",
-                "footer.categories.color": "색상 도구",
-                "footer.quicklinks": "빠른 링크",
-                "footer.links.tools": "모든 도구",
-                "footer.links.faq": "자주 묻는 질문",
-                "footer.links.contact": "연락처",
-                "footer.links.privacy": "개인정보 보호정책",
-                "footer.links.disclaimer": "면책 조항",
-                "footer.links.terms": "이용 약관",
-                "footer.copyright": "© 2025 LollyPoPDF. 모든 권리 보유."
-            },
-            "zh-CN": {
-                "nav.home": "首页",
-                "nav.about": "关于我们",
-                "nav.tools": "工具",
-                "nav.contact": "联系我们",
-                "hero.title": "BMI计算器和健康肠道",
-                "hero.description": "实时计算您的BMI，获取个性化健康建议，并学习如何改善肠道健康。所有处理都在本地完成，完全保护隐私。",
-                "howto.title": "如何使用健康工具",
-                "howto.step1.title": "计算您的BMI",
-                "howto.step1.description": "使用公制或英制单位输入您的身高和体重。该工具将立即计算您的BMI并显示您的健康类别。",
-                "howto.step2.title": "使用语音控制",
-                "howto.step2.description": "点击麦克风按钮并说出您的测量值。该工具将识别您的语音并自动输入数值。",
-                "howto.step3.title": "获取健康建议",
-                "howto.step3.description": "根据您的BMI，接收改善健康的个性化建议，特别关注肠道健康和整体健康。",
-                "howto.step4.title": "了解肠道健康",
-                "howto.step4.description": "探索我们的肠道健康提示和生活方式建议集合，以改善您的消化健康和整体健康。",
-                "tool.title": "BMI计算器和健康肠道",
-                "tool.tabs.bmi": "BMI计算器",
-                "tool.tabs.gut": "健康肠道",
-                "tool.bmi.weight": "体重:",
-                "tool.bmi.height": "身高:",
-                "tool.bmi.calculate": "计算BMI",
-                "tool.bmi.reset": "重置",
-                "tool.tips.title": "个性化健康提示",
-                "tool.voice.title": "语音控制",
-                "tool.voice.description": "点击麦克风并说出您的测量值",
-                "tool.voice.start": "开始语音输入",
-                "tool.voice.stop": "停止语音输入",
-                "tool.voice.pause": "暂停输出",
-                "tool.voice.resume": "恢复输出",
-                "tool.gut.title": "改善您的肠道健康",
-                "tool.gut.description": "健康的肠道对整体健康至关重要。以下是一些改善消化健康的提示:",
-                "footer.follow": "关注我们",
-                "footer.categories": "热门类别",
-                "footer.categories.pdf": "PDF工具",
-                "footer.categories.image": "图像工具",
-                "footer.categories.text": "文本工具",
-                "footer.categories.av": "音频/视频工具",
-                "footer.categories.web": "Web开发工具",
-                "footer.categories.calc": "计算器工具",
-                "footer.categories.util": "实用工具",
-                "footer.categories.color": "颜色工具",
-                "footer.quicklinks": "快速链接",
-                "footer.links.tools": "所有工具",
-                "footer.links.faq": "常见问题",
-                "footer.links.contact": "联系我们",
-                "footer.links.privacy": "隐私政策",
-                "footer.links.disclaimer": "免责声明",
-                "footer.links.terms": "服务条款",
-                "footer.copyright": "© 2025 LollyPoPDF. 保留所有权利。"
-            },
-            "zh-TW": {
-                "nav.home": "首頁",
-                "nav.about": "關於我們",
-                "nav.tools": "工具",
-                "nav.contact": "聯絡我們",
-                "hero.title": "BMI計算器和健康腸道",
-                "hero.description": "即時計算您的BMI，獲取個人化健康建議，並學習如何改善腸道健康。所有處理都在本地完成，完全保護隱私。",
-                "howto.title": "如何使用健康工具",
-                "howto.step1.title": "計算您的BMI",
-                "howto.step1.description": "使用公制或英制單位輸入您的身高和體重。該工具將立即計算您的BMI並顯示您的健康類別。",
-                "howto.step2.title": "使用語音控制",
-                "howto.step2.description": "點擊麥克風按鈕並說出您的測量值。該工具將識別您的語音並自動輸入數值。",
-                "howto.step3.title": "獲取健康建議",
-                "howto.step3.description": "根據您的BMI，接收改善健康的個人化建議，特別關注腸道健康和整體健康。",
-                "howto.step4.title": "了解腸道健康",
-                "howto.step4.description": "探索我們的腸道健康提示和生活方式的建議集合，以改善您的消化健康和整體健康。",
-                "tool.title": "BMI計算器和健康腸道",
-                "tool.tabs.bmi": "BMI計算器",
-                "tool.tabs.gut": "健康腸道",
-                "tool.bmi.weight": "體重:",
-                "tool.bmi.height": "身高:",
-                "tool.bmi.calculate": "計算BMI",
-                "tool.bmi.reset": "重置",
-                "tool.tips.title": "個人化健康提示",
-                "tool.voice.title": "語音控制",
-                "tool.voice.description": "點擊麥克風並說出您的測量值",
-                "tool.voice.start": "開始語音輸入",
-                "tool.voice.stop": "停止語音輸入",
-                "tool.voice.pause": "暫停輸出",
-                "tool.voice.resume": "恢復輸出",
-                "tool.gut.title": "改善您的腸道健康",
-                "tool.gut.description": "健康的腸道對整體健康至關重要。以下是一些改善消化健康的提示:",
-                "footer.follow": "關注我們",
-                "footer.categories": "熱門類別",
-                "footer.categories.pdf": "PDF工具",
-                "footer.categories.image": "圖像工具",
-                "footer.categories.text": "文字工具",
-                "footer.categories.av": "音頻/視頻工具",
-                "footer.categories.web": "Web開發工具",
-                "footer.categories.calc": "計算機工具",
-                "footer.categories.util": "實用工具",
-                "footer.categories.color": "顏色工具",
-                "footer.quicklinks": "快速連結",
-                "footer.links.tools": "所有工具",
-                "footer.links.faq": "常見問題",
-                "footer.links.contact": "聯絡我們",
-                "footer.links.privacy": "隱私政策",
-                "footer.links.disclaimer": "免責聲明",
-                "footer.links.terms": "服務條款",
-                "footer.copyright": "© 2025 LollyPoPDF. 保留所有權利。"
-            },
-            ar: {
-                "nav.home": "الصفحة الرئيسية",
-                "nav.about": "من نحن",
-                "nav.tools": "الأدوات",
-                "nav.contact": "اتصل بنا",
-                "hero.title": "حاسبة مؤشر كتلة الجسم والأمعاء الصحية",
-                "hero.description": "احسب مؤشر كتلة الجسم الخاص بك في الوقت الفعلي، واحصل على نصائح صحية مخصصة، وتعلم كيفية تحسين صحة أمعائك. كل المعالجة تتم محليًا مع خصوصية كاملة.",
-                "howto.title": "كيفية استخدام أداة الصحة",
-                "howto.step1.title": "احسب مؤشر كتلة الجسم الخاص بك",
-                "howto.step1.description": "أدخل طولك ووزنك باستخدام الوحدات المترية أو الإمبراطورية. ستقوم الأداة بحساب مؤشر كتلة الجسم الخاص بك على الفور وعرض فئة صحتك.",
-                "howto.step2.title": "استخدم التحكم الصوتي",
-                "howto.step2.description": "انقر على زر الميكروفون وتحدث بقياساتك. ستتعرف الأداة على صوتك وإدخال القيم تلقائيًا.",
-                "howto.step3.title": "احصل على نصائح صحية",
-                "howto.step3.description": "بناءً على مؤشر كتلة الجسم الخاص بك، احصل على نصائح مخصصة لتحسين صحتك، مع تركيز خاص على صحة الأمعاء والرفاهية العامة.",
-                "howto.step4.title": "تعلم عن صحة الأمعاء",
-                "howto.step4.description": "استكشف مجموعتنا من نصائح صحة الأمعاء وتوصيات نمط الحياة لتحسين صحتك الهضمية ورفاهيتك العامة.",
-                "tool.title": "حاسبة مؤشر كتلة الجسم والأمعاء الصحية",
-                "tool.tabs.bmi": "حاسبة مؤشر كتلة الجسم",
-                "tool.tabs.gut": "الأمعاء الصحية",
-                "tool.bmi.weight": "الوزن:",
-                "tool.bmi.height": "الطول:",
-                "tool.bmi.calculate": "احسب مؤشر كتلة الجسم",
-                "tool.bmi.reset": "إعادة تعيين",
-                "tool.tips.title": "نصائح صحية مخصصة",
-                "tool.voice.title": "التحكم الصوتي",
-                "tool.voice.description": "انقر على الميكروفون وتحدث بقياساتك",
-                "tool.voice.start": "بدء الإدخال الصوتي",
-                "tool.voice.stop": "إيقاف الإدخال الصوتي",
-                "tool.voice.pause": "إيقاف الإخراج مؤقتًا",
-                "tool.voice.resume": "استئناف الإخراج",
-                "tool.gut.title": "حسّن صحة أمعائك",
-                "tool.gut.description": "الأمعاء الصحية ضرورية للرفاهية العامة. إليك بعض النصائح لتحسين صحتك الهضمية:",
-                "footer.follow": "تابعنا",
-                "footer.categories": "الفئات الشائعة",
-                "footer.categories.pdf": "أدوات PDF",
-                "footer.categories.image": "أدوات الصور",
-                "footer.categories.text": "أدوات النص",
-                "footer.categories.av": "أدوات الصوت/الفيديو",
-                "footer.categories.web": "أدوات مطور الويب",
-                "footer.categories.calc": "أدوات الآلة الحاسبة",
-                "footer.categories.util": "أدوات المساعدة",
-                "footer.categories.color": "أدوات الألوان",
-                "footer.quicklinks": "روابط سريعة",
-                "footer.links.tools": "جميع الأدوات",
-                "footer.links.faq": "الأسئلة الشائعة",
-                "footer.links.contact": "اتصل بنا",
-                "footer.links.privacy": "سياسة الخصوصية",
-                "footer.links.disclaimer": "إخلاء المسؤولية",
-                "footer.links.terms": "شروط الخدمة",
-                "footer.copyright": "© 2025 LollyPoPDF. جميع الحقوق محفوظة."
-            },
-            fa: {
-                "nav.home": "صفحه اصلی",
-                "nav.about": "درباره ما",
-                "nav.tools": "ابزارها",
-                "nav.contact": "تماس با ما",
-                "hero.title": "ماشین حساب BMI و روده سالم",
-                "hero.description": "BMI خود را در زمان واقعی محاسبه کنید، توصیه های بهداشتی شخصی شده دریافت کنید و بیاموزید که چگونه سلامت روده خود را بهبود بخشید. تمام پردازش ها به صورت محلی و با حفظ حریم خصوصی کامل انجام می شود.",
-                "howto.title": "نحوه استفاده از ابزار سلامت",
-                "howto.step1.title": "BMI خود را محاسبه کنید",
-                "howto.step1.description": "قد و وزن خود را با استفاده از واحدهای متریک یا امپریال وارد کنید. این ابزار بلافاصله BMI شما را محاسبه کرده و دسته سلامت شما را نشان می دهد.",
-                "howto.step2.title": "از کنترل صوتی استفاده کنید",
-                "howto.step2.description": "روی دکمه میکروفون کلیک کنید و اندازه های خود را بیان کنید. این ابزار صدای شما را تشخیص داده و مقادیر را به طور خودکار وارد می کند.",
-                "howto.step3.title": "توصیه های بهداشتی دریافت کنید",
-                "howto.step3.description": "بر اساس BMI خود، توصیه های شخصی شده برای بهبود سلامت خود دریافت کنید، با تمرکز ویژه بر سلامت روده و تندرستی کلی.",
-                "howto.step4.title": "در مورد سلامت روده بیاموزید",
-                "howto.step4.description": "مجموعه ای از نکات سلامت روده و توصیه های سبک زندگی ما را کاوش کنید تا سلامت گوارشی و تندرستی کلی خود را بهبود بخشید.",
-                "tool.title": "ماشین حساب BMI و روده سالم",
-                "tool.tabs.bmi": "ماشین حساب BMI",
-                "tool.tabs.gut": "روده سالم",
-                "tool.bmi.weight": "وزن:",
-                "tool.bmi.height": "قد:",
-                "tool.bmi.calculate": "محاسبه BMI",
-                "tool.bmi.reset": "بازنشانی",
-                "tool.tips.title": "نکات بهداشتی شخصی شده",
-                "tool.voice.title": "کنترل صوتی",
-                "tool.voice.description": "روی میکروفون کلیک کنید و اندازه های خود را بیان کنید",
-                "tool.voice.start": "شروع ورودی صوتی",
-                "tool.voice.stop": "توقف ورودی صوتی",
-                "tool.voice.pause": "مکث خروجی",
-                "tool.voice.resume": "ادامه خروجی",
-                "tool.gut.title": "سلامت روده خود را بهبود بخشید",
-                "tool.gut.description": "روده سالم برای تندرستی کلی ضروری است. در اینجا چند نکته برای بهبود سلامت گوارشی شما آورده شده است:",
-                "footer.follow": "ما را دنبال کنید",
-                "footer.categories": "دسته های محبوب",
-                "footer.categories.pdf": "ابزارهای PDF",
-                "footer.categories.image": "ابزارهای تصویر",
-                "footer.categories.text": "ابزارهای متن",
-                "footer.categories.av": "ابزارهای صوتی/تصویری",
-                "footer.categories.web": "ابزارهای توسعه دهنده وب",
-                "footer.categories.calc": "ابزارهای ماشین حساب",
-                "footer.categories.util": "ابزارهای کمکی",
-                "footer.categories.color": "ابزارهای رنگ",
-                "footer.quicklinks": "لینک های سریع",
-                "footer.links.tools": "همه ابزارها",
-                "footer.links.faq": "سوالات متداول",
-                "footer.links.contact": "تماس با ما",
-                "footer.links.privacy": "سیاست حفظ حریم خصوصی",
-                "footer.links.disclaimer": "سلب مسئولیت",
-                "footer.links.terms": "شرایط استفاده",
-                "footer.copyright": "© 2025 LollyPoPDF. تمامی حقوق محفوظ است."
-            },
-            bg: {
-                "nav.home": "Начало",
-                "nav.about": "За нас",
-                "nav.tools": "Инструменти",
-                "nav.contact": "Контакт",
-                "hero.title": "BMI Калкулатор и Здрав Чревен тракт",
-                "hero.description": "Изчислете вашия BMI в реално време, получете персонализирани здравни съвети и научете как да подобрите здравето на червата си. Цялата обработка се извършва локално с пълна поверителност.",
-                "howto.title": "Как да използвате здравния инструмент",
-                "howto.step1.title": "Изчислете вашия BMI",
-                "howto.step1.description": "Въведете височината и теглото си, като използвате метрични или имперски единици. Инструментът незабавно ще изчисли вашия BMI и ще покаже вашата здравна категория.",
-                "howto.step2.title": "Използвайте гласово управление",
-                "howto.step2.description": "Кликнете върху бутона на микрофона и кажете вашите измервания. Инструментът ще разпознае гласа ви и ще въведе стойностите автоматично.",
-                "howto.step3.title": "Получете здравни съвети",
-                "howto.step3.description": "Въз основа на вашия BMI получете персонализирани съвети за подобряване на здравето ви, със специален фокус върху здравето на червата и цялостното благосъстояние.",
-                "howto.step4.title": "Научете за здравето на червата",
-                "howto.step4.description": "Разгледайте нашата колекция от съвети за здравето на червата и препоръки за начин на живот, за да подобрите храносмилането и цялостното си благосъстояние.",
-                "tool.title": "BMI Калкулатор и Здрав Чревен тракт",
-                "tool.tabs.bmi": "BMI Калкулатор",
-                "tool.tabs.gut": "Здрав Чревен тракт",
-                "tool.bmi.weight": "Тегло:",
-                "tool.bmi.height": "Височина:",
-                "tool.bmi.calculate": "Изчисли BMI",
-                "tool.bmi.reset": "Нулиране",
-                "tool.tips.title": "Персонализирани здравни съвети",
-                "tool.voice.title": "Гласово управление",
-                "tool.voice.description": "Кликнете върху микрофона и кажете вашите измервания",
-                "tool.voice.start": "Стартирай гласово въвеждане",
-                "tool.voice.stop": "Спри гласово въвеждане",
-                "tool.voice.pause": "Паузирай извеждане",
-                "tool.voice.resume": "Продължи извеждане",
-                "tool.gut.title": "Подобрете здравето на червата си",
-                "tool.gut.description": "Здрав чревен тракт е от съществено значение за цялостното благосъстояние. Ето някои съвети за подобряване на храносмилането:",
-                "footer.follow": "СЛЕДВАЙТЕ НИ",
-                "footer.categories": "Популярни категории",
-                "footer.categories.pdf": "PDF инструменти",
-                "footer.categories.image": "Инструменти за изображения",
-                "footer.categories.text": "Текстови инструменти",
-                "footer.categories.av": "Аудио/Видео инструменти",
-                "footer.categories.web": "WebDeveloper инструменти",
-                "footer.categories.calc": "Калкулаторни инструменти",
-                "footer.categories.util": "Помощни инструменти",
-                "footer.categories.color": "Цветови инструменти",
-                "footer.quicklinks": "Бързи връзки",
-                "footer.links.tools": "Всички инструменти",
-                "footer.links.faq": "ЧЗВ",
-                "footer.links.contact": "Контакт",
-                "footer.links.privacy": "Политика за поверителност",
-                "footer.links.disclaimer": "Отказ от отговорност",
-                "footer.links.terms": "Условия за ползване",
-                "footer.copyright": "© 2025 LollyPoPDF. Всички права запазени."
-            },
-            ca: {
-                "nav.home": "Inici",
-                "nav.about": "Sobre nosaltres",
-                "nav.tools": "Eines",
-                "nav.contact": "Contacte",
-                "hero.title": "Calculadora d'IMC i Intestí Sa",
-                "hero.description": "Calcula el teu IMC en temps real, rep consells de salut personalitzats i aprèn a millorar la salut intestinal. Tot el processament es fa localment amb privacitat completa.",
-                "howto.title": "Com utilitzar l'eina de salut",
-                "howto.step1.title": "Calcula el teu IMC",
-                "howto.step1.description": "Introdueix la teva alçada i pes utilitzant unitats mètriques o imperials. L'eina calcularà instantàniament el teu IMC i mostrarà la teva categoria de salut.",
-                "howto.step2.title": "Utilitza el control per veu",
-                "howto.step2.description": "Fes clic al botó del micròfon i parla les teves mesures. L'eina reconeixerà la teva veu i introduirà els valors automàticament.",
-                "howto.step3.title": "Rep consells de salut",
-                "howto.step3.description": "Basat en el teu IMC, rep consells personalitzats per millorar la teva salut, amb un enfocament especial en la salut intestinal i el benestar general.",
-                "howto.step4.title": "Aprèn sobre la salut intestinal",
-                "howto.step4.description": "Explora la nostra col·lecció de consells de salut intestinal i recomanacions d'estil de vida per millorar la teva salut digestiva i benestar general.",
-                "tool.title": "Calculadora d'IMC i Intestí Sa",
-                "tool.tabs.bmi": "Calculadora d'IMC",
-                "tool.tabs.gut": "Intestí Sa",
-                "tool.bmi.weight": "Pes:",
-                "tool.bmi.height": "Alçada:",
-                "tool.bmi.calculate": "Calcula l'IMC",
-                "tool.bmi.reset": "Restableix",
-                "tool.tips.title": "Consells de salut personalitzats",
-                "tool.voice.title": "Control per veu",
-                "tool.voice.description": "Fes clic al micròfon i parla les teves mesures",
-                "tool.voice.start": "Inicia l'entrada de veu",
-                "tool.voice.stop": "Atura l'entrada de veu",
-                "tool.voice.pause": "Pausa la sortida",
-                "tool.voice.resume": "Reprèn la sortida",
-                "tool.gut.title": "Millora la teva salut intestinal",
-                "tool.gut.description": "Un intestí sa és essencial per al benestar general. Aquí tens alguns consells per millorar la teva salut digestiva:",
-                "footer.follow": "SEGUEIX-NOS",
-                "footer.categories": "Categories populars",
-                "footer.categories.pdf": "Eines PDF",
-                "footer.categories.image": "Eines d'imatge",
-                "footer.categories.text": "Eines de text",
-                "footer.categories.av": "Eines d'Àudio/Video",
-                "footer.categories.web": "Eines WebDeveloper",
-                "footer.categories.calc": "Eines de calculadora",
-                "footer.categories.util": "Eines d'utilitat",
-                "footer.categories.color": "Eines de color",
-                "footer.quicklinks": "Enllaços ràpids",
-                "footer.links.tools": "Totes les eines",
-                "footer.links.faq": "PMF",
-                "footer.links.contact": "Contacte",
-                "footer.links.privacy": "Política de privacitat",
-                "footer.links.disclaimer": "Descàrrec de responsabilitat",
-                "footer.links.terms": "Termes del servei",
-                "footer.copyright": "© 2025 LollyPoPDF. Tots els drets reservats."
-            },
-            nl: {
-                "nav.home": "Home",
-                "nav.about": "Over ons",
-                "nav.tools": "Tools",
-                "nav.contact": "Contact",
-                "hero.title": "BMI Calculator & Gezonde Darmen",
-                "hero.description": "Bereken uw BMI in realtime, ontvang gepersonaliseerd gezondheidsadvies en leer hoe u uw darmgezondheid kunt verbeteren. Alle verwerking gebeurt lokaal met volledige privacy.",
-                "howto.title": "Hoe het gezondheidsinstrument te gebruiken",
-                "howto.step1.title": "Bereken uw BMI",
-                "howto.step1.description": "Voer uw lengte en gewicht in met behulp van metrische of imperiale eenheden. De tool berekent direct uw BMI en toont uw gezondheidscategorie.",
-                "howto.step2.title": "Gebruik spraakbesturing",
-                "howto.step2.description": "Klik op de microfoonknop en spreek uw metingen uit. De tool herkent uw stem en voert de waarden automatisch in.",
-                "howto.step3.title": "Ontvang gezondheidsadvies",
-                "howto.step3.description": "Op basis van uw BMI ontvangt u gepersonaliseerd advies om uw gezondheid te verbeteren, met speciale aandacht voor darmgezondheid en algemeen welzijn.",
-                "howto.step4.title": "Leer over darmgezondheid",
-                "howto.step4.description": "Verken onze collectie van darmgezondheidstips en levensstijlaanbevelingen om uw spijsverteringsgezondheid en algemeen welzijn te verbeteren.",
-                "tool.title": "BMI Calculator & Gezonde Darmen",
-                "tool.tabs.bmi": "BMI Calculator",
-                "tool.tabs.gut": "Gezonde Darmen",
-                "tool.bmi.weight": "Gewicht:",
-                "tool.bmi.height": "Lengte:",
-                "tool.bmi.calculate": "BMI berekenen",
-                "tool.bmi.reset": "Resetten",
-                "tool.tips.title": "Gepersonaliseerde gezondheidstips",
-                "tool.voice.title": "Spraakbesturing",
-                "tool.voice.description": "Klik op de microfoon en spreek uw metingen uit",
-                "tool.voice.start": "Start spraakinvoer",
-                "tool.voice.stop": "Stop spraakinvoer",
-                "tool.voice.pause": "Onderbreek uitvoer",
-                "tool.voice.resume": "Hervat uitvoer",
-                "tool.gut.title": "Verbeter uw darmgezondheid",
-                "tool.gut.description": "Een gezonde darm is essentieel voor algemeen welzijn. Hier zijn enkele tips om uw spijsverteringsgezondheid te verbeteren:",
-                "footer.follow": "VOLG ONS",
-                "footer.categories": "Populaire categorieën",
-                "footer.categories.pdf": "PDF Tools",
-                "footer.categories.image": "Afbeeldingstools",
-                "footer.categories.text": "Teksttools",
-                "footer.categories.av": "Audio/Video Tools",
-                "footer.categories.web": "WebDeveloper Tools",
-                "footer.categories.calc": "Rekenmachinetools",
-                "footer.categories.util": "Hulpprogramma's",
-                "footer.categories.color": "Kleurentools",
-                "footer.quicklinks": "Snelle links",
-                "footer.links.tools": "Alle tools",
-                "footer.links.faq": "FAQ",
-                "footer.links.contact": "Contact",
-                "footer.links.privacy": "Privacybeleid",
-                "footer.links.disclaimer": "Disclaimer",
-                "footer.links.terms": "Servicevoorwaarden",
-                "footer.copyright": "© 2025 LollyPoPDF. Alle rechten voorbehouden."
-            },
-            el: {
-                "nav.home": "Αρχική",
-                "nav.about": "Σχετικά με εμάς",
-                "nav.tools": "Εργαλεία",
-                "nav.contact": "Επικοινωνία",
-                "hero.title": "Αριθμομηχανή ΔΜΣ & Υγιές Έντερο",
-                "hero.description": "Υπολογίστε το ΔΜΣ σας σε πραγματικό χρόνο, λάβετε εξατομικευμένες συμβουλές υγείας και μάθετε πώς να βελτιώσετε την υγεία του εντέρου σας. Όλη η επεξεργασία γίνεται τοπικά με πλήρη απόρρητο.",
-                "howto.title": "Πώς να χρησιμοποιήσετε το εργαλείο υγείας",
-                "howto.step1.title": "Υπολογίστε το ΔΜΣ σας",
-                "howto.step1.description": "Εισάγετε το ύψος και το βάρος σας χρησιμοποιώντας μετρικές ή αυτοκρατορικές μονάδες. Το εργαλείο θα υπολογίσει αμέσως το ΔΜΣ σας και θα εμφανίσει την κατηγορία υγείας σας.",
-                "howto.step2.title": "Χρησιμοποιήστε φωνητικό έλεγχο",
-                "howto.step2.description": "Κάντε κλικ στο κουμπί του μικροφώνου και πείτε τις μετρήσεις σας. Το εργαλείο θα αναγνωρίσει τη φωνή σας και θα εισαγάγει τις τιμές αυτόματα.",
-                "howto.step3.title": "Λάβετε συμβουλές υγείας",
-                "howto.step3.description": "Βασισμένο στο ΔΜΣ σας, λάβετε εξατομικευμένες συμβουλές για τη βελτίωση της υγείας σας, με ειδική έμφαση στην υγεία του εντέρου και τη γενική ευεξία.",
-                "howto.step4.title": "Μάθετε για την υγεία του εντέρου",
-                "howto.step4.description": "Εξερευνήστε τη συλλογή μας από συμβουλές υγείας εντέρου και συστάσεις τρόπου ζωής για να βελτιώσετε την πέψη και τη γενική σας ευεξία.",
-                "tool.title": "Αριθμομηχανή ΔΜΣ & Υγιές Έντερο",
-                "tool.tabs.bmi": "Αριθμομηχανή ΔΜΣ",
-                "tool.tabs.gut": "Υγιές Έντερο",
-                "tool.bmi.weight": "Βάρος:",
-                "tool.bmi.height": "Ύψος:",
-                "tool.bmi.calculate": "Υπολογισμός ΔΜΣ",
-                "tool.bmi.reset": "Επαναφορά",
-                "tool.tips.title": "Εξατομικευμένες συμβουλές υγείας",
-                "tool.voice.title": "Φωνητικός έλεγχος",
-                "tool.voice.description": "Κάντε κλικ στο μικρόφωνο και πείτε τις μετρήσεις σας",
-                "tool.voice.start": "Έναρξη φωνητικής εισαγωγής",
-                "tool.voice.stop": "Διακοπή φωνητικής εισαγωγής",
-                "tool.voice.pause": "Παύση εξόδου",
-                "tool.voice.resume": "Συνέχιση εξόδου",
-                "tool.gut.title": "Βελτιώστε την υγεία του εντέρου σας",
-                "tool.gut.description": "Ένα υγιές έντερο είναι απαραίτητο για τη γενική ευεξία. Ορίστε μερικές συμβουλές για τη βελτίωση της πέψης σας:",
-                "footer.follow": "ΑΚΟΛΟΥΘΗΣΤΕ ΜΑΣ",
-                "footer.categories": "Δημοφιλείς κατηγορίες",
-                "footer.categories.pdf": "Εργαλεία PDF",
-                "footer.categories.image": "Εργαλεία εικόνας",
-                "footer.categories.text": "Εργαλεία κειμένου",
-                "footer.categories.av": "Εργαλεία Ήχου/Βίντεο",
-                "footer.categories.web": "Εργαλεία WebDeveloper",
-                "footer.categories.calc": "Εργαλεία αριθμομηχανής",
-                "footer.categories.util": "Βοηθητικά εργαλεία",
-                "footer.categories.color": "Εργαλεία χρώματος",
-                "footer.quicklinks": "Γρήγοροι σύνδεσμοι",
-                "footer.links.tools": "Όλα τα εργαλεία",
-                "footer.links.faq": "Συχνές ερωτήσεις",
-                "footer.links.contact": "Επικοινωνία",
-                "footer.links.privacy": "Πολιτική απορρήτου",
-                "footer.links.disclaimer": "Αποποίηση ευθυνών",
-                "footer.links.terms": "Όροι χρήσης",
-                "footer.copyright": "© 2025 LollyPoPDF. Με επιφύλαξη παντός δικαιώματος."
-            },
-            hi: {
-                "nav.home": "होम",
-                "nav.about": "हमारे बारे में",
-                "nav.tools": "टूल्स",
-                "nav.contact": "संपर्क करें",
-                "hero.title": "बीएमआई कैलकुलेटर और स्वस्थ आंत",
-                "hero.description": "अपने बीएमआई की वास्तविक समय में गणना करें, व्यक्तिगत स्वास्थ्य सलाह प्राप्त करें और अपनी आंत स्वास्थ्य को सुधारने का तरीका सीखें। सभी प्रसंस्करण पूर्ण गोपनीयता के साथ स्थानीय रूप से होता है।",
-                "howto.title": "स्वास्थ्य टूल का उपयोग कैसे करें",
-                "howto.step1.title": "अपने बीएमआई की गणना करें",
-                "howto.step1.description": "मीट्रिक या इंपीरियल इकाइयों का उपयोग करके अपनी ऊंचाई और वजन दर्ज करें। टूल तुरंत आपके बीएमआई की गणना करेगा और आपकी स्वास्थ्य श्रेणी दिखाएगा।",
-                "howto.step2.title": "वॉइस कंट्रोल का उपयोग करें",
-                "howto.step2.description": "माइक्रोफोन बटन पर क्लिक करें और अपने माप बोलें। टूल आपकी आवाज को पहचान लेगा और मानों को स्वचालित रूप से इनपुट करेगा।",
-                "howto.step3.title": "स्वास्थ्य सलाह प्राप्त करें",
-                "howto.step3.description": "आपके बीएमआई के आधार पर, आंत स्वास्थ्य और समग्र कल्याण पर विशेष ध्यान देने के साथ, अपने स्वास्थ्य को सुधारने के लिए व्यक्तिगत सलाह प्राप्त करें।",
-                "howto.step4.title": "आंत स्वास्थ्य के बारे में जानें",
-                "howto.step4.description": "अपने पाचन स्वास्थ्य और समग्र कल्याण को सुधारने के लिए आंत स्वास्थ्य युक्तियों और जीवनशैली सिफारिशों के हमारे संग्रह का अन्वेषण करें।",
-                "tool.title": "बीएमआई कैलकुलेटर और स्वस्थ आंत",
-                "tool.tabs.bmi": "बीएमआई कैलकुलेटर",
-                "tool.tabs.gut": "स्वस्थ आंत",
-                "tool.bmi.weight": "वजन:",
-                "tool.bmi.height": "ऊंचाई:",
-                "tool.bmi.calculate": "बीएमआई की गणना करें",
-                "tool.bmi.reset": "रीसेट",
-                "tool.tips.title": "व्यक्तिगत स्वास्थ्य युक्तियाँ",
-                "tool.voice.title": "वॉइस कंट्रोल",
-                "tool.voice.description": "माइक्रोफोन पर क्लिक करें और अपने माप बोलें",
-                "tool.voice.start": "वॉइस इनपुट शुरू करें",
-                "tool.voice.stop": "वॉइस इनपुट रोकें",
-                "tool.voice.pause": "आउटपुट रोकें",
-                "tool.voice.resume": "आउटपुट फिर से शुरू करें",
-                "tool.gut.title": "अपनी आंत स्वास्थ्य सुधारें",
-                "tool.gut.description": "समग्र कल्याण के लिए एक स्वस्थ आंत आवश्यक है। अपने पाचन स्वास्थ्य को सुधारने के लिए यहां कुछ युक्तियां दी गई हैं:",
-                "footer.follow": "हमें फॉलो करें",
-                "footer.categories": "लोकप्रिय श्रेणियां",
-                "footer.categories.pdf": "पीडीएफ टूल्स",
-                "footer.categories.image": "इमेज टूल्स",
-                "footer.categories.text": "टेक्स्ट टूल्स",
-                "footer.categories.av": "ऑडियो/वीडियो टूल्स",
-                "footer.categories.web": "वेबडेवलपर टूल्स",
-                "footer.categories.calc": "कैलकुलेटर टूल्स",
-                "footer.categories.util": "यूटिलिटी टूल्स",
-                "footer.categories.color": "कलर टूल्स",
-                "footer.quicklinks": "त्वरित लिंक",
-                "footer.links.tools": "सभी टूल्स",
-                "footer.links.faq": "सामान्य प्रश्न",
-                "footer.links.contact": "संपर्क करें",
-                "footer.links.privacy": "गोपनीयता नीति",
-                "footer.links.disclaimer": "अस्वीकरण",
-                "footer.links.terms": "सेवा की शर्तें",
-                "footer.copyright": "© 2025 LollyPoPDF. सर्वाधिकार सुरक्षित।"
-            },
-            te: {
-                "nav.home": "హోమ్",
-                "nav.about": "మా గురించి",
-                "nav.tools": "టూల్స్",
-                "nav.contact": "సంప్రదించండి",
-                "hero.title": "BMI కాలిక్యులేటర్ & ఆరోగ్యకరమైన గట్",
-                "hero.description": "నిజ సమయంలో మీ BMIని లెక్కించండి, వ్యక్తిగత ఆరోగ్య సలహాలు పొందండి మరియు మీ గట్ ఆరోగ్యాన్ని ఎలా మెరుగుపరచాలో తెలుసుకోండి. అన్ని ప్రాసెసింగ్ పూర్తి గోప్యతతో స్థానికంగా జరుగుతుంది.",
-                "howto.title": "ఆరోగ్య సాధనాన్ని ఎలా ఉపయోగించాలి",
-                "howto.step1.title": "మీ BMIని లెక్కించండి",
-                "howto.step1.description": "మెట్రిక్ లేదా ఇంపీరియల్ యూనిట్లను ఉపయోగించి మీ ఎత్తు మరియు బరువును నమోదు చేయండి. టూల్ తక్షణమే మీ BMIని లెక్కించి మీ ఆరోగ్య వర్గాన్ని చూపుతుంది.",
-                "howto.step2.title": "వాయిస్ కంట్రోల్ ఉపయోగించండి",
-                "howto.step2.description": "మైక్రోఫోన్ బటన్పై క్లిక్ చేసి మీ కొలతలను మాట్లాడండి. టూల్ మీ వాయిస్ను గుర్తించి విలువలను స్వయంచాలకంగా ఇన్పుట్ చేస్తుంది.",
-                "howto.step3.title": "ఆరోగ్య సలహాలు పొందండి",
-                "howto.step3.description": "మీ BMI ఆధారంగా, గట్ ఆరోగ్యం మరియు మొత్తం ఆరోగ్యంపై ప్రత్యేక దృష్టితో, మీ ఆరోగ్యాన్ని మెరుగుపరచడానికి వ్యక్తిగత సలహాలు పొందండి.",
-                "howto.step4.title": "గట్ ఆరోగ్యం గురించి తెలుసుకోండి",
-                "howto.step4.description": "మీ జీర్ణ ఆరోగ్యం మరియు మొత్తం ఆరోగ్యాన్ని మెరుగుపరచడానికి మా గట్ ఆరోగ్య చిట్కాలు మరియు జీవనశైలి సిఫార్సుల సేకరణను అన్వేషించండి.",
-                "tool.title": "BMI కాలిక్యులేటర్ & ఆరోగ్యకరమైన గట్",
-                "tool.tabs.bmi": "BMI కాలిక్యులేటర్",
-                "tool.tabs.gut": "ఆరోగ్యకరమైన గట్",
-                "tool.bmi.weight": "బరువు:",
-                "tool.bmi.height": "ఎత్తు:",
-                "tool.bmi.calculate": "BMI లెక్కించండి",
-                "tool.bmi.reset": "రీసెట్",
-                "tool.tips.title": "వ్యక్తిగత ఆరోగ్య చిట్కాలు",
-                "tool.voice.title": "వాయిస్ కంట్రోల్",
-                "tool.voice.description": "మైక్రోఫోన్పై క్లిక్ చేసి మీ కొలతలను మాట్లాడండి",
-                "tool.voice.start": "వాయిస్ ఇన్పుట్ ప్రారంభించండి",
-                "tool.voice.stop": "వాయిస్ ఇన్పుట్ ఆపండి",
-                "tool.voice.pause": "అవుట్పుట్ విరామం",
-                "tool.voice.resume": "అవుట్పుట్ కొనసాగించండి",
-                "tool.gut.title": "మీ గట్ ఆరోగ్యాన్ని మెరుగుపరచండి",
-                "tool.gut.description": "మొత్తం ఆరోగ్యానికి ఆరోగ్యకరమైన గట్ అత్యవసరం. మీ జీర్ణ ఆరోగ్యాన్ని మెరుగుపరచడానికి ఇక్కడ కొన్ని చిట్కాలు ఉన్నాయి:",
-                "footer.follow": "మమ్మల్ని అనుసరించండి",
-                "footer.categories": "జనాదరణ పొందిన వర్గాలు",
-                "footer.categories.pdf": "PDF టూల్స్",
-                "footer.categories.image": "ఇమేజ్ టూల్స్",
-                "footer.categories.text": "టెక్స్ట్ టూల్స్",
-                "footer.categories.av": "ఆడియో/వీడియో టూల్స్",
-                "footer.categories.web": "వెబ్ డెవలపర్ టూల్స్",
-                "footer.categories.calc": "కాలిక్యులేటర్ టూల్స్",
-                "footer.categories.util": "యుటిలిటీ టూల్స్",
-                "footer.categories.color": "కలర్ టూల్స్",
-                "footer.quicklinks": "త్వరిత లింకులు",
-                "footer.links.tools": "అన్ని టూల్స్",
-                "footer.links.faq": "FAQ",
-                "footer.links.contact": "సంప్రదించండి",
-                "footer.links.privacy": "గోప్యతా విధానం",
-                "footer.links.disclaimer": "డిస్క్లైమర్",
-                "footer.links.terms": "సేవా నిబంధనలు",
-                "footer.copyright": "© 2025 LollyPoPDF. అన్ని హక్కులు రిజర్వు."
-            },
-            kn: {
-                "nav.home": "ಹೋಮ್",
-                "nav.about": "ನಮ್ಮ ಬಗ್ಗೆ",
-                "nav.tools": "ಟೂಲ್ಸ್",
-                "nav.contact": "ಸಂಪರ್ಕಿಸಿ",
-                "hero.title": "BMI ಕ್ಯಾಲ್ಕುಲೇಟರ್ & ಆರೋಗ್ಯಕರ ಕರುಳು",
-                "hero.description": "ನಿಮ್ಮ BMI ಅನ್ನು ರಿಯಲ್ ಟೈಮ್ನಲ್ಲಿ ಲೆಕ್ಕಹಾಕಿ, ವೈಯಕ್ತಿಕ ಆರೋಗ್ಯ ಸಲಹೆಗಳನ್ನು ಪಡೆಯಿರಿ ಮತ್ತು ನಿಮ್ಮ ಕರುಳಿನ ಆರೋಗ್ಯವನ್ನು ಹೇಗೆ ಸುಧಾರಿಸಬೇಕೆಂದು ತಿಳಿಯಿರಿ. ಎಲ್ಲಾ ಪ್ರಕ್ರಿಯೆಗಳು ಸಂಪೂರ್ಣ ಗೌಪ್ಯತೆಯೊಂದಿಗೆ ಸ್ಥಳೀಯವಾಗಿ ನಡೆಯುತ್ತದೆ.",
-                "howto.title": "ಆರೋಗ್ಯ ಸಾಧನವನ್ನು ಹೇಗೆ ಬಳಸುವುದು",
-                "howto.step1.title": "ನಿಮ್ಮ BMI ಅನ್ನು ಲೆಕ್ಕಹಾಕಿ",
-                "howto.step1.description": "ಮೆಟ್ರಿಕ್ ಅಥವಾ ಇಂಪೀರಿಯಲ್ ಘಟಕಗಳನ್ನು ಬಳಸಿಕೊಂಡು ನಿಮ್ಮ ಎತ್ತರ ಮತ್ತು ತೂಕವನ್ನು ನಮೂದಿಸಿ. ಟೂಲ್ ತಕ್ಷಣ ನಿಮ್ಮ BMI ಅನ್ನು ಲೆಕ್ಕಹಾಕಿ ನಿಮ್ಮ ಆರೋಗ್ಯ ವರ್ಗವನ್ನು ತೋರಿಸುತ್ತದೆ.",
-                "howto.step2.title": "ವಾಯ್ಸ್ ಕಂಟ್ರೋಲ್ ಬಳಸಿ",
-                "howto.step2.description": "ಮೈಕ್ರೊಫೋನ್ ಬಟನ್ ಕ್ಲಿಕ್ ಮಾಡಿ ಮತ್ತು ನಿಮ್ಮ ಅಳತೆಗಳನ್ನು ಮಾತನಾಡಿ. ಟೂಲ್ ನಿಮ್ಮ ಧ್ವನಿಯನ್ನು ಗುರುತಿಸಿ ಮೌಲ್ಯಗಳನ್ನು ಸ್ವಯಂಚಾಲಿತವಾಗಿ ಇನ್ಪುಟ್ ಮಾಡುತ್ತದೆ.",
-                "howto.step3.title": "ಆರೋಗ್ಯ ಸಲಹೆಗಳನ್ನು ಪಡೆಯಿರಿ",
-                "howto.step3.description": "ನಿಮ್ಮ BMI ಆಧಾರದ ಮೇಲೆ, ಕರುಳಿನ ಆರೋಗ್ಯ ಮತ್ತು ಒಟ್ಟಾರೆ ಕ್ಷೇಮದ ಮೇಲೆ ವಿಶೇಷ ಗಮನವಿಟ್ಟುಕೊಂಡು, ನಿಮ್ಮ ಆರೋಗ್ಯವನ್ನು ಸುಧಾರಿಸಲು ವೈಯಕ್ತಿಕ ಸಲಹೆಗಳನ್ನು ಪಡೆಯಿರಿ.",
-                "howto.step4.title": "ಕರುಳಿನ ಆರೋಗ್ಯದ ಬಗ್ಗೆ ತಿಳಿಯಿರಿ",
-                "howto.step4.description": "ನಿಮ್ಮ ಜೀರ್ಣ ಆರೋಗ್ಯ ಮತ್ತು ಒಟ್ಟಾರೆ ಕ್ಷೇಮವನ್ನು ಸುಧಾರಿಸಲು ನಮ್ಮ ಕರುಳಿನ ಆರೋಗ್ಯ ಸಲಹೆಗಳು ಮತ್ತು ಜೀವನಶೈಲಿ ಶಿಫಾರಸುಗಳ ಸಂಗ್ರಹವನ್ನು ಅನ್ವೇಷಿಸಿ.",
-                "tool.title": "BMI ಕ್ಯಾಲ್ಕುಲೇಟರ್ & ಆರೋಗ್ಯಕರ ಕರುಳು",
-                "tool.tabs.bmi": "BMI ಕ್ಯಾಲ್ಕುಲೇಟರ್",
-                "tool.tabs.gut": "ಆರೋಗ್ಯಕರ ಕರುಳು",
-                "tool.bmi.weight": "ತೂಕ:",
-                "tool.bmi.height": "ಎತ್ತರ:",
-                "tool.bmi.calculate": "BMI ಲೆಕ್ಕಹಾಕಿ",
-                "tool.bmi.reset": "ರೀಸೆಟ್",
-                "tool.tips.title": "ವೈಯಕ್ತಿಕ ಆರೋಗ್ಯ ಸಲಹೆಗಳು",
-                "tool.voice.title": "ವಾಯ್ಸ್ ಕಂಟ್ರೋಲ್",
-                "tool.voice.description": "ಮೈಕ್ರೊಫೋನ್ ಕ್ಲಿಕ್ ಮಾಡಿ ಮತ್ತು ನಿಮ್ಮ ಅಳತೆಗಳನ್ನು ಮಾತನಾಡಿ",
-                "tool.voice.start": "ವಾಯ್ಸ್ ಇನ್ಪುಟ್ ಪ್ರಾರಂಭಿಸಿ",
-                "tool.voice.stop": "ವಾಯ್ಸ್ ಇನ್ಪುಟ್ ನಿಲ್ಲಿಸಿ",
-                "tool.voice.pause": "ಔಟ್ಪುಟ್ ವಿರಾಮ",
-                "tool.voice.resume": "ಔಟ್ಪುಟ್ ಮುಂದುವರಿಸಿ",
-                "tool.gut.title": "ನಿಮ್ಮ ಕರುಳಿನ ಆರೋಗ್ಯವನ್ನು ಸುಧಾರಿಸಿ",
-                "tool.gut.description": "ಒಟ್ಟಾರೆ ಕ್ಷೇಮಕ್ಕೆ ಆರೋಗ್ಯಕರ ಕರುಳು ಅತ್ಯಗತ್ಯ. ನಿಮ್ಮ ಜೀರ್ಣ ಆರೋಗ್ಯವನ್ನು ಸುಧಾರಿಸಲು ಇಲ್ಲಿ ಕೆಲವು ಸಲಹೆಗಳು:",
-                "footer.follow": "ನಮ್ಮನ್ನು ಅನುಸರಿಸಿ",
-                "footer.categories": "ಜನಪ್ರಿಯ ವರ್ಗಗಳು",
-                "footer.categories.pdf": "PDF ಟೂಲ್ಸ್",
-                "footer.categories.image": "ಇಮೇಜ್ ಟೂಲ್ಸ್",
-                "footer.categories.text": "ಟೆಕ್ಸ್ಟ್ ಟೂಲ್ಸ್",
-                "footer.categories.av": "ಆಡಿಯೋ/ವೀಡಿಯೋ ಟೂಲ್ಸ್",
-                "footer.categories.web": "ವೆಬ್ ಡೆವಲಪರ್ ಟೂಲ್ಸ್",
-                "footer.categories.calc": "ಕ್ಯಾಲ್ಕುಲೇಟರ್ ಟೂಲ್ಸ್",
-                "footer.categories.util": "ಯುಟಿಲಿಟಿ ಟೂಲ್ಸ್",
-                "footer.categories.color": "ಕಲರ್ ಟೂಲ್ಸ್",
-                "footer.quicklinks": "ತ್ವರಿತ ಲಿಂಕ್ಗಳು",
-                "footer.links.tools": "ಎಲ್ಲಾ ಟೂಲ್ಸ್",
-                "footer.links.faq": "FAQ",
-                "footer.links.contact": "ಸಂಪರ್ಕಿಸಿ",
-                "footer.links.privacy": "ಗೌಪ್ಯತಾ ನೀತಿ",
-                "footer.links.disclaimer": "ಡಿಸ್ಕ್ಲೈಮರ್",
-                "footer.links.terms": "ಸೇವಾ ನಿಯಮಗಳು",
-                "footer.copyright": "© 2025 LollyPoPDF. ಎಲ್ಲಾ ಹಕ್ಕುಗಳು ಕಾಯ್ದಿರಿಸಲಾಗಿದೆ."
-            },
-            ta: {
-                "nav.home": "முகப்பு",
-                "nav.about": "எங்களைப் பற்றி",
-                "nav.tools": "கருவிகள்",
-                "nav.contact": "தொடர்பு கொள்ள",
-                "hero.title": "BMI கால்குலேட்டர் & ஆரோக்கியமான குடல்",
-                "hero.description": "உங்கள் BMIயை நிகழ்நேரத்தில் கணக்கிடுங்கள், தனிப்பட்ட ஆரோக்கிய ஆலோசனைகளைப் பெறுங்கள் மற்றும் உங்கள் குடல் ஆரோக்கியத்தை எவ்வாறு மேம்படுத்துவது என்பதை அறிக. அனைத்து செயலாக்கமும் முழுமையான தனியுரிமையுடன் உள்நாட்டில் நடைபெறுகிறது.",
-                "howto.title": "ஆரோக்கிய கருவியை எவ்வாறு பயன்படுத்துவது",
-                "howto.step1.title": "உங்கள் BMIயை கணக்கிடுங்கள்",
-                "howto.step1.description": "மெட்ரிக் அல்லது இம்பீரியல் அலகுகளைப் பயன்படுத்தி உங்கள் உயரம் மற்றும் எடையை உள்ளிடவும். கருவி உடனடியாக உங்கள் BMIயை கணக்கிட்டு உங்கள் ஆரோக்கிய வகையைக் காண்பிக்கும்.",
-                "howto.step2.title": "குரல் கட்டுப்பாட்டைப் பயன்படுத்தவும்",
-                "howto.step2.description": "மைக்ரோஃபோன் பொத்தானைக் கிளிக் செய்து உங்கள் அளவீடுகளைப் பேசுங்கள். கருவி உங்கள் குரலை அடையாளம் கண்டு மதிப்புகளை தானாக உள்ளிடும்.",
-                "howto.step3.title": "ஆரோக்கிய ஆலோசனைகளைப் பெறுங்கள்",
-                "howto.step3.description": "உங்கள் BMIயின் அடிப்படையில், குடல் ஆரோக்கியம் மற்றும் ஒட்டுமொத்த நல்வாழ்வில் சிறப்பு கவனம் செலுத்தி, உங்கள் ஆரோக்கியத்தை மேம்படுத்த தனிப்பட்ட ஆலோசனைகளைப் பெறுங்கள்.",
-                "howto.step4.title": "குடல் ஆரோக்கியத்தைப் பற்றி அறிக",
-                "howto.step4.description": "உங்கள் செரிமான ஆரோக்கியம் மற்றும் ஒட்டுமொத்த நல்வாழ்வை மேம்படுத்த எங்கள் குடல் ஆரோக்கிய உதவிக்குறிப்புகள் மற்றும் வாழ்க்கை முறை பரிந்துரைகளின் தொகுப்பை ஆராயுங்கள்.",
-                "tool.title": "BMI கால்குலேட்டர் & ஆரோக்கியமான குடல்",
-                "tool.tabs.bmi": "BMI கால்குலேட்டர்",
-                "tool.tabs.gut": "ஆரோக்கியமான குடல்",
-                "tool.bmi.weight": "எடை:",
-                "tool.bmi.height": "உயரம்:",
-                "tool.bmi.calculate": "BMI கணக்கிடு",
-                "tool.bmi.reset": "மீட்டமை",
-                "tool.tips.title": "தனிப்பட்ட ஆரோக்கிய உதவிக்குறிப்புகள்",
-                "tool.voice.title": "குரல் கட்டுப்பாடு",
-                "tool.voice.description": "மைக்ரோஃபோனில் கிளிக் செய்து உங்கள் அளவீடுகளைப் பேசுங்கள்",
-                "tool.voice.start": "குரல் உள்ளீட்டைத் தொடங்கு",
-                "tool.voice.stop": "குரல் உள்ளீட்டை நிறுத்து",
-                "tool.voice.pause": "வெளியீட்டை இடைநிறுத்து",
-                "tool.voice.resume": "வெளியீட்டைத் தொடர்க",
-                "tool.gut.title": "உங்கள் குடல் ஆரோக்கியத்தை மேம்படுத்துங்கள்",
-                "tool.gut.description": "ஒட்டுமொத்த நல்வாழ்வுக்கு ஆரோக்கியமான குடல் அவசியம். உங்கள் செரிமான ஆரோக்கியத்தை மேம்படுத்த சில உதவிக்குறிப்புகள் இங்கே:",
-                "footer.follow": "எங்களைப் பின்தொடருங்கள்",
-                "footer.categories": "பிரபலமான வகைகள்",
-                "footer.categories.pdf": "PDF கருவிகள்",
-                "footer.categories.image": "பட கருவிகள்",
-                "footer.categories.text": "உரை கருவிகள்",
-                "footer.categories.av": "ஆடியோ/வீடியோ கருவிகள்",
-                "footer.categories.web": "வெப்டெவலப்பர் கருவிகள்",
-                "footer.categories.calc": "கால்குலேட்டர் கருவிகள்",
-                "footer.categories.util": "பயன்பாட்டு கருவிகள்",
-                "footer.categories.color": "வண்ண கருவிகள்",
-                "footer.quicklinks": "விரைவு இணைப்புகள்",
-                "footer.links.tools": "அனைத்து கருவிகள்",
-                "footer.links.faq": "FAQ",
-                "footer.links.contact": "தொடர்பு கொள்ள",
-                "footer.links.privacy": "தனியுரிமைக் கொள்கை",
-                "footer.links.disclaimer": "மறுப்பறிக்கை",
-                "footer.links.terms": "சேவை விதிமுறைகள்",
-                "footer.copyright": "© 2025 LollyPoPDF. அனைத்து உரிமைகளும் பாதுகாக்கப்பட்டவை."
-            },
-            ml: {
-                "nav.home": "ഹോം",
-                "nav.about": "ഞങ്ങളെക്കുറിച്ച്",
-                "nav.tools": "ടൂളുകൾ",
-                "nav.contact": "ബന്ധപ്പെടുക",
-                "hero.title": "BMI കാൽക്കുലേറ്റർ & ആരോഗ്യകരമായ കുടൽ",
-                "hero.description": "നിങ്ങളുടെ BMI യഥാർത്ഥ സമയത്തിൽ കണക്കാക്കുക, വ്യക്തിഗത ആരോഗ്യ ഉപദേശങ്ങൾ നേടുക, നിങ്ങളുടെ കുടൽ ആരോഗ്യം എങ്ങനെ മെച്ചപ്പെടുത്താമെന്ന് അറിയുക. എല്ലാ പ്രോസസ്സിംഗും പൂർണ്ണ സ്വകാര്യതയോടെ പ്രാദേശികമായി നടക്കുന്നു.",
-                "howto.title": "ആരോഗ്യ ഉപകരണം എങ്ങനെ ഉപയോഗിക്കാം",
-                "howto.step1.title": "നിങ്ങളുടെ BMI കണക്കാക്കുക",
-                "howto.step1.description": "മെട്രിക് അല്ലെങ്കിൽ ഇംപീരിയൽ യൂണിറ്റുകൾ ഉപയോഗിച്ച് നിങ്ങളുടെ ഉയരവും ഭാരവും നൽകുക. ഉപകരണം തൽക്ഷണം നിങ്ങളുടെ BMI കണക്കാക്കി നിങ്ങളുടെ ആരോഗ്യ വിഭാഗം കാണിക്കും.",
-                "howto.step2.title": "വോയ്സ് കൺട്രോൾ ഉപയോഗിക്കുക",
-                "howto.step2.description": "മൈക്രോഫോൺ ബട്ടൺ ക്ലിക്ക് ചെയ്ത് നിങ്ങളുടെ അളവുകൾ സംസാരിക്കുക. ഉപകരണം നിങ്ങളുടെ വോയ്സ് തിരിച്ചറിഞ്ഞ് മൂല്യങ്ങൾ സ്വയമേവ നൽകും.",
-                "howto.step3.title": "ആരോഗ്യ ഉപദേശങ്ങൾ നേടുക",
-                "howto.step3.description": "നിങ്ങളുടെ BMI അടിസ്ഥാനമാക്കി, കുടൽ ആരോഗ്യത്തിലും മൊത്തത്തിലുള്ള ക്ഷേമത്തിലും പ്രത്യേക ശ്രദ്ധ കേന്ദ്രീകരിച്ച്, നിങ്ങളുടെ ആരോഗ്യം മെച്ചപ്പെടുത്തുന്നതിന് വ്യക്തിഗത ഉപദേശങ്ങൾ നേടുക.",
-                "howto.step4.title": "കുടൽ ആരോഗ്യത്തെക്കുറിച്ച് അറിയുക",
-                "howto.step4.description": "നിങ്ങളുടെ ദഹന ആരോഗ്യവും മൊത്തത്തിലുള്ള ക്ഷേമവും മെച്ചപ്പെടുത്താൻ ഞങ്ങളുടെ കുടൽ ആരോഗ്യ ടിപ്പുകളുടെയും ജീവിതശൈലി ശുപാർശകളുടെയും ശേഖരം പര്യവേക്ഷണം ചെയ്യുക.",
-                "tool.title": "BMI കാൽക്കുലേറ്റർ & ആരോഗ്യകരമായ കുടൽ",
-                "tool.tabs.bmi": "BMI കാൽക്കുലേറ്റർ",
-                "tool.tabs.gut": "ആരോഗ്യകരമായ കുടൽ",
-                "tool.bmi.weight": "ഭാരം:",
-                "tool.bmi.height": "ഉയരം:",
-                "tool.bmi.calculate": "BMI കണക്കാക്കുക",
-                "tool.bmi.reset": "റീസെറ്റ്",
-                "tool.tips.title": "വ്യക്തിഗത ആരോഗ്യ ടിപ്പുകൾ",
-                "tool.voice.title": "വോയ്സ് കൺട്രോൾ",
-                "tool.voice.description": "മൈക്രോഫോണിൽ ക്ലിക്ക് ചെയ്ത് നിങ്ങളുടെ അളവുകൾ സംസാരിക്കുക",
-                "tool.voice.start": "വോയ്സ് ഇൻപുട്ട് ആരംഭിക്കുക",
-                "tool.voice.stop": "വോയ്സ് ഇൻപുട്ട് നിർത്തുക",
-                "tool.voice.pause": "ഔട്ട്പുട്ട് താൽക്കാലികമായി നിർത്തുക",
-                "tool.voice.resume": "ഔട്ട്പുട്ട് തുടരുക",
-                "tool.gut.title": "നിങ്ങളുടെ കുടൽ ആരോഗ്യം മെച്ചപ്പെടുത്തുക",
-                "tool.gut.description": "മൊത്തത്തിലുള്ള ക്ഷേമത്തിന് ആരോഗ്യകരമായ കുടൽ അത്യാവശ്യമാണ്. നിങ്ങളുടെ ദഹന ആരോഗ്യം മെച്ചപ്പെടുത്തുന്നതിനുള്ള ചില ടിപ്പുകൾ ഇതാ:",
-                "footer.follow": "ഞങ്ങളെ പിന്തുടരുക",
-                "footer.categories": "ജനപ്രിയ വിഭാഗങ്ങൾ",
-                "footer.categories.pdf": "PDF ടൂളുകൾ",
-                "footer.categories.image": "ഇമേജ് ടൂളുകൾ",
-                "footer.categories.text": "ടെക്സ്റ്റ് ടൂളുകൾ",
-                "footer.categories.av": "ഓഡിയോ/വീഡിയോ ടൂളുകൾ",
-                "footer.categories.web": "വെബ് ഡെവലപ്പർ ടൂളുകൾ",
-                "footer.categories.calc": "കാൽക്കുലേറ്റർ ടൂളുകൾ",
-                "footer.categories.util": "യൂട്ടിലിറ്റി ടൂളുകൾ",
-                "footer.categories.color": "കളർ ടൂളുകൾ",
-                "footer.quicklinks": "ദ്രുത ലിങ്കുകൾ",
-                "footer.links.tools": "എല്ലാ ടൂളുകളും",
-                "footer.links.faq": "FAQ",
-                "footer.links.contact": "ബന്ധപ്പെടുക",
-                "footer.links.privacy": "സ്വകാര്യതാ നയം",
-                "footer.links.disclaimer": "അസാധുതാ പ്രഖ്യാപനം",
-                "footer.links.terms": "സേവന നിബന്ധനകൾ",
-                "footer.copyright": "© 2025 LollyPoPDF. എല്ലാ അവകാശങ്ങളും നിക്ഷിപ്തം."
-            },
-            id: {
-                "nav.home": "Beranda",
-                "nav.about": "Tentang Kami",
-                "nav.tools": "Alat",
-                "nav.contact": "Kontak",
-                "hero.title": "Kalkulator BMI & Usus Sehat",
-                "hero.description": "Hitung BMI Anda secara real-time, dapatkan saran kesehatan yang dipersonalisasi, dan pelajari cara meningkatkan kesehatan usus Anda. Semua pemrosesan terjadi secara lokal dengan privasi lengkap.",
-                "howto.title": "Cara Menggunakan Alat Kesehatan",
-                "howto.step1.title": "Hitung BMI Anda",
-                "howto.step1.description": "Masukkan tinggi dan berat badan Anda menggunakan satuan metrik atau imperial. Alat akan langsung menghitung BMI Anda dan menunjukkan kategori kesehatan Anda.",
-                "howto.step2.title": "Gunakan Kontrol Suara",
-                "howto.step2.description": "Klik tombol mikrofon dan ucapkan pengukuran Anda. Alat akan mengenali suara Anda dan memasukkan nilai secara otomatis.",
-                "howto.step3.title": "Dapatkan Saran Kesehatan",
-                "howto.step3.description": "Berdasarkan BMI Anda, terima saran yang dipersonalisasi untuk meningkatkan kesehatan Anda, dengan fokus khusus pada kesehatan usus dan kesejahteraan secara keseluruhan.",
-                "howto.step4.title": "Pelajari tentang Kesehatan Usus",
-                "howto.step4.description": "Jelajahi koleksi tips kesehatan usus dan rekomendasi gaya hidup kami untuk meningkatkan kesehatan pencernaan dan kesejahteraan secara keseluruhan.",
-                "tool.title": "Kalkulator BMI & Usus Sehat",
-                "tool.tabs.bmi": "Kalkulator BMI",
-                "tool.tabs.gut": "Usus Sehat",
-                "tool.bmi.weight": "Berat:",
-                "tool.bmi.height": "Tinggi:",
-                "tool.bmi.calculate": "Hitung BMI",
-                "tool.bmi.reset": "Reset",
-                "tool.tips.title": "Tips Kesehatan yang Dipersonalisasi",
-                "tool.voice.title": "Kontrol Suara",
-                "tool.voice.description": "Klik mikrofon dan ucapkan pengukuran Anda",
-                "tool.voice.start": "Mulai Input Suara",
-                "tool.voice.stop": "Hentikan Input Suara",
-                "tool.voice.pause": "Jeda Output",
-                "tool.voice.resume": "Lanjutkan Output",
-                "tool.gut.title": "Tingkatkan Kesehatan Usus Anda",
-                "tool.gut.description": "Usus yang sehat sangat penting untuk kesejahteraan secara keseluruhan. Berikut adalah beberapa tips untuk meningkatkan kesehatan pencernaan Anda:",
-                "footer.follow": "IKUTI KAMI",
-                "footer.categories": "Kategori Populer",
-                "footer.categories.pdf": "Alat PDF",
-                "footer.categories.image": "Alat Gambar",
-                "footer.categories.text": "Alat Teks",
-                "footer.categories.av": "Alat Audio/Video",
-                "footer.categories.web": "Alat WebDeveloper",
-                "footer.categories.calc": "Alat Kalkulator",
-                "footer.categories.util": "Alat Utilitas",
-                "footer.categories.color": "Alat Warna",
-                "footer.quicklinks": "Tautan Cepat",
-                "footer.links.tools": "Semua Alat",
-                "footer.links.faq": "FAQ",
-                "footer.links.contact": "Kontak",
-                "footer.links.privacy": "Kebijakan Privasi",
-                "footer.links.disclaimer": "Penafian",
-                "footer.links.terms": "Syarat Layanan",
-                "footer.copyright": "© 2025 LollyPoPDF. Hak Cipta Dilindungi."
-            },
-            ms: {
-                "nav.home": "Laman Utama",
-                "nav.about": "Tentang Kami",
-                "nav.tools": "Alat",
-                "nav.contact": "Hubungi",
-                "hero.title": "Kalkulator BMI & Usus Sihat",
-                "hero.description": "Kira BMI anda dalam masa nyata, dapatkan nasihat kesihatan yang diperibadikan, dan pelajari cara meningkatkan kesihatan usus anda. Semua pemprosesan berlaku secara tempatan dengan privasi lengkap.",
-                "howto.title": "Cara Menggunakan Alat Kesihatan",
-                "howto.step1.title": "Kira BMI Anda",
-                "howto.step1.description": "Masukkan ketinggian dan berat badan anda menggunakan unit metrik atau imperial. Alat akan segera mengira BMI anda dan menunjukkan kategori kesihatan anda.",
-                "howto.step2.title": "Gunakan Kawalan Suara",
-                "howto.step2.description": "Klik butang mikrofon dan ucapkan ukuran anda. Alat akan mengenali suara anda dan memasukkan nilai secara automatik.",
-                "howto.step3.title": "Dapatkan Nasihat Kesihatan",
-                "howto.step3.description": "Berdasarkan BMI anda, terima nasihat yang diperibadikan untuk meningkatkan kesihatan anda, dengan tumpuan khusus pada kesihatan usus dan kesejahteraan keseluruhan.",
-                "howto.step4.title": "Belajar tentang Kesihatan Usus",
-                "howto.step4.description": "Terokai koleksi tip kesihatan usus dan cadangan gaya hidup kami untuk meningkatkan kesihatan pencernaan dan kesejahteraan keseluruhan anda.",
-                "tool.title": "Kalkulator BMI & Usus Sihat",
-                "tool.tabs.bmi": "Kalkulator BMI",
-                "tool.tabs.gut": "Usus Sihat",
-                "tool.bmi.weight": "Berat:",
-                "tool.bmi.height": "Tinggi:",
-                "tool.bmi.calculate": "Kira BMI",
-                "tool.bmi.reset": "Tetapkan Semula",
-                "tool.tips.title": "Tip Kesihatan yang Diperibadikan",
-                "tool.voice.title": "Kawalan Suara",
-                "tool.voice.description": "Klik mikrofon dan ucapkan ukuran anda",
-                "tool.voice.start": "Mulakan Input Suara",
-                "tool.voice.stop": "Hentikan Input Suara",
-                "tool.voice.pause": "Jeda Output",
-                "tool.voice.resume": "Sambung Output",
-                "tool.gut.title": "Tingkatkan Kesihatan Usus Anda",
-                "tool.gut.description": "Usus yang sihat adalah penting untuk kesejahteraan keseluruhan. Berikut adalah beberapa tip untuk meningkatkan kesihatan pencernaan anda:",
-                "footer.follow": "IKUTI KAMI",
-                "footer.categories": "Kategori Popular",
-                "footer.categories.pdf": "Alat PDF",
-                "footer.categories.image": "Alat Imej",
-                "footer.categories.text": "Alat Teks",
-                "footer.categories.av": "Alat Audio/Video",
-                "footer.categories.web": "Alat WebDeveloper",
-                "footer.categories.calc": "Alat Kalkulator",
-                "footer.categories.util": "Alat Utiliti",
-                "footer.categories.color": "Alat Warna",
-                "footer.quicklinks": "Pautan Pantas",
-                "footer.links.tools": "Semua Alat",
-                "footer.links.faq": "Soalan Lazim",
-                "footer.links.contact": "Hubungi",
-                "footer.links.privacy": "Dasar Privasi",
-                "footer.links.disclaimer": "Penafian",
-                "footer.links.terms": "Syarat Perkhidmatan",
-                "footer.copyright": "© 2025 LollyPoPDF. Hak Cipta Terpelihara."
-            },
-            pl: {
-                "nav.home": "Strona główna",
-                "nav.about": "O nas",
-                "nav.tools": "Narzędzia",
-                "nav.contact": "Kontakt",
-                "hero.title": "Kalkulator BMI i Zdrowe Jelita",
-                "hero.description": "Oblicz swoje BMI w czasie rzeczywistym, uzyskaj spersonalizowane porady zdrowotne i dowiedz się, jak poprawić zdrowie jelit. Wszystkie przetwarzania odbywają się lokalnie z pełną prywatnością.",
-                "howto.title": "Jak korzystać z narzędzia zdrowotnego",
-                "howto.step1.title": "Oblicz swoje BMI",
-                "howto.step1.description": "Wprowadź swój wzrost i wagę za pomocą jednostek metrycznych lub imperialnych. Narzędzie natychmiast obliczy Twoje BMI i pokaże Twoją kategorię zdrowia.",
-                "howto.step2.title": "Użyj kontroli głosowej",
-                "howto.step2.description": "Kliknij przycisk mikrofonu i wypowiedz swoje pomiary. Narzędzie rozpozna Twój głos i automatycznie wprowadzi wartości.",
-                "howto.step3.title": "Uzyskaj porady zdrowotne",
-                "howto.step3.description": "Na podstawie Twojego BMI otrzymaj spersonalizowane porady dotyczące poprawy zdrowia, ze szczególnym uwzględnieniem zdrowia jelit i ogólnego samopoczucia.",
-                "howto.step4.title": "Dowiedz się o zdrowiu jelit",
-                "howto.step4.description": "Poznaj naszą kolekcję porad dotyczących zdrowia jelit i zaleceń dotyczących stylu życia, aby poprawić swoje zdrowie trawienne i ogólne samopoczucie.",
-                "tool.title": "Kalkulator BMI i Zdrowe Jelita",
-                "tool.tabs.bmi": "Kalkulator BMI",
-                "tool.tabs.gut": "Zdrowe Jelita",
-                "tool.bmi.weight": "Waga:",
-                "tool.bmi.height": "Wzrost:",
-                "tool.bmi.calculate": "Oblicz BMI",
-                "tool.bmi.reset": "Resetuj",
-                "tool.tips.title": "Spersonalizowane porady zdrowotne",
-                "tool.voice.title": "Kontrola głosowa",
-                "tool.voice.description": "Kliknij mikrofon i wypowiedz swoje pomiary",
-                "tool.voice.start": "Rozpocznij wprowadzanie głosowe",
-                "tool.voice.stop": "Zatrzymaj wprowadzanie głosowe",
-                "tool.voice.pause": "Wstrzymaj wyjście",
-                "tool.voice.resume": "Wznów wyjście",
-                "tool.gut.title": "Popraw zdrowie swoich jelit",
-                "tool.gut.description": "Zdrowe jelita są niezbędne dla ogólnego samopoczucia. Oto kilka wskazówek, jak poprawić zdrowie trawienne:",
-                "footer.follow": "OBSERWUJ NAS",
-                "footer.categories": "Popularne kategorie",
-                "footer.categories.pdf": "Narzędzia PDF",
-                "footer.categories.image": "Narzędzia obrazów",
-                "footer.categories.text": "Narzędzia tekstowe",
-                "footer.categories.av": "Narzędzia audio/wideo",
-                "footer.categories.web": "Narzędzia WebDeveloper",
-                "footer.categories.calc": "Narzędzia kalkulatora",
-                "footer.categories.util": "Narzędzia użytkowe",
-                "footer.categories.color": "Narzędzia kolorów",
-                "footer.quicklinks": "Szybkie linki",
-                "footer.links.tools": "Wszystkie narzędzia",
-                "footer.links.faq": "FAQ",
-                "footer.links.contact": "Kontakt",
-                "footer.links.privacy": "Polityka prywatności",
-                "footer.links.disclaimer": "Zastrzeżenie",
-                "footer.links.terms": "Warunki usługi",
-                "footer.copyright": "© 2025 LollyPoPDF. Wszelkie prawa zastrzeżone."
-            },
-            th: {
-                "nav.home": "หน้าแรก",
-                "nav.about": "เกี่ยวกับเรา",
-                "nav.tools": "เครื่องมือ",
-                "nav.contact": "ติดต่อ",
-                "hero.title": "เครื่องคำนวณ BMI และลำไส้ที่ดีต่อสุขภาพ",
-                "hero.description": "คำนวณ BMI ของคุณแบบเรียลไทม์ รับคำแนะนำด้านสุขภาพส่วนบุคคล และเรียนรู้วิธีปรับปรุงสุขภาพลำไส้ของคุณ การประมวลผลทั้งหมดเกิดขึ้นภายในเครื่องด้วยความเป็นส่วนตัวอย่างสมบูรณ์",
-                "howto.title": "วิธีใช้เครื่องมือสุขภาพ",
-                "howto.step1.title": "คำนวณ BMI ของคุณ",
-                "howto.step1.description": "ป้อนส่วนสูงและน้ำหนักของคุณโดยใช้หน่วยเมตริกหรืออิมพีเรียล เครื่องมือจะคำนวณ BMI ของคุณทันทีและแสดงหมวดหมู่สุขภาพของคุณ",
-                "howto.step2.title": "ใช้การควบคุมด้วยเสียง",
-                "howto.step2.description": "คลิกปุ่มไมโครโฟนและพูดการวัดของคุณ เครื่องมือจะจดจำเสียงของคุณและป้อนค่าอัตโนมัติ",
-                "howto.step3.title": "รับคำแนะนำด้านสุขภาพ",
-                "howto.step3.description": "ตาม BMI ของคุณ รับคำแนะนำส่วนบุคคลเพื่อปรับปรุงสุขภาพของคุณ โดยเน้นเป็นพิเศษที่สุขภาพลำไส้และความเป็นอยู่ที่ดีโดยรวม",
-                "howto.step4.title": "เรียนรู้เกี่ยวกับสุขภาพลำไส้",
-                "howto.step4.description": "สำรวจคอลเลกชันเคล็ดลับสุขภาพลำไส้และคำแนะนำการใช้ชีวิตของเราเพื่อปรับปรุงสุขภาพการย่อยอาหารและความเป็นอยู่ที่ดีโดยรวมของคุณ",
-                "tool.title": "เครื่องคำนวณ BMI และลำไส้ที่ดีต่อสุขภาพ",
-                "tool.tabs.bmi": "เครื่องคำนวณ BMI",
-                "tool.tabs.gut": "ลำไส้ที่ดีต่อสุขภาพ",
-                "tool.bmi.weight": "น้ำหนัก:",
-                "tool.bmi.height": "ส่วนสูง:",
-                "tool.bmi.calculate": "คำนวณ BMI",
-                "tool.bmi.reset": "รีเซ็ต",
-                "tool.tips.title": "เคล็ดลับสุขภาพส่วนบุคคล",
-                "tool.voice.title": "การควบคุมด้วยเสียง",
-                "tool.voice.description": "คลิกที่ไมโครโฟนและพูดการวัดของคุณ",
-                "tool.voice.start": "เริ่มป้อนเสียง",
-                "tool.voice.stop": "หยุดป้อนเสียง",
-                "tool.voice.pause": "หยุดพักผลลัพธ์ชั่วคราว",
-                "tool.voice.resume": "ดำเนินการผลลัพธ์ต่อ",
-                "tool.gut.title": "ปรับปรุงสุขภาพลำไส้ของคุณ",
-                "tool.gut.description": "ลำไส้ที่ดีต่อสุขภาพมีความสำคัญต่อความเป็นอยู่ที่ดีโดยรวม นี่คือเคล็ดลับบางส่วนเพื่อปรับปรุงสุขภาพการย่อยอาหารของคุณ:",
-                "footer.follow": "ติดตามเรา",
-                "footer.categories": "หมวดหมู่ยอดนิยม",
-                "footer.categories.pdf": "เครื่องมือ PDF",
-                "footer.categories.image": "เครื่องมือภาพ",
-                "footer.categories.text": "เครื่องมือข้อความ",
-                "footer.categories.av": "เครื่องมือเสียง/วิดีโอ",
-                "footer.categories.web": "เครื่องมือ WebDeveloper",
-                "footer.categories.calc": "เครื่องมือเครื่องคิดเลข",
-                "footer.categories.util": "เครื่องมืออรรถประโยชน์",
-                "footer.categories.color": "เครื่องมือสี",
-                "footer.quicklinks": "ลิงก์ด่วน",
-                "footer.links.tools": "เครื่องมือทั้งหมด",
-                "footer.links.faq": "คำถามที่พบบ่อย",
-                "footer.links.contact": "ติดต่อ",
-                "footer.links.privacy": "นโยบายความเป็นส่วนตัว",
-                "footer.links.disclaimer": "ข้อจำกัดความรับผิดชอบ",
-                "footer.links.terms": "เงื่อนไขการให้บริการ",
-                "footer.copyright": "© 2025 LollyPoPDF. สงวนลิขสิทธิ์."
-            },
-            tr: {
-                "nav.home": "Ana Sayfa",
-                "nav.about": "Hakkımızda",
-                "nav.tools": "Araçlar",
-                "nav.contact": "İletişim",
-                "hero.title": "BMI Hesaplayıcı ve Sağlıklı Bağırsak",
-                "hero.description": "BMI'nizi gerçek zamanlı olarak hesaplayın, kişiselleştirilmiş sağlık tavsiyeleri alın ve bağırsak sağlığınızı nasıl iyileştireceğinizi öğrenin. Tüm işlemler tam gizlilikle yerel olarak gerçekleşir.",
-                "howto.title": "Sağlık Aracı Nasıl Kullanılır",
-                "howto.step1.title": "BMI'nizi Hesaplayın",
-                "howto.step1.description": "Metrik veya emperyal birimleri kullanarak boyunuzu ve kilonuzu girin. Araç anında BMI'nizi hesaplayacak ve sağlık kategorinizi gösterecektir.",
-                "howto.step2.title": "Ses Kontrolünü Kullanın",
-                "howto.step2.description": "Mikrofon düğmesine tıklayın ve ölçümlerinizi söyleyin. Araç sesinizi tanıyacak ve değerleri otomatik olarak girecektir.",
-                "howto.step3.title": "Sağlık Tavsiyeleri Alın",
-                "howto.step3.description": "BMI'nize dayalı olarak, bağırsak sağlığına ve genel refaha özel odaklanarak, sağlığınızı iyileştirmek için kişiselleştirilmiş tavsiyeler alın.",
-                "howto.step4.title": "Bağırsak Sağlığı Hakkında Bilgi Edinin",
-                "howto.step4.description": "Sindirim sağlığınızı ve genel refahınızı iyileştirmek için bağırsak sağlığı ipuçları ve yaşam tarzı önerileri koleksiyonumuzu keşfedin.",
-                "tool.title": "BMI Hesaplayıcı ve Sağlıklı Bağırsak",
-                "tool.tabs.bmi": "BMI Hesaplayıcı",
-                "tool.tabs.gut": "Sağlıklı Bağırsak",
-                "tool.bmi.weight": "Kilo:",
-                "tool.bmi.height": "Boy:",
-                "tool.bmi.calculate": "BMI Hesapla",
-                "tool.bmi.reset": "Sıfırla",
-                "tool.tips.title": "Kişiselleştirilmiş Sağlık İpuçları",
-                "tool.voice.title": "Ses Kontrolü",
-                "tool.voice.description": "Mikrofona tıklayın ve ölçümlerinizi söyleyin",
-                "tool.voice.start": "Ses Girişini Başlat",
-                "tool.voice.stop": "Ses Girişini Durdur",
-                "tool.voice.pause": "Çıktıyı Duraklat",
-                "tool.voice.resume": "Çıktıyı Sürdür",
-                "tool.gut.title": "Bağırsak Sağlığınızı İyileştirin",
-                "tool.gut.description": "Sağlıklı bir bağırsak genel refah için esastır. Sindirim sağlığınızı iyileştirmek için bazı ipuçları:",
-                "footer.follow": "BİZİ TAKİP EDİN",
-                "footer.categories": "Popüler Kategoriler",
-                "footer.categories.pdf": "PDF Araçları",
-                "footer.categories.image": "Görsel Araçları",
-                "footer.categories.text": "Metin Araçları",
-                "footer.categories.av": "Ses/Video Araçları",
-                "footer.categories.web": "Web Geliştirici Araçları",
-                "footer.categories.calc": "Hesap Makinesi Araçları",
-                "footer.categories.util": "Yardımcı Araçlar",
-                "footer.categories.color": "Renk Araçları",
-                "footer.quicklinks": "Hızlı Bağlantılar",
-                "footer.links.tools": "Tüm Araçlar",
-                "footer.links.faq": "SSS",
-                "footer.links.contact": "İletişim",
-                "footer.links.privacy": "Gizlilik Politikası",
-                "footer.links.disclaimer": "Feragatname",
-                "footer.links.terms": "Hizmet Şartları",
-                "footer.copyright": "© 2025 LollyPoPDF. Tüm hakları saklıdır."
-            },
-            uk: {
-                "nav.home": "Головна",
-                "nav.about": "Про нас",
-                "nav.tools": "Інструменти",
-                "nav.contact": "Контакт",
-                "hero.title": "Калькулятор ІМТ та Здоровий Кишківник",
-                "hero.description": "Розрахуйте свій ІМТ у реальному часі, отримайте персоналізовані поради щодо здоров'я та дізнайтеся, як покращити здоров'я кишечника. Вся обробка відбувається локально з повною конфіденційністю.",
-                "howto.title": "Як використовувати інструмент здоров'я",
-                "howto.step1.title": "Розрахуйте свій ІМТ",
-                "howto.step1.description": "Введіть своє зростання та вагу, використовуючи метричні або імперські одиниці. Інструмент миттєво розрахує ваш ІМТ і покаже вашу категорію здоров'я.",
-                "howto.step2.title": "Використовуйте голосове керування",
-                "howto.step2.description": "Натисніть кнопку мікрофона і проговоріть свої виміри. Інструмент розпізнає ваш голос і автоматично введе значення.",
-                "howto.step3.title": "Отримайте поради щодо здоров'я",
-                "howto.step3.description": "На основі вашого ІМТ отримайте персоналізовані поради щодо покращення здоров'я, з особливим акцентом на здоров'я кишечника та загальний добробут.",
-                "howto.step4.title": "Дізнайтеся про здоров'я кишечника",
-                "howto.step4.description": "Дослідіть нашу колекцію порад щодо здоров'я кишечника та рекомендацій щодо способу життя, щоб покращити здоров'я травлення та загальний добробут.",
-                "tool.title": "Калькулятор ІМТ та Здоровий Кишківник",
-                "tool.tabs.bmi": "Калькулятор ІМТ",
-                "tool.tabs.gut": "Здоровий Кишківник",
-                "tool.bmi.weight": "Вага:",
-                "tool.bmi.height": "Зріст:",
-                "tool.bmi.calculate": "Розрахувати ІМТ",
-                "tool.bmi.reset": "Скинути",
-                "tool.tips.title": "Персоналізовані поради щодо здоров'я",
-                "tool.voice.title": "Голосове керування",
-                "tool.voice.description": "Натисніть на мікрофон і проговоріть свої виміри",
-                "tool.voice.start": "Почати голосовий ввід",
-                "tool.voice.stop": "Зупинити голосовий ввід",
-                "tool.voice.pause": "Призупинити вивід",
-                "tool.voice.resume": "Продовжити вивід",
-                "tool.gut.title": "Покращте здоров'я свого кишечника",
-                "tool.gut.description": "Здоровий кишечник є важливим для загального добробуту. Ось кілька порад щодо покращення здоров'я травлення:",
-                "footer.follow": "СЛІДКУЙТЕ ЗА НАМИ",
-                "footer.categories": "Популярні категорії",
-                "footer.categories.pdf": "Інструменти PDF",
-                "footer.categories.image": "Інструменти зображень",
-                "footer.categories.text": "Текстові інструменти",
-                "footer.categories.av": "Аудіо/Відео інструменти",
-                "footer.categories.web": "Інструменти WebDeveloper",
-                "footer.categories.calc": "Інструменти калькулятора",
-                "footer.categories.util": "Утиліти",
-                "footer.categories.color": "Кольорові інструменти",
-                "footer.quicklinks": "Швидкі посилання",
-                "footer.links.tools": "Всі інструменти",
-                "footer.links.faq": "Часті запитання",
-                "footer.links.contact": "Контакт",
-                "footer.links.privacy": "Політика конфіденційності",
-                "footer.links.disclaimer": "Відмова від відповідальності",
-                "footer.links.terms": "Умови використання",
-                "footer.copyright": "© 2025 LollyPoPDF. Всі права захищені."
-            },
-            vi: {
-                "nav.home": "Trang Chủ",
-                "nav.about": "Về Chúng Tôi",
-                "nav.tools": "Công Cụ",
-                "nav.contact": "Liên Hệ",
-                "hero.title": "Máy Tính BMI & Đường Ruột Khỏe Mạnh",
-                "hero.description": "Tính chỉ số BMI của bạn theo thời gian thực, nhận lời khuyên sức khỏe được cá nhân hóa và tìm hiểu cách cải thiện sức khỏe đường ruột. Tất cả xử lý diễn ra cục bộ với quyền riêng tư hoàn toàn.",
-                "howto.title": "Cách Sử Dụng Công Cụ Sức Khỏe",
-                "howto.step1.title": "Tính Chỉ Số BMI Của Bạn",
-                "howto.step1.description": "Nhập chiều cao và cân nặng của bạn bằng đơn vị mét hoặc imperial. Công cụ sẽ ngay lập tức tính chỉ số BMI của bạn và hiển thị danh mục sức khỏe của bạn.",
-                "howto.step2.title": "Sử Dụng Điều Khiển Bằng Giọng Nói",
-                "howto.step2.description": "Nhấp vào nút micrô và nói các phép đo của bạn. Công cụ sẽ nhận dạng giọng nói của bạn và tự động nhập các giá trị.",
-                "howto.step3.title": "Nhận Lời Khuyên Sức Khỏe",
-                "howto.step3.description": "Dựa trên chỉ số BMI của bạn, nhận lời khuyên được cá nhân hóa để cải thiện sức khỏe của bạn, với trọng tâm đặc biệt vào sức khỏe đường ruột và sức khỏe tổng thể.",
-                "howto.step4.title": "Tìm Hiểu Về Sức Khỏe Đường Ruột",
-                "howto.step4.description": "Khám phá bộ sưu tập mẹo sức khỏe đường ruột và khuyến nghị lối sống của chúng tôi để cải thiện sức khỏe tiêu hóa và sức khỏe tổng thể của bạn.",
-                "tool.title": "Máy Tính BMI & Đường Ruột Khỏe Mạnh",
-                "tool.tabs.bmi": "Máy Tính BMI",
-                "tool.tabs.gut": "Đường Ruột Khỏe Mạnh",
-                "tool.bmi.weight": "Cân nặng:",
-                "tool.bmi.height": "Chiều cao:",
-                "tool.bmi.calculate": "Tính BMI",
-                "tool.bmi.reset": "Đặt lại",
-                "tool.tips.title": "Mẹo Sức Khỏe Được Cá Nhân Hóa",
-                "tool.voice.title": "Điều Khiển Bằng Giọng Nói",
-                "tool.voice.description": "Nhấp vào micrô và nói các phép đo của bạn",
-                "tool.voice.start": "Bắt đầu Nhập Giọng Nói",
-                "tool.voice.stop": "Dừng Nhập Giọng Nói",
-                "tool.voice.pause": "Tạm dừng Đầu ra",
-                "tool.voice.resume": "Tiếp tục Đầu ra",
-                "tool.gut.title": "Cải Thiện Sức Khỏe Đường Ruột Của Bạn",
-                "tool.gut.description": "Một đường ruột khỏe mạnh là điều cần thiết cho sức khỏe tổng thể. Dưới đây là một số mẹo để cải thiện sức khỏe tiêu hóa của bạn:",
-                "footer.follow": "THEO DÕI CHÚNG TÔI",
-                "footer.categories": "Danh Mục Phổ Biến",
-                "footer.categories.pdf": "Công Cụ PDF",
-                "footer.categories.image": "Công Cụ Hình Ảnh",
-                "footer.categories.text": "Công Cụ Văn Bản",
-                "footer.categories.av": "Công Cụ Âm Thanh/Video",
-                "footer.categories.web": "Công Cụ WebDeveloper",
-                "footer.categories.calc": "Công Cụ Máy Tính",
-                "footer.categories.util": "Công Cụ Tiện Ích",
-                "footer.categories.color": "Công Cụ Màu Sắc",
-                "footer.quicklinks": "Liên Kết Nhanh",
-                "footer.links.tools": "Tất Cả Công Cụ",
-                "footer.links.faq": "Câu Hỏi Thường Gặp",
-                "footer.links.contact": "Liên Hệ",
-                "footer.links.privacy": "Chính Sách Bảo Mật",
-                "footer.links.disclaimer": "Tuyên Bố Miễn Trừ Trách Nhiệm",
-                "footer.links.terms": "Điều Khoản Dịch Vụ",
-                "footer.copyright": "© 2025 LollyPoPDF. Mọi quyền được bảo lưu."
-            },
-            is: {
-                "nav.home": "Heim",
-                "nav.about": "Um Okkur",
-                "nav.tools": "Verkfæri",
-                "nav.contact": "Hafa Samband",
-                "hero.title": "BMI Reiknivél og Heilbrigt Ðarmakerfi",
-                "hero.description": "Reiknaðu BMI þitt í rauntíma, fáðu persónulegar heilsuráðleggingar og lærðu hvernig á að bæta Ðarmakerfið þitt. Öll vinnsla fer fram staðbundið með fullri næði.",
-                "howto.title": "Hvernig á að nota heilsuverkfærið",
-                "howto.step1.title": "Reiknaðu BMI þitt",
-                "howto.step1.description": "Sláðu inn hæð og þyngd þína með því að nota metra eða bresk einingar. Verkfærið reiknar strax BMI þitt og sýnir heilsuflokk þinn.",
-                "howto.step2.title": "Notaðu raddstýringu",
-                "howto.step2.description": "Smelltu á hljóðnemahnappinn og talaðu mælingar þínar. Verkfærið þekkir rödd þína og setur gildin inn sjálfkrafa.",
-                "howto.step3.title": "Fáðu heilsuráðleggingar",
-                "howto.step3.description": "Byggt á BMI þínu, fáðu persónulegar ráðleggingar um að bæta heilsu þína, með sérstakri áherslu á Ðarmaheilsu og almenna vellíðan.",
-                "howto.step4.title": "Lærðu um Ðarmaheilsu",
-                "howto.step4.description": "Kannaðu safn okkar af Ðarmaheilsuráðum og lífsstílsráðleggingum til að bæta meltingarheilsu þína og almenna vellíðan.",
-                "tool.title": "BMI Reiknivél og Heilbrigt Ðarmakerfi",
-                "tool.tabs.bmi": "BMI Reiknivél",
-                "tool.tabs.gut": "Heilbrigt Ðarmakerfi",
-                "tool.bmi.weight": "Þyngd:",
-                "tool.bmi.height": "Hæð:",
-                "tool.bmi.calculate": "Reikna BMI",
-                "tool.bmi.reset": "Endurstilla",
-                "tool.tips.title": "Persónulegar heilsuráð",
-                "tool.voice.title": "Raddstýring",
-                "tool.voice.description": "Smelltu á hljóðnemann og talaðu mælingar þínar",
-                "tool.voice.start": "Byrja raddinnslátt",
-                "tool.voice.stop": "Stoppa raddinnslátt",
-                "tool.voice.pause": "Gera hlé á úttaki",
-                "tool.voice.resume": "Halda áfram úttaki",
-                "tool.gut.title": "Bættu Ðarmaheilsu þína",
-                "tool.gut.description": "Heilbrigt Ðarmakerfi er nauðsynlegt fyrir almenna vellíðan. Hér eru nokkrar ráðleggingar til að bæta meltingarheilsu þína:",
-                "footer.follow": "FYLGDU OKKUR",
-                "footer.categories": "Vinsælar flokkar",
-                "footer.categories.pdf": "PDF Verkfæri",
-                "footer.categories.image": "Myndverkfæri",
-                "footer.categories.text": "Textaverkfæri",
-                "footer.categories.av": "Hljóð/Myndband Verkfæri",
-                "footer.categories.web": "WebDeveloper Verkfæri",
-                "footer.categories.calc": "Reiknivélarverkfæri",
-                "footer.categories.util": "Gagnleg verkfæri",
-                "footer.categories.color": "Litverkfæri",
-                "footer.quicklinks": "Flýtilankar",
-                "footer.links.tools": "Öll verkfæri",
-                "footer.links.faq": "Algengar spurningar",
-                "footer.links.contact": "Hafa Samband",
-                "footer.links.privacy": "Meðferðarstefna",
-                "footer.links.disclaimer": "Fyrirvari",
-                "footer.links.terms": "Þjónustuskilmálar",
-                "footer.copyright": "© 2025 LollyPoPDF. Öll réttindi áskilin."
-            },
-            no: {
-                "nav.home": "Hjem",
-                "nav.about": "Om Oss",
-                "nav.tools": "Verktøy",
-                "nav.contact": "Kontakt",
-                "hero.title": "BMI Kalkulator & Sunn Tarm",
-                "hero.description": "Beregn BMI-en din i sanntid, få personlige helseråd og lær hvordan du kan forbedre tarmsunnheten din. All behandling skjer lokalt med fullstendig personvern.",
-                "howto.title": "Hvordan Bruke Helseverktøyet",
-                "howto.step1.title": "Beregn BMI-en din",
-                "howto.step1.description": "Skriv inn høyden og vekten din ved å bruke metriske eller imperiske enheter. Verktøyet beregner umiddelbart BMI-en din og viser helsekategorien din.",
-                "howto.step2.title": "Bruk Stemmekontroll",
-                "howto.step2.description": "Klikk på mikrofonknappen og snakk inn målene dine. Verktøyet gjenkjenner stemmen din og legger inn verdiene automatisk.",
-                "howto.step3.title": "Få Helseråd",
-                "howto.step3.description": "Basert på BMI-en din, motta personlige råd for å forbedre helsen din, med spesielt fokus på tarmsunnethet og generell velvære.",
-                "howto.step4.title": "Lær om Tarmsunnethet",
-                "howto.step4.description": "Utforsk vår samling av tarmsunnethetstips og livsstilsanbefalinger for å forbedre fordøyelseshelsen og generell velvære.",
-                "tool.title": "BMI Kalkulator & Sunn Tarm",
-                "tool.tabs.bmi": "BMI Kalkulator",
-                "tool.tabs.gut": "Sunn Tarm",
-                "tool.bmi.weight": "Vekt:",
-                "tool.bmi.height": "Høyde:",
-                "tool.bmi.calculate": "Beregn BMI",
-                "tool.bmi.reset": "Tilbakestill",
-                "tool.tips.title": "Personlige Helsetips",
-                "tool.voice.title": "Stemmekontroll",
-                "tool.voice.description": "Klikk på mikrofonen og snakk inn målene dine",
-                "tool.voice.start": "Start Stemmeinndata",
-                "tool.voice.stop": "Stopp Stemmeinndata",
-                "tool.voice.pause": "Pause Utdata",
-                "tool.voice.resume": "Fortsett Utdata",
-                "tool.gut.title": "Forbedre Tarmsunnheten din",
-                "tool.gut.description": "En sunn tarm er avgjørende for generell velvære. Her er noen tips for å forbedre fordøyelseshelsen din:",
-                "footer.follow": "FØLG OSS",
-                "footer.categories": "Populære Kategorier",
-                "footer.categories.pdf": "PDF Verktøy",
-                "footer.categories.image": "Bildeverktøy",
-                "footer.categories.text": "Tekstverktøy",
-                "footer.categories.av": "Lyd/Video Verktøy",
-                "footer.categories.web": "WebUtvikler Verktøy",
-                "footer.categories.calc": "Kalkulatorverktøy",
-                "footer.categories.util": "Nytteverktøy",
-                "footer.categories.color": "Fargeverktøy",
-                "footer.quicklinks": "Hurtiglenker",
-                "footer.links.tools": "Alle Verktøy",
-                "footer.links.faq": "FAQ",
-                "footer.links.contact": "Kontakt",
-                "footer.links.privacy": "Personvernpolicy",
-                "footer.links.disclaimer": "Ansvarsfraskrivelse",
-                "footer.links.terms": "Tjenestevilkår",
-                "footer.copyright": "© 2025 LollyPoPDF. Alle rettigheter forbeholdt."
-            },
-            sv: {
-                "nav.home": "Hem",
-                "nav.about": "Om Oss",
-                "nav.tools": "Verktyg",
-                "nav.contact": "Kontakt",
-                "hero.title": "BMI Kalkylator & Hälsosam Tarm",
-                "hero.description": "Beräkna din BMI i realtid, få personliga hälsoråd och lär dig hur du kan förbättra din tarmhälsa. All bearbetning sker lokalt med fullständig integritet.",
-                "howto.title": "Hur man använder Hälsoverktyget",
-                "howto.step1.title": "Beräkna Din BMI",
-                "howto.step1.description": "Ange din längd och vikt med hjälp av metriska eller imperiala enheter. Verktyget beräknar omedelbart din BMI och visar din hälsokategori.",
-                "howto.step2.title": "Använd Röststyrning",
-                "howto.step2.description": "Klicka på mikrofonknappen och tala in dina mått. Verktyget känner igen din röst och matar in värdena automatiskt.",
-                "howto.step3.title": "Få Hälsoråd",
-                "howto.step3.description": "Baserat på din BMI, få personliga råd för att förbättra din hälsa, med särskilt fokus på tarmhälsa och allmänt välbefinnande.",
-                "howto.step4.title": "Lär Dig om Tarmhälsa",
-                "howto.step4.description": "Utforska vår samling av tarmhälsotips och livsstilsrekommendationer för att förbättra din matsmältningshälsa och allmänt välbefinnande.",
-                "tool.title": "BMI Kalkylator & Hälsosam Tarm",
-                "tool.tabs.bmi": "BMI Kalkylator",
-                "tool.tabs.gut": "Hälsosam Tarm",
-                "tool.bmi.weight": "Vikt:",
-                "tool.bmi.height": "Längd:",
-                "tool.bmi.calculate": "Beräkna BMI",
-                "tool.bmi.reset": "Återställ",
-                "tool.tips.title": "Personliga Hälsotips",
-                "tool.voice.title": "Röststyrning",
-                "tool.voice.description": "Klicka på mikrofonen och tala in dina mått",
-                "tool.voice.start": "Starta Röstinmatning",
-                "tool.voice.stop": "Stoppa Röstinmatning",
-                "tool.voice.pause": "Pausa Utdata",
-                "tool.voice.resume": "Återuppta Utdata",
-                "tool.gut.title": "Förbättra Din Tarmhälsa",
-                "tool.gut.description": "En hälsosam tarm är avgörande för allmänt välbefinnande. Här är några tips för att förbättra din matsmältningshälsa:",
-                "footer.follow": "FÖLJ OSS",
-                "footer.categories": "Populära Kategorier",
-                "footer.categories.pdf": "PDF Verktyg",
-                "footer.categories.image": "Bildverktyg",
-                "footer.categories.text": "Textverktyg",
-                "footer.categories.av": "Ljud/Video Verktyg",
-                "footer.categories.web": "WebbUtvecklare Verktyg",
-                "footer.categories.calc": "Kalkylatorverktyg",
-                "footer.categories.util": "Verktyg för Verktyg",
-                "footer.categories.color": "Färgverktyg",
-                "footer.quicklinks": "Snabblänkar",
-                "footer.links.tools": "Alla Verktyg",
-                "footer.links.faq": "FAQ",
-                "footer.links.contact": "Kontakt",
-                "footer.links.privacy": "Integritetspolicy",
-                "footer.links.disclaimer": "Ansvarsfriskrivning",
-                "footer.links.terms": "Användarvillkor",
-                "footer.copyright": "© 2025 LollyPoPDF. Alla rättigheter förbehållna."
-            },
-            fi: {
-                "nav.home": "Koti",
-                "nav.about": "Meistä",
-                "nav.tools": "Työkalut",
-                "nav.contact": "Yhteystiedot",
-                "hero.title": "BMI Laskin & Terve Suolisto",
-                "hero.description": "Laske BMI:si reaaliaikaisesti, saa henkilökohtaisia terveysneuvoja ja opi parantamaan suolistosi terveyttä. Kaikki käsittely tapahtuu paikallisesti täydellisen yksityisyyden kanssa.",
-                "howto.title": "Kuinka Käyttää Terveystyökalua",
-                "howto.step1.title": "Laske BMI:si",
-                "howto.step1.description": "Syötä pituutesi ja painosi käyttämällä metrisiä tai imperiaalisia yksiköitä. Työkalu laskee BMI:si välittömästi ja näyttää terveytesi luokan.",
-                "howto.step2.title": "Käytä Ääniohjainta",
-                "howto.step2.description": "Napsauta mikrofonia ja puhu mittauksesi. Työkalu tunnistaa äänesi ja syöttää arvot automaattisesti.",
-                "howto.step3.title": "Saa Terveysneuvoja",
-                "howto.step3.description": "BMI:si perusteella saa henkilökohtaisia neuvoja terveytesi parantamiseksi, erityisesti keskittyen suoliston terveyteen ja yleiseen hyvinvointiin.",
-                "howto.step4.title": "Opi Suoliston Terveydestä",
-                "howto.step4.description": "Tutustu kokoelmaamme suoliston terveysvinkkejä ja elämäntapasuosituksia parantaaksesi ruoansulatuksen terveyttäsi ja yleistä hyvinvointiasi.",
-                "tool.title": "BMI Laskin & Terve Suolisto",
-                "tool.tabs.bmi": "BMI Laskin",
-                "tool.tabs.gut": "Terve Suolisto",
-                "tool.bmi.weight": "Paino:",
-                "tool.bmi.height": "Pituus:",
-                "tool.bmi.calculate": "Laske BMI",
-                "tool.bmi.reset": "Nollaa",
-                "tool.tips.title": "Henkilökohtaiset Terveysvinkit",
-                "tool.voice.title": "Ääniohjain",
-                "tool.voice.description": "Napsauta mikrofonia ja puhu mittauksesi",
-                "tool.voice.start": "Käynnistä Äänisyöttö",
-                "tool.voice.stop": "Lopeta Äänisyöttö",
-                "tool.voice.pause": "Keskeytä Tulostus",
-                "tool.voice.resume": "Jatka Tulostusta",
-                "tool.gut.title": "Paranna Suolistosi Terveyttä",
-                "tool.gut.description": "Terve suolisto on välttämätön yleiselle hyvinvoinnille. Tässä on joitain vinkkejä ruoansulatuksen terveyden parantamiseksi:",
-                "footer.follow": "SEURA MEITÄ",
-                "footer.categories": "Suositut Kategoriat",
-                "footer.categories.pdf": "PDF Työkalut",
-                "footer.categories.image": "Kuvatyökalut",
-                "footer.categories.text": "Tekstityökalut",
-                "footer.categories.av": "Ääni/Video Työkalut",
-                "footer.categories.web": "WebKehittäjä Työkalut",
-                "footer.categories.calc": "Laskinityökalut",
-                "footer.categories.util": "Aputyökalut",
-                "footer.categories.color": "Värityökalut",
-                "footer.quicklinks": "Pikalinkit",
-                "footer.links.tools": "Kaikki Työkalut",
-                "footer.links.faq": "UKK",
-                "footer.links.contact": "Yhteystiedot",
-                "footer.links.privacy": "Tietosuojakäytäntö",
-                "footer.links.disclaimer": "Vastuuvapauslauseke",
-                "footer.links.terms": "Käyttöehdot",
-                "footer.copyright": "© 2025 LollyPoPDF. Kaikki oikeudet pidätetään."
-            },
-            cs: {
-                "nav.home": "Domů",
-                "nav.about": "O nás",
-                "nav.tools": "Nástroje",
-                "nav.contact": "Kontakt",
-                "hero.title": "BMI Kalkulačka & Zdravé Střevo",
-                "hero.description": "Vypočítejte si své BMI v reálném čase, získejte personalizované zdravotní rady a naučte se, jak zlepšit zdraví svého střeva. Veškeré zpracování probíhá lokálně s úplným soukromím.",
-                "howto.title": "Jak používat zdravotní nástroj",
-                "howto.step1.title": "Vypočítejte své BMI",
-                "howto.step1.description": "Zadejte svou výšku a hmotnost pomocí metrických nebo imperiálních jednotek. Nástroj okamžitě vypočítá vaše BMI a zobrazí vaši zdravotní kategorii.",
-                "howto.step2.title": "Použijte hlasové ovládání",
-                "howto.step2.description": "Klikněte na tlačítko mikrofonu a řekněte své míry. Nástroj rozpozná váš hlas a automaticky zadá hodnoty.",
-                "howto.step3.title": "Získejte zdravotní rady",
-                "howto.step3.description": "Na základě vašeho BMI získejte personalizované rady pro zlepšení vašeho zdraví, se zvláštním zaměřením na zdraví střev a celkovou pohodu.",
-                "howto.step4.title": "Naučte se o zdraví střev",
-                "howto.step4.description": "Prozkoumejte naši sbírku tipů na zdraví střev a doporučení životního stylu, abyste zlepšili své trávicí zdraví a celkovou pohodu.",
-                "tool.title": "BMI Kalkulačka & Zdravé Střevo",
-                "tool.tabs.bmi": "BMI Kalkulačka",
-                "tool.tabs.gut": "Zdravé Střevo",
-                "tool.bmi.weight": "Hmotnost:",
-                "tool.bmi.height": "Výška:",
-                "tool.bmi.calculate": "Vypočítat BMI",
-                "tool.bmi.reset": "Resetovat",
-                "tool.tips.title": "Personalizované zdravotní tipy",
-                "tool.voice.title": "Hlasové ovládání",
-                "tool.voice.description": "Klikněte na mikrofon a řekněte své míry",
-                "tool.voice.start": "Spustit hlasový vstup",
-                "tool.voice.stop": "Zastavit hlasový vstup",
-                "tool.voice.pause": "Pozastavit výstup",
-                "tool.voice.resume": "Pokračovat ve výstupu",
-                "tool.gut.title": "Zlepšete zdraví svého střeva",
-                "tool.gut.description": "Zdravé střevo je nezbytné pro celkovou pohodu. Zde je několik tipů pro zlepšení vašeho trávicího zdraví:",
-                "footer.follow": "SLEDUJTE NÁS",
-                "footer.categories": "Populární kategorie",
-                "footer.categories.pdf": "PDF Nástroje",
-                "footer.categories.image": "Obrázkové nástroje",
-                "footer.categories.text": "Textové nástroje",
-                "footer.categories.av": "Audio/Video nástroje",
-                "footer.categories.web": "WebDeveloper nástroje",
-                "footer.categories.calc": "Kalkulačkové nástroje",
-                "footer.categories.util": "Užitečné nástroje",
-                "footer.categories.color": "Barevné nástroje",
-                "footer.quicklinks": "Rychlé odkazy",
-                "footer.links.tools": "Všechny nástroje",
-                "footer.links.faq": "Často kladené otázky",
-                "footer.links.contact": "Kontakt",
-                "footer.links.privacy": "Zásady ochrany osobních údajů",
-                "footer.links.disclaimer": "Odmítnutí odpovědnosti",
-                "footer.links.terms": "Podmínky služby",
-                "footer.copyright": "© 2025 LollyPoPDF. Všechna práva vyhrazena."
             }
         };
 

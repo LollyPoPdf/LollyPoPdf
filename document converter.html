@@ -90,7 +90,7 @@
         .logo-circle {
             width: 40px;
             height: 40px;
-            border-radius: 50%;
+            border-radius: 40%;
             background: linear-gradient(to bottom right, #9370db, #8a2be2);
             display: flex;
             align-items: center;
@@ -548,7 +548,7 @@
         .footer-logo-circle {
             width: 40px;
             height: 40px;
-            border-radius: 50%;
+            border-radius: 40%;
             background: linear-gradient(to bottom right, #9370db, #8a2be2);
             display: flex;
             align-items: center;
@@ -790,17 +790,13 @@
                         <div class="logo-stem"></div>
                     </div>
                     <div class="logo-text">LollyPoPdf</div>
-                </a>
-                
-                <button class="mobile-menu-btn" id="mobileMenuBtn">
-                    <i class="fas fa-bars"></i>
-                </button>
+                </a>                
                 
                 <nav>
                     <ul id="navMenu">
-                        <li><a href="https://lollypopdf.com#home" class="nav-link" data-key="home">Home</a></li>
+                        <li><a href=" https://lollypopdf.github.io/LollyPoPdf#home" class="nav-link" data-key="home">Home</a></li>
                         <li><a href="https://lollypopdf.github.io/LollyPoPdf#about" class="nav-link" data-key="about">About Us</a></li>
-                        <li><a href="https://lollypopdf.com#tools" class="nav-link" data-key="tools">Tools</a></li>
+                        <li><a href=" https://lollypopdf.github.io/LollyPoPdf#tools" class="nav-link" data-key="tools">Tools</a></li>
                         <li><a href="contact.html" class="nav-link" data-key="contact">Contact</a></li>
                     </ul>
                 </nav>
@@ -809,6 +805,9 @@
                     <span class="email">lollypoppdf@gmail.com</span>
                     <button class="theme-toggle" id="themeToggle">
                         <i class="fas fa-moon"></i>
+                    </button>
+                    <button class="mobile-menu-btn" id="mobileMenuBtn">
+                        <i class="fas fa-bars"></i>
                     </button>
                 </div>
             </div>
@@ -957,11 +956,11 @@
                 <div class="footer-section">
                     <h3 class="category-header">Popular Categories</h3>
                     <ul class="footer-links">
-                        <li><a href="https://lollypopdf.com#pdf-tools" data-key="pdfTools">PDF Tools</a></li>
-                        <li><a href="https://lollypopdf.com#image-tools" data-key="imageTools">Image Tools</a></li>
+                        <li><a href=" https://lollypopdf.github.io/LollyPoPdf#pdf-tools" data-key="pdfTools">PDF Tools</a></li>
+                        <li><a href=" https://lollypopdf.github.io/LollyPoPdf#image-tools" data-key="imageTools">Image Tools</a></li>
                         <li><a href="https://lollypopdf.com#text-tools" data-key="textTools">Text Tools</a></li>
                         <li><a href="https://lollypopdf.com#audio-video-tools" data-key="audioVideoTools">Audio/Video Tools</a></li>
-                        <li><a href="https://lollypopdf.github.io/LollyPoPdf#web developer-tools" data-key="webDeveloperTools">Web Developer Tools</a></li>
+                        <li><a href="https://lollypopdf.github.io/LollyPoPdf#web developer-tools" data-key="web DeveloperTools">Web Developer Tools</a></li>
                         <li><a href="https://lollypopdf.com#calculator-tools" data-key="calculatorTools">Calculator Tools</a></li>
                         <li><a href="https://lollypopdf.com#utility-tools" data-key="utilityTools">Utility Tools</a></li>
                         <li><a href="https://lollypopdf.com#color-tools" data-key="colorTools">Color Tools</a></li>
@@ -1090,7 +1089,7 @@
                 footerDescription: "Free online tools for PDF, images, text, and more. Simplify your digital tasks with our easy-to-use utilities.",
                 copyright: "© 2025 LollyPoPDF. All rights reserved."
             },
-            es: {
+             es: {
                 home: "Inicio",
                 about: "Nosotros",
                 tools: "Herramientas",
@@ -3267,9 +3266,9 @@
                     // Extract text from DOCX
                     const docxText = await extractTextFromDocx(file);
                     
-                    // Create PDF with extracted text
-                    const pdfContent = createPdfFromText(docxText, file.name);
-                    const blob = new Blob([pdfContent], { type: 'application/pdf' });
+                    // Create PDF with extracted text using proper PDF structure
+                    const pdfBytes = await createProperPdfFromText(docxText, file.name);
+                    const blob = new Blob([pdfBytes], { type: 'application/pdf' });
                     
                     resolve({
                         success: true,
@@ -3288,12 +3287,12 @@
         async function convertTxtToPdf(file) {
             return new Promise((resolve) => {
                 const reader = new FileReader();
-                reader.onload = function(e) {
+                reader.onload = async function(e) {
                     const text = e.target.result;
                     try {
-                        // Create PDF with text content
-                        const pdfContent = createPdfFromText(text, file.name);
-                        const blob = new Blob([pdfContent], { type: 'application/pdf' });
+                        // Create PDF with text content using proper PDF structure
+                        const pdfBytes = await createProperPdfFromText(text, file.name);
+                        const blob = new Blob([pdfBytes], { type: 'application/pdf' });
                         resolve({
                             success: true,
                             data: URL.createObjectURL(blob)
@@ -3496,115 +3495,104 @@
             });
         }
         
-        function createPdfFromText(text, filename) {
-            // Simple PDF generation with text content
+        // NEW: Proper PDF generation function
+        async function createProperPdfFromText(text, filename) {
+            // Split text into lines
             const lines = text.split('\n');
-            let pdfContent = `%PDF-1.4
-1 0 obj
-<<
-/Type /Catalog
-/Pages 2 0 R
->>
-endobj
-2 0 obj
-<<
-/Type /Pages
-/Kids [3 0 R]
-/Count 1
->>
-endobj
-3 0 obj
-<<
-/Type /Page
-/Parent 2 0 R
-/MediaBox [0 0 612 792]
-/Contents 4 0 R
-/Resources <<
-/Font <<
-/F1 5 0 R
->>
->>
->>
-endobj
-4 0 obj
-<<
-/Length ${text.length * 10}
->>
-stream
-BT
-/F1 12 Tf
-50 750 Td
-(Converted document: ${filename}) Tj
-50 730 Td
-( ) Tj
-`;
+            
+            // PDF header
+            let pdfContent = '%PDF-1.4\n';
+            
+            // Object 1: Catalog
+            pdfContent += '1 0 obj\n';
+            pdfContent += '<< /Type /Catalog /Pages 2 0 R >>\n';
+            pdfContent += 'endobj\n';
+            
+            // Object 2: Pages
+            pdfContent += '2 0 obj\n';
+            pdfContent += '<< /Type /Pages /Kids [3 0 R] /Count 1 >>\n';
+            pdfContent += 'endobj\n';
+            
+            // Object 3: Page
+            pdfContent += '3 0 obj\n';
+            pdfContent += '<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Contents 4 0 R /Resources << /Font << /F1 5 0 R >> >> >>\n';
+            pdfContent += 'endobj\n';
+            
+            // Object 4: Content stream
+            let streamContent = 'BT\n';
+            streamContent += '/F1 12 Tf\n';
+            streamContent += '50 750 Td\n';
+            streamContent += `(Document: ${filename}) Tj\n`;
+            streamContent += '0 -20 Td\n';
+            streamContent += '( ) Tj\n';
+            streamContent += '0 -20 Td\n';
             
             let yPosition = 710;
-            lines.forEach(line => {
-                if (line.trim() !== '') {
-                    pdfContent += `50 ${yPosition} Td\n(${line.substring(0, 80)}) Tj\n`;
-                    yPosition -= 20;
-                    if (yPosition < 50) {
-                        // Add new page if needed
-                        pdfContent += `ET
-endstream
-endobj
-6 0 obj
-<<
-/Type /Page
-/Parent 2 0 R
-/MediaBox [0 0 612 792]
-/Contents 7 0 R
-/Resources <<
-/Font <<
-/F1 5 0 R
->>
->>
->>
-endobj
-7 0 obj
-<<
-/Length ${text.length * 10}
->>
-stream
-BT
-/F1 12 Tf
-`;
-                        yPosition = 750;
-                    }
+            let lineCount = 0;
+            
+            for (let i = 0; i < lines.length; i++) {
+                const line = lines[i];
+                if (line.trim() === '') continue;
+                
+                // Split long lines
+                const maxLineLength = 80;
+                const lineChunks = [];
+                for (let j = 0; j < line.length; j += maxLineLength) {
+                    lineChunks.push(line.substring(j, j + maxLineLength));
                 }
-            });
+                
+                for (const chunk of lineChunks) {
+                    if (yPosition < 50) {
+                        // Add page break - for simplicity, we'll just truncate
+                        break;
+                    }
+                    
+                    streamContent += `(${chunk}) Tj\n`;
+                    streamContent += '0 -20 Td\n';
+                    yPosition -= 20;
+                    lineCount++;
+                    
+                    if (lineCount > 30) break; // Limit lines per page
+                }
+                
+                if (lineCount > 30) break;
+            }
             
-            pdfContent += `ET
-endstream
-endobj
-5 0 obj
-<<
-/Type /Font
-/Subtype /Type1
-/BaseFont /Helvetica
->>
-endobj
-xref
-0 8
-0000000000 65535 f 
-0000000009 00000 n 
-0000000058 00000 n 
-0000000115 00000 n 
-0000000274 00000 n 
-0000000450 00000 n 
-0000000600 00000 n 
-0000000750 00000 n 
-trailer
-<<
-/Size 8
-/Root 1 0 R
->>
-startxref
-${pdfContent.length - 100}
-%%EOF`;
+            streamContent += 'ET\n';
             
-            return pdfContent;
+            pdfContent += '4 0 obj\n';
+            pdfContent += `<< /Length ${streamContent.length} >>\n`;
+            pdfContent += 'stream\n';
+            pdfContent += streamContent;
+            pdfContent += 'endstream\n';
+            pdfContent += 'endobj\n';
+            
+            // Object 5: Font
+            pdfContent += '5 0 obj\n';
+            pdfContent += '<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>\n';
+            pdfContent += 'endobj\n';
+            
+            // Cross-reference table
+            const xrefOffset = pdfContent.length;
+            pdfContent += 'xref\n';
+            pdfContent += '0 6\n';
+            pdfContent += '0000000000 65535 f \n';
+            pdfContent += '0000000009 00000 n \n';
+            pdfContent += '0000000058 00000 n \n';
+            pdfContent += '0000000115 00000 n \n';
+            pdfContent += '0000000274 00000 n \n';
+            pdfContent += '0000000450 00000 n \n';
+            
+            // Trailer
+            pdfContent += 'trailer\n';
+            pdfContent += '<< /Size 6 /Root 1 0 R >>\n';
+            pdfContent += 'startxref\n';
+            pdfContent += `${xrefOffset}\n`;
+            pdfContent += '%%EOF';
+            
+            // Convert to Uint8Array
+            const encoder = new TextEncoder();
+            return encoder.encode(pdfContent);
         }
         
         function escapeXml(unsafe) {

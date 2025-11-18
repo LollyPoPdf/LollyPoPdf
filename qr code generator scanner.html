@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>QR Code Generator & Scanner | LollyPoPdf</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
     <style>
         :root {
@@ -856,6 +856,7 @@
             display: flex;
             gap: 15px;
             margin-top: 20px;
+            flex-wrap: wrap;
         }
 
         .social-icon {
@@ -1252,6 +1253,8 @@
                     <a href="https://twitter.com/lollypopdf" class="social-icon"><i class="fab fa-twitter"></i></a>
                     <a href="https://instagram.com/lollypopdf" class="social-icon"><i class="fab fa-instagram"></i></a>
                     <a href="https://pinterest.com/lollypopdf" class="social-icon"><i class="fab fa-pinterest-p"></i></a>
+                    <a href="https://youtube.com/@lollypopdf" class="social-icon"><i class="fab fa-youtube"></i></a>
+                    <a href="https://www.trustpilot.com/review/lollypopdf.com" class="social-icon"><i class="fas fa-star"></i></a>
                 </div>
             </div>
             
@@ -1263,7 +1266,7 @@
                     <li><a href="https://lollypopdf.com#image-tools" data-i18n="footer.categories.image">Image Tools</a></li>
                     <li><a href="https://lollypopdf.com#text-tools" data-i18n="footer.categories.text">Text Tools</a></li>
                     <li><a href="https://lollypopdf.com#audio-video-tools" data-i18n="footer.categories.av">Audio/Video Tools</a></li>
-                    <li><a href="https://lollypopdf.com#web-developer-tools" data-i18n="footer.categories.web">WebDeveloper Tools</a></li>
+                    <li><a href="https://lollypopdf.com#web-developer-tools" data-i18n="footer.categories.web">Web Developer Tools</a></li>
                     <li><a href="https://lollypopdf.com#calculator-tools" data-i18n="footer.categories.calc">Calculator Tools</a></li>
                     <li><a href="https://lollypopdf.com#utility-tools" data-i18n="footer.categories.util">Utility Tools</a></li>
                     <li><a href="https://lollypopdf.com#color-tools" data-i18n="footer.categories.color">Color Tools</a></li>
@@ -1411,7 +1414,7 @@
             });
         });
 
-        // QR Code Generator
+        // QR Code Generator - USING THE WORKING CODE FROM YOUR EXAMPLE
         const qrText = document.getElementById('qrText');
         const qrSize = document.getElementById('qrSize');
         const qrSizeValue = document.getElementById('qrSizeValue');
@@ -1423,66 +1426,61 @@
         const downloadBtn = document.getElementById('downloadBtn');
         const clearGeneratorBtn = document.getElementById('clearGeneratorBtn');
         
-        let currentQRCode = null;
+        let qr;
         
         // Update size value display
         qrSize.addEventListener('input', () => {
             qrSizeValue.textContent = `${qrSize.value}px`;
-            if (currentQRCode) {
-                generateQRCode();
-            }
         });
         
-        // Generate QR code
+        // Generate QR code - USING THE WORKING CODE FROM YOUR EXAMPLE
         generateBtn.addEventListener('click', generateQRCode);
         
         function generateQRCode() {
             const text = qrText.value.trim();
-            if (!text) {
-                alert('Please enter some text or a URL to generate a QR code.');
+            const qrContainer = document.getElementById('qrCode');
+            const downloadBtn = document.getElementById('downloadBtn');
+            qrContainer.innerHTML = "";
+            downloadBtn.style.display = "none";
+
+            if (text === "") {
+                alert("Please enter some text.");
                 return;
             }
-            
+
             const size = parseInt(qrSize.value);
-            const color = qrColor.value.replace('#', '');
-            const bgColor = qrBgColor.value.replace('#', '');
+            const color = qrColor.value;
+            const bgColor = qrBgColor.value;
             const errorLevel = qrErrorLevel.value;
-            
-            // Clear previous QR code
-            qrCode.innerHTML = '';
-            
-            // Generate new QR code
-            QRCode.toCanvas(qrText.value, {
+
+            qr = new QRCode(qrContainer, {
+                text: text,
                 width: size,
                 height: size,
-                color: {
-                    dark: color,
-                    light: bgColor
-                },
-                errorCorrectionLevel: errorLevel
-            }, function(err, canvas) {
-                if (err) {
-                    console.error(err);
-                    alert('Error generating QR code. Please try again.');
-                    return;
-                }
-                
-                qrCode.appendChild(canvas);
-                currentQRCode = canvas;
-                downloadBtn.style.display = 'flex';
+                colorDark: color,
+                colorLight: bgColor,
+                correctLevel: QRCode.CorrectLevel[errorLevel]
+            });
+
+            setTimeout(() => {
+                downloadBtn.style.display = "flex";
                 
                 // Save to history
-                saveToHistory(text, canvas.toDataURL());
-            });
+                const img = document.querySelector("#qrCode img") || document.querySelector("#qrCode canvas");
+                if (img) {
+                    saveToHistory(text, img.src || img.toDataURL("image/png"));
+                }
+            }, 500); // wait to ensure canvas is rendered
         }
         
         // Download QR code
         downloadBtn.addEventListener('click', () => {
-            if (!currentQRCode) return;
-            
-            const link = document.createElement('a');
-            link.download = 'qr-code.png';
-            link.href = currentQRCode.toDataURL();
+            const img = document.querySelector("#qrCode img") || document.querySelector("#qrCode canvas");
+            if (!img) return;
+
+            const link = document.createElement("a");
+            link.href = img.src || img.toDataURL("image/png");
+            link.download = "qr-code.png";
             link.click();
         });
         
@@ -1491,7 +1489,6 @@
             qrText.value = '';
             qrCode.innerHTML = '<div class="placeholder-text" data-i18n="tool.generator.preview">Your QR code will appear here</div>';
             downloadBtn.style.display = 'none';
-            currentQRCode = null;
         });
         
         // QR Code Scanner
@@ -1513,10 +1510,16 @@
         
         async function startCamera() {
             try {
+                // Request camera access
                 stream = await navigator.mediaDevices.getUserMedia({ 
-                    video: { facingMode: 'environment' } 
+                    video: { 
+                        facingMode: 'environment',
+                        width: { ideal: 1280 },
+                        height: { ideal: 720 }
+                    } 
                 });
                 
+                // Set up video element
                 cameraVideo.srcObject = stream;
                 cameraVideo.style.display = 'block';
                 cameraPlaceholder.style.display = 'none';
@@ -1555,21 +1558,27 @@
         
         // Scan for QR codes in video stream
         function scanQRCode() {
-            if (!isCameraActive) return;
+            if (!isCameraActive || cameraVideo.videoWidth === 0) return;
             
-            const canvas = document.createElement('canvas');
-            const context = canvas.getContext('2d');
-            canvas.width = cameraVideo.videoWidth;
-            canvas.height = cameraVideo.videoHeight;
-            context.drawImage(cameraVideo, 0, 0, canvas.width, canvas.height);
-            
-            const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
-            const code = jsQR(imageData.data, imageData.width, imageData.height);
-            
-            if (code) {
-                displayScanResult(code.data);
-                // Save to history
-                saveToHistory(code.data, null, true);
+            try {
+                // Create canvas to capture video frame
+                const canvas = document.createElement('canvas');
+                const context = canvas.getContext('2d');
+                canvas.width = cameraVideo.videoWidth;
+                canvas.height = cameraVideo.videoHeight;
+                context.drawImage(cameraVideo, 0, 0, canvas.width, canvas.height);
+                
+                // Get image data for QR code scanning
+                const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+                const code = jsQR(imageData.data, imageData.width, imageData.height);
+                
+                if (code) {
+                    displayScanResult(code.data);
+                    // Save to history
+                    saveToHistory(code.data, null, true);
+                }
+            } catch (error) {
+                console.error('Error scanning QR code:', error);
             }
         }
         
@@ -1608,21 +1617,28 @@
             reader.onload = function(e) {
                 const img = new Image();
                 img.onload = function() {
-                    const canvas = document.createElement('canvas');
-                    const context = canvas.getContext('2d');
-                    canvas.width = img.width;
-                    canvas.height = img.height;
-                    context.drawImage(img, 0, 0);
-                    
-                    const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
-                    const code = jsQR(imageData.data, imageData.width, imageData.height);
-                    
-                    if (code) {
-                        displayScanResult(code.data);
-                        // Save to history
-                        saveToHistory(code.data, null, true);
-                    } else {
-                        alert('No QR code found in the image.');
+                    try {
+                        // Create canvas to process image
+                        const canvas = document.createElement('canvas');
+                        const context = canvas.getContext('2d');
+                        canvas.width = img.width;
+                        canvas.height = img.height;
+                        context.drawImage(img, 0, 0);
+                        
+                        // Get image data for QR code scanning
+                        const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+                        const code = jsQR(imageData.data, imageData.width, imageData.height);
+                        
+                        if (code) {
+                            displayScanResult(code.data);
+                            // Save to history
+                            saveToHistory(code.data, null, true);
+                        } else {
+                            alert('No QR code found in the image.');
+                        }
+                    } catch (error) {
+                        console.error('Error processing image:', error);
+                        alert('Error processing image. Please try another image.');
                     }
                 };
                 img.src = e.target.result;
@@ -1824,7 +1840,7 @@
                 "footer.categories.image": "Image Tools",
                 "footer.categories.text": "Text Tools",
                 "footer.categories.av": "Audio/Video Tools",
-                "footer.categories.web": "WebDeveloper Tools",
+                "footer.categories.web": "Web Developer Tools",
                 "footer.categories.calc": "Calculator Tools",
                 "footer.categories.util": "Utility Tools",
                 "footer.categories.color": "Color Tools",
@@ -1850,7 +1866,7 @@
                 "howto.step2.title": "Escanear Códigos QR",
                 "howto.step2.description": "Usa la cámara de tu dispositivo para escanear códigos QR en tiempo real o sube una imagen que contenga un código QR. La herramienta decodificará el contenido al instante.",
                 "howto.step3.title": "Personalizar y Descargar",
-                "howto.step3.description": "Ajusta la apariencia del código QR con colores personalizados, agrega logotipos y elige el tamaño perfecto. Descarga tu código QR como PNG o SVG.",
+                "howto.step3.description": "Ajusta la apariencia del código QR con colores personalizados, agrega logotipos y elige el tamaño perfecto. Descarga tu código QR como PNG or SVG.",
                 "howto.step4.title": "Guardar y Gestionar",
                 "howto.step4.description": "Accede a tus códigos QR generados y escaneados desde la sección de historial. Todos los datos se almacenan localmente en tu navegador para privacidad.",
                 "tool.title": "Generador y Escáner de Códigos QR",
@@ -1882,7 +1898,7 @@
                 "footer.categories.image": "Herramientas de Imagen",
                 "footer.categories.text": "Herramientas de Texto",
                 "footer.categories.av": "Herramientas de Audio/Video",
-                "footer.categories.web": "Herramientas WebDesarrollador",
+                "footer.categories.web": "Herramientas Web Desarrollador",
                 "footer.categories.calc": "Herramientas de Calculadora",
                 "footer.categories.util": "Herramientas de Utilidad",
                 "footer.categories.color": "Herramientas de Color",
@@ -1940,7 +1956,7 @@
                 "footer.categories.image": "Outils d'image",
                 "footer.categories.text": "Outils de texte",
                 "footer.categories.av": "Outils Audio/Video",
-                "footer.categories.web": "Outils WebDeveloper",
+                "footer.categories.web": "Outils Web Developer",
                 "footer.categories.calc": "Outils de calculatrice",
                 "footer.categories.util": "Outils utilitaires",
                 "footer.categories.color": "Outils de couleur",
@@ -1998,7 +2014,7 @@
                 "footer.categories.image": "Bildwerkzeuge",
                 "footer.categories.text": "Textwerkzeuge",
                 "footer.categories.av": "Audio/Video-Werkzeuge",
-                "footer.categories.web": "WebDeveloper-Werkzeuge",
+                "footer.categories.web": "Web Developer-Werkzeuge",
                 "footer.categories.calc": "Rechnerwerkzeuge",
                 "footer.categories.util": "Hilfsprogramme",
                 "footer.categories.color": "Farbwerkzeuge",
@@ -2056,7 +2072,7 @@
                 "footer.categories.image": "Strumenti immagine",
                 "footer.categories.text": "Strumenti testo",
                 "footer.categories.av": "Strumenti Audio/Video",
-                "footer.categories.web": "Strumenti WebDeveloper",
+                "footer.categories.web": "Strumenti Web Developer",
                 "footer.categories.calc": "Strumenti calcolatrice",
                 "footer.categories.util": "Strumenti utilità",
                 "footer.categories.color": "Strumenti colore",
@@ -2114,7 +2130,7 @@
                 "footer.categories.image": "Ferramentas de imagem",
                 "footer.categories.text": "Ferramentas de texto",
                 "footer.categories.av": "Ferramentas de Áudio/Video",
-                "footer.categories.web": "Ferramentas WebDeveloper",
+                "footer.categories.web": "Ferramentas Web Developer",
                 "footer.categories.calc": "Ferramentas de calculadora",
                 "footer.categories.util": "Ferramentas de utilidade",
                 "footer.categories.color": "Ferramentas de cor",
@@ -2172,7 +2188,7 @@
                 "footer.categories.image": "画像ツール",
                 "footer.categories.text": "テキストツール",
                 "footer.categories.av": "オーディオ/ビデオツール",
-                "footer.categories.web": "Web開発者ツール",
+                "footer.categories.web": "Web 開発者ツール",
                 "footer.categories.calc": "計算機ツール",
                 "footer.categories.util": "ユーティリティツール",
                 "footer.categories.color": "カラーツール",
@@ -2230,7 +2246,7 @@
                 "footer.categories.image": "Инструменты изображений",
                 "footer.categories.text": "Текстовые инструменты",
                 "footer.categories.av": "Аудио/Видео инструменты",
-                "footer.categories.web": "Инструменты WebDeveloper",
+                "footer.categories.web": "Инструменты Web Developer",
                 "footer.categories.calc": "Инструменты калькулятора",
                 "footer.categories.util": "Утилиты",
                 "footer.categories.color": "Цветовые инструменты",
@@ -2346,7 +2362,7 @@
                 "footer.categories.image": "图像工具",
                 "footer.categories.text": "文本工具",
                 "footer.categories.av": "音频/视频工具",
-                "footer.categories.web": "Web开发工具",
+                "footer.categories.web": "Web 开发工具",
                 "footer.categories.calc": "计算器工具",
                 "footer.categories.util": "实用工具",
                 "footer.categories.color": "颜色工具",
@@ -2404,7 +2420,7 @@
                 "footer.categories.image": "影像工具",
                 "footer.categories.text": "文字工具",
                 "footer.categories.av": "音訊/視訊工具",
-                "footer.categories.web": "Web開發工具",
+                "footer.categories.web": "Web 開發工具",
                 "footer.categories.calc": "計算機工具",
                 "footer.categories.util": "實用工具",
                 "footer.categories.color": "顏色工具",
@@ -2636,7 +2652,7 @@
                 "footer.categories.image": "Eines d'imatge",
                 "footer.categories.text": "Eines de text",
                 "footer.categories.av": "Eines d'Àudio/Video",
-                "footer.categories.web": "Eines WebDeveloper",
+                "footer.categories.web": "Eines Web Developer",
                 "footer.categories.calc": "Eines de calculadora",
                 "footer.categories.util": "Eines d'utilitat",
                 "footer.categories.color": "Eines de color",
@@ -2694,7 +2710,7 @@
                 "footer.categories.image": "Afbeeldingstools",
                 "footer.categories.text": "Teksttools",
                 "footer.categories.av": "Audio/Video Tools",
-                "footer.categories.web": "WebDeveloper Tools",
+                "footer.categories.web": "Web Developer Tools",
                 "footer.categories.calc": "Rekenmachinetools",
                 "footer.categories.util": "Hulpprogramma's",
                 "footer.categories.color": "Kleurentools",
@@ -2752,7 +2768,7 @@
                 "footer.categories.image": "Εργαλεία εικόνας",
                 "footer.categories.text": "Εργαλεία κειμένου",
                 "footer.categories.av": "Εργαλεία Ήχου/Βίντεο",
-                "footer.categories.web": "Εργαλεία WebDeveloper",
+                "footer.categories.web": "Εργαλεία Web Developer",
                 "footer.categories.calc": "Εργαλεία αριθμομηχανής",
                 "footer.categories.util": "Βοηθητικά εργαλεία",
                 "footer.categories.color": "Εργαλεία χρώματος",
@@ -2810,7 +2826,7 @@
                 "footer.categories.image": "इमेज टूल्स",
                 "footer.categories.text": "टेक्स्ट टूल्स",
                 "footer.categories.av": "ऑडियो/वीडियो टूल्स",
-                "footer.categories.web": "वेबडेवलपर टूल्स",
+                "footer.categories.web": "वेब डेवलपर टूल्स",
                 "footer.categories.calc": "कैलकुलेटर टूल्स",
                 "footer.categories.util": "यूटिलिटी टूल्स",
                 "footer.categories.color": "कलर टूल्स",
@@ -2868,7 +2884,7 @@
                 "footer.categories.image": "ఇమేజ్ టూల్స్",
                 "footer.categories.text": "టెక్స్ట్ టూల్స్",
                 "footer.categories.av": "ఆడియో/వీడియో టూల్స్",
-                "footer.categories.web": "వెబ్ డెవలపర్ టూల్స్",
+                "footer.categories.web": "వెబ్  డెవలపర్ టూల్స్",
                 "footer.categories.calc": "కాలిక్యులేటర్ టూల్స్",
                 "footer.categories.util": "యుటిలిటీ టూల్స్",
                 "footer.categories.color": "కలర్ టూల్స్",
@@ -2926,7 +2942,7 @@
                 "footer.categories.image": "ಇಮೇಜ್ ಟೂಲ್ಸ್",
                 "footer.categories.text": "ಟೆಕ್ಸ್ಟ್ ಟೂಲ್ಸ್",
                 "footer.categories.av": "ಆಡಿಯೋ/ವೀಡಿಯೋ ಟೂಲ್ಸ್",
-                "footer.categories.web": "ವೆಬ್ ಡೆವಲಪರ್ ಟೂಲ್ಸ್",
+                "footer.categories.web": "ವೆಬ್  ಡೆವಲಪರ್ ಟೂಲ್ಸ್",
                 "footer.categories.calc": "ಕ್ಯಾಲ್ಕುಲೇಟರ್ ಟೂಲ್ಸ್",
                 "footer.categories.util": "ಯುಟಿಲಿಟಿ ಟೂಲ್ಸ್",
                 "footer.categories.color": "ಕಲರ್ ಟೂಲ್ಸ್",
@@ -3100,7 +3116,7 @@
                 "footer.categories.image": "Alat Gambar",
                 "footer.categories.text": "Alat Teks",
                 "footer.categories.av": "Alat Audio/Video",
-                "footer.categories.web": "Alat WebDeveloper",
+                "footer.categories.web": "Alat Web Developer",
                 "footer.categories.calc": "Alat Kalkulator",
                 "footer.categories.util": "Alat Utilitas",
                 "footer.categories.color": "Alat Warna",
@@ -3158,7 +3174,7 @@
                 "footer.categories.image": "Alat Imej",
                 "footer.categories.text": "Alat Teks",
                 "footer.categories.av": "Alat Audio/Video",
-                "footer.categories.web": "Alat WebDeveloper",
+                "footer.categories.web": "Alat Web Developer",
                 "footer.categories.calc": "Alat Kalkulator",
                 "footer.categories.util": "Alat Utiliti",
                 "footer.categories.color": "Alat Warna",
@@ -3216,7 +3232,7 @@
                 "footer.categories.image": "Narzędzia obrazów",
                 "footer.categories.text": "Narzędzia tekstowe",
                 "footer.categories.av": "Narzędzia audio/wideo",
-                "footer.categories.web": "Narzędzia WebDeveloper",
+                "footer.categories.web": "Narzędzia Web Developer",
                 "footer.categories.calc": "Narzędzia kalkulatora",
                 "footer.categories.util": "Narzędzia użytkowe",
                 "footer.categories.color": "Narzędzia kolorów",
@@ -3274,7 +3290,7 @@
                 "footer.categories.image": "เครื่องมือภาพ",
                 "footer.categories.text": "เครื่องมือข้อความ",
                 "footer.categories.av": "เครื่องมือเสียง/วิดีโอ",
-                "footer.categories.web": "เครื่องมือ WebDeveloper",
+                "footer.categories.web": "เครื่องมือ Web Developer",
                 "footer.categories.calc": "เครื่องมือเครื่องคิดเลข",
                 "footer.categories.util": "เครื่องมืออรรถประโยชน์",
                 "footer.categories.color": "เครื่องมือสี",
@@ -3332,7 +3348,7 @@
                 "footer.categories.image": "Resim Araçları",
                 "footer.categories.text": "Metin Araçları",
                 "footer.categories.av": "Ses/Video Araçları",
-                "footer.categories.web": "WebDeveloper Araçları",
+                "footer.categories.web": "Web Developer Araçları",
                 "footer.categories.calc": "Hesap Makinesi Araçları",
                 "footer.categories.util": "Yardımcı Araçlar",
                 "footer.categories.color": "Renk Araçları",
@@ -3390,7 +3406,7 @@
                 "footer.categories.image": "Інструменти зображень",
                 "footer.categories.text": "Текстові інструменти",
                 "footer.categories.av": "Аудіо/Відео інструменти",
-                "footer.categories.web": "Інструменти WebDeveloper",
+                "footer.categories.web": "Інструменти Web Developer",
                 "footer.categories.calc": "Інструменти калькулятора",
                 "footer.categories.util": "Утиліти",
                 "footer.categories.color": "Кольорові інструменти",
@@ -3448,7 +3464,7 @@
                 "footer.categories.image": "Công cụ hình ảnh",
                 "footer.categories.text": "Công cụ văn bản",
                 "footer.categories.av": "Công cụ Âm thanh/Video",
-                "footer.categories.web": "Công cụ WebDeveloper",
+                "footer.categories.web": "Công cụ We bDeveloper",
                 "footer.categories.calc": "Công cụ máy tính",
                 "footer.categories.util": "Công cụ tiện ích",
                 "footer.categories.color": "Công cụ màu sắc",
@@ -3506,7 +3522,7 @@
                 "footer.categories.image": "Myndaverkfæri",
                 "footer.categories.text": "Textaverkfæri",
                 "footer.categories.av": "Hljóð/Myndband verkfæri",
-                "footer.categories.web": "WebDeveloper verkfæri",
+                "footer.categories.web": "Web Developer verkfæri",
                 "footer.categories.calc": "Reiknivélarverkfæri",
                 "footer.categories.util": "Gagnleg verkfæri",
                 "footer.categories.color": "Litverkfæri",
@@ -3564,7 +3580,7 @@
                 "footer.categories.image": "Bildeverktøy",
                 "footer.categories.text": "Tekstverktøy",
                 "footer.categories.av": "Lyd/Video verktøy",
-                "footer.categories.web": "WebDeveloper verktøy",
+                "footer.categories.web": "Web Developer verktøy",
                 "footer.categories.calc": "Kalkulator verktøy",
                 "footer.categories.util": "Nyttige verktøy",
                 "footer.categories.color": "Fargeverktøy",
@@ -3622,7 +3638,7 @@
                 "footer.categories.image": "Bildverktyg",
                 "footer.categories.text": "Textverktyg",
                 "footer.categories.av": "Ljud/Video verktyg",
-                "footer.categories.web": "WebDeveloper verktyg",
+                "footer.categories.web": "Web Developer verktyg",
                 "footer.categories.calc": "Kalkylator verktyg",
                 "footer.categories.util": "Verktyg för verktyg",
                 "footer.categories.color": "Färgverktyg",
@@ -3680,7 +3696,7 @@
                 "footer.categories.image": "Kuvatyökalut",
                 "footer.categories.text": "Tekstityökalut",
                 "footer.categories.av": "Ääni/Video-työkalut",
-                "footer.categories.web": "WebDeveloper-työkalut",
+                "footer.categories.web": "Web Developer-työkalut",
                 "footer.categories.calc": "Laskurityökalut",
                 "footer.categories.util": "Aputyökalut",
                 "footer.categories.color": "Väri työkalut",
@@ -3738,7 +3754,7 @@
                 "footer.categories.image": "Obrázkové nástroje",
                 "footer.categories.text": "Textové nástroje",
                 "footer.categories.av": "Audio/Video nástroje",
-                "footer.categories.web": "WebDeveloper nástroje",
+                "footer.categories.web": "Web Developer nástroje",
                 "footer.categories.calc": "Kalkulační nástroje",
                 "footer.categories.util": "Užitečné nástroje",
                 "footer.categories.color": "Barevné nástroje",
@@ -3751,7 +3767,6 @@
                 "footer.links.terms": "Podmínky služby",
                 "footer.copyright": "© 2025 LollyPoPDF. Všechna práva vyhrazena."
             }
-            
 
         };
 

@@ -1,0 +1,1916 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Screen Recorder | LollyPoPdf</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #9370db;
+            --primary-dark: #8a2be2;
+            --secondary-color: #f0ebff;
+            --text-color: #333333;
+            --text-light: #6b7280;
+            --bg-color: #ffffff;
+            --bg-secondary: #f9f9f9;
+            --border-radius: 12px;
+            --transition: all 0.3s ease;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --header-height: 80px;
+            --white: #ffffff;
+            --header-text: #6b7280;
+            --accent-color: #9370db;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --error-color: #ef4444;
+        }
+
+        .dark-mode {
+            --primary-color: #a391f2;
+            --primary-dark: #8a2be2;
+            --secondary-color: #2d2d2d;
+            --text-color: #f0f0f0;
+            --text-light: #a0a0a0;
+            --bg-color: #1a1a1a;
+            --bg-secondary: #2d2d2d;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+            --white: #1a1a1a;
+            --header-text: #a0a0a0;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            transition: var(--transition);
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        ul {
+            list-style: none;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header Styles */
+        header {
+            background-color: var(--white);
+            color: var(--header-text);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+        }
+
+        .logo-icon {
+            position: relative;
+            width: 40px;
+            height: 40px;
+        }
+
+        .logo-circle {
+            width: 40px;
+            height: 40px;
+            border-radius: 40%;
+            background: linear-gradient(to bottom right, #9370db, #8a2be2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .logo-stem {
+            position: absolute;
+            bottom: -17px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 6px;
+            height: 17px;
+            background-color: #8a2be2;
+            border-radius: 0 0 3px 3px;
+        }
+
+        .logo-text {
+            font-size: 24px;
+            font-weight: bold;
+            color: #9370db;
+        }
+
+        nav ul {
+            display: flex;
+            gap: 30px;
+            list-style: none;
+        }
+
+        nav a {
+            font-weight: 500;
+            position: relative;
+            color: var(--header-text);
+            padding: 8px 0;
+            border-radius: 0;
+            transition: var(--transition);
+            text-decoration: none;
+        }
+
+        nav a:hover {
+            color: var(--accent-color);
+        }
+
+        nav a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: var(--accent-color);
+            transition: width 0.3s ease;
+        }
+
+        nav a:hover::after {
+            width: 100%;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .email {
+            font-size: 14px;
+            color: var(--header-text);
+        }
+
+        .theme-toggle {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 20px;
+            color: var(--header-text);
+            padding: 8px;
+            border-radius: 50%;
+            transition: var(--transition);
+        }
+
+        .theme-toggle:hover {
+            background-color: #f0ebff;
+            color: var(--accent-color);
+        }
+
+        .dark-mode .theme-toggle:hover {
+            background-color: #2d3748;
+            color: var(--accent-color);
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--header-text);
+        }
+
+        /* Mobile Menu */
+        .mobile-menu {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            width: 100%;
+            background-color: var(--white);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            z-index: 999;
+        }
+
+        .dark-mode .mobile-menu {
+            background-color: var(--bg-secondary);
+        }
+
+        .mobile-menu.active {
+            display: block;
+        }
+
+        .mobile-menu ul {
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .mobile-menu a {
+            display: block;
+            padding: 10px 0;
+            font-weight: 500;
+            color: var(--header-text);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .dark-mode .mobile-menu a {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .mobile-menu a:hover {
+            color: var(--accent-color);
+        }
+
+        /* Hero Section */
+        .hero {
+            background-color: var(--secondary-color);
+            padding: 60px 0;
+            text-align: center;
+        }
+
+        .dark-mode .hero {
+            background: linear-gradient(135deg, #2a1a4a, #3d2a6d);
+        }
+
+        .hero h1 {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            color: #000;
+        }
+
+        .dark-mode .hero h1 {
+            color: var(--text-color);
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            color: var(--text-color);
+            max-width: 700px;
+            margin: 0 auto 30px;
+        }
+
+        /* How to Use Section */
+        .how-to-section {
+            padding: 80px 0;
+            background-color: var(--bg-color);
+        }
+
+        .dark-mode .how-to-section {
+            background-color: var(--bg-secondary);
+        }
+
+        .section-title {
+            font-size: 2rem;
+            text-align: center;
+            margin-bottom: 40px;
+            color: #000000;
+        }
+
+        .dark-mode .section-title {
+            color: var(--text-color);
+        }
+
+        .steps-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 40px;
+        }
+
+        .step-box {
+            background-color: var(--bg-secondary);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            padding: 30px;
+            min-height: 200px;
+            position: relative;
+        }
+
+        .step-number {
+            width: 40px;
+            height: 40px;
+            background-color: var(--primary-color);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 16px;
+            margin-bottom: 15px;
+        }
+
+        .step-title {
+            font-size: 18px;
+            color: #000000;
+            margin-bottom: 10px;
+        }
+
+        .dark-mode .step-title {
+            color: var(--text-color);
+        }
+
+        .step-description {
+            font-size: 14px;
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        /* Tool Section */
+        .tool-section {
+            padding: 80px 0;
+            background-color: var(--secondary-color);
+        }
+
+        .dark-mode .tool-section {
+            background: linear-gradient(135deg, #2a1a4a, #3d2a6d);
+        }
+
+        .tool-title {
+            font-size: 2.5rem;
+            text-align: center;
+            margin-bottom: 40px;
+            color: #a391f2;
+        }
+
+        .dark-mode .tool-title {
+            color: #a391f2;
+        }
+
+        .tool-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background-color: var(--bg-color);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            padding: 40px;
+        }
+
+        .recorder-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .preview-box {
+            background-color: var(--bg-secondary);
+            border-radius: var(--border-radius);
+            padding: 20px;
+            text-align: center;
+            box-shadow: var(--shadow);
+            position: relative;
+        }
+
+        .preview-title {
+            font-size: 18px;
+            margin-bottom: 15px;
+            color: var(--primary-color);
+        }
+
+        .video-preview {
+            width: 100%;
+            max-height: 300px;
+            border-radius: var(--border-radius);
+            background-color: #000;
+        }
+
+        .recording-indicator {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 14px;
+            color: var(--error-color);
+            display: none;
+        }
+
+        .recording-dot {
+            width: 10px;
+            height: 10px;
+            background-color: var(--error-color);
+            border-radius: 50%;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+
+        .controls-container {
+            background-color: var(--bg-secondary);
+            border-radius: var(--border-radius);
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+
+        .controls-title {
+            font-size: 18px;
+            margin-bottom: 15px;
+            color: var(--primary-color);
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .option-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .option-label {
+            display: block;
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 5px;
+        }
+
+        .option-select {
+            padding: 8px 12px;
+            border-radius: var(--border-radius);
+            border: 1px solid var(--primary-color);
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-size: 14px;
+            width: 100%;
+        }
+
+        .option-range {
+            width: 100%;
+        }
+
+        .range-value {
+            font-size: 12px;
+            color: var(--text-light);
+            text-align: center;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 5px;
+        }
+
+        .checkbox-group input {
+            width: 16px;
+            height: 16px;
+        }
+
+        .timer {
+            font-size: 2rem;
+            font-weight: bold;
+            text-align: center;
+            margin: 20px 0;
+            color: var(--primary-color);
+            display: none;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .action-btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: var(--transition);
+            flex: 1;
+            min-width: 150px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .record-btn {
+            background-color: var(--success-color);
+            color: white;
+        }
+
+        .record-btn:hover {
+            background-color: #0da271;
+        }
+
+        .record-btn:disabled {
+            background-color: var(--text-light);
+            cursor: not-allowed;
+        }
+
+        .stop-btn {
+            background-color: var(--error-color);
+            color: white;
+        }
+
+        .stop-btn:hover {
+            background-color: #dc2626;
+        }
+
+        .stop-btn:disabled {
+            background-color: var(--text-light);
+            cursor: not-allowed;
+        }
+
+        .download-btn {
+            background-color: var(--primary-color);
+            color: white;
+            display: none;
+        }
+
+        .download-btn:hover {
+            background-color: var(--primary-dark);
+        }
+
+        .clear-btn {
+            background-color: white;
+            color: var(--primary-color);
+            border: 2px solid var(--primary-color);
+        }
+
+        .clear-btn:hover {
+            background-color: var(--secondary-color);
+        }
+
+        .status-message {
+            text-align: center;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: var(--border-radius);
+            display: none;
+        }
+
+        .status-success {
+            background-color: rgba(16, 185, 129, 0.1);
+            color: var(--success-color);
+            border: 1px solid var(--success-color);
+        }
+
+        .status-error {
+            background-color: rgba(239, 68, 68, 0.1);
+            color: var(--error-color);
+            border: 1px solid var(--error-color);
+        }
+
+        .status-info {
+            background-color: rgba(147, 112, 219, 0.1);
+            color: var(--primary-color);
+            border: 1px solid var(--primary-color);
+        }
+
+        .status-warning {
+            background-color: rgba(245, 158, 11, 0.1);
+            color: var(--warning-color);
+            border: 1px solid var(--warning-color);
+        }
+
+        /* Footer */
+        footer {
+            background-color: #000000;
+            color: white;
+            padding: 60px 0 80px;
+            position: relative;
+        }
+
+        .footer-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 60px;
+        }
+
+        .footer-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            text-decoration: none;
+        }
+
+        .footer-logo .logo-icon {
+            width: 40px;
+            height: 40px;
+        }
+
+        .footer-logo .logo-text {
+            color: #9370db;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .footer-section h3 {
+            color: white;
+            font-weight: 600;
+            font-size: 20px;
+            margin-bottom: 20px;
+        }
+
+        .footer-section h4 {
+            color: #9370db;
+            font-size: 18px;
+            margin-bottom: 15px;
+        }
+
+        .footer-links li {
+            margin-bottom: 10px;
+        }
+
+        .footer-links a {
+            color: white;
+        }
+
+        .footer-links a:hover {
+            color: #9370db;
+        }
+
+        .social-icons {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .social-icon {
+            width: 40px;
+            height: 40px;
+            background-color: #9370db;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+        }
+
+        .social-icon:hover {
+            background-color: #8a2be2;
+            transform: translateY(-3px);
+        }
+
+        .copyright {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            color: #f9f7ff;
+            font-size: 12px;
+        }
+
+        .footer-line {
+            position: absolute;
+            bottom: 50px;
+            left: 0;
+            width: 100%;
+            height: 1px;
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        /* Language Switcher */
+        .language-switcher {
+            position: fixed;
+            bottom: 10px;
+            right: 10px;
+            z-index: 1000;
+        }
+
+        .language-btn {
+            background-color: #9370db;
+            color: white;
+            border: none;
+            border-radius: 30px;
+            padding: 5px 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .language-dropdown {
+            position: absolute;
+            bottom: 100%;
+            right: 0;
+            width: 300px;
+            background-color: white;
+            border-radius: var(--border-radius);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            display: none;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .dark-mode .language-dropdown {
+            background-color: var(--bg-secondary);
+        }
+
+        .language-switcher:hover .language-dropdown {
+            display: grid;
+        }
+
+        .language-option {
+            padding: 8px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            text-align: center;
+            font-size: 14px;
+        }
+
+        .language-option:hover {
+            background-color: white;
+            color: #9370db;
+        }
+
+        .dark-mode .language-option:hover {
+            background-color: var(--bg-color);
+        }
+
+        /* Browser Compatibility Warning */
+        .compatibility-warning {
+            background-color: rgba(245, 158, 11, 0.1);
+            border: 1px solid var(--warning-color);
+            color: var(--warning-color);
+            padding: 15px;
+            border-radius: var(--border-radius);
+            margin-bottom: 20px;
+            text-align: center;
+            display: none;
+        }
+
+        .audio-info {
+            background-color: rgba(147, 112, 219, 0.1);
+            border: 1px solid var(--primary-color);
+            color: var(--primary-color);
+            padding: 15px;
+            border-radius: var(--border-radius);
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        /* Audio Test Section */
+        .audio-test {
+            background-color: var(--bg-secondary);
+            border-radius: var(--border-radius);
+            padding: 15px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .audio-test-btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 20px;
+            padding: 8px 16px;
+            cursor: pointer;
+            font-size: 14px;
+            margin: 0 5px;
+        }
+
+        .audio-test-btn:hover {
+            background-color: var(--primary-dark);
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 992px) {
+            .steps-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .footer-container {
+                grid-template-columns: 1fr 1fr;
+            }
+            
+            .recorder-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            nav ul, .email {
+                display: none;
+            }
+            
+            .mobile-menu-btn {
+                display: block;
+            }
+            
+            .hero h1, .tool-title {
+                font-size: 2rem;
+            }
+            
+            .hero p {
+                font-size: 1rem;
+            }
+            
+            .language-dropdown {
+                width: 250px;
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .footer-container {
+                grid-template-columns: 1fr;
+                gap: 40px;
+            }
+            
+            .options-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .tool-container {
+                padding: 20px;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+            
+            .action-btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container header-container">
+            <a href="https://lollypopdf.com" class="logo">
+                <div class="logo-icon">
+                    <div class="logo-circle">LPdf</div>
+                    <div class="logo-stem"></div>
+                </div>
+                <span class="logo-text">LollyPoPdf</span>
+            </a>
+            
+            <nav>
+                <ul>
+                    <li><a href="https://lollypopdf.github.io/LollyPoPdf#home" class="nav-link" data-i18n="nav.home">Home</a></li>
+                    <li><a href="https://lollypopdf.github.io/LollyPoPdf#about" class="nav-link" data-i18n="nav.about">About Us</a></li>
+                    <li><a href="https://lollypopdf.github.io/LollyPoPdf#tools" class="nav-link" data-i18n="nav.tools">Tools</a></li>
+                    <li><a href="contact.html" class="nav-link" data-i18n="nav.contact">Contact</a></li>
+                </ul>
+            </nav>
+            
+            <div class="header-right">
+                <span class="email">lollypoppdf@gmail.com</span>
+                <button class="theme-toggle" id="themeToggle">
+                    <i class="fas fa-moon"></i>
+                </button>
+                <button class="mobile-menu-btn" id="mobileMenuBtn">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </div>
+        
+        <!-- Mobile Menu -->
+        <div class="mobile-menu" id="mobileMenu">
+            <ul>
+                <li><a href="https://lollypopdf.github.io/LollyPoPdf#home" class="nav-link" data-i18n="nav.home">Home</a></li>
+                <li><a href="https://lollypopdf.github.io/LollyPoPdf#about" class="nav-link" data-i18n="nav.about">About Us</a></li>
+                <li><a href="https://lollypopdf.github.io/LollyPoPdf#tools" class="nav-link" data-i18n="nav.tools">Tools</a></li>
+                <li><a href="contact.html" class="nav-link" data-i18n="nav.contact">Contact</a></li>
+            </ul>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <h1 data-i18n="hero.title">Advanced Screen Recorder</h1>
+            <p data-i18n="hero.description">Record your screen, webcam, and audio directly in your browser. No installation required. All processing happens locally with no file size limits and complete privacy.</p>
+        </div>
+    </section>
+
+    <!-- How to Use Section -->
+    <section class="how-to-section">
+        <div class="container">
+            <h2 class="section-title" data-i18n="howto.title">How to Use the Screen Recorder</h2>
+            <div class="steps-container">
+                <div class="step-box">
+                    <div class="step-number">1</div>
+                    <h3 class="step-title" data-i18n="howto.step1.title">Configure Recording Settings</h3>
+                    <p class="step-description" data-i18n="howto.step1.description">Choose what you want to record - screen, webcam, or both. Select audio sources and adjust quality settings for optimal recording.</p>
+                </div>
+                <div class="step-box">
+                    <div class="step-number">2</div>
+                    <h3 class="step-title" data-i18n="howto.step2.title">Start Recording</h3>
+                    <p class="step-description" data-i18n="howto.step2.description">Click the "Start Recording" button. Your browser will ask for permission to record your screen and/or audio. Grant permission to begin.</p>
+                </div>
+                <div class="step-box">
+                    <div class="step-number">3</div>
+                    <h3 class="step-title" data-i18n="howto.step3.title">Record Your Content</h3>
+                    <p class="step-description" data-i18n="howto.step3.description">Record your screen, presentation, tutorial, or meeting. Watch the timer and recording indicator to track your progress.</p>
+                </div>
+                <div class="step-box">
+                    <div class="step-number">4</div>
+                    <h3 class="step-title" data-i18n="howto.step4.title">Stop & Download</h3>
+                    <p class="step-description" data-i18n="howto.step4.description">Click "Stop Recording" when finished. Preview your recording and download it in WebM or MP4 format with one click.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Tool Section -->
+    <section class="tool-section">
+        <div class="container">
+            <h2 class="tool-title" data-i18n="tool.title">Screen Recorder</h2>
+            <div class="tool-container">
+                <!-- Browser Compatibility Warning -->
+                <div class="compatibility-warning" id="compatibilityWarning">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <span data-i18n="tool.compatibility.warning">Screen recording may not work on all browsers. For best results, use Chrome, Edge, or Firefox.</span>
+                </div>
+
+                <!-- Audio Information -->
+                <div class="audio-info">
+                    <i class="fas fa-info-circle"></i>
+                    <span data-i18n="tool.audio.info">For system audio recording, use Chrome on Windows/macOS and enable "Share audio" when prompted. Microphone audio works on all browsers.</span>
+                </div>
+
+                <!-- Audio Test Section -->
+                <div class="audio-test">
+                    <p data-i18n="tool.audio.test">Test your audio before recording:</p>
+                    <button class="audio-test-btn" id="testMicrophone">
+                        <i class="fas fa-microphone"></i> Test Microphone
+                    </button>
+                    <button class="audio-test-btn" id="testPlayback">
+                        <i class="fas fa-volume-up"></i> Test Playback
+                    </button>
+                    <audio id="testAudio" style="display: none;"></audio>
+                </div>
+
+                <!-- Status Messages -->
+                <div class="status-message" id="statusMessage"></div>
+
+                <!-- Recording Previews -->
+                <div class="recorder-container">
+                    <div class="preview-box">
+                        <h3 class="preview-title" data-i18n="tool.preview.live">Live Preview</h3>
+                        <video id="livePreview" class="video-preview" autoplay></video>
+                        <div class="recording-indicator" id="recordingIndicator">
+                            <div class="recording-dot"></div>
+                            <span data-i18n="tool.recording">Recording</span>
+                        </div>
+                    </div>
+                    <div class="preview-box">
+                        <h3 class="preview-title" data-i18n="tool.preview.recorded">Recorded Video</h3>
+                        <video id="recordedPreview" class="video-preview" controls></video>
+                    </div>
+                </div>
+
+                <!-- Timer -->
+                <div class="timer" id="timer">00:00:00</div>
+
+                <!-- Recording Controls -->
+                <div class="controls-container">
+                    <h3 class="controls-title" data-i18n="tool.controls.title">Recording Options</h3>
+                    <div class="options-grid">
+                        <div class="option-group">
+                            <label for="recordingType" class="option-label" data-i18n="tool.controls.type">Recording Type:</label>
+                            <select id="recordingType" class="option-select">
+                                <option value="screen" data-i18n="tool.controls.screen">Screen Only</option>
+                                <option value="camera" data-i18n="tool.controls.camera">Camera Only</option>
+                                <option value="both" data-i18n="tool.controls.both">Screen + Camera</option>
+                            </select>
+                        </div>
+                        
+                        <div class="option-group">
+                            <label for="videoQuality" class="option-label" data-i18n="tool.controls.quality">Video Quality:</label>
+                            <select id="videoQuality" class="option-select">
+                                <option value="high" data-i18n="tool.controls.high">High (1080p)</option>
+                                <option value="medium" selected data-i18n="tool.controls.medium">Medium (720p)</option>
+                                <option value="low" data-i18n="tool.controls.low">Low (480p)</option>
+                            </select>
+                        </div>
+                        
+                        <div class="option-group">
+                            <label for="frameRate" class="option-label" data-i18n="tool.controls.framerate">Frame Rate:</label>
+                            <select id="frameRate" class="option-select">
+                                <option value="60">60 fps</option>
+                                <option value="30" selected>30 fps</option>
+                                <option value="24">24 fps</option>
+                                <option value="15">15 fps</option>
+                            </select>
+                        </div>
+                        
+                        <div class="option-group">
+                            <label for="outputFormat" class="option-label" data-i18n="tool.controls.format">Output Format:</label>
+                            <select id="outputFormat" class="option-select">
+                                <option value="webm">WebM</option>
+                                <option value="mp4">MP4</option>
+                            </select>
+                        </div>
+                        
+                        <div class="option-group">
+                            <label class="option-label" data-i18n="tool.controls.audio">Audio Sources:</label>
+                            <div class="checkbox-group">
+                                <input type="checkbox" id="systemAudio">
+                                <label for="systemAudio" data-i18n="tool.controls.system">System Audio</label>
+                            </div>
+                            <div class="checkbox-group">
+                                <input type="checkbox" id="microphoneAudio" checked>
+                                <label for="microphoneAudio" data-i18n="tool.controls.microphone">Microphone</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="action-buttons">
+                    <button class="action-btn record-btn" id="recordBtn" data-i18n="tool.record">
+                        <i class="fas fa-circle"></i> Start Recording
+                    </button>
+                    <button class="action-btn stop-btn" id="stopBtn" disabled data-i18n="tool.stop">
+                        <i class="fas fa-stop"></i> Stop Recording
+                    </button>
+                    <button class="action-btn download-btn" id="downloadBtn" data-i18n="tool.download">
+                        <i class="fas fa-download"></i> Download Video
+                    </button>
+                    <button class="action-btn clear-btn" id="clearBtn" data-i18n="tool.clear">
+                        <i class="fas fa-trash"></i> Clear Recording
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container footer-container">
+            <!-- Left Section -->
+            <div class="footer-section">
+                <a href="https://lollypopdf.com" class="footer-logo">
+                    <div class="logo-icon">
+                        <div class="logo-circle">LPdf</div>
+                        <div class="logo-stem"></div>
+                    </div>
+                    <span class="logo-text">LollyPoPdf</span>
+                </a>
+                <h3 data-i18n="footer.follow">FOLLOW US</h3>
+                <div class="social-icons">
+                    <a href="https://facebook.com/lollypopdf" class="social-icon"><i class="fab fa-facebook-f"></i></a>
+                    <a href="https://linkedin.com/company/lollypopdf" class="social-icon"><i class="fab fa-linkedin-in"></i></a>
+                    <a href="https://twitter.com/lollypopdf" class="social-icon"><i class="fab fa-twitter"></i></a>
+                    <a href="https://instagram.com/lollypopdf" class="social-icon"><i class="fab fa-instagram"></i></a>
+                    <a href="https://pinterest.com/lollypopdf" class="social-icon"><i class="fab fa-pinterest-p"></i></a>
+                </div>
+            </div>
+            
+            <!-- Middle Section - Popular Categories -->
+            <div class="footer-section">
+                <h4 data-i18n="footer.categories">Popular Categories</h4>
+                <ul class="footer-links">
+                    <li><a href="https://lollypopdf.com#pdf-tools" data-i18n="footer.categories.pdf">PDF Tools</a></li>
+                    <li><a href="https://lollypopdf.com#image-tools" data-i18n="footer.categories.image">Image Tools</a></li>
+                    <li><a href="https://lollypopdf.com#text-tools" data-i18n="footer.categories.text">Text Tools</a></li>
+                    <li><a href="https://lollypopdf.com#audio-video-tools" data-i18n="footer.categories.av">Audio/Video Tools</a></li>
+                    <li><a href="https://lollypopdf.com#web-developer-tools" data-i18n="footer.categories.web">WebDeveloper Tools</a></li>
+                    <li><a href="https://lollypopdf.com#calculator-tools" data-i18n="footer.categories.calc">Calculator Tools</a></li>
+                    <li><a href="https://lollypopdf.com#utility-tools" data-i18n="footer.categories.util">Utility Tools</a></li>
+                    <li><a href="https://lollypopdf.com#color-tools" data-i18n="footer.categories.color">Color Tools</a></li>
+                </ul>
+            </div>
+            
+            <!-- Right Section - Quick Links -->
+            <div class="footer-section">
+                <h4 data-i18n="footer.quicklinks">Quick Links</h4>
+                <ul class="footer-links">
+                    <li><a href="https://lollypopdf.github.io/LollyPoPdf#home" data-i18n="nav.home">Home</a></li>
+                    <li><a href="https://lollypopdf.github.io/LollyPoPdf#tools" data-i18n="footer.links.tools">All Tools</a></li>
+                    <li><a href="faq.html" data-i18n="footer.links.faq">FAQ</a></li>
+                    <li><a href="contact.html" data-i18n="footer.links.contact">Contact</a></li>
+                    <li><a href="privacy-policy.html" data-i18n="footer.links.privacy">Privacy Policy</a></li>
+                    <li><a href="disclaimer.html" data-i18n="footer.links.disclaimer">Disclaimer</a></li>
+                    <li><a href="terms.html" data-i18n="footer.links.terms">Terms of Service</a></li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="footer-line"></div>
+        <div class="copyright" data-i18n="footer.copyright">© 2025 LollyPoPDF. All rights reserved.</div>
+    </footer>
+
+    <!-- Language Switcher -->
+    <div class="language-switcher">
+        <button class="language-btn">
+            <i class="fas fa-globe"></i>
+            <span id="currentLanguage">English</span>
+        </button>
+        <div class="language-dropdown">
+            <div class="language-option" data-lang="en">English</div>
+            <div class="language-option" data-lang="es">Español</div>
+            <div class="language-option" data-lang="fr">Français</div>
+            <div class="language-option" data-lang="de">Deutsch</div>
+            <div class="language-option" data-lang="it">Italiano</div>
+            <div class="language-option" data-lang="pt">Português</div>
+            <div class="language-option" data-lang="ja">日本語</div>
+            <div class="language-option" data-lang="ru">Pусский</div>
+            <div class="language-option" data-lang="ko">한국어</div>
+            <div class="language-option" data-lang="zh-CN">中文 (简体)</div>
+            <div class="language-option" data-lang="zh-TW">中文 (繁體)</div>
+            <div class="language-option" data-lang="ar">العربية</div>
+            <div class="language-option" data-lang="fa">فارسی</div>
+            <div class="language-option" data-lang="bg">Български</div>
+            <div class="language-option" data-lang="ca">Català</div>
+            <div class="language-option" data-lang="nl">Nederlands</div>
+            <div class="language-option" data-lang="el">Ελληνικά</div>
+            <div class="language-option" data-lang="hi">हिन्दी</div>
+        </div>
+    </div>
+
+    <script>
+        // Theme Toggle
+        const themeToggle = document.getElementById('themeToggle');
+        const body = document.body;
+        
+        // Check for saved theme preference or respect OS preference
+        const savedTheme = localStorage.getItem('theme') || 
+            (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        
+        if (savedTheme === 'dark') {
+            body.classList.add('dark-mode');
+            themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+        }
+        
+        themeToggle.addEventListener('click', () => {
+            body.classList.toggle('dark-mode');
+            const isDarkMode = body.classList.contains('dark-mode');
+            
+            if (isDarkMode) {
+                themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+                localStorage.setItem('theme', 'dark');
+            } else {
+                themeToggle.innerHTML = '<i class="fas fa-moon"></i>';
+                localStorage.setItem('theme', 'light');
+            }
+        });
+
+        // Mobile Menu Toggle
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const mobileMenu = document.getElementById('mobileMenu');
+        
+        mobileMenuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('active');
+            
+            // Change icon based on menu state
+            if (mobileMenu.classList.contains('active')) {
+                mobileMenuBtn.innerHTML = '<i class="fas fa-times"></i>';
+            } else {
+                mobileMenuBtn.innerHTML = '<i class="fas fa-bars"></i>';
+            }
+        });
+
+        // Close mobile menu when clicking on a link
+        const mobileMenuLinks = mobileMenu.querySelectorAll('a');
+        mobileMenuLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                mobileMenu.classList.remove('active');
+                mobileMenuBtn.innerHTML = '<i class="fas fa-bars"></i>';
+            });
+        });
+
+        // Screen Recorder Functionality
+        const livePreview = document.getElementById('livePreview');
+        const recordedPreview = document.getElementById('recordedPreview');
+        const recordBtn = document.getElementById('recordBtn');
+        const stopBtn = document.getElementById('stopBtn');
+        const downloadBtn = document.getElementById('downloadBtn');
+        const clearBtn = document.getElementById('clearBtn');
+        const timer = document.getElementById('timer');
+        const recordingIndicator = document.getElementById('recordingIndicator');
+        const statusMessage = document.getElementById('statusMessage');
+        const compatibilityWarning = document.getElementById('compatibilityWarning');
+        const testMicrophone = document.getElementById('testMicrophone');
+        const testPlayback = document.getElementById('testPlayback');
+        const testAudio = document.getElementById('testAudio');
+        
+        // Options
+        const recordingType = document.getElementById('recordingType');
+        const videoQuality = document.getElementById('videoQuality');
+        const frameRate = document.getElementById('frameRate');
+        const outputFormat = document.getElementById('outputFormat');
+        const systemAudio = document.getElementById('systemAudio');
+        const microphoneAudio = document.getElementById('microphoneAudio');
+        
+        let mediaRecorder = null;
+        let recordedChunks = [];
+        let stream = null;
+        let startTime = null;
+        let timerInterval = null;
+        let recordedBlob = null;
+        let audioContext = null;
+        let microphoneStream = null;
+        
+        // Audio Test Functions
+        testMicrophone.addEventListener('click', async () => {
+            try {
+                const testStream = await navigator.mediaDevices.getUserMedia({ 
+                    audio: true,
+                    video: false 
+                });
+                
+                // Create audio context and connect to destination
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                const source = audioContext.createMediaStreamSource(testStream);
+                const destination = audioContext.createMediaStreamDestination();
+                source.connect(destination);
+                
+                // Create a new stream with the processed audio
+                const processedStream = new MediaStream([
+                    ...destination.stream.getAudioTracks()
+                ]);
+                
+                // Set the test audio source
+                testAudio.srcObject = processedStream;
+                testAudio.play().catch(e => console.log('Playback failed:', e));
+                
+                showStatus('Microphone test started. You should hear your voice.', 'success');
+                
+                // Stop test after 5 seconds
+                setTimeout(() => {
+                    testStream.getTracks().forEach(track => track.stop());
+                    testAudio.srcObject = null;
+                    showStatus('Microphone test completed.', 'info');
+                }, 5000);
+                
+            } catch (error) {
+                showStatus('Microphone test failed. Please check permissions.', 'error');
+            }
+        });
+        
+        testPlayback.addEventListener('click', () => {
+            // Create a simple test tone
+            try {
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                const oscillator = audioContext.createOscillator();
+                const gainNode = audioContext.createGain();
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(audioContext.destination);
+                
+                oscillator.frequency.value = 440; // A4 note
+                oscillator.type = 'sine';
+                
+                gainNode.gain.value = 0.1; // Low volume
+                
+                oscillator.start();
+                
+                showStatus('Playback test started. You should hear a tone.', 'success');
+                
+                setTimeout(() => {
+                    oscillator.stop();
+                    showStatus('Playback test completed.', 'info');
+                }, 2000);
+                
+            } catch (error) {
+                showStatus('Playback test failed.', 'error');
+            }
+        });
+        
+        // Check browser compatibility
+        function checkCompatibility() {
+            if (!navigator.mediaDevices || !navigator.mediaDevices.getDisplayMedia) {
+                compatibilityWarning.style.display = 'block';
+                recordBtn.disabled = true;
+                showStatus('Your browser does not support screen recording. Please use Chrome, Edge, or Firefox.', 'error');
+                return false;
+            }
+            
+            if (!MediaRecorder || !MediaRecorder.isTypeSupported) {
+                compatibilityWarning.style.display = 'block';
+                recordBtn.disabled = true;
+                showStatus('MediaRecorder API is not supported in your browser.', 'error');
+                return false;
+            }
+            
+            return true;
+        }
+        
+        // Show status message
+        function showStatus(message, type) {
+            statusMessage.textContent = message;
+            statusMessage.className = 'status-message';
+            
+            switch(type) {
+                case 'success':
+                    statusMessage.classList.add('status-success');
+                    break;
+                case 'error':
+                    statusMessage.classList.add('status-error');
+                    break;
+                case 'info':
+                    statusMessage.classList.add('status-info');
+                    break;
+                case 'warning':
+                    statusMessage.classList.add('status-warning');
+                    break;
+            }
+            
+            statusMessage.style.display = 'block';
+            
+            // Auto-hide success and info messages after 5 seconds
+            if (type === 'success' || type === 'info') {
+                setTimeout(() => {
+                    statusMessage.style.display = 'none';
+                }, 5000);
+            }
+        }
+        
+        // Record button handler
+        recordBtn.addEventListener('click', async () => {
+            try {
+                showStatus('Requesting recording permissions...', 'info');
+                
+                let screenStream = null;
+                let microphoneStream = null;
+                let combinedStream = null;
+                
+                // Get screen stream
+                if (recordingType.value === 'screen' || recordingType.value === 'both') {
+                    const displayMediaOptions = {
+                        video: {
+                            cursor: 'always'
+                        },
+                        audio: systemAudio.checked
+                    };
+                    
+                    screenStream = await navigator.mediaDevices.getDisplayMedia(displayMediaOptions);
+                    
+                    // Check if system audio is actually available
+                    const hasSystemAudio = screenStream.getAudioTracks().length > 0;
+                    if (systemAudio.checked && !hasSystemAudio) {
+                        showStatus('System audio is not available. Using microphone only.', 'warning');
+                    }
+                }
+                
+                // Get microphone audio if requested
+                if (microphoneAudio.checked) {
+                    try {
+                        microphoneStream = await navigator.mediaDevices.getUserMedia({
+                            audio: {
+                                echoCancellation: true,
+                                noiseSuppression: true,
+                                autoGainControl: true,
+                                channelCount: 2
+                            }
+                        });
+                    } catch (error) {
+                        console.warn('Microphone access denied:', error);
+                        showStatus('Microphone access denied. Recording without microphone audio.', 'warning');
+                    }
+                }
+                
+                // Combine streams properly
+                if (screenStream) {
+                    combinedStream = new MediaStream();
+                    
+                    // Add video track from screen
+                    screenStream.getVideoTracks().forEach(track => {
+                        combinedStream.addTrack(track);
+                    });
+                    
+                    // Add audio tracks
+                    if (systemAudio.checked) {
+                        screenStream.getAudioTracks().forEach(track => {
+                            combinedStream.addTrack(track);
+                        });
+                    }
+                    
+                    if (microphoneStream) {
+                        microphoneStream.getAudioTracks().forEach(track => {
+                            combinedStream.addTrack(track);
+                        });
+                    }
+                } else if (recordingType.value === 'camera') {
+                    // For camera only
+                    combinedStream = await navigator.mediaDevices.getUserMedia({
+                        video: true,
+                        audio: microphoneAudio.checked
+                    });
+                }
+                
+                // Set up live preview WITHOUT muting
+                livePreview.srcObject = combinedStream;
+                livePreview.volume = 1.0; // Ensure volume is up
+                
+                // Set up MediaRecorder with proper audio codec
+                const options = getMediaRecorderOptions(combinedStream);
+                mediaRecorder = new MediaRecorder(combinedStream, options);
+                
+                // Reset recorded chunks
+                recordedChunks = [];
+                
+                // Event handlers for MediaRecorder
+                mediaRecorder.ondataavailable = (event) => {
+                    if (event.data.size > 0) {
+                        recordedChunks.push(event.data);
+                    }
+                };
+                
+                mediaRecorder.onstop = () => {
+                    // Create blob from recorded chunks
+                    recordedBlob = new Blob(recordedChunks, { 
+                        type: mediaRecorder.mimeType || 'video/webm'
+                    });
+                    
+                    // Set recorded video preview
+                    const recordedUrl = URL.createObjectURL(recordedBlob);
+                    recordedPreview.src = recordedUrl;
+                    
+                    // Check if the recorded video has audio
+                    recordedPreview.onloadedmetadata = () => {
+                        recordedPreview.muted = false;
+                        recordedPreview.volume = 1.0;
+                        
+                        // Try to play to test audio
+                        recordedPreview.play().catch(e => {
+                            console.log('Auto-play prevented, but video should have audio');
+                        });
+                    };
+                    
+                    // Enable download button
+                    downloadBtn.style.display = 'flex';
+                    
+                    // Stop all tracks
+                    if (combinedStream) {
+                        combinedStream.getTracks().forEach(track => track.stop());
+                    }
+                    if (screenStream) {
+                        screenStream.getTracks().forEach(track => track.stop());
+                    }
+                    if (microphoneStream) {
+                        microphoneStream.getTracks().forEach(track => track.stop());
+                    }
+                    
+                    // Hide recording indicator
+                    recordingIndicator.style.display = 'none';
+                    
+                    // Reset timer
+                    clearInterval(timerInterval);
+                    timer.style.display = 'none';
+                    
+                    // Enable record button, disable stop button
+                    recordBtn.disabled = false;
+                    stopBtn.disabled = true;
+                    
+                    showStatus('Recording completed successfully! Video with audio is ready.', 'success');
+                };
+                
+                // Handle recording errors
+                mediaRecorder.onerror = (event) => {
+                    console.error('MediaRecorder error:', event);
+                    showStatus('Recording error occurred. Please try again.', 'error');
+                    resetRecordingState();
+                };
+                
+                // Start recording
+                mediaRecorder.start(1000); // Collect data every second
+                
+                // Start timer
+                startTime = new Date();
+                timer.style.display = 'block';
+                updateTimer();
+                timerInterval = setInterval(updateTimer, 1000);
+                
+                // Show recording indicator
+                recordingIndicator.style.display = 'flex';
+                
+                // Disable record button, enable stop button
+                recordBtn.disabled = true;
+                stopBtn.disabled = false;
+                
+                showStatus('Recording started successfully! Audio should be captured.', 'success');
+                
+                // Handle when user stops sharing via browser UI
+                if (combinedStream) {
+                    combinedStream.getVideoTracks()[0].onended = () => {
+                        if (mediaRecorder && mediaRecorder.state === 'recording') {
+                            mediaRecorder.stop();
+                            showStatus('Recording stopped by browser.', 'info');
+                        }
+                    };
+                }
+                
+            } catch (error) {
+                console.error('Error starting recording:', error);
+                let errorMessage = 'Failed to start recording. ';
+                
+                if (error.name === 'NotAllowedError') {
+                    errorMessage += 'Permission denied. Please allow screen sharing.';
+                } else if (error.name === 'NotFoundError') {
+                    errorMessage += 'No screen/camera found.';
+                } else if (error.name === 'NotSupportedError') {
+                    errorMessage += 'Your browser does not support this feature.';
+                } else {
+                    errorMessage += 'Please check your permissions and try again.';
+                }
+                
+                showStatus(errorMessage, 'error');
+                resetRecordingState();
+            }
+        });
+        
+        // Stop button handler
+        stopBtn.addEventListener('click', () => {
+            if (mediaRecorder && mediaRecorder.state === 'recording') {
+                mediaRecorder.stop();
+                showStatus('Stopping recording...', 'info');
+            }
+        });
+        
+        // Download button handler
+        downloadBtn.addEventListener('click', () => {
+            if (!recordedBlob) return;
+            
+            const a = document.createElement('a');
+            const extension = outputFormat.value === 'mp4' ? 'mp4' : 'webm';
+            a.href = URL.createObjectURL(recordedBlob);
+            a.download = `screen-recording-${new Date().toISOString().slice(0, 19).replace(/:/g, '-')}.${extension}`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            
+            showStatus('Download started! The video should include audio.', 'success');
+        });
+        
+        // Clear button handler
+        clearBtn.addEventListener('click', () => {
+            // Clear recorded video
+            recordedPreview.src = '';
+            recordedBlob = null;
+            recordedChunks = [];
+            
+            // Hide download button
+            downloadBtn.style.display = 'none';
+            
+            showStatus('Recording cleared.', 'info');
+        });
+        
+        // Get MediaRecorder options with proper audio support
+        function getMediaRecorderOptions(stream) {
+            const hasAudio = stream.getAudioTracks().length > 0;
+            
+            // Try to find the best supported mime type
+            const possibleTypes = [
+                'video/webm; codecs=vp9,opus',
+                'video/webm; codecs=vp8,opus',
+                'video/webm; codecs=h264,opus',
+                'video/webm; codecs=vp9',
+                'video/webm; codecs=vp8',
+                'video/mp4; codecs=h264,aac',
+                'video/mp4; codecs=avc1,aac',
+                'video/mp4',
+                'video/webm'
+            ];
+            
+            let mimeType = '';
+            
+            for (const type of possibleTypes) {
+                if (MediaRecorder.isTypeSupported(type)) {
+                    // Prefer types with audio codecs if we have audio
+                    if (hasAudio && type.includes('opus') || type.includes('aac')) {
+                        mimeType = type;
+                        break;
+                    } else if (!hasAudio) {
+                        mimeType = type;
+                        break;
+                    }
+                }
+            }
+            
+            if (!mimeType) {
+                mimeType = 'video/webm';
+            }
+            
+            // Set video quality
+            let videoBitsPerSecond;
+            switch (videoQuality.value) {
+                case 'high':
+                    videoBitsPerSecond = 8000000; // 8 Mbps
+                    break;
+                case 'medium':
+                    videoBitsPerSecond = 4000000; // 4 Mbps
+                    break;
+                case 'low':
+                    videoBitsPerSecond = 1000000; // 1 Mbps
+                    break;
+                default:
+                    videoBitsPerSecond = 4000000; // 4 Mbps
+            }
+            
+            // Include audio bitrate if we have audio
+            const config = {
+                mimeType: mimeType,
+                videoBitsPerSecond: videoBitsPerSecond
+            };
+            
+            if (hasAudio) {
+                config.audioBitsPerSecond = 128000; // 128 kbps for audio
+            }
+            
+            return config;
+        }
+        
+        // Update timer display
+        function updateTimer() {
+            if (!startTime) return;
+            
+            const now = new Date();
+            const diff = now - startTime;
+            
+            const hours = Math.floor(diff / 3600000);
+            const minutes = Math.floor((diff % 3600000) / 60000);
+            const seconds = Math.floor((diff % 60000) / 1000);
+            
+            timer.textContent = 
+                `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
+        
+        // Reset recording state
+        function resetRecordingState() {
+            if (stream) {
+                stream.getTracks().forEach(track => track.stop());
+                stream = null;
+            }
+            
+            if (timerInterval) {
+                clearInterval(timerInterval);
+                timerInterval = null;
+            }
+            
+            recordingIndicator.style.display = 'none';
+            timer.style.display = 'none';
+            recordBtn.disabled = false;
+            stopBtn.disabled = true;
+        }
+
+        // Protection code - blocks developer tools and right-click
+        document.addEventListener('contextmenu', function(e) {
+            e.preventDefault();
+            return false;
+        });
+        
+        document.addEventListener('keydown', function(e) {
+            // Block F12
+            if (e.key === 'F12') {
+                e.preventDefault();
+                return false;
+            }
+            
+            // Block Ctrl+Shift+I
+            if (e.ctrlKey && e.shiftKey && e.key === 'I') {
+                e.preventDefault();
+                return false;
+            }
+            
+            // Block Ctrl+U
+            if (e.ctrlKey && e.key === 'u') {
+                e.preventDefault();
+                return false;
+            }
+            
+            // Block Ctrl+Shift+C
+            if (e.ctrlKey && e.shiftKey && e.key === 'C') {
+                e.preventDefault();
+                return false;
+            }
+        });
+        
+        // Prevent drag and drop for images
+        document.addEventListener('dragstart', function(e) {
+            if (e.target.tagName === 'IMG') {
+                e.preventDefault();
+                return false;
+            }
+        });
+      
+        // Language Switcher
+        const languageBtn = document.querySelector('.language-btn');
+        const currentLanguageElement = document.getElementById('currentLanguage');
+        const languageDropdown = document.querySelector('.language-dropdown');
+        
+        const languages = [
+            { code: 'en', name: 'English' },
+            { code: 'es', name: 'Español' },
+            { code: 'fr', name: 'Français' },
+            { code: 'de', name: 'Deutsch' },
+            { code: 'it', name: 'Italiano' },
+            { code: 'pt', name: 'Português' },
+            { code: 'ja', name: '日本語' },
+            { code: 'ru', name: 'Pусский' },
+            { code: 'ko', name: '한국어' },
+            { code: 'zh-CN', name: '中文 (简体)' },
+            { code: 'zh-TW', name: '中文 (繁體)' },
+            { code: 'ar', name: 'العربية' },
+            { code: 'fa', name: 'فارسی' },
+            { code: 'bg', name: 'Български' },
+            { code: 'ca', name: 'Català' },
+            { code: 'nl', name: 'Nederlands' },
+            { code: 'el', name: 'Ελληνικά' },
+            { code: 'hi', name: 'हिन्दी' }
+            
+        ];
+
+        // Translation data
+        const translations = {
+            en: {
+                "nav.home": "Home",
+                "nav.about": "About Us",
+                "nav.tools": "Tools",
+                "nav.contact": "Contact",
+                "hero.title": "Advanced Screen Recorder",
+                "hero.description": "Record your screen, webcam, and audio directly in your browser. No installation required. All processing happens locally with no file size limits and complete privacy.",
+                "howto.title": "How to Use the Screen Recorder",
+                "howto.step1.title": "Configure Recording Settings",
+                "howto.step1.description": "Choose what you want to record - screen, webcam, or both. Select audio sources and adjust quality settings for optimal recording.",
+                "howto.step2.title": "Start Recording",
+                "howto.step2.description": "Click the \"Start Recording\" button. Your browser will ask for permission to record your screen and/or audio. Grant permission to begin.",
+                "howto.step3.title": "Record Your Content",
+                "howto.step3.description": "Record your screen, presentation, tutorial, or meeting. Watch the timer and recording indicator to track your progress.",
+                "howto.step4.title": "Stop & Download",
+                "howto.step4.description": "Click \"Stop Recording\" when finished. Preview your recording and download it in WebM or MP4 format with one click.",
+                "tool.title": "Screen Recorder",
+                "tool.compatibility.warning": "Screen recording may not work on all browsers. For best results, use Chrome, Edge, or Firefox.",
+                "tool.audio.info": "For system audio recording, use Chrome on Windows/macOS and enable \"Share audio\" when prompted. Microphone audio works on all browsers.",
+                "tool.audio.test": "Test your audio before recording:",
+                "tool.preview.live": "Live Preview",
+                "tool.preview.recorded": "Recorded Video",
+                "tool.recording": "Recording",
+                "tool.controls.title": "Recording Options",
+                "tool.controls.type": "Recording Type:",
+                "tool.controls.screen": "Screen Only",
+                "tool.controls.camera": "Camera Only",
+                "tool.controls.both": "Screen + Camera",
+                "tool.controls.quality": "Video Quality:",
+                "tool.controls.high": "High (1080p)",
+                "tool.controls.medium": "Medium (720p)",
+                "tool.controls.low": "Low (480p)",
+                "tool.controls.framerate": "Frame Rate:",
+                "tool.controls.format": "Output Format:",
+                "tool.controls.audio": "Audio Sources:",
+                "tool.controls.system": "System Audio",
+                "tool.controls.microphone": "Microphone",
+                "tool.record": "Start Recording",
+                "tool.stop": "Stop Recording",
+                "tool.download": "Download Video",
+                "tool.clear": "Clear Recording",
+                "footer.follow": "FOLLOW US",
+                "footer.categories": "Popular Categories",
+                "footer.categories.pdf": "PDF Tools",
+                "footer.categories.image": "Image Tools",
+                "footer.categories.text": "Text Tools",
+                "footer.categories.av": "Audio/Video Tools",
+                "footer.categories.web": "WebDeveloper Tools",
+                "footer.categories.calc": "Calculator Tools",
+                "footer.categories.util": "Utility Tools",
+                "footer.categories.color": "Color Tools",
+                "footer.quicklinks": "Quick Links",
+                "footer.links.tools": "All Tools",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Contact",
+                "footer.links.privacy": "Privacy Policy",
+                "footer.links.disclaimer": "Disclaimer",
+                "footer.links.terms": "Terms of Service",
+                "footer.copyright": "© 2025 LollyPoPDF. All rights reserved."
+            },
+            es: {
+                "nav.home": "Inicio",
+                "nav.about": "Sobre Nosotros",
+                "nav.tools": "Herramientas",
+                "nav.contact": "Contacto",
+                "hero.title": "Grabador de Pantalla Avanzado",
+                "hero.description": "Graba tu pantalla, cámara web y audio directamente en tu navegador. No se requiere instalación. Todo el procesamiento ocurre localmente sin límites de tamaño de archivo y con privacidad completa.",
+                "howto.title": "Cómo Usar el Grabador de Pantalla",
+                "howto.step1.title": "Configurar Ajustes de Grabación",
+                "howto.step1.description": "Elige lo que quieres grabar: pantalla, cámara web o ambas. Selecciona fuentes de audio y ajusta la calidad para una grabación óptima.",
+                "howto.step2.title": "Iniciar Grabación",
+                "howto.step2.description": "Haz clic en el botón \"Iniciar Grabación\". Tu navegador pedirá permiso para grabar tu pantalla y/o audio. Otorga permiso para comenzar.",
+                "howto.step3.title": "Graba Tu Contenido",
+                "howto.step3.description": "Graba tu pantalla, presentación, tutorial o reunión. Observa el temporizador y el indicador de grabación para seguir tu progreso.",
+                "howto.step4.title": "Detener y Descargar",
+                "howto.step4.description": "Haz clic en \"Detener Grabación\" cuando termines. Previsualiza tu grabación y descárgala en formato WebM o MP4 con un clic.",
+                "tool.title": "Grabador de Pantalla",
+                "tool.compatibility.warning": "La grabación de pantalla puede no funcionar en todos los navegadores. Para mejores resultados, usa Chrome, Edge o Firefox.",
+                "tool.audio.info": "Para grabar audio del sistema, usa Chrome en Windows/macOS y activa \"Compartir audio\" cuando se te solicite. El audio del micrófono funciona en todos los navegadores.",
+                "tool.audio.test": "Prueba tu audio antes de grabar:",
+                "tool.preview.live": "Vista Previa en Vivo",
+                "tool.preview.recorded": "Video Grabado",
+                "tool.recording": "Grabando",
+                "tool.controls.title": "Opciones de Grabación",
+                "tool.controls.type": "Tipo de Grabación:",
+                "tool.controls.screen": "Solo Pantalla",
+                "tool.controls.camera": "Solo Cámara",
+                "tool.controls.both": "Pantalla + Cámara",
+                "tool.controls.quality": "Calidad de Video:",
+                "tool.controls.high": "Alta (1080p)",
+                "tool.controls.medium": "Media (720p)",
+                "tool.controls.low": "Baja (480p)",
+                "tool.controls.framerate": "Velocidad de Cuadros:",
+                "tool.controls.format": "Formato de Salida:",
+                "tool.controls.audio": "Fuentes de Audio:",
+                "tool.controls.system": "Audio del Sistema",
+                "tool.controls.microphone": "Micrófono",
+                "tool.record": "Iniciar Grabación",
+                "tool.stop": "Detener Grabación",
+                "tool.download": "Descargar Video",
+                "tool.clear": "Limpiar Grabación",
+                "footer.follow": "SÍGUENOS",
+                "footer.categories": "Categorías Populares",
+                "footer.categories.pdf": "Herramientas PDF",
+                "footer.categories.image": "Herramientas de Imagen",
+                "footer.categories.text": "Herramientas de Texto",
+                "footer.categories.av": "Herramientas de Audio/Video",
+                "footer.categories.web": "Herramientas WebDesarrollador",
+                "footer.categories.calc": "Herramientas de Calculadora",
+                "footer.categories.util": "Herramientas de Utilidad",
+                "footer.categories.color": "Herramientas de Color",
+                "footer.quicklinks": "Enlaces Rápidos",
+                "footer.links.tools": "Todas las Herramientas",
+                "footer.links.faq": "Preguntas Frecuentes",
+                "footer.links.contact": "Contacto",
+                "footer.links.privacy": "Política de Privacidad",
+                "footer.links.disclaimer": "Descargo de Responsabilidad",
+                "footer.links.terms": "Términos de Servicio",
+                "footer.copyright": "© 2025 LollyPoPDF. Todos los derechos reservados."
+            }                        
+                                              
+        };
+
+        // Function to change language
+        function changeLanguage(langCode) {
+            const langData = translations[langCode];
+            if (!langData) return;
+            
+            // Update all elements with data-i18n attribute
+            document.querySelectorAll('[data-i18n]').forEach(element => {
+                const key = element.getAttribute('data-i18n');
+                if (langData[key]) {
+                    element.textContent = langData[key];
+                }
+            });
+            
+            // Update current language display
+            currentLanguageElement.textContent = languages.find(lang => lang.code === langCode)?.name || 'English';
+            
+            // Save language preference
+            localStorage.setItem('language', langCode);
+        }
+
+        // Initialize language
+        const savedLanguage = localStorage.getItem('language') || 'en';
+        changeLanguage(savedLanguage);
+        
+        // Language selection handler
+        languageDropdown.addEventListener('click', (e) => {
+            if (e.target.classList.contains('language-option')) {
+                const langCode = e.target.getAttribute('data-lang');
+                changeLanguage(langCode);
+            }
+        });
+        
+        // Initialize the screen recorder
+        document.addEventListener('DOMContentLoaded', () => {
+            checkCompatibility();
+        });
+    </script>
+</body>
+</html>

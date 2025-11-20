@@ -231,7 +231,7 @@
             flex-direction: column;
             gap: 15px;
         }
- 
+
         .mobile-menu a {
             display: block;
             padding: 10px 0;
@@ -794,6 +794,30 @@
             text-align: center;
         }
 
+        /* Audio Test Section */
+        .audio-test {
+            background-color: var(--bg-secondary);
+            border-radius: var(--border-radius);
+            padding: 15px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .audio-test-btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 20px;
+            padding: 8px 16px;
+            cursor: pointer;
+            font-size: 14px;
+            margin: 0 5px;
+        }
+
+        .audio-test-btn:hover {
+            background-color: var(--primary-dark);
+        }
+
         /* Mobile-specific UI adjustments */
         .mobile-only {
             display: none;
@@ -966,6 +990,18 @@
                 <div class="audio-info">
                     <i class="fas fa-info-circle"></i>
                     <span data-i18n="tool.audio.info">For system audio recording, use Chrome on Windows/macOS and enable "Share audio" when prompted.</span>
+                </div>
+
+                <!-- Audio Test Section -->
+                <div class="audio-test">
+                    <p data-i18n="tool.audio.test">Test your audio before recording:</p>
+                    <button class="audio-test-btn" id="testMicrophone">
+                        <i class="fas fa-microphone"></i> Test Microphone
+                    </button>
+                    <button class="audio-test-btn" id="testPlayback">
+                        <i class="fas fa-volume-up"></i> Test Playback
+                    </button>
+                    <audio id="testAudio" style="display: none;"></audio>
                 </div>
 
                 <!-- Status Messages -->
@@ -1196,6 +1232,9 @@
         const recordingIndicator = document.getElementById('recordingIndicator');
         const statusMessage = document.getElementById('statusMessage');
         const compatibilityWarning = document.getElementById('compatibilityWarning');
+        const testMicrophone = document.getElementById('testMicrophone');
+        const testPlayback = document.getElementById('testPlayback');
+        const testAudio = document.getElementById('testAudio');
         const deviceInfo = document.getElementById('deviceInfo');
         const deviceTypeText = document.getElementById('deviceTypeText');
         
@@ -1211,6 +1250,7 @@
         let startTime = null;
         let timerInterval = null;
         let recordedBlob = null;
+        let audioContext = null;
         
         // Detect device type
         function detectDeviceType() {
@@ -1277,6 +1317,72 @@
             
             deviceTypeText.textContent = deviceMessage;
         }
+        
+        // Audio Test Functions
+        testMicrophone.addEventListener('click', async () => {
+            try {
+                const testStream = await navigator.mediaDevices.getUserMedia({ 
+                    audio: true,
+                    video: false 
+                });
+                
+                // Create audio context and connect to destination
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                const source = audioContext.createMediaStreamSource(testStream);
+                const destination = audioContext.createMediaStreamDestination();
+                source.connect(destination);
+                
+                // Create a new stream with the processed audio
+                const processedStream = new MediaStream([
+                    ...destination.stream.getAudioTracks()
+                ]);
+                
+                // Set the test audio source
+                testAudio.srcObject = processedStream;
+                testAudio.play().catch(e => console.log('Playback failed:', e));
+                
+                showStatus('Microphone test started. You should hear your voice.', 'success');
+                
+                // Stop test after 5 seconds
+                setTimeout(() => {
+                    testStream.getTracks().forEach(track => track.stop());
+                    testAudio.srcObject = null;
+                    showStatus('Microphone test completed.', 'info');
+                }, 5000);
+                
+            } catch (error) {
+                showStatus('Microphone test failed. Please check permissions.', 'error');
+            }
+        });
+        
+        testPlayback.addEventListener('click', () => {
+            // Create a simple test tone
+            try {
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                const oscillator = audioContext.createOscillator();
+                const gainNode = audioContext.createGain();
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(audioContext.destination);
+                
+                oscillator.frequency.value = 440; // A4 note
+                oscillator.type = 'sine';
+                
+                gainNode.gain.value = 0.1; // Low volume
+                
+                oscillator.start();
+                
+                showStatus('Playback test started. You should hear a tone.', 'success');
+                
+                setTimeout(() => {
+                    oscillator.stop();
+                    showStatus('Playback test completed.', 'info');
+                }, 2000);
+                
+            } catch (error) {
+                showStatus('Playback test failed.', 'error');
+            }
+        });
         
         // Check browser compatibility
         function checkCompatibility() {
@@ -1384,16 +1490,9 @@
                     const recordedUrl = URL.createObjectURL(recordedBlob);
                     recordedPreview.src = recordedUrl;
                     
-                    // Check if the recorded video has audio
-                    recordedPreview.onloadedmetadata = () => {
-                        recordedPreview.muted = false;
-                        recordedPreview.volume = 1.0;
-                        
-                        // Try to play to test audio
-                        recordedPreview.play().catch(e => {
-                            console.log('Auto-play prevented, but video should have audio');
-                        });
-                    };
+                    // Ensure audio plays in the recorded preview
+                    recordedPreview.muted = false;
+                    recordedPreview.volume = 1.0;
                     
                     // Enable download button
                     downloadBtn.style.display = 'flex';
@@ -1414,7 +1513,7 @@
                     recordBtn.disabled = false;
                     stopBtn.disabled = true;
                     
-                    showStatus('Recording completed successfully! Video is ready.', 'success');
+                    showStatus('Recording completed successfully! Video with audio is ready.', 'success');
                 };
                 
                 // Handle recording errors
@@ -1440,7 +1539,7 @@
                 recordBtn.disabled = true;
                 stopBtn.disabled = false;
                 
-                showStatus('Screen recording started successfully!', 'success');
+                showStatus('Screen recording started successfully! Audio should be captured.', 'success');
                 
                 // Handle when user stops sharing via browser UI
                 if (stream) {
@@ -1491,7 +1590,7 @@
             a.click();
             document.body.removeChild(a);
             
-            showStatus('Download started!', 'success');
+            showStatus('Download started! The video should include audio.', 'success');
         });
         
         // Clear button handler
@@ -1653,6 +1752,7 @@
                 "tool.title": "Screen Recorder",
                 "tool.compatibility.warning": "Screen recording may not work on all browsers. For best results, use Chrome, Edge, or Firefox.",
                 "tool.audio.info": "For system audio recording, use Chrome on Windows/macOS and enable \"Share audio\" when prompted.",
+                "tool.audio.test": "Test your audio before recording:",
                 "tool.preview.live": "Live Preview",
                 "tool.preview.recorded": "Recorded Video",
                 "tool.recording": "Recording",
@@ -1707,6 +1807,7 @@
                 "tool.title": "Grabador de Pantalla",
                 "tool.compatibility.warning": "La grabación de pantalla puede no funcionar en todos los navegadores. Para mejores resultados, usa Chrome, Edge o Firefox.",
                 "tool.audio.info": "Para grabar audio del sistema, usa Chrome en Windows/macOS y activa \"Compartir audio\" cuando se te solicite.",
+                "tool.audio.test": "Prueba tu audio antes de grabar:",
                 "tool.preview.live": "Vista Previa en Vivo",
                 "tool.preview.recorded": "Video Grabado",
                 "tool.recording": "Grabando",

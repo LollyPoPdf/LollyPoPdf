@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Screen Recorder | LollyPoPdf</title>
+    <title>Universal Screen Recorder | LollyPoPdf</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
@@ -935,8 +935,8 @@
     <!-- Hero Section -->
     <section class="hero">
         <div class="container">
-            <h1 data-i18n="hero.title">Advanced Screen Recorder</h1>
-            <p data-i18n="hero.description">Record your screen, webcam, and audio directly in your browser. No installation required. All processing happens locally with no file size limits and complete privacy.</p>
+            <h1 data-i18n="hero.title">Universal Screen Recorder</h1>
+            <p data-i18n="hero.description">Record your screen, webcam, and audio directly in your browser. Works on PC, Mobile, and Tablet devices. No installation required. All processing happens locally with no file size limits and complete privacy.</p>
         </div>
     </section>
 
@@ -972,7 +972,7 @@
     <!-- Tool Section -->
     <section class="tool-section">
         <div class="container">
-            <h2 class="tool-title" data-i18n="tool.title">Screen Recorder</h2>
+            <h2 class="tool-title" data-i18n="tool.title">Universal Screen Recorder</h2>
             <div class="tool-container">
                 <!-- Device Detection Info -->
                 <div class="device-info" id="deviceInfo">
@@ -1487,25 +1487,17 @@
                     const isMobile = ['Android', 'iOS', 'Windows Phone', 'Tablet'].includes(deviceType);
                     
                     if (isMobile) {
-                        // On mobile, we might need to use getUserMedia for camera instead of getDisplayMedia
-                        if (recordingType.value === 'screen') {
-                            // On mobile, screen recording might not be available, so we'll use camera
-                            showStatus('On mobile devices, screen recording may not be available. Using camera instead.', 'warning');
+                        // On mobile, we need to use the MediaRecorder API with proper constraints
+                        try {
+                            // Try to get display media first
+                            screenStream = await navigator.mediaDevices.getDisplayMedia(displayMediaOptions);
+                        } catch (error) {
+                            // If getDisplayMedia fails, try to use the camera as fallback
+                            showStatus('Screen recording not available. Using camera instead.', 'warning');
                             screenStream = await navigator.mediaDevices.getUserMedia({
                                 video: true,
                                 audio: systemAudio.checked
                             });
-                        } else if (recordingType.value === 'both') {
-                            // Try to get screen, but fall back to camera
-                            try {
-                                screenStream = await navigator.mediaDevices.getDisplayMedia(displayMediaOptions);
-                            } catch (error) {
-                                showStatus('Screen recording not available on this device. Using camera only.', 'warning');
-                                screenStream = await navigator.mediaDevices.getUserMedia({
-                                    video: true,
-                                    audio: systemAudio.checked
-                                });
-                            }
                         }
                     } else {
                         // Desktop - use standard getDisplayMedia
@@ -1854,8 +1846,8 @@
                 "nav.about": "About Us",
                 "nav.tools": "Tools",
                 "nav.contact": "Contact",
-                "hero.title": "Advanced Screen Recorder",
-                "hero.description": "Record your screen, webcam, and audio directly in your browser. No installation required. All processing happens locally with no file size limits and complete privacy.",
+                "hero.title": "Universal Screen Recorder",
+                "hero.description": "Record your screen, webcam, and audio directly in your browser. Works on PC, Mobile, and Tablet devices. No installation required. All processing happens locally with no file size limits and complete privacy.",
                 "howto.title": "How to Use the Screen Recorder",
                 "howto.step1.title": "Configure Recording Settings",
                 "howto.step1.description": "Choose what you want to record - screen, webcam, or both. Select audio sources and adjust quality settings for optimal recording.",
@@ -1865,7 +1857,7 @@
                 "howto.step3.description": "Record your screen, presentation, tutorial, or meeting. Watch the timer and recording indicator to track your progress.",
                 "howto.step4.title": "Stop & Download",
                 "howto.step4.description": "Click \"Stop Recording\" when finished. Preview your recording and download it in WebM or MP4 format with one click.",
-                "tool.title": "Screen Recorder",
+                "tool.title": "Universal Screen Recorder",
                 "tool.compatibility.warning": "Screen recording may not work on all browsers. For best results, use Chrome, Edge, or Firefox.",
                 "tool.audio.info": "For system audio recording, use Chrome on Windows/macOS and enable \"Share audio\" when prompted. Microphone audio works on all browsers.",
                 "tool.audio.test": "Test your audio before recording:",
@@ -1914,8 +1906,8 @@
                 "nav.about": "Sobre Nosotros",
                 "nav.tools": "Herramientas",
                 "nav.contact": "Contacto",
-                "hero.title": "Grabador de Pantalla Avanzado",
-                "hero.description": "Graba tu pantalla, cámara web y audio directamente en tu navegador. No se requiere instalación. Todo el procesamiento ocurre localmente sin límites de tamaño de archivo y con privacidad completa.",
+                "hero.title": "Grabador de Pantalla Universal",
+                "hero.description": "Graba tu pantalla, cámara web y audio directamente en tu navegador. Funciona en PC, móviles y tabletas. No se requiere instalación. Todo el procesamiento ocurre localmente sin límites de tamaño de archivo y con privacidad completa.",
                 "howto.title": "Cómo Usar el Grabador de Pantalla",
                 "howto.step1.title": "Configurar Ajustes de Grabación",
                 "howto.step1.description": "Elige lo que quieres grabar: pantalla, cámara web o ambas. Selecciona fuentes de audio y ajusta la calidad para una grabación óptima.",
@@ -1925,7 +1917,7 @@
                 "howto.step3.description": "Graba tu pantalla, presentación, tutorial o reunión. Observa el temporizador y el indicador de grabación para seguir tu progreso.",
                 "howto.step4.title": "Detener y Descargar",
                 "howto.step4.description": "Haz clic en \"Detener Grabación\" cuando termines. Previsualiza tu grabación y descárgala en formato WebM o MP4 con un clic.",
-                "tool.title": "Grabador de Pantalla",
+                "tool.title": "Grabador de Pantalla Universal",
                 "tool.compatibility.warning": "La grabación de pantalla puede no funcionar en todos los navegadores. Para mejores resultados, usa Chrome, Edge o Firefox.",
                 "tool.audio.info": "Para grabar audio del sistema, usa Chrome en Windows/macOS y activa \"Compartir audio\" cuando se te solicite. El audio del micrófono funciona en todos los navegadores.",
                 "tool.audio.test": "Prueba tu audio antes de grabar:",

@@ -807,6 +807,22 @@
             background-color: var(--primary-dark);
         }
 
+        /* Device Detection */
+        .device-info {
+            background-color: rgba(147, 112, 219, 0.1);
+            border: 1px solid var(--primary-color);
+            color: var(--primary-color);
+            padding: 15px;
+            border-radius: var(--border-radius);
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        /* Mobile-specific UI adjustments */
+        .mobile-only {
+            display: none;
+        }
+
         /* Responsive Styles */
         @media (max-width: 992px) {
             .steps-container {
@@ -865,6 +881,10 @@
             
             .action-btn {
                 width: 100%;
+            }
+            
+            .mobile-only {
+                display: block;
             }
         }
     </style>
@@ -954,6 +974,12 @@
         <div class="container">
             <h2 class="tool-title" data-i18n="tool.title">Screen Recorder</h2>
             <div class="tool-container">
+                <!-- Device Detection Info -->
+                <div class="device-info" id="deviceInfo">
+                    <i class="fas fa-mobile-alt"></i>
+                    <span id="deviceTypeText">Detecting your device...</span>
+                </div>
+
                 <!-- Browser Compatibility Warning -->
                 <div class="compatibility-warning" id="compatibilityWarning">
                     <i class="fas fa-exclamation-triangle"></i>
@@ -985,7 +1011,7 @@
                 <div class="recorder-container">
                     <div class="preview-box">
                         <h3 class="preview-title" data-i18n="tool.preview.live">Live Preview</h3>
-                        <video id="livePreview" class="video-preview" autoplay></video>
+                        <video id="livePreview" class="video-preview" autoplay muted></video>
                         <div class="recording-indicator" id="recordingIndicator">
                             <div class="recording-dot"></div>
                             <span data-i18n="tool.recording">Recording</span>
@@ -1222,6 +1248,8 @@
         const testMicrophone = document.getElementById('testMicrophone');
         const testPlayback = document.getElementById('testPlayback');
         const testAudio = document.getElementById('testAudio');
+        const deviceInfo = document.getElementById('deviceInfo');
+        const deviceTypeText = document.getElementById('deviceTypeText');
         
         // Options
         const recordingType = document.getElementById('recordingType');
@@ -1239,6 +1267,72 @@
         let recordedBlob = null;
         let audioContext = null;
         let microphoneStream = null;
+        
+        // Detect device type
+        function detectDeviceType() {
+            const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+            
+            // Check for mobile devices
+            if (/android/i.test(userAgent)) {
+                return 'Android';
+            }
+            if (/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream) {
+                return 'iOS';
+            }
+            if (/Windows Phone/i.test(userAgent)) {
+                return 'Windows Phone';
+            }
+            if (/Tablet|iPad/i.test(userAgent)) {
+                return 'Tablet';
+            }
+            
+            // Check for desktop browsers
+            if (/Windows/i.test(userAgent)) {
+                return 'Windows PC';
+            }
+            if (/Macintosh/i.test(userAgent)) {
+                return 'Mac';
+            }
+            if (/Linux/i.test(userAgent)) {
+                return 'Linux PC';
+            }
+            
+            return 'Unknown Device';
+        }
+        
+        // Update device info display
+        function updateDeviceInfo() {
+            const deviceType = detectDeviceType();
+            let deviceMessage = '';
+            
+            switch(deviceType) {
+                case 'Android':
+                    deviceMessage = 'You are using an Android device. Screen recording is supported on Chrome and Samsung Internet browsers.';
+                    break;
+                case 'iOS':
+                    deviceMessage = 'You are using an iOS device. Screen recording requires iOS 14+ and Safari browser.';
+                    break;
+                case 'Windows Phone':
+                    deviceMessage = 'You are using a Windows Phone. Screen recording may have limited support.';
+                    break;
+                case 'Tablet':
+                    deviceMessage = 'You are using a tablet. Screen recording works similarly to mobile devices.';
+                    break;
+                case 'Windows PC':
+                    deviceMessage = 'You are using a Windows PC. Screen recording works best on Chrome, Edge, or Firefox.';
+                    break;
+                case 'Mac':
+                    deviceMessage = 'You are using a Mac. Screen recording works best on Chrome, Edge, or Safari.';
+                    break;
+                case 'Linux PC':
+                    deviceMessage = 'You are using a Linux PC. Screen recording works best on Chrome or Firefox.';
+                    break;
+                default:
+                    deviceMessage = 'Screen recording works on most modern browsers and devices.';
+            }
+            
+            deviceTypeText.textContent = deviceMessage;
+        }
         
         // Audio Test Functions
         testMicrophone.addEventListener('click', async () => {
@@ -1308,11 +1402,26 @@
         
         // Check browser compatibility
         function checkCompatibility() {
-            if (!navigator.mediaDevices || !navigator.mediaDevices.getDisplayMedia) {
-                compatibilityWarning.style.display = 'block';
-                recordBtn.disabled = true;
-                showStatus('Your browser does not support screen recording. Please use Chrome, Edge, or Firefox.', 'error');
-                return false;
+            // Check for mobile-specific limitations
+            const deviceType = detectDeviceType();
+            const isMobile = ['Android', 'iOS', 'Windows Phone', 'Tablet'].includes(deviceType);
+            
+            if (isMobile) {
+                // Mobile devices have limited screen recording support
+                if (!navigator.mediaDevices || !navigator.mediaDevices.getDisplayMedia) {
+                    compatibilityWarning.style.display = 'block';
+                    compatibilityWarning.innerHTML = '<i class="fas fa-exclamation-triangle"></i> <span>Screen recording on mobile devices requires specific browser support. For Android, use Chrome or Samsung Internet. For iOS, use Safari on iOS 14+.</span>';
+                    recordBtn.disabled = false; // Still allow trying
+                    return true;
+                }
+            } else {
+                // Desktop compatibility check
+                if (!navigator.mediaDevices || !navigator.mediaDevices.getDisplayMedia) {
+                    compatibilityWarning.style.display = 'block';
+                    recordBtn.disabled = true;
+                    showStatus('Your browser does not support screen recording. Please use Chrome, Edge, or Firefox.', 'error');
+                    return false;
+                }
             }
             
             if (!MediaRecorder || !MediaRecorder.isTypeSupported) {
@@ -1373,7 +1482,35 @@
                         audio: systemAudio.checked
                     };
                     
-                    screenStream = await navigator.mediaDevices.getDisplayMedia(displayMediaOptions);
+                    // For mobile devices, we might need to handle permissions differently
+                    const deviceType = detectDeviceType();
+                    const isMobile = ['Android', 'iOS', 'Windows Phone', 'Tablet'].includes(deviceType);
+                    
+                    if (isMobile) {
+                        // On mobile, we might need to use getUserMedia for camera instead of getDisplayMedia
+                        if (recordingType.value === 'screen') {
+                            // On mobile, screen recording might not be available, so we'll use camera
+                            showStatus('On mobile devices, screen recording may not be available. Using camera instead.', 'warning');
+                            screenStream = await navigator.mediaDevices.getUserMedia({
+                                video: true,
+                                audio: systemAudio.checked
+                            });
+                        } else if (recordingType.value === 'both') {
+                            // Try to get screen, but fall back to camera
+                            try {
+                                screenStream = await navigator.mediaDevices.getDisplayMedia(displayMediaOptions);
+                            } catch (error) {
+                                showStatus('Screen recording not available on this device. Using camera only.', 'warning');
+                                screenStream = await navigator.mediaDevices.getUserMedia({
+                                    video: true,
+                                    audio: systemAudio.checked
+                                });
+                            }
+                        }
+                    } else {
+                        // Desktop - use standard getDisplayMedia
+                        screenStream = await navigator.mediaDevices.getDisplayMedia(displayMediaOptions);
+                    }
                     
                     // Check if system audio is actually available
                     const hasSystemAudio = screenStream.getAudioTracks().length > 0;
@@ -1682,47 +1819,7 @@
             recordBtn.disabled = false;
             stopBtn.disabled = true;
         }
-
-        // Protection code - blocks developer tools and right-click
-        document.addEventListener('contextmenu', function(e) {
-            e.preventDefault();
-            return false;
-        });
         
-        document.addEventListener('keydown', function(e) {
-            // Block F12
-            if (e.key === 'F12') {
-                e.preventDefault();
-                return false;
-            }
-            
-            // Block Ctrl+Shift+I
-            if (e.ctrlKey && e.shiftKey && e.key === 'I') {
-                e.preventDefault();
-                return false;
-            }
-            
-            // Block Ctrl+U
-            if (e.ctrlKey && e.key === 'u') {
-                e.preventDefault();
-                return false;
-            }
-            
-            // Block Ctrl+Shift+C
-            if (e.ctrlKey && e.shiftKey && e.key === 'C') {
-                e.preventDefault();
-                return false;
-            }
-        });
-        
-        // Prevent drag and drop for images
-        document.addEventListener('dragstart', function(e) {
-            if (e.target.tagName === 'IMG') {
-                e.preventDefault();
-                return false;
-            }
-        });
-      
         // Language Switcher
         const languageBtn = document.querySelector('.language-btn');
         const currentLanguageElement = document.getElementById('currentLanguage');
@@ -1909,6 +2006,7 @@
         
         // Initialize the screen recorder
         document.addEventListener('DOMContentLoaded', () => {
+            updateDeviceInfo();
             checkCompatibility();
         });
     </script>

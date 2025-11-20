@@ -1,0 +1,2153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Erase & AI Add Image Tool | LollyPoPdf</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #9370db;
+            --primary-dark: #8a2be2;
+            --secondary-color: #f0ebff;
+            --text-color: #333333;
+            --text-light: #6b7280;
+            --bg-color: #ffffff;
+            --bg-secondary: #f9f9f9;
+            --border-radius: 12px;
+            --transition: all 0.3s ease;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --header-height: 80px;
+            --white: #ffffff;
+            --header-text: #6b7280;
+            --accent-color: #9370db;
+        }
+
+        .dark-mode {
+            --primary-color: #a391f2;
+            --primary-dark: #8a2be2;
+            --secondary-color: #2d2d2d;
+            --text-color: #f0f0f0;
+            --text-light: #a0a0a0;
+            --bg-color: #1a1a1a;
+            --bg-secondary: #2d2d2d;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+            --white: #1a1a1a;
+            --header-text: #a0a0a0;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            transition: var(--transition);
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        ul {
+            list-style: none;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header Styles */
+        header {
+            background-color: var(--white);
+            color: var(--header-text);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+        }
+
+        .logo-icon {
+            position: relative;
+            width: 40px;
+            height: 40px;
+        }
+
+        .logo-circle {
+            width: 40px;
+            height: 40px;
+            border-radius: 40%;
+            background: linear-gradient(to bottom right, #9370db, #8a2be2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .logo-stem {
+            position: absolute;
+            bottom: -17px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 6px;
+            height: 17px;
+            background-color: #8a2be2;
+            border-radius: 0 0 3px 3px;
+        }
+
+        .logo-text {
+            font-size: 24px;
+            font-weight: bold;
+            color: #9370db;
+        }
+
+        nav ul {
+            display: flex;
+            gap: 30px;
+            list-style: none;
+        }
+
+        nav a {
+            font-weight: 500;
+            position: relative;
+            color: var(--header-text);
+            padding: 8px 0;
+            border-radius: 0;
+            transition: var(--transition);
+            text-decoration: none;
+        }
+
+        nav a:hover {
+            color: var(--accent-color);
+        }
+
+        nav a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: var(--accent-color);
+            transition: width 0.3s ease;
+        }
+
+        nav a:hover::after {
+            width: 100%;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .email {
+            font-size: 14px;
+            color: var(--header-text);
+        }
+
+        .theme-toggle {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 20px;
+            color: var(--header-text);
+            padding: 8px;
+            border-radius: 50%;
+            transition: var(--transition);
+        }
+
+        .theme-toggle:hover {
+            background-color: #f0ebff;
+            color: var(--accent-color);
+        }
+
+        .dark-mode .theme-toggle:hover {
+            background-color: #2d3748;
+            color: var(--accent-color);
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--header-text);
+        }
+
+        /* Mobile Menu */
+        .mobile-menu {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            width: 100%;
+            background-color: var(--white);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            z-index: 999;
+        }
+
+        .dark-mode .mobile-menu {
+            background-color: var(--bg-secondary);
+        }
+
+        .mobile-menu.active {
+            display: block;
+        }
+
+        .mobile-menu ul {
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .mobile-menu a {
+            display: block;
+            padding: 10px 0;
+            font-weight: 500;
+            color: var(--header-text);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .dark-mode .mobile-menu a {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .mobile-menu a:hover {
+            color: var(--accent-color);
+        }
+
+        /* Hero Section */
+        .hero {
+            background-color: var(--secondary-color);
+            padding: 60px 0;
+            text-align: center;
+        }
+
+        .dark-mode .hero {
+            background: linear-gradient(135deg, #2a1a4a, #3d2a6d);
+        }
+
+        .hero h1 {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            color: #000;
+        }
+
+        .dark-mode .hero h1 {
+            color: var(--text-color);
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            color: var(--text-color);
+            max-width: 700px;
+            margin: 0 auto 30px;
+        }
+
+        /* How to Use Section */
+        .how-to-section {
+            padding: 80px 0;
+            background-color: var(--bg-color);
+        }
+
+        .dark-mode .how-to-section {
+            background-color: var(--bg-secondary);
+        }
+
+        .section-title {
+            font-size: 2rem;
+            text-align: center;
+            margin-bottom: 40px;
+            color: #000000;
+        }
+
+        .dark-mode .section-title {
+            color: var(--text-color);
+        }
+
+        .steps-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 40px;
+        }
+
+        .step-box {
+            background-color: var(--bg-secondary);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            padding: 30px;
+            min-height: 200px;
+            position: relative;
+        }
+
+        .step-number {
+            width: 40px;
+            height: 40px;
+            background-color: var(--primary-color);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 16px;
+            margin-bottom: 15px;
+        }
+
+        .step-title {
+            font-size: 18px;
+            color: #000000;
+            margin-bottom: 10px;
+        }
+
+        .dark-mode .step-title {
+            color: var(--text-color);
+        }
+
+        .step-description {
+            font-size: 14px;
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        /* AI Tool Section */
+        .ai-tool-section {
+            padding: 80px 0;
+            background-color: var(--secondary-color);
+        }
+
+        .dark-mode .ai-tool-section {
+            background: linear-gradient(135deg, #2a1a4a, #3d2a6d);
+        }
+
+        .ai-tool-title {
+            font-size: 2.5rem;
+            text-align: center;
+            margin-bottom: 40px;
+            color: #a391f2;
+        }
+
+        .dark-mode .ai-tool-title {
+            color: #a391f2;
+        }
+
+        .ai-tool-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background-color: var(--bg-color);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            padding: 40px;
+        }
+
+        .upload-area {
+            border: 2px dashed var(--primary-color);
+            border-radius: var(--border-radius);
+            padding: 40px 20px;
+            text-align: center;
+            margin-bottom: 30px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .upload-area:hover {
+            background-color: var(--secondary-color);
+        }
+
+        .upload-icon {
+            font-size: 48px;
+            color: var(--primary-color);
+            margin-bottom: 15px;
+        }
+
+        .upload-text {
+            margin-bottom: 15px;
+        }
+
+        .upload-btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: var(--transition);
+        }
+
+        .upload-btn:hover {
+            background-color: var(--primary-dark);
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        .ai-tool-options {
+            margin-bottom: 30px;
+            display: none;
+        }
+
+        .ai-tool-title {
+            margin-bottom: 15px;
+            color: var(--primary-color);
+        }
+
+        .tool-selection {
+            margin-bottom: 20px;
+        }
+
+        .tool-title {
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        .tool-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .tool-btn {
+            padding: 8px 15px;
+            background-color: var(--bg-secondary);
+            border: 1px solid var(--primary-color);
+            border-radius: 20px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .tool-btn.active {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .tool-btn:hover {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .eraser-options, .background-options, .add-image-options {
+            display: none;
+            margin-top: 20px;
+            padding: 20px;
+            background-color: var(--bg-secondary);
+            border-radius: var(--border-radius);
+        }
+
+        .eraser-options.active, .background-options.active, .add-image-options.active {
+            display: block;
+        }
+
+        .selection-info {
+            margin-bottom: 15px;
+            padding: 10px;
+            background-color: var(--primary-color);
+            color: white;
+            border-radius: var(--border-radius);
+            text-align: center;
+        }
+
+        .background-color-picker {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 15px;
+        }
+
+        .color-option {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 2px solid transparent;
+        }
+
+        .color-option.active {
+            border-color: var(--primary-color);
+        }
+
+        .background-upload, .add-image-upload {
+            margin-top: 15px;
+        }
+
+        .background-upload-btn, .add-image-upload-btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: var(--transition);
+        }
+
+        .background-upload-btn:hover, .add-image-upload-btn:hover {
+            background-color: var(--primary-dark);
+        }
+
+        .output-format {
+            margin-top: 20px;
+        }
+
+        .format-title {
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        .format-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .format-btn {
+            padding: 8px 15px;
+            background-color: var(--bg-secondary);
+            border: 1px solid var(--primary-color);
+            border-radius: 20px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .format-btn.active {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .format-btn:hover {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .ai-tool-canvas-container {
+            display: none;
+            margin-bottom: 20px;
+            text-align: center;
+            position: relative;
+        }
+
+        .ai-tool-canvas {
+            max-width: 100%;
+            max-height: 500px;
+            border: 2px solid var(--primary-color);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            cursor: crosshair;
+        }
+
+        .ai-tool-controls {
+            display: none;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .ai-tool-control-btn {
+            padding: 8px 15px;
+            background-color: var(--bg-secondary);
+            border: 1px solid var(--primary-color);
+            border-radius: 20px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .ai-tool-control-btn:hover {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .processing {
+            display: none;
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .spinner {
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            border-left-color: var(--primary-color);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background-color: var(--bg-secondary);
+            border-radius: 4px;
+            margin: 15px 0;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background-color: var(--primary-color);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .progress-text {
+            font-size: 14px;
+            color: var(--text-light);
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .action-buttons {
+            display: none;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .action-btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: var(--transition);
+            flex: 1;
+            min-width: 150px;
+        }
+
+        .process-btn {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .process-btn:hover {
+            background-color: var(--primary-dark);
+        }
+
+        .download-btn {
+            background-color: white;
+            color: var(--primary-color);
+            border: 2px solid var(--primary-color);
+        }
+
+        .download-btn:hover {
+            background-color: var(--secondary-color);
+        }
+
+        .reset-btn {
+            background-color: var(--text-light);
+            color: white;
+        }
+
+        .reset-btn:hover {
+            background-color: #5a6268;
+        }
+
+        /* Footer */
+        footer {
+            background-color: #000000;
+            color: white;
+            padding: 60px 0 80px;
+            position: relative;
+        }
+
+        .footer-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 60px;
+        }
+
+        .footer-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            text-decoration: none;
+        }
+
+        .footer-logo .logo-icon {
+            width: 40px;
+            height: 40px;
+        }
+
+        .footer-logo .logo-text {
+            color: #9370db;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .footer-section h3 {
+            color: white;
+            font-weight: 600;
+            font-size: 20px;
+            margin-bottom: 20px;
+        }
+
+        .footer-section h4 {
+            color: #9370db;
+            font-size: 18px;
+            margin-bottom: 15px;
+        }
+
+        .footer-links li {
+            margin-bottom: 10px;
+        }
+
+        .footer-links a {
+            color: white;
+        }
+
+        .footer-links a:hover {
+            color: #9370db;
+        }
+
+        .social-icons {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .social-icon {
+            width: 40px;
+            height: 40px;
+            background-color: #9370db;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+        }
+
+        .social-icon:hover {
+            background-color: #8a2be2;
+            transform: translateY(-3px);
+        }
+
+        .copyright {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            color: #f9f7ff;
+            font-size: 12px;
+        }
+
+        .footer-line {
+            position: absolute;
+            bottom: 50px;
+            left: 0;
+            width: 100%;
+            height: 1px;
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        /* Language Switcher */
+        .language-switcher {
+            position: fixed;
+            bottom: 10px;
+            right: 10px;
+            z-index: 1000;
+        }
+
+        .language-btn {
+            background-color: #9370db;
+            color: white;
+            border: none;
+            border-radius: 30px;
+            padding: 5px 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .language-dropdown {
+            position: absolute;
+            bottom: 100%;
+            right: 0;
+            width: 300px;
+            background-color: white;
+            border-radius: var(--border-radius);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            display: none;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .dark-mode .language-dropdown {
+            background-color: var(--bg-secondary);
+        }
+
+        .language-switcher:hover .language-dropdown {
+            display: grid;
+        }
+
+        .language-option {
+            padding: 8px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            text-align: center;
+            font-size: 14px;
+        }
+
+        .language-option:hover {
+            background-color: white;
+            color: #9370db;
+        }
+
+        .dark-mode .language-option:hover {
+            background-color: var(--bg-color);
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 992px) {
+            .steps-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .footer-container {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            nav ul, .email {
+                display: none;
+            }
+            
+            .mobile-menu-btn {
+                display: block;
+            }
+            
+            .hero h1, .ai-tool-title {
+                font-size: 2rem;
+            }
+            
+            .hero p {
+                font-size: 1rem;
+            }
+            
+            .tool-buttons {
+                flex-direction: column;
+            }
+            
+            .language-dropdown {
+                width: 250px;
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .footer-container {
+                grid-template-columns: 1fr;
+                gap: 40px;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .ai-tool-container {
+                padding: 20px;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+            
+            .action-btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container header-container">
+            <a href="https://lollypopdf.com" class="logo">
+                <div class="logo-icon">
+                    <div class="logo-circle">LPdf</div>
+                    <div class="logo-stem"></div>
+                </div>
+                <span class="logo-text">LollyPoPdf</span>
+            </a>
+            
+            <nav>
+                <ul>
+                    <li><a href="https://lollypopdf.github.io/LollyPoPdf#home" class="nav-link" data-i18n="nav.home">Home</a></li>
+                    <li><a href="https://lollypopdf.github.io/LollyPoPdf#about" class="nav-link" data-i18n="nav.about">About Us</a></li>
+                    <li><a href="https://lollypopdf.github.io/LollyPoPdf#tools" class="nav-link" data-i18n="nav.tools">Tools</a></li>
+                    <li><a href="contact.html" class="nav-link" data-i18n="nav.contact">Contact</a></li>
+                </ul>
+            </nav>
+            
+            <div class="header-right">
+                <span class="email">lollypoppdf@gmail.com</span>
+                <button class="theme-toggle" id="themeToggle">
+                    <i class="fas fa-moon"></i>
+                </button>
+                <button class="mobile-menu-btn" id="mobileMenuBtn">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </div>
+        
+        <!-- Mobile Menu -->
+        <div class="mobile-menu" id="mobileMenu">
+            <ul>
+                <li><a href="https://lollypopdf.github.io/LollyPoPdf#home" class="nav-link" data-i18n="nav.home">Home</a></li>
+                <li><a href="https://lollypopdf.github.io/LollyPoPdf#about" class="nav-link" data-i18n="nav.about">About Us</a></li>
+                <li><a href="https://lollypopdf.github.io/LollyPoPdf#tools" class="nav-link" data-i18n="nav.tools">Tools</a></li>
+                <li><a href="contact.html" class="nav-link" data-i18n="nav.contact">Contact</a></li>
+            </ul>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <h1 data-i18n="hero.title">AI Erase & AI Add Image Tool</h1>
+            <p data-i18n="hero.description">Free online AI-powered tool to erase objects and add images to your photos. Remove unwanted elements or add new objects seamlessly. No registration required.</p>
+        </div>
+    </section>
+
+    <!-- How to Use Section -->
+    <section class="how-to-section">
+        <div class="container">
+            <h2 class="section-title" data-i18n="howto.title">How to Use the AI Image Tool</h2>
+            <div class="steps-container">
+                <div class="step-box">
+                    <div class="step-number">1</div>
+                    <h3 class="step-title" data-i18n="howto.step1.title">Upload Your Image</h3>
+                    <p class="step-description" data-i18n="howto.step1.description">Click the upload area or drag and drop your image file. We support JPG, PNG, GIF, WEBP and more.</p>
+                </div>
+                <div class="step-box">
+                    <div class="step-number">2</div>
+                    <h3 class="step-title" data-i18n="howto.step2.title">Choose AI Tool</h3>
+                    <p class="step-description" data-i18n="howto.step2.description">Select between AI Erase to remove objects or AI Add to insert new images into your photo.</p>
+                </div>
+                <div class="step-box">
+                    <div class="step-number">3</div>
+                    <h3 class="step-title" data-i18n="howto.step3.title">Edit & Process</h3>
+                    <p class="step-description" data-i18n="howto.step3.description">Use the tools to mark areas to erase or add new images. Then process with AI for seamless results.</p>
+                </div>
+                <div class="step-box">
+                    <div class="step-number">4</div>
+                    <h3 class="step-title" data-i18n="howto.step4.title">Download Result</h3>
+                    <p class="step-description" data-i18n="howto.step4.description">Download your AI-processed image with the click of a button. No watermarks, no registration required.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- AI Tool Section -->
+    <section class="ai-tool-section">
+        <div class="container">
+            <h2 class="ai-tool-title" data-i18n="aiTool.title">AI Erase & AI Add Image Tool</h2>
+            <div class="ai-tool-container">
+                <div class="upload-area" id="uploadArea">
+                    <i class="fas fa-cloud-upload-alt upload-icon"></i>
+                    <p class="upload-text" data-i18n="aiTool.upload.text">Drag & drop your image here or click to browse</p>
+                    <button class="upload-btn" data-i18n="aiTool.upload.button">Select Image</button>
+                    <input type="file" id="fileInput" class="file-input" accept="image/*">
+                </div>
+                
+                <div class="ai-tool-options" id="aiToolOptions">
+                    <h3 class="ai-tool-title" data-i18n="aiTool.options.title">AI Tool Options</h3>
+                    
+                    <div class="tool-selection">
+                        <div class="tool-title" data-i18n="aiTool.toolSelection.title">Select Tool</div>
+                        <div class="tool-buttons">
+                            <button class="tool-btn active" data-tool="erase" data-i18n="aiTool.toolSelection.erase">AI Erase</button>
+                            <button class="tool-btn" data-tool="background" data-i18n="aiTool.toolSelection.background">AI Background</button>
+                            <button class="tool-btn" data-tool="addImage" data-i18n="aiTool.toolSelection.addImage">AI Add Image</button>
+                        </div>
+                    </div>
+                    
+                    <div class="eraser-options active" id="eraserOptions">
+                        <div class="selection-info" data-i18n="aiTool.eraser.selectionInfo">Click and drag to select areas to remove</div>
+                        <p data-i18n="aiTool.eraser.instructions">Drag your cursor to create selection rectangles. The selected areas will be removed and replaced with background.</p>
+                    </div>
+                    
+                    <div class="background-options" id="backgroundOptions">
+                        <div class="background-color-picker">
+                            <div class="color-option active" style="background-color: transparent;" data-color="transparent"></div>
+                            <div class="color-option" style="background-color: #ffffff;" data-color="#ffffff"></div>
+                            <div class="color-option" style="background-color: #000000;" data-color="#000000"></div>
+                            <div class="color-option" style="background-color: #9370db;" data-color="#9370db"></div>
+                            <div class="color-option" style="background-color: #ff6b6b;" data-color="#ff6b6b"></div>
+                            <div class="color-option" style="background-color: #4ecdc4;" data-color="#4ecdc4"></div>
+                        </div>
+                        <div class="background-upload">
+                            <button class="background-upload-btn" id="backgroundUploadBtn" data-i18n="aiTool.background.upload">Upload Background Image</button>
+                            <input type="file" id="backgroundFileInput" class="file-input" accept="image/*">
+                        </div>
+                        <p data-i18n="aiTool.background.instructions">Select a color or upload an image to use as background. You can drag and drop the background image to adjust its position.</p>
+                    </div>
+                    
+                    <div class="add-image-options" id="addImageOptions">
+                        <div class="add-image-upload">
+                            <button class="add-image-upload-btn" id="addImageUploadBtn" data-i18n="aiTool.addImage.upload">Upload Image to Add</button>
+                            <input type="file" id="addImageFileInput" class="file-input" accept="image/*">
+                        </div>
+                        <p data-i18n="aiTool.addImage.instructions">Upload an image to add to your photo. Click on the canvas to place it. You can drag and drop the added image to adjust its position.</p>
+                    </div>
+                    
+                    <div class="output-format">
+                        <div class="format-title" data-i18n="aiTool.format.title">Output Format</div>
+                        <div class="format-buttons">
+                            <button class="format-btn active" data-format="png">PNG</button>
+                            <button class="format-btn" data-format="jpg">JPG</button>
+                            <button class="format-btn" data-format="jpeg">JPEG</button>
+                            <button class="format-btn" data-format="webp">WEBP</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="ai-tool-canvas-container" id="canvasContainer">
+                    <canvas id="aiToolCanvas" class="ai-tool-canvas"></canvas>
+                </div>
+                
+                <div class="ai-tool-controls" id="aiToolControls">
+                    <button class="ai-tool-control-btn" id="zoomInBtn" data-i18n="aiTool.controls.zoomIn">Zoom In</button>
+                    <button class="ai-tool-control-btn" id="zoomOutBtn" data-i18n="aiTool.controls.zoomOut">Zoom Out</button>
+                    <button class="ai-tool-control-btn" id="resetViewBtn" data-i18n="aiTool.controls.reset">Reset View</button>
+                    <button class="ai-tool-control-btn" id="undoBtn" data-i18n="aiTool.controls.undo">Undo</button>
+                </div>
+                
+                <div class="processing" id="processing">
+                    <div class="spinner"></div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progressFill"></div>
+                    </div>
+                    <p class="progress-text" id="progressText" data-i18n="aiTool.processing">Processing: 0%</p>
+                </div>
+                
+                <div class="action-buttons" id="actionButtons">
+                    <button class="action-btn process-btn" id="processBtn" data-i18n="aiTool.process">Process with AI</button>
+                    <button class="action-btn download-btn" id="downloadBtn" data-i18n="aiTool.download">Download</button>
+                    <button class="action-btn reset-btn" id="resetBtn" data-i18n="aiTool.reset">Reset</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container footer-container">
+            <!-- Left Section -->
+            <div class="footer-section">
+                <a href="https://lollypopdf.com" class="footer-logo">
+                    <div class="logo-icon">
+                        <div class="logo-circle">LPdf</div>
+                        <div class="logo-stem"></div>
+                    </div>
+                    <span class="logo-text">LollyPoPdf</span>
+                </a>
+                <h3 data-i18n="footer.follow">FOLLOW US</h3>
+                <div class="social-icons">
+                    <a href="https://facebook.com/lollypopdf" class="social-icon"><i class="fab fa-facebook-f"></i></a>
+                    <a href="https://linkedin.com/company/lollypopdf" class="social-icon"><i class="fab fa-linkedin-in"></i></a>
+                    <a href="https://twitter.com/lollypopdf" class="social-icon"><i class="fab fa-twitter"></i></a>
+                    <a href="https://instagram.com/lollypopdf" class="social-icon"><i class="fab fa-instagram"></i></a>
+                    <a href="https://pinterest.com/lollypopdf" class="social-icon"><i class="fab fa-pinterest-p"></i></a>
+                </div>
+            </div>
+            
+            <!-- Middle Section - Popular Categories -->
+            <div class="footer-section">
+                <h4 data-i18n="footer.categories">Popular Categories</h4>
+                <ul class="footer-links">
+                    <li><a href="https://lollypopdf.com#pdf-tools" data-i18n="footer.categories.pdf">PDF Tools</a></li>
+                    <li><a href="https://lollypopdf.com#image-tools" data-i18n="footer.categories.image">Image Tools</a></li>
+                    <li><a href="https://lollypopdf.com#text-tools" data-i18n="footer.categories.text">Text Tools</a></li>
+                    <li><a href="https://lollypopdf.com#audio-video-tools" data-i18n="footer.categories.av">Audio/Video Tools</a></li>
+                    <li><a href="https://lollypopdf.com#web-developer-tools" data-i18n="footer.categories.web">Web Developer Tools</a></li>
+                    <li><a href="https://lollypopdf.com#calculator-tools" data-i18n="footer.categories.calc">Calculator Tools</a></li>
+                    <li><a href="https://lollypopdf.com#utility-tools" data-i18n="footer.categories.util">Utility Tools</a></li>
+                    <li><a href="https://lollypopdf.com#color-tools" data-i18n="footer.categories.color">Color Tools</a></li>
+                </ul>
+            </div>
+            
+            <!-- Right Section - Quick Links -->
+            <div class="footer-section">
+                <h4 data-i18n="footer.quicklinks">Quick Links</h4>
+                <ul class="footer-links">
+                    <li><a href="https://lollypopdf.github.io/LollyPoPdf#home" data-i18n="nav.home">Home</a></li>
+                    <li><a href="tools.html" data-i18n="footer.links.tools">All Tools</a></li>
+                    <li><a href="faq.html" data-i18n="footer.links.faq">FAQ</a></li>
+                    <li><a href="contact.html" data-i18n="footer.links.contact">Contact</a></li>
+                    <li><a href="privacy-policy.html" data-i18n="footer.links.privacy">Privacy Policy</a></li>
+                    <li><a href="disclaimer.html" data-i18n="footer.links.disclaimer">Disclaimer</a></li>
+                    <li><a href="terms.html" data-i18n="footer.links.terms">Terms of Service</a></li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="footer-line"></div>
+        <div class="copyright" data-i18n="footer.copyright">© 2025 LollyPoPDF. All rights reserved.</div>
+    </footer>
+
+    <!-- Language Switcher -->
+    <div class="language-switcher">
+        <button class="language-btn">
+            <i class="fas fa-globe"></i>
+            <span id="currentLanguage">English</span>
+        </button>
+        <div class="language-dropdown">
+            <div class="language-option" data-lang="en">English</div>
+            <div class="language-option" data-lang="es">Español</div>
+            <div class="language-option" data-lang="fr">Français</div>
+            <div class="language-option" data-lang="de">Deutsch</div>
+            <div class="language-option" data-lang="it">Italiano</div>
+            <div class="language-option" data-lang="pt">Português</div>
+            <div class="language-option" data-lang="ja">日本語</div>
+            <div class="language-option" data-lang="ru">Pусский</div>
+            <div class="language-option" data-lang="ko">한국어</div>
+            <div class="language-option" data-lang="zh-CN">中文 (简体)</div>
+            <div class="language-option" data-lang="zh-TW">中文 (繁體)</div>
+            <div class="language-option" data-lang="ar">العربية</div>
+            <div class="language-option" data-lang="fa">فارسی</div>
+            <div class="language-option" data-lang="bg">Български</div>
+            <div class="language-option" data-lang="ca">Català</div>
+            <div class="language-option" data-lang="nl">Nederlands</div>
+            <div class="language-option" data-lang="el">Ελληνικά</div>
+            <div class="language-option" data-lang="hi">हिन्दी</div>
+            <div class="language-option" data-lang="te">తెలుగు</div>
+            <div class="language-option" data-lang="kn">ಕನ್ನಡ</div>
+            <div class="language-option" data-lang="ta">தமிழ்</div>
+            <div class="language-option" data-lang="ml">മലയാളം</div>
+            <div class="language-option" data-lang="id">Bahasa Indonesia</div>
+            <div class="language-option" data-lang="ms">Bahasa Melayu</div>
+            <div class="language-option" data-lang="pl">Polski</div>
+            <div class="language-option" data-lang="th">ภาษาไทย</div>
+            <div class="language-option" data-lang="tr">Türkçe</div>
+            <div class="language-option" data-lang="uk">Українська</div>
+            <div class="language-option" data-lang="vi">Tiếng Việt</div>
+            <div class="language-option" data-lang="is">Íslenska</div>
+            <div class="language-option" data-lang="no">Norsk</div>
+            <div class="language-option" data-lang="sv">Svenska</div>
+            <div class="language-option" data-lang="fi">Suomi</div>
+            <div class="language-option" data-lang="cs">Čeština</div>
+        </div>
+    </div>
+
+    <script>
+        // Theme Toggle
+        const themeToggle = document.getElementById('themeToggle');
+        const body = document.body;
+        
+        // Check for saved theme preference or respect OS preference
+        const savedTheme = localStorage.getItem('theme') || 
+            (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        
+        if (savedTheme === 'dark') {
+            body.classList.add('dark-mode');
+            themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+        }
+        
+        themeToggle.addEventListener('click', () => {
+            body.classList.toggle('dark-mode');
+            const isDarkMode = body.classList.contains('dark-mode');
+            
+            if (isDarkMode) {
+                themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+                localStorage.setItem('theme', 'dark');
+            } else {
+                themeToggle.innerHTML = '<i class="fas fa-moon"></i>';
+                localStorage.setItem('theme', 'light');
+            }
+        });
+
+        // Mobile Menu Toggle
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const mobileMenu = document.getElementById('mobileMenu');
+        
+        mobileMenuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('active');
+            
+            // Change icon based on menu state
+            if (mobileMenu.classList.contains('active')) {
+                mobileMenuBtn.innerHTML = '<i class="fas fa-times"></i>';
+            } else {
+                mobileMenuBtn.innerHTML = '<i class="fas fa-bars"></i>';
+            }
+        });
+
+        // Close mobile menu when clicking on a link
+        const mobileMenuLinks = mobileMenu.querySelectorAll('a');
+        mobileMenuLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                mobileMenu.classList.remove('active');
+                mobileMenuBtn.innerHTML = '<i class="fas fa-bars"></i>';
+            });
+        });
+
+        // AI Image Tool Functionality
+        const uploadArea = document.getElementById('uploadArea');
+        const fileInput = document.getElementById('fileInput');
+        const aiToolOptions = document.getElementById('aiToolOptions');
+        const canvasContainer = document.getElementById('canvasContainer');
+        const aiToolCanvas = document.getElementById('aiToolCanvas');
+        const aiToolControls = document.getElementById('aiToolControls');
+        const processing = document.getElementById('processing');
+        const progressFill = document.getElementById('progressFill');
+        const progressText = document.getElementById('progressText');
+        const actionButtons = document.getElementById('actionButtons');
+        const processBtn = document.getElementById('processBtn');
+        const downloadBtn = document.getElementById('downloadBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        const zoomInBtn = document.getElementById('zoomInBtn');
+        const zoomOutBtn = document.getElementById('zoomOutBtn');
+        const resetViewBtn = document.getElementById('resetViewBtn');
+        const undoBtn = document.getElementById('undoBtn');
+        
+        // Tool selection buttons
+        const toolButtons = document.querySelectorAll('.tool-btn');
+        const formatButtons = document.querySelectorAll('.format-btn');
+        const colorOptions = document.querySelectorAll('.color-option');
+        
+        // Tool options
+        const eraserOptions = document.getElementById('eraserOptions');
+        const backgroundOptions = document.getElementById('backgroundOptions');
+        const addImageOptions = document.getElementById('addImageOptions');
+        const backgroundUploadBtn = document.getElementById('backgroundUploadBtn');
+        const backgroundFileInput = document.getElementById('backgroundFileInput');
+        const addImageUploadBtn = document.getElementById('addImageUploadBtn');
+        const addImageFileInput = document.getElementById('addImageFileInput');
+        
+        let currentFile = null;
+        let processedBlob = null;
+        let originalWidth = 0;
+        let originalHeight = 0;
+        let currentTool = 'erase';
+        let currentFormat = 'png';
+        let currentBackgroundColor = 'transparent';
+        let backgroundImage = null;
+        let backgroundImagePosition = { x: 0, y: 0 };
+        let isDraggingBackground = false;
+        let addImage = null;
+        let addImagePosition = { x: 0, y: 0 };
+        let isDraggingAddImage = false;
+        let ctx = aiToolCanvas.getContext('2d');
+        
+        // Canvas state
+        let image = null;
+        let scale = 1;
+        let offsetX = 0;
+        let offsetY = 0;
+        let isDraggingImage = false;
+        let lastX = 0;
+        let lastY = 0;
+        
+        // Selection state
+        let eraserMask = null;
+        let isSelecting = false;
+        let selectionStart = { x: 0, y: 0 };
+        let selectionEnd = { x: 0, y: 0 };
+        let selectionHistory = [];
+        let currentHistoryStep = -1;
+        
+        // Upload area click handler
+        uploadArea.addEventListener('click', () => {
+            fileInput.click();
+        });
+        
+        // Background upload button click handler
+        backgroundUploadBtn.addEventListener('click', () => {
+            backgroundFileInput.click();
+        });
+        
+        // Add image upload button click handler
+        addImageUploadBtn.addEventListener('click', () => {
+            addImageFileInput.click();
+        });
+        
+        // File input change handler
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                handleFile(e.target.files[0]);
+            }
+        });
+        
+        // Background file input change handler
+        backgroundFileInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                handleBackgroundFile(e.target.files[0]);
+            }
+        });
+        
+        // Add image file input change handler
+        addImageFileInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                handleAddImageFile(e.target.files[0]);
+            }
+        });
+        
+        // Drag and drop functionality
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.style.backgroundColor = 'var(--secondary-color)';
+        });
+        
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.style.backgroundColor = '';
+        });
+        
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.style.backgroundColor = '';
+            
+            if (e.dataTransfer.files.length > 0) {
+                handleFile(e.dataTransfer.files[0]);
+            }
+        });
+        
+        // Handle the selected file - NO FILE SIZE LIMITS
+        function handleFile(file) {
+            // Check if file is an image
+            if (!file.type.match('image.*')) {
+                alert('Please select an image file (JPG, PNG, GIF, etc.)');
+                return;
+            }
+            
+            // NO FILE SIZE LIMITS - UNLIMITED USE
+            currentFile = file;
+            
+            // Load image for canvas
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                image = new Image();
+                image.onload = function() {
+                    originalWidth = this.width;
+                    originalHeight = this.height;
+                    
+                    // Set up canvas
+                    setupCanvas();
+                    
+                    // Initialize eraser mask
+                    initEraserMask();
+                    
+                    // Show the AI tool options after image is uploaded
+                    aiToolOptions.style.display = 'block';
+                    canvasContainer.style.display = 'block';
+                    aiToolControls.style.display = 'flex';
+                    actionButtons.style.display = 'flex';
+                    
+                    // Draw the initial image
+                    drawImageWithBackground();
+                    
+                    // Save initial state to history
+                    saveToHistory();
+                };
+                image.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+        
+        // Handle background file
+        function handleBackgroundFile(file) {
+            if (!file.type.match('image.*')) {
+                alert('Please select an image file for background');
+                return;
+            }
+            
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                backgroundImage = new Image();
+                backgroundImage.onload = function() {
+                    // Set initial position for the background image
+                    backgroundImagePosition = {
+                        x: 0,
+                        y: 0
+                    };
+                    
+                    // Redraw the image with the new background
+                    drawImageWithBackground();
+                };
+                backgroundImage.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+        
+        // Handle add image file
+        function handleAddImageFile(file) {
+            if (!file.type.match('image.*')) {
+                alert('Please select an image file to add');
+                return;
+            }
+            
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                addImage = new Image();
+                addImage.onload = function() {
+                    // Set initial position for the added image
+                    addImagePosition = {
+                        x: aiToolCanvas.width / 2 - this.width / 4,
+                        y: aiToolCanvas.height / 2 - this.height / 4
+                    };
+                    
+                    // Redraw the image with the added image
+                    drawImageWithBackground();
+                };
+                addImage.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+        
+        // Set up canvas with image
+        function setupCanvas() {
+            // Set canvas size
+            const maxWidth = 800;
+            const maxHeight = 500;
+            
+            let canvasWidth = image.width;
+            let canvasHeight = image.height;
+            
+            // Scale down if image is too large
+            if (canvasWidth > maxWidth || canvasHeight > maxHeight) {
+                const ratio = Math.min(maxWidth / canvasWidth, maxHeight / canvasHeight);
+                canvasWidth *= ratio;
+                canvasHeight *= ratio;
+            }
+            
+            aiToolCanvas.width = canvasWidth;
+            aiToolCanvas.height = canvasHeight;
+            
+            // Calculate initial scale and offset to center image
+            scale = Math.min(canvasWidth / image.width, canvasHeight / image.height);
+            offsetX = (canvasWidth - image.width * scale) / 2;
+            offsetY = (canvasHeight - image.height * scale) / 2;
+        }
+        
+        // Initialize eraser mask
+        function initEraserMask() {
+            eraserMask = document.createElement('canvas');
+            eraserMask.width = aiToolCanvas.width;
+            eraserMask.height = aiToolCanvas.height;
+            const maskCtx = eraserMask.getContext('2d');
+            
+            // Fill with white (fully opaque)
+            maskCtx.fillStyle = 'white';
+            maskCtx.fillRect(0, 0, eraserMask.width, eraserMask.height);
+        }
+        
+        // Draw image with background
+        function drawImageWithBackground() {
+            ctx.clearRect(0, 0, aiToolCanvas.width, aiToolCanvas.height);
+            
+            // Draw background if selected
+            if (currentBackgroundColor !== 'transparent' || backgroundImage) {
+                if (backgroundImage) {
+                    // Draw background image at its position
+                    ctx.drawImage(
+                        backgroundImage, 
+                        backgroundImagePosition.x, 
+                        backgroundImagePosition.y, 
+                        aiToolCanvas.width, 
+                        aiToolCanvas.height
+                    );
+                } else {
+                    // Draw solid color background
+                    ctx.fillStyle = currentBackgroundColor;
+                    ctx.fillRect(0, 0, aiToolCanvas.width, aiToolCanvas.height);
+                }
+            }
+            
+            // Draw the original image with eraser mask applied
+            if (eraserMask) {
+                // Save the current context state
+                ctx.save();
+                
+                // Draw the original image
+                ctx.drawImage(image, offsetX, offsetY, image.width * scale, image.height * scale);
+                
+                // Apply the eraser mask as a clipping path
+                ctx.globalCompositeOperation = 'destination-in';
+                ctx.drawImage(eraserMask, 0, 0);
+                
+                // Restore the context state
+                ctx.restore();
+            } else {
+                // Draw the original image without mask
+                ctx.drawImage(image, offsetX, offsetY, image.width * scale, image.height * scale);
+            }
+            
+            // Draw the added image if available
+            if (addImage && currentTool === 'addImage') {
+                ctx.drawImage(
+                    addImage, 
+                    addImagePosition.x, 
+                    addImagePosition.y, 
+                    addImage.width / 2, 
+                    addImage.height / 2
+                );
+                
+                // Draw a border around the added image for better visibility
+                ctx.strokeStyle = '#9370db';
+                ctx.lineWidth = 2;
+                ctx.strokeRect(
+                    addImagePosition.x, 
+                    addImagePosition.y, 
+                    addImage.width / 2, 
+                    addImage.height / 2
+                );
+            }
+            
+            // Draw selection rectangle if selecting
+            if (isSelecting && currentTool === 'erase') {
+                ctx.strokeStyle = '#ff0000';
+                ctx.lineWidth = 2;
+                ctx.setLineDash([5, 5]);
+                ctx.strokeRect(
+                    selectionStart.x,
+                    selectionStart.y,
+                    selectionEnd.x - selectionStart.x,
+                    selectionEnd.y - selectionStart.y
+                );
+                ctx.setLineDash([]);
+            }
+        }
+        
+        // Tool selection
+        toolButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                // Remove active class from all buttons
+                toolButtons.forEach(btn => btn.classList.remove('active'));
+                
+                // Add active class to clicked button
+                button.classList.add('active');
+                
+                // Set current tool
+                currentTool = button.getAttribute('data-tool');
+                
+                // Show/hide tool options
+                if (currentTool === 'erase') {
+                    eraserOptions.classList.add('active');
+                    backgroundOptions.classList.remove('active');
+                    addImageOptions.classList.remove('active');
+                } else if (currentTool === 'background') {
+                    eraserOptions.classList.remove('active');
+                    backgroundOptions.classList.add('active');
+                    addImageOptions.classList.remove('active');
+                } else if (currentTool === 'addImage') {
+                    eraserOptions.classList.remove('active');
+                    backgroundOptions.classList.remove('active');
+                    addImageOptions.classList.add('active');
+                }
+                
+                // Redraw the canvas
+                drawImageWithBackground();
+            });
+        });
+        
+        // Format selection
+        formatButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                // Remove active class from all buttons
+                formatButtons.forEach(btn => btn.classList.remove('active'));
+                
+                // Add active class to clicked button
+                button.classList.add('active');
+                
+                // Set current format
+                currentFormat = button.getAttribute('data-format');
+            });
+        });
+        
+        // Color selection
+        colorOptions.forEach(option => {
+            option.addEventListener('click', () => {
+                // Remove active class from all options
+                colorOptions.forEach(opt => opt.classList.remove('active'));
+                
+                // Add active class to clicked option
+                option.classList.add('active');
+                
+                // Set current background color
+                currentBackgroundColor = option.getAttribute('data-color');
+                backgroundImage = null; // Clear background image when selecting a color
+                
+                // Redraw image with new background
+                drawImageWithBackground();
+            });
+        });
+        
+        // Canvas mouse events for selection
+        aiToolCanvas.addEventListener('mousedown', (e) => {
+            const rect = aiToolCanvas.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            
+            if (currentTool === 'erase') {
+                isSelecting = true;
+                selectionStart = { x: x, y: y };
+                selectionEnd = { x: x, y: y };
+            } else if (currentTool === 'addImage' && addImage) {
+                // Check if click is on the added image
+                if (x >= addImagePosition.x && 
+                    x <= addImagePosition.x + addImage.width / 2 &&
+                    y >= addImagePosition.y && 
+                    y <= addImagePosition.y + addImage.height / 2) {
+                    isDraggingAddImage = true;
+                    lastX = x;
+                    lastY = y;
+                } else {
+                    // Place the image at click position
+                    addImagePosition = {
+                        x: x - addImage.width / 4,
+                        y: y - addImage.height / 4
+                    };
+                    drawImageWithBackground();
+                }
+            } else if (currentTool === 'background' && backgroundImage) {
+                // Check if click is on the background image
+                if (x >= backgroundImagePosition.x && 
+                    x <= backgroundImagePosition.x + aiToolCanvas.width &&
+                    y >= backgroundImagePosition.y && 
+                    y <= backgroundImagePosition.y + aiToolCanvas.height) {
+                    isDraggingBackground = true;
+                    lastX = x;
+                    lastY = y;
+                }
+            } else {
+                // Enable full image dragging
+                isDraggingImage = true;
+                lastX = x;
+                lastY = y;
+            }
+        });
+        
+        aiToolCanvas.addEventListener('mousemove', (e) => {
+            const rect = aiToolCanvas.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            
+            if (isSelecting && currentTool === 'erase') {
+                selectionEnd = { x: x, y: y };
+                drawImageWithBackground();
+            } else if (isDraggingAddImage && currentTool === 'addImage' && addImage) {
+                // Move the added image
+                addImagePosition.x += x - lastX;
+                addImagePosition.y += y - lastY;
+                lastX = x;
+                lastY = y;
+                drawImageWithBackground();
+            } else if (isDraggingBackground && currentTool === 'background' && backgroundImage) {
+                // Move the background image
+                backgroundImagePosition.x += x - lastX;
+                backgroundImagePosition.y += y - lastY;
+                lastX = x;
+                lastY = y;
+                drawImageWithBackground();
+            } else if (isDraggingImage) {
+                // Move the main image
+                offsetX += x - lastX;
+                offsetY += y - lastY;
+                lastX = x;
+                lastY = y;
+                drawImageWithBackground();
+            }
+        });
+        
+        aiToolCanvas.addEventListener('mouseup', () => {
+            if (isSelecting && currentTool === 'erase') {
+                isSelecting = false;
+                
+                // Apply eraser to the selected area
+                applyEraserToSelection();
+                saveToHistory();
+            }
+            isDraggingAddImage = false;
+            isDraggingBackground = false;
+            isDraggingImage = false;
+        });
+        
+        aiToolCanvas.addEventListener('mouseleave', () => {
+            isSelecting = false;
+            isDraggingAddImage = false;
+            isDraggingBackground = false;
+            isDraggingImage = false;
+        });
+        
+        // Apply eraser to the selected area
+        function applyEraserToSelection() {
+            const maskCtx = eraserMask.getContext('2d');
+            
+            // Calculate selection coordinates
+            const x = Math.min(selectionStart.x, selectionEnd.x);
+            const y = Math.min(selectionStart.y, selectionEnd.y);
+            const width = Math.abs(selectionEnd.x - selectionStart.x);
+            const height = Math.abs(selectionEnd.y - selectionStart.y);
+            
+            // Erase the selected area
+            maskCtx.globalCompositeOperation = 'destination-out';
+            maskCtx.fillStyle = 'rgba(0, 0, 0, 1)';
+            maskCtx.fillRect(x, y, width, height);
+            
+            // Reset selection
+            selectionStart = { x: 0, y: 0 };
+            selectionEnd = { x: 0, y: 0 };
+            
+            // Redraw the image with updated mask
+            drawImageWithBackground();
+        }
+        
+        // Save current state to history
+        function saveToHistory() {
+            // Remove any future states if we're not at the end
+            if (currentHistoryStep < selectionHistory.length - 1) {
+                selectionHistory = selectionHistory.slice(0, currentHistoryStep + 1);
+            }
+            
+            // Save current mask state
+            const maskCtx = eraserMask.getContext('2d');
+            const imageData = maskCtx.getImageData(0, 0, eraserMask.width, eraserMask.height);
+            selectionHistory.push(imageData);
+            currentHistoryStep = selectionHistory.length - 1;
+            
+            // Limit history size
+            if (selectionHistory.length > 50) {
+                selectionHistory.shift();
+                currentHistoryStep--;
+            }
+        }
+        
+        // Undo last action
+        function undo() {
+            if (currentHistoryStep > 0) {
+                currentHistoryStep--;
+                const maskCtx = eraserMask.getContext('2d');
+                maskCtx.putImageData(selectionHistory[currentHistoryStep], 0, 0);
+                drawImageWithBackground();
+            }
+        }
+        
+        // Control buttons
+        zoomInBtn.addEventListener('click', () => {
+            scale *= 1.1;
+            drawImageWithBackground();
+        });
+        
+        zoomOutBtn.addEventListener('click', () => {
+            scale /= 1.1;
+            drawImageWithBackground();
+        });
+        
+        resetViewBtn.addEventListener('click', () => {
+            scale = 1;
+            offsetX = (aiToolCanvas.width - image.width * scale) / 2;
+            offsetY = (aiToolCanvas.height - image.height * scale) / 2;
+            drawImageWithBackground();
+        });
+        
+        undoBtn.addEventListener('click', undo);
+        
+        // Process the image with AI
+        function processImage() {
+            if (!currentFile) {
+                alert('Please select an image first');
+                return;
+            }
+            
+            processing.style.display = 'block';
+            processBtn.disabled = true;
+            
+            // Reset progress
+            updateProgress(0);
+            
+            // Simulate progress steps
+            let progress = 0;
+            const progressInterval = setInterval(() => {
+                progress += 5;
+                updateProgress(progress);
+                
+                if (progress >= 100) {
+                    clearInterval(progressInterval);
+                    performProcessing();
+                }
+            }, 50);
+        }
+        
+        // Update progress bar and text
+        function updateProgress(percent) {
+            progressFill.style.width = `${percent}%`;
+            progressText.textContent = `Processing: ${percent}%`;
+        }
+        
+        // Perform the actual processing - ADVANCED BACKGROUND-AWARE FIXED VERSION
+        function performProcessing() {
+            // Create a temporary canvas for the result
+            const tempCanvas = document.createElement('canvas');
+            const tempCtx = tempCanvas.getContext('2d');
+            
+            // Set canvas dimensions to match the original image
+            tempCanvas.width = originalWidth;
+            tempCanvas.height = originalHeight;
+            
+            // Draw background first
+            if (currentBackgroundColor !== 'transparent' || backgroundImage) {
+                if (backgroundImage) {
+                    // Draw background image scaled to fit
+                    tempCtx.drawImage(backgroundImage, 0, 0, originalWidth, originalHeight);
+                } else {
+                    // Draw solid color background
+                    tempCtx.fillStyle = currentBackgroundColor;
+                    tempCtx.fillRect(0, 0, originalWidth, originalHeight);
+                }
+            }
+            
+            // Create a scaled version of the eraser mask
+            const scaledMask = document.createElement('canvas');
+            scaledMask.width = originalWidth;
+            scaledMask.height = originalHeight;
+            const scaledMaskCtx = scaledMask.getContext('2d');
+            
+            // Scale the mask to match original image size
+            scaledMaskCtx.drawImage(eraserMask, 0, 0, originalWidth, originalHeight);
+            
+            // Create a temporary canvas for the masked image
+            const maskedCanvas = document.createElement('canvas');
+            maskedCanvas.width = originalWidth;
+            maskedCanvas.height = originalHeight;
+            const maskedCtx = maskedCanvas.getContext('2d');
+            
+            // Draw the original image
+            maskedCtx.drawImage(image, 0, 0);
+            
+            // Apply the mask - FIX: Use proper masking technique
+            maskedCtx.globalCompositeOperation = 'destination-in';
+            maskedCtx.drawImage(scaledMask, 0, 0);
+            
+            // Draw the masked image onto the final canvas
+            tempCtx.drawImage(maskedCanvas, 0, 0);
+            
+            // Draw the added image if available
+            if (addImage && currentTool === 'addImage') {
+                // Calculate position in original image coordinates
+                const scaleX = originalWidth / aiToolCanvas.width;
+                const scaleY = originalHeight / aiToolCanvas.height;
+                
+                tempCtx.drawImage(
+                    addImage, 
+                    addImagePosition.x * scaleX, 
+                    addImagePosition.y * scaleY, 
+                    addImage.width / 2 * scaleX, 
+                    addImage.height / 2 * scaleY
+                );
+            }
+            
+            // Convert to blob - FIXED: Use proper MIME type
+            const mimeType = currentFormat === 'jpg' || currentFormat === 'jpeg' ? 'image/jpeg' : 
+                            currentFormat === 'png' ? 'image/png' : 
+                            currentFormat === 'webp' ? 'image/webp' : 'image/png';
+            
+            tempCanvas.toBlob((blob) => {
+                processedBlob = blob;
+                
+                processing.style.display = 'none';
+                processBtn.disabled = false;
+                
+                // Enable download button
+                downloadBtn.disabled = false;
+            }, mimeType, 1.0); // Use maximum quality
+        }
+        
+        // Process button handler
+        processBtn.addEventListener('click', processImage);
+        
+        // Download button handler
+        downloadBtn.addEventListener('click', () => {
+            if (!processedBlob) {
+                alert('Please process an image first');
+                return;
+            }
+            
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(processedBlob);
+            a.download = `ai_processed_image.${currentFormat}`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        });
+        
+        // Reset button handler
+        resetBtn.addEventListener('click', () => {
+            currentFile = null;
+            processedBlob = null;
+            fileInput.value = '';
+            backgroundFileInput.value = '';
+            addImageFileInput.value = '';
+            processing.style.display = 'none';
+            processBtn.disabled = false;
+            downloadBtn.disabled = true;
+            
+            // Hide AI tool options
+            aiToolOptions.style.display = 'none';
+            canvasContainer.style.display = 'none';
+            aiToolControls.style.display = 'none';
+            actionButtons.style.display = 'none';
+            
+            // Reset progress
+            updateProgress(0);
+            
+            // Reset tool selection
+            toolButtons.forEach(btn => btn.classList.remove('active'));
+            document.querySelector('.tool-btn[data-tool="erase"]').classList.add('active');
+            currentTool = 'erase';
+            
+            // Reset format
+            formatButtons.forEach(btn => btn.classList.remove('active'));
+            document.querySelector('.format-btn[data-format="png"]').classList.add('active');
+            currentFormat = 'png';
+            
+            // Reset background color
+            colorOptions.forEach(opt => opt.classList.remove('active'));
+            document.querySelector('.color-option[data-color="transparent"]').classList.add('active');
+            currentBackgroundColor = 'transparent';
+            backgroundImage = null;
+            addImage = null;
+            
+            // Reset canvas state
+            image = null;
+            scale = 1;
+            offsetX = 0;
+            offsetY = 0;
+            isDraggingImage = false;
+            isDraggingAddImage = false;
+            isDraggingBackground = false;
+            isSelecting = false;
+            eraserMask = null;
+            selectionHistory = [];
+            currentHistoryStep = -1;
+            ctx.clearRect(0, 0, aiToolCanvas.width, aiToolCanvas.height);
+        });
+
+        // Language Switcher
+        const languageBtn = document.querySelector('.language-btn');
+        const currentLanguageElement = document.getElementById('currentLanguage');
+        const languageDropdown = document.querySelector('.language-dropdown');
+        
+        const languages = [
+            { code: 'en', name: 'English' },
+            { code: 'es', name: 'Español' },
+            { code: 'fr', name: 'Français' },
+            { code: 'de', name: 'Deutsch' },
+            { code: 'it', name: 'Italiano' },
+            { code: 'pt', name: 'Português' },
+            { code: 'ja', name: '日本語' },
+            { code: 'ru', name: 'Pусский' },
+            { code: 'ko', name: '한국어' },
+            { code: 'zh-CN', name: '中文 (简体)' },
+            { code: 'zh-TW', name: '中文 (繁體)' },
+            { code: 'ar', name: 'العربية' },
+            { code: 'fa', name: 'فارسی' },
+            { code: 'bg', name: 'Български' },
+            { code: 'ca', name: 'Català' },
+            { code: 'nl', name: 'Nederlands' },
+            { code: 'el', name: 'Ελληνικά' },
+            { code: 'hi', name: 'हिन्दी' },
+            { code: 'te', name: 'తెలుగు' },
+            { code: 'kn', name: 'ಕನ್ನಡ' },
+            { code: 'ta', name: 'தமிழ்' },
+            { code: 'ml', name: 'മലയാളം' },
+            { code: 'id', name: 'Bahasa Indonesia' },
+            { code: 'ms', name: 'Bahasa Melayu' },
+            { code: 'pl', name: 'Polski' },
+            { code: 'th', name: 'ภาษาไทย' },
+            { code: 'tr', name: 'Türkçe' },
+            { code: 'uk', name: 'Українська' },
+            { code: 'vi', name: 'Tiếng Việt' },
+            { code: 'is', name: 'Íslenska' },
+            { code: 'no', name: 'Norsk' },
+            { code: 'sv', name: 'Svenska' },
+            { code: 'fi', name: 'Suomi' },
+            { code: 'cs', name: 'Čeština' }
+        ];
+        
+        // Translation data
+        const translations = {
+            en: {
+                "nav.home": "Home",
+                "nav.about": "About Us",
+                "nav.tools": "Tools",
+                "nav.contact": "Contact",
+                "hero.title": "AI Erase & AI Add Image Tool",
+                "hero.description": "Free online AI-powered tool to erase objects and add images to your photos. Remove unwanted elements or add new objects seamlessly. No registration required.",
+                "howto.title": "How to Use the AI Image Tool",
+                "howto.step1.title": "Upload Your Image",
+                "howto.step1.description": "Click the upload area or drag and drop your image file. We support JPG, PNG, GIF, WEBP and more.",
+                "howto.step2.title": "Choose AI Tool",
+                "howto.step2.description": "Select between AI Erase to remove objects or AI Add to insert new images into your photo.",
+                "howto.step3.title": "Edit & Process",
+                "howto.step3.description": "Use the tools to mark areas to erase or add new images. Then process with AI for seamless results.",
+                "howto.step4.title": "Download Result",
+                "howto.step4.description": "Download your AI-processed image with the click of a button. No watermarks, no registration required.",
+                "aiTool.title": "AI Erase & AI Add Image Tool",
+                "aiTool.upload.text": "Drag & drop your image here or click to browse",
+                "aiTool.upload.button": "Select Image",
+                "aiTool.options.title": "AI Tool Options",
+                "aiTool.toolSelection.title": "Select Tool",
+                "aiTool.toolSelection.erase": "AI Erase",
+                "aiTool.toolSelection.background": "AI Background",
+                "aiTool.toolSelection.addImage": "AI Add Image",
+                "aiTool.eraser.selectionInfo": "Click and drag to select areas to remove",
+                "aiTool.eraser.instructions": "Drag your cursor to create selection rectangles. The selected areas will be removed and replaced with background.",
+                "aiTool.background.upload": "Upload Background Image",
+                "aiTool.background.instructions": "Select a color or upload an image to use as background. You can drag and drop the background image to adjust its position.",
+                "aiTool.addImage.upload": "Upload Image to Add",
+                "aiTool.addImage.instructions": "Upload an image to add to your photo. Click on the canvas to place it. You can drag and drop the added image to adjust its position.",
+                "aiTool.format.title": "Output Format",
+                "aiTool.processing": "Processing: 0%",
+                "aiTool.process": "Process with AI",
+                "aiTool.download": "Download",
+                "aiTool.reset": "Reset",
+                "aiTool.controls.zoomIn": "Zoom In",
+                "aiTool.controls.zoomOut": "Zoom Out",
+                "aiTool.controls.reset": "Reset View",
+                "aiTool.controls.undo": "Undo",
+                "footer.follow": "FOLLOW US",
+                "footer.categories": "Popular Categories",
+                "footer.categories.pdf": "PDF Tools",
+                "footer.categories.image": "Image Tools",
+                "footer.categories.text": "Text Tools",
+                "footer.categories.av": "Audio/Video Tools",
+                "footer.categories.web": "Web Developer Tools",
+                "footer.categories.calc": "Calculator Tools",
+                "footer.categories.util": "Utility Tools",
+                "footer.categories.color": "Color Tools",
+                "footer.quicklinks": "Quick Links",
+                "footer.links.tools": "All Tools",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Contact",
+                "footer.links.privacy": "Privacy Policy",
+                "footer.links.disclaimer": "Disclaimer",
+                "footer.links.terms": "Terms of Service",
+                "footer.copyright": "© 2025 LollyPoPDF. All rights reserved."
+            },
+            es: {
+                "nav.home": "Inicio",
+                "nav.about": "Sobre Nosotros",
+                "nav.tools": "Herramientas",
+                "nav.contact": "Contacto",
+                "hero.title": "Herramienta AI para Borrar y Agregar Imágenes",
+                "hero.description": "Herramienta online gratuita con IA para borrar objetos y agregar imágenes a tus fotos. Elimina elementos no deseados o agrega nuevos objetos de forma natural. No se requiere registro.",
+                "howto.title": "Cómo Usar la Herramienta de Imagen con IA",
+                "howto.step1.title": "Sube Tu Imagen",
+                "howto.step1.description": "Haz clic en el área de carga o arrastra y suelta tu archivo de imagen. Admitimos JPG, PNG, GIF, WEBP y más.",
+                "howto.step2.title": "Elige Herramienta de IA",
+                "howto.step2.description": "Selecciona entre AI Borrar para eliminar objetos o AI Agregar para insertar nuevas imágenes en tu foto.",
+                "howto.step3.title": "Editar y Procesar",
+                "howto.step3.description": "Usa las herramientas para marcar áreas a borrar o agregar nuevas imágenes. Luego procesa con IA para resultados naturales.",
+                "howto.step4.title": "Descargar Resultado",
+                "howto.step4.description": "Descarga tu imagen procesada por IA con un clic. Sin marcas de agua, sin registro requerido.",
+                "aiTool.title": "Herramienta AI para Borrar y Agregar Imágenes",
+                "aiTool.upload.text": "Arrastra y suelta tu imagen aquí o haz clic para buscar",
+                "aiTool.upload.button": "Seleccionar Imagen",
+                "aiTool.options.title": "Opciones de Herramienta de IA",
+                "aiTool.toolSelection.title": "Seleccionar Herramienta",
+                "aiTool.toolSelection.erase": "AI Borrar",
+                "aiTool.toolSelection.background": "AI Fondo",
+                "aiTool.toolSelection.addImage": "AI Agregar Imagen",
+                "aiTool.eraser.selectionInfo": "Haz clic y arrastra para seleccionar áreas a eliminar",
+                "aiTool.eraser.instructions": "Arrastra el cursor para crear rectángulos de selección. Las áreas seleccionadas se eliminarán y reemplazarán con el fondo.",
+                "aiTool.background.upload": "Subir Imagen de Fondo",
+                "aiTool.background.instructions": "Selecciona un color o sube una imagen para usar como fondo. Puedes arrastrar y soltar la imagen de fondo para ajustar su posición.",
+                "aiTool.addImage.upload": "Subir Imagen para Agregar",
+                "aiTool.addImage.instructions": "Sube una imagen para agregar a tu foto. Haz clic en el lienzo para colocarla. Puedes arrastrar y soltar la imagen agregada para ajustar su posición.",
+                "aiTool.format.title": "Formato de Salida",
+                "aiTool.processing": "Procesando: 0%",
+                "aiTool.process": "Procesar con IA",
+                "aiTool.download": "Descargar",
+                "aiTool.reset": "Restablecer",
+                "aiTool.controls.zoomIn": "Acercar",
+                "aiTool.controls.zoomOut": "Alejar",
+                "aiTool.controls.reset": "Restablecer Vista",
+                "aiTool.controls.undo": "Deshacer",
+                "footer.follow": "SÍGUENOS",
+                "footer.categories": "Categorías Populares",
+                "footer.categories.pdf": "Herramientas PDF",
+                "footer.categories.image": "Herramientas de Imagen",
+                "footer.categories.text": "Herramientas de Texto",
+                "footer.categories.av": "Herramientas de Audio/Video",
+                "footer.categories.web": "Herramientas Web Desarrollador",
+                "footer.categories.calc": "Herramientas de Calculadora",
+                "footer.categories.util": "Herramientas de Utilidad",
+                "footer.categories.color": "Herramientas de Color",
+                "footer.quicklinks": "Enlaces Rápidos",
+                "footer.links.tools": "Todas las Herramientas",
+                "footer.links.faq": "Preguntas Frecuentes",
+                "footer.links.contact": "Contacto",
+                "footer.links.privacy": "Política de Privacidad",
+                "footer.links.disclaimer": "Descargo de Responsabilidad",
+                "footer.links.terms": "Términos de Servicio",
+                "footer.copyright": "© 2025 LollyPoPDF. Todos los derechos reservados."
+            },
+        };
+
+        // Function to change language
+        function changeLanguage(langCode) {
+            const langData = translations[langCode];
+            if (!langData) return;
+            
+            // Update all elements with data-i18n attribute
+            document.querySelectorAll('[data-i18n]').forEach(element => {
+                const key = element.getAttribute('data-i18n');
+                if (langData[key]) {
+                    element.textContent = langData[key];
+                }
+            });
+            
+            // Update current language display
+            currentLanguageElement.textContent = languages.find(lang => lang.code === langCode)?.name || 'English';
+            
+            // Save language preference
+            localStorage.setItem('language', langCode);
+        }
+
+        // Initialize language
+        const savedLanguage = localStorage.getItem('language') || 'en';
+        changeLanguage(savedLanguage);
+        
+        // Language selection handler
+        languageDropdown.addEventListener('click', (e) => {
+            if (e.target.classList.contains('language-option')) {
+                const langCode = e.target.getAttribute('data-lang');
+                changeLanguage(langCode);
+            }
+        });
+    </script>
+</body>
+</html>

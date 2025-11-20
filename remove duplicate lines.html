@@ -850,6 +850,18 @@
             background-color: var(--primary-dark);
         }
 
+        /* Mobile Instructions */
+        .mobile-instructions {
+            background-color: rgba(16, 185, 129, 0.1);
+            border: 1px solid var(--success-color);
+            color: var(--success-color);
+            padding: 15px;
+            border-radius: var(--border-radius);
+            margin-bottom: 20px;
+            text-align: center;
+            display: none;
+        }
+
         /* Responsive Styles */
         @media (max-width: 992px) {
             .steps-container {
@@ -963,7 +975,7 @@
     <section class="hero">
         <div class="container">
             <h1 data-i18n="hero.title">Universal Screen Recorder</h1>
-            <p data-i18n="hero.description">Record your screen directly in your browser. Works on all devices and browsers including older versions. No installation required. All processing happens locally with no file size limits and complete privacy.</p>
+            <p data-i18n="hero.description">Record your screen directly in your browser. Works on all devices including mobile phones, tablets, and PCs. No installation required. All processing happens locally with no file size limits and complete privacy.</p>
         </div>
     </section>
 
@@ -975,12 +987,12 @@
                 <div class="step-box">
                     <div class="step-number">1</div>
                     <h3 class="step-title" data-i18n="howto.step1.title">Configure Recording Settings</h3>
-                    <p class="step-description" data-i18n="howto.step1.description">Choose your preferred video quality and audio settings. For mobile devices, we support all major browsers including older versions.</p>
+                    <p class="step-description" data-i18n="howto.step1.description">Choose your preferred video quality and audio settings. For mobile devices, follow the specific instructions provided.</p>
                 </div>
                 <div class="step-box">
                     <div class="step-number">2</div>
                     <h3 class="step-title" data-i18n="howto.step2.title">Start Recording</h3>
-                    <p class="step-description" data-i18n="howto.step2.description">Click the "Start Recording" button. If standard recording fails, use the alternative method for better compatibility.</p>
+                    <p class="step-description" data-i18n="howto.step2.description">Click the "Start Recording" button. If standard recording fails, use the alternative method for mobile devices.</p>
                 </div>
                 <div class="step-box">
                     <div class="step-number">3</div>
@@ -1005,6 +1017,12 @@
                 <div class="device-info" id="deviceInfo">
                     <i class="fas fa-mobile-alt"></i>
                     <span id="deviceTypeText">Detecting your device...</span>
+                </div>
+
+                <!-- Mobile Instructions -->
+                <div class="mobile-instructions" id="mobileInstructions">
+                    <i class="fas fa-info-circle"></i>
+                    <span id="mobileInstructionsText">For mobile screen recording, use Chrome or Samsung Internet browser and enable screen recording permissions.</span>
                 </div>
 
                 <!-- Alternative Recording Method -->
@@ -1276,6 +1294,8 @@
         const alternativeMethod = document.getElementById('alternativeMethod');
         const altMethodText = document.getElementById('altMethodText');
         const altRecordBtn = document.getElementById('altRecordBtn');
+        const mobileInstructions = document.getElementById('mobileInstructions');
+        const mobileInstructionsText = document.getElementById('mobileInstructionsText');
         
         // Options
         const videoQuality = document.getElementById('videoQuality');
@@ -1291,6 +1311,7 @@
         let recordedBlob = null;
         let audioContext = null;
         let usingAlternativeMethod = false;
+        let isMobileDevice = false;
         
         // Detect device type
         function detectDeviceType() {
@@ -1298,15 +1319,19 @@
             
             // Check for mobile devices
             if (/android/i.test(userAgent)) {
+                isMobileDevice = true;
                 return 'Android';
             }
             if (/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream) {
+                isMobileDevice = true;
                 return 'iOS';
             }
             if (/Windows Phone/i.test(userAgent)) {
+                isMobileDevice = true;
                 return 'Windows Phone';
             }
             if (/Tablet|iPad/i.test(userAgent)) {
+                isMobileDevice = true;
                 return 'Tablet';
             }
             
@@ -1331,25 +1356,30 @@
             
             switch(deviceType) {
                 case 'Android':
-                    deviceMessage = 'You are using an Android device. Screen recording works on all major browsers including older versions.';
+                    deviceMessage = 'You are using an Android device. For screen recording, use Chrome or Samsung Internet browser.';
+                    mobileInstructionsText.textContent = 'For Android screen recording: 1) Use Chrome or Samsung Internet 2) Enable screen recording permissions 3) Select "Screen" when prompted';
+                    mobileInstructions.style.display = 'block';
                     break;
                 case 'iOS':
-                    deviceMessage = 'You are using an iOS device. Screen recording works on Safari and other browsers.';
+                    deviceMessage = 'You are using an iOS device. Screen recording works on Safari (iOS 14+).';
+                    mobileInstructionsText.textContent = 'For iOS screen recording: 1) Use Safari browser 2) iOS 14+ required 3) Enable screen recording in Settings';
+                    mobileInstructions.style.display = 'block';
                     break;
                 case 'Windows Phone':
-                    deviceMessage = 'You are using a Windows Phone. Screen recording works on available browsers.';
+                    deviceMessage = 'You are using a Windows Phone. Screen recording may have limited support.';
                     break;
                 case 'Tablet':
-                    deviceMessage = 'You are using a tablet. Screen recording works across all browsers.';
+                    deviceMessage = 'You are using a tablet. Follow mobile device instructions for screen recording.';
+                    mobileInstructions.style.display = 'block';
                     break;
                 case 'Windows PC':
-                    deviceMessage = 'You are using a Windows PC. Screen recording works on all major browsers.';
+                    deviceMessage = 'You are using a Windows PC. Screen recording works best on Chrome, Edge, or Firefox.';
                     break;
                 case 'Mac':
-                    deviceMessage = 'You are using a Mac. Screen recording works on all major browsers.';
+                    deviceMessage = 'You are using a Mac. Screen recording works best on Chrome, Edge, or Safari.';
                     break;
                 case 'Linux PC':
-                    deviceMessage = 'You are using a Linux PC. Screen recording works on all major browsers.';
+                    deviceMessage = 'You are using a Linux PC. Screen recording works best on Chrome or Firefox.';
                     break;
                 default:
                     deviceMessage = 'Screen recording works on most modern browsers and devices.';
@@ -1427,7 +1457,6 @@
         // Check browser compatibility and show alternative method if needed
         function checkCompatibility() {
             const deviceType = detectDeviceType();
-            const isMobile = ['Android', 'iOS', 'Windows Phone', 'Tablet'].includes(deviceType);
             
             // Check for basic MediaRecorder support
             if (!MediaRecorder) {
@@ -1437,8 +1466,8 @@
             
             // Check for getDisplayMedia support
             if (!navigator.mediaDevices || !navigator.mediaDevices.getDisplayMedia) {
-                if (isMobile) {
-                    showAlternativeMethod('Screen recording not available. Try alternative method for mobile devices.');
+                if (isMobileDevice) {
+                    showAlternativeMethod('Screen recording not available on this mobile browser. Try alternative method.');
                 } else {
                     showAlternativeMethod('Screen recording not available in your browser.');
                 }
@@ -1887,12 +1916,12 @@
                 "nav.tools": "Tools",
                 "nav.contact": "Contact",
                 "hero.title": "Universal Screen Recorder",
-                "hero.description": "Record your screen directly in your browser. Works on all devices and browsers including older versions. No installation required. All processing happens locally with no file size limits and complete privacy.",
+                "hero.description": "Record your screen directly in your browser. Works on all devices including mobile phones, tablets, and PCs. No installation required. All processing happens locally with no file size limits and complete privacy.",
                 "howto.title": "How to Use the Screen Recorder",
                 "howto.step1.title": "Configure Recording Settings",
-                "howto.step1.description": "Choose your preferred video quality and audio settings. For mobile devices, we support all major browsers including older versions.",
+                "howto.step1.description": "Choose your preferred video quality and audio settings. For mobile devices, follow the specific instructions provided.",
                 "howto.step2.title": "Start Recording",
-                "howto.step2.description": "Click the \"Start Recording\" button. If standard recording fails, use the alternative method for better compatibility.",
+                "howto.step2.description": "Click the \"Start Recording\" button. If standard recording fails, use the alternative method for mobile devices.",
                 "howto.step3.title": "Record Your Content",
                 "howto.step3.description": "Record your screen, presentation, tutorial, or meeting. Watch the timer and recording indicator to track your progress.",
                 "howto.step4.title": "Stop & Download",
@@ -1942,12 +1971,12 @@
                 "nav.tools": "Herramientas",
                 "nav.contact": "Contacto",
                 "hero.title": "Grabador de Pantalla Universal",
-                "hero.description": "Graba tu pantalla directamente en tu navegador. Funciona en todos los dispositivos y navegadores, incluidas versiones antiguas. No se requiere instalación. Todo el procesamiento ocurre localmente sin límites de tamaño de archivo y con privacidad completa.",
+                "hero.description": "Graba tu pantalla directamente en tu navegador. Funciona en todos los dispositivos, incluidos teléfonos móviles, tabletas y PC. No se requiere instalación. Todo el procesamiento ocurre localmente sin límites de tamaño de archivo y con privacidad completa.",
                 "howto.title": "Cómo Usar el Grabador de Pantalla",
                 "howto.step1.title": "Configurar Ajustes de Grabación",
-                "howto.step1.description": "Elige tu calidad de video y ajustes de audio preferidos. Para dispositivos móviles, admitimos todos los navegadores principales, incluidas versiones antiguas.",
+                "howto.step1.description": "Elige tu calidad de video y ajustes de audio preferidos. Para dispositivos móviles, sigue las instrucciones específicas proporcionadas.",
                 "howto.step2.title": "Iniciar Grabación",
-                "howto.step2.description": "Haz clic en el botón \"Iniciar Grabación\". Si la grabación estándar falla, usa el método alternativo para mejor compatibilidad.",
+                "howto.step2.description": "Haz clic en el botón \"Iniciar Grabación\". Si la grabación estándar falla, usa el método alternativo para dispositivos móviles.",
                 "howto.step3.title": "Graba Tu Contenido",
                 "howto.step3.description": "Graba tu pantalla, presentación, tutorial o reunión. Observa el temporizador y el indicador de grabación para seguir tu progreso.",
                 "howto.step4.title": "Detener y Descargar",

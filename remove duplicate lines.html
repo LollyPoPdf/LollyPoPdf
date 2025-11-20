@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Universal Screen Recorder | LollyPoPdf</title>
+    <title>Screen Recorder | LollyPoPdf</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
@@ -783,30 +783,6 @@
             text-align: center;
         }
 
-        /* Audio Test Section */
-        .audio-test {
-            background-color: var(--bg-secondary);
-            border-radius: var(--border-radius);
-            padding: 15px;
-            margin-bottom: 20px;
-            text-align: center;
-        }
-
-        .audio-test-btn {
-            background-color: var(--primary-color);
-            color: white;
-            border: none;
-            border-radius: 20px;
-            padding: 8px 16px;
-            cursor: pointer;
-            font-size: 14px;
-            margin: 0 5px;
-        }
-
-        .audio-test-btn:hover {
-            background-color: var(--primary-dark);
-        }
-
         /* Device Detection */
         .device-info {
             background-color: rgba(147, 112, 219, 0.1);
@@ -936,7 +912,7 @@
     <section class="hero">
         <div class="container">
             <h1 data-i18n="hero.title">Universal Screen Recorder</h1>
-            <p data-i18n="hero.description">Record your screen, webcam, and audio directly in your browser. Works on PC, Mobile, and Tablet devices. No installation required. All processing happens locally with no file size limits and complete privacy.</p>
+            <p data-i18n="hero.description">Record your screen directly in your browser. Works on PC, Mobile, and Tablet devices. No installation required. All processing happens locally with no file size limits and complete privacy.</p>
         </div>
     </section>
 
@@ -948,12 +924,12 @@
                 <div class="step-box">
                     <div class="step-number">1</div>
                     <h3 class="step-title" data-i18n="howto.step1.title">Configure Recording Settings</h3>
-                    <p class="step-description" data-i18n="howto.step1.description">Choose what you want to record - screen, webcam, or both. Select audio sources and adjust quality settings for optimal recording.</p>
+                    <p class="step-description" data-i18n="howto.step1.description">Choose your preferred video quality and audio settings. For mobile devices, ensure you're using a supported browser like Chrome or Safari.</p>
                 </div>
                 <div class="step-box">
                     <div class="step-number">2</div>
                     <h3 class="step-title" data-i18n="howto.step2.title">Start Recording</h3>
-                    <p class="step-description" data-i18n="howto.step2.description">Click the "Start Recording" button. Your browser will ask for permission to record your screen and/or audio. Grant permission to begin.</p>
+                    <p class="step-description" data-i18n="howto.step2.description">Click the "Start Recording" button. Your browser will ask for permission to record your screen. Grant permission to begin.</p>
                 </div>
                 <div class="step-box">
                     <div class="step-number">3</div>
@@ -972,7 +948,7 @@
     <!-- Tool Section -->
     <section class="tool-section">
         <div class="container">
-            <h2 class="tool-title" data-i18n="tool.title">Universal Screen Recorder</h2>
+            <h2 class="tool-title" data-i18n="tool.title">Screen Recorder</h2>
             <div class="tool-container">
                 <!-- Device Detection Info -->
                 <div class="device-info" id="deviceInfo">
@@ -989,19 +965,7 @@
                 <!-- Audio Information -->
                 <div class="audio-info">
                     <i class="fas fa-info-circle"></i>
-                    <span data-i18n="tool.audio.info">For system audio recording, use Chrome on Windows/macOS and enable "Share audio" when prompted. Microphone audio works on all browsers.</span>
-                </div>
-
-                <!-- Audio Test Section -->
-                <div class="audio-test">
-                    <p data-i18n="tool.audio.test">Test your audio before recording:</p>
-                    <button class="audio-test-btn" id="testMicrophone">
-                        <i class="fas fa-microphone"></i> Test Microphone
-                    </button>
-                    <button class="audio-test-btn" id="testPlayback">
-                        <i class="fas fa-volume-up"></i> Test Playback
-                    </button>
-                    <audio id="testAudio" style="display: none;"></audio>
+                    <span data-i18n="tool.audio.info">For system audio recording, use Chrome on Windows/macOS and enable "Share audio" when prompted.</span>
                 </div>
 
                 <!-- Status Messages -->
@@ -1030,15 +994,6 @@
                 <div class="controls-container">
                     <h3 class="controls-title" data-i18n="tool.controls.title">Recording Options</h3>
                     <div class="options-grid">
-                        <div class="option-group">
-                            <label for="recordingType" class="option-label" data-i18n="tool.controls.type">Recording Type:</label>
-                            <select id="recordingType" class="option-select">
-                                <option value="screen" data-i18n="tool.controls.screen">Screen Only</option>
-                                <option value="camera" data-i18n="tool.controls.camera">Camera Only</option>
-                                <option value="both" data-i18n="tool.controls.both">Screen + Camera</option>
-                            </select>
-                        </div>
-                        
                         <div class="option-group">
                             <label for="videoQuality" class="option-label" data-i18n="tool.controls.quality">Video Quality:</label>
                             <select id="videoQuality" class="option-select">
@@ -1071,10 +1026,6 @@
                             <div class="checkbox-group">
                                 <input type="checkbox" id="systemAudio">
                                 <label for="systemAudio" data-i18n="tool.controls.system">System Audio</label>
-                            </div>
-                            <div class="checkbox-group">
-                                <input type="checkbox" id="microphoneAudio" checked>
-                                <label for="microphoneAudio" data-i18n="tool.controls.microphone">Microphone</label>
                             </div>
                         </div>
                     </div>
@@ -1245,19 +1196,14 @@
         const recordingIndicator = document.getElementById('recordingIndicator');
         const statusMessage = document.getElementById('statusMessage');
         const compatibilityWarning = document.getElementById('compatibilityWarning');
-        const testMicrophone = document.getElementById('testMicrophone');
-        const testPlayback = document.getElementById('testPlayback');
-        const testAudio = document.getElementById('testAudio');
         const deviceInfo = document.getElementById('deviceInfo');
         const deviceTypeText = document.getElementById('deviceTypeText');
         
         // Options
-        const recordingType = document.getElementById('recordingType');
         const videoQuality = document.getElementById('videoQuality');
         const frameRate = document.getElementById('frameRate');
         const outputFormat = document.getElementById('outputFormat');
         const systemAudio = document.getElementById('systemAudio');
-        const microphoneAudio = document.getElementById('microphoneAudio');
         
         let mediaRecorder = null;
         let recordedChunks = [];
@@ -1265,8 +1211,6 @@
         let startTime = null;
         let timerInterval = null;
         let recordedBlob = null;
-        let audioContext = null;
-        let microphoneStream = null;
         
         // Detect device type
         function detectDeviceType() {
@@ -1333,72 +1277,6 @@
             
             deviceTypeText.textContent = deviceMessage;
         }
-        
-        // Audio Test Functions
-        testMicrophone.addEventListener('click', async () => {
-            try {
-                const testStream = await navigator.mediaDevices.getUserMedia({ 
-                    audio: true,
-                    video: false 
-                });
-                
-                // Create audio context and connect to destination
-                audioContext = new (window.AudioContext || window.webkitAudioContext)();
-                const source = audioContext.createMediaStreamSource(testStream);
-                const destination = audioContext.createMediaStreamDestination();
-                source.connect(destination);
-                
-                // Create a new stream with the processed audio
-                const processedStream = new MediaStream([
-                    ...destination.stream.getAudioTracks()
-                ]);
-                
-                // Set the test audio source
-                testAudio.srcObject = processedStream;
-                testAudio.play().catch(e => console.log('Playback failed:', e));
-                
-                showStatus('Microphone test started. You should hear your voice.', 'success');
-                
-                // Stop test after 5 seconds
-                setTimeout(() => {
-                    testStream.getTracks().forEach(track => track.stop());
-                    testAudio.srcObject = null;
-                    showStatus('Microphone test completed.', 'info');
-                }, 5000);
-                
-            } catch (error) {
-                showStatus('Microphone test failed. Please check permissions.', 'error');
-            }
-        });
-        
-        testPlayback.addEventListener('click', () => {
-            // Create a simple test tone
-            try {
-                audioContext = new (window.AudioContext || window.webkitAudioContext)();
-                const oscillator = audioContext.createOscillator();
-                const gainNode = audioContext.createGain();
-                
-                oscillator.connect(gainNode);
-                gainNode.connect(audioContext.destination);
-                
-                oscillator.frequency.value = 440; // A4 note
-                oscillator.type = 'sine';
-                
-                gainNode.gain.value = 0.1; // Low volume
-                
-                oscillator.start();
-                
-                showStatus('Playback test started. You should hear a tone.', 'success');
-                
-                setTimeout(() => {
-                    oscillator.stop();
-                    showStatus('Playback test completed.', 'info');
-                }, 2000);
-                
-            } catch (error) {
-                showStatus('Playback test failed.', 'error');
-            }
-        });
         
         // Check browser compatibility
         function checkCompatibility() {
@@ -1467,103 +1345,24 @@
         // Record button handler
         recordBtn.addEventListener('click', async () => {
             try {
-                showStatus('Requesting recording permissions...', 'info');
+                showStatus('Requesting screen recording permissions...', 'info');
                 
-                let screenStream = null;
-                let microphoneStream = null;
-                let combinedStream = null;
+                const displayMediaOptions = {
+                    video: {
+                        cursor: 'always'
+                    },
+                    audio: systemAudio.checked
+                };
                 
-                // Get screen stream
-                if (recordingType.value === 'screen' || recordingType.value === 'both') {
-                    const displayMediaOptions = {
-                        video: {
-                            cursor: 'always'
-                        },
-                        audio: systemAudio.checked
-                    };
-                    
-                    // For mobile devices, we might need to handle permissions differently
-                    const deviceType = detectDeviceType();
-                    const isMobile = ['Android', 'iOS', 'Windows Phone', 'Tablet'].includes(deviceType);
-                    
-                    if (isMobile) {
-                        // On mobile, we need to use the MediaRecorder API with proper constraints
-                        try {
-                            // Try to get display media first
-                            screenStream = await navigator.mediaDevices.getDisplayMedia(displayMediaOptions);
-                        } catch (error) {
-                            // If getDisplayMedia fails, try to use the camera as fallback
-                            showStatus('Screen recording not available. Using camera instead.', 'warning');
-                            screenStream = await navigator.mediaDevices.getUserMedia({
-                                video: true,
-                                audio: systemAudio.checked
-                            });
-                        }
-                    } else {
-                        // Desktop - use standard getDisplayMedia
-                        screenStream = await navigator.mediaDevices.getDisplayMedia(displayMediaOptions);
-                    }
-                    
-                    // Check if system audio is actually available
-                    const hasSystemAudio = screenStream.getAudioTracks().length > 0;
-                    if (systemAudio.checked && !hasSystemAudio) {
-                        showStatus('System audio is not available. Using microphone only.', 'warning');
-                    }
-                }
+                // Get screen stream using getDisplayMedia
+                stream = await navigator.mediaDevices.getDisplayMedia(displayMediaOptions);
                 
-                // Get microphone audio if requested
-                if (microphoneAudio.checked) {
-                    try {
-                        microphoneStream = await navigator.mediaDevices.getUserMedia({
-                            audio: {
-                                echoCancellation: true,
-                                noiseSuppression: true,
-                                autoGainControl: true,
-                                channelCount: 2
-                            }
-                        });
-                    } catch (error) {
-                        console.warn('Microphone access denied:', error);
-                        showStatus('Microphone access denied. Recording without microphone audio.', 'warning');
-                    }
-                }
-                
-                // Combine streams properly
-                if (screenStream) {
-                    combinedStream = new MediaStream();
-                    
-                    // Add video track from screen
-                    screenStream.getVideoTracks().forEach(track => {
-                        combinedStream.addTrack(track);
-                    });
-                    
-                    // Add audio tracks
-                    if (systemAudio.checked) {
-                        screenStream.getAudioTracks().forEach(track => {
-                            combinedStream.addTrack(track);
-                        });
-                    }
-                    
-                    if (microphoneStream) {
-                        microphoneStream.getAudioTracks().forEach(track => {
-                            combinedStream.addTrack(track);
-                        });
-                    }
-                } else if (recordingType.value === 'camera') {
-                    // For camera only
-                    combinedStream = await navigator.mediaDevices.getUserMedia({
-                        video: true,
-                        audio: microphoneAudio.checked
-                    });
-                }
-                
-                // Set up live preview WITHOUT muting
-                livePreview.srcObject = combinedStream;
-                livePreview.volume = 1.0; // Ensure volume is up
+                // Set up live preview
+                livePreview.srcObject = stream;
                 
                 // Set up MediaRecorder with proper audio codec
-                const options = getMediaRecorderOptions(combinedStream);
-                mediaRecorder = new MediaRecorder(combinedStream, options);
+                const options = getMediaRecorderOptions(stream);
+                mediaRecorder = new MediaRecorder(stream, options);
                 
                 // Reset recorded chunks
                 recordedChunks = [];
@@ -1600,14 +1399,8 @@
                     downloadBtn.style.display = 'flex';
                     
                     // Stop all tracks
-                    if (combinedStream) {
-                        combinedStream.getTracks().forEach(track => track.stop());
-                    }
-                    if (screenStream) {
-                        screenStream.getTracks().forEach(track => track.stop());
-                    }
-                    if (microphoneStream) {
-                        microphoneStream.getTracks().forEach(track => track.stop());
+                    if (stream) {
+                        stream.getTracks().forEach(track => track.stop());
                     }
                     
                     // Hide recording indicator
@@ -1621,7 +1414,7 @@
                     recordBtn.disabled = false;
                     stopBtn.disabled = true;
                     
-                    showStatus('Recording completed successfully! Video with audio is ready.', 'success');
+                    showStatus('Recording completed successfully! Video is ready.', 'success');
                 };
                 
                 // Handle recording errors
@@ -1647,11 +1440,11 @@
                 recordBtn.disabled = true;
                 stopBtn.disabled = false;
                 
-                showStatus('Recording started successfully! Audio should be captured.', 'success');
+                showStatus('Screen recording started successfully!', 'success');
                 
                 // Handle when user stops sharing via browser UI
-                if (combinedStream) {
-                    combinedStream.getVideoTracks()[0].onended = () => {
+                if (stream) {
+                    stream.getVideoTracks()[0].onended = () => {
                         if (mediaRecorder && mediaRecorder.state === 'recording') {
                             mediaRecorder.stop();
                             showStatus('Recording stopped by browser.', 'info');
@@ -1661,14 +1454,14 @@
                 
             } catch (error) {
                 console.error('Error starting recording:', error);
-                let errorMessage = 'Failed to start recording. ';
+                let errorMessage = 'Failed to start screen recording. ';
                 
                 if (error.name === 'NotAllowedError') {
                     errorMessage += 'Permission denied. Please allow screen sharing.';
                 } else if (error.name === 'NotFoundError') {
-                    errorMessage += 'No screen/camera found.';
+                    errorMessage += 'No screen found.';
                 } else if (error.name === 'NotSupportedError') {
-                    errorMessage += 'Your browser does not support this feature.';
+                    errorMessage += 'Your browser does not support screen recording.';
                 } else {
                     errorMessage += 'Please check your permissions and try again.';
                 }
@@ -1698,7 +1491,7 @@
             a.click();
             document.body.removeChild(a);
             
-            showStatus('Download started! The video should include audio.', 'success');
+            showStatus('Download started!', 'success');
         });
         
         // Clear button handler
@@ -1847,28 +1640,23 @@
                 "nav.tools": "Tools",
                 "nav.contact": "Contact",
                 "hero.title": "Universal Screen Recorder",
-                "hero.description": "Record your screen, webcam, and audio directly in your browser. Works on PC, Mobile, and Tablet devices. No installation required. All processing happens locally with no file size limits and complete privacy.",
+                "hero.description": "Record your screen directly in your browser. Works on PC, Mobile, and Tablet devices. No installation required. All processing happens locally with no file size limits and complete privacy.",
                 "howto.title": "How to Use the Screen Recorder",
                 "howto.step1.title": "Configure Recording Settings",
-                "howto.step1.description": "Choose what you want to record - screen, webcam, or both. Select audio sources and adjust quality settings for optimal recording.",
+                "howto.step1.description": "Choose your preferred video quality and audio settings. For mobile devices, ensure you're using a supported browser like Chrome or Safari.",
                 "howto.step2.title": "Start Recording",
-                "howto.step2.description": "Click the \"Start Recording\" button. Your browser will ask for permission to record your screen and/or audio. Grant permission to begin.",
+                "howto.step2.description": "Click the \"Start Recording\" button. Your browser will ask for permission to record your screen. Grant permission to begin.",
                 "howto.step3.title": "Record Your Content",
                 "howto.step3.description": "Record your screen, presentation, tutorial, or meeting. Watch the timer and recording indicator to track your progress.",
                 "howto.step4.title": "Stop & Download",
                 "howto.step4.description": "Click \"Stop Recording\" when finished. Preview your recording and download it in WebM or MP4 format with one click.",
-                "tool.title": "Universal Screen Recorder",
+                "tool.title": "Screen Recorder",
                 "tool.compatibility.warning": "Screen recording may not work on all browsers. For best results, use Chrome, Edge, or Firefox.",
-                "tool.audio.info": "For system audio recording, use Chrome on Windows/macOS and enable \"Share audio\" when prompted. Microphone audio works on all browsers.",
-                "tool.audio.test": "Test your audio before recording:",
+                "tool.audio.info": "For system audio recording, use Chrome on Windows/macOS and enable \"Share audio\" when prompted.",
                 "tool.preview.live": "Live Preview",
                 "tool.preview.recorded": "Recorded Video",
                 "tool.recording": "Recording",
                 "tool.controls.title": "Recording Options",
-                "tool.controls.type": "Recording Type:",
-                "tool.controls.screen": "Screen Only",
-                "tool.controls.camera": "Camera Only",
-                "tool.controls.both": "Screen + Camera",
                 "tool.controls.quality": "Video Quality:",
                 "tool.controls.high": "High (1080p)",
                 "tool.controls.medium": "Medium (720p)",
@@ -1877,7 +1665,6 @@
                 "tool.controls.format": "Output Format:",
                 "tool.controls.audio": "Audio Sources:",
                 "tool.controls.system": "System Audio",
-                "tool.controls.microphone": "Microphone",
                 "tool.record": "Start Recording",
                 "tool.stop": "Stop Recording",
                 "tool.download": "Download Video",
@@ -1907,28 +1694,23 @@
                 "nav.tools": "Herramientas",
                 "nav.contact": "Contacto",
                 "hero.title": "Grabador de Pantalla Universal",
-                "hero.description": "Graba tu pantalla, cámara web y audio directamente en tu navegador. Funciona en PC, móviles y tabletas. No se requiere instalación. Todo el procesamiento ocurre localmente sin límites de tamaño de archivo y con privacidad completa.",
+                "hero.description": "Graba tu pantalla directamente en tu navegador. Funciona en PC, móviles y tabletas. No se requiere instalación. Todo el procesamiento ocurre localmente sin límites de tamaño de archivo y con privacidad completa.",
                 "howto.title": "Cómo Usar el Grabador de Pantalla",
                 "howto.step1.title": "Configurar Ajustes de Grabación",
-                "howto.step1.description": "Elige lo que quieres grabar: pantalla, cámara web o ambas. Selecciona fuentes de audio y ajusta la calidad para una grabación óptima.",
+                "howto.step1.description": "Elige tu calidad de video y ajustes de audio preferidos. Para dispositivos móviles, asegúrate de usar un navegador compatible como Chrome o Safari.",
                 "howto.step2.title": "Iniciar Grabación",
-                "howto.step2.description": "Haz clic en el botón \"Iniciar Grabación\". Tu navegador pedirá permiso para grabar tu pantalla y/o audio. Otorga permiso para comenzar.",
+                "howto.step2.description": "Haz clic en el botón \"Iniciar Grabación\". Tu navegador pedirá permiso para grabar tu pantalla. Otorga permiso para comenzar.",
                 "howto.step3.title": "Graba Tu Contenido",
                 "howto.step3.description": "Graba tu pantalla, presentación, tutorial o reunión. Observa el temporizador y el indicador de grabación para seguir tu progreso.",
                 "howto.step4.title": "Detener y Descargar",
                 "howto.step4.description": "Haz clic en \"Detener Grabación\" cuando termines. Previsualiza tu grabación y descárgala en formato WebM o MP4 con un clic.",
-                "tool.title": "Grabador de Pantalla Universal",
+                "tool.title": "Grabador de Pantalla",
                 "tool.compatibility.warning": "La grabación de pantalla puede no funcionar en todos los navegadores. Para mejores resultados, usa Chrome, Edge o Firefox.",
-                "tool.audio.info": "Para grabar audio del sistema, usa Chrome en Windows/macOS y activa \"Compartir audio\" cuando se te solicite. El audio del micrófono funciona en todos los navegadores.",
-                "tool.audio.test": "Prueba tu audio antes de grabar:",
+                "tool.audio.info": "Para grabar audio del sistema, usa Chrome en Windows/macOS y activa \"Compartir audio\" cuando se te solicite.",
                 "tool.preview.live": "Vista Previa en Vivo",
                 "tool.preview.recorded": "Video Grabado",
                 "tool.recording": "Grabando",
                 "tool.controls.title": "Opciones de Grabación",
-                "tool.controls.type": "Tipo de Grabación:",
-                "tool.controls.screen": "Solo Pantalla",
-                "tool.controls.camera": "Solo Cámara",
-                "tool.controls.both": "Pantalla + Cámara",
                 "tool.controls.quality": "Calidad de Video:",
                 "tool.controls.high": "Alta (1080p)",
                 "tool.controls.medium": "Media (720p)",
@@ -1937,7 +1719,6 @@
                 "tool.controls.format": "Formato de Salida:",
                 "tool.controls.audio": "Fuentes de Audio:",
                 "tool.controls.system": "Audio del Sistema",
-                "tool.controls.microphone": "Micrófono",
                 "tool.record": "Iniciar Grabación",
                 "tool.stop": "Detener Grabación",
                 "tool.download": "Descargar Video",

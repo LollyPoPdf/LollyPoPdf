@@ -457,7 +457,7 @@
             color: white;
         }
 
-        .eraser-options, .background-options, .add-image-options {
+        .eraser-options, .background-options, .add-image-options, .crop-tool {
             display: none;
             margin-top: 20px;
             padding: 20px;
@@ -465,7 +465,7 @@
             border-radius: var(--border-radius);
         }
 
-        .eraser-options.active, .background-options.active, .add-image-options.active {
+        .eraser-options.active, .background-options.active, .add-image-options.active, .crop-tool.active {
             display: block;
         }
 
@@ -834,6 +834,41 @@
             background-color: var(--bg-color);
         }
 
+        /* Cropping Styles */
+        .crop-tool {
+            display: none;
+            margin-top: 20px;
+            padding: 20px;
+            background-color: var(--bg-secondary);
+            border-radius: var(--border-radius);
+        }
+
+        .crop-controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .crop-btn {
+            padding: 8px 15px;
+            background-color: var(--bg-secondary);
+            border: 1px solid var(--primary-color);
+            border-radius: 20px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .crop-btn:hover {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .crop-btn.active {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
         /* Responsive Styles */
         @media (max-width: 992px) {
             .steps-container {
@@ -906,10 +941,10 @@
             
             <nav>
                 <ul>
-                    <li><a href="https://lollypopdf.github.io/LollyPoPdf#home" class="nav-link" data-i18n="nav.home">Home</a></li>
-                    <li><a href="https://lollypopdf.github.io/LollyPoPdf#about" class="nav-link" data-i18n="nav.about">About Us</a></li>
-                    <li><a href="https://lollypopdf.github.io/LollyPoPdf#tools" class="nav-link" data-i18n="nav.tools">Tools</a></li>
-                    <li><a href="contact.html" class="nav-link" data-i18n="nav.contact">Contact</a></li>
+                    <li><a href="https://lollypopdf.com#home" class="nav-link" data-i18n="nav.home">Home</a></li>
+                    <li><a href="https://lollypopdf.com#about" class="nav-link" data-i18n="nav.about">About Us</a></li>
+                    <li><a href="https://lollypopdf.com#tools" class="nav-link" data-i18n="nav.tools">Tools</a></li>
+                    <li><a href="https://lollypopdf.com#contact" class="nav-link" data-i18n="nav.contact">Contact</a></li>
                 </ul>
             </nav>
             
@@ -927,10 +962,10 @@
         <!-- Mobile Menu -->
         <div class="mobile-menu" id="mobileMenu">
             <ul>
-                <li><a href="https://lollypopdf.github.io/LollyPoPdf#home" class="nav-link" data-i18n="nav.home">Home</a></li>
-                <li><a href="https://lollypopdf.github.io/LollyPoPdf#about" class="nav-link" data-i18n="nav.about">About Us</a></li>
-                <li><a href="https://lollypopdf.github.io/LollyPoPdf#tools" class="nav-link" data-i18n="nav.tools">Tools</a></li>
-                <li><a href="contact.html" class="nav-link" data-i18n="nav.contact">Contact</a></li>
+                <li><a href="https://lollypopdf.com#home" class="nav-link" data-i18n="nav.home">Home</a></li>
+                <li><a href="https://lollypopdf.com#about" class="nav-link" data-i18n="nav.about">About Us</a></li>
+                <li><a href="https://lollypopdf.com#tools" class="nav-link" data-i18n="nav.tools">Tools</a></li>
+                <li><a href="https://lollypopdf.com#contact" class="nav-link" data-i18n="nav.contact">Contact</a></li>
             </ul>
         </div>
     </header>
@@ -993,6 +1028,7 @@
                             <button class="tool-btn active" data-tool="erase" data-i18n="aiTool.toolSelection.erase">AI Erase</button>
                             <button class="tool-btn" data-tool="background" data-i18n="aiTool.toolSelection.background">AI Background</button>
                             <button class="tool-btn" data-tool="addImage" data-i18n="aiTool.toolSelection.addImage">AI Add Image</button>
+                            <button class="tool-btn" data-tool="crop" data-i18n="aiTool.toolSelection.crop">Crop Image</button>
                         </div>
                     </div>
                     
@@ -1023,6 +1059,14 @@
                             <input type="file" id="addImageFileInput" class="file-input" accept="image/*">
                         </div>
                         <p data-i18n="aiTool.addImage.instructions">Upload an image to add to your photo. Click on the canvas to place it. You can drag and drop the added image to adjust its position.</p>
+                    </div>
+                    
+                    <div class="crop-tool" id="cropTool">
+                        <div class="crop-controls">
+                            <button class="crop-btn" id="cropApplyBtn" data-i18n="aiTool.crop.apply">Apply Crop</button>
+                            <button class="crop-btn" id="cropCancelBtn" data-i18n="aiTool.crop.cancel">Cancel</button>
+                        </div>
+                        <p data-i18n="aiTool.crop.instructions">Drag the corners or edges of the crop selection to adjust the area. Click "Apply Crop" to confirm.</p>
                     </div>
                     
                     <div class="output-format">
@@ -1094,7 +1138,7 @@
                     <li><a href="https://lollypopdf.com#image-tools" data-i18n="footer.categories.image">Image Tools</a></li>
                     <li><a href="https://lollypopdf.com#text-tools" data-i18n="footer.categories.text">Text Tools</a></li>
                     <li><a href="https://lollypopdf.com#audio-video-tools" data-i18n="footer.categories.av">Audio/Video Tools</a></li>
-                    <li><a href="https://lollypopdf.com#web-developer-tools" data-i18n="footer.categories.web">Web Developer Tools</a></li>
+                    <li><a href="https://lollypopdf.com#web-developer-tools" data-i18n="footer.categories.web">Web/Developer Tools</a></li>
                     <li><a href="https://lollypopdf.com#calculator-tools" data-i18n="footer.categories.calc">Calculator Tools</a></li>
                     <li><a href="https://lollypopdf.com#utility-tools" data-i18n="footer.categories.util">Utility Tools</a></li>
                     <li><a href="https://lollypopdf.com#color-tools" data-i18n="footer.categories.color">Color Tools</a></li>
@@ -1105,7 +1149,7 @@
             <div class="footer-section">
                 <h4 data-i18n="footer.quicklinks">Quick Links</h4>
                 <ul class="footer-links">
-                    <li><a href="https://lollypopdf.github.io/LollyPoPdf#home" data-i18n="nav.home">Home</a></li>
+                    <li><a href="https://lollypopdf.com#home" data-i18n="nav.home">Home</a></li>
                     <li><a href="tools.html" data-i18n="footer.links.tools">All Tools</a></li>
                     <li><a href="faq.html" data-i18n="footer.links.faq">FAQ</a></li>
                     <li><a href="contact.html" data-i18n="footer.links.contact">Contact</a></li>
@@ -1243,10 +1287,13 @@
         const eraserOptions = document.getElementById('eraserOptions');
         const backgroundOptions = document.getElementById('backgroundOptions');
         const addImageOptions = document.getElementById('addImageOptions');
+        const cropTool = document.getElementById('cropTool');
         const backgroundUploadBtn = document.getElementById('backgroundUploadBtn');
         const backgroundFileInput = document.getElementById('backgroundFileInput');
         const addImageUploadBtn = document.getElementById('addImageUploadBtn');
         const addImageFileInput = document.getElementById('addImageFileInput');
+        const cropApplyBtn = document.getElementById('cropApplyBtn');
+        const cropCancelBtn = document.getElementById('cropCancelBtn');
         
         let currentFile = null;
         let processedBlob = null;
@@ -1279,6 +1326,14 @@
         let selectionEnd = { x: 0, y: 0 };
         let selectionHistory = [];
         let currentHistoryStep = -1;
+        
+        // Crop state
+        let isCropping = false;
+        let cropSelection = null;
+        let isDraggingCrop = false;
+        let isResizingCrop = false;
+        let resizeHandle = null;
+        let isCanvasCropped = false;
         
         // Upload area click handler
         uploadArea.addEventListener('click', () => {
@@ -1354,6 +1409,9 @@
                     originalWidth = this.width;
                     originalHeight = this.height;
                     
+                    // Reset crop state
+                    isCanvasCropped = false;
+                    
                     // Set up canvas
                     setupCanvas();
                     
@@ -1396,6 +1454,9 @@
                     
                     // Redraw the image with the new background
                     drawImageWithBackground();
+                    
+                    // Save to history for undo functionality
+                    saveToHistory();
                 };
                 backgroundImage.src = e.target.result;
             };
@@ -1421,6 +1482,9 @@
                     
                     // Redraw the image with the added image
                     drawImageWithBackground();
+                    
+                    // Save to history for undo functionality
+                    saveToHistory();
                 };
                 addImage.src = e.target.result;
             };
@@ -1539,6 +1603,40 @@
                 );
                 ctx.setLineDash([]);
             }
+            
+            // Draw crop selection if cropping
+            if (isCropping && cropSelection) {
+                ctx.strokeStyle = '#ff0000';
+                ctx.lineWidth = 2;
+                ctx.setLineDash([5, 5]);
+                ctx.strokeRect(
+                    cropSelection.x,
+                    cropSelection.y,
+                    cropSelection.width,
+                    cropSelection.height
+                );
+                ctx.setLineDash([]);
+                
+                // Draw resize handles
+                drawCropHandles();
+            }
+        }
+        
+        // Draw crop resize handles
+        function drawCropHandles() {
+            if (!cropSelection) return;
+            
+            const handles = [
+                { x: cropSelection.x - 5, y: cropSelection.y - 5, type: 'nw' },
+                { x: cropSelection.x + cropSelection.width - 5, y: cropSelection.y - 5, type: 'ne' },
+                { x: cropSelection.x - 5, y: cropSelection.y + cropSelection.height - 5, type: 'sw' },
+                { x: cropSelection.x + cropSelection.width - 5, y: cropSelection.y + cropSelection.height - 5, type: 'se' }
+            ];
+            
+            handles.forEach(handle => {
+                ctx.fillStyle = '#ff0000';
+                ctx.fillRect(handle.x, handle.y, 10, 10);
+            });
         }
         
         // Tool selection
@@ -1558,14 +1656,36 @@
                     eraserOptions.classList.add('active');
                     backgroundOptions.classList.remove('active');
                     addImageOptions.classList.remove('active');
+                    cropTool.classList.remove('active');
+                    isCropping = false;
                 } else if (currentTool === 'background') {
                     eraserOptions.classList.remove('active');
                     backgroundOptions.classList.add('active');
                     addImageOptions.classList.remove('active');
+                    cropTool.classList.remove('active');
+                    isCropping = false;
                 } else if (currentTool === 'addImage') {
                     eraserOptions.classList.remove('active');
                     backgroundOptions.classList.remove('active');
                     addImageOptions.classList.add('active');
+                    cropTool.classList.remove('active');
+                    isCropping = false;
+                } else if (currentTool === 'crop') {
+                    eraserOptions.classList.remove('active');
+                    backgroundOptions.classList.remove('active');
+                    addImageOptions.classList.remove('active');
+                    cropTool.classList.add('active');
+                    isCropping = true;
+                    
+                    // Initialize crop selection
+                    if (!cropSelection) {
+                        cropSelection = {
+                            x: 50,
+                            y: 50,
+                            width: aiToolCanvas.width - 100,
+                            height: aiToolCanvas.height - 100
+                        };
+                    }
                 }
                 
                 // Redraw the canvas
@@ -1602,6 +1722,9 @@
                 
                 // Redraw image with new background
                 drawImageWithBackground();
+                
+                // Save to history for undo functionality
+                saveToHistory();
             });
         });
         
@@ -1631,6 +1754,9 @@
                         y: y - addImage.height / 4
                     };
                     drawImageWithBackground();
+                    
+                    // Save to history for undo functionality
+                    saveToHistory();
                 }
             } else if (currentTool === 'background' && backgroundImage) {
                 // Check if click is on the background image
@@ -1639,6 +1765,34 @@
                     y >= backgroundImagePosition.y && 
                     y <= backgroundImagePosition.y + aiToolCanvas.height) {
                     isDraggingBackground = true;
+                    lastX = x;
+                    lastY = y;
+                }
+            } else if (currentTool === 'crop' && cropSelection) {
+                // Check if click is on a resize handle
+                const handles = [
+                    { x: cropSelection.x - 5, y: cropSelection.y - 5, type: 'nw' },
+                    { x: cropSelection.x + cropSelection.width - 5, y: cropSelection.y - 5, type: 'ne' },
+                    { x: cropSelection.x - 5, y: cropSelection.y + cropSelection.height - 5, type: 'sw' },
+                    { x: cropSelection.x + cropSelection.width - 5, y: cropSelection.y + cropSelection.height - 5, type: 'se' }
+                ];
+                
+                let handleClicked = false;
+                handles.forEach(handle => {
+                    if (x >= handle.x && x <= handle.x + 10 && y >= handle.y && y <= handle.y + 10) {
+                        isResizingCrop = true;
+                        resizeHandle = handle.type;
+                        lastX = x;
+                        lastY = y;
+                        handleClicked = true;
+                    }
+                });
+                
+                // If not a handle, check if click is inside the crop selection
+                if (!handleClicked && 
+                    x >= cropSelection.x && x <= cropSelection.x + cropSelection.width &&
+                    y >= cropSelection.y && y <= cropSelection.y + cropSelection.height) {
+                    isDraggingCrop = true;
                     lastX = x;
                     lastY = y;
                 }
@@ -1672,6 +1826,45 @@
                 lastX = x;
                 lastY = y;
                 drawImageWithBackground();
+            } else if (isDraggingCrop && currentTool === 'crop' && cropSelection) {
+                // Move the crop selection
+                cropSelection.x += x - lastX;
+                cropSelection.y += y - lastY;
+                lastX = x;
+                lastY = y;
+                drawImageWithBackground();
+            } else if (isResizingCrop && currentTool === 'crop' && cropSelection) {
+                // Resize the crop selection based on the handle
+                switch (resizeHandle) {
+                    case 'nw':
+                        cropSelection.width += cropSelection.x - x;
+                        cropSelection.height += cropSelection.y - y;
+                        cropSelection.x = x;
+                        cropSelection.y = y;
+                        break;
+                    case 'ne':
+                        cropSelection.width = x - cropSelection.x;
+                        cropSelection.height += cropSelection.y - y;
+                        cropSelection.y = y;
+                        break;
+                    case 'sw':
+                        cropSelection.width += cropSelection.x - x;
+                        cropSelection.height = y - cropSelection.y;
+                        cropSelection.x = x;
+                        break;
+                    case 'se':
+                        cropSelection.width = x - cropSelection.x;
+                        cropSelection.height = y - cropSelection.y;
+                        break;
+                }
+                
+                // Ensure minimum size
+                cropSelection.width = Math.max(10, cropSelection.width);
+                cropSelection.height = Math.max(10, cropSelection.height);
+                
+                lastX = x;
+                lastY = y;
+                drawImageWithBackground();
             } else if (isDraggingImage) {
                 // Move the main image
                 offsetX += x - lastX;
@@ -1693,6 +1886,8 @@
             isDraggingAddImage = false;
             isDraggingBackground = false;
             isDraggingImage = false;
+            isDraggingCrop = false;
+            isResizingCrop = false;
         });
         
         aiToolCanvas.addEventListener('mouseleave', () => {
@@ -1700,6 +1895,8 @@
             isDraggingAddImage = false;
             isDraggingBackground = false;
             isDraggingImage = false;
+            isDraggingCrop = false;
+            isResizingCrop = false;
         });
         
         // Apply eraser to the selected area
@@ -1712,7 +1909,7 @@
             const width = Math.abs(selectionEnd.x - selectionStart.x);
             const height = Math.abs(selectionEnd.y - selectionStart.y);
             
-            // Erase the selected area
+            // Erase the selected area - make it transparent
             maskCtx.globalCompositeOperation = 'destination-out';
             maskCtx.fillStyle = 'rgba(0, 0, 0, 1)';
             maskCtx.fillRect(x, y, width, height);
@@ -1735,7 +1932,24 @@
             // Save current mask state
             const maskCtx = eraserMask.getContext('2d');
             const imageData = maskCtx.getImageData(0, 0, eraserMask.width, eraserMask.height);
-            selectionHistory.push(imageData);
+            
+            // Save current state
+            const state = {
+                mask: imageData,
+                backgroundImage: backgroundImage ? backgroundImage.src : null,
+                backgroundPosition: {...backgroundImagePosition},
+                addImage: addImage ? addImage.src : null,
+                addImagePosition: {...addImagePosition},
+                backgroundColor: currentBackgroundColor,
+                canvasWidth: aiToolCanvas.width,
+                canvasHeight: aiToolCanvas.height,
+                offsetX: offsetX,
+                offsetY: offsetY,
+                scale: scale,
+                isCanvasCropped: isCanvasCropped
+            };
+            
+            selectionHistory.push(state);
             currentHistoryStep = selectionHistory.length - 1;
             
             // Limit history size
@@ -1749,8 +1963,49 @@
         function undo() {
             if (currentHistoryStep > 0) {
                 currentHistoryStep--;
+                const state = selectionHistory[currentHistoryStep];
+                
+                // Restore mask
                 const maskCtx = eraserMask.getContext('2d');
-                maskCtx.putImageData(selectionHistory[currentHistoryStep], 0, 0);
+                maskCtx.putImageData(state.mask, 0, 0);
+                
+                // Restore background image
+                if (state.backgroundImage) {
+                    backgroundImage = new Image();
+                    backgroundImage.src = state.backgroundImage;
+                    backgroundImagePosition = state.backgroundPosition;
+                } else {
+                    backgroundImage = null;
+                }
+                
+                // Restore add image
+                if (state.addImage) {
+                    addImage = new Image();
+                    addImage.src = state.addImage;
+                    addImagePosition = state.addImagePosition;
+                } else {
+                    addImage = null;
+                }
+                
+                // Restore background color
+                currentBackgroundColor = state.backgroundColor;
+                
+                // Restore canvas dimensions and view
+                aiToolCanvas.width = state.canvasWidth;
+                aiToolCanvas.height = state.canvasHeight;
+                offsetX = state.offsetX;
+                offsetY = state.offsetY;
+                scale = state.scale;
+                isCanvasCropped = state.isCanvasCropped;
+                
+                // Update color picker UI
+                colorOptions.forEach(opt => {
+                    opt.classList.remove('active');
+                    if (opt.getAttribute('data-color') === currentBackgroundColor) {
+                        opt.classList.add('active');
+                    }
+                });
+                
                 drawImageWithBackground();
             }
         }
@@ -1774,6 +2029,79 @@
         });
         
         undoBtn.addEventListener('click', undo);
+        
+        // Crop buttons
+        cropApplyBtn.addEventListener('click', () => {
+            if (!cropSelection) return;
+            
+            // Create a temporary canvas for the cropped image
+            const tempCanvas = document.createElement('canvas');
+            const tempCtx = tempCanvas.getContext('2d');
+            
+            // Set canvas dimensions to match the crop selection EXACTLY
+            tempCanvas.width = Math.round(cropSelection.width);
+            tempCanvas.height = Math.round(cropSelection.height);
+            
+            // Draw the cropped area with pixel-perfect accuracy
+            tempCtx.drawImage(
+                aiToolCanvas,
+                Math.round(cropSelection.x), 
+                Math.round(cropSelection.y), 
+                Math.round(cropSelection.width), 
+                Math.round(cropSelection.height),
+                0, 0, 
+                Math.round(cropSelection.width), 
+                Math.round(cropSelection.height)
+            );
+            
+            // Update the main canvas with the cropped image
+            aiToolCanvas.width = Math.round(cropSelection.width);
+            aiToolCanvas.height = Math.round(cropSelection.height);
+            ctx.drawImage(tempCanvas, 0, 0);
+            
+            // Update the original image dimensions
+            const scaleX = originalWidth / aiToolCanvas.width;
+            const scaleY = originalHeight / aiToolCanvas.height;
+            originalWidth = Math.round(cropSelection.width * scaleX);
+            originalHeight = Math.round(cropSelection.height * scaleY);
+            
+            // Update the eraser mask
+            initEraserMask();
+            
+            // Reset positions and scale to maintain visual consistency
+            offsetX = 0;
+            offsetY = 0;
+            scale = 1;
+            
+            // Adjust added image position relative to the new canvas
+            if (addImage) {
+                addImagePosition.x = Math.max(0, addImagePosition.x - cropSelection.x);
+                addImagePosition.y = Math.max(0, addImagePosition.y - cropSelection.y);
+            }
+            
+            // Adjust background image position
+            if (backgroundImage) {
+                backgroundImagePosition.x = Math.max(0, backgroundImagePosition.x - cropSelection.x);
+                backgroundImagePosition.y = Math.max(0, backgroundImagePosition.y - cropSelection.y);
+            }
+            
+            // Reset crop state
+            isCropping = false;
+            cropSelection = null;
+            isCanvasCropped = true;
+            
+            // Redraw the image
+            drawImageWithBackground();
+            
+            // Save to history
+            saveToHistory();
+        });
+        
+        cropCancelBtn.addEventListener('click', () => {
+            isCropping = false;
+            cropSelection = null;
+            drawImageWithBackground();
+        });
         
         // Process the image with AI
         function processImage() {
@@ -1807,65 +2135,56 @@
             progressText.textContent = `Processing: ${percent}%`;
         }
         
-        // Perform the actual processing - ADVANCED BACKGROUND-AWARE FIXED VERSION
+        // Perform the actual processing - FIXED: White background for downloaded images
         function performProcessing() {
             // Create a temporary canvas for the result
             const tempCanvas = document.createElement('canvas');
             const tempCtx = tempCanvas.getContext('2d');
             
-            // Set canvas dimensions to match the original image
-            tempCanvas.width = originalWidth;
-            tempCanvas.height = originalHeight;
+            // Set canvas dimensions to match the current canvas EXACTLY
+            tempCanvas.width = aiToolCanvas.width;
+            tempCanvas.height = aiToolCanvas.height;
             
-            // Draw background first
+            // ALWAYS start with a white background for the downloaded image
+            tempCtx.fillStyle = '#ffffff';
+            tempCtx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
+            
+            // Draw background if selected (over the white background)
             if (currentBackgroundColor !== 'transparent' || backgroundImage) {
                 if (backgroundImage) {
-                    // Draw background image scaled to fit
-                    tempCtx.drawImage(backgroundImage, 0, 0, originalWidth, originalHeight);
-                } else {
+                    // Draw background image scaled to fit EXACTLY
+                    tempCtx.drawImage(backgroundImage, 0, 0, tempCanvas.width, tempCanvas.height);
+                } else if (currentBackgroundColor !== 'transparent') {
                     // Draw solid color background
                     tempCtx.fillStyle = currentBackgroundColor;
-                    tempCtx.fillRect(0, 0, originalWidth, originalHeight);
+                    tempCtx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
                 }
             }
             
-            // Create a scaled version of the eraser mask
-            const scaledMask = document.createElement('canvas');
-            scaledMask.width = originalWidth;
-            scaledMask.height = originalHeight;
-            const scaledMaskCtx = scaledMask.getContext('2d');
-            
-            // Scale the mask to match original image size
-            scaledMaskCtx.drawImage(eraserMask, 0, 0, originalWidth, originalHeight);
-            
             // Create a temporary canvas for the masked image
             const maskedCanvas = document.createElement('canvas');
-            maskedCanvas.width = originalWidth;
-            maskedCanvas.height = originalHeight;
+            maskedCanvas.width = tempCanvas.width;
+            maskedCanvas.height = tempCanvas.height;
             const maskedCtx = maskedCanvas.getContext('2d');
             
-            // Draw the original image
-            maskedCtx.drawImage(image, 0, 0);
+            // Draw the current canvas (which includes all edits)
+            maskedCtx.drawImage(aiToolCanvas, 0, 0);
             
-            // Apply the mask - FIX: Use proper masking technique
+            // Apply the mask to make erased areas transparent
             maskedCtx.globalCompositeOperation = 'destination-in';
-            maskedCtx.drawImage(scaledMask, 0, 0);
+            maskedCtx.drawImage(eraserMask, 0, 0);
             
             // Draw the masked image onto the final canvas
             tempCtx.drawImage(maskedCanvas, 0, 0);
             
             // Draw the added image if available
             if (addImage && currentTool === 'addImage') {
-                // Calculate position in original image coordinates
-                const scaleX = originalWidth / aiToolCanvas.width;
-                const scaleY = originalHeight / aiToolCanvas.height;
-                
                 tempCtx.drawImage(
                     addImage, 
-                    addImagePosition.x * scaleX, 
-                    addImagePosition.y * scaleY, 
-                    addImage.width / 2 * scaleX, 
-                    addImage.height / 2 * scaleY
+                    addImagePosition.x, 
+                    addImagePosition.y, 
+                    addImage.width / 2, 
+                    addImage.height / 2
                 );
             }
             
@@ -1952,6 +2271,7 @@
             eraserMask = null;
             selectionHistory = [];
             currentHistoryStep = -1;
+            isCanvasCropped = false;
             ctx.clearRect(0, 0, aiToolCanvas.width, aiToolCanvas.height);
         });
 
@@ -1985,16 +2305,6 @@
             { code: 'ml', name: 'മലയാളം' },
             { code: 'id', name: 'Bahasa Indonesia' },
             { code: 'ms', name: 'Bahasa Melayu' },
-            { code: 'pl', name: 'Polski' },
-            { code: 'th', name: 'ภาษาไทย' },
-            { code: 'tr', name: 'Türkçe' },
-            { code: 'uk', name: 'Українська' },
-            { code: 'vi', name: 'Tiếng Việt' },
-            { code: 'is', name: 'Íslenska' },
-            { code: 'no', name: 'Norsk' },
-            { code: 'sv', name: 'Svenska' },
-            { code: 'fi', name: 'Suomi' },
-            { code: 'cs', name: 'Čeština' }
         ];
         
         // Translation data
@@ -2023,12 +2333,16 @@
                 "aiTool.toolSelection.erase": "AI Erase",
                 "aiTool.toolSelection.background": "AI Background",
                 "aiTool.toolSelection.addImage": "AI Add Image",
+                "aiTool.toolSelection.crop": "Crop Image",
                 "aiTool.eraser.selectionInfo": "Click and drag to select areas to remove",
                 "aiTool.eraser.instructions": "Drag your cursor to create selection rectangles. The selected areas will be removed and replaced with background.",
                 "aiTool.background.upload": "Upload Background Image",
                 "aiTool.background.instructions": "Select a color or upload an image to use as background. You can drag and drop the background image to adjust its position.",
                 "aiTool.addImage.upload": "Upload Image to Add",
                 "aiTool.addImage.instructions": "Upload an image to add to your photo. Click on the canvas to place it. You can drag and drop the added image to adjust its position.",
+                "aiTool.crop.apply": "Apply Crop",
+                "aiTool.crop.cancel": "Cancel",
+                "aiTool.crop.instructions": "Drag the corners or edges of the crop selection to adjust the area. Click \"Apply Crop\" to confirm.",
                 "aiTool.format.title": "Output Format",
                 "aiTool.processing": "Processing: 0%",
                 "aiTool.process": "Process with AI",
@@ -2044,7 +2358,7 @@
                 "footer.categories.image": "Image Tools",
                 "footer.categories.text": "Text Tools",
                 "footer.categories.av": "Audio/Video Tools",
-                "footer.categories.web": "Web Developer Tools",
+                "footer.categories.web": "Web/Developer Tools",
                 "footer.categories.calc": "Calculator Tools",
                 "footer.categories.util": "Utility Tools",
                 "footer.categories.color": "Color Tools",
@@ -2081,12 +2395,16 @@
                 "aiTool.toolSelection.erase": "AI Borrar",
                 "aiTool.toolSelection.background": "AI Fondo",
                 "aiTool.toolSelection.addImage": "AI Agregar Imagen",
+                "aiTool.toolSelection.crop": "Recortar Imagen",
                 "aiTool.eraser.selectionInfo": "Haz clic y arrastra para seleccionar áreas a eliminar",
                 "aiTool.eraser.instructions": "Arrastra el cursor para crear rectángulos de selección. Las áreas seleccionadas se eliminarán y reemplazarán con el fondo.",
                 "aiTool.background.upload": "Subir Imagen de Fondo",
                 "aiTool.background.instructions": "Selecciona un color o sube una imagen para usar como fondo. Puedes arrastrar y soltar la imagen de fondo para ajustar su posición.",
                 "aiTool.addImage.upload": "Subir Imagen para Agregar",
                 "aiTool.addImage.instructions": "Sube una imagen para agregar a tu foto. Haz clic en el lienzo para colocarla. Puedes arrastrar y soltar la imagen agregada para ajustar su posición.",
+                "aiTool.crop.apply": "Aplicar Recorte",
+                "aiTool.crop.cancel": "Cancelar",
+                "aiTool.crop.instructions": "Arrastra las esquinas o bordes de la selección de recorte para ajustar el área. Haz clic en \"Aplicar Recorte\" para confirmar.",
                 "aiTool.format.title": "Formato de Salida",
                 "aiTool.processing": "Procesando: 0%",
                 "aiTool.process": "Procesar con IA",
@@ -2102,7 +2420,7 @@
                 "footer.categories.image": "Herramientas de Imagen",
                 "footer.categories.text": "Herramientas de Texto",
                 "footer.categories.av": "Herramientas de Audio/Video",
-                "footer.categories.web": "Herramientas Web Desarrollador",
+                "footer.categories.web": "Herramientas Web/Desarrollador",
                 "footer.categories.calc": "Herramientas de Calculadora",
                 "footer.categories.util": "Herramientas de Utilidad",
                 "footer.categories.color": "Herramientas de Color",
@@ -2115,6 +2433,1991 @@
                 "footer.links.terms": "Términos de Servicio",
                 "footer.copyright": "© 2025 LollyPoPDF. Todos los derechos reservados."
             },
+            fr: {
+                "nav.home": "Accueil",
+                "nav.about": "À propos de nous",
+                "nav.tools": "Outils",
+                "nav.contact": "Contact",
+                "hero.title": "Outil IA d'Effacement et d'Ajout d'Image",
+                "hero.description": "Outil en ligne gratuit alimenté par l'IA pour effacer des objets et ajouter des images à vos photos. Supprimez les éléments indésirables ou ajoutez de nouveaux objets de manière transparente. Aucune inscription requise.",
+                "howto.title": "Comment utiliser l'outil d'image IA",
+                "howto.step1.title": "Téléchargez votre image",
+                "howto.step1.description": "Cliquez sur la zone de téléchargement ou faites glisser et déposez votre fichier image. Nous prenons en charge JPG, PNG, GIF, WEBP et plus encore.",
+                "howto.step2.title": "Choisissez l'outil IA",
+                "howto.step2.description": "Sélectionnez entre IA Effacer pour supprimer des objets ou IA Ajouter pour insérer de nouvelles images dans votre photo.",
+                "howto.step3.title": "Modifier et traiter",
+                "howto.step3.description": "Utilisez les outils pour marquer les zones à effacer ou ajouter de nouvelles images. Ensuite, traitez avec l'IA pour des résultats transparents.",
+                "howto.step4.title": "Télécharger le résultat",
+                "howto.step4.description": "Téléchargez votre image traitée par IA en un clic. Sans filigrane, sans inscription requise.",
+                "aiTool.title": "Outil IA d'Effacement et d'Ajout d'Image",
+                "aiTool.upload.text": "Glissez-déposez votre image ici ou cliquez pour parcourir",
+                "aiTool.upload.button": "Sélectionner une image",
+                "aiTool.options.title": "Options de l'outil IA",
+                "aiTool.toolSelection.title": "Sélectionner l'outil",
+                "aiTool.toolSelection.erase": "IA Effacer",
+                "aiTool.toolSelection.background": "IA Arrière-plan",
+                "aiTool.toolSelection.addImage": "IA Ajouter une image",
+                "aiTool.toolSelection.crop": "Recadrer l'image",
+                "aiTool.eraser.selectionInfo": "Cliquez et faites glisser pour sélectionner les zones à supprimer",
+                "aiTool.eraser.instructions": "Faites glisser votre curseur pour créer des rectangles de sélection. Les zones sélectionnées seront supprimées et remplacées par l'arrière-plan.",
+                "aiTool.background.upload": "Télécharger l'image d'arrière-plan",
+                "aiTool.background.instructions": "Sélectionnez une couleur ou téléchargez une image à utiliser comme arrière-plan. Vous pouvez faire glisser et déposer l'image d'arrière-plan pour ajuster sa position.",
+                "aiTool.addImage.upload": "Télécharger l'image à ajouter",
+                "aiTool.addImage.instructions": "Téléchargez une image à ajouter à votre photo. Cliquez sur le canevas pour la placer. Vous pouvez faire glisser et déposer l'image ajoutée pour ajuster sa position.",
+                "aiTool.crop.apply": "Appliquer le recadrage",
+                "aiTool.crop.cancel": "Annuler",
+                "aiTool.crop.instructions": "Faites glisser les coins ou les bords de la sélection de recadrage pour ajuster la zone. Cliquez sur \"Appliquer le recadrage\" pour confirmer.",
+                "aiTool.format.title": "Format de sortie",
+                "aiTool.processing": "Traitement : 0%",
+                "aiTool.process": "Traiter avec l'IA",
+                "aiTool.download": "Télécharger",
+                "aiTool.reset": "Réinitialiser",
+                "aiTool.controls.zoomIn": "Zoom avant",
+                "aiTool.controls.zoomOut": "Zoom arrière",
+                "aiTool.controls.reset": "Réinitialiser la vue",
+                "aiTool.controls.undo": "Annuler",
+                "footer.follow": "SUIVEZ-NOUS",
+                "footer.categories": "Catégories populaires",
+                "footer.categories.pdf": "Outils PDF",
+                "footer.categories.image": "Outils d'image",
+                "footer.categories.text": "Outils de texte",
+                "footer.categories.av": "Outils audio/vidéo",
+                "footer.categories.web": "Outils Web/Développeur",
+                "footer.categories.calc": "Outils de calculatrice",
+                "footer.categories.util": "Outils utilitaires",
+                "footer.categories.color": "Outils de couleur",
+                "footer.quicklinks": "Liens rapides",
+                "footer.links.tools": "Tous les outils",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Contact",
+                "footer.links.privacy": "Politique de confidentialité",
+                "footer.links.disclaimer": "Avertissement",
+                "footer.links.terms": "Conditions d'utilisation",
+                "footer.copyright": "© 2025 LollyPoPDF. Tous droits réservés."
+            },
+            de: {
+                "nav.home": "Startseite",
+                "nav.about": "Über uns",
+                "nav.tools": "Werkzeuge",
+                "nav.contact": "Kontakt",
+                "hero.title": "KI-Lösch- und KI-Bildhinzufügungstool",
+                "hero.description": "Kostenloses online KI-gestütztes Tool zum Löschen von Objekten und Hinzufügen von Bildern zu Ihren Fotos. Entfernen Sie unerwünschte Elemente oder fügen Sie nahtlos neue Objekte hinzu. Keine Registrierung erforderlich.",
+                "howto.title": "So verwenden Sie das KI-Bildtool",
+                "howto.step1.title": "Laden Sie Ihr Bild hoch",
+                "howto.step1.description": "Klicken Sie auf den Upload-Bereich oder ziehen Sie Ihre Bilddatei per Drag & Drop. Wir unterstützen JPG, PNG, GIF, WEBP und mehr.",
+                "howto.step2.title": "Wählen Sie KI-Tool",
+                "howto.step2.description": "Wählen Sie zwischen KI Löschen, um Objekte zu entfernen, oder KI Hinzufügen, um neue Bilder in Ihr Foto einzufügen.",
+                "howto.step3.title": "Bearbeiten & Verarbeiten",
+                "howto.step3.description": "Verwenden Sie die Tools, um Bereiche zum Löschen zu markieren oder neue Bilder hinzuzufügen. Verarbeiten Sie dann mit KI für nahtlose Ergebnisse.",
+                "howto.step4.title": "Ergebnis herunterladen",
+                "howto.step4.description": "Laden Sie Ihr KI-verarbeitetes Bild mit einem Klick herunter. Keine Wasserzeichen, keine Registrierung erforderlich.",
+                "aiTool.title": "KI-Lösch- und KI-Bildhinzufügungstool",
+                "aiTool.upload.text": "Ziehen Sie Ihr Bild hierher oder klicken Sie zum Durchsuchen",
+                "aiTool.upload.button": "Bild auswählen",
+                "aiTool.options.title": "KI-Tool-Optionen",
+                "aiTool.toolSelection.title": "Tool auswählen",
+                "aiTool.toolSelection.erase": "KI Löschen",
+                "aiTool.toolSelection.background": "KI Hintergrund",
+                "aiTool.toolSelection.addImage": "KI Bild hinzufügen",
+                "aiTool.toolSelection.crop": "Bild zuschneiden",
+                "aiTool.eraser.selectionInfo": "Klicken und ziehen Sie, um zu löschende Bereiche auszuwählen",
+                "aiTool.eraser.instructions": "Ziehen Sie Ihren Cursor, um Auswahlrechtecke zu erstellen. Die ausgewählten Bereiche werden entfernt und durch den Hintergrund ersetzt.",
+                "aiTool.background.upload": "Hintergrundbild hochladen",
+                "aiTool.background.instructions": "Wählen Sie eine Farbe oder laden Sie ein Bild hoch, das als Hintergrund verwendet werden soll. Sie können das Hintergrundbild per Drag & Drop verschieben, um seine Position anzupassen.",
+                "aiTool.addImage.upload": "Hinzuzufügendes Bild hochladen",
+                "aiTool.addImage.instructions": "Laden Sie ein Bild hoch, das zu Ihrem Foto hinzugefügt werden soll. Klicken Sie auf die Leinwand, um es zu platzieren. Sie können das hinzugefügte Bild per Drag & Drop verschieben, um seine Position anzupassen.",
+                "aiTool.crop.apply": "Zuschneiden anwenden",
+                "aiTool.crop.cancel": "Abbrechen",
+                "aiTool.crop.instructions": "Ziehen Sie die Ecken oder Kanten der Zuschneideauswahl, um den Bereich anzupassen. Klicken Sie auf \"Zuschneiden anwenden\", um zu bestätigen.",
+                "aiTool.format.title": "Ausgabeformat",
+                "aiTool.processing": "Verarbeitung: 0%",
+                "aiTool.process": "Mit KI verarbeiten",
+                "aiTool.download": "Herunterladen",
+                "aiTool.reset": "Zurücksetzen",
+                "aiTool.controls.zoomIn": "Vergrößern",
+                "aiTool.controls.zoomOut": "Verkleinern",
+                "aiTool.controls.reset": "Ansicht zurücksetzen",
+                "aiTool.controls.undo": "Rückgängig",
+                "footer.follow": "FOLGEN SIE UNS",
+                "footer.categories": "Beliebte Kategorien",
+                "footer.categories.pdf": "PDF-Tools",
+                "footer.categories.image": "Bild-Tools",
+                "footer.categories.text": "Text-Tools",
+                "footer.categories.av": "Audio/Video-Tools",
+                "footer.categories.web": "Web/Entwickler-Tools",
+                "footer.categories.calc": "Rechner-Tools",
+                "footer.categories.util": "Utility-Tools",
+                "footer.categories.color": "Farb-Tools",
+                "footer.quicklinks": "Schnelllinks",
+                "footer.links.tools": "Alle Tools",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Kontakt",
+                "footer.links.privacy": "Datenschutzrichtlinie",
+                "footer.links.disclaimer": "Haftungsausschluss",
+                "footer.links.terms": "Nutzungsbedingungen",
+                "footer.copyright": "© 2025 LollyPoPDF. Alle Rechte vorbehalten."
+            },
+            it: {
+                "nav.home": "Home",
+                "nav.about": "Chi siamo",
+                "nav.tools": "Strumenti",
+                "nav.contact": "Contatto",
+                "hero.title": "Strumento IA Cancella e Aggiungi Immagine",
+                "hero.description": "Strumento online gratuito alimentato da IA per cancellare oggetti e aggiungere immagini alle tue foto. Rimuovi elementi indesiderati o aggiungi nuovi oggetti in modo seamless. Nessuna registrazione richiesta.",
+                "howto.title": "Come utilizzare lo strumento immagine IA",
+                "howto.step1.title": "Carica la tua immagine",
+                "howto.step1.description": "Clicca sull'area di caricamento o trascina e rilascia il tuo file immagine. Supportiamo JPG, PNG, GIF, WEBP e altro.",
+                "howto.step2.title": "Scegli lo strumento IA",
+                "howto.step2.description": "Seleziona tra IA Cancella per rimuovere oggetti o IA Aggiungi per inserire nuove immagini nella tua foto.",
+                "howto.step3.title": "Modifica ed Elabora",
+                "howto.step3.description": "Usa gli strumenti per segnare le aree da cancellare o aggiungere nuove immagini. Poi elabora con IA per risultati seamless.",
+                "howto.step4.title": "Scarica il risultato",
+                "howto.step4.description": "Scarica la tua immagine elaborata da IA con un clic. Nessuna filigrana, nessuna registrazione richiesta.",
+                "aiTool.title": "Strumento IA Cancella e Aggiungi Immagine",
+                "aiTool.upload.text": "Trascina e rilascia la tua immagine qui o clicca per sfogliare",
+                "aiTool.upload.button": "Seleziona immagine",
+                "aiTool.options.title": "Opzioni strumento IA",
+                "aiTool.toolSelection.title": "Seleziona strumento",
+                "aiTool.toolSelection.erase": "IA Cancella",
+                "aiTool.toolSelection.background": "IA Sfondo",
+                "aiTool.toolSelection.addImage": "IA Aggiungi immagine",
+                "aiTool.toolSelection.crop": "Ritaglia immagine",
+                "aiTool.eraser.selectionInfo": "Clicca e trascina per selezionare le aree da rimuovere",
+                "aiTool.eraser.instructions": "Trascina il cursore per creare rettangoli di selezione. Le aree selezionate verranno rimosse e sostituite con lo sfondo.",
+                "aiTool.background.upload": "Carica immagine di sfondo",
+                "aiTool.background.instructions": "Seleziona un colore o carica un'immagine da usare come sfondo. Puoi trascinare e rilasciare l'immagine di sfondo per regolarne la posizione.",
+                "aiTool.addImage.upload": "Carica immagine da aggiungere",
+                "aiTool.addImage.instructions": "Carica un'immagine da aggiungere alla tua foto. Clicca sulla tela per posizionarla. Puoi trascinare e rilasciare l'immagine aggiunta per regolarne la posizione.",
+                "aiTool.crop.apply": "Applica ritaglio",
+                "aiTool.crop.cancel": "Annulla",
+                "aiTool.crop.instructions": "Trascina gli angoli o i bordi della selezione di ritaglio per regolare l'area. Clicca \"Applica ritaglio\" per confermare.",
+                "aiTool.format.title": "Formato di output",
+                "aiTool.processing": "Elaborazione: 0%",
+                "aiTool.process": "Elabora con IA",
+                "aiTool.download": "Scarica",
+                "aiTool.reset": "Reimposta",
+                "aiTool.controls.zoomIn": "Zoom avanti",
+                "aiTool.controls.zoomOut": "Zoom indietro",
+                "aiTool.controls.reset": "Reimposta vista",
+                "aiTool.controls.undo": "Annulla",
+                "footer.follow": "SEGUICI",
+                "footer.categories": "Categorie popolari",
+                "footer.categories.pdf": "Strumenti PDF",
+                "footer.categories.image": "Strumenti immagine",
+                "footer.categories.text": "Strumenti testo",
+                "footer.categories.av": "Strumenti audio/video",
+                "footer.categories.web": "Strumenti web/sviluppatore",
+                "footer.categories.calc": "Strumenti calcolatrice",
+                "footer.categories.util": "Strumenti utilità",
+                "footer.categories.color": "Strumenti colore",
+                "footer.quicklinks": "Link rapidi",
+                "footer.links.tools": "Tutti gli strumenti",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Contatto",
+                "footer.links.privacy": "Informativa sulla privacy",
+                "footer.links.disclaimer": "Disclaimer",
+                "footer.links.terms": "Termini di servizio",
+                "footer.copyright": "© 2025 LollyPoPDF. Tutti i diritti riservati."
+            },
+            pt: {
+                "nav.home": "Início",
+                "nav.about": "Sobre nós",
+                "nav.tools": "Ferramentas",
+                "nav.contact": "Contato",
+                "hero.title": "Ferramenta IA Apagar e Adicionar Imagem",
+                "hero.description": "Ferramenta online gratuita alimentada por IA para apagar objetos e adicionar imagens às suas fotos. Remova elementos indesejados ou adicione novos objetos perfeitamente. Nenhum registro necessário.",
+                "howto.title": "Como usar a ferramenta de imagem IA",
+                "howto.step1.title": "Faça upload da sua imagem",
+                "howto.step1.description": "Clique na área de upload ou arraste e solte seu arquivo de imagem. Suportamos JPG, PNG, GIF, WEBP e mais.",
+                "howto.step2.title": "Escolha a ferramenta IA",
+                "howto.step2.description": "Selecione entre IA Apagar para remover objetos ou IA Adicionar para inserir novas imagens na sua foto.",
+                "howto.step3.title": "Editar e Processar",
+                "howto.step3.description": "Use as ferramentas para marcar áreas a apagar ou adicionar novas imagens. Então processe com IA para resultados perfeitos.",
+                "howto.step4.title": "Baixar resultado",
+                "howto.step4.description": "Baixe sua imagem processada por IA com um clique. Sem marcas d'água, sem registro necessário.",
+                "aiTool.title": "Ferramenta IA Apagar e Adicionar Imagem",
+                "aiTool.upload.text": "Arraste e solte sua imagem aqui ou clique para procurar",
+                "aiTool.upload.button": "Selecionar imagem",
+                "aiTool.options.title": "Opções da ferramenta IA",
+                "aiTool.toolSelection.title": "Selecionar ferramenta",
+                "aiTool.toolSelection.erase": "IA Apagar",
+                "aiTool.toolSelection.background": "IA Plano de fundo",
+                "aiTool.toolSelection.addImage": "IA Adicionar imagem",
+                "aiTool.toolSelection.crop": "Recortar imagem",
+                "aiTool.eraser.selectionInfo": "Clique e arraste para selecionar áreas a remover",
+                "aiTool.eraser.instructions": "Arraste seu cursor para criar retângulos de seleção. As áreas selecionadas serão removidas e substituídas pelo plano de fundo.",
+                "aiTool.background.upload": "Fazer upload da imagem de fundo",
+                "aiTool.background.instructions": "Selecione uma cor ou faça upload de uma imagem para usar como plano de fundo. Você pode arrastar e soltar a imagem de fundo para ajustar sua posição.",
+                "aiTool.addImage.upload": "Fazer upload da imagem a adicionar",
+                "aiTool.addImage.instructions": "Faça upload de uma imagem para adicionar à sua foto. Clique na tela para posicioná-la. Você pode arrastar e soltar a imagem adicionada para ajustar sua posição.",
+                "aiTool.crop.apply": "Aplicar recorte",
+                "aiTool.crop.cancel": "Cancelar",
+                "aiTool.crop.instructions": "Arraste os cantos ou bordas da seleção de recorte para ajustar a área. Clique em \"Aplicar recorte\" para confirmar.",
+                "aiTool.format.title": "Formato de saída",
+                "aiTool.processing": "Processando: 0%",
+                "aiTool.process": "Processar com IA",
+                "aiTool.download": "Baixar",
+                "aiTool.reset": "Redefinir",
+                "aiTool.controls.zoomIn": "Aumentar zoom",
+                "aiTool.controls.zoomOut": "Diminuir zoom",
+                "aiTool.controls.reset": "Redefinir visualização",
+                "aiTool.controls.undo": "Desfazer",
+                "footer.follow": "SIGA-NOS",
+                "footer.categories": "Categorias populares",
+                "footer.categories.pdf": "Ferramentas PDF",
+                "footer.categories.image": "Ferramentas de imagem",
+                "footer.categories.text": "Ferramentas de texto",
+                "footer.categories.av": "Ferramentas de áudio/vídeo",
+                "footer.categories.web": "Ferramentas Web/Desenvolvedor",
+                "footer.categories.calc": "Ferramentas de calculadora",
+                "footer.categories.util": "Ferramentas de utilidade",
+                "footer.categories.color": "Ferramentas de cor",
+                "footer.quicklinks": "Links rápidos",
+                "footer.links.tools": "Todas as ferramentas",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Contato",
+                "footer.links.privacy": "Política de privacidade",
+                "footer.links.disclaimer": "Aviso legal",
+                "footer.links.terms": "Termos de serviço",
+                "footer.copyright": "© 2025 LollyPoPDF. Todos os direitos reservados."
+            },
+            ja: {
+                "nav.home": "ホーム",
+                "nav.about": "私たちについて",
+                "nav.tools": "ツール",
+                "nav.contact": "お問い合わせ",
+                "hero.title": "AI消去・AI画像追加ツール",
+                "hero.description": "オブジェクトを消去し、写真に画像を追加する無料のオンラインAIツール。不要な要素を削除したり、新しいオブジェクトをシームレスに追加できます。登録不要。",
+                "howto.title": "AI画像ツールの使用方法",
+                "howto.step1.title": "画像をアップロード",
+                "howto.step1.description": "アップロードエリアをクリックするか、画像ファイルをドラッグ＆ドロップしてください。JPG、PNG、GIF、WEBPなどをサポートしています。",
+                "howto.step2.title": "AIツールを選択",
+                "howto.step2.description": "オブジェクトを削除するAI消去か、写真に新しい画像を挿入するAI追加から選択します。",
+                "howto.step3.title": "編集と処理",
+                "howto.step3.description": "ツールを使用して消去する領域をマークしたり、新しい画像を追加します。その後、AIで処理してシームレスな結果を得ます。",
+                "howto.step4.title": "結果をダウンロード",
+                "howto.step4.description": "ワンクリックでAI処理された画像をダウンロード。透かしなし、登録不要。",
+                "aiTool.title": "AI消去・AI画像追加ツール",
+                "aiTool.upload.text": "画像をここにドラッグ＆ドロップするか、クリックして参照",
+                "aiTool.upload.button": "画像を選択",
+                "aiTool.options.title": "AIツールオプション",
+                "aiTool.toolSelection.title": "ツールを選択",
+                "aiTool.toolSelection.erase": "AI消去",
+                "aiTool.toolSelection.background": "AI背景",
+                "aiTool.toolSelection.addImage": "AI画像追加",
+                "aiTool.toolSelection.crop": "画像切り抜き",
+                "aiTool.eraser.selectionInfo": "クリックしてドラッグし、削除する領域を選択",
+                "aiTool.eraser.instructions": "カーソルをドラッグして選択矩形を作成します。選択された領域は削除され、背景で置き換えられます。",
+                "aiTool.background.upload": "背景画像をアップロード",
+                "aiTool.background.instructions": "背景として使用する色を選択するか、画像をアップロードします。背景画像をドラッグ＆ドロップして位置を調整できます。",
+                "aiTool.addImage.upload": "追加する画像をアップロード",
+                "aiTool.addImage.instructions": "写真に追加する画像をアップロードします。キャンバスをクリックして配置します。追加した画像をドラッグ＆ドロップして位置を調整できます。",
+                "aiTool.crop.apply": "切り抜きを適用",
+                "aiTool.crop.cancel": "キャンセル",
+                "aiTool.crop.instructions": "切り抜き選択の角や端をドラッグして領域を調整します。「切り抜きを適用」をクリックして確定します。",
+                "aiTool.format.title": "出力形式",
+                "aiTool.processing": "処理中: 0%",
+                "aiTool.process": "AIで処理",
+                "aiTool.download": "ダウンロード",
+                "aiTool.reset": "リセット",
+                "aiTool.controls.zoomIn": "ズームイン",
+                "aiTool.controls.zoomOut": "ズームアウト",
+                "aiTool.controls.reset": "表示をリセット",
+                "aiTool.controls.undo": "元に戻す",
+                "footer.follow": "フォローする",
+                "footer.categories": "人気カテゴリ",
+                "footer.categories.pdf": "PDFツール",
+                "footer.categories.image": "画像ツール",
+                "footer.categories.text": "テキストツール",
+                "footer.categories.av": "オーディオ/ビデオツール",
+                "footer.categories.web": "Web/開発者ツール",
+                "footer.categories.calc": "計算機ツール",
+                "footer.categories.util": "ユーティリティツール",
+                "footer.categories.color": "カラーツール",
+                "footer.quicklinks": "クイックリンク",
+                "footer.links.tools": "すべてのツール",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "お問い合わせ",
+                "footer.links.privacy": "プライバシーポリシー",
+                "footer.links.disclaimer": "免責事項",
+                "footer.links.terms": "利用規約",
+                "footer.copyright": "© 2025 LollyPoPDF. 全著作権所有。"
+            },
+            ru: {
+                "nav.home": "Главная",
+                "nav.about": "О нас",
+                "nav.tools": "Инструменты",
+                "nav.contact": "Контакты",
+                "hero.title": "Инструмент AI Стирание и Добавление изображения",
+                "hero.description": "Бесплатный онлайн-инструмент на основе ИИ для стирания объектов и добавления изображений к вашим фотографиям. Удаляйте нежелательные элементы или добавляйте новые объекты бесшовно. Регистрация не требуется.",
+                "howto.title": "Как использовать инструмент AI для изображений",
+                "howto.step1.title": "Загрузите ваше изображение",
+                "howto.step1.description": "Нажмите на область загрузки или перетащите ваш файл изображения. Мы поддерживаем JPG, PNG, GIF, WEBP и другие.",
+                "howto.step2.title": "Выберите инструмент AI",
+                "howto.step2.description": "Выберите между AI Стирание для удаления объектов или AI Добавить для вставки новых изображений в вашу фотографию.",
+                "howto.step3.title": "Редактировать и Обработать",
+                "howto.step3.description": "Используйте инструменты для отметки областей для стирания или добавления новых изображений. Затем обработайте с AI для бесшовных результатов.",
+                "howto.step4.title": "Скачать результат",
+                "howto.step4.description": "Скачайте ваше обработанное AI изображение одним кликом. Без водяных знаков, без регистрации.",
+                "aiTool.title": "Инструмент AI Стирание и Добавление изображения",
+                "aiTool.upload.text": "Перетащите ваше изображение сюда или нажмите для просмотра",
+                "aiTool.upload.button": "Выбрать изображение",
+                "aiTool.options.title": "Опции инструмента AI",
+                "aiTool.toolSelection.title": "Выбрать инструмент",
+                "aiTool.toolSelection.erase": "AI Стирание",
+                "aiTool.toolSelection.background": "AI Фон",
+                "aiTool.toolSelection.addImage": "AI Добавить изображение",
+                "aiTool.toolSelection.crop": "Обрезать изображение",
+                "aiTool.eraser.selectionInfo": "Нажмите и перетащите для выбора областей для удаления",
+                "aiTool.eraser.instructions": "Перетащите курсор для создания прямоугольников выделения. Выбранные области будут удалены и заменены фоном.",
+                "aiTool.background.upload": "Загрузить фоновое изображение",
+                "aiTool.background.instructions": "Выберите цвет или загрузите изображение для использования в качестве фона. Вы можете перетаскивать фоновое изображение для регулировки его позиции.",
+                "aiTool.addImage.upload": "Загрузить изображение для добавления",
+                "aiTool.addImage.instructions": "Загрузите изображение для добавления к вашей фотографии. Нажмите на холст для размещения. Вы можете перетаскивать добавленное изображение для регулировки его позиции.",
+                "aiTool.crop.apply": "Применить обрезку",
+                "aiTool.crop.cancel": "Отмена",
+                "aiTool.crop.instructions": "Перетащите углы или края выделения обрезки для регулировки области. Нажмите \"Применить обрезку\" для подтверждения.",
+                "aiTool.format.title": "Выходной формат",
+                "aiTool.processing": "Обработка: 0%",
+                "aiTool.process": "Обработать с AI",
+                "aiTool.download": "Скачать",
+                "aiTool.reset": "Сбросить",
+                "aiTool.controls.zoomIn": "Увеличить",
+                "aiTool.controls.zoomOut": "Уменьшить",
+                "aiTool.controls.reset": "Сбросить вид",
+                "aiTool.controls.undo": "Отменить",
+                "footer.follow": "СЛЕДУЙТЕ ЗА НАМИ",
+                "footer.categories": "Популярные категории",
+                "footer.categories.pdf": "PDF инструменты",
+                "footer.categories.image": "Инструменты для изображений",
+                "footer.categories.text": "Текстовые инструменты",
+                "footer.categories.av": "Аудио/Видео инструменты",
+                "footer.categories.web": "Веб/Разработчик инструменты",
+                "footer.categories.calc": "Калькулятор инструменты",
+                "footer.categories.util": "Утилиты",
+                "footer.categories.color": "Цветовые инструменты",
+                "footer.quicklinks": "Быстрые ссылки",
+                "footer.links.tools": "Все инструменты",
+                "footer.links.faq": "ЧаВо",
+                "footer.links.contact": "Контакты",
+                "footer.links.privacy": "Политика конфиденциальности",
+                "footer.links.disclaimer": "Отказ от ответственности",
+                "footer.links.terms": "Условия обслуживания",
+                "footer.copyright": "© 2025 LollyPoPDF. Все права защищены."
+            },
+            ko: {
+                "nav.home": "홈",
+                "nav.about": "회사 소개",
+                "nav.tools": "도구",
+                "nav.contact": "연락처",
+                "hero.title": "AI 지우기 및 AI 이미지 추가 도구",
+                "hero.description": "사진에서 개체를 지우고 이미지를 추가하는 무료 온라인 AI 도구. 원치 않는 요소를 제거하거나 새로운 개체를 매끄럽게 추가하세요. 등록 불필요.",
+                "howto.title": "AI 이미지 도구 사용 방법",
+                "howto.step1.title": "이미지 업로드",
+                "howto.step1.description": "업로드 영역을 클릭하거나 이미지 파일을 드래그 앤 드롭하세요. JPG, PNG, GIF, WEBP 등을 지원합니다.",
+                "howto.step2.title": "AI 도구 선택",
+                "howto.step2.description": "개체를 제거하는 AI 지우기 또는 사진에 새로운 이미지를 삽입하는 AI 추가 중 선택하세요.",
+                "howto.step3.title": "편집 및 처리",
+                "howto.step3.description": "도구를 사용하여 지울 영역을 표시하거나 새로운 이미지를 추가하세요. 그런 다음 AI로 처리하여 매끄러운 결과를 얻으세요.",
+                "howto.step4.title": "결과 다운로드",
+                "howto.step4.description": "한 번의 클릭으로 AI 처리된 이미지를 다운로드하세요. 워터마크 없음, 등록 불필요.",
+                "aiTool.title": "AI 지우기 및 AI 이미지 추가 도구",
+                "aiTool.upload.text": "이미지를 여기로 드래그 앤 드롭하거나 클릭하여 찾아보기",
+                "aiTool.upload.button": "이미지 선택",
+                "aiTool.options.title": "AI 도구 옵션",
+                "aiTool.toolSelection.title": "도구 선택",
+                "aiTool.toolSelection.erase": "AI 지우기",
+                "aiTool.toolSelection.background": "AI 배경",
+                "aiTool.toolSelection.addImage": "AI 이미지 추가",
+                "aiTool.toolSelection.crop": "이미지 자르기",
+                "aiTool.eraser.selectionInfo": "클릭하고 드래그하여 제거할 영역 선택",
+                "aiTool.eraser.instructions": "커서를 드래그하여 선택 사각형을 만드세요. 선택된 영역은 제거되고 배경으로 대체됩니다.",
+                "aiTool.background.upload": "배경 이미지 업로드",
+                "aiTool.background.instructions": "배경으로 사용할 색상을 선택하거나 이미지를 업로드하세요. 배경 이미지를 드래그 앤 드롭하여 위치를 조정할 수 있습니다.",
+                "aiTool.addImage.upload": "추가할 이미지 업로드",
+                "aiTool.addImage.instructions": "사진에 추가할 이미지를 업로드하세요. 캔버스를 클릭하여 배치하세요. 추가된 이미지를 드래그 앤 드롭하여 위치를 조정할 수 있습니다.",
+                "aiTool.crop.apply": "자르기 적용",
+                "aiTool.crop.cancel": "취소",
+                "aiTool.crop.instructions": "자르기 선택의 모서리나 가장자리를 드래그하여 영역을 조정하세요. \"자르기 적용\"을 클릭하여 확인하세요.",
+                "aiTool.format.title": "출력 형식",
+                "aiTool.processing": "처리 중: 0%",
+                "aiTool.process": "AI로 처리",
+                "aiTool.download": "다운로드",
+                "aiTool.reset": "재설정",
+                "aiTool.controls.zoomIn": "확대",
+                "aiTool.controls.zoomOut": "축소",
+                "aiTool.controls.reset": "보기 재설정",
+                "aiTool.controls.undo": "실행 취소",
+                "footer.follow": "팔로우하기",
+                "footer.categories": "인기 카테고리",
+                "footer.categories.pdf": "PDF 도구",
+                "footer.categories.image": "이미지 도구",
+                "footer.categories.text": "텍스트 도구",
+                "footer.categories.av": "오디오/비디오 도구",
+                "footer.categories.web": "웹/개발자 도구",
+                "footer.categories.calc": "계산기 도구",
+                "footer.categories.util": "유틸리티 도구",
+                "footer.categories.color": "색상 도구",
+                "footer.quicklinks": "빠른 링크",
+                "footer.links.tools": "모든 도구",
+                "footer.links.faq": "자주 묻는 질문",
+                "footer.links.contact": "연락처",
+                "footer.links.privacy": "개인정보 보호정책",
+                "footer.links.disclaimer": "면책 조항",
+                "footer.links.terms": "이용 약관",
+                "footer.copyright": "© 2025 LollyPoPDF. 모든 권리 보유."
+            },
+            "zh-CN": {
+                "nav.home": "首页",
+                "nav.about": "关于我们",
+                "nav.tools": "工具",
+                "nav.contact": "联系我们",
+                "hero.title": "AI擦除和AI添加图像工具",
+                "hero.description": "免费的在线AI驱动工具，可擦除对象并向您的照片添加图像。无缝移除不需要的元素或添加新对象。无需注册。",
+                "howto.title": "如何使用AI图像工具",
+                "howto.step1.title": "上传您的图像",
+                "howto.step1.description": "点击上传区域或拖放您的图像文件。我们支持JPG、PNG、GIF、WEBP等格式。",
+                "howto.step2.title": "选择AI工具",
+                "howto.step2.description": "在AI擦除（移除对象）和AI添加（向照片插入新图像）之间选择。",
+                "howto.step3.title": "编辑和处理",
+                "howto.step3.description": "使用工具标记要擦除的区域或添加新图像。然后使用AI处理以获得无缝结果。",
+                "howto.step4.title": "下载结果",
+                "howto.step4.description": "一键下载AI处理后的图像。无水印，无需注册。",
+                "aiTool.title": "AI擦除和AI添加图像工具",
+                "aiTool.upload.text": "将图像拖放到此处或点击浏览",
+                "aiTool.upload.button": "选择图像",
+                "aiTool.options.title": "AI工具选项",
+                "aiTool.toolSelection.title": "选择工具",
+                "aiTool.toolSelection.erase": "AI擦除",
+                "aiTool.toolSelection.background": "AI背景",
+                "aiTool.toolSelection.addImage": "AI添加图像",
+                "aiTool.toolSelection.crop": "裁剪图像",
+                "aiTool.eraser.selectionInfo": "点击并拖动以选择要移除的区域",
+                "aiTool.eraser.instructions": "拖动光标创建选择矩形。选定的区域将被移除并替换为背景。",
+                "aiTool.background.upload": "上传背景图像",
+                "aiTool.background.instructions": "选择颜色或上传图像作为背景。您可以拖放背景图像以调整其位置。",
+                "aiTool.addImage.upload": "上传要添加的图像",
+                "aiTool.addImage.instructions": "上传要添加到照片中的图像。点击画布放置。您可以拖放添加的图像以调整其位置。",
+                "aiTool.crop.apply": "应用裁剪",
+                "aiTool.crop.cancel": "取消",
+                "aiTool.crop.instructions": "拖动裁剪选择的角或边缘以调整区域。点击\"应用裁剪\"确认。",
+                "aiTool.format.title": "输出格式",
+                "aiTool.processing": "处理中: 0%",
+                "aiTool.process": "使用AI处理",
+                "aiTool.download": "下载",
+                "aiTool.reset": "重置",
+                "aiTool.controls.zoomIn": "放大",
+                "aiTool.controls.zoomOut": "缩小",
+                "aiTool.controls.reset": "重置视图",
+                "aiTool.controls.undo": "撤销",
+                "footer.follow": "关注我们",
+                "footer.categories": "热门分类",
+                "footer.categories.pdf": "PDF工具",
+                "footer.categories.image": "图像工具",
+                "footer.categories.text": "文本工具",
+                "footer.categories.av": "音频/视频工具",
+                "footer.categories.web": "Web/开发者工具",
+                "footer.categories.calc": "计算器工具",
+                "footer.categories.util": "实用工具",
+                "footer.categories.color": "颜色工具",
+                "footer.quicklinks": "快速链接",
+                "footer.links.tools": "所有工具",
+                "footer.links.faq": "常见问题",
+                "footer.links.contact": "联系我们",
+                "footer.links.privacy": "隐私政策",
+                "footer.links.disclaimer": "免责声明",
+                "footer.links.terms": "服务条款",
+                "footer.copyright": "© 2025 LollyPoPDF. 保留所有权利。"
+            },
+            "zh-TW": {
+                "nav.home": "首頁",
+                "nav.about": "關於我們",
+                "nav.tools": "工具",
+                "nav.contact": "聯絡我們",
+                "hero.title": "AI擦除和AI添加圖像工具",
+                "hero.description": "免費的線上AI驅動工具，可擦除物件並向您的照片添加圖像。無縫移除不需要的元素或添加新物件。無需註冊。",
+                "howto.title": "如何使用AI圖像工具",
+                "howto.step1.title": "上傳您的圖像",
+                "howto.step1.description": "點擊上傳區域或拖放您的圖像檔案。我們支援JPG、PNG、GIF、WEBP等格式。",
+                "howto.step2.title": "選擇AI工具",
+                "howto.step2.description": "在AI擦除（移除物件）和AI添加（向照片插入新圖像）之間選擇。",
+                "howto.step3.title": "編輯和處理",
+                "howto.step3.description": "使用工具標記要擦除的區域或添加新圖像。然後使用AI處理以獲得無縫結果。",
+                "howto.step4.title": "下載結果",
+                "howto.step4.description": "一鍵下載AI處理後的圖像。無浮水印，無需註冊。",
+                "aiTool.title": "AI擦除和AI添加圖像工具",
+                "aiTool.upload.text": "將圖像拖放到此處或點擊瀏覽",
+                "aiTool.upload.button": "選擇圖像",
+                "aiTool.options.title": "AI工具選項",
+                "aiTool.toolSelection.title": "選擇工具",
+                "aiTool.toolSelection.erase": "AI擦除",
+                "aiTool.toolSelection.background": "AI背景",
+                "aiTool.toolSelection.addImage": "AI添加圖像",
+                "aiTool.toolSelection.crop": "裁剪圖像",
+                "aiTool.eraser.selectionInfo": "點擊並拖動以選擇要移除的區域",
+                "aiTool.eraser.instructions": "拖動游標建立選擇矩形。選定的區域將被移除並替換為背景。",
+                "aiTool.background.upload": "上傳背景圖像",
+                "aiTool.background.instructions": "選擇顏色或上傳圖像作為背景。您可以拖放背景圖像以調整其位置。",
+                "aiTool.addImage.upload": "上傳要添加的圖像",
+                "aiTool.addImage.instructions": "上傳要添加到照片中的圖像。點擊畫布放置。您可以拖放添加的圖像以調整其位置。",
+                "aiTool.crop.apply": "套用裁剪",
+                "aiTool.crop.cancel": "取消",
+                "aiTool.crop.instructions": "拖動裁剪選擇的角或邊緣以調整區域。點擊\"套用裁剪\"確認。",
+                "aiTool.format.title": "輸出格式",
+                "aiTool.processing": "處理中: 0%",
+                "aiTool.process": "使用AI處理",
+                "aiTool.download": "下載",
+                "aiTool.reset": "重設",
+                "aiTool.controls.zoomIn": "放大",
+                "aiTool.controls.zoomOut": "縮小",
+                "aiTool.controls.reset": "重設檢視",
+                "aiTool.controls.undo": "復原",
+                "footer.follow": "追蹤我們",
+                "footer.categories": "熱門分類",
+                "footer.categories.pdf": "PDF工具",
+                "footer.categories.image": "圖像工具",
+                "footer.categories.text": "文字工具",
+                "footer.categories.av": "音訊/視訊工具",
+                "footer.categories.web": "Web/開發者工具",
+                "footer.categories.calc": "計算機工具",
+                "footer.categories.util": "實用工具",
+                "footer.categories.color": "顏色工具",
+                "footer.quicklinks": "快速連結",
+                "footer.links.tools": "所有工具",
+                "footer.links.faq": "常見問題",
+                "footer.links.contact": "聯絡我們",
+                "footer.links.privacy": "隱私權政策",
+                "footer.links.disclaimer": "免責聲明",
+                "footer.links.terms": "服務條款",
+                "footer.copyright": "© 2025 LollyPoPDF. 保留所有權利。"
+            },
+            ar: {
+                "nav.home": "الصفحة الرئيسية",
+                "nav.about": "من نحن",
+                "nav.tools": "الأدوات",
+                "nav.contact": "اتصل بنا",
+                "hero.title": "أداة المسح والاضافة بالذكاء الاصطناعي",
+                "hero.description": "أداة مجانية على الإنترنت مدعومة بالذكاء الاصطناعي لمحو الكائنات وإضافة الصور إلى صورك. قم بإزالة العناصر غير المرغوب فيها أو أضف كائنات جديدة بسلاسة. لا يلزم التسجيل.",
+                "howto.title": "كيفية استخدام أداة الصور بالذكاء الاصطناعي",
+                "howto.step1.title": "قم بتحميل صورتك",
+                "howto.step1.description": "انقر على منطقة التحميل أو اسحب وأفلت ملف الصورة الخاص بك. نحن ندعم JPG وPNG وGIF وWEBP والمزيد.",
+                "howto.step2.title": "اختر أداة الذكاء الاصطناعي",
+                "howto.step2.description": "اختر بين المسح بالذكاء الاصطناعي لإزالة الكائنات أو الإضافة بالذكاء الاصطناعي لإدراج صور جديدة في صورتك.",
+                "howto.step3.title": "تحرير ومعالجة",
+                "howto.step3.description": "استخدم الأدوات لوضع علامة على المناطق للمسح أو إضافة صور جديدة. ثم قم بالمعالجة بالذكاء الاصطناعي للحصول على نتائج سلسة.",
+                "howto.step4.title": "تحميل النتيجة",
+                "howto.step4.description": "قم بتنزيل صورتك المعالجة بالذكاء الاصطناعي بنقرة واحدة. لا توجد علامات مائية، ولا يلزم التسجيل.",
+                "aiTool.title": "أداة المسح والاضافة بالذكاء الاصطناعي",
+                "aiTool.upload.text": "اسحب وأفلت صورتك هنا أو انقر للتصفح",
+                "aiTool.upload.button": "اختر صورة",
+                "aiTool.options.title": "خيارات أداة الذكاء الاصطناعي",
+                "aiTool.toolSelection.title": "اختر الأداة",
+                "aiTool.toolSelection.erase": "المسح بالذكاء الاصطناعي",
+                "aiTool.toolSelection.background": "الخلفية بالذكاء الاصطناعي",
+                "aiTool.toolSelection.addImage": "إضافة صورة بالذكاء الاصطناعي",
+                "aiTool.toolSelection.crop": "قص الصورة",
+                "aiTool.eraser.selectionInfo": "انقر واسحب لتحديد المناطق المراد إزالتها",
+                "aiTool.eraser.instructions": "اسحب المؤشر لإنشاء مستطيلات التحديد. سيتم إزالة المناطق المحددة واستبدالها بالخلفية.",
+                "aiTool.background.upload": "تحميل صورة الخلفية",
+                "aiTool.background.instructions": "اختر لونًا أو قم بتحميل صورة لاستخدامها كخلفية. يمكنك سحب وإفلات صورة الخلفية لضبط موضعها.",
+                "aiTool.addImage.upload": "تحميل الصورة للإضافة",
+                "aiTool.addImage.instructions": "قم بتحميل صورة لإضافتها إلى صورتك. انقر على اللوحة لوضعها. يمكنك سحب وإفلات الصورة المضافة لضبط موضعها.",
+                "aiTool.crop.apply": "تطبيق القص",
+                "aiTool.crop.cancel": "إلغاء",
+                "aiTool.crop.instructions": "اسحب زوايا أو حواف اختيار القص لضبط المنطقة. انقر \"تطبيق القص\" للتأكيد.",
+                "aiTool.format.title": "تنسيق الإخراج",
+                "aiTool.processing": "جاري المعالجة: 0%",
+                "aiTool.process": "المعالجة بالذكاء الاصطناعي",
+                "aiTool.download": "تحميل",
+                "aiTool.reset": "إعادة تعيين",
+                "aiTool.controls.zoomIn": "تكبير",
+                "aiTool.controls.zoomOut": "تصغير",
+                "aiTool.controls.reset": "إعادة تعيين العرض",
+                "aiTool.controls.undo": "تراجع",
+                "footer.follow": "تابعنا",
+                "footer.categories": "الفئات الشائعة",
+                "footer.categories.pdf": "أدوات PDF",
+                "footer.categories.image": "أدوات الصور",
+                "footer.categories.text": "أدوات النص",
+                "footer.categories.av": "أدوات الصوت/الفيديو",
+                "footer.categories.web": "أدوات الويب/المطور",
+                "footer.categories.calc": "أدوات الآلة الحاسبة",
+                "footer.categories.util": "أدوات المساعدة",
+                "footer.categories.color": "أدوات الألوان",
+                "footer.quicklinks": "روابط سريعة",
+                "footer.links.tools": "جميع الأدوات",
+                "footer.links.faq": "الأسئلة الشائعة",
+                "footer.links.contact": "اتصل بنا",
+                "footer.links.privacy": "سياسة الخصوصية",
+                "footer.links.disclaimer": "إخلاء المسؤولية",
+                "footer.links.terms": "شروط الخدمة",
+                "footer.copyright": "© 2025 LollyPoPDF. جميع الحقوق محفوظة."
+            },
+            fa: {
+                "nav.home": "خانه",
+                "nav.about": "درباره ما",
+                "nav.tools": "ابزارها",
+                "nav.contact": "تماس با ما",
+                "hero.title": "ابزار پاک‌سازی و افزودن تصویر هوش مصنوعی",
+                "hero.description": "ابزار آنلاین رایگان مبتنی بر هوش مصنوعی برای پاک‌سازی اشیاء و افزودن تصاویر به عکس‌های شما. عناصر ناخواسته را حذف کنید یا اشیاء جدید را به راحتی اضافه کنید. بدون نیاز به ثبت‌نام.",
+                "howto.title": "نحوه استفاده از ابزار تصویر هوش مصنوعی",
+                "howto.step1.title": "تصویر خود را آپلود کنید",
+                "howto.step1.description": "روی ناحیه آپلود کلیک کنید یا فایل تصویر خود را بکشید و رها کنید. ما از JPG، PNG، GIF، WEBP و بیشتر پشتیبانی می‌کنیم.",
+                "howto.step2.title": "ابزار هوش مصنوعی را انتخاب کنید",
+                "howto.step2.description": "بین پاک‌سازی هوش مصنوعی برای حذف اشیاء یا افزودن هوش مصنوعی برای درج تصاویر جدید در عکس خود انتخاب کنید.",
+                "howto.step3.title": "ویرایش و پردازش",
+                "howto.step3.description": "از ابزارها برای علامت‌گذاری نواحی برای پاک‌سازی یا افزودن تصاویر جدید استفاده کنید. سپس با هوش مصنوعی پردازش کنید تا نتایج یکپارچه به دست آید.",
+                "howto.step4.title": "دانلود نتیجه",
+                "howto.step4.description": "عکس پردازش شده هوش مصنوعی خود را با یک کلیک دانلود کنید. بدون واترمارک، بدون نیاز به ثبت‌نام.",
+                "aiTool.title": "ابزار پاک‌سازی و افزودن تصویر هوش مصنوعی",
+                "aiTool.upload.text": "تصویر خود را اینجا بکشید و رها کنید یا برای مرور کلیک کنید",
+                "aiTool.upload.button": "انتخاب تصویر",
+                "aiTool.options.title": "گزینه‌های ابزار هوش مصنوعی",
+                "aiTool.toolSelection.title": "انتخاب ابزار",
+                "aiTool.toolSelection.erase": "پاک‌سازی هوش مصنوعی",
+                "aiTool.toolSelection.background": "پس‌زمینه هوش مصنوعی",
+                "aiTool.toolSelection.addImage": "افزودن تصویر هوش مصنوعی",
+                "aiTool.toolSelection.crop": "برش تصویر",
+                "aiTool.eraser.selectionInfo": "کلیک کنید و بکشید تا نواحی برای حذف انتخاب شوند",
+                "aiTool.eraser.instructions": "مکان‌نما را بکشید تا مستطیل‌های انتخاب ایجاد شوند. نواحی انتخاب شده حذف و با پس‌زمینه جایگزین می‌شوند.",
+                "aiTool.background.upload": "آپلود تصویر پس‌زمینه",
+                "aiTool.background.instructions": "یک رنگ انتخاب کنید یا تصویری را برای استفاده به عنوان پس‌زمینه آپلود کنید. می‌توانید تصویر پس‌زمینه را بکشید و رها کنید تا موقعیت آن را تنظیم کنید.",
+                "aiTool.addImage.upload": "آپلود تصویر برای افزودن",
+                "aiTool.addImage.instructions": "تصویری را برای افزودن به عکس خود آپلود کنید. روی بوم کلیک کنید تا قرار گیرد. می‌توانید تصویر اضافه شده را بکشید و رها کنید تا موقعیت آن را تنظیم کنید.",
+                "aiTool.crop.apply": "اعمال برش",
+                "aiTool.crop.cancel": "لغو",
+                "aiTool.crop.instructions": "گوشه‌ها یا لبه‌های انتخاب برش را بکشید تا ناحیه تنظیم شود. برای تأیید روی \"اعمال برش\" کلیک کنید.",
+                "aiTool.format.title": "فرمت خروجی",
+                "aiTool.processing": "در حال پردازش: 0%",
+                "aiTool.process": "پردازش با هوش مصنوعی",
+                "aiTool.download": "دانلود",
+                "aiTool.reset": "بازنشانی",
+                "aiTool.controls.zoomIn": "بزرگنمایی",
+                "aiTool.controls.zoomOut": "کوچکنمایی",
+                "aiTool.controls.reset": "بازنشانی نمای",
+                "aiTool.controls.undo": "بازگشت",
+                "footer.follow": "ما را دنبال کنید",
+                "footer.categories": "دسته‌بندی‌های محبوب",
+                "footer.categories.pdf": "ابزارهای PDF",
+                "footer.categories.image": "ابزارهای تصویر",
+                "footer.categories.text": "ابزارهای متن",
+                "footer.categories.av": "ابزارهای صدا/ویدیو",
+                "footer.categories.web": "ابزارهای وب/توسعه‌دهنده",
+                "footer.categories.calc": "ابزارهای ماشین حساب",
+                "footer.categories.util": "ابزارهای کمکی",
+                "footer.categories.color": "ابزارهای رنگ",
+                "footer.quicklinks": "لینک‌های سریع",
+                "footer.links.tools": "همه ابزارها",
+                "footer.links.faq": "سوالات متداول",
+                "footer.links.contact": "تماس با ما",
+                "footer.links.privacy": "سیاست حفظ حریم خصوصی",
+                "footer.links.disclaimer": "سلب مسئولیت",
+                "footer.links.terms": "شرایط استفاده از خدمات",
+                "footer.copyright": "© 2025 LollyPoPDF. تمامی حقوق محفوظ است."
+            },
+            bg: {
+                "nav.home": "Начало",
+                "nav.about": "За нас",
+                "nav.tools": "Инструменти",
+                "nav.contact": "Контакт",
+                "hero.title": "Инструмент за изтриване и добавяне на изображения с AI",
+                "hero.description": "Безплатен онлайн инструмент, задвижван от AI, за изтриване на обекти и добавяне на изображения към вашите снимки. Премахнете нежелани елементи или добавете нови обекти плавно. Не се изисква регистрация.",
+                "howto.title": "Как да използвате инструмента за изображения с AI",
+                "howto.step1.title": "Качете вашето изображение",
+                "howto.step1.description": "Кликнете върху зоната за качване или плъзнете и пуснете вашия файл с изображение. Поддържаме JPG, PNG, GIF, WEBP и други.",
+                "howto.step2.title": "Изберете AI инструмент",
+                "howto.step2.description": "Изберете между AI Изтриване за премахване на обекти или AI Добавяне за вмъкване на нови изображения във вашата снимка.",
+                "howto.step3.title": "Редактирайте и Обработете",
+                "howto.step3.description": "Използвайте инструментите, за да маркирате области за изтриване или добавяне на нови изображения. След това обработете с AI за плавни резултати.",
+                "howto.step4.title": "Изтеглете резултата",
+                "howto.step4.description": "Изтеглете вашето обработено с AI изображение с едно кликване. Без водни знаци, без регистрация.",
+                "aiTool.title": "Инструмент за изтриване и добавяне на изображения с AI",
+                "aiTool.upload.text": "Плъзнете и пуснете вашето изображение тук или кликнете за разглеждане",
+                "aiTool.upload.button": "Изберете изображение",
+                "aiTool.options.title": "Опции на AI инструмента",
+                "aiTool.toolSelection.title": "Изберете инструмент",
+                "aiTool.toolSelection.erase": "AI Изтриване",
+                "aiTool.toolSelection.background": "AI Фон",
+                "aiTool.toolSelection.addImage": "AI Добавяне на изображение",
+                "aiTool.toolSelection.crop": "Изрязване на изображение",
+                "aiTool.eraser.selectionInfo": "Кликнете и плъзнете, за да изберете области за премахване",
+                "aiTool.eraser.instructions": "Плъзнете курсора, за да създадете правоъгълници за избор. Избраните области ще бъдат премахнати и заменени с фона.",
+                "aiTool.background.upload": "Качете фоново изображение",
+                "aiTool.background.instructions": "Изберете цвят или качете изображение, което да се използва като фон. Можете да плъзгате и пускате фоновото изображение, за да регулирате позицията му.",
+                "aiTool.addImage.upload": "Качете изображение за добавяне",
+                "aiTool.addImage.instructions": "Качете изображение, което да добавите към вашата снимка. Кликнете върху платното, за да го поставите. Можете да плъзгате и пускате добавеното изображение, за да регулирате позицията му.",
+                "aiTool.crop.apply": "Приложи изрязване",
+                "aiTool.crop.cancel": "Отказ",
+                "aiTool.crop.instructions": "Плъзнете ъглите или ръбовете на селекцията за изрязване, за да регулирате областта. Кликнете \"Приложи изрязване\" за потвърждение.",
+                "aiTool.format.title": "Изходен формат",
+                "aiTool.processing": "Обработване: 0%",
+                "aiTool.process": "Обработка с AI",
+                "aiTool.download": "Изтегляне",
+                "aiTool.reset": "Нулиране",
+                "aiTool.controls.zoomIn": "Увеличаване",
+                "aiTool.controls.zoomOut": "Намаляване",
+                "aiTool.controls.reset": "Нулиране на изгледа",
+                "aiTool.controls.undo": "Отмяна",
+                "footer.follow": "СЛЕДВАТЕ НИ",
+                "footer.categories": "Популярни категории",
+                "footer.categories.pdf": "PDF инструменти",
+                "footer.categories.image": "Инструменти за изображения",
+                "footer.categories.text": "Текстови инструменти",
+                "footer.categories.av": "Аудио/Видео инструменти",
+                "footer.categories.web": "Уеб/Разработчик инструменти",
+                "footer.categories.calc": "Калкулаторни инструменти",
+                "footer.categories.util": "Помощни инструменти",
+                "footer.categories.color": "Цветови инструменти",
+                "footer.quicklinks": "Бързи връзки",
+                "footer.links.tools": "Всички инструменти",
+                "footer.links.faq": "ЧЗВ",
+                "footer.links.contact": "Контакт",
+                "footer.links.privacy": "Политика за поверителност",
+                "footer.links.disclaimer": "Отказ от отговорност",
+                "footer.links.terms": "Условия за ползване",
+                "footer.copyright": "© 2025 LollyPoPDF. Всички права запазени."
+            },
+            ca: {
+                "nav.home": "Inici",
+                "nav.about": "Sobre nosaltres",
+                "nav.tools": "Eines",
+                "nav.contact": "Contacte",
+                "hero.title": "Eina d'Esborrat i Afegit d'Imatge amb IA",
+                "hero.description": "Eina en línia gratuïta impulsada per IA per esborrar objectes i afegir imatges a les vostres fotos. Elimineu elements no desitjats o afegiu nous objectes de manera perfecta. No es requereix registre.",
+                "howto.title": "Com utilitzar l'eina d'imatge amb IA",
+                "howto.step1.title": "Pugeu la vostra imatge",
+                "howto.step1.description": "Feu clic a l'àrea de pujada o arrossegueu i deixeu anar el vostre fitxer d'imatge. Admetem JPG, PNG, GIF, WEBP i més.",
+                "howto.step2.title": "Trieu l'eina d'IA",
+                "howto.step2.description": "Seleccioneu entre IA Esborrar per eliminar objectes o IA Afegir per inserir noves imatges a la vostra foto.",
+                "howto.step3.title": "Editeu i Processeu",
+                "howto.step3.description": "Utilitzeu les eines per marcar àrees per esborrar o afegir noves imatges. Després processeu amb IA per obtenir resultats perfectes.",
+                "howto.step4.title": "Baixeu el resultat",
+                "howto.step4.description": "Baixeu la vostra imatge processada per IA amb un sol clic. Sense marques d'aigua, sense registre necessari.",
+                "aiTool.title": "Eina d'Esborrat i Afegit d'Imatge amb IA",
+                "aiTool.upload.text": "Arrossegueu i deixeu anar la vostra imatge aquí o feu clic per navegar",
+                "aiTool.upload.button": "Seleccioneu imatge",
+                "aiTool.options.title": "Opcions de l'eina d'IA",
+                "aiTool.toolSelection.title": "Seleccioneu eina",
+                "aiTool.toolSelection.erase": "IA Esborrar",
+                "aiTool.toolSelection.background": "IA Fons",
+                "aiTool.toolSelection.addImage": "IA Afegir imatge",
+                "aiTool.toolSelection.crop": "Retallar imatge",
+                "aiTool.eraser.selectionInfo": "Feu clic i arrossegueu per seleccionar àrees per eliminar",
+                "aiTool.eraser.instructions": "Arrossegueu el cursor per crear rectangles de selecció. Les àrees seleccionades s'eliminaran i es substituiran pel fons.",
+                "aiTool.background.upload": "Pugeu imatge de fons",
+                "aiTool.background.instructions": "Seleccioneu un color o pugeu una imatge per utilitzar com a fons. Podeu arrossegueu i deixar anar la imatge de fons per ajustar la seva posició.",
+                "aiTool.addImage.upload": "Pugeu imatge per afegir",
+                "aiTool.addImage.instructions": "Pugeu una imatge per afegir a la vostra foto. Feu clic al llenç per col·locar-la. Podeu arrossegueu i deixar anar la imatge afegida per ajustar la seva posició.",
+                "aiTool.crop.apply": "Aplicar retall",
+                "aiTool.crop.cancel": "Cancel·lar",
+                "aiTool.crop.instructions": "Arrossegueu les cantonades o vores de la selecció de retall per ajustar l'àrea. Feu clic \"Aplicar retall\" per confirmar.",
+                "aiTool.format.title": "Format de sortida",
+                "aiTool.processing": "Processant: 0%",
+                "aiTool.process": "Processar amb IA",
+                "aiTool.download": "Baixar",
+                "aiTool.reset": "Restablir",
+                "aiTool.controls.zoomIn": "Ampliar",
+                "aiTool.controls.zoomOut": "Reduir",
+                "aiTool.controls.reset": "Restablir vista",
+                "aiTool.controls.undo": "Desfer",
+                "footer.follow": "SEGUEIX-NOS",
+                "footer.categories": "Categories populars",
+                "footer.categories.pdf": "Eines PDF",
+                "footer.categories.image": "Eines d'imatge",
+                "footer.categories.text": "Eines de text",
+                "footer.categories.av": "Eines d'àudio/vídeo",
+                "footer.categories.web": "Eines web/desenvolupador",
+                "footer.categories.calc": "Eines de calculadora",
+                "footer.categories.util": "Eines d'utilitat",
+                "footer.categories.color": "Eines de color",
+                "footer.quicklinks": "Enllaços ràpids",
+                "footer.links.tools": "Totes les eines",
+                "footer.links.faq": "PMF",
+                "footer.links.contact": "Contacte",
+                "footer.links.privacy": "Política de privadesa",
+                "footer.links.disclaimer": "Avís legal",
+                "footer.links.terms": "Termes del servei",
+                "footer.copyright": "© 2025 LollyPoPDF. Tots els drets reservats."
+            },
+            nl: {
+                "nav.home": "Home",
+                "nav.about": "Over ons",
+                "nav.tools": "Tools",
+                "nav.contact": "Contact",
+                "hero.title": "AI Wis en AI Afbeelding Toevoegen Tool",
+                "hero.description": "Gratis online AI-gestuurde tool om objecten te wissen en afbeeldingen aan je foto's toe te voegen. Verwijder ongewenste elementen of voeg naadloos nieuwe objecten toe. Geen registratie vereist.",
+                "howto.title": "Hoe de AI Afbeelding Tool te gebruiken",
+                "howto.step1.title": "Upload je afbeelding",
+                "howto.step1.description": "Klik op het uploadgebied of sleep en zet je afbeeldingsbestand neer. We ondersteunen JPG, PNG, GIF, WEBP en meer.",
+                "howto.step2.title": "Kies AI Tool",
+                "howto.step2.description": "Selecteer tussen AI Wissen om objecten te verwijderen of AI Toevoegen om nieuwe afbeeldingen in je foto in te voegen.",
+                "howto.step3.title": "Bewerk en Verwerk",
+                "howto.step3.description": "Gebruik de tools om gebieden te markeren om te wissen of nieuwe afbeeldingen toe te voegen. Verwerk dan met AI voor naadloze resultaten.",
+                "howto.step4.title": "Download resultaat",
+                "howto.step4.description": "Download je AI-verwerkte afbeelding met één klik. Geen watermerken, geen registratie vereist.",
+                "aiTool.title": "AI Wis en AI Afbeelding Toevoegen Tool",
+                "aiTool.upload.text": "Sleep en zet je afbeelding hier neer of klik om te bladeren",
+                "aiTool.upload.button": "Selecteer afbeelding",
+                "aiTool.options.title": "AI Tool Opties",
+                "aiTool.toolSelection.title": "Selecteer tool",
+                "aiTool.toolSelection.erase": "AI Wissen",
+                "aiTool.toolSelection.background": "AI Achtergrond",
+                "aiTool.toolSelection.addImage": "AI Afbeelding Toevoegen",
+                "aiTool.toolSelection.crop": "Afbeelding Bijsnijden",
+                "aiTool.eraser.selectionInfo": "Klik en sleep om te verwijderen gebieden te selecteren",
+                "aiTool.eraser.instructions": "Sleep je cursor om selectievakken te maken. De geselecteerde gebieden worden verwijderd en vervangen door de achtergrond.",
+                "aiTool.background.upload": "Upload achtergrondafbeelding",
+                "aiTool.background.instructions": "Selecteer een kleur of upload een afbeelding om als achtergrond te gebruiken. Je kunt de achtergrondafbeelding slepen en neerzetten om de positie aan te passen.",
+                "aiTool.addImage.upload": "Upload toe te voegen afbeelding",
+                "aiTool.addImage.instructions": "Upload een afbeelding om aan je foto toe te voegen. Klik op het canvas om te plaatsen. Je kunt de toegevoegde afbeelding slepen en neerzetten om de positie aan te passen.",
+                "aiTool.crop.apply": "Bijsnijden Toepassen",
+                "aiTool.crop.cancel": "Annuleren",
+                "aiTool.crop.instructions": "Sleep de hoeken of randen van de bijsnijdselectie om het gebied aan te passen. Klik \"Bijsnijden Toepassen\" om te bevestigen.",
+                "aiTool.format.title": "Uitvoerformaat",
+                "aiTool.processing": "Verwerken: 0%",
+                "aiTool.process": "Verwerken met AI",
+                "aiTool.download": "Downloaden",
+                "aiTool.reset": "Resetten",
+                "aiTool.controls.zoomIn": "Inzoomen",
+                "aiTool.controls.zoomOut": "Uitzoomen",
+                "aiTool.controls.reset": "Weergave Resetten",
+                "aiTool.controls.undo": "Ongedaan Maken",
+                "footer.follow": "VOLG ONS",
+                "footer.categories": "Populaire Categorieën",
+                "footer.categories.pdf": "PDF Tools",
+                "footer.categories.image": "Afbeelding Tools",
+                "footer.categories.text": "Tekst Tools",
+                "footer.categories.av": "Audio/Video Tools",
+                "footer.categories.web": "Web/Developer Tools",
+                "footer.categories.calc": "Rekenmachine Tools",
+                "footer.categories.util": "Utility Tools",
+                "footer.categories.color": "Kleur Tools",
+                "footer.quicklinks": "Snelle Links",
+                "footer.links.tools": "Alle Tools",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Contact",
+                "footer.links.privacy": "Privacybeleid",
+                "footer.links.disclaimer": "Disclaimer",
+                "footer.links.terms": "Servicevoorwaarden",
+                "footer.copyright": "© 2025 LollyPoPDF. Alle rechten voorbehouden."
+            },
+            el: {
+                "nav.home": "Αρχική",
+                "nav.about": "Σχετικά με εμάς",
+                "nav.tools": "Εργαλεία",
+                "nav.contact": "Επικοινωνία",
+                "hero.title": "Εργαλείο AI Διαγραφής και Προσθήκης Εικόνας",
+                "hero.description": "Δωρεάν διαδικτυακό εργαλείο με τεχνητή νοημοσύνη για διαγραφή αντικειμένων και προσθήκη εικόνων στις φωτογραφίες σας. Αφαιρέστε ανεπιθύμητα στοιχεία ή προσθέστε νέα αντικείμενα απρόσκοπτα. Δεν απαιτείται εγγραφή.",
+                "howto.title": "Πώς να χρησιμοποιήσετε το εργαλείο εικόνας AI",
+                "howto.step1.title": "Ανεβάστε την εικόνα σας",
+                "howto.step1.description": "Κάντε κλικ στην περιοχή μεταφόρτωσης ή σύρετε και αποθέστε το αρχείο εικόνας σας. Υποστηρίζουμε JPG, PNG, GIF, WEBP και άλλα.",
+                "howto.step2.title": "Επιλέξτε εργαλείο AI",
+                "howto.step2.description": "Επιλέξτε μεταξύ AI Διαγραφή για αφαίρεση αντικειμένων ή AI Προσθήκη για εισαγωγή νέων εικόνων στη φωτογραφία σας.",
+                "howto.step3.title": "Επεξεργασία και Επεξεργασία",
+                "howto.step3.description": "Χρησιμοποιήστε τα εργαλεία για να επισημάνετε περιοχές προς διαγραφή ή προσθήκη νέων εικόνων. Στη συνέχεια επεξεργαστείτε με AI για απρόσκοπτα αποτελέσματα.",
+                "howto.step4.title": "Λήψη αποτελέσματος",
+                "howto.step4.description": "Κατεβάστε την επεξεργασμένη με AI εικόνα σας με ένα κλικ. Χωρίς υδατογραφήματα, χωρίς απαίτηση εγγραφής.",
+                "aiTool.title": "Εργαλείο AI Διαγραφής και Προσθήκης Εικόνας",
+                "aiTool.upload.text": "Σύρετε και αποθέστε την εικόνα σας εδώ ή κάντε κλικ για περιήγηση",
+                "aiTool.upload.button": "Επιλέξτε εικόνα",
+                "aiTool.options.title": "Επιλογές εργαλείου AI",
+                "aiTool.toolSelection.title": "Επιλέξτε εργαλείο",
+                "aiTool.toolSelection.erase": "AI Διαγραφή",
+                "aiTool.toolSelection.background": "AI Φόντο",
+                "aiTool.toolSelection.addImage": "AI Προσθήκη εικόνας",
+                "aiTool.toolSelection.crop": "Περικοπή εικόνας",
+                "aiTool.eraser.selectionInfo": "Κάντε κλικ και σύρετε για επιλογή περιοχών προς αφαίρεση",
+                "aiTool.eraser.instructions": "Σύρετε τον δρομέα για δημιουργία ορθογωνίων επιλογής. Οι επιλεγμένες περιοχές θα αφαιρεθούν και θα αντικατασταθούν με το φόντο.",
+                "aiTool.background.upload": "Ανεβάστε εικόνα φόντου",
+                "aiTool.background.instructions": "Επιλέξτε χρώμα ή ανεβάστε εικόνα για χρήση ως φόντο. Μπορείτε να σύρετε και να αποθέσετε την εικόνα φόντου για ρύθμιση της θέσης της.",
+                "aiTool.addImage.upload": "Ανεβάστε εικόνα προς προσθήκη",
+                "aiTool.addImage.instructions": "Ανεβάστε μια εικόνα για προσθήκη στη φωτογραφία σας. Κάντε κλικ στον καμβά για τοποθέτηση. Μπορείτε να σύρετε και να αποθέσετε την προστεθείσα εικόνα για ρύθμιση της θέσης της.",
+                "aiTool.crop.apply": "Εφαρμογή περικοπής",
+                "aiTool.crop.cancel": "Ακύρωση",
+                "aiTool.crop.instructions": "Σύρετε τις γωνίες ή τις άκρες της επιλογής περικοπής για ρύθμιση της περιοχής. Κάντε κλικ \"Εφαρμογή περικοπής\" για επιβεβαίωση.",
+                "aiTool.format.title": "Μορφή εξόδου",
+                "aiTool.processing": "Επεξεργασία: 0%",
+                "aiTool.process": "Επεξεργασία με AI",
+                "aiTool.download": "Λήψη",
+                "aiTool.reset": "Επαναφορά",
+                "aiTool.controls.zoomIn": "Μεγέθυνση",
+                "aiTool.controls.zoomOut": "Σμίκρυνση",
+                "aiTool.controls.reset": "Επαναφορά προβολής",
+                "aiTool.controls.undo": "Αναίρεση",
+                "footer.follow": "ΑΚΟΛΟΥΘΗΣΤΕ ΜΑΣ",
+                "footer.categories": "Δημοφιλείς κατηγορίες",
+                "footer.categories.pdf": "Εργαλεία PDF",
+                "footer.categories.image": "Εργαλεία εικόνας",
+                "footer.categories.text": "Εργαλεία κειμένου",
+                "footer.categories.av": "Εργαλεία ήχου/βίντεο",
+                "footer.categories.web": "Εργαλεία Web/Προγραμματιστή",
+                "footer.categories.calc": "Εργαλεία αριθμομηχανής",
+                "footer.categories.util": "Εργαλεία χρησιμότητας",
+                "footer.categories.color": "Εργαλεία χρώματος",
+                "footer.quicklinks": "Γρήγοροι σύνδεσμοι",
+                "footer.links.tools": "Όλα τα εργαλεία",
+                "footer.links.faq": "Συχνές ερωτήσεις",
+                "footer.links.contact": "Επικοινωνία",
+                "footer.links.privacy": "Πολιτική απορρήτου",
+                "footer.links.disclaimer": "Αποποίηση ευθυνών",
+                "footer.links.terms": "Όροι χρήσης",
+                "footer.copyright": "© 2025 LollyPoPDF. Με επιφύλαξη παντός δικαιώματος."
+            },
+            hi: {
+                "nav.home": "होम",
+                "nav.about": "हमारे बारे में",
+                "nav.tools": "टूल्स",
+                "nav.contact": "संपर्क करें",
+                "hero.title": "AI इरेज़ और AI इमेज ऐड टूल",
+                "hero.description": "वस्तुओं को मिटाने और अपनी तस्वीरों में छवियाँ जोड़ने के लिए मुफ्त ऑनलाइन AI-संचालित टूल। अवांछित तत्वों को हटाएं या नए ऑब्जेक्ट्स सीमलेसली जोड़ें। कोई पंजीकरण आवश्यक नहीं।",
+                "howto.title": "AI इमेज टूल का उपयोग कैसे करें",
+                "howto.step1.title": "अपनी इमेज अपलोड करें",
+                "howto.step1.description": "अपलोड एरिया पर क्लिक करें या अपनी इमेज फ़ाइल को ड्रैग और ड्रॉप करें। हम JPG, PNG, GIF, WEBP और अधिक सपोर्ट करते हैं।",
+                "howto.step2.title": "AI टूल चुनें",
+                "howto.step2.description": "ऑब्जेक्ट्स हटाने के लिए AI इरेज़ या अपनी फोटो में नई इमेज डालने के लिए AI ऐड के बीच चयन करें।",
+                "howto.step3.title": "एडिट और प्रोसेस",
+                "howto.step3.description": "मिटाने के लिए एरिया मार्क करने या नई इमेज जोड़ने के लिए टूल्स का उपयोग करें। फिर सीमलेस रिजल्ट्स के लिए AI से प्रोसेस करें।",
+                "howto.step4.title": "रिजल्ट डाउनलोड करें",
+                "howto.step4.description": "एक क्लिक से अपनी AI-प्रोसेस्ड इमेज डाउनलोड करें। कोई वॉटरमार्क नहीं, कोई पंजीकरण आवश्यक नहीं।",
+                "aiTool.title": "AI इरेज़ और AI इमेज ऐड टूल",
+                "aiTool.upload.text": "अपनी इमेज यहाँ ड्रैग और ड्रॉप करें या ब्राउज़ करने के लिए क्लिक करें",
+                "aiTool.upload.button": "इमेज चुनें",
+                "aiTool.options.title": "AI टूल ऑप्शन्स",
+                "aiTool.toolSelection.title": "टूल चुनें",
+                "aiTool.toolSelection.erase": "AI इरेज़",
+                "aiTool.toolSelection.background": "AI बैकग्राउंड",
+                "aiTool.toolSelection.addImage": "AI इमेज ऐड",
+                "aiTool.toolSelection.crop": "इमेज क्रॉप",
+                "aiTool.eraser.selectionInfo": "हटाने के लिए एरिया चुनने के लिए क्लिक करें और ड्रैग करें",
+                "aiTool.eraser.instructions": "सेलेक्शन रेक्टेंगल बनाने के लिए अपने कर्सर को ड्रैग करें। चयनित एरिया हटा दिए जाएंगे और बैकग्राउंड से रिप्लेस हो जाएंगे।",
+                "aiTool.background.upload": "बैकग्राउंड इमेज अपलोड करें",
+                "aiTool.background.instructions": "बैकग्राउंड के रूप में उपयोग करने के लिए एक रंग चुनें या इमेज अपलोड करें। आप बैकग्राउंड इमेज को उसकी पोजीशन एडजस्ट करने के लिए ड्रैग और ड्रॉप कर सकते हैं।",
+                "aiTool.addImage.upload": "ऐड करने के लिए इमेज अपलोड करें",
+                "aiTool.addImage.instructions": "अपनी फोटो में जोड़ने के लिए एक इमेज अपलोड करें। प्लेस करने के लिए कैनवास पर क्लिक करें। आप ऐड की गई इमेज को उसकी पोजीशन एडजस्ट करने के लिए ड्रैग और ड्रॉप कर सकते हैं।",
+                "aiTool.crop.apply": "क्रॉप अप्लाई करें",
+                "aiTool.crop.cancel": "कैंसल",
+                "aiTool.crop.instructions": "एरिया एडजस्ट करने के लिए क्रॉप सेलेक्शन के कॉर्नर या एज को ड्रैग करें। कन्फर्म करने के लिए \"क्रॉप अप्लाई करें\" क्लिक करें।",
+                "aiTool.format.title": "आउटपुट फॉर्मेट",
+                "aiTool.processing": "प्रोसेसिंग: 0%",
+                "aiTool.process": "AI से प्रोसेस करें",
+                "aiTool.download": "डाउनलोड",
+                "aiTool.reset": "रीसेट",
+                "aiTool.controls.zoomIn": "ज़ूम इन",
+                "aiTool.controls.zoomOut": "ज़ूम आउट",
+                "aiTool.controls.reset": "व्यू रीसेट",
+                "aiTool.controls.undo": "अनडू",
+                "footer.follow": "हमें फॉलो करें",
+                "footer.categories": "लोकप्रिय श्रेणियाँ",
+                "footer.categories.pdf": "PDF टूल्स",
+                "footer.categories.image": "इमेज टूल्स",
+                "footer.categories.text": "टेक्स्ट टूल्स",
+                "footer.categories.av": "ऑडियो/वीडियो टूल्स",
+                "footer.categories.web": "वेब/डेवलपर टूल्स",
+                "footer.categories.calc": "कैलकुलेटर टूल्स",
+                "footer.categories.util": "यूटिलिटी टूल्स",
+                "footer.categories.color": "कलर टूल्स",
+                "footer.quicklinks": "क्विक लिंक्स",
+                "footer.links.tools": "सभी टूल्स",
+                "footer.links.faq": "सामान्य प्रश्न",
+                "footer.links.contact": "संपर्क करें",
+                "footer.links.privacy": "गोपनीयता नीति",
+                "footer.links.disclaimer": "अस्वीकरण",
+                "footer.links.terms": "सेवा की शर्तें",
+                "footer.copyright": "© 2025 LollyPoPDF. सर्वाधिकार सुरक्षित।"
+            },
+            te: {
+                "nav.home": "హోమ్",
+                "nav.about": "మా గురించి",
+                "nav.tools": "టూల్స్",
+                "nav.contact": "సంప్రదించండి",
+                "hero.title": "AI ఎరేజ్ & AI ఇమేజ్ యాడ్ టూల్",
+                "hero.description": "వస్తువులను తుడిచివేయడానికి మరియు మీ ఫోటోలకు ఇమేజీలను జోడించడానికి ఉచిత ఆన్లైన్ AI-ఆధారిత సాధనం. అవాంఛిత అంశాలను తీసివేయండి లేదా కొత్త వస్తువులను నిర్విరామంగా జోడించండి. రిజిస్ట్రేషన్ అవసరం లేదు.",
+                "howto.title": "AI ఇమేజ్ టూల్ ఎలా ఉపయోగించాలి",
+                "howto.step1.title": "మీ ఇమేజ్ అప్లోడ్ చేయండి",
+                "howto.step1.description": "అప్లోడ్ ప్రాంతంపై క్లిక్ చేయండి లేదా మీ ఇమేజ్ ఫైల్ను డ్రాగ్ మరియు డ్రాప్ చేయండి. మేము JPG, PNG, GIF, WEBP మరియు మరిన్నింటిని మద్దతు ఇస్తాము.",
+                "howto.step2.title": "AI టూల్ ఎంచుకోండి",
+                "howto.step2.description": "వస్తువులను తీసివేయడానికి AI ఎరేజ్ లేదా మీ ఫోటోలో కొత్త ఇమేజీలను చేర్చడానికి AI యాడ్ మధ్య ఎంచుకోండి.",
+                "howto.step3.title": "ఎడిట్ & ప్రాసెస్",
+                "howto.step3.description": "తుడిచివేయడానికి ప్రాంతాలను మార్క్ చేయడానికి లేదా కొత్త ఇమేజీలను జోడించడానికి టూల్స్ ఉపయోగించండి. అప్పుడు నిర్విరామ ఫలితాల కోసం AIతో ప్రాసెస్ చేయండి.",
+                "howto.step4.title": "ఫలితం డౌన్లోడ్ చేయండి",
+                "howto.step4.description": "ఒక క్లిక్తో మీ AI-ప్రాసెస్డ్ ఇమేజ్ని డౌన్లోడ్ చేయండి. వాటర్మార్క్లు లేవు, రిజిస్ట్రేషన్ అవసరం లేదు.",
+                "aiTool.title": "AI ఎరేజ్ & AI ఇమేజ్ యాడ్ టూల్",
+                "aiTool.upload.text": "మీ ఇమేజ్ను ఇక్కడ డ్రాగ్ మరియు డ్రాప్ చేయండి లేదా బ్రౌజ్ చేయడానికి క్లిక్ చేయండి",
+                "aiTool.upload.button": "ఇమేజ్ ఎంచుకోండి",
+                "aiTool.options.title": "AI టూల్ ఎంపికలు",
+                "aiTool.toolSelection.title": "టూల్ ఎంచుకోండి",
+                "aiTool.toolSelection.erase": "AI ఎరేజ్",
+                "aiTool.toolSelection.background": "AI బ్యాక్గ్రౌండ్",
+                "aiTool.toolSelection.addImage": "AI ఇమేజ్ యాడ్",
+                "aiTool.toolSelection.crop": "ఇమేజ్ క్రాప్",
+                "aiTool.eraser.selectionInfo": "తీసివేయడానికి ప్రాంతాలను ఎంచుకోవడానికి క్లిక్ చేయండి మరియు డ్రాగ్ చేయండి",
+                "aiTool.eraser.instructions": "సెలెక్షన్ రెక్టాంగిల్స్ సృష్టించడానికి మీ కర్సర్ను డ్రాగ్ చేయండి. ఎంచుకున్న ప్రాంతాలు తీసివేయబడతాయి మరియు బ్యాక్గ్రౌండ్తో భర్తీ చేయబడతాయి.",
+                "aiTool.background.upload": "బ్యాక్గ్రౌండ్ ఇమేజ్ అప్లోడ్ చేయండి",
+                "aiTool.background.instructions": "బ్యాక్గ్రౌండ్గా ఉపయోగించడానికి రంగును ఎంచుకోండి లేదా ఇమేజ్ను అప్లోడ్ చేయండి. మీరు బ్యాక్గ్రౌండ్ ఇమేజ్ను దాని స్థానాన్ని సర్దుబాటు చేయడానికి డ్రాగ్ మరియు డ్రాప్ చేయవచ్చు.",
+                "aiTool.addImage.upload": "జోడించడానికి ఇమేజ్ అప్లోడ్ చేయండి",
+                "aiTool.addImage.instructions": "మీ ఫోటోకు జోడించడానికి ఇమేజ్ను అప్లోడ్ చేయండి. ప్లేస్ చేయడానికి కెన్వాస్పై క్లిక్ చేయండి. మీరు జోడించిన ఇమేజ్ను దాని స్థానాన్ని సర్దుబాటు చేయడానికి డ్రాగ్ మరియు డ్రాప్ చేయవచ్చు.",
+                "aiTool.crop.apply": "క్రాప్ అప్లై చేయండి",
+                "aiTool.crop.cancel": "క్యాన్సల్",
+                "aiTool.crop.instructions": "ప్రాంతాన్ని సర్దుబాటు చేయడానికి క్రాప్ సెలెక్షన్ యొక్క మూలలు లేదా అంచులను డ్రాగ్ చేయండి. నిర్ధారించడానికి \"క్రాప్ అప్లై చేయండి\" క్లిక్ చేయండి.",
+                "aiTool.format.title": "అవుట్పుట్ ఫార్మాట్",
+                "aiTool.processing": "ప్రాసెసింగ్: 0%",
+                "aiTool.process": "AIతో ప్రాసెస్ చేయండి",
+                "aiTool.download": "డౌన్లోడ్",
+                "aiTool.reset": "రీసెట్",
+                "aiTool.controls.zoomIn": "జూమ్ ఇన్",
+                "aiTool.controls.zoomOut": "జూమ్ అవుట్",
+                "aiTool.controls.reset": "వ్యూ రీసెట్",
+                "aiTool.controls.undo": "అన్డూ",
+                "footer.follow": "మమ్మల్ని ఫాలో చేయండి",
+                "footer.categories": "జనాదరణ పొందిన వర్గాలు",
+                "footer.categories.pdf": "PDF టూల్స్",
+                "footer.categories.image": "ఇమేజ్ టూల్స్",
+                "footer.categories.text": "టెక్స్ట్ టూల్స్",
+                "footer.categories.av": "ఆడియో/వీడియో టూల్స్",
+                "footer.categories.web": "వెబ్/డెవలపర్ టూల్స్",
+                "footer.categories.calc": "కాలిక్యులేటర్ టూల్స్",
+                "footer.categories.util": "యుటిలిటీ టూల్స్",
+                "footer.categories.color": "కలర్ టూల్స్",
+                "footer.quicklinks": "క్విక్ లింక్స్",
+                "footer.links.tools": "అన్ని టూల్స్",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "సంప్రదించండి",
+                "footer.links.privacy": "గోప్యతా విధానం",
+                "footer.links.disclaimer": "డిస్క్లైమర్",
+                "footer.links.terms": "సేవా నిబంధనలు",
+                "footer.copyright": "© 2025 LollyPoPDF. అన్ని హక్కులు ప్రత్యేకించబడినవి."
+            },
+            kn: {
+                "nav.home": "ಹೋಮ್",
+                "nav.about": "ನಮ್ಮ ಬಗ್ಗೆ",
+                "nav.tools": "ಟೂಲ್ಸ್",
+                "nav.contact": "ಸಂಪರ್ಕಿಸಿ",
+                "hero.title": "AI ಎರೇಸ್ & AI ಇಮೇಜ್ ಆಡ್ ಟೂಲ್",
+                "hero.description": "ವಸ್ತುಗಳನ್ನು ಅಳಿಸಲು ಮತ್ತು ನಿಮ್ಮ ಫೋಟೋಗಳಿಗೆ ಚಿತ್ರಗಳನ್ನು ಸೇರಿಸಲು ಉಚಿತ ಆನ್ಲೈನ್ AI-ಚಾಲಿತ ಸಾಧನ. ಅನಪೇಕ್ಷಿತ ಅಂಶಗಳನ್ನು ತೆಗೆದುಹಾಕಿ ಅಥವಾ ಹೊಸ ವಸ್ತುಗಳನ್ನು ನಿರಂತರವಾಗಿ ಸೇರಿಸಿ. ನೋಂದಣಿ ಅಗತ್ಯವಿಲ್ಲ.",
+                "howto.title": "AI ಇಮೇಜ್ ಟೂಲ್ ಅನ್ನು ಹೇಗೆ ಬಳಸುವುದು",
+                "howto.step1.title": "ನಿಮ್ಮ ಇಮೇಜ್ ಅಪ್ಲೋಡ್ ಮಾಡಿ",
+                "howto.step1.description": "ಅಪ್ಲೋಡ್ ಪ್ರದೇಶದ ಮೇಲೆ ಕ್ಲಿಕ್ ಮಾಡಿ ಅಥವಾ ನಿಮ್ಮ ಇಮೇಜ್ ಫೈಲ್ ಅನ್ನು ಡ್ರ್ಯಾಗ್ ಮತ್ತು ಡ್ರಾಪ್ ಮಾಡಿ. ನಾವು JPG, PNG, GIF, WEBP ಮತ್ತು ಹೆಚ್ಚಿನವುಗಳನ್ನು ಬೆಂಬಲಿಸುತ್ತೇವೆ.",
+                "howto.step2.title": "AI ಟೂಲ್ ಆಯ್ಕೆಮಾಡಿ",
+                "howto.step2.description": "ವಸ್ತುಗಳನ್ನು ತೆಗೆದುಹಾಕಲು AI ಎರೇಸ್ ಅಥವಾ ನಿಮ್ಮ ಫೋಟೋದಲ್ಲಿ ಹೊಸ ಚಿತ್ರಗಳನ್ನು ಸೇರಿಸಲು AI ಆಡ್ ನಡುವೆ ಆಯ್ಕೆಮಾಡಿ.",
+                "howto.step3.title": "ಎಡಿಟ್ & ಪ್ರಾಸೆಸ್",
+                "howto.step3.description": "ಅಳಿಸಲು ಪ್ರದೇಶಗಳನ್ನು ಗುರುತಿಸಲು ಅಥವಾ ಹೊಸ ಚಿತ್ರಗಳನ್ನು ಸೇರಿಸಲು ಟೂಲ್ಸ್ ಬಳಸಿ. ನಂತರ ನಿರಂತರ ಫಲಿತಾಂಶಗಳಿಗಾಗಿ AI ಯೊಂದಿಗೆ ಪ್ರಾಸೆಸ್ ಮಾಡಿ.",
+                "howto.step4.title": "ಫಲಿತಾಂಶ ಡೌನ್ಲೋಡ್ ಮಾಡಿ",
+                "howto.step4.description": "ಒಂದೇ ಕ್ಲಿಕ್ನಲ್ಲಿ ನಿಮ್ಮ AI-ಪ್ರಾಸೆಸ್ಡ್ ಇಮೇಜ್ ಅನ್ನು ಡೌನ್ಲೋಡ್ ಮಾಡಿ. ವಾಟರ್ಮಾರ್ಕ್ಗಳಿಲ್ಲ, ನೋಂದಣಿ ಅಗತ್ಯವಿಲ್ಲ.",
+                "aiTool.title": "AI ಎರೇಸ್ & AI ಇಮೇಜ್ ಆಡ್ ಟೂಲ್",
+                "aiTool.upload.text": "ನಿಮ್ಮ ಇಮೇಜ್ ಅನ್ನು ಇಲ್ಲಿ ಡ್ರ್ಯಾಗ್ ಮತ್ತು ಡ್ರಾಪ್ ಮಾಡಿ ಅಥವಾ ಬ್ರೌಸ್ ಮಾಡಲು ಕ್ಲಿಕ್ ಮಾಡಿ",
+                "aiTool.upload.button": "ಇಮೇಜ್ ಆಯ್ಕೆಮಾಡಿ",
+                "aiTool.options.title": "AI ಟೂಲ್ ಆಯ್ಕೆಗಳು",
+                "aiTool.toolSelection.title": "ಟೂಲ್ ಆಯ್ಕೆಮಾಡಿ",
+                "aiTool.toolSelection.erase": "AI ಎರೇಸ್",
+                "aiTool.toolSelection.background": "AI ಬ್ಯಾಕ್ಗ್ರೌಂಡ್",
+                "aiTool.toolSelection.addImage": "AI ಇಮೇಜ್ ಆಡ್",
+                "aiTool.toolSelection.crop": "ಇಮೇಜ್ ಕ್ರಾಪ್",
+                "aiTool.eraser.selectionInfo": "ತೆಗೆದುಹಾಕಲು ಪ್ರದೇಶಗಳನ್ನು ಆಯ್ಕೆಮಾಡಲು ಕ್ಲಿಕ್ ಮಾಡಿ ಮತ್ತು ಡ್ರ್ಯಾಗ್ ಮಾಡಿ",
+                "aiTool.eraser.instructions": "ಸೆಲೆಕ್ಷನ್ ಆಯತಗಳನ್ನು ರಚಿಸಲು ನಿಮ್ಮ ಕರ್ಸರ್ ಅನ್ನು ಡ್ರ್ಯಾಗ್ ಮಾಡಿ. ಆಯ್ಕೆಮಾಡಿದ ಪ್ರದೇಶಗಳನ್ನು ತೆಗೆದುಹಾಕಲಾಗುತ್ತದೆ ಮತ್ತು ಬ್ಯಾಕ್ಗ್ರೌಂಡ್ನೊಂದಿಗೆ ಬದಲಾಯಿಸಲಾಗುತ್ತದೆ.",
+                "aiTool.background.upload": "ಬ್ಯಾಕ್ಗ್ರೌಂಡ್ ಇಮೇಜ್ ಅಪ್ಲೋಡ್ ಮಾಡಿ",
+                "aiTool.background.instructions": "ಬ್ಯಾಕ್ಗ್ರೌಂಡ್ ಆಗಿ ಬಳಸಲು ಬಣ್ಣವನ್ನು ಆಯ್ಕೆಮಾಡಿ ಅಥವಾ ಇಮೇಜ್ ಅಪ್ಲೋಡ್ ಮಾಡಿ. ನೀವು ಬ್ಯಾಕ್ಗ್ರೌಂಡ್ ಇಮೇಜ್ ಅನ್ನು ಅದರ ಸ್ಥಾನವನ್ನು ಸರಿಹೊಂದಿಸಲು ಡ್ರ್ಯಾಗ್ ಮತ್ತು ಡ್ರಾಪ್ ಮಾಡಬಹುದು.",
+                "aiTool.addImage.upload": "ಸೇರಿಸಲು ಇಮೇಜ್ ಅಪ್ಲೋಡ್ ಮಾಡಿ",
+                "aiTool.addImage.instructions": "ನಿಮ್ಮ ಫೋಟೋಗೆ ಸೇರಿಸಲು ಇಮೇಜ್ ಅಪ್ಲೋಡ್ ಮಾಡಿ. ಇರಿಸಲು ಕ್ಯಾನ್ವಾಸ್ ಮೇಲೆ ಕ್ಲಿಕ್ ಮಾಡಿ. ನೀವು ಸೇರಿಸಿದ ಇಮೇಜ್ ಅನ್ನು ಅದರ ಸ್ಥಾನವನ್ನು ಸರಿಹೊಂದಿಸಲು ಡ್ರ್ಯಾಗ್ ಮತ್ತು ಡ್ರಾಪ್ ಮಾಡಬಹುದು.",
+                "aiTool.crop.apply": "ಕ್ರಾಪ್ ಅನ್ವಯಿಸಿ",
+                "aiTool.crop.cancel": "ರದ್ದುಮಾಡಿ",
+                "aiTool.crop.instructions": "ಪ್ರದೇಶವನ್ನು ಸರಿಹೊಂದಿಸಲು ಕ್ರಾಪ್ ಸೆಲೆಕ್ಷನ್ನ ಮೂಲೆಗಳು ಅಥವಾ ಅಂಚುಗಳನ್ನು ಡ್ರ್ಯಾಗ್ ಮಾಡಿ. ದೃಢೀಕರಿಸಲು \"ಕ್ರಾಪ್ ಅನ್ವಯಿಸಿ\" ಕ್ಲಿಕ್ ಮಾಡಿ.",
+                "aiTool.format.title": "ಔಟ್ಪುಟ್ ಫಾರ್ಮ್ಯಾಟ್",
+                "aiTool.processing": "ಪ್ರಾಸೆಸಿಂಗ್: 0%",
+                "aiTool.process": "AI ಯೊಂದಿಗೆ ಪ್ರಾಸೆಸ್ ಮಾಡಿ",
+                "aiTool.download": "ಡೌನ್ಲೋಡ್",
+                "aiTool.reset": "ರೀಸೆಟ್",
+                "aiTool.controls.zoomIn": "ಜೂಮ್ ಇನ್",
+                "aiTool.controls.zoomOut": "ಜೂಮ್ ಔಟ್",
+                "aiTool.controls.reset": "ವ್ಯೂ ರೀಸೆಟ್",
+                "aiTool.controls.undo": "ಅನ್ಡೂ",
+                "footer.follow": "ನಮ್ಮನ್ನು ಅನುಸರಿಸಿ",
+                "footer.categories": "ಜನಪ್ರಿಯ ವರ್ಗಗಳು",
+                "footer.categories.pdf": "PDF ಟೂಲ್ಸ್",
+                "footer.categories.image": "ಇಮೇಜ್ ಟೂಲ್ಸ್",
+                "footer.categories.text": "ಟೆಕ್ಸ್ಟ್ ಟೂಲ್ಸ್",
+                "footer.categories.av": "ಆಡಿಯೋ/ವೀಡಿಯೋ ಟೂಲ್ಸ್",
+                "footer.categories.web": "ವೆಬ್/ಡೆವಲಪರ್ ಟೂಲ್ಸ್",
+                "footer.categories.calc": "ಕ್ಯಾಲ್ಕುಲೇಟರ್ ಟೂಲ್ಸ್",
+                "footer.categories.util": "ಯುಟಿಲಿಟಿ ಟೂಲ್ಸ್",
+                "footer.categories.color": "ಕಲರ್ ಟೂಲ್ಸ್",
+                "footer.quicklinks": "ಕ್ವಿಕ್ ಲಿಂಕ್ಗಳು",
+                "footer.links.tools": "ಎಲ್ಲಾ ಟೂಲ್ಸ್",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "ಸಂಪರ್ಕಿಸಿ",
+                "footer.links.privacy": "ಗೌಪ್ಯತಾ ನೀತಿ",
+                "footer.links.disclaimer": "ಡಿಸ್ಕ್ಲೈಮರ್",
+                "footer.links.terms": "ಸೇವಾ ನಿಯಮಗಳು",
+                "footer.copyright": "© 2025 LollyPoPDF. ಎಲ್ಲಾ ಹಕ್ಕುಗಳು ಕಾಯ್ದಿರಿಸಿದೆ."
+            },
+            ta: {
+                "nav.home": "முகப்பு",
+                "nav.about": "எங்களைப் பற்றி",
+                "nav.tools": "கருவிகள்",
+                "nav.contact": "தொடர்பு கொள்ள",
+                "hero.title": "AI அழித்தல் & AI பட சேர்க்கை கருவி",
+                "hero.description": "பொருட்களை அழிக்கவும் உங்கள் புகைப்படங்களில் படங்களை சேர்க்கவும் இலவச ஆன்லைன் AI-இயக்க கருவி. தேவையற்ற உறுப்புகளை அகற்றவும் அல்லது புதிய பொருட்களை இடையூறின்றி சேர்க்கவும். பதிவு தேவையில்லை.",
+                "howto.title": "AI பட கருவியை எவ்வாறு பயன்படுத்துவது",
+                "howto.step1.title": "உங்கள் படத்தை பதிவேற்றவும்",
+                "howto.step1.description": "பதிவேற்ற பகுதியை கிளிக் செய்யவும் அல்லது உங்கள் பட கோப்பை இழுத்து விடவும். நாங்கள் JPG, PNG, GIF, WEBP மற்றும் பலவற்றை ஆதரிக்கிறோம்.",
+                "howto.step2.title": "AI கருவியை தேர்ந்தெடுக்கவும்",
+                "howto.step2.description": "பொருட்களை அகற்ற AI அழித்தல் அல்லது உங்கள் புகைப்படத்தில் புதிய படங்களைச் செருக AI சேர்க்கை இடையே தேர்வு செய்யவும்.",
+                "howto.step3.title": "திருத்தம் & செயலாக்கம்",
+                "howto.step3.description": "அழிக்க பகுதிகளை குறிக்க அல்லது புதிய படங்களை சேர்க்க கருவிகளைப் பயன்படுத்தவும். பின்னர் இடையூறற்ற முடிவுகளுக்காக AI உடன் செயலாக்கவும்.",
+                "howto.step4.title": "முடிவை பதிவிறக்கவும்",
+                "howto.step4.description": "ஒரே கிளிக்கில் உங்கள் AI-செயலாக்கப்பட்ட படத்தை பதிவிறக்கவும். நீர்முத்திரைகள் இல்லை, பதிவு தேவையில்லை.",
+                "aiTool.title": "AI அழித்தல் & AI பட சேர்க்கை கருவி",
+                "aiTool.upload.text": "உங்கள் படத்தை இங்கே இழுத்து விடவும் அல்லது உலாவ கிளிக் செய்யவும்",
+                "aiTool.upload.button": "படத்தை தேர்ந்தெடுக்கவும்",
+                "aiTool.options.title": "AI கருவி விருப்பங்கள்",
+                "aiTool.toolSelection.title": "கருவியை தேர்ந்தெடுக்கவும்",
+                "aiTool.toolSelection.erase": "AI அழித்தல்",
+                "aiTool.toolSelection.background": "AI பின்னணி",
+                "aiTool.toolSelection.addImage": "AI பட சேர்க்கை",
+                "aiTool.toolSelection.crop": "படத்தை வெட்டு",
+                "aiTool.eraser.selectionInfo": "அகற்ற பகுதிகளை தேர்ந்தெடுக்க கிளிக் செய்து இழுக்கவும்",
+                "aiTool.eraser.instructions": "தேர்வு செவ்வகங்களை உருவாக்க உங்கள் கர்சரை இழுக்கவும். தேர்ந்தெடுக்கப்பட்ட பகுதிகள் அகற்றப்பட்டு பின்னணியுடன் மாற்றப்படும்.",
+                "aiTool.background.upload": "பின்னணி படத்தை பதிவேற்றவும்",
+                "aiTool.background.instructions": "பின்னணியாக பயன்படுத்த நிறத்தை தேர்ந்தெடுக்கவும் அல்லது படத்தை பதிவேற்றவும். பின்னணி படத்தை அதன் நிலையை சரிசெய்ய இழுத்து விடலாம்.",
+                "aiTool.addImage.upload": "சேர்க்க படத்தை பதிவேற்றவும்",
+                "aiTool.addImage.instructions": "உங்கள் புகைப்படத்தில் சேர்க்க படத்தை பதிவேற்றவும். வைக்க கேன்வாஸில் கிளிக் செய்யவும். சேர்க்கப்பட்ட படத்தை அதன் நிலையை சரிசெய்ய இழுத்து விடலாம்.",
+                "aiTool.crop.apply": "வெட்டுதலை பயன்படுத்து",
+                "aiTool.crop.cancel": "ரத்து செய்",
+                "aiTool.crop.instructions": "பகுதியை சரிசெய்ய வெட்டுதல் தேர்வின் மூலைகள் அல்லது விளிம்புகளை இழுக்கவும். உறுதிப்படுத்த \"வெட்டுதலை பயன்படுத்து\" கிளிக் செய்யவும்.",
+                "aiTool.format.title": "வெளியீடு வடிவம்",
+                "aiTool.processing": "செயலாக்கம்: 0%",
+                "aiTool.process": "AI உடன் செயலாக்கவும்",
+                "aiTool.download": "பதிவிறக்கம்",
+                "aiTool.reset": "மீட்டமை",
+                "aiTool.controls.zoomIn": "ஜூம் இன்",
+                "aiTool.controls.zoomOut": "ஜூம் அவுட்",
+                "aiTool.controls.reset": "காட்சியை மீட்டமை",
+                "aiTool.controls.undo": "செயல்தவிர்",
+                "footer.follow": "எங்களைப் பின்தொடருங்கள்",
+                "footer.categories": "பிரபலமான வகைகள்",
+                "footer.categories.pdf": "PDF கருவிகள்",
+                "footer.categories.image": "பட கருவிகள்",
+                "footer.categories.text": "உரை கருவிகள்",
+                "footer.categories.av": "ஆடியோ/வீடியோ கருவிகள்",
+                "footer.categories.web": "வலை/டெவலப்பர் கருவிகள்",
+                "footer.categories.calc": "கால்குலேட்டர் கருவிகள்",
+                "footer.categories.util": "பயன்பாட்டு கருவிகள்",
+                "footer.categories.color": "நிற கருவிகள்",
+                "footer.quicklinks": "விரைவு இணைப்புகள்",
+                "footer.links.tools": "அனைத்து கருவிகள்",
+                "footer.links.faq": "கேள்வி பதில்",
+                "footer.links.contact": "தொடர்பு கொள்ள",
+                "footer.links.privacy": "தனியுரிமைக் கொள்கை",
+                "footer.links.disclaimer": "பொறுப்புத் துறப்பு",
+                "footer.links.terms": "சேவை விதிமுறைகள்",
+                "footer.copyright": "© 2025 LollyPoPDF. அனைத்து உரிமைகளும் பாதுகாக்கப்பட்டவை."
+            },
+            ml: {
+                "nav.home": "ഹോം",
+                "nav.about": "ഞങ്ങളെക്കുറിച്ച്",
+                "nav.tools": "ടൂളുകൾ",
+                "nav.contact": "ബന്ധപ്പെടുക",
+                "hero.title": "AI ഇറേസ് & AI ഇമേജ് ആഡ് ടൂൾ",
+                "hero.description": "ഒബ്ജക്റ്റുകൾ മായ്ച്ച് നിങ്ങളുടെ ഫോട്ടോകളിലേക്ക് ഇമേജുകൾ ചേർക്കാനുള്ള സ free ജന്യ ഓൺലൈൻ AI-പവർഡ് ടൂൾ. അവാംഛിത ഘടകങ്ങൾ നീക്കംചെയ്യുക അല്ലെങ്കിൽ പുതിയ ഒബ്ജക്റ്റുകൾ നിരന്തരമായി ചേർക്കുക. രജിസ്ട്രേഷൻ ആവശ്യമില്ല.",
+                "howto.title": "AI ഇമേജ് ടൂൾ എങ്ങനെ ഉപയോഗിക്കാം",
+                "howto.step1.title": "നിങ്ങളുടെ ഇമേജ് അപ്‌ലോഡ് ചെയ്യുക",
+                "howto.step1.description": "അപ്‌ലോഡ് ഏരിയയിൽ ക്ലിക്ക് ചെയ്യുക അല്ലെങ്കിൽ നിങ്ങളുടെ ഇമേജ് ഫയൽ ഡ്രാഗ് ചെയ്ത് ഡ്രോപ്പ് ചെയ്യുക. ഞങ്ങൾ JPG, PNG, GIF, WEBP എന്നിവയെ പിന്തുണയ്ക്കുന്നു.",
+                "howto.step2.title": "AI ടൂൾ തിരഞ്ഞെടുക്കുക",
+                "howto.step2.description": "ഒബ്ജക്റ്റുകൾ നീക്കംചെയ്യാൻ AI ഇറേസ് അല്ലെങ്കിൽ നിങ്ങളുടെ ഫോട്ടോയിൽ പുതിയ ഇമേജുകൾ ചേർക്കാൻ AI ആഡ് ഇടയിൽ തിരഞ്ഞെടുക്കുക.",
+                "howto.step3.title": "എഡിറ്റ് & പ്രോസസ്",
+                "howto.step3.description": "മായ്ക്കാൻ ഏരിയകൾ മാർക്ക് ചെയ്യാനോ പുതിയ ഇമേജുകൾ ചേർക്കാനോ ടൂളുകൾ ഉപയോഗിക്കുക. തുടർന്ന് നിരന്തരമായ ഫലങ്ങൾക്കായി AI ഉപയോഗിച്ച് പ്രോസസ് ചെയ്യുക.",
+                "howto.step4.title": "ഫലം ഡൗൺലോഡ് ചെയ്യുക",
+                "howto.step4.description": "ഒരു ക്ലിക്കിൽ നിങ്ങളുടെ AI-പ്രോസസ്ഡ് ഇമേജ് ഡൗൺലോഡ് ചെയ്യുക. വാട്ടർമാർക്കുകളില്ല, രജിസ്ട്രേഷൻ ആവശ്യമില്ല.",
+                "aiTool.title": "AI ഇറേസ് & AI ഇമേജ് ആഡ് ടൂൾ",
+                "aiTool.upload.text": "നിങ്ങളുടെ ഇമേജ് ഇവിടെ ഡ്രാഗ് ചെയ്ത് ഡ്രോപ്പ് ചെയ്യുക അല്ലെങ്കിൽ ബ്രൗസ് ചെയ്യാൻ ക്ലിക്ക് ചെയ്യുക",
+                "aiTool.upload.button": "ഇമേജ് തിരഞ്ഞെടുക്കുക",
+                "aiTool.options.title": "AI ടൂൾ ഓപ്ഷനുകൾ",
+                "aiTool.toolSelection.title": "ടൂൾ തിരഞ്ഞെടുക്കുക",
+                "aiTool.toolSelection.erase": "AI ഇറേസ്",
+                "aiTool.toolSelection.background": "AI ബാക്ഗ്രൗണ്ട്",
+                "aiTool.toolSelection.addImage": "AI ഇമേജ് ആഡ്",
+                "aiTool.toolSelection.crop": "ഇമേജ് ക്രോപ്പ്",
+                "aiTool.eraser.selectionInfo": "നീക്കംചെയ്യാൻ ഏരിയകൾ തിരഞ്ഞെടുക്കാൻ ക്ലിക്ക് ചെയ്ത് ഡ്രാഗ് ചെയ്യുക",
+                "aiTool.eraser.instructions": "സെലക്ഷൻ ദീർഘചതുരങ്ങൾ സൃഷ്ടിക്കാൻ നിങ്ങളുടെ കഴ്‌സർ ഡ്രാഗ് ചെയ്യുക. തിരഞ്ഞെടുത്ത ഏരിയകൾ നീക്കംചെയ്യപ്പെടുകയും ബാക്ഗ്രൗണ്ട് ഉപയോഗിച്ച് മാറ്റിസ്ഥാപിക്കപ്പെടുകയും ചെയ്യും.",
+                "aiTool.background.upload": "ബാക്ഗ്രൗണ്ട് ഇമേജ് അപ്‌ലോഡ് ചെയ്യുക",
+                "aiTool.background.instructions": "ബാക്ഗ്രൗണ്ടായി ഉപയോഗിക്കാൻ ഒരു നിറം തിരഞ്ഞെടുക്കുക അല്ലെങ്കിൽ ഇമേജ് അപ്‌ലോഡ് ചെയ്യുക. ബാക്ഗ്രൗണ്ട് ഇമേജ് അതിന്റെ സ്ഥാനം ക്രമീകരിക്കാൻ നിങ്ങൾക്ക് ഡ്രാഗ് ചെയ്ത് ഡ്രോപ്പ് ചെയ്യാം.",
+                "aiTool.addImage.upload": "ചേർക്കാൻ ഇമേജ് അപ്‌ലോഡ് ചെയ്യുക",
+                "aiTool.addImage.instructions": "നിങ്ങളുടെ ഫോട്ടോയിൽ ചേർക്കാൻ ഒരു ഇമേജ് അപ്‌ലോഡ് ചെയ്യുക. സ്ഥാപിക്കാൻ കാൻവാസിൽ ക്ലിക്ക് ചെയ്യുക. ചേർത്ത ഇമേജ് അതിന്റെ സ്ഥാനം ക്രമീകരിക്കാൻ നിങ്ങൾക്ക് ഡ്രാഗ് ചെയ്ത് ഡ്രോപ്പ് ചെയ്യാം.",
+                "aiTool.crop.apply": "ക്രോപ്പ് പ്രയോഗിക്കുക",
+                "aiTool.crop.cancel": "റദ്ദാക്കുക",
+                "aiTool.crop.instructions": "ഏരിയ ക്രമീകരിക്കാൻ ക്രോപ്പ് സെലക്ഷന്റെ കോണുകളോ അരികുകളോ ഡ്രാഗ് ചെയ്യുക. സ്ഥിരീകരിക്കാൻ \"ക്രോപ്പ് പ്രയോഗിക്കുക\" ക്ലിക്ക് ചെയ്യുക.",
+                "aiTool.format.title": "ഔട്ട്പുട്ട് ഫോർമാറ്റ്",
+                "aiTool.processing": "പ്രോസസ്സിംഗ്: 0%",
+                "aiTool.process": "AI ഉപയോഗിച്ച് പ്രോസസ് ചെയ്യുക",
+                "aiTool.download": "ഡൗൺലോഡ്",
+                "aiTool.reset": "റീസെറ്റ്",
+                "aiTool.controls.zoomIn": "സൂം ഇൻ",
+                "aiTool.controls.zoomOut": "സൂം ഔട്ട്",
+                "aiTool.controls.reset": "വ്യൂ റീസെറ്റ്",
+                "aiTool.controls.undo": "അൺഡു",
+                "footer.follow": "ഞങ്ങളെ പിന്തുടരുക",
+                "footer.categories": "ജനപ്രിയ വിഭാഗങ്ങൾ",
+                "footer.categories.pdf": "PDF ടൂളുകൾ",
+                "footer.categories.image": "ഇമേജ് ടൂളുകൾ",
+                "footer.categories.text": "ടെക്സ്റ്റ് ടൂളുകൾ",
+                "footer.categories.av": "ഓഡിയോ/വീഡിയോ ടൂളുകൾ",
+                "footer.categories.web": "വെബ്/ഡെവലപ്പർ ടൂളുകൾ",
+                "footer.categories.calc": "കാൽക്കുലേറ്റർ ടൂളുകൾ",
+                "footer.categories.util": "യൂട്ടിലിറ്റി ടൂളുകൾ",
+                "footer.categories.color": "കളർ ടൂളുകൾ",
+                "footer.quicklinks": "ദ്രുത ലിങ്കുകൾ",
+                "footer.links.tools": "എല്ലാ ടൂളുകളും",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "ബന്ധപ്പെടുക",
+                "footer.links.privacy": "സ്വകാര്യതാ നയം",
+                "footer.links.disclaimer": "അസാധുതാ നിരാകരണം",
+                "footer.links.terms": "സേവന നിബന്ധനകൾ",
+                "footer.copyright": "© 2025 LollyPoPDF. എല്ലാ അവകാശങ്ങളും നിക്ഷിപ്തം."
+            },
+            id: {
+                "nav.home": "Beranda",
+                "nav.about": "Tentang Kami",
+                "nav.tools": "Alat",
+                "nav.contact": "Kontak",
+                "hero.title": "Alat Hapus & Tambah Gambar AI",
+                "hero.description": "Alat online gratis bertenaga AI untuk menghapus objek dan menambahkan gambar ke foto Anda. Hapus elemen yang tidak diinginkan atau tambahkan objek baru dengan mulus. Tidak perlu registrasi.",
+                "howto.title": "Cara Menggunakan Alat Gambar AI",
+                "howto.step1.title": "Unggah Gambar Anda",
+                "howto.step1.description": "Klik area unggah atau seret dan lepas file gambar Anda. Kami mendukung JPG, PNG, GIF, WEBP dan lainnya.",
+                "howto.step2.title": "Pilih Alat AI",
+                "howto.step2.description": "Pilih antara AI Hapus untuk menghapus objek atau AI Tambah untuk menyisipkan gambar baru ke foto Anda.",
+                "howto.step3.title": "Edit & Proses",
+                "howto.step3.description": "Gunakan alat untuk menandai area yang akan dihapus atau menambahkan gambar baru. Kemudian proses dengan AI untuk hasil yang mulus.",
+                "howto.step4.title": "Unduh Hasil",
+                "howto.step4.description": "Unduh gambar yang diproses AI dengan satu klik. Tanpa watermark, tidak perlu registrasi.",
+                "aiTool.title": "Alat Hapus & Tambah Gambar AI",
+                "aiTool.upload.text": "Seret dan lepas gambar Anda di sini atau klik untuk menjelajah",
+                "aiTool.upload.button": "Pilih Gambar",
+                "aiTool.options.title": "Opsi Alat AI",
+                "aiTool.toolSelection.title": "Pilih Alat",
+                "aiTool.toolSelection.erase": "AI Hapus",
+                "aiTool.toolSelection.background": "AI Latar Belakang",
+                "aiTool.toolSelection.addImage": "AI Tambah Gambar",
+                "aiTool.toolSelection.crop": "Potong Gambar",
+                "aiTool.eraser.selectionInfo": "Klik dan seret untuk memilih area yang akan dihapus",
+                "aiTool.eraser.instructions": "Seret kursor Anda untuk membuat persegi panjang seleksi. Area yang dipilih akan dihapus dan diganti dengan latar belakang.",
+                "aiTool.background.upload": "Unggah Gambar Latar Belakang",
+                "aiTool.background.instructions": "Pilih warna atau unggah gambar untuk digunakan sebagai latar belakang. Anda dapat menyeret dan melepaskan gambar latar belakang untuk menyesuaikan posisinya.",
+                "aiTool.addImage.upload": "Unggah Gambar untuk Ditambahkan",
+                "aiTool.addImage.instructions": "Unggah gambar untuk ditambahkan ke foto Anda. Klik pada kanvas untuk menempatkannya. Anda dapat menyeret dan melepaskan gambar yang ditambahkan untuk menyesuaikan posisinya.",
+                "aiTool.crop.apply": "Terapkan Potongan",
+                "aiTool.crop.cancel": "Batal",
+                "aiTool.crop.instructions": "Seret sudut atau tepi seleksi potongan untuk menyesuaikan area. Klik \"Terapkan Potongan\" untuk mengonfirmasi.",
+                "aiTool.format.title": "Format Keluaran",
+                "aiTool.processing": "Memproses: 0%",
+                "aiTool.process": "Proses dengan AI",
+                "aiTool.download": "Unduh",
+                "aiTool.reset": "Atur Ulang",
+                "aiTool.controls.zoomIn": "Perbesar",
+                "aiTool.controls.zoomOut": "Perkecil",
+                "aiTool.controls.reset": "Atur Ulang Tampilan",
+                "aiTool.controls.undo": "Urungkan",
+                "footer.follow": "IKUTI KAMI",
+                "footer.categories": "Kategori Populer",
+                "footer.categories.pdf": "Alat PDF",
+                "footer.categories.image": "Alat Gambar",
+                "footer.categories.text": "Alat Teks",
+                "footer.categories.av": "Alat Audio/Video",
+                "footer.categories.web": "Alat Web/Pengembang",
+                "footer.categories.calc": "Alat Kalkulator",
+                "footer.categories.util": "Alat Utilitas",
+                "footer.categories.color": "Alat Warna",
+                "footer.quicklinks": "Tautan Cepat",
+                "footer.links.tools": "Semua Alat",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Kontak",
+                "footer.links.privacy": "Kebijakan Privasi",
+                "footer.links.disclaimer": "Penafian",
+                "footer.links.terms": "Ketentuan Layanan",
+                "footer.copyright": "© 2025 LollyPoPDF. Hak Cipta Dilindungi."
+            },
+            ms: {
+                "nav.home": "Laman Utama",
+                "nav.about": "Tentang Kami",
+                "nav.tools": "Alat",
+                "nav.contact": "Hubungi",
+                "hero.title": "Alat Padam & Tambah Imej AI",
+                "hero.description": "Alat dalam talian percuma berkuasa AI untuk memadam objek dan menambah imej ke foto anda. Buang elemen yang tidak diingini atau tambah objek baru dengan lancar. Tiada pendaftaran diperlukan.",
+                "howto.title": "Cara Menggunakan Alat Imej AI",
+                "howto.step1.title": "Muat Naik Imej Anda",
+                "howto.step1.description": "Klik kawasan muat naik atau seret dan lepaskan fail imej anda. Kami menyokong JPG, PNG, GIF, WEBP dan banyak lagi.",
+                "howto.step2.title": "Pilih Alat AI",
+                "howto.step2.description": "Pilih antara AI Padam untuk membuang objek atau AI Tambah untuk memasukkan imej baru ke dalam foto anda.",
+                "howto.step3.title": "Edit & Proses",
+                "howto.step3.description": "Gunakan alat untuk menandakan kawasan untuk dipadam atau menambah imej baru. Kemudian proses dengan AI untuk hasil yang lancar.",
+                "howto.step4.title": "Muat Turun Hasil",
+                "howto.step4.description": "Muat turun imej yang diproses AI anda dengan satu klik. Tiada tanda air, tiada pendaftaran diperlukan.",
+                "aiTool.title": "Alat Padam & Tambah Imej AI",
+                "aiTool.upload.text": "Seret dan lepaskan imej anda di sini atau klik untuk melayari",
+                "aiTool.upload.button": "Pilih Imej",
+                "aiTool.options.title": "Pilihan Alat AI",
+                "aiTool.toolSelection.title": "Pilih Alat",
+                "aiTool.toolSelection.erase": "AI Padam",
+                "aiTool.toolSelection.background": "AI Latar Belakang",
+                "aiTool.toolSelection.addImage": "AI Tambah Imej",
+                "aiTool.toolSelection.crop": "Potong Imej",
+                "aiTool.eraser.selectionInfo": "Klik dan seret untuk memilih kawasan untuk dibuang",
+                "aiTool.eraser.instructions": "Seret kursor anda untuk membuat segi empat tepat pilihan. Kawasan yang dipilih akan dibuang dan digantikan dengan latar belakang.",
+                "aiTool.background.upload": "Muat Naik Imej Latar Belakang",
+                "aiTool.background.instructions": "Pilih warna atau muat naik imej untuk digunakan sebagai latar belakang. Anda boleh menyeret dan melepaskan imej latar belakang untuk melaraskan kedudukannya.",
+                "aiTool.addImage.upload": "Muat Naik Imej untuk Ditambah",
+                "aiTool.addImage.instructions": "Muat naik imej untuk ditambah ke foto anda. Klik pada kanvas untuk meletakkannya. Anda boleh menyeret dan melepaskan imej yang ditambah untuk melaraskan kedudukannya.",
+                "aiTool.crop.apply": "Gunakan Potongan",
+                "aiTool.crop.cancel": "Batal",
+                "aiTool.crop.instructions": "Seret sudut atau tepi pilihan potongan untuk melaraskan kawasan. Klik \"Gunakan Potongan\" untuk mengesahkan.",
+                "aiTool.format.title": "Format Output",
+                "aiTool.processing": "Memproses: 0%",
+                "aiTool.process": "Proses dengan AI",
+                "aiTool.download": "Muat Turun",
+                "aiTool.reset": "Tetapkan Semula",
+                "aiTool.controls.zoomIn": "Zum Masuk",
+                "aiTool.controls.zoomOut": "Zum Keluar",
+                "aiTool.controls.reset": "Tetapkan Semula Paparan",
+                "aiTool.controls.undo": "Buat Asal",
+                "footer.follow": "IKUTI KAMI",
+                "footer.categories": "Kategori Popular",
+                "footer.categories.pdf": "Alat PDF",
+                "footer.categories.image": "Alat Imej",
+                "footer.categories.text": "Alat Teks",
+                "footer.categories.av": "Alat Audio/Video",
+                "footer.categories.web": "Alat Web/Pembangun",
+                "footer.categories.calc": "Alat Kalkulator",
+                "footer.categories.util": "Alat Utiliti",
+                "footer.categories.color": "Alat Warna",
+                "footer.quicklinks": "Pautan Pantas",
+                "footer.links.tools": "Semua Alat",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Hubungi",
+                "footer.links.privacy": "Dasar Privasi",
+                "footer.links.disclaimer": "Penafian",
+                "footer.links.terms": "Terma Perkhidmatan",
+                "footer.copyright": "© 2025 LollyPoPDF. Hak Cipta Terpelihara."
+            },
+            pl: {
+                "nav.home": "Strona główna",
+                "nav.about": "O nas",
+                "nav.tools": "Narzędzia",
+                "nav.contact": "Kontakt",
+                "hero.title": "Narzędzie AI do Usuwania i Dodawania Obrazów",
+                "hero.description": "Darmowe internetowe narzędzie AI do usuwania obiektów i dodawania obrazów do Twoich zdjęć. Usuwaj niechciane elementy lub dodawaj nowe obiekty płynnie. Bez rejestracji.",
+                "howto.title": "Jak używać narzędzia do obrazów AI",
+                "howto.step1.title": "Prześlij swój obraz",
+                "howto.step1.description": "Kliknij obszar przesyłania lub przeciągnij i upuść plik obrazu. Obsługujemy JPG, PNG, GIF, WEBP i więcej.",
+                "howto.step2.title": "Wybierz narzędzie AI",
+                "howto.step2.description": "Wybierz między AI Usuń, aby usunąć obiekty, lub AI Dodaj, aby wstawić nowe obrazy do swojego zdjęcia.",
+                "howto.step3.title": "Edytuj i Przetwarzaj",
+                "howto.step3.description": "Użyj narzędzi, aby zaznaczyć obszary do usunięcia lub dodania nowych obrazów. Następnie przetwórz za pomocą AI dla płynnych rezultatów.",
+                "howto.step4.title": "Pobierz wynik",
+                "howto.step4.description": "Pobierz swój obraz przetworzony przez AI jednym kliknięciem. Bez znaków wodnych, bez rejestracji.",
+                "aiTool.title": "Narzędzie AI do Usuwania i Dodawania Obrazów",
+                "aiTool.upload.text": "Przeciągnij i upuść swój obraz tutaj lub kliknij, aby przeglądać",
+                "aiTool.upload.button": "Wybierz obraz",
+                "aiTool.options.title": "Opcje narzędzia AI",
+                "aiTool.toolSelection.title": "Wybierz narzędzie",
+                "aiTool.toolSelection.erase": "AI Usuń",
+                "aiTool.toolSelection.background": "AI Tło",
+                "aiTool.toolSelection.addImage": "AI Dodaj obraz",
+                "aiTool.toolSelection.crop": "Przytnij obraz",
+                "aiTool.eraser.selectionInfo": "Kliknij i przeciągnij, aby zaznaczyć obszary do usunięcia",
+                "aiTool.eraser.instructions": "Przeciągnij kursor, aby utworzyć prostokąty zaznaczenia. Zaznaczone obszary zostaną usunięte i zastąpione tłem.",
+                "aiTool.background.upload": "Prześlij obraz tła",
+                "aiTool.background.instructions": "Wybierz kolor lub prześlij obraz do użycia jako tło. Możesz przeciągać i upuszczać obraz tła, aby dostosować jego pozycję.",
+                "aiTool.addImage.upload": "Prześlij obraz do dodania",
+                "aiTool.addImage.instructions": "Prześlij obraz, aby dodać go do swojego zdjęcia. Kliknij na płótnie, aby go umieścić. Możesz przeciągać i upuszczać dodany obraz, aby dostosować jego pozycję.",
+                "aiTool.crop.apply": "Zastosuj przycięcie",
+                "aiTool.crop.cancel": "Anuluj",
+                "aiTool.crop.instructions": "Przeciągnij rogi lub krawędzie zaznaczenia przycinania, aby dostosować obszar. Kliknij \"Zastosuj przycięcie\", aby potwierdzić.",
+                "aiTool.format.title": "Format wyjściowy",
+                "aiTool.processing": "Przetwarzanie: 0%",
+                "aiTool.process": "Przetwórz z AI",
+                "aiTool.download": "Pobierz",
+                "aiTool.reset": "Resetuj",
+                "aiTool.controls.zoomIn": "Powiększ",
+                "aiTool.controls.zoomOut": "Pomniejsz",
+                "aiTool.controls.reset": "Resetuj widok",
+                "aiTool.controls.undo": "Cofnij",
+                "footer.follow": "OBSERWUJ NAS",
+                "footer.categories": "Popularne kategorie",
+                "footer.categories.pdf": "Narzędzia PDF",
+                "footer.categories.image": "Narzędzia obrazów",
+                "footer.categories.text": "Narzędzia tekstowe",
+                "footer.categories.av": "Narzędzia audio/wideo",
+                "footer.categories.web": "Narzędzia web/developerskie",
+                "footer.categories.calc": "Narzędzia kalkulatora",
+                "footer.categories.util": "Narzędzia użytkowe",
+                "footer.categories.color": "Narzędzia kolorów",
+                "footer.quicklinks": "Szybkie linki",
+                "footer.links.tools": "Wszystkie narzędzia",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Kontakt",
+                "footer.links.privacy": "Polityka prywatności",
+                "footer.links.disclaimer": "Zastrzeżenie",
+                "footer.links.terms": "Warunki usługi",
+                "footer.copyright": "© 2025 LollyPoPDF. Wszelkie prawa zastrzeżone."
+            },
+            th: {
+                "nav.home": "หน้าหลัก",
+                "nav.about": "เกี่ยวกับเรา",
+                "nav.tools": "เครื่องมือ",
+                "nav.contact": "ติดต่อ",
+                "hero.title": "เครื่องมือลบภาพและเพิ่มภาพด้วย AI",
+                "hero.description": "เครื่องมือออนไลน์ฟรีที่ใช้ AI เพื่อลบวัตถุและเพิ่มภาพลงในรูปถ่ายของคุณ ลบองค์ประกอบที่ไม่ต้องการหรือเพิ่มวัตถุใหม่ได้อย่างราบรื่น ไม่ต้องลงทะเบียน",
+                "howto.title": "วิธีใช้เครื่องมือภาพ AI",
+                "howto.step1.title": "อัปโหลดภาพของคุณ",
+                "howto.step1.description": "คลิกพื้นที่อัปโหลดหรือลากและวางไฟล์ภาพของคุณ เรารองรับ JPG, PNG, GIF, WEBP และอื่นๆ",
+                "howto.step2.title": "เลือกเครื่องมือ AI",
+                "howto.step2.description": "เลือกระหว่าง AI ลบ เพื่อลบวัตถุ หรือ AI เพิ่ม เพื่อแทรกภาพใหม่ลงในรูปถ่ายของคุณ",
+                "howto.step3.title": "แก้ไขและประมวลผล",
+                "howto.step3.description": "ใช้เครื่องมือเพื่อทำเครื่องหมายพื้นที่ที่จะลบหรือเพิ่มภาพใหม่ จากนั้นประมวลผลด้วย AI เพื่อผลลัพธ์ที่ราบรื่น",
+                "howto.step4.title": "ดาวน์โหลดผลลัพธ์",
+                "howto.step4.description": "ดาวน์โหลดภาพที่ประมวลผลด้วย AI ของคุณด้วยการคลิกเดียว ไม่มีลายน้ำ ไม่ต้องลงทะเบียน",
+                "aiTool.title": "เครื่องมือลบภาพและเพิ่มภาพด้วย AI",
+                "aiTool.upload.text": "ลากและวางภาพของคุณที่นี่หรือคลิกเพื่อเรียกดู",
+                "aiTool.upload.button": "เลือกภาพ",
+                "aiTool.options.title": "ตัวเลือกเครื่องมือ AI",
+                "aiTool.toolSelection.title": "เลือกเครื่องมือ",
+                "aiTool.toolSelection.erase": "AI ลบ",
+                "aiTool.toolSelection.background": "AI พื้นหลัง",
+                "aiTool.toolSelection.addImage": "AI เพิ่มภาพ",
+                "aiTool.toolSelection.crop": "ครอปภาพ",
+                "aiTool.eraser.selectionInfo": "คลิกและลากเพื่อเลือกพื้นที่ที่จะลบ",
+                "aiTool.eraser.instructions": "ลากเคอร์เซอร์เพื่อสร้างสี่เหลี่ยมผืนผ้าเลือก พื้นที่ที่เลือกจะถูกลบและแทนที่ด้วยพื้นหลัง",
+                "aiTool.background.upload": "อัปโหลดภาพพื้นหลัง",
+                "aiTool.background.instructions": "เลือกสีหรืออัปโหลดภาพเพื่อใช้เป็นพื้นหลัง คุณสามารถลากและวางภาพพื้นหลังเพื่อปรับตำแหน่งได้",
+                "aiTool.addImage.upload": "อัปโหลดภาพที่จะเพิ่ม",
+                "aiTool.addImage.instructions": "อัปโหลดภาพเพื่อเพิ่มลงในรูปถ่ายของคุณ คลิกบนผืนผ้าใบเพื่อวางมัน คุณสามารถลากและวางภาพที่เพิ่มเพื่อปรับตำแหน่งได้",
+                "aiTool.crop.apply": "ใช้การครอป",
+                "aiTool.crop.cancel": "ยกเลิก",
+                "aiTool.crop.instructions": "ลากมุมหรือขอบของการเลือกครอปเพื่อปรับพื้นที่ คลิก \"ใช้การครอป\" เพื่อยืนยัน",
+                "aiTool.format.title": "รูปแบบผลลัพธ์",
+                "aiTool.processing": "กำลังประมวลผล: 0%",
+                "aiTool.process": "ประมวลผลด้วย AI",
+                "aiTool.download": "ดาวน์โหลด",
+                "aiTool.reset": "รีเซ็ต",
+                "aiTool.controls.zoomIn": "ซูมเข้า",
+                "aiTool.controls.zoomOut": "ซูมออก",
+                "aiTool.controls.reset": "รีเซ็ตมุมมอง",
+                "aiTool.controls.undo": "ย้อนกลับ",
+                "footer.follow": "ติดตามเรา",
+                "footer.categories": "หมวดหมู่ยอดนิยม",
+                "footer.categories.pdf": "เครื่องมือ PDF",
+                "footer.categories.image": "เครื่องมือภาพ",
+                "footer.categories.text": "เครื่องมือข้อความ",
+                "footer.categories.av": "เครื่องมือเสียง/วิดีโอ",
+                "footer.categories.web": "เครื่องมือเว็บ/นักพัฒนา",
+                "footer.categories.calc": "เครื่องมือเครื่องคิดเลข",
+                "footer.categories.util": "เครื่องมืออรรถประโยชน์",
+                "footer.categories.color": "เครื่องมือสี",
+                "footer.quicklinks": "ลิงก์ด่วน",
+                "footer.links.tools": "เครื่องมือทั้งหมด",
+                "footer.links.faq": "คำถามที่พบบ่อย",
+                "footer.links.contact": "ติดต่อ",
+                "footer.links.privacy": "นโยบายความเป็นส่วนตัว",
+                "footer.links.disclaimer": "ข้อจำกัดความรับผิดชอบ",
+                "footer.links.terms": "เงื่อนไขการให้บริการ",
+                "footer.copyright": "© 2025 LollyPoPDF. สงวนลิขสิทธิ์ทั้งหมด"
+            },
+            tr: {
+                "nav.home": "Ana Sayfa",
+                "nav.about": "Hakkımızda",
+                "nav.tools": "Araçlar",
+                "nav.contact": "İletişim",
+                "hero.title": "AI Silme ve AI Görsel Ekleme Aracı",
+                "hero.description": "Fotoğraflarınızdan nesneleri silmek ve yeni görseller eklemek için ücretsiz çevrimiçi AI destekli araç. İstenmeyen öğeleri kaldırın veya yeni nesneleri sorunsuz ekleyin. Kayıt gerekmez.",
+                "howto.title": "AI Görsel Aracı Nasıl Kullanılır",
+                "howto.step1.title": "Görselinizi Yükleyin",
+                "howto.step1.description": "Yükleme alanına tıklayın veya görsel dosyanızı sürükleyip bırakın. JPG, PNG, GIF, WEBP ve daha fazlasını destekliyoruz.",
+                "howto.step2.title": "AI Aracını Seçin",
+                "howto.step2.description": "Nesneleri kaldırmak için AI Silme veya fotoğrafınıza yeni görseller eklemek için AI Ekleme arasında seçim yapın.",
+                "howto.step3.title": "Düzenle ve İşle",
+                "howto.step3.description": "Silmek veya yeni görseller eklemek için araçları kullanın. Ardından sorunsuz sonuçlar için AI ile işleyin.",
+                "howto.step4.title": "Sonucu İndir",
+                "howto.step4.description": "AI ile işlenmiş görselinizi tek tıkla indirin. Filigran yok, kayıt gerekmez.",
+                "aiTool.title": "AI Silme ve AI Görsel Ekleme Aracı",
+                "aiTool.upload.text": "Görselinizi buraya sürükleyip bırakın veya göz atmak için tıklayın",
+                "aiTool.upload.button": "Görsel Seç",
+                "aiTool.options.title": "AI Aracı Seçenekleri",
+                "aiTool.toolSelection.title": "Araç Seç",
+                "aiTool.toolSelection.erase": "AI Sil",
+                "aiTool.toolSelection.background": "AI Arka Plan",
+                "aiTool.toolSelection.addImage": "AI Görsel Ekle",
+                "aiTool.toolSelection.crop": "Görseli Kırp",
+                "aiTool.eraser.selectionInfo": "Kaldırılacak alanları seçmek için tıklayın ve sürükleyin",
+                "aiTool.eraser.instructions": "Seçim dikdörtgenleri oluşturmak için imlecinizi sürükleyin. Seçilen alanlar kaldırılacak ve arka planla değiştirilecektir.",
+                "aiTool.background.upload": "Arka Plan Görseli Yükle",
+                "aiTool.background.instructions": "Arka plan olarak kullanmak için bir renk seçin veya görsel yükleyin. Arka plan görselini konumunu ayarlamak için sürükleyip bırakabilirsiniz.",
+                "aiTool.addImage.upload": "Eklenecek Görseli Yükle",
+                "aiTool.addImage.instructions": "Fotoğrafınıza eklemek için bir görsel yükleyin. Yerleştirmek için tuval üzerine tıklayın. Eklenen görselin konumunu ayarlamak için sürükleyip bırakabilirsiniz.",
+                "aiTool.crop.apply": "Kırpmayı Uygula",
+                "aiTool.crop.cancel": "İptal",
+                "aiTool.crop.instructions": "Kırpma seçiminin köşelerini veya kenarlarını sürükleyerek alanı ayarlayın. Onaylamak için \"Kırpmayı Uygula\"ya tıklayın.",
+                "aiTool.format.title": "Çıktı Formatı",
+                "aiTool.processing": "İşleniyor: 0%",
+                "aiTool.process": "AI ile İşle",
+                "aiTool.download": "İndir",
+                "aiTool.reset": "Sıfırla",
+                "aiTool.controls.zoomIn": "Yakınlaştır",
+                "aiTool.controls.zoomOut": "Uzaklaştır",
+                "aiTool.controls.reset": "Görünümü Sıfırla",
+                "aiTool.controls.undo": "Geri Al",
+                "footer.follow": "BİZİ TAKİP EDİN",
+                "footer.categories": "Popüler Kategoriler",
+                "footer.categories.pdf": "PDF Araçları",
+                "footer.categories.image": "Görsel Araçları",
+                "footer.categories.text": "Metin Araçları",
+                "footer.categories.av": "Ses/Video Araçları",
+                "footer.categories.web": "Web/Geliştirici Araçları",
+                "footer.categories.calc": "Hesap Makinesi Araçları",
+                "footer.categories.util": "Yardımcı Araçlar",
+                "footer.categories.color": "Renk Araçları",
+                "footer.quicklinks": "Hızlı Bağlantılar",
+                "footer.links.tools": "Tüm Araçlar",
+                "footer.links.faq": "SSS",
+                "footer.links.contact": "İletişim",
+                "footer.links.privacy": "Gizlilik Politikası",
+                "footer.links.disclaimer": "Feragatname",
+                "footer.links.terms": "Hizmet Şartları",
+                "footer.copyright": "© 2025 LollyPoPDF. Tüm hakları saklıdır."
+            },
+            uk: {
+                "nav.home": "Головна",
+                "nav.about": "Про нас",
+                "nav.tools": "Інструменти",
+                "nav.contact": "Контакти",
+                "hero.title": "Інструмент AI для видалення та додавання зображень",
+                "hero.description": "Безкоштовний онлайн-інструмент з AI для видалення об'єктів і додавання зображень до ваших фотографій. Видаляйте небажані елементи або додавайте нові об'єкти безшовно. Реєстрація не потрібна.",
+                "howto.title": "Як використовувати інструмент AI для зображень",
+                "howto.step1.title": "Завантажте ваше зображення",
+                "howto.step1.description": "Натисніть на область завантаження або перетягніть файл зображення. Ми підтримуємо JPG, PNG, GIF, WEBP та інші.",
+                "howto.step2.title": "Виберіть інструмент AI",
+                "howto.step2.description": "Виберіть між AI Видалити для видалення об'єктів або AI Додати для вставки нових зображень у вашу фотографію.",
+                "howto.step3.title": "Редагуйте та обробляйте",
+                "howto.step3.description": "Використовуйте інструменти, щоб позначити області для видалення або додавання нових зображень. Потім обробіть за допомогою AI для безшовних результатів.",
+                "howto.step4.title": "Завантажте результат",
+                "howto.step4.description": "Завантажте ваше зображення, оброблене AI, одним клацанням. Без водяних знаків, без реєстрації.",
+                "aiTool.title": "Інструмент AI для видалення та додавання зображень",
+                "aiTool.upload.text": "Перетягніть ваше зображення сюди або клацніть для перегляду",
+                "aiTool.upload.button": "Вибрати зображення",
+                "aiTool.options.title": "Опції інструмента AI",
+                "aiTool.toolSelection.title": "Виберіть інструмент",
+                "aiTool.toolSelection.erase": "AI Видалити",
+                "aiTool.toolSelection.background": "AI Фон",
+                "aiTool.toolSelection.addImage": "AI Додати зображення",
+                "aiTool.toolSelection.crop": "Обрізати зображення",
+                "aiTool.eraser.selectionInfo": "Клацніть і тягніть, щоб вибрати області для видалення",
+                "aiTool.eraser.instructions": "Тягніть курсор, щоб створити прямокутники виділення. Виділені області будуть видалені та замінені фоном.",
+                "aiTool.background.upload": "Завантажити фонове зображення",
+                "aiTool.background.instructions": "Виберіть колір або завантажте зображення для використання як фон. Ви можете перетягувати фонове зображення для налаштування його позиції.",
+                "aiTool.addImage.upload": "Завантажити зображення для додавання",
+                "aiTool.addImage.instructions": "Завантажте зображення, щоб додати його до вашої фотографії. Клацніть на полотні, щоб розмістити його. Ви можете перетягувати додане зображення для налаштування його позиції.",
+                "aiTool.crop.apply": "Застосувати обрізку",
+                "aiTool.crop.cancel": "Скасувати",
+                "aiTool.crop.instructions": "Тягніть кути або краї виділення обрізки, щоб налаштувати область. Клацніть \"Застосувати обрізку\", щоб підтвердити.",
+                "aiTool.format.title": "Вихідний формат",
+                "aiTool.processing": "Обробка: 0%",
+                "aiTool.process": "Обробити з AI",
+                "aiTool.download": "Завантажити",
+                "aiTool.reset": "Скинути",
+                "aiTool.controls.zoomIn": "Збільшити",
+                "aiTool.controls.zoomOut": "Зменшити",
+                "aiTool.controls.reset": "Скинути вигляд",
+                "aiTool.controls.undo": "Скасувати",
+                "footer.follow": "СЛІДКУЙТЕ ЗА НАМИ",
+                "footer.categories": "Популярні категорії",
+                "footer.categories.pdf": "Інструменти PDF",
+                "footer.categories.image": "Інструменти зображень",
+                "footer.categories.text": "Текстові інструменти",
+                "footer.categories.av": "Аудіо/Відео інструменти",
+                "footer.categories.web": "Веб/Розробницькі інструменти",
+                "footer.categories.calc": "Інструменти калькулятора",
+                "footer.categories.util": "Утиліти",
+                "footer.categories.color": "Інструменти кольору",
+                "footer.quicklinks": "Швидкі посилання",
+                "footer.links.tools": "Всі інструменти",
+                "footer.links.faq": "Часті запитання",
+                "footer.links.contact": "Контакти",
+                "footer.links.privacy": "Політика конфіденційності",
+                "footer.links.disclaimer": "Відмова від відповідальності",
+                "footer.links.terms": "Умови використання",
+                "footer.copyright": "© 2025 LollyPoPDF. Всі права захищені."
+            },
+            vi: {
+                "nav.home": "Trang chủ",
+                "nav.about": "Về chúng tôi",
+                "nav.tools": "Công cụ",
+                "nav.contact": "Liên hệ",
+                "hero.title": "Công cụ Xóa và Thêm Ảnh bằng AI",
+                "hero.description": "Công cụ trực tuyến miễn phí sử dụng AI để xóa vật thể và thêm ảnh vào ảnh của bạn. Loại bỏ các yếu tố không mong muốn hoặc thêm đối tượng mới một cách liền mạch. Không cần đăng ký.",
+                "howto.title": "Cách sử dụng Công cụ Ảnh AI",
+                "howto.step1.title": "Tải lên ảnh của bạn",
+                "howto.step1.description": "Nhấp vào khu vực tải lên hoặc kéo và thả tệp ảnh của bạn. Chúng tôi hỗ trợ JPG, PNG, GIF, WEBP và nhiều hơn nữa.",
+                "howto.step2.title": "Chọn Công cụ AI",
+                "howto.step2.description": "Chọn giữa AI Xóa để loại bỏ vật thể hoặc AI Thêm để chèn ảnh mới vào ảnh của bạn.",
+                "howto.step3.title": "Chỉnh sửa & Xử lý",
+                "howto.step3.description": "Sử dụng các công cụ để đánh dấu các khu vực cần xóa hoặc thêm ảnh mới. Sau đó xử lý bằng AI để có kết quả liền mạch.",
+                "howto.step4.title": "Tải xuống Kết quả",
+                "howto.step4.description": "Tải xuống ảnh được xử lý bằng AI của bạn chỉ với một cú nhấp chuột. Không có hình mờ, không cần đăng ký.",
+                "aiTool.title": "Công cụ Xóa và Thêm Ảnh bằng AI",
+                "aiTool.upload.text": "Kéo và thả ảnh của bạn vào đây hoặc nhấp để duyệt",
+                "aiTool.upload.button": "Chọn Ảnh",
+                "aiTool.options.title": "Tùy chọn Công cụ AI",
+                "aiTool.toolSelection.title": "Chọn Công cụ",
+                "aiTool.toolSelection.erase": "AI Xóa",
+                "aiTool.toolSelection.background": "AI Nền",
+                "aiTool.toolSelection.addImage": "AI Thêm ảnh",
+                "aiTool.toolSelection.crop": "Cắt ảnh",
+                "aiTool.eraser.selectionInfo": "Nhấp và kéo để chọn các khu vực cần xóa",
+                "aiTool.eraser.instructions": "Kéo con trỏ để tạo các hình chữ nhật lựa chọn. Các khu vực được chọn sẽ bị xóa và thay thế bằng nền.",
+                "aiTool.background.upload": "Tải lên Ảnh nền",
+                "aiTool.background.instructions": "Chọn một màu hoặc tải lên ảnh để sử dụng làm nền. Bạn có thể kéo và thả ảnh nền để điều chỉnh vị trí của nó.",
+                "aiTool.addImage.upload": "Tải lên Ảnh để Thêm",
+                "aiTool.addImage.instructions": "Tải lên ảnh để thêm vào ảnh của bạn. Nhấp vào canvas để đặt nó. Bạn có thể kéo và thả ảnh đã thêm để điều chỉnh vị trí của nó.",
+                "aiTool.crop.apply": "Áp dụng Cắt",
+                "aiTool.crop.cancel": "Hủy",
+                "aiTool.crop.instructions": "Kéo các góc hoặc cạnh của vùng chọn cắt để điều chỉnh khu vực. Nhấp \"Áp dụng Cắt\" để xác nhận.",
+                "aiTool.format.title": "Định dạng Đầu ra",
+                "aiTool.processing": "Đang xử lý: 0%",
+                "aiTool.process": "Xử lý với AI",
+                "aiTool.download": "Tải xuống",
+                "aiTool.reset": "Đặt lại",
+                "aiTool.controls.zoomIn": "Phóng to",
+                "aiTool.controls.zoomOut": "Thu nhỏ",
+                "aiTool.controls.reset": "Đặt lại Giao diện",
+                "aiTool.controls.undo": "Hoàn tác",
+                "footer.follow": "THEO DÕI CHÚNG TÔI",
+                "footer.categories": "Danh mục Phổ biến",
+                "footer.categories.pdf": "Công cụ PDF",
+                "footer.categories.image": "Công cụ Ảnh",
+                "footer.categories.text": "Công cụ Văn bản",
+                "footer.categories.av": "Công cụ Âm thanh/Video",
+                "footer.categories.web": "Công cụ Web/Nhà phát triển",
+                "footer.categories.calc": "Công cụ Máy tính",
+                "footer.categories.util": "Công cụ Tiện ích",
+                "footer.categories.color": "Công cụ Màu sắc",
+                "footer.quicklinks": "Liên kết Nhanh",
+                "footer.links.tools": "Tất cả Công cụ",
+                "footer.links.faq": "Câu hỏi Thường gặp",
+                "footer.links.contact": "Liên hệ",
+                "footer.links.privacy": "Chính sách Riêng tư",
+                "footer.links.disclaimer": "Từ chối Trách nhiệm",
+                "footer.links.terms": "Điều khoản Dịch vụ",
+                "footer.copyright": "© 2025 LollyPoPDF. Tất cả các quyền được bảo lưu."
+            },
+            is: {
+                "nav.home": "Heim",
+                "nav.about": "Um okkur",
+                "nav.tools": "Verkfæri",
+                "nav.contact": "Hafa samband",
+                "hero.title": "AI Eyða og AI Bæta við Myndavél",
+                "hero.description": "Ókeypis netvélin AI-tæki til að eyða hlutum og bæta myndum við ljósmyndirnar þínar. Fjarlægðu óæskilega þætti eða bættu við nýjum hlutum samfellt. Engin skráning krafist.",
+                "howto.title": "Hvernig á að nota AI Myndavélina",
+                "howto.step1.title": "Hladdu upp myndinni þinni",
+                "howto.step1.description": "Smelltu á upphleðslusvæðið eða dragðu og slepptu myndaskránni þinni. Við styðjum JPG, PNG, GIF, WEBP og fleira.",
+                "howto.step2.title": "Veldu AI Tæki",
+                "howto.step2.description": "Veldu á milli AI Eyða til að fjarlægja hluti eða AI Bæta við til að setja inn nýjar myndir í ljósmyndina þína.",
+                "howto.step3.title": "Breyta og Vinna",
+                "howto.step3.description": "Notaðu verkfærin til að merkja svæði til að eyða eða bæta við nýjum myndum. Vinna síðan með AI fyrir samfellda niðurstöður.",
+                "howto.step4.title": "Sækja Niðurstöðu",
+                "howto.step4.description": "Sæktu AI-vinnslumyndina þína með einum smelli. Engin vatnsmerki, engin skráning krafist.",
+                "aiTool.title": "AI Eyða og AI Bæta við Myndavél",
+                "aiTool.upload.text": "Dragðu og slepptu myndinni þinni hér eða smelltu til að skoða",
+                "aiTool.upload.button": "Veldu mynd",
+                "aiTool.options.title": "AI Tækisvalkostir",
+                "aiTool.toolSelection.title": "Veldu Tæki",
+                "aiTool.toolSelection.erase": "AI Eyða",
+                "aiTool.toolSelection.background": "AI Bakgrunnur",
+                "aiTool.toolSelection.addImage": "AI Bæta við mynd",
+                "aiTool.toolSelection.crop": "Skera mynd",
+                "aiTool.eraser.selectionInfo": "Smelltu og dragðu til að velja svæði til að fjarlægja",
+                "aiTool.eraser.instructions": "Dragðu músina til að búa til valrétthyrninga. Valin svæði verða fjarlægð og skipt út fyrir bakgrunn.",
+                "aiTool.background.upload": "Hlaða upp bakgrunnsmynd",
+                "aiTool.background.instructions": "Veldu lit eða hladdu upp mynd til að nota sem bakgrunn. Þú getur dregið og sleppt bakgrunnsmyndinni til að stilla staðsetningu hennar.",
+                "aiTool.addImage.upload": "Hlaða upp mynd til að bæta við",
+                "aiTool.addImage.instructions": "Hladdu upp mynd til að bæta við ljósmyndina þína. Smelltu á striga til að setja hana. Þú getur dregið og sleppt myndinni sem bætt var við til að stilla staðsetningu hennar.",
+                "aiTool.crop.apply": "Beita skurði",
+                "aiTool.crop.cancel": "Hætta við",
+                "aiTool.crop.instructions": "Dragðu horn eða brúnir skurðvalsins til að stilla svæðið. Smelltu á \"Beita skurði\" til að staðfesta.",
+                "aiTool.format.title": "Úttaksform",
+                "aiTool.processing": "Vinnsla: 0%",
+                "aiTool.process": "Vinna með AI",
+                "aiTool.download": "Sækja",
+                "aiTool.reset": "Endurstilla",
+                "aiTool.controls.zoomIn": "Þysja inn",
+                "aiTool.controls.zoomOut": "Þysja út",
+                "aiTool.controls.reset": "Endurstilla sýn",
+                "aiTool.controls.undo": "Afturkalla",
+                "footer.follow": "FYLGDU OKKUR",
+                "footer.categories": "Vinsælar flokkar",
+                "footer.categories.pdf": "PDF Tæki",
+                "footer.categories.image": "Myndatæki",
+                "footer.categories.text": "Textatæki",
+                "footer.categories.av": "Hljóð/Myndbandatæki",
+                "footer.categories.web": "Vefur/Þróunartæki",
+                "footer.categories.calc": "Reiknivélartæki",
+                "footer.categories.util": "Gagnleg tæki",
+                "footer.categories.color": "Litatæki",
+                "footer.quicklinks": "Flýtileiðir",
+                "footer.links.tools": "Öll tæki",
+                "footer.links.faq": "Algengar spurningar",
+                "footer.links.contact": "Hafa samband",
+                "footer.links.privacy": "Meðferð persónuupplýsinga",
+                "footer.links.disclaimer": "Ábyrgðarafsal",
+                "footer.links.terms": "Þjónustuskilmálar",
+                "footer.copyright": "© 2025 LollyPoPDF. Allur réttur áskilinn."
+            },
+            no: {
+                "nav.home": "Hjem",
+                "nav.about": "Om oss",
+                "nav.tools": "Verktøy",
+                "nav.contact": "Kontakt",
+                "hero.title": "AI Slett og AI Legg til Bildeverktøy",
+                "hero.description": "Gratis online AI-drevet verktøy for å slette objekter og legge til bilder i bildene dine. Fjern uønskede elementer eller legg til nye objekter sømløst. Ingen registrering kreves.",
+                "howto.title": "Hvordan bruke AI Bildeverktøyet",
+                "howto.step1.title": "Last opp bildet ditt",
+                "howto.step1.description": "Klikk på opplastingsområdet eller dra og slipp bildefilen din. Vi støtter JPG, PNG, GIF, WEBP og mer.",
+                "howto.step2.title": "Velg AI Verktøy",
+                "howto.step2.description": "Velg mellom AI Slett for å fjerne objekter eller AI Legg til for å sette inn nye bilder i bildet ditt.",
+                "howto.step3.title": "Rediger og Behandle",
+                "howto.step3.description": "Bruk verktøyene til å markere områder for å slette eller legge til nye bilder. Behandle deretter med AI for sømløse resultater.",
+                "howto.step4.title": "Last ned resultatet",
+                "howto.step4.description": "Last ned ditt AI-behandlede bilde med ett klikk. Ingen vannmerker, ingen registrering kreves.",
+                "aiTool.title": "AI Slett og AI Legg til Bildeverktøy",
+                "aiTool.upload.text": "Dra og slipp bildet ditt her eller klikk for å bla",
+                "aiTool.upload.button": "Velg bilde",
+                "aiTool.options.title": "AI Verktøyalternativer",
+                "aiTool.toolSelection.title": "Velg Verktøy",
+                "aiTool.toolSelection.erase": "AI Slett",
+                "aiTool.toolSelection.background": "AI Bakgrunn",
+                "aiTool.toolSelection.addImage": "AI Legg til bilde",
+                "aiTool.toolSelection.crop": "Beskjær bilde",
+                "aiTool.eraser.selectionInfo": "Klikk og dra for å velge områder å fjerne",
+                "aiTool.eraser.instructions": "Dra markøren for å opprette valgrektangler. De valgte områdene vil bli fjernet og erstattet med bakgrunn.",
+                "aiTool.background.upload": "Last opp bakgrunnsbilde",
+                "aiTool.background.instructions": "Velg en farge eller last opp et bilde for å bruke som bakgrunn. Du kan dra og slippe bakgrunnsbildet for å justere posisjonen.",
+                "aiTool.addImage.upload": "Last opp bilde for å legge til",
+                "aiTool.addImage.instructions": "Last opp et bilde for å legge til i bildet ditt. Klikk på lerretet for å plassere det. Du kan dra og slippe det lagte bildet for å justere posisjonen.",
+                "aiTool.crop.apply": "Bruk beskjæring",
+                "aiTool.crop.cancel": "Avbryt",
+                "aiTool.crop.instructions": "Dra hjørnene eller kantene på beskjæringsvalget for å justere området. Klikk \"Bruk beskjæring\" for å bekrefte.",
+                "aiTool.format.title": "Utdataformat",
+                "aiTool.processing": "Behandler: 0%",
+                "aiTool.process": "Behandle med AI",
+                "aiTool.download": "Last ned",
+                "aiTool.reset": "Tilbakestill",
+                "aiTool.controls.zoomIn": "Zoom inn",
+                "aiTool.controls.zoomOut": "Zoom ut",
+                "aiTool.controls.reset": "Tilbakestill visning",
+                "aiTool.controls.undo": "Angre",
+                "footer.follow": "FØLG OSS",
+                "footer.categories": "Populære kategorier",
+                "footer.categories.pdf": "PDF Verktøy",
+                "footer.categories.image": "Bildeverktøy",
+                "footer.categories.text": "Tekstverktøy",
+                "footer.categories.av": "Lyd/Video verktøy",
+                "footer.categories.web": "Nett/Utviklerverktøy",
+                "footer.categories.calc": "Kalkulatorverktøy",
+                "footer.categories.util": "Nyttige verktøy",
+                "footer.categories.color": "Fargeverktøy",
+                "footer.quicklinks": "Hurtiglenker",
+                "footer.links.tools": "Alle verktøy",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Kontakt",
+                "footer.links.privacy": "Personvernregler",
+                "footer.links.disclaimer": "Ansvarsfraskrivelse",
+                "footer.links.terms": "Tjenestevilkår",
+                "footer.copyright": "© 2025 LollyPoPDF. Alle rettigheter forbeholdt."
+            },
+            sv: {
+                "nav.home": "Hem",
+                "nav.about": "Om oss",
+                "nav.tools": "Verktyg",
+                "nav.contact": "Kontakt",
+                "hero.title": "AI Radera och AI Lägg till Bildverktyg",
+                "hero.description": "Gratis online AI-drivet verktyg för att radera objekt och lägga till bilder i dina foton. Ta bort oönskade element eller lägg till nya objekt sömlöst. Ingen registrering krävs.",
+                "howto.title": "Hur man använder AI Bildverktyget",
+                "howto.step1.title": "Ladda upp din bild",
+                "howto.step1.description": "Klicka på uppladdningsområdet eller dra och släpp din bildfil. Vi stöder JPG, PNG, GIF, WEBP och mer.",
+                "howto.step2.title": "Välj AI Verktyg",
+                "howto.step2.description": "Välj mellan AI Radera för att ta bort objekt eller AI Lägg till för att infoga nya bilder i ditt foto.",
+                "howto.step3.title": "Redigera och Bearbeta",
+                "howto.step3.description": "Använd verktygen för att markera områden att radera eller lägga till nya bilder. Bearbeta sedan med AI för sömlösa resultat.",
+                "howto.step4.title": "Ladda ner resultatet",
+                "howto.step4.description": "Ladda ner din AI-bearbetade bild med ett klick. Inga vattenstämplar, ingen registrering krävs.",
+                "aiTool.title": "AI Radera och AI Lägg till Bildverktyg",
+                "aiTool.upload.text": "Dra och släpp din bild här eller klicka för att bläddra",
+                "aiTool.upload.button": "Välj bild",
+                "aiTool.options.title": "AI Verktygsalternativ",
+                "aiTool.toolSelection.title": "Välj Verktyg",
+                "aiTool.toolSelection.erase": "AI Radera",
+                "aiTool.toolSelection.background": "AI Bakgrund",
+                "aiTool.toolSelection.addImage": "AI Lägg till bild",
+                "aiTool.toolSelection.crop": "Beskär bild",
+                "aiTool.eraser.selectionInfo": "Klicka och dra för att välja områden att ta bort",
+                "aiTool.eraser.instructions": "Dra markören för att skapa valrektanglar. De valda områdena kommer att tas bort och ersättas med bakgrund.",
+                "aiTool.background.upload": "Ladda upp bakgrundsbild",
+                "aiTool.background.instructions": "Välj en färg eller ladda upp en bild för att använda som bakgrund. Du kan dra och släppa bakgrundsbilden för att justera dess position.",
+                "aiTool.addImage.upload": "Ladda upp bild för att lägga till",
+                "aiTool.addImage.instructions": "Ladda upp en bild för att lägga till i ditt foto. Klicka på duken för att placera den. Du kan dra och släppa den tillagda bilden för att justera dess position.",
+                "aiTool.crop.apply": "Tillämpa beskärning",
+                "aiTool.crop.cancel": "Avbryt",
+                "aiTool.crop.instructions": "Dra hörnen eller kanterna på beskärningsvalet för att justera området. Klicka \"Tillämpa beskärning\" för att bekräfta.",
+                "aiTool.format.title": "Utdataformat",
+                "aiTool.processing": "Bearbetar: 0%",
+                "aiTool.process": "Bearbeta med AI",
+                "aiTool.download": "Ladda ner",
+                "aiTool.reset": "Återställ",
+                "aiTool.controls.zoomIn": "Zooma in",
+                "aiTool.controls.zoomOut": "Zooma ut",
+                "aiTool.controls.reset": "Återställ vy",
+                "aiTool.controls.undo": "Ångra",
+                "footer.follow": "FÖLJ OSS",
+                "footer.categories": "Populära kategorier",
+                "footer.categories.pdf": "PDF Verktyg",
+                "footer.categories.image": "Bildverktyg",
+                "footer.categories.text": "Textverktyg",
+                "footer.categories.av": "Ljud/Video verktyg",
+                "footer.categories.web": "Webb/Utvecklarverktyg",
+                "footer.categories.calc": "Kalkylatorverktyg",
+                "footer.categories.util": "Verktyg för verktyg",
+                "footer.categories.color": "Färgverktyg",
+                "footer.quicklinks": "Snabblänkar",
+                "footer.links.tools": "Alla verktyg",
+                "footer.links.faq": "FAQ",
+                "footer.links.contact": "Kontakt",
+                "footer.links.privacy": "Integritetspolicy",
+                "footer.links.disclaimer": "Ansvarsfriskrivning",
+                "footer.links.terms": "Användarvillkor",
+                "footer.copyright": "© 2025 LollyPoPDF. Alla rättigheter förbehållna."
+            },
+            fi: {
+                "nav.home": "Koti",
+                "nav.about": "Meistä",
+                "nav.tools": "Työkalut",
+                "nav.contact": "Yhteystiedot",
+                "hero.title": "AI Poista ja AI Lisää Kuvatyökalu",
+                "hero.description": "Ilmainen verkkopohjainen AI-käyttöinen työkalu esineiden poistamiseen ja kuvien lisäämiseen valokuvissasi. Poista ei-toivottuja elementtejä tai lisää uusia esineitä saumattomasti. Rekisteröitymistä ei tarvita.",
+                "howto.title": "Kuinka käyttää AI Kuvatyökalua",
+                "howto.step1.title": "Lataa kuvasi",
+                "howto.step1.description": "Napsauta latausalueella tai vedä ja pudota kuvatiedostosi. Tuemme JPG, PNG, GIF, WEBP ja enemmän.",
+                "howto.step2.title": "Valitse AI Työkalu",
+                "howto.step2.description": "Valitse AI Poista poistaaksesi esineitä tai AI Lisää lisätäksesi uusia kuvia valokuvaasi.",
+                "howto.step3.title": "Muokkaa ja Käsittele",
+                "howto.step3.description": "Käytä työkaluja merkitsemään alueita poistettavaksi tai lisätäksesi uusia kuvia. Käsittele sitten AI:lla saumattomien tulosten saamiseksi.",
+                "howto.step4.title": "Lataa tulos",
+                "howto.step4.description": "Lataa AI-käsitelty kuvasi yhdellä napsautuksella. Ei vesileimoja, ei rekisteröitymistä.",
+                "aiTool.title": "AI Poista ja AI Lisää Kuvatyökalu",
+                "aiTool.upload.text": "Vedä ja pudota kuvasi tähän tai napsauta selataksesi",
+                "aiTool.upload.button": "Valitse kuva",
+                "aiTool.options.title": "AI Työkalun Asetukset",
+                "aiTool.toolSelection.title": "Valitse Työkalu",
+                "aiTool.toolSelection.erase": "AI Poista",
+                "aiTool.toolSelection.background": "AI Tausta",
+                "aiTool.toolSelection.addImage": "AI Lisää kuva",
+                "aiTool.toolSelection.crop": "Rajaa kuva",
+                "aiTool.eraser.selectionInfo": "Napsauta ja vedä valitaksesi poistettavat alueet",
+                "aiTool.eraser.instructions": "Vedä kohdistinta luodaksesi valintasuorakulmioita. Valitut alueet poistetaan ja korvataan taustalla.",
+                "aiTool.background.upload": "Lataa taustakuva",
+                "aiTool.background.instructions": "Valitse väri tai lataa kuva käytettäväksi taustana. Voit vetää ja pudottaa taustakuvan säätääksesi sen sijaintia.",
+                "aiTool.addImage.upload": "Lataa lisättävä kuva",
+                "aiTool.addImage.instructions": "Lataa kuva lisättäväksi valokuvaasi. Napsauta kangas sijoittaaksesi sen. Voit vetää ja pudottaa lisätyn kuvan säätääksesi sen sijaintia.",
+                "aiTool.crop.apply": "Käytä rajausta",
+                "aiTool.crop.cancel": "Peruuta",
+                "aiTool.crop.instructions": "Vedä rajausvalinnan kulmia tai reunoja säätääksesi aluetta. Napsauta \"Käytä rajausta\" vahvistaaksesi.",
+                "aiTool.format.title": "Tulostusmuoto",
+                "aiTool.processing": "Käsitellään: 0%",
+                "aiTool.process": "Käsittele AI:lla",
+                "aiTool.download": "Lataa",
+                "aiTool.reset": "Nollaa",
+                "aiTool.controls.zoomIn": "Lähennä",
+                "aiTool.controls.zoomOut": "Loitonna",
+                "aiTool.controls.reset": "Nollaa näkymä",
+                "aiTool.controls.undo": "Kumoa",
+                "footer.follow": "SEURA MEITÄ",
+                "footer.categories": "Suositut luokat",
+                "footer.categories.pdf": "PDF Työkalut",
+                "footer.categories.image": "Kuvatyökalut",
+                "footer.categories.text": "Tekstityökalut",
+                "footer.categories.av": "Ääni/Videotyökalut",
+                "footer.categories.web": "Web/Kehittäjätyökalut",
+                "footer.categories.calc": "Laskurityökalut",
+                "footer.categories.util": "Aputyökalut",
+                "footer.categories.color": "Värityökalut",
+                "footer.quicklinks": "Pikalinkit",
+                "footer.links.tools": "Kaikki työkalut",
+                "footer.links.faq": "UKK",
+                "footer.links.contact": "Yhteystiedot",
+                "footer.links.privacy": "Tietosuojakäytäntö",
+                "footer.links.disclaimer": "Vastuuvapauslauseke",
+                "footer.links.terms": "Käyttöehdot",
+                "footer.copyright": "© 2025 LollyPoPDF. Kaikki oikeudet pidätetään."
+            },
+            cs: {
+                "nav.home": "Domů",
+                "nav.about": "O nás",
+                "nav.tools": "Nástroje",
+                "nav.contact": "Kontakt",
+                "hero.title": "AI Vymazat a AI Přidat Obrázek Nástroj",
+                "hero.description": "Bezplatný online nástroj poháněný AI pro mazání objektů a přidávání obrázků do vašich fotografií. Odstraňte nežádoucí prvky nebo přidejte nové objekty bezproblémově. Bez registrace.",
+                "howto.title": "Jak používat AI Obrázkový Nástroj",
+                "howto.step1.title": "Nahrajte svůj obrázek",
+                "howto.step1.description": "Klikněte na oblast nahrávání nebo přetáhněte svůj obrazový soubor. Podporujeme JPG, PNG, GIF, WEBP a další.",
+                "howto.step2.title": "Zvolte AI Nástroj",
+                "howto.step2.description": "Vyberte mezi AI Vymazat pro odstranění objektů nebo AI Přidat pro vložení nových obrázků do vaší fotografie.",
+                "howto.step3.title": "Upravit a Zpracovat",
+                "howto.step3.description": "Použijte nástroje k označení oblastí k vymazání nebo přidání nových obrázků. Poté zpracujte pomocí AI pro bezproblémové výsledky.",
+                "howto.step4.title": "Stáhnout výsledek",
+                "howto.step4.description": "Stáhněte si obrázek zpracovaný AI jedním kliknutím. Žádné vodoznaky, žádná registrace.",
+                "aiTool.title": "AI Vymazat a AI Přidat Obrázek Nástroj",
+                "aiTool.upload.text": "Přetáhněte svůj obrázek sem nebo klikněte pro procházení",
+                "aiTool.upload.button": "Vybrat obrázek",
+                "aiTool.options.title": "Možnosti AI Nástroje",
+                "aiTool.toolSelection.title": "Vyberte Nástroj",
+                "aiTool.toolSelection.erase": "AI Vymazat",
+                "aiTool.toolSelection.background": "AI Pozadí",
+                "aiTool.toolSelection.addImage": "AI Přidat obrázek",
+                "aiTool.toolSelection.crop": "Oříznout obrázek",
+                "aiTool.eraser.selectionInfo": "Klikněte a táhněte pro výběr oblastí k odstranění",
+                "aiTool.eraser.instructions": "Táhněte kurzorem pro vytvoření výběrových obdélníků. Vybrané oblasti budou odstraněny a nahrazeny pozadím.",
+                "aiTool.background.upload": "Nahrát obrázek pozadí",
+                "aiTool.background.instructions": "Vyberte barvu nebo nahrajte obrázek pro použití jako pozadí. Můžete přetáhnout obrázek pozadí pro úpravu jeho polohy.",
+                "aiTool.addImage.upload": "Nahrát obrázek k přidání",
+                "aiTool.addImage.instructions": "Nahrajte obrázek k přidání do vaší fotografie. Klikněte na plátno pro umístění. Můžete přetáhnout přidaný obrázek pro úpravu jeho polohy.",
+                "aiTool.crop.apply": "Použít oříznutí",
+                "aiTool.crop.cancel": "Zrušit",
+                "aiTool.crop.instructions": "Táhněte rohy nebo okraje výběru oříznutí pro úpravu oblasti. Klikněte \"Použít oříznutí\" pro potvrzení.",
+                "aiTool.format.title": "Výstupní formát",
+                "aiTool.processing": "Zpracovává se: 0%",
+                "aiTool.process": "Zpracovat s AI",
+                "aiTool.download": "Stáhnout",
+                "aiTool.reset": "Obnovit",
+                "aiTool.controls.zoomIn": "Přiblížit",
+                "aiTool.controls.zoomOut": "Oddálit",
+                "aiTool.controls.reset": "Obnovit zobrazení",
+                "aiTool.controls.undo": "Zpět",
+                "footer.follow": "SLEDUJTE NÁS",
+                "footer.categories": "Populární kategorie",
+                "footer.categories.pdf": "PDF Nástroje",
+                "footer.categories.image": "Obrázkové nástroje",
+                "footer.categories.text": "Textové nástroje",
+                "footer.categories.av": "Audio/Video nástroje",
+                "footer.categories.web": "Web/Vývojářské nástroje",
+                "footer.categories.calc": "Kalkulační nástroje",
+                "footer.categories.util": "Užitečné nástroje",
+                "footer.categories.color": "Barevné nástroje",
+                "footer.quicklinks": "Rychlé odkazy",
+                "footer.links.tools": "Všechny nástroje",
+                "footer.links.faq": "Časté otázky",
+                "footer.links.contact": "Kontakt",
+                "footer.links.privacy": "Zásady ochrany osobních údajů",
+                "footer.links.disclaimer": "Odmítnutí odpovědnosti",
+                "footer.links.terms": "Podmínky služby",
+                "footer.copyright": "© 2025 LollyPoPDF. Všechna práva vyhrazena."
+            }
+
         };
 
         // Function to change language

@@ -1,0 +1,3625 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Word to PDF Converter | LollyPoPDF</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+        :root {
+            --primary-color: #9370db;
+            --secondary-color: #8a2be2;
+            --bg-color: #ffffff;
+            --card-bg: #ffffff;
+            --text-color: #333333;
+            --border-color: #e0e0e0;
+            --shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            --light-lavender: #f5f0ff;
+            --dark-lavender: #e6d9ff;
+            --white: #ffffff;
+            --header-text: #6b7280;
+            --accent-color: #9370db;
+            --transition: all 0.3s ease;
+        }
+
+        .dark-mode {
+            --primary-color: #9370db;
+            --secondary-color: #8a2be2;
+            --bg-color: #1a1a1a;
+            --card-bg: #2d2d2d;
+            --text-color: #f0f0f0;
+            --border-color: #444444;
+            --shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+            --light-lavender: #2a1a4a;
+            --dark-lavender: #3d2a6d;
+            --white: #1a1a1a;
+            --header-text: #d1d5db;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            transition: var(--transition);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header Styles */
+        header {
+            background-color: var(--white);
+            color: var(--header-text);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+        }
+
+        .logo-icon {
+            position: relative;
+            width: 40px;
+            height: 40px;
+        }
+
+        .logo-circle {
+            width: 40px;
+            height: 40px;
+            border-radius: 40%;
+            background: linear-gradient(to bottom right, #9370db, #8a2be2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .logo-stem {
+            position: absolute;
+            bottom: -17px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 6px;
+            height: 17px;
+            background-color: #8a2be2;
+            border-radius: 0 0 3px 3px;
+        }
+
+        .logo-text {
+            font-size: 24px;
+            font-weight: bold;
+            color: #9370db;
+        }
+
+        nav ul {
+            display: flex;
+            gap: 30px;
+            list-style: none;
+        }
+
+        nav a {
+            font-weight: 500;
+            position: relative;
+            color: var(--header-text);
+            padding: 8px 0;
+            border-radius: 0;
+            transition: var(--transition);
+            text-decoration: none;
+        }
+
+        nav a:hover {
+            color: var(--accent-color);
+        }
+
+        nav a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: var(--accent-color);
+            transition: width 0.3s ease;
+        }
+
+        nav a:hover::after {
+            width: 100%;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .email {
+            font-size: 14px;
+            color: var(--header-text);
+        }
+
+        .theme-toggle {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 20px;
+            color: var(--header-text);
+            padding: 8px;
+            border-radius: 50%;
+            transition: var(--transition);
+        }
+
+        .theme-toggle:hover {
+            background-color: #f0ebff;
+            color: var(--accent-color);
+        }
+
+        .dark-mode .theme-toggle:hover {
+            background-color: #2d3748;
+            color: var(--accent-color);
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--header-text);
+        }
+
+        /* Hero Section */
+        .hero {
+            background: var(--light-lavender);
+            padding: 60px 20px;
+            text-align: center;
+        }
+
+        .hero h1 {
+            font-size: 2.5rem;
+            color: #000;
+            margin-bottom: 15px;
+        }
+
+        .dark-mode .hero h1 {
+            color: #fff;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            color: var(--text-color);
+            max-width: 700px;
+            margin: 0 auto 30px;
+            line-height: 1.6;
+        }
+
+        /* How to Convert Section */
+        .how-to {
+            background-color: #ffffff;
+            padding: 80px 20px;
+        }
+
+        .dark-mode .how-to {
+            background-color: #1a1a1a;
+        }
+
+        .how-to h2 {
+            font-size: 2rem;
+            color: #000000;
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .dark-mode .how-to h2 {
+            color: #ffffff;
+        }
+
+        .steps-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 40px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .step-box {
+            background-color: #f9f9f9;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            min-height: 200px;
+            position: relative;
+        }
+
+        .dark-mode .step-box {
+            background-color: #2d2d2d;
+        }
+
+        .step-number {
+            width: 40px;
+            height: 40px;
+            background-color: var(--primary-color);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        .step-box h3 {
+            font-size: 18px;
+            color: #000000;
+            margin-bottom: 15px;
+        }
+
+        .dark-mode .step-box h3 {
+            color: #ffffff;
+        }
+
+        .step-box p {
+            font-size: 14px;
+            color: #333333;
+            line-height: 1.6;
+        }
+
+        .dark-mode .step-box p {
+            color: #f0f0f0;
+        }
+
+        /* Converter Tool */
+        .converter {
+            background: var(--light-lavender);
+            padding: 60px 20px;
+        }
+
+        .converter h2 {
+            font-size: 2rem;
+            color: var(--primary-color);
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .converter-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            padding: 30px;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .upload-area {
+            border: 2px dashed var(--border-color);
+            border-radius: 8px;
+            padding: 40px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: border-color 0.3s;
+        }
+
+        .upload-area:hover {
+            border-color: var(--primary-color);
+        }
+
+        .upload-icon {
+            font-size: 48px;
+            color: var(--primary-color);
+            margin-bottom: 15px;
+        }
+
+        .upload-text {
+            margin-bottom: 15px;
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        .upload-btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+
+        .upload-btn:hover {
+            background-color: var(--secondary-color);
+        }
+
+        .preview-section {
+            margin-top: 30px;
+            display: none;
+        }
+
+        .preview-container {
+            display: flex;
+            gap: 30px;
+            flex-wrap: wrap;
+        }
+
+        .preview-box {
+            flex: 1;
+            min-width: 300px;
+        }
+
+        .preview-image {
+            width: 100%;
+            max-height: 300px;
+            object-fit: contain;
+            border-radius: 8px;
+            background-color: var(--bg-color);
+            border: 1px solid var(--border-color);
+        }
+
+        .file-info {
+            font-size: 14px;
+            color: var(--text-color);
+            margin-top: 10px;
+        }
+
+        .conversion-options {
+            margin: 20px 0;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .format-selection, .quality-selection {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .format-selection label, .quality-selection label {
+            font-weight: 500;
+        }
+
+        .format-dropdown {
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid var(--border-color);
+            background-color: var(--bg-color);
+            color: var(--text-color);
+        }
+
+        .quality-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .quality-btn {
+            flex: 1;
+            padding: 12px;
+            background: none;
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .quality-btn.active {
+            background-color: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        .quality-title {
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .quality-desc {
+            font-size: 12px;
+            opacity: 0.8;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+            flex: 1;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--secondary-color);
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            color: var(--primary-color);
+            border: 2px solid var(--primary-color);
+        }
+
+        .btn-outline:hover {
+            background-color: rgba(147, 112, 219, 0.1);
+        }
+
+        .btn-secondary {
+            background-color: #6b7280;
+            color: white;
+            border: none;
+        }
+
+        .btn-secondary:hover {
+            background-color: #4b5563;
+        }
+
+        .progress-container {
+            margin-top: 20px;
+            display: none;
+        }
+
+        .progress-bar {
+            height: 8px;
+            background-color: var(--border-color);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background-color: var(--primary-color);
+            width: 0%;
+            transition: width 0.3s;
+        }
+
+        /* Content Preview */
+        .content-preview {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: var(--card-bg);
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .content-preview h4 {
+            margin-bottom: 10px;
+            color: var(--primary-color);
+        }
+
+        .preview-content {
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        /* Footer Styles */
+        footer {
+            width: 100%;
+            background-color: #000000;
+            color: white;
+            padding: 60px 5% 80px;
+            position: relative;
+        }
+
+        .footer-content {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 40px;
+            justify-content: space-between;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .footer-logo {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            margin-bottom: 20px;
+        }
+
+        .footer-logo-icon {
+            position: relative;
+            width: 40px;
+            height: 40px;
+            margin-right: 10px;
+        }
+
+        .footer-logo-circle {
+            width: 40px;
+            height: 40px;
+            border-radius: 40%;
+            background: linear-gradient(to bottom right, #9370db, #8a2be2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .footer-logo-stem {
+            position: absolute;
+            bottom: -17px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 6px;
+            height: 17px;
+            background-color: #8a2be2;
+            border-radius: 0 0 3px 3px;
+        }
+
+        .footer-logo-text {
+            color: #9370db;
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .footer-section {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .footer-section h3 {
+            color: #ffffff;
+            font-size: 18px;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        .footer-section h3.category-header {
+            color: #a391f2;
+        }
+
+        .social-icons {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .social-icon {
+            width: 40px;
+            height: 40px;
+            background-color: #9370db;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+
+        .social-icon:hover {
+            background-color: #8a2be2;
+            transform: translateY(-3px);
+        }
+
+        .footer-links {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 10px;
+        }
+
+        .footer-links a {
+            color: white;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .footer-links a:hover {
+            color: #9370db;
+        }
+
+        .footer-line {
+            position: absolute;
+            bottom: 50px;
+            left: 0;
+            width: 100%;
+            height: 1px;
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .copyright {
+            position: absolute;
+            bottom: 20px;
+            left: 10px;
+            color: #f9f7ff;
+            font-size: 12px;
+        }
+
+        /* Language Switcher */
+        .language-switcher {
+            position: fixed;
+            bottom: 10px;
+            right: 20px;
+            z-index: 1000;
+        }
+
+        .language-btn {
+            background-color: #9370db;
+            color: white;
+            border: none;
+            border-radius: 20px;
+            padding: 5px 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            transition: background-color 0.3s;
+        }
+
+        .language-btn:hover {
+            background-color: #8a2be2;
+        }
+
+        .language-dropdown {
+            position: absolute;
+            bottom: 50px;
+            right: 0;
+            width: 300px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            display: none;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .language-switcher:hover .language-dropdown {
+            display: grid;
+        }
+
+        .language-option {
+            padding: 8px 5px;
+            text-align: center;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+            font-size: 12px;
+        }
+
+        .language-option:hover {
+            background-color: #f5f0ff;
+            color: #333;
+        }
+
+        /* Formatting Preview */
+        .formatting-preview {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: var(--card-bg);
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+        }
+
+        .formatting-preview h4 {
+            margin-bottom: 10px;
+            color: var(--primary-color);
+        }
+
+        .formatting-features {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .formatting-feature {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 18px;
+        }
+
+        .formatting-feature i {
+            color: var(--primary-color);
+        }
+
+        /* Status Messages */
+        .status-message {
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 5px;
+            text-align: center;
+            font-weight: 500;
+            display: none;
+        }
+
+        .status-success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .status-error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .status-info {
+            background-color: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 768px) {
+            .steps-container {
+                grid-template-columns: 1fr;
+            }
+            
+            nav ul {
+                display: none;
+                flex-direction: column;
+                position: absolute;
+                top: 70px;
+                left: 0;
+                width: 100%;
+                background-color: var(--bg-color);
+                box-shadow: var(--shadow);
+                padding: 20px;
+                gap: 15px;
+            }
+            
+            nav ul.active {
+                display: flex;
+            }
+            
+            .mobile-menu-btn {
+                display: block;
+            }
+            
+            .preview-container {
+                flex-direction: column;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+            
+            .footer-content {
+                flex-direction: column;
+            }
+            
+            .language-dropdown {
+                width: 250px;
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .header-right .email {
+                display: none;
+            }
+
+            .quality-buttons {
+                flex-direction: column;
+            }
+
+            .formatting-features {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hero h1 {
+                font-size: 2rem;
+            }
+            
+            .hero p {
+                font-size: 1rem;
+            }
+            
+            .language-dropdown {
+                width: 200px;
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <div class="header-container">
+                <a href="https://lollypopdf.com" class="logo">
+                    <div class="logo-icon">
+                        <div class="logo-circle">LPdf</div>
+                        <div class="logo-stem"></div>
+                    </div>
+                    <div class="logo-text">LollyPoPdf</div>
+                </a>                
+                
+                <nav>
+                    <ul id="navMenu">
+                        <li><a href="https://lollypopdf.github.io/LollyPoPdf#home" class="nav-link" data-key="home">Home</a></li>
+                        <li><a href="https://lollypopdf.github.io/LollyPoPdf#about" class="nav-link" data-key="about">About Us</a></li>
+                        <li><a href="https://lollypopdf.github.io/LollyPoPdf#tools" class="nav-link" data-key="tools">Tools</a></li>
+                        <li><a href="contact.html" class="nav-link" data-key="contact">Contact</a></li>
+                    </ul>
+                </nav>
+                
+                <div class="header-right">
+                    <span class="email">lollypoppdf@gmail.com</span>
+                    <button class="theme-toggle" id="themeToggle">
+                        <i class="fas fa-moon"></i>
+                    </button>
+                    <button class="mobile-menu-btn" id="mobileMenuBtn">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <h1 class="hero-title" data-key="heroTitle">Word to PDF Converter</h1>
+            <p class="hero-description" data-key="heroDescription">Convert your Word documents to PDF format while preserving the exact layout, formatting, fonts, and structure of the original document.</p>
+        </div>
+    </section>
+
+    <!-- How to Convert Section -->
+    <section class="how-to">
+        <div class="container">
+            <h2 class="section-title" data-key="howToTitle">How to Convert Word to PDF</h2>
+            <div class="steps-container">
+                <div class="step-box">
+                    <div class="step-number">1</div>
+                    <h3 class="step-title" data-key="step1Title">Upload Your Word Document</h3>
+                    <p class="step-description" data-key="step1Desc">Click the upload area or drag and drop your Word file. We support DOC and DOCX formats.</p>
+                </div>
+                <div class="step-box">
+                    <div class="step-number">2</div>
+                    <h3 class="step-title" data-key="step2Title">Preview Document</h3>
+                    <p class="step-description" data-key="step2Desc">See a preview of your Word document with exact formatting and content.</p>
+                </div>
+                <div class="step-box">
+                    <div class="step-number">3</div>
+                    <h3 class="step-title" data-key="step3Title">Convert to PDF</h3>
+                    <p class="step-description" data-key="step3Desc">Click the "Convert to PDF" button to start the conversion process.</p>
+                </div>
+                <div class="step-box">
+                    <div class="step-number">4</div>
+                    <h3 class="step-title" data-key="step4Title">Download PDF Document</h3>
+                    <p class="step-description" data-key="step4Desc">Download your converted PDF document with perfect formatting.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Converter Tool -->
+    <section class="converter">
+        <div class="container">
+            <h2 class="section-title" data-key="toolTitle">Word to PDF Converter</h2>
+            <div class="converter-card">
+                <div class="upload-area" id="uploadArea">
+                    <i class="fas fa-file-upload upload-icon"></i>
+                    <p class="upload-text" data-key="uploadText">Drag & drop your Word document here or click to browse</p>
+                    <input type="file" id="fileInput" class="file-input" accept=".doc,.docx,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document">
+                    <button class="upload-btn" id="browseBtn" data-key="browseBtn">Browse Word Files</button>
+                </div>
+                
+                <div class="preview-section" id="previewSection">
+                    <div class="preview-container">
+                        <div class="preview-box">
+                            <h3 data-key="originalLabel">Original Word Document</h3>
+                            <div id="originalPreview" class="preview-image">
+                                <i class="fas fa-file-word" style="font-size: 48px; color: var(--primary-color); margin: 20px;"></i>
+                                <p id="originalFileName"></p>
+                            </div>
+                            <div class="file-info" id="originalInfo"></div>
+                            
+                            <!-- Content Preview Section -->
+                            <div class="content-preview" id="contentPreview">
+                                <h4>Document Content Preview</h4>
+                                <div class="preview-content" id="previewContent"></div>
+                            </div>
+                        </div>
+                        <div class="preview-box">
+                            <h3 data-key="convertedLabel">Converted PDF Document</h3>
+                            <div id="convertedPreview" class="preview-image">
+                                <i class="fas fa-file-pdf" style="font-size: 48px; color: var(--primary-color); margin: 20px;"></i>
+                                <p id="convertedFileName"></p>
+                            </div>
+                            <div class="file-info" id="convertedInfo"></div>
+                            
+                            <!-- Formatting Preview Section -->
+                            <div class="formatting-preview" id="formattingPreview">
+                                <h4>Format Preservation</h4>
+                                <div class="formatting-features">
+                                    <div class="formatting-feature">
+                                        <i class="fas fa-check-circle"></i>
+                                        <span>Perfect Paragraphs</span>
+                                    </div>
+                                    <div class="formatting-feature">
+                                        <i class="fas fa-check-circle"></i>
+                                        <span>Professional Page Numbers</span>
+                                    </div>
+                                    <div class="formatting-feature">
+                                        <i class="fas fa-check-circle"></i>
+                                        <span>Exact Fonts & Sizes</span>
+                                    </div>
+                                    <div class="formatting-feature">
+                                        <i class="fas fa-check-circle"></i>
+                                        <span>Original Layout</span>
+                                    </div>
+                                    <div class="formatting-feature">
+                                        <i class="fas fa-check-circle"></i>
+                                        <span>Proper Spacing</span>
+                                    </div>
+                                    <div class="formatting-feature">
+                                        <i class="fas fa-check-circle"></i>
+                                        <span>Exact Page Matching</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="conversion-options">
+                        <div class="quality-selection">
+                            <label data-key="compressionLabel">Conversion Quality:</label>
+                            <div class="quality-buttons">
+                                <button class="quality-btn active" data-quality="exact">
+                                    <span class="quality-title" data-key="exactQuality">Exact</span>
+                                    <span class="quality-desc" data-key="exactQualityDesc">(Perfect Formatting)</span>
+                                </button>
+                                <button class="quality-btn" data-quality="high">
+                                    <span class="quality-title" data-key="highQuality">High</span>
+                                    <span class="quality-desc" data-key="highQualityDesc">(Very Good)</span>
+                                </button>
+                                <button class="quality-btn" data-quality="medium">
+                                    <span class="quality-title" data-key="mediumQuality">Medium</span>
+                                    <span class="quality-desc" data-key="mediumQualityDesc">(Good)</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="action-buttons">
+                        <button class="btn btn-primary" id="convertBtn" data-key="convertBtn">Convert to PDF</button>
+                        <button class="btn btn-outline" id="downloadBtn" data-key="downloadBtn">Download PDF</button>
+                        <button class="btn btn-secondary" id="resetBtn" data-key="resetBtn">Reset</button>
+                    </div>
+                    
+                    <div class="progress-container" id="progressContainer">
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="progressFill"></div>
+                        </div>
+                    </div>
+
+                    <!-- Status Messages -->
+                    <div class="status-message status-success" id="successMessage">
+                        <i class="fas fa-check-circle"></i> PDF successfully converted and ready for download!
+                    </div>
+                    <div class="status-message status-error" id="errorMessage">
+                        <i class="fas fa-exclamation-circle"></i> <span id="errorText">Conversion failed. Please try again.</span>
+                    </div>
+                    <div class="status-message status-info" id="infoMessage">
+                        <i class="fas fa-info-circle"></i> <span id="infoText">Processing your document...</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <a href="https://lollypopdf.com" class="footer-logo">
+                        <div class="footer-logo-icon">
+                            <div class="footer-logo-circle">LPdf</div>
+                            <div class="footer-logo-stem"></div>
+                        </div>
+                        <div class="footer-logo-text">LollyPoPdf</div>
+                    </a>                  
+                    
+                    <h3>FOLLOW US</h3>
+                    <div class="social-icons">
+                        <a href="https://facebook.com/lollypopdf" class="social-icon"><i class="fab fa-facebook-f"></i></a>
+                        <a href="https://linkedin.com/company/lollypopdf" class="social-icon"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="https://twitter.com/lollypopdf" class="social-icon"><i class="fab fa-twitter"></i></a>
+                        <a href="https://instagram.com/lollypopdf" class="social-icon"><i class="fab fa-instagram"></i></a>
+                        <a href="https://pinterest.com/lollypopdf" class="social-icon"><i class="fab fa-pinterest-p"></i></a>
+                        <a href="https://youtube.com/@lollypopdf" class="social-icon"><i class="fab fa-youtube"></i></a>
+                        <a href="https://www.trustpilot.com/review/lollypopdf.com" class="social-icon"><i class="fas fa-star"></i></a>
+                    </div>
+                </div>
+                
+                <div class="footer-section">
+                    <h3 class="category-header">Popular Categories</h3>
+                    <ul class="footer-links">
+                        <li><a href="https://lollypopdf.github.io/LollyPoPdf#pdf-tools" data-key="pdfTools">PDF Tools</a></li>
+                        <li><a href="https://lollypopdf.github.io/LollyPoPdf#image-tools" data-key="imageTools">Image Tools</a></li>
+                        <li><a href="https://lollypopdf.com#text-tools" data-key="textTools">Text Tools</a></li>
+                        <li><a href="https://lollypopdf.com#audio-video-tools" data-key="audioVideoTools">Audio/Video Tools</a></li>
+                        <li><a href="https://lollypopdf.github.io/LollyPoPdf#web developer-tools" data-key="web DeveloperTools">Web Developer Tools</a></li>
+                        <li><a href="https://lollypopdf.com#calculator-tools" data-key="calculatorTools">Calculator Tools</a></li>
+                        <li><a href="https://lollypopdf.com#utility-tools" data-key="utilityTools">Utility Tools</a></li>
+                        <li><a href="https://lollypopdf.com#color-tools" data-key="colorTools">Color Tools</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h3 class="category-header">Quick Links</h3>
+                    <ul class="footer-links">
+                        <li><a href="https://lollypopdf.com#home" data-key="homeLink">Home</a></li>
+                        <li><a href="tools.html" data-key="allTools">All Tools</a></li>
+                        <li><a href="faq.html" data-key="faq">FAQ</a></li>
+                        <li><a href="contact.html" data-key="contactLink">Contact</a></li>
+                        <li><a href="privacy-policy.html" data-key="privacyPolicy">Privacy Policy</a></li>
+                        <li><a href="disclaimer.html" data-key="disclaimer">Disclaimer</a></li>
+                        <li><a href="terms.html" data-key="terms">Terms of Service</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="footer-line"></div>
+            <div class="copyright" data-key="copyright">© 2025 LollyPoPDF. All rights reserved.</div>
+        </div>
+    </footer>
+
+    <!-- Language Switcher -->
+    <div class="language-switcher">
+        <button class="language-btn">
+            <i class="fas fa-globe"></i>
+            <span id="currentLanguage">English</span>
+        </button>
+        <div class="language-dropdown">
+            <div class="language-option" data-lang="en">English</div>
+            <div class="language-option" data-lang="es">Español</div>
+            <div class="language-option" data-lang="fr">Français</div>
+            <div class="language-option" data-lang="de">Deutsch</div>
+            <div class="language-option" data-lang="it">Italiano</div>
+            <div class="language-option" data-lang="pt">Português</div>
+            <div class="language-option" data-lang="ja">日本語</div>
+            <div class="language-option" data-lang="ru">Pусский</div>
+            <div class="language-option" data-lang="ko">한국어</div>
+            <div class="language-option" data-lang="zh-CN">中文 (简体)</div>
+            <div class="language-option" data-lang="zh-TW">中文 (繁體)</div>
+            <div class="language-option" data-lang="ar">العربية</div>
+            <div class="language-option" data-lang="fa">فارسی</div>
+            <div class="language-option" data-lang="bg">Български</div>
+            <div class="language-option" data-lang="ca">Català</div>
+            <div class="language-option" data-lang="nl">Nederlands</div>
+            <div class="language-option" data-lang="el">Ελληνικά</div>
+            <div class="language-option" data-lang="hi">हिन्दी</div>
+            <div class="language-option" data-lang="te">తెలుగు</div>
+            <div class="language-option" data-lang="kn">ಕನ್ನಡ</div>
+            <div class="language-option" data-lang="ta">தமிழ்</div>
+            <div class="language-option" data-lang="ml">മലയാളം</div>
+            <div class="language-option" data-lang="id">Bahasa Indonesia</div>
+            <div class="language-option" data-lang="ms">Bahasa Melayu</div>
+            <div class="language-option" data-lang="pl">Polski</div>
+            <div class="language-option" data-lang="th">ภาษาไทย</div>
+            <div class="language-option" data-lang="tr">Türkçe</div>
+            <div class="language-option" data-lang="uk">Українська</div>
+            <div class="language-option" data-lang="vi">Tiếng Việt</div>
+            <div class="language-option" data-lang="is">Íslenska</div>
+            <div class="language-option" data-lang="no">Norsk</div>
+            <div class="language-option" data-lang="sv">Svenska</div>
+            <div class="language-option" data-lang="fi">Suomi</div>
+            <div class="language-option" data-lang="cs">Čeština</div>
+        </div>
+    </div>
+
+    <script>
+        // Language translations
+        const translations = {
+            en: {
+                home: "Home",
+                about: "About Us",
+                tools: "Tools",
+                contact: "Contact",
+                heroTitle: "Word to PDF Converter",
+                heroDescription: "Convert your Word documents to PDF format while preserving the exact layout, formatting, fonts, and structure of the original document.",
+                howToTitle: "How to Convert Word to PDF",
+                step1Title: "Upload Your Word Document",
+                step1Desc: "Click the upload area or drag and drop your Word file. We support DOC and DOCX formats.",
+                step2Title: "Preview Document",
+                step2Desc: "See a preview of your Word document with exact formatting and content.",
+                step3Title: "Convert to PDF",
+                step3Desc: "Click the \"Convert to PDF\" button to start the conversion process.",
+                step4Title: "Download PDF Document",
+                step4Desc: "Download your converted PDF document with perfect formatting.",
+                toolTitle: "Word to PDF Converter",
+                uploadText: "Drag & drop your Word document here or click to browse",
+                browseBtn: "Browse Word Files",
+                originalLabel: "Original Word Document",
+                convertedLabel: "Converted PDF Document",
+                compressionLabel: "Conversion Quality:",
+                exactQuality: "Exact",
+                exactQualityDesc: "(Perfect Formatting)",
+                highQuality: "High",
+                highQualityDesc: "(Very Good)",
+                mediumQuality: "Medium",
+                mediumQualityDesc: "(Good)",
+                convertBtn: "Convert to PDF",
+                downloadBtn: "Download PDF",
+                resetBtn: "Reset",
+                followUs: "FOLLOW US",
+                popularCategories: "Popular Categories",
+                pdfTools: "PDF Tools",
+                imageTools: "Image Tools",
+                textTools: "Text Tools",
+                audioVideoTools: "Audio/Video Tools",
+                webDeveloperTools: "Web Developer Tools",
+                calculatorTools: "Calculator Tools",
+                utilityTools: "Utility Tools",
+                colorTools: "Color Tools",
+                quickLinks: "Quick Links",
+                homeLink: "Home",
+                allTools: "All Tools",
+                faq: "FAQ",
+                contactLink: "Contact",
+                privacyPolicy: "Privacy Policy",
+                disclaimer: "Disclaimer",
+                terms: "Terms of Service",
+                footerDescription: "Free online tools for PDF, images, text, and more. Simplify your digital tasks with our easy-to-use utilities.",
+                copyright: "© 2025 LollyPoPDF. All rights reserved."
+            },
+            es: {
+                home: "Inicio",
+                about: "Nosotros",
+                tools: "Herramientas",
+                contact: "Contacto",
+                heroTitle: "Convertidor de Word a PDF",
+                heroDescription: "Convierte tus documentos Word a formato PDF preservando el diseño, formato, fuentes y estructura exactos del documento original.",
+                howToTitle: "Cómo Convertir Word a PDF",
+                step1Title: "Sube Tu Documento Word",
+                step1Desc: "Haz clic en el área de carga o arrastra y suelta tu archivo Word. Admitimos formatos DOC y DOCX.",
+                step2Title: "Vista Previa del Documento",
+                step2Desc: "Ve una vista previa de tu documento Word con formato y contenido exactos.",
+                step3Title: "Convertir a PDF",
+                step3Desc: "Haz clic en el botón \"Convertir a PDF\" para iniciar el proceso de conversión.",
+                step4Title: "Descargar Documento PDF",
+                step4Desc: "Descarga tu documento PDF convertido con formato perfecto.",
+                toolTitle: "Convertidor de Word a PDF",
+                uploadText: "Arrastra y suelta tu documento Word aquí o haz clic para buscar",
+                browseBtn: "Buscar Archivos Word",
+                originalLabel: "Documento Word Original",
+                convertedLabel: "Documento PDF Convertido",
+                compressionLabel: "Calidad de Conversión:",
+                exactQuality: "Exacto",
+                exactQualityDesc: "(Formato Perfecto)",
+                highQuality: "Alta",
+                highQualityDesc: "(Muy Buena)",
+                mediumQuality: "Media",
+                mediumQualityDesc: "(Buena)",
+                convertBtn: "Convertir a PDF",
+                downloadBtn: "Descargar PDF",
+                resetBtn: "Restablecer",
+                followUs: "SÍGUENOS",
+                popularCategories: "Categorías Populares",
+                pdfTools: "Herramientas PDF",
+                imageTools: "Herramientas de Imagen",
+                textTools: "Herramientas de Texto",
+                audioVideoTools: "Herramientas de Audio/Video",
+                webDeveloperTools: "Herramientas Web Desarrollador",
+                calculatorTools: "Herramientas de Calculadora",
+                utilityTools: "Herramientas de Utilidad",
+                colorTools: "Herramientas de Color",
+                quickLinks: "Enlaces Rápidos",
+                homeLink: "Inicio",
+                allTools: "Todas las Herramientas",
+                faq: "Preguntas Frecuentes",
+                contactLink: "Contacto",
+                privacyPolicy: "Política de Privacidad",
+                disclaimer: "Descargo de Responsabilidad",
+                terms: "Términos de Servicio",
+                footerDescription: "Herramientas en línea gratuitas para PDF, imágenes, texto y más. Simplifica tus tareas digitales con nuestras utilidades fáciles de usar.",
+                copyright: "© 2025 LollyPoPDF. Todos los derechos reservados."
+            },
+            fr: {
+                home: "Accueil",
+                about: "À propos",
+                tools: "Outils",
+                contact: "Contact",
+                heroTitle: "Convertisseur Word en PDF",
+                heroDescription: "Convertissez vos documents Word au format PDF en préservant la mise en page, le formatage, les polices et la structure exacts du document original.",
+                howToTitle: "Comment convertir Word en PDF",
+                step1Title: "Téléchargez votre document Word",
+                step1Desc: "Cliquez sur la zone de téléchargement ou faites glisser et déposez votre fichier Word. Nous prenons en charge les formats DOC et DOCX.",
+                step2Title: "Aperçu du document",
+                step2Desc: "Visualisez un aperçu de votre document Word avec un formatage et un contenu exacts.",
+                step3Title: "Convertir en PDF",
+                step3Desc: "Cliquez sur le bouton \"Convertir en PDF\" pour démarrer le processus de conversion.",
+                step4Title: "Télécharger le document PDF",
+                step4Desc: "Téléchargez votre document PDF converti avec un formatage parfait.",
+                toolTitle: "Convertisseur Word en PDF",
+                uploadText: "Glissez et déposez votre document Word ici ou cliquez pour parcourir",
+                browseBtn: "Parcourir les fichiers Word",
+                originalLabel: "Document Word original",
+                convertedLabel: "Document PDF converti",
+                compressionLabel: "Qualité de conversion :",
+                exactQuality: "Exacte",
+                exactQualityDesc: "(Formatage parfait)",
+                highQuality: "Élevée",
+                highQualityDesc: "(Très bonne)",
+                mediumQuality: "Moyenne",
+                mediumQualityDesc: "(Bonne)",
+                convertBtn: "Convertir en PDF",
+                downloadBtn: "Télécharger PDF",
+                resetBtn: "Réinitialiser",
+                followUs: "SUIVEZ-NOUS",
+                popularCategories: "Catégories populaires",
+                pdfTools: "Outils PDF",
+                imageTools: "Outils d'image",
+                textTools: "Outils de texte",
+                audioVideoTools: "Outils audio/vidéo",
+                webDeveloperTools: "Outils de développement Web",
+                calculatorTools: "Outils de calculatrice",
+                utilityTools: "Outils utilitaires",
+                colorTools: "Outils de couleur",
+                quickLinks: "Liens rapides",
+                homeLink: "Accueil",
+                allTools: "Tous les outils",
+                faq: "FAQ",
+                contactLink: "Contact",
+                privacyPolicy: "Politique de confidentialité",
+                disclaimer: "Avertissement",
+                terms: "Conditions d'utilisation",
+                footerDescription: "Outils en ligne gratuits pour PDF, images, texte et plus. Simplifiez vos tâches numériques avec nos utilitaires faciles à utiliser.",
+                copyright: "© 2025 LollyPoPDF. Tous droits réservés."
+            },
+            de: {
+                home: "Startseite",
+                about: "Über uns",
+                tools: "Werkzeuge",
+                contact: "Kontakt",
+                heroTitle: "Word zu PDF Konverter",
+                heroDescription: "Konvertieren Sie Ihre Word-Dokumente in das PDF-Format und bewahren Sie dabei das genaue Layout, die Formatierung, Schriftarten und Struktur des Originaldokuments.",
+                howToTitle: "So konvertieren Sie Word in PDF",
+                step1Title: "Laden Sie Ihr Word-Dokument hoch",
+                step1Desc: "Klicken Sie auf den Upload-Bereich oder ziehen Sie Ihre Word-Datei per Drag & Drop. Wir unterstützen DOC- und DOCX-Formate.",
+                step2Title: "Dokumentvorschau",
+                step2Desc: "Sehen Sie eine Vorschau Ihres Word-Dokuments mit exakter Formatierung und Inhalt.",
+                step3Title: "In PDF konvertieren",
+                step3Desc: "Klicken Sie auf die Schaltfläche \"In PDF konvertieren\", um den Konvertierungsprozess zu starten.",
+                step4Title: "PDF-Dokument herunterladen",
+                step4Desc: "Laden Sie Ihr konvertiertes PDF-Dokument mit perfekter Formatierung herunter.",
+                toolTitle: "Word zu PDF Konverter",
+                uploadText: "Ziehen Sie Ihr Word-Dokument hierher oder klicken Sie zum Durchsuchen",
+                browseBtn: "Word-Dateien durchsuchen",
+                originalLabel: "Originales Word-Dokument",
+                convertedLabel: "Konvertiertes PDF-Dokument",
+                compressionLabel: "Konvertierungsqualität:",
+                exactQuality: "Exakt",
+                exactQualityDesc: "(Perfekte Formatierung)",
+                highQuality: "Hoch",
+                highQualityDesc: "(Sehr gut)",
+                mediumQuality: "Mittel",
+                mediumQualityDesc: "(Gut)",
+                convertBtn: "In PDF konvertieren",
+                downloadBtn: "PDF herunterladen",
+                resetBtn: "Zurücksetzen",
+                followUs: "FOLGEN SIE UNS",
+                popularCategories: "Beliebte Kategorien",
+                pdfTools: "PDF-Werkzeuge",
+                imageTools: "Bildwerkzeuge",
+                textTools: "Textwerkzeuge",
+                audioVideoTools: "Audio/Video-Werkzeuge",
+                webDeveloperTools: "Webentwickler-Werkzeuge",
+                calculatorTools: "Rechner-Werkzeuge",
+                utilityTools: "Hilfsprogramme",
+                colorTools: "Farbwerkzeuge",
+                quickLinks: "Schnelllinks",
+                homeLink: "Startseite",
+                allTools: "Alle Werkzeuge",
+                faq: "FAQ",
+                contactLink: "Kontakt",
+                privacyPolicy: "Datenschutzrichtlinie",
+                disclaimer: "Haftungsausschluss",
+                terms: "Nutzungsbedingungen",
+                footerDescription: "Kostenlose Online-Tools für PDF, Bilder, Text und mehr. Vereinfachen Sie Ihre digitalen Aufgaben mit unseren benutzerfreundlichen Utilities.",
+                copyright: "© 2025 LollyPoPDF. Alle Rechte vorbehalten."
+            },
+            it: {
+                home: "Home",
+                about: "Chi siamo",
+                tools: "Strumenti",
+                contact: "Contatto",
+                heroTitle: "Convertitore da Word a PDF",
+                heroDescription: "Converti i tuoi documenti Word in formato PDF preservando l'esatto layout, formattazione, caratteri e struttura del documento originale.",
+                howToTitle: "Come convertire Word in PDF",
+                step1Title: "Carica il tuo documento Word",
+                step1Desc: "Clicca sull'area di caricamento o trascina e rilascia il tuo file Word. Supportiamo i formati DOC e DOCX.",
+                step2Title: "Anteprima del documento",
+                step2Desc: "Visualizza un'anteprima del tuo documento Word con formattazione e contenuto esatti.",
+                step3Title: "Converti in PDF",
+                step3Desc: "Clicca sul pulsante \"Converti in PDF\" per avviare il processo di conversione.",
+                step4Title: "Scarica il documento PDF",
+                step4Desc: "Scarica il tuo documento PDF convertito con formattazione perfetta.",
+                toolTitle: "Convertitore da Word a PDF",
+                uploadText: "Trascina e rilascia il tuo documento Word qui o clicca per sfogliare",
+                browseBtn: "Sfoglia file Word",
+                originalLabel: "Documento Word originale",
+                convertedLabel: "Documento PDF convertito",
+                compressionLabel: "Qualità di conversione:",
+                exactQuality: "Esatta",
+                exactQualityDesc: "(Formattazione perfetta)",
+                highQuality: "Alta",
+                highQualityDesc: "(Molto buona)",
+                mediumQuality: "Media",
+                mediumQualityDesc: "(Buona)",
+                convertBtn: "Converti in PDF",
+                downloadBtn: "Scarica PDF",
+                resetBtn: "Reimposta",
+                followUs: "SEGUICI",
+                popularCategories: "Categorie popolari",
+                pdfTools: "Strumenti PDF",
+                imageTools: "Strumenti immagine",
+                textTools: "Strumenti testo",
+                audioVideoTools: "Strumenti audio/video",
+                webDeveloperTools: "Strumenti per sviluppatori web",
+                calculatorTools: "Strumenti calcolatrice",
+                utilityTools: "Strumenti utilità",
+                colorTools: "Strumenti colore",
+                quickLinks: "Link rapidi",
+                homeLink: "Home",
+                allTools: "Tutti gli strumenti",
+                faq: "FAQ",
+                contactLink: "Contatto",
+                privacyPolicy: "Privacy Policy",
+                disclaimer: "Disclaimer",
+                terms: "Termini di servizio",
+                footerDescription: "Strumenti online gratuiti per PDF, immagini, testo e altro. Semplifica le tue attività digitali con le nostre utilità facili da usare.",
+                copyright: "© 2025 LollyPoPDF. Tutti i diritti riservati."
+            },
+            pt: {
+                home: "Início",
+                about: "Sobre nós",
+                tools: "Ferramentas",
+                contact: "Contato",
+                heroTitle: "Conversor de Word para PDF",
+                heroDescription: "Converta seus documentos Word para o formato PDF preservando o layout, formatação, fontes e estrutura exatos do documento original.",
+                howToTitle: "Como converter Word para PDF",
+                step1Title: "Carregue seu documento Word",
+                step1Desc: "Clique na área de upload ou arraste e solte seu arquivo Word. Suportamos formatos DOC e DOCX.",
+                step2Title: "Visualizar documento",
+                step2Desc: "Veja uma prévia do seu documento Word com formatação e conteúdo exatos.",
+                step3Title: "Converter para PDF",
+                step3Desc: "Clique no botão \"Converter para PDF\" para iniciar o processo de conversão.",
+                step4Title: "Baixar documento PDF",
+                step4Desc: "Baixe seu documento PDF convertido com formatação perfeita.",
+                toolTitle: "Conversor de Word para PDF",
+                uploadText: "Arraste e solte seu documento Word aqui ou clique para navegar",
+                browseBtn: "Procurar arquivos Word",
+                originalLabel: "Documento Word original",
+                convertedLabel: "Documento PDF convertido",
+                compressionLabel: "Qualidade de conversão:",
+                exactQuality: "Exata",
+                exactQualityDesc: "(Formatação perfeita)",
+                highQuality: "Alta",
+                highQualityDesc: "(Muito boa)",
+                mediumQuality: "Média",
+                mediumQualityDesc: "(Boa)",
+                convertBtn: "Converter para PDF",
+                downloadBtn: "Baixar PDF",
+                resetBtn: "Redefinir",
+                followUs: "SIGA-NOS",
+                popularCategories: "Categorias populares",
+                pdfTools: "Ferramentas PDF",
+                imageTools: "Ferramentas de imagem",
+                textTools: "Ferramentas de texto",
+                audioVideoTools: "Ferramentas de áudio/vídeo",
+                webDeveloperTools: "Ferramentas para desenvolvedores web",
+                calculatorTools: "Ferramentas de calculadora",
+                utilityTools: "Ferramentas utilitárias",
+                colorTools: "Ferramentas de cor",
+                quickLinks: "Links rápidos",
+                homeLink: "Início",
+                allTools: "Todas as ferramentas",
+                faq: "FAQ",
+                contactLink: "Contato",
+                privacyPolicy: "Política de privacidade",
+                disclaimer: "Aviso legal",
+                terms: "Termos de serviço",
+                footerDescription: "Ferramentas online gratuitas para PDF, imagens, texto e muito mais. Simplifique suas tarefas digitais com nossos utilitários fáceis de usar.",
+                copyright: "© 2025 LollyPoPDF. Todos os direitos reservados."
+            },
+            ja: {
+                home: "ホーム",
+                about: "私たちについて",
+                tools: "ツール",
+                contact: "お問い合わせ",
+                heroTitle: "WordからPDFへの変換ツール",
+                heroDescription: "Word文書をPDF形式に変換し、元の文書の正確なレイアウト、書式設定、フォント、構造を保持します。",
+                howToTitle: "WordをPDFに変換する方法",
+                step1Title: "Word文書をアップロード",
+                step1Desc: "アップロード領域をクリックするか、Wordファイルをドラッグ＆ドロップしてください。DOCおよびDOCX形式をサポートしています。",
+                step2Title: "文書のプレビュー",
+                step2Desc: "正確な書式設定と内容でWord文書のプレビューを表示します。",
+                step3Title: "PDFに変換",
+                step3Desc: "「PDFに変換」ボタンをクリックして変換プロセスを開始します。",
+                step4Title: "PDF文書をダウンロード",
+                step4Desc: "完璧な書式設定で変換されたPDF文書をダウンロードします。",
+                toolTitle: "WordからPDFへの変換ツール",
+                uploadText: "Word文書をここにドラッグ＆ドロップするか、クリックして参照します",
+                browseBtn: "Wordファイルを参照",
+                originalLabel: "元のWord文書",
+                convertedLabel: "変換されたPDF文書",
+                compressionLabel: "変換品質：",
+                exactQuality: "正確",
+                exactQualityDesc: "(完璧な書式設定)",
+                highQuality: "高",
+                highQualityDesc: "(非常に良い)",
+                mediumQuality: "中",
+                mediumQualityDesc: "(良い)",
+                convertBtn: "PDFに変換",
+                downloadBtn: "PDFをダウンロード",
+                resetBtn: "リセット",
+                followUs: "フォローする",
+                popularCategories: "人気カテゴリ",
+                pdfTools: "PDFツール",
+                imageTools: "画像ツール",
+                textTools: "テキストツール",
+                audioVideoTools: "オーディオ/ビデオツール",
+                webDeveloperTools: "Web開発者ツール",
+                calculatorTools: "計算機ツール",
+                utilityTools: "ユーティリティツール",
+                colorTools: "カラーツール",
+                quickLinks: "クイックリンク",
+                homeLink: "ホーム",
+                allTools: "すべてのツール",
+                faq: "よくある質問",
+                contactLink: "お問い合わせ",
+                privacyPolicy: "プライバシーポリシー",
+                disclaimer: "免責事項",
+                terms: "利用規約",
+                footerDescription: "PDF、画像、テキストなどの無料オンラインツール。使いやすいユーティリティでデジタルタスクを簡素化します。",
+                copyright: "© 2025 LollyPoPDF. 全著作権所有。"
+            },
+            ru: {
+                home: "Главная",
+                about: "О нас",
+                tools: "Инструменты",
+                contact: "Контакты",
+                heroTitle: "Конвертер Word в PDF",
+                heroDescription: "Конвертируйте документы Word в формат PDF, сохраняя точную разметку, форматирование, шрифты и структуру исходного документа.",
+                howToTitle: "Как конвертировать Word в PDF",
+                step1Title: "Загрузите документ Word",
+                step1Desc: "Нажмите на область загрузки или перетащите файл Word. Мы поддерживаем форматы DOC и DOCX.",
+                step2Title: "Предпросмотр документа",
+                step2Desc: "Посмотрите предварительный просмотр вашего документа Word с точным форматированием и содержанием.",
+                step3Title: "Конвертировать в PDF",
+                step3Desc: "Нажмите кнопку \"Конвертировать в PDF\", чтобы начать процесс преобразования.",
+                step4Title: "Скачать PDF-документ",
+                step4Desc: "Скачайте преобразованный PDF-документ с идеальным форматированием.",
+                toolTitle: "Конвертер Word в PDF",
+                uploadText: "Перетащите документ Word сюда или нажмите для просмотра",
+                browseBtn: "Просмотр файлов Word",
+                originalLabel: "Исходный документ Word",
+                convertedLabel: "Преобразованный PDF-документ",
+                compressionLabel: "Качество конвертации:",
+                exactQuality: "Точное",
+                exactQualityDesc: "(Идеальное форматирование)",
+                highQuality: "Высокое",
+                highQualityDesc: "(Очень хорошее)",
+                mediumQuality: "Среднее",
+                mediumQualityDesc: "(Хорошее)",
+                convertBtn: "Конвертировать в PDF",
+                downloadBtn: "Скачать PDF",
+                resetBtn: "Сбросить",
+                followUs: "СЛЕДУЙТЕ ЗА НАМИ",
+                popularCategories: "Популярные категории",
+                pdfTools: "Инструменты PDF",
+                imageTools: "Инструменты для изображений",
+                textTools: "Текстовые инструменты",
+                audioVideoTools: "Аудио/видео инструменты",
+                webDeveloperTools: "Инструменты веб-разработчика",
+                calculatorTools: "Инструменты калькулятора",
+                utilityTools: "Утилиты",
+                colorTools: "Инструменты цвета",
+                quickLinks: "Быстрые ссылки",
+                homeLink: "Главная",
+                allTools: "Все инструменты",
+                faq: "Часто задаваемые вопросы",
+                contactLink: "Контакты",
+                privacyPolicy: "Политика конфиденциальности",
+                disclaimer: "Отказ от ответственности",
+                terms: "Условия использования",
+                footerDescription: "Бесплатные онлайн-инструменты для PDF, изображений, текста и многого другого. Упростите свои цифровые задачи с помощью наших простых в использовании утилит.",
+                copyright: "© 2025 LollyPoPDF. Все права защищены."
+            },
+            ko: {
+                home: "홈",
+                about: "회사 소개",
+                tools: "도구",
+                contact: "연락처",
+                heroTitle: "Word에서 PDF로 변환기",
+                heroDescription: "원본 문서의 정확한 레이아웃, 서식, 글꼴 및 구조를 유지하면서 Word 문서를 PDF 형식으로 변환합니다.",
+                howToTitle: "Word를 PDF로 변환하는 방법",
+                step1Title: "Word 문서 업로드",
+                step1Desc: "업로드 영역을 클릭하거나 Word 파일을 드래그 앤 드롭하세요. DOC 및 DOCX 형식을 지원합니다.",
+                step2Title: "문서 미리 보기",
+                step2Desc: "정확한 서식과 내용으로 Word 문서 미리 보기를 확인하세요.",
+                step3Title: "PDF로 변환",
+                step3Desc: "변환 프로세스를 시작하려면 \"PDF로 변환\" 버튼을 클릭하세요.",
+                step4Title: "PDF 문서 다운로드",
+                step4Desc: "완벽한 서식으로 변환된 PDF 문서를 다운로드하세요.",
+                toolTitle: "Word에서 PDF로 변환기",
+                uploadText: "Word 문서를 여기에 드래그 앤 드롭하거나 클릭하여 탐색하세요",
+                browseBtn: "Word 파일 탐색",
+                originalLabel: "원본 Word 문서",
+                convertedLabel: "변환된 PDF 문서",
+                compressionLabel: "변환 품질:",
+                exactQuality: "정확함",
+                exactQualityDesc: "(완벽한 서식)",
+                highQuality: "높음",
+                highQualityDesc: "(매우 좋음)",
+                mediumQuality: "중간",
+                mediumQualityDesc: "(좋음)",
+                convertBtn: "PDF로 변환",
+                downloadBtn: "PDF 다운로드",
+                resetBtn: "재설정",
+                followUs: "팔로우하기",
+                popularCategories: "인기 카테고리",
+                pdfTools: "PDF 도구",
+                imageTools: "이미지 도구",
+                textTools: "텍스트 도구",
+                audioVideoTools: "오디오/비디오 도구",
+                webDeveloperTools: "웹 개발자 도구",
+                calculatorTools: "계산기 도구",
+                utilityTools: "유틸리티 도구",
+                colorTools: "색상 도구",
+                quickLinks: "빠른 링크",
+                homeLink: "홈",
+                allTools: "모든 도구",
+                faq: "자주 묻는 질문",
+                contactLink: "연락처",
+                privacyPolicy: "개인정보 보호정책",
+                disclaimer: "면책조항",
+                terms: "서비스 약관",
+                footerDescription: "PDF, 이미지, 텍스트 등을 위한 무료 온라인 도구. 사용하기 쉬운 유틸리티로 디지털 작업을 단순화하세요.",
+                copyright: "© 2025 LollyPoPDF. 판권 소유."
+            },
+            'zh-CN': {
+                home: "首页",
+                about: "关于我们",
+                tools: "工具",
+                contact: "联系",
+                heroTitle: "Word转PDF转换器",
+                heroDescription: "将您的Word文档转换为PDF格式，同时保留原始文档的精确布局、格式、字体和结构。",
+                howToTitle: "如何将Word转换为PDF",
+                step1Title: "上传Word文档",
+                step1Desc: "点击上传区域或拖放Word文件。我们支持DOC和DOCX格式。",
+                step2Title: "预览文档",
+                step2Desc: "查看具有精确格式和内容的Word文档预览。",
+                step3Title: "转换为PDF",
+                step3Desc: "点击“转换为PDF”按钮开始转换过程。",
+                step4Title: "下载PDF文档",
+                step4Desc: "下载具有完美格式的转换后PDF文档。",
+                toolTitle: "Word转PDF转换器",
+                uploadText: "将Word文档拖放到此处或点击浏览",
+                browseBtn: "浏览Word文件",
+                originalLabel: "原始Word文档",
+                convertedLabel: "已转换的PDF文档",
+                compressionLabel: "转换质量：",
+                exactQuality: "精确",
+                exactQualityDesc: "(完美格式)",
+                highQuality: "高",
+                highQualityDesc: "(非常好)",
+                mediumQuality: "中",
+                mediumQualityDesc: "(好)",
+                convertBtn: "转换为PDF",
+                downloadBtn: "下载PDF",
+                resetBtn: "重置",
+                followUs: "关注我们",
+                popularCategories: "热门类别",
+                pdfTools: "PDF工具",
+                imageTools: "图片工具",
+                textTools: "文本工具",
+                audioVideoTools: "音频/视频工具",
+                webDeveloperTools: "Web开发工具",
+                calculatorTools: "计算器工具",
+                utilityTools: "实用工具",
+                colorTools: "颜色工具",
+                quickLinks: "快速链接",
+                homeLink: "首页",
+                allTools: "所有工具",
+                faq: "常见问题",
+                contactLink: "联系",
+                privacyPolicy: "隐私政策",
+                disclaimer: "免责声明",
+                terms: "服务条款",
+                footerDescription: "用于PDF、图片、文本等的免费在线工具。使用我们易于使用的实用程序简化您的数字任务。",
+                copyright: "© 2025 LollyPoPDF. 版权所有。"
+            },
+            'zh-TW': {
+                home: "首頁",
+                about: "關於我們",
+                tools: "工具",
+                contact: "聯繫",
+                heroTitle: "Word轉PDF轉換器",
+                heroDescription: "將您的Word文檔轉換為PDF格式，同時保留原始文檔的精確佈局、格式、字體和結構。",
+                howToTitle: "如何將Word轉換為PDF",
+                step1Title: "上傳Word文檔",
+                step1Desc: "點擊上傳區域或拖放Word文件。我們支持DOC和DOCX格式。",
+                step2Title: "預覽文檔",
+                step2Desc: "查看具有精確格式和內容的Word文檔預覽。",
+                step3Title: "轉換為PDF",
+                step3Desc: "點擊「轉換為PDF」按鈕開始轉換過程。",
+                step4Title: "下載PDF文檔",
+                step4Desc: "下載具有完美格式的轉換後PDF文檔。",
+                toolTitle: "Word轉PDF轉換器",
+                uploadText: "將Word文檔拖放到此處或點擊瀏覽",
+                browseBtn: "瀏覽Word文件",
+                originalLabel: "原始Word文檔",
+                convertedLabel: "已轉換的PDF文檔",
+                compressionLabel: "轉換品質：",
+                exactQuality: "精確",
+                exactQualityDesc: "(完美格式)",
+                highQuality: "高",
+                highQualityDesc: "(非常好)",
+                mediumQuality: "中",
+                mediumQualityDesc: "(好)",
+                convertBtn: "轉換為PDF",
+                downloadBtn: "下載PDF",
+                resetBtn: "重置",
+                followUs: "關注我們",
+                popularCategories: "熱門類別",
+                pdfTools: "PDF工具",
+                imageTools: "圖片工具",
+                textTools: "文字工具",
+                audioVideoTools: "音頻/視頻工具",
+                webDeveloperTools: "網頁開發工具",
+                calculatorTools: "計算機工具",
+                utilityTools: "實用工具",
+                colorTools: "顏色工具",
+                quickLinks: "快速連結",
+                homeLink: "首頁",
+                allTools: "所有工具",
+                faq: "常見問題",
+                contactLink: "聯繫",
+                privacyPolicy: "隱私政策",
+                disclaimer: "免責聲明",
+                terms: "服務條款",
+                footerDescription: "用於PDF、圖片、文字等的免費在線工具。使用我們易於使用的實用程序簡化您的數字任務。",
+                copyright: "© 2025 LollyPoPDF. 版權所有。"
+            },
+            ar: {
+                home: "الرئيسية",
+                about: "من نحن",
+                tools: "أدوات",
+                contact: "اتصل بنا",
+                heroTitle: "محول Word إلى PDF",
+                heroDescription: "قم بتحويل مستندات Word الخاصة بك إلى تنسيق PDF مع الحفاظ على التخطيط الدقيق والتنسيق والخطوط وهيكل المستند الأصلي.",
+                howToTitle: "كيفية تحويل Word إلى PDF",
+                step1Title: "قم بتحميل مستند Word الخاص بك",
+                step1Desc: "انقر فوق منطقة التحميل أو اسحب وأفلت ملف Word الخاص بك. نحن ندعم تنسيقات DOC و DOCX.",
+                step2Title: "معاينة المستند",
+                step2Desc: "شاهد معاينة لمستند Word الخاص بك بتنسيق ومحتوى دقيقين.",
+                step3Title: "تحويل إلى PDF",
+                step3Desc: "انقر فوق زر \"تحويل إلى PDF\" لبدء عملية التحويل.",
+                step4Title: "تنزيل مستند PDF",
+                step4Desc: "قم بتنزيل مستند PDF المحول الخاص بك بتنسيق مثالي.",
+                toolTitle: "محول Word إلى PDF",
+                uploadText: "اسحب وأفلت مستند Word الخاص بك هنا أو انقر للتصفح",
+                browseBtn: "تصفح ملفات Word",
+                originalLabel: "مستند Word الأصلي",
+                convertedLabel: "مستند PDF المحول",
+                compressionLabel: "جودة التحويل:",
+                exactQuality: "دقيق",
+                exactQualityDesc: "(تنسيق مثالي)",
+                highQuality: "عالية",
+                highQualityDesc: "(جيدة جداً)",
+                mediumQuality: "متوسطة",
+                mediumQualityDesc: "(جيدة)",
+                convertBtn: "تحويل إلى PDF",
+                downloadBtn: "تنزيل PDF",
+                resetBtn: "إعادة تعيين",
+                followUs: "تابعنا",
+                popularCategories: "الفئات الشائعة",
+                pdfTools: "أدوات PDF",
+                imageTools: "أدوات الصور",
+                textTools: "أدوات النص",
+                audioVideoTools: "أدوات الصوت/الفيديو",
+                webDeveloperTools: "أدوات مطور الويب",
+                calculatorTools: "أدوات الآلة الحاسبة",
+                utilityTools: "أدوات المساعدة",
+                colorTools: "أدوات الألوان",
+                quickLinks: "روابط سريعة",
+                homeLink: "الرئيسية",
+                allTools: "جميع الأدوات",
+                faq: "الأسئلة الشائعة",
+                contactLink: "اتصل بنا",
+                privacyPolicy: "سياسة الخصوصية",
+                disclaimer: "إخلاء المسؤولية",
+                terms: "شروط الخدمة",
+                footerDescription: "أدوات مجانية على الإنترنت لـ PDF والصور والنص والمزيد. بسّط مهامك الرقمية باستخدام أدواتنا سهلة الاستخدام.",
+                copyright: "© 2025 LollyPoPDF. جميع الحقوق محفوظة."
+            },
+            fa: {
+                home: "خانه",
+                about: "درباره ما",
+                tools: "ابزارها",
+                contact: "تماس با ما",
+                heroTitle: "مبدل Word به PDF",
+                heroDescription: "اسناد Word خود را به فرمت PDF تبدیل کنید در حالی که طرح‌بندی دقیق، قالب‌بندی، فونت‌ها و ساختار سند اصلی را حفظ می‌کند.",
+                howToTitle: "نحوه تبدیل Word به PDF",
+                step1Title: "سند Word خود را آپلود کنید",
+                step1Desc: "روی ناحیه آپلود کلیک کنید یا فایل Word خود را بکشید و رها کنید. ما از فرمت‌های DOC و DOCX پشتیبانی می‌کنیم.",
+                step2Title: "پیش‌نمایش سند",
+                step2Desc: "پیش‌نمایشی از سند Word خود با قالب‌بندی و محتوای دقیق ببینید.",
+                step3Title: "تبدیل به PDF",
+                step3Desc: "برای شروع فرآیند تبدیل روی دکمه \"تبدیل به PDF\" کلیک کنید.",
+                step4Title: "دانلود سند PDF",
+                step4Desc: "سند PDF تبدیل شده خود را با قالب‌بندی عالی دانلود کنید.",
+                toolTitle: "مبدل Word به PDF",
+                uploadText: "سند Word خود را اینجا بکشید و رها کنید یا برای مرور کلیک کنید",
+                browseBtn: "مرور فایل‌های Word",
+                originalLabel: "سند Word اصلی",
+                convertedLabel: "سند PDF تبدیل شده",
+                compressionLabel: "کیفیت تبدیل:",
+                exactQuality: "دقیق",
+                exactQualityDesc: "(قالب‌بندی عالی)",
+                highQuality: "بالا",
+                highQualityDesc: "(خیلی خوب)",
+                mediumQuality: "متوسط",
+                mediumQualityDesc: "(خوب)",
+                convertBtn: "تبدیل به PDF",
+                downloadBtn: "دانلود PDF",
+                resetBtn: "بازنشانی",
+                followUs: "ما را دنبال کنید",
+                popularCategories: "دسته‌بندی‌های محبوب",
+                pdfTools: "ابزارهای PDF",
+                imageTools: "ابزارهای تصویر",
+                textTools: "ابزارهای متن",
+                audioVideoTools: "ابزارهای صوتی/تصویری",
+                webDeveloperTools: "ابزارهای توسعه‌دهنده وب",
+                calculatorTools: "ابزارهای ماشین حساب",
+                utilityTools: "ابزارهای کمکی",
+                colorTools: "ابزارهای رنگ",
+                quickLinks: "لینک‌های سریع",
+                homeLink: "خانه",
+                allTools: "همه ابزارها",
+                faq: "سوالات متداول",
+                contactLink: "تماس با ما",
+                privacyPolicy: "سیاست حفظ حریم خصوصی",
+                disclaimer: "سلب مسئولیت",
+                terms: "شرایط خدمات",
+                footerDescription: "ابزارهای رایگان آنلاین برای PDF، تصاویر، متن و موارد دیگر. با استفاده از ابزارهای آسان ما، وظایف دیجیتالی خود را ساده کنید.",
+                copyright: "© 2025 LollyPoPDF. کلیه حقوق محفوظ است."
+            },
+            bg: {
+                home: "Начало",
+                about: "За нас",
+                tools: "Инструменти",
+                contact: "Контакт",
+                heroTitle: "Конвертор от Word към PDF",
+                heroDescription: "Конвертирайте вашите Word документи във формат PDF, като запазвате точния layout, форматиране, шрифтове и структура на оригиналния документ.",
+                howToTitle: "Как да конвертирате Word в PDF",
+                step1Title: "Качете Word документа си",
+                step1Desc: "Кликнете върху зоната за качване или плъзнете и пуснете Word файла си. Поддържаме DOC и DOCX формати.",
+                step2Title: "Преглед на документа",
+                step2Desc: "Вижте преглед на Word документа си с точно форматиране и съдържание.",
+                step3Title: "Конвертиране в PDF",
+                step3Desc: "Кликнете върху бутона \"Конвертиране в PDF\" за да започнете процеса на конвертиране.",
+                step4Title: "Изтегляне на PDF документа",
+                step4Desc: "Изтеглете конвертирания си PDF документ с перфектно форматиране.",
+                toolTitle: "Конвертор от Word към PDF",
+                uploadText: "Плъзнете и пуснете Word документа си тук или кликнете за преглед",
+                browseBtn: "Преглед на Word файлове",
+                originalLabel: "Оригинален Word документ",
+                convertedLabel: "Конвертиран PDF документ",
+                compressionLabel: "Качество на конвертиране:",
+                exactQuality: "Точно",
+                exactQualityDesc: "(Перфектно форматиране)",
+                highQuality: "Високо",
+                highQualityDesc: "(Много добро)",
+                mediumQuality: "Средно",
+                mediumQualityDesc: "(Добро)",
+                convertBtn: "Конвертирай в PDF",
+                downloadBtn: "Изтегли PDF",
+                resetBtn: "Нулиране",
+                followUs: "СЛЕДВАЙТЕ НИ",
+                popularCategories: "Популярни категории",
+                pdfTools: "PDF инструменти",
+                imageTools: "Инструменти за изображения",
+                textTools: "Текстови инструменти",
+                audioVideoTools: "Аудио/видео инструменти",
+                webDeveloperTools: "Инструменти за уеб разработчици",
+                calculatorTools: "Калкулаторни инструменти",
+                utilityTools: "Служебни инструменти",
+                colorTools: "Инструменти за цветове",
+                quickLinks: "Бързи връзки",
+                homeLink: "Начало",
+                allTools: "Всички инструменти",
+                faq: "Често задавани въпроси",
+                contactLink: "Контакт",
+                privacyPolicy: "Политика за поверителност",
+                disclaimer: "Отказ от отговорност",
+                terms: "Условия за ползване",
+                footerDescription: "Безплатни онлайн инструменти за PDF, изображения, текст и други. Опростете вашите цифрови задачи с нашите лесни за използване програми.",
+                copyright: "© 2025 LollyPoPDF. Всички права запазени."
+            },
+            ca: {
+                home: "Inici",
+                about: "Sobre nosaltres",
+                tools: "Eines",
+                contact: "Contacte",
+                heroTitle: "Convertidor de Word a PDF",
+                heroDescription: "Converteix els teus documents Word a format PDF preservant el disseny exacte, el format, les fonts i l'estructura del document original.",
+                howToTitle: "Com convertir Word a PDF",
+                step1Title: "Puja el teu document Word",
+                step1Desc: "Fes clic a l'àrea de pujada o arrossega i deixa anar el teu fitxer Word. Admetem formats DOC i DOCX.",
+                step2Title: "Vista prèvia del document",
+                step2Desc: "Veure una vista prèvia del teu document Word amb format i contingut exactes.",
+                step3Title: "Converteix a PDF",
+                step3Desc: "Fes clic al botó \"Converteix a PDF\" per iniciar el procés de conversió.",
+                step4Title: "Descarrega el document PDF",
+                step4Desc: "Descarrega el teu document PDF convertit amb un format perfecte.",
+                toolTitle: "Convertidor de Word a PDF",
+                uploadText: "Arrossega i deixa anar el teu document Word aquí o fes clic per navegar",
+                browseBtn: "Navega per fitxers Word",
+                originalLabel: "Document Word original",
+                convertedLabel: "Document PDF convertit",
+                compressionLabel: "Qualitat de conversió:",
+                exactQuality: "Exacta",
+                exactQualityDesc: "(Format perfecte)",
+                highQuality: "Alta",
+                highQualityDesc: "(Molt bona)",
+                mediumQuality: "Mitjana",
+                mediumQualityDesc: "(Bona)",
+                convertBtn: "Converteix a PDF",
+                downloadBtn: "Descarrega PDF",
+                resetBtn: "Reinicia",
+                followUs: "SEGUEIX-NOS",
+                popularCategories: "Categories populars",
+                pdfTools: "Eines PDF",
+                imageTools: "Eines d'imatge",
+                textTools: "Eines de text",
+                audioVideoTools: "Eines d'àudio/vídeo",
+                webDeveloperTools: "Eines per a desenvolupadors web",
+                calculatorTools: "Eines de calculadora",
+                utilityTools: "Eines d'utilitat",
+                colorTools: "Eines de color",
+                quickLinks: "Enllaços ràpids",
+                homeLink: "Inici",
+                allTools: "Totes les eines",
+                faq: "Preguntes freqüents",
+                contactLink: "Contacte",
+                privacyPolicy: "Política de privadesa",
+                disclaimer: "Descàrrec de responsabilitat",
+                terms: "Termes del servei",
+                footerDescription: "Eines en línia gratuïtes per a PDF, imatges, text i més. Simplifica les teves tasques digitals amb les nostres utilitats fàcils d'utilitzar.",
+                copyright: "© 2025 LollyPoPDF. Tots els drets reservats."
+            },
+            nl: {
+                home: "Home",
+                about: "Over ons",
+                tools: "Tools",
+                contact: "Contact",
+                heroTitle: "Word naar PDF Converter",
+                heroDescription: "Converteer uw Word-documenten naar PDF-formaat terwijl u de exacte lay-out, opmaak, lettertypen en structuur van het originele document behoudt.",
+                howToTitle: "Hoe Word naar PDF te converteren",
+                step1Title: "Upload uw Word-document",
+                step1Desc: "Klik op het uploadgebied of sleep en zet uw Word-bestand neer. We ondersteunen DOC- en DOCX-formaten.",
+                step2Title: "Documentvoorbeeld",
+                step2Desc: "Bekijk een voorbeeld van uw Word-document met exacte opmaak en inhoud.",
+                step3Title: "Converteer naar PDF",
+                step3Desc: "Klik op de knop \"Converteer naar PDF\" om het conversieproces te starten.",
+                step4Title: "Download PDF-document",
+                step4Desc: "Download uw geconverteerde PDF-document met perfecte opmaak.",
+                toolTitle: "Word naar PDF Converter",
+                uploadText: "Sleep uw Word-document hierheen of klik om te bladeren",
+                browseBtn: "Blader door Word-bestanden",
+                originalLabel: "Origineel Word-document",
+                convertedLabel: "Geconverteerd PDF-document",
+                compressionLabel: "Conversiekwaliteit:",
+                exactQuality: "Exact",
+                exactQualityDesc: "(Perfecte opmaak)",
+                highQuality: "Hoog",
+                highQualityDesc: "(Zeer goed)",
+                mediumQuality: "Gemiddeld",
+                mediumQualityDesc: "(Goed)",
+                convertBtn: "Converteer naar PDF",
+                downloadBtn: "Download PDF",
+                resetBtn: "Reset",
+                followUs: "VOLG ONS",
+                popularCategories: "Populaire categorieën",
+                pdfTools: "PDF-tools",
+                imageTools: "Afbeeldingstools",
+                textTools: "Teksttools",
+                audioVideoTools: "Audio/video-tools",
+                webDeveloperTools: "Webontwikkelaarstools",
+                calculatorTools: "Rekenmachinetools",
+                utilityTools: "Hulpprogramma's",
+                colorTools: "Kleurentools",
+                quickLinks: "Snelle links",
+                homeLink: "Home",
+                allTools: "Alle tools",
+                faq: "FAQ",
+                contactLink: "Contact",
+                privacyPolicy: "Privacybeleid",
+                disclaimer: "Disclaimer",
+                terms: "Servicevoorwaarden",
+                footerDescription: "Gratis online tools voor PDF, afbeeldingen, tekst en meer. Vereenvoudig uw digitale taken met onze gebruiksvriendelijke utilities.",
+                copyright: "© 2025 LollyPoPDF. Alle rechten voorbehouden."
+            },
+            el: {
+                home: "Αρχική",
+                about: "Σχετικά με εμάς",
+                tools: "Εργαλεία",
+                contact: "Επικοινωνία",
+                heroTitle: "Μετατροπέας Word σε PDF",
+                heroDescription: "Μετατρέψτε τα έγγραφα Word σας σε μορφή PDF διατηρώντας την ακριβή διάταξη, μορφοποίηση, γραμματοσειρές και δομή του αρχικού εγγράφου.",
+                howToTitle: "Πώς να μετατρέψετε το Word σε PDF",
+                step1Title: "Ανεβάστε το έγγραφο Word σας",
+                step1Desc: "Κάντε κλικ στην περιοχή μεταφόρτωσης ή σύρετε και αποθέστε το αρχείο Word σας. Υποστηρίζουμε μορφές DOC και DOCX.",
+                step2Title: "Προεπισκόπηση εγγράφου",
+                step2Desc: "Δείτε μια προεπισκόπηση του εγγράφου Word σας με ακριβή μορφοποίηση και περιεχόμενο.",
+                step3Title: "Μετατροπή σε PDF",
+                step3Desc: "Κάντε κλικ στο κουμπί \"Μετατροπή σε PDF\" για να ξεκινήσετε τη διαδικασία μετατροπής.",
+                step4Title: "Λήψη εγγράφου PDF",
+                step4Desc: "Κατεβάστε το μετατρεπμένο έγγραφο PDF σας με τέλεια μορφοποίηση.",
+                toolTitle: "Μετατροπέας Word σε PDF",
+                uploadText: "Σύρετε και αποθέστε το έγγραφο Word σας εδώ ή κάντε κλικ για περιήγηση",
+                browseBtn: "Περιήγηση αρχείων Word",
+                originalLabel: "Πρωτότυπο έγγραφο Word",
+                convertedLabel: "Μετατρεπμένο έγγραφο PDF",
+                compressionLabel: "Ποιότητα μετατροπής:",
+                exactQuality: "Ακριβής",
+                exactQualityDesc: "(Τέλεια μορφοποίηση)",
+                highQuality: "Υψηλή",
+                highQualityDesc: "(Πολύ καλή)",
+                mediumQuality: "Μέτρια",
+                mediumQualityDesc: "(Καλή)",
+                convertBtn: "Μετατροπή σε PDF",
+                downloadBtn: "Λήψη PDF",
+                resetBtn: "Επαναφορά",
+                followUs: "ΑΚΟΛΟΥΘΗΣΤΕ ΜΑΣ",
+                popularCategories: "Δημοφιλείς κατηγορίες",
+                pdfTools: "Εργαλεία PDF",
+                imageTools: "Εργαλεία εικόνας",
+                textTools: "Εργαλεία κειμένου",
+                audioVideoTools: "Εργαλεία ήχου/βίντεο",
+                webDeveloperTools: "Εργαλεία προγραμματιστή ιστού",
+                calculatorTools: "Εργαλεία αριθμομηχανής",
+                utilityTools: "Βοηθητικά εργαλεία",
+                colorTools: "Εργαλεία χρωμάτων",
+                quickLinks: "Γρήγοροι σύνδεσμοι",
+                homeLink: "Αρχική",
+                allTools: "Όλα τα εργαλεία",
+                faq: "Συχνές ερωτήσεις",
+                contactLink: "Επικοινωνία",
+                privacyPolicy: "Πολιτική απορρήτου",
+                disclaimer: "Αποποίηση ευθύνης",
+                terms: "Όροι χρήσης",
+                footerDescription: "Δωρεάν διαδικτυακά εργαλεία για PDF, εικόνες, κείμενο και άλλα. Απλοποιήστε τις ψηφιακές σας εργασίες με τα εύχρηστα βοηθητικά μας προγράμματα.",
+                copyright: "© 2025 LollyPoPDF. Με επιφύλαξη παντός δικαιώματος."
+            },
+            hi: {
+                home: "होम",
+                about: "हमारे बारे में",
+                tools: "टूल्स",
+                contact: "संपर्क करें",
+                heroTitle: "वर्ड से PDF कन्वर्टर",
+                heroDescription: "अपने वर्ड दस्तावेज़ों को PDF प्रारूप में परिवर्तित करें जबकि मूल दस्तावेज़ के सटीक लेआउट, फॉर्मेटिंग, फ़ॉन्ट और संरचना को संरक्षित करें।",
+                howToTitle: "वर्ड को PDF में कैसे बदलें",
+                step1Title: "अपना वर्ड दस्तावेज़ अपलोड करें",
+                step1Desc: "अपलोड क्षेत्र पर क्लिक करें या अपनी वर्ड फ़ाइल को खींचें और छोड़ें। हम DOC और DOCX प्रारूपों का समर्थन करते हैं।",
+                step2Title: "दस्तावेज़ पूर्वावलोकन",
+                step2Desc: "सटीक फॉर्मेटिंग और सामग्री के साथ अपने वर्ड दस्तावेज़ का पूर्वावलोकन देखें।",
+                step3Title: "PDF में बदलें",
+                step3Desc: "रूपांतरण प्रक्रिया शुरू करने के लिए \"PDF में बदलें\" बटन पर क्लिक करें।",
+                step4Title: "PDF दस्तावेज़ डाउनलोड करें",
+                step4Desc: "बिल्कुल सही फॉर्मेटिंग के साथ अपना परिवर्तित PDF दस्तावेज़ डाउनलोड करें।",
+                toolTitle: "वर्ड से PDF कन्वर्टर",
+                uploadText: "अपना वर्ड दस्तावेज़ यहां खींचें और छोड़ें या ब्राउज़ करने के लिए क्लिक करें",
+                browseBtn: "वर्ड फ़ाइलें ब्राउज़ करें",
+                originalLabel: "मूल वर्ड दस्तावेज़",
+                convertedLabel: "परिवर्तित PDF दस्तावेज़",
+                compressionLabel: "रूपांतरण गुणवत्ता:",
+                exactQuality: "सटीक",
+                exactQualityDesc: "(सही फॉर्मेटिंग)",
+                highQuality: "उच्च",
+                highQualityDesc: "(बहुत अच्छा)",
+                mediumQuality: "मध्यम",
+                mediumQualityDesc: "(अच्छा)",
+                convertBtn: "PDF में बदलें",
+                downloadBtn: "PDF डाउनलोड करें",
+                resetBtn: "रीसेट करें",
+                followUs: "हमें फॉलो करें",
+                popularCategories: "लोकप्रिय श्रेणियाँ",
+                pdfTools: "PDF टूल्स",
+                imageTools: "छवि टूल्स",
+                textTools: "टेक्स्ट टूल्स",
+                audioVideoTools: "ऑडियो/वीडियो टूल्स",
+                webDeveloperTools: "वेब डेवलपर टूल्स",
+                calculatorTools: "कैलकुलेटर टूल्स",
+                utilityTools: "उपयोगिता टूल्स",
+                colorTools: "रंग टूल्स",
+                quickLinks: "त्वरित लिंक",
+                homeLink: "होम",
+                allTools: "सभी टूल्स",
+                faq: "अक्सर पूछे जाने वाले प्रश्न",
+                contactLink: "संपर्क करें",
+                privacyPolicy: "गोपनीयता नीति",
+                disclaimer: "अस्वीकरण",
+                terms: "सेवा की शर्तें",
+                footerDescription: "PDF, छवियों, पाठ और अधिक के लिए मुफ्त ऑनलाइन टूल्स। हमारे उपयोग में आसान उपयोगिताओं के साथ अपने डिजिटल कार्यों को सरल बनाएं।",
+                copyright: "© 2025 LollyPoPDF. सर्वाधिकार सुरक्षित।"
+            },
+            te: {
+                home: "హోమ్",
+                about: "మా గురించి",
+                tools: "టూల్స్",
+                contact: "సంప్రదించండి",
+                heroTitle: "వర్డ్ నుండి PDF కన్వర్టర్",
+                heroDescription: "మీ వర్డ్ డాక్యుమెంట్లను PDF ఫార్మాట్‌గా మార్చండి, అసలు డాక్యుమెంట్ యొక్క ఖచ్చితమైన లేఅవుట్, ఫార్మాటింగ్, ఫాంట్లు మరియు నిర్మాణాన్ని కాపాడుతూ.",
+                howToTitle: "వర్డ్ ని PDF గా ఎలా మార్చాలి",
+                step1Title: "మీ వర్డ్ డాక్యుమెంట్ అప్‌లోడ్ చేయండి",
+                step1Desc: "అప్‌లోడ్ ప్రాంతంపై క్లిక్ చేయండి లేదా మీ వర్డ్ ఫైల్‌ని డ్రాగ్ మరియు డ్రాప్ చేయండి. మేము DOC మరియు DOCX ఫార్మాట్లకు మద్దతు ఇస్తాము.",
+                step2Title: "డాక్యుమెంట్ మునుజూపు",
+                step2Desc: "ఖచ్చితమైన ఫార్మాటింగ్ మరియు కంటెంట్‌తో మీ వర్డ్ డాక్యుమెంట్ యొక్క మునుజూపును చూడండి.",
+                step3Title: "PDF కి మార్చండి",
+                step3Desc: "మార్పిడి ప్రక్రియను ప్రారంభించడానికి \"PDF కి మార్చండి\" బటన్‌పై క్లిక్ చేయండి.",
+                step4Title: "PDF డాక్యుమెంట్ డౌన్‌లోడ్ చేయండి",
+                step4Desc: "ఖచ్చితమైన ఫార్మాటింగ్‌తో మార్చబడిన మీ PDF డాక్యుమెంట్‌ను డౌన్‌లోడ్ చేయండి.",
+                toolTitle: "వర్డ్ నుండి PDF కన్వర్టర్",
+                uploadText: "మీ వర్డ్ డాక్యుమెంట్‌ను ఇక్కడ డ్రాగ్ మరియు డ్రాప్ చేయండి లేదా బ్రౌజ్ చేయడానికి క్లిక్ చేయండి",
+                browseBtn: "వర్డ్ ఫైల్‌లను బ్రౌజ్ చేయండి",
+                originalLabel: "అసలు వర్డ్ డాక్యుమెంట్",
+                convertedLabel: "మార్చబడిన PDF డాక్యుమెంట్",
+                compressionLabel: "మార్పిడి నాణ్యత:",
+                exactQuality: "ఖచ్చితమైన",
+                exactQualityDesc: "(పర్ఫెక్ట్ ఫార్మాటింగ్)",
+                highQuality: "అధిక",
+                highQualityDesc: "(చాలా మంచిది)",
+                mediumQuality: "మధ్యస్థ",
+                mediumQualityDesc: "(మంచిది)",
+                convertBtn: "PDF కి మార్చండి",
+                downloadBtn: "PDF డౌన్‌లోడ్ చేయండి",
+                resetBtn: "రీసెట్ చేయండి",
+                followUs: "మమ్మల్ని అనుసరించండి",
+                popularCategories: "జనాదరణ పొందిన వర్గాలు",
+                pdfTools: "PDF టూల్స్",
+                imageTools: "ఇమేజ్ టూల్స్",
+                textTools: "టెక్స్ట్ టూల్స్",
+                audioVideoTools: "ఆడియో/వీడియో టూల్స్",
+                webDeveloperTools: "వెబ్ డెవలపర్ టూల్స్",
+                calculatorTools: "కాలిక్యులేటర్ టూల్స్",
+                utilityTools: "యుటిలిటీ టూల్స్",
+                colorTools: "కలర్ టూల్స్",
+                quickLinks: "త్వరిత లింకులు",
+                homeLink: "హోమ్",
+                allTools: "అన్ని టూల్స్",
+                faq: "తరచుగా అడిగే ప్రశ్నలు",
+                contactLink: "సంప్రదించండి",
+                privacyPolicy: "గోప్యతా విధానం",
+                disclaimer: "నిరాకరణ",
+                terms: "సేవా నిబంధనలు",
+                footerDescription: "PDF, ఇమేజీలు, టెక్స్ట్ మరియు మరిన్నింటికి ఉచిత ఆన్‌లైన్ టూల్స్. మా సులభంగా ఉపయోగించే యుటిలిటీలతో మీ డిజిటల్ పనులను సులభతరం చేయండి.",
+                copyright: "© 2025 LollyPoPDF. హక్కులు ప్రత్యేకించబడినవి."
+            },
+            kn: {
+                home: "ಹೋಮ್",
+                about: "ನಮ್ಮ ಬಗ್ಗೆ",
+                tools: "ಉಪಕರಣಗಳು",
+                contact: "ಸಂಪರ್ಕಿಸಿ",
+                heroTitle: "ವರ್ಡ್ ಟು ಪಿಡಿಎಫ್ ಕನ್ವರ್ಟರ್",
+                heroDescription: "ಮೂಲ ಡಾಕ್ಯುಮೆಂಟ್ ನ ಸರಿಯಾದ ಲೇಅಔಟ್, ಫಾರ್ಮ್ಯಾಟಿಂಗ್, ಫಾಂಟ್ ಗಳು ಮತ್ತು ರಚನೆಯನ್ನು ಕಾಪಾಡಿಕೊಂಡು ನಿಮ್ಮ ವರ್ಡ್ ಡಾಕ್ಯುಮೆಂಟ್ ಗಳನ್ನು ಪಿಡಿಎಫ್ ಸ್ವರೂಪಕ್ಕೆ ಪರಿವರ್ತಿಸಿ.",
+                howToTitle: "ವರ್ಡ್ ಅನ್ನು ಪಿಡಿಎಫ್ ಗೆ ಹೇಗೆ ಪರಿವರ್ತಿಸುವುದು",
+                step1Title: "ನಿಮ್ಮ ವರ್ಡ್ ಡಾಕ್ಯುಮೆಂಟ್ ಅನ್ನು ಅಪ್ಲೋಡ್ ಮಾಡಿ",
+                step1Desc: "ಅಪ್ಲೋಡ್ ಪ್ರದೇಶದ ಮೇಲೆ ಕ್ಲಿಕ್ ಮಾಡಿ ಅಥವಾ ನಿಮ್ಮ ವರ್ಡ್ ಫೈಲ್ ಅನ್ನು ಎಳೆದು ಬಿಡಿ. ನಾವು DOC ಮತ್ತು DOCX ಸ್ವರೂಪಗಳನ್ನು ಬೆಂಬಲಿಸುತ್ತೇವೆ.",
+                step2Title: "ಡಾಕ್ಯುಮೆಂಟ್ ಮುನ್ನೋಟ",
+                step2Desc: "ಸರಿಯಾದ ಫಾರ್ಮ್ಯಾಟಿಂಗ್ ಮತ್ತು ವಿಷಯದೊಂದಿಗೆ ನಿಮ್ಮ ವರ್ಡ್ ಡಾಕ್ಯುಮೆಂಟ್ ನ ಮುನ್ನೋಟವನ್ನು ನೋಡಿ.",
+                step3Title: "ಪಿಡಿಎಫ್ ಗೆ ಪರಿವರ್ತಿಸಿ",
+                step3Desc: "ಪರಿವರ್ತನೆ ಪ್ರಕ್ರಿಯೆಯನ್ನು ಪ್ರಾರಂಭಿಸಲು \"ಪಿಡಿಎಫ್ ಗೆ ಪರಿವರ್ತಿಸಿ\" ಬಟನ್ ಅನ್ನು ಕ್ಲಿಕ್ ಮಾಡಿ.",
+                step4Title: "ಪಿಡಿಎಫ್ ಡಾಕ್ಯುಮೆಂಟ್ ಡೌನ್ಲೋಡ್ ಮಾಡಿ",
+                step4Desc: "ಪರಿಪೂರ್ಣ ಫಾರ್ಮ್ಯಾಟಿಂಗ್ ಜೊತೆಗೆ ನಿಮ್ಮ ಪರಿವರ್ತಿತ ಪಿಡಿಎಫ್ ಡಾಕ್ಯುಮೆಂಟ್ ಅನ್ನು ಡೌನ್ಲೋಡ್ ಮಾಡಿ.",
+                toolTitle: "ವರ್ಡ್ ಟು ಪಿಡಿಎಫ್ ಕನ್ವರ್ಟರ್",
+                uploadText: "ನಿಮ್ಮ ವರ್ಡ್ ಡಾಕ್ಯುಮೆಂಟ್ ಅನ್ನು ಇಲ್ಲಿ ಎಳೆದು ಬಿಡಿ ಅಥವಾ ಬ್ರೌಸ್ ಮಾಡಲು ಕ್ಲಿಕ್ ಮಾಡಿ",
+                browseBtn: "ವರ್ಡ್ ಫೈಲ್‌ಗಳನ್ನು ಬ್ರೌಸ್ ಮಾಡಿ",
+                originalLabel: "ಮೂಲ ವರ್ಡ್ ಡಾಕ್ಯುಮೆಂಟ್",
+                convertedLabel: "ಪರಿವರ್ತಿತ ಪಿಡಿಎಫ್ ಡಾಕ್ಯುಮೆಂಟ್",
+                compressionLabel: "ಪರಿವರ್ತನೆ ಗುಣಮಟ್ಟ:",
+                exactQuality: "ನಿಖರ",
+                exactQualityDesc: "(ಪರಿಪೂರ್ಣ ಫಾರ್ಮ್ಯಾಟಿಂಗ್)",
+                highQuality: "ಉನ್ನತ",
+                highQualityDesc: "(ಬಹಳ ಉತ್ತಮ)",
+                mediumQuality: "ಮಧ್ಯಮ",
+                mediumQualityDesc: "(ಉತ್ತಮ)",
+                convertBtn: "ಪಿಡಿಎಫ್ ಗೆ ಪರಿವರ್ತಿಸಿ",
+                downloadBtn: "ಪಿಡಿಎಫ್ ಡೌನ್ಲೋಡ್ ಮಾಡಿ",
+                resetBtn: "ರೀಸೆಟ್ ಮಾಡಿ",
+                followUs: "ನಮ್ಮನ್ನು ಅನುಸರಿಸಿ",
+                popularCategories: "ಜನಪ್ರಿಯ ವರ್ಗಗಳು",
+                pdfTools: "ಪಿಡಿಎಫ್ ಉಪಕರಣಗಳು",
+                imageTools: "ಚಿತ್ರ ಉಪಕರಣಗಳು",
+                textTools: "ಪಠ್ಯ ಉಪಕರಣಗಳು",
+                audioVideoTools: "ಆಡಿಯೋ/ವೀಡಿಯೋ ಉಪಕರಣಗಳು",
+                webDeveloperTools: "ವೆಬ್ ಡೆವಲಪರ್ ಉಪಕರಣಗಳು",
+                calculatorTools: "ಕ್ಯಾಲ್ಕುಲೇಟರ್ ಉಪಕರಣಗಳು",
+                utilityTools: "ಯುಟಿಲಿಟಿ ಉಪಕರಣಗಳು",
+                colorTools: "ಬಣ್ಣದ ಉಪಕರಣಗಳು",
+                quickLinks: "ತ್ವರಿತ ಲಿಂಕ್‌ಗಳು",
+                homeLink: "ಹೋಮ್",
+                allTools: "ಎಲ್ಲಾ ಉಪಕರಣಗಳು",
+                faq: "ಪ್ರಶ್ನೆಗಳು",
+                contactLink: "ಸಂಪರ್ಕಿಸಿ",
+                privacyPolicy: "ಗೌಪ್ಯತಾ ನೀತಿ",
+                disclaimer: "ಮುನ್ಸೂಚನೆ",
+                terms: "ಸೇವಾ ನಿಯಮಗಳು",
+                footerDescription: "ಪಿಡಿಎಫ್, ಚಿತ್ರಗಳು, ಪಠ್ಯ ಮತ್ತು ಹೆಚ್ಚಿನದಕ್ಕಾಗಿ ಉಚಿತ ಆನ್ಲೈನ್ ಉಪಕರಣಗಳು. ನಮ್ಮ ಬಳಸಲು ಸುಲಭವಾದ ಉಪಯುಕ್ತತೆಗಳೊಂದಿಗೆ ನಿಮ್ಮ ಡಿಜಿಟಲ್ ಕಾರ್ಯಗಳನ್ನು ಸರಳಗೊಳಿಸಿ.",
+                copyright: "© 2025 LollyPoPDF. ಹಕ್ಕುಗಳು ಕಾಯ್ದಿರಿಸಲಾಗಿವೆ."
+            },
+            ta: {
+                home: "முகப்பு",
+                about: "எங்களைப் பற்றி",
+                tools: "கருவிகள்",
+                contact: "தொடர்பு கொள்ள",
+                heroTitle: "Word முதல் PDF மாற்றி",
+                heroDescription: "உங்கள் Word ஆவணங்களை PDF வடிவமாக மாற்றவும், அசல் ஆவணத்தின் சரியான அமைப்பு, வடிவமைப்பு, எழுத்துருக்கள் மற்றும் கட்டமைப்பை பாதுகாக்கவும்.",
+                howToTitle: "Word ஐ PDF ஆக மாற்றுவது எப்படி",
+                step1Title: "உங்கள் Word ஆவணத்தை பதிவேற்றவும்",
+                step1Desc: "பதிவேற்றப் பகுதியைக் கிளிக் செய்யவும் அல்லது உங்கள் Word கோப்பை இழுத்து விடவும். நாங்கள் DOC மற்றும் DOCX வடிவங்களை ஆதரிக்கிறோம்.",
+                step2Title: "ஆவண முன்னோட்டம்",
+                step2Desc: "சரியான வடிவமைப்பு மற்றும் உள்ளடக்கத்துடன் உங்கள் Word ஆவணத்தின் முன்னோட்டத்தைக் காண்க.",
+                step3Title: "PDF ஆக மாற்றவும்",
+                step3Desc: "மாற்றும் செயல்முறையைத் தொடங்க \"PDF ஆக மாற்று\" பொத்தானைக் கிளிக் செய்யவும்.",
+                step4Title: "PDF ஆவணத்தைப் பதிவிறக்கவும்",
+                step4Desc: "சரியான வடிவமைப்புடன் உங்கள் மாற்றப்பட்ட PDF ஆவணத்தைப் பதிவிறக்கவும்.",
+                toolTitle: "Word முதல் PDF மாற்றி",
+                uploadText: "உங்கள் Word ஆவணத்தை இங்கே இழுத்து விடவும் அல்லது உலாவ கிளிக் செய்யவும்",
+                browseBtn: "Word கோப்புகளை உலாவு",
+                originalLabel: "அசல் Word ஆவணம்",
+                convertedLabel: "மாற்றப்பட்ட PDF ஆவணம்",
+                compressionLabel: "மாற்றும் தரம்:",
+                exactQuality: "துல்லியமான",
+                exactQualityDesc: "(சரியான வடிவமைப்பு)",
+                highQuality: "உயர்",
+                highQualityDesc: "(மிகவும் நல்லது)",
+                mediumQuality: "நடுத்தர",
+                mediumQualityDesc: "(நல்லது)",
+                convertBtn: "PDF ஆக மாற்று",
+                downloadBtn: "PDF பதிவிறக்கு",
+                resetBtn: "மீட்டமை",
+                followUs: "எங்களைப் பின்தொடருங்கள்",
+                popularCategories: "பிரபலமான வகைகள்",
+                pdfTools: "PDF கருவிகள்",
+                imageTools: "பட கருவிகள்",
+                textTools: "உரை கருவிகள்",
+                audioVideoTools: "ஆடியோ/வீடியோ கருவிகள்",
+                webDeveloperTools: "வலை உருவாக்குநர் கருவிகள்",
+                calculatorTools: "கணக்கிடும் கருவிகள்",
+                utilityTools: "பயன்பாட்டு கருவிகள்",
+                colorTools: "நிற கருவிகள்",
+                quickLinks: "விரைவு இணைப்புகள்",
+                homeLink: "முகப்பு",
+                allTools: "அனைத்து கருவிகள்",
+                faq: "அடிக்கடி கேட்கப்படும் கேள்விகள்",
+                contactLink: "தொடர்பு கொள்ள",
+                privacyPolicy: "தனியுரிமைக் கொள்கை",
+                disclaimer: "மறுப்பு",
+                terms: "சேவை விதிமுறைகள்",
+                footerDescription: "PDF, படங்கள், உரை மற்றும் பலவற்றிற்கான இலவச ஆன்லைன் கருவிகள். எங்கள் பயன்படுத்த எளிதான பயன்பாடுகளுடன் உங்கள் டிஜிட்டல் பணிகளை எளிதாக்குங்கள்.",
+                copyright: "© 2025 LollyPoPDF. அனைத்து உரிமைகளும் பாதுகாக்கப்பட்டவை."
+            },
+            ml: {
+                home: "ഹോം",
+                about: "ഞങ്ങളെക്കുറിച്ച്",
+                tools: "ടൂളുകൾ",
+                contact: "ബന്ധപ്പെടുക",
+                heroTitle: "വേഡ് ടു പിഡിഎഫ് കൺവെർട്ടർ",
+                heroDescription: "യഥാർത്ഥ ഡോക്കുമെന്റിന്റെ കൃത്യമായ ലേഔട്ട്, ഫോർമാറ്റിംഗ്, ഫോണ്ടുകൾ, ഘടന എന്നിവ സംരക്ഷിച്ചുകൊണ്ട് നിങ്ങളുടെ വേഡ് ഡോക്കുമെന്റുകൾ പിഡിഎഫ് ഫോർമാറ്റിലേക്ക് പരിവർത്തനം ചെയ്യുക.",
+                howToTitle: "വേഡ് പിഡിഎഫിലേക്ക് എങ്ങനെ പരിവർത്തനം ചെയ്യാം",
+                step1Title: "നിങ്ങളുടെ വേഡ് ഡോക്കുമെന്റ് അപ്ലോഡ് ചെയ്യുക",
+                step1Desc: "അപ്ലോഡ് ഏരിയയിൽ ക്ലിക്ക് ചെയ്യുക അല്ലെങ്കിൽ നിങ്ങളുടെ വേഡ് ഫയൽ ഡ്രാഗ് ചെയ്ത് ഡ്രോപ്പ് ചെയ്യുക. ഞങ്ങൾ DOC, DOCX ഫോർമാറ്റുകൾ പിന്തുണയ്ക്കുന്നു.",
+                step2Title: "ഡോക്കുമെന്റ് പ്രിവ്യൂ",
+                step2Desc: "കൃത്യമായ ഫോർമാറ്റിംഗും ഉള്ളടക്കവുമുള്ള നിങ്ങളുടെ വേഡ് ഡോക്കുമെന്റിന്റെ ഒരു പ്രിവ്യൂ കാണുക.",
+                step3Title: "പിഡിഎഫിലേക്ക് പരിവർത്തനം ചെയ്യുക",
+                step3Desc: "പരിവർത്തന പ്രക്രിയ ആരംഭിക്കാൻ \"പിഡിഎഫിലേക്ക് പരിവർത്തനം ചെയ്യുക\" ബട്ടൺ ക്ലിക്ക് ചെയ്യുക.",
+                step4Title: "പിഡിഎഫ് ഡോക്കുമെന്റ് ഡൗൺലോഡ് ചെയ്യുക",
+                step4Desc: "തികഞ്ഞ ഫോർമാറ്റിംഗ് ഉപയോഗിച്ച് നിങ്ങളുടെ പരിവർത്തനം ചെയ്ത പിഡിഎഫ് ഡോക്കുമെന്റ് ഡൗൺലോഡ് ചെയ്യുക.",
+                toolTitle: "വേഡ് ടു പിഡിഎഫ് കൺവെർട്ടർ",
+                uploadText: "നിങ്ങളുടെ വേഡ് ഡോക്കുമെന്റ് ഇവിടെ ഡ്രാഗ് ചെയ്ത് ഡ്രോപ്പ് ചെയ്യുക അല്ലെങ്കിൽ ബ്രൗസ് ചെയ്യാൻ ക്ലിക്ക് ചെയ്യുക",
+                browseBtn: "വേഡ് ഫയലുകൾ ബ്രൗസ് ചെയ്യുക",
+                originalLabel: "യഥാർത്ഥ വേഡ് ഡോക്കുമെന്റ്",
+                convertedLabel: "പരിവർത്തനം ചെയ്ത പിഡിഎഫ് ഡോക്കുമെന്റ്",
+                compressionLabel: "പരിവർത്തന ഗുണനിലവാരം:",
+                exactQuality: "കൃത്യമായ",
+                exactQualityDesc: "(തികഞ്ഞ ഫോർമാറ്റിംഗ്)",
+                highQuality: "ഉയർന്ന",
+                highQualityDesc: "(വളരെ നല്ലത്)",
+                mediumQuality: "മധ്യമ",
+                mediumQualityDesc: "(നല്ലത്)",
+                convertBtn: "പിഡിഎഫിലേക്ക് പരിവർത്തനം ചെയ്യുക",
+                downloadBtn: "പിഡിഎഫ് ഡൗൺലോഡ് ചെയ്യുക",
+                resetBtn: "റീസെറ്റ് ചെയ്യുക",
+                followUs: "ഞങ്ങളെ പിന്തുടരുക",
+                popularCategories: "ജനപ്രിയ വിഭാഗങ്ങൾ",
+                pdfTools: "പിഡിഎഫ് ടൂളുകൾ",
+                imageTools: "ഇമേജ് ടൂളുകൾ",
+                textTools: "ടെക്സ്റ്റ് ടൂളുകൾ",
+                audioVideoTools: "ഓഡിയോ/വീഡിയോ ടൂളുകൾ",
+                webDeveloperTools: "വെബ് ഡെവലപ്പർ ടൂളുകൾ",
+                calculatorTools: "കാൽക്കുലേറ്റർ ടൂളുകൾ",
+                utilityTools: "യൂട്ടിലിറ്റി ടൂളുകൾ",
+                colorTools: "കളർ ടൂളുകൾ",
+                quickLinks: "ദ്രുത ലിങ്കുകൾ",
+                homeLink: "ഹോം",
+                allTools: "എല്ലാ ടൂളുകളും",
+                faq: "പതിവുചോദ്യങ്ങൾ",
+                contactLink: "ബന്ധപ്പെടുക",
+                privacyPolicy: "സ്വകാര്യതാ നയം",
+                disclaimer: "ഉത്തരവാദപരിധി നിരാകരണം",
+                terms: "സേവന വ്യവസ്ഥകൾ",
+                footerDescription: "പിഡിഎഫ്, ഇമേജുകൾ, ടെക്സ്റ്റ് എന്നിവയ്ക്കുള്ള സൗജന്യ ഓൺലൈൻ ടൂളുകൾ. ഞങ്ങളുടെ എളുപ്പത്തിൽ ഉപയോഗിക്കാവുന്ന ഉപകരണങ്ങൾ ഉപയോഗിച്ച് നിങ്ങളുടെ ഡിജിറ്റൽ ജോലികൾ ലളിതമാക്കുക.",
+                copyright: "© 2025 LollyPoPDF. എല്ലാ അവകാശങ്ങളും നിക്ഷിപ്തം."
+            },
+            id: {
+                home: "Beranda",
+                about: "Tentang Kami",
+                tools: "Alat",
+                contact: "Kontak",
+                heroTitle: "Pengonversi Word ke PDF",
+                heroDescription: "Konversi dokumen Word Anda ke format PDF sambil mempertahankan tata letak, pemformatan, font, dan struktur dokumen asli yang tepat.",
+                howToTitle: "Cara Mengonversi Word ke PDF",
+                step1Title: "Unggah Dokumen Word Anda",
+                step1Desc: "Klik area unggah atau seret dan lepas file Word Anda. Kami mendukung format DOC dan DOCX.",
+                step2Title: "Pratinjau Dokumen",
+                step2Desc: "Lihat pratinjau dokumen Word Anda dengan pemformatan dan konten yang tepat.",
+                step3Title: "Konversi ke PDF",
+                step3Desc: "Klik tombol \"Konversi ke PDF\" untuk memulai proses konversi.",
+                step4Title: "Unduh Dokumen PDF",
+                step4Desc: "Unduh dokumen PDF yang telah dikonversi dengan pemformatan sempurna.",
+                toolTitle: "Pengonversi Word ke PDF",
+                uploadText: "Seret dan lepas dokumen Word Anda di sini atau klik untuk menjelajah",
+                browseBtn: "Jelajahi File Word",
+                originalLabel: "Dokumen Word Asli",
+                convertedLabel: "Dokumen PDF yang Dikonversi",
+                compressionLabel: "Kualitas Konversi:",
+                exactQuality: "Tepat",
+                exactQualityDesc: "(Pemformatan Sempurna)",
+                highQuality: "Tinggi",
+                highQualityDesc: "(Sangat Baik)",
+                mediumQuality: "Sedang",
+                mediumQualityDesc: "(Baik)",
+                convertBtn: "Konversi ke PDF",
+                downloadBtn: "Unduh PDF",
+                resetBtn: "Reset",
+                followUs: "IKUTI KAMI",
+                popularCategories: "Kategori Populer",
+                pdfTools: "Alat PDF",
+                imageTools: "Alat Gambar",
+                textTools: "Alat Teks",
+                audioVideoTools: "Alat Audio/Video",
+                webDeveloperTools: "Alat Pengembang Web",
+                calculatorTools: "Alat Kalkulator",
+                utilityTools: "Alat Utilitas",
+                colorTools: "Alat Warna",
+                quickLinks: "Tautan Cepat",
+                homeLink: "Beranda",
+                allTools: "Semua Alat",
+                faq: "FAQ",
+                contactLink: "Kontak",
+                privacyPolicy: "Kebijakan Privasi",
+                disclaimer: "Penafian",
+                terms: "Ketentuan Layanan",
+                footerDescription: "Alat online gratis untuk PDF, gambar, teks, dan lainnya. Sederhanakan tugas digital Anda dengan utilitas kami yang mudah digunakan.",
+                copyright: "© 2025 LollyPoPDF. Hak Cipta Dilindungi."
+            },
+            ms: {
+                home: "Laman Utama",
+                about: "Tentang Kami",
+                tools: "Alatan",
+                contact: "Hubungi",
+                heroTitle: "Penukar Word ke PDF",
+                heroDescription: "Tukar dokumen Word anda ke format PDF sambil mengekalkan susun atur, pemformatan, fon dan struktur dokumen asal yang tepat.",
+                howToTitle: "Cara Menukar Word ke PDF",
+                step1Title: "Muat Naik Dokumen Word Anda",
+                step1Desc: "Klik pada kawasan muat naik atau seret dan lepaskan fail Word anda. Kami menyokong format DOC dan DOCX.",
+                step2Title: "Pratonton Dokumen",
+                step2Desc: "Lihat pratonton dokumen Word anda dengan pemformatan dan kandungan yang tepat.",
+                step3Title: "Tukar ke PDF",
+                step3Desc: "Klik butang \"Tukar ke PDF\" untuk memulakan proses penukaran.",
+                step4Title: "Muat Turun Dokumen PDF",
+                step4Desc: "Muat turun dokumen PDF anda yang telah ditukar dengan pemformatan yang sempurna.",
+                toolTitle: "Penukar Word ke PDF",
+                uploadText: "Seret dan lepaskan dokumen Word anda di sini atau klik untuk melayari",
+                browseBtn: "Layari Fail Word",
+                originalLabel: "Dokumen Word Asal",
+                convertedLabel: "Dokumen PDF yang Ditukar",
+                compressionLabel: "Kualiti Penukaran:",
+                exactQuality: "Tepat",
+                exactQualityDesc: "(Pemformatan Sempurna)",
+                highQuality: "Tinggi",
+                highQualityDesc: "(Sangat Baik)",
+                mediumQuality: "Sederhana",
+                mediumQualityDesc: "(Baik)",
+                convertBtn: "Tukar ke PDF",
+                downloadBtn: "Muat Turun PDF",
+                resetBtn: "Tetapkan Semula",
+                followUs: "IKUTI KAMI",
+                popularCategories: "Kategori Popular",
+                pdfTools: "Alatan PDF",
+                imageTools: "Alatan Imej",
+                textTools: "Alatan Teks",
+                audioVideoTools: "Alatan Audio/Video",
+                webDeveloperTools: "Alatan Pembangun Web",
+                calculatorTools: "Alatan Kalkulator",
+                utilityTools: "Alatan Utiliti",
+                colorTools: "Alatan Warna",
+                quickLinks: "Pautan Pantas",
+                homeLink: "Laman Utama",
+                allTools: "Semua Alatan",
+                faq: "Soalan Lazim",
+                contactLink: "Hubungi",
+                privacyPolicy: "Dasar Privasi",
+                disclaimer: "Penafian",
+                terms: "Syarat Perkhidmatan",
+                footerDescription: "Alatan dalam talian percuma untuk PDF, imej, teks dan banyak lagi. Permudahkan tugas digital anda dengan utiliti kami yang mudah digunakan.",
+                copyright: "© 2025 LollyPoPDF. Hak Cipta Terpelihara."
+            },
+            pl: {
+                home: "Strona główna",
+                about: "O nas",
+                tools: "Narzędzia",
+                contact: "Kontakt",
+                heroTitle: "Konwerter Word na PDF",
+                heroDescription: "Konwertuj dokumenty Word do formatu PDF, zachowując dokładny układ, formatowanie, czcionki i strukturę oryginalnego dokumentu.",
+                howToTitle: "Jak przekonwertować Word na PDF",
+                step1Title: "Prześlij dokument Word",
+                step1Desc: "Kliknij obszar przesyłania lub przeciągnij i upuść plik Word. Obsługujemy formaty DOC i DOCX.",
+                step2Title: "Podgląd dokumentu",
+                step2Desc: "Zobacz podgląd dokumentu Word z dokładnym formatowaniem i treścią.",
+                step3Title: "Konwertuj na PDF",
+                step3Desc: "Kliknij przycisk \"Konwertuj na PDF\", aby rozpocząć proces konwersji.",
+                step4Title: "Pobierz dokument PDF",
+                step4Desc: "Pobierz przekonwertowany dokument PDF z doskonałym formatowaniem.",
+                toolTitle: "Konwerter Word na PDF",
+                uploadText: "Przeciągnij i upuść dokument Word tutaj lub kliknij, aby przeglądać",
+                browseBtn: "Przeglądaj pliki Word",
+                originalLabel: "Oryginalny dokument Word",
+                convertedLabel: "Przekonwertowany dokument PDF",
+                compressionLabel: "Jakość konwersji:",
+                exactQuality: "Dokładna",
+                exactQualityDesc: "(Doskonale formatowanie)",
+                highQuality: "Wysoka",
+                highQualityDesc: "(Bardzo dobra)",
+                mediumQuality: "Średnia",
+                mediumQualityDesc: "(Dobra)",
+                convertBtn: "Konwertuj na PDF",
+                downloadBtn: "Pobierz PDF",
+                resetBtn: "Resetuj",
+                followUs: "OBSERWUJ NAS",
+                popularCategories: "Popularne kategorie",
+                pdfTools: "Narzędzia PDF",
+                imageTools: "Narzędzia obrazów",
+                textTools: "Narzędzia tekstu",
+                audioVideoTools: "Narzędzia audio/wideo",
+                webDeveloperTools: "Narzędzia web developera",
+                calculatorTools: "Narzędzia kalkulatora",
+                utilityTools: "Narzędzia użytkowe",
+                colorTools: "Narzędzia kolorów",
+                quickLinks: "Szybkie linki",
+                homeLink: "Strona główna",
+                allTools: "Wszystkie narzędzia",
+                faq: "FAQ",
+                contactLink: "Kontakt",
+                privacyPolicy: "Polityka prywatności",
+                disclaimer: "Zastrzeżenie",
+                terms: "Warunki usługi",
+                footerDescription: "Darmowe narzędzia online dla PDF, obrazów, tekstu i nie tylko. Uprość swoje zadania cyfrowe za pomocą naszych łatwych w użyciu narzędzi.",
+                copyright: "© 2025 LollyPoPDF. Wszystkie prawa zastrzeżone."
+            },
+            th: {
+                home: "หน้าหลัก",
+                about: "เกี่ยวกับเรา",
+                tools: "เครื่องมือ",
+                contact: "ติดต่อ",
+                heroTitle: "ตัวแปลง Word เป็น PDF",
+                heroDescription: "แปลงเอกสาร Word ของคุณเป็นรูปแบบ PDF ในขณะที่รักษารูปแบบ แบบอักษร และโครงสร้างของเอกสารต้นฉบับไว้อย่างสมบูรณ์",
+                howToTitle: "วิธีแปลง Word เป็น PDF",
+                step1Title: "อัปโหลดเอกสาร Word ของคุณ",
+                step1Desc: "คลิกพื้นที่อัปโหลดหรือลากและวางไฟล์ Word ของคุณ เรารองรับรูปแบบ DOC และ DOCX",
+                step2Title: "ดูตัวอย่างเอกสาร",
+                step2Desc: "ดูตัวอย่างเอกสาร Word ของคุณด้วยรูปแบบและเนื้อหาที่ถูกต้อง",
+                step3Title: "แปลงเป็น PDF",
+                step3Desc: "คลิกปุ่ม \"แปลงเป็น PDF\" เพื่อเริ่มกระบวนการแปลง",
+                step4Title: "ดาวน์โหลดเอกสาร PDF",
+                step4Desc: "ดาวน์โหลดเอกสาร PDF ที่แปลงแล้วด้วยรูปแบบที่สมบูรณ์แบบ",
+                toolTitle: "ตัวแปลง Word เป็น PDF",
+                uploadText: "ลากและวางเอกสาร Word ของคุณที่นี่หรือคลิกเพื่อเรียกดู",
+                browseBtn: "เรียกดูไฟล์ Word",
+                originalLabel: "เอกสาร Word ดั้งเดิม",
+                convertedLabel: "เอกสาร PDF ที่แปลงแล้ว",
+                compressionLabel: "คุณภาพการแปลง:",
+                exactQuality: "แม่นยำ",
+                exactQualityDesc: "(รูปแบบสมบูรณ์แบบ)",
+                highQuality: "สูง",
+                highQualityDesc: "(ดีมาก)",
+                mediumQuality: "ปานกลาง",
+                mediumQualityDesc: "(ดี)",
+                convertBtn: "แปลงเป็น PDF",
+                downloadBtn: "ดาวน์โหลด PDF",
+                resetBtn: "รีเซ็ต",
+                followUs: "ติดตามเรา",
+                popularCategories: "หมวดหมู่ยอดนิยม",
+                pdfTools: "เครื่องมือ PDF",
+                imageTools: "เครื่องมือรูปภาพ",
+                textTools: "เครื่องมือข้อความ",
+                audioVideoTools: "เครื่องมือเสียง/วิดีโอ",
+                webDeveloperTools: "เครื่องมือนักพัฒนาเว็บ",
+                calculatorTools: "เครื่องมือเครื่องคิดเลข",
+                utilityTools: "เครื่องมืออรรถประโยชน์",
+                colorTools: "เครื่องมือสี",
+                quickLinks: "ลิงก์ด่วน",
+                homeLink: "หน้าหลัก",
+                allTools: "เครื่องมือทั้งหมด",
+                faq: "คำถามที่พบบ่อย",
+                contactLink: "ติดต่อ",
+                privacyPolicy: "นโยบายความเป็นส่วนตัว",
+                disclaimer: "ข้อจำกัดความรับผิดชอบ",
+                terms: "เงื่อนไขการให้บริการ",
+                footerDescription: "เครื่องมือออนไลน์ฟรีสำหรับ PDF รูปภาพ ข้อความ และอื่นๆ ทำให้งานดิจิทัลของคุณง่ายขึ้นด้วยยูทิลิตี้ที่ใช้ง่ายของเรา",
+                copyright: "© 2025 LollyPoPDF. สงวนลิขสิทธิ์"
+            },
+            tr: {
+                home: "Ana Sayfa",
+                about: "Hakkımızda",
+                tools: "Araçlar",
+                contact: "İletişim",
+                heroTitle: "Word'den PDF'e Dönüştürücü",
+                heroDescription: "Word belgelerinizi orijinal belgenin tam düzeni, biçimlendirmesi, yazı tipleri ve yapısını koruyarak PDF formatına dönüştürün.",
+                howToTitle: "Word'ü PDF'e Nasıl Dönüştürürsünüz",
+                step1Title: "Word Belgenizi Yükleyin",
+                step1Desc: "Yükleme alanına tıklayın veya Word dosyanızı sürükleyip bırakın. DOC ve DOCX formatlarını destekliyoruz.",
+                step2Title: "Belge Önizlemesi",
+                step2Desc: "Word belgenizin tam biçimlendirme ve içerikle önizlemesini görün.",
+                step3Title: "PDF'e Dönüştür",
+                step3Desc: "Dönüştürme işlemini başlatmak için \"PDF'e Dönüştür\" düğmesine tıklayın.",
+                step4Title: "PDF Belgesini İndirin",
+                step4Desc: "Mükemmel biçimlendirmeyle dönüştürülmüş PDF belgenizi indirin.",
+                toolTitle: "Word'den PDF'e Dönüştürücü",
+                uploadText: "Word belgenizi buraya sürükleyip bırakın veya gözatmak için tıklayın",
+                browseBtn: "Word Dosyalarını Gözat",
+                originalLabel: "Orijinal Word Belgesi",
+                convertedLabel: "Dönüştürülmüş PDF Belgesi",
+                compressionLabel: "Dönüştürme Kalitesi:",
+                exactQuality: "Tam",
+                exactQualityDesc: "(Mükemmel Biçimlendirme)",
+                highQuality: "Yüksek",
+                highQualityDesc: "(Çok İyi)",
+                mediumQuality: "Orta",
+                mediumQualityDesc: "(İyi)",
+                convertBtn: "PDF'e Dönüştür",
+                downloadBtn: "PDF İndir",
+                resetBtn: "Sıfırla",
+                followUs: "BİZİ TAKİP EDİN",
+                popularCategories: "Popüler Kategoriler",
+                pdfTools: "PDF Araçları",
+                imageTools: "Resim Araçları",
+                textTools: "Metin Araçları",
+                audioVideoTools: "Ses/Video Araçları",
+                webDeveloperTools: "Web Geliştirici Araçları",
+                calculatorTools: "Hesap Makinesi Araçları",
+                utilityTools: "Yardımcı Araçlar",
+                colorTools: "Renk Araçları",
+                quickLinks: "Hızlı Bağlantılar",
+                homeLink: "Ana Sayfa",
+                allTools: "Tüm Araçlar",
+                faq: "SSS",
+                contactLink: "İletişim",
+                privacyPolicy: "Gizlilik Politikası",
+                disclaimer: "Feragatname",
+                terms: "Hizmet Şartları",
+                footerDescription: "PDF, görüntüler, metin ve daha fazlası için ücretsiz çevrimiçi araçlar. Kullanımı kolay araçlarımızla dijital görevlerinizi basitleştirin.",
+                copyright: "© 2025 LollyPoPDF. Tüm hakları saklıdır."
+            },
+            uk: {
+                home: "Головна",
+                about: "Про нас",
+                tools: "Інструменти",
+                contact: "Контакт",
+                heroTitle: "Конвертер Word в PDF",
+                heroDescription: "Конвертуйте документи Word у формат PDF, зберігаючи точний макет, форматування, шрифти та структуру оригінального документа.",
+                howToTitle: "Як конвертувати Word у PDF",
+                step1Title: "Завантажте документ Word",
+                step1Desc: "Натисніть на область завантаження або перетягніть файл Word. Ми підтримуємо формати DOC і DOCX.",
+                step2Title: "Попередній перегляд документа",
+                step2Desc: "Подивіться попередній перегляд документа Word з точним форматуванням та вмістом.",
+                step3Title: "Конвертувати в PDF",
+                step3Desc: "Натисніть кнопку \"Конвертувати в PDF\", щоб розпочати процес конвертації.",
+                step4Title: "Завантажити документ PDF",
+                step4Desc: "Завантажте конвертований документ PDF з ідеальним форматуванням.",
+                toolTitle: "Конвертер Word в PDF",
+                uploadText: "Перетягніть документ Word сюди або натисніть для перегляду",
+                browseBtn: "Переглянути файли Word",
+                originalLabel: "Оригінальний документ Word",
+                convertedLabel: "Конвертований документ PDF",
+                compressionLabel: "Якість конвертації:",
+                exactQuality: "Точна",
+                exactQualityDesc: "(Ідеальне форматування)",
+                highQuality: "Висока",
+                highQualityDesc: "(Дуже добре)",
+                mediumQuality: "Середня",
+                mediumQualityDesc: "(Добре)",
+                convertBtn: "Конвертувати в PDF",
+                downloadBtn: "Завантажити PDF",
+                resetBtn: "Скинути",
+                followUs: "СЛІДКУЙТЕ ЗА НАМИ",
+                popularCategories: "Популярні категорії",
+                pdfTools: "Інструменти PDF",
+                imageTools: "Інструменти зображень",
+                textTools: "Текстові інструменти",
+                audioVideoTools: "Аудіо/відео інструменти",
+                webDeveloperTools: "Інструменти веб-розробника",
+                calculatorTools: "Інструменти калькулятора",
+                utilityTools: "Службові інструменти",
+                colorTools: "Інструменти кольорів",
+                quickLinks: "Швидкі посилання",
+                homeLink: "Головна",
+                allTools: "Всі інструменти",
+                faq: "ЧаПи",
+                contactLink: "Контакт",
+                privacyPolicy: "Політика конфіденційності",
+                disclaimer: "Відмова від відповідальності",
+                terms: "Умови використання",
+                footerDescription: "Безкоштовні онлайн-інструменти для PDF, зображень, тексту та багато іншого. Спростіть свої цифрові завдання за допомогою наших зручних утиліт.",
+                copyright: "© 2025 LollyPoPDF. Всі права захищені."
+            },
+            vi: {
+                home: "Trang chủ",
+                about: "Về chúng tôi",
+                tools: "Công cụ",
+                contact: "Liên hệ",
+                heroTitle: "Chuyển đổi Word sang PDF",
+                heroDescription: "Chuyển đổi tài liệu Word của bạn sang định dạng PDF trong khi vẫn giữ nguyên bố cục, định dạng, phông chữ và cấu trúc của tài liệu gốc.",
+                howToTitle: "Cách chuyển đổi Word sang PDF",
+                step1Title: "Tải lên tài liệu Word của bạn",
+                step1Desc: "Nhấp vào vùng tải lên hoặc kéo và thả tệp Word của bạn. Chúng tôi hỗ trợ định dạng DOC và DOCX.",
+                step2Title: "Xem trước tài liệu",
+                step2Desc: "Xem trước tài liệu Word của bạn với định dạng và nội dung chính xác.",
+                step3Title: "Chuyển đổi sang PDF",
+                step3Desc: "Nhấp vào nút \"Chuyển đổi sang PDF\" để bắt đầu quá trình chuyển đổi.",
+                step4Title: "Tải xuống tài liệu PDF",
+                step4Desc: "Tải xuống tài liệu PDF đã chuyển đổi với định dạng hoàn hảo.",
+                toolTitle: "Chuyển đổi Word sang PDF",
+                uploadText: "Kéo và thả tài liệu Word của bạn vào đây hoặc nhấp để duyệt",
+                browseBtn: "Duyệt tệp Word",
+                originalLabel: "Tài liệu Word gốc",
+                convertedLabel: "Tài liệu PDF đã chuyển đổi",
+                compressionLabel: "Chất lượng chuyển đổi:",
+                exactQuality: "Chính xác",
+                exactQualityDesc: "(Định dạng hoàn hảo)",
+                highQuality: "Cao",
+                highQualityDesc: "(Rất tốt)",
+                mediumQuality: "Trung bình",
+                mediumQualityDesc: "(Tốt)",
+                convertBtn: "Chuyển đổi sang PDF",
+                downloadBtn: "Tải xuống PDF",
+                resetBtn: "Đặt lại",
+                followUs: "THEO DÕI CHÚNG TÔI",
+                popularCategories: "Danh mục phổ biến",
+                pdfTools: "Công cụ PDF",
+                imageTools: "Công cụ hình ảnh",
+                textTools: "Công cụ văn bản",
+                audioVideoTools: "Công cụ âm thanh/video",
+                webDeveloperTools: "Công cụ nhà phát triển web",
+                calculatorTools: "Công cụ máy tính",
+                utilityTools: "Công cụ tiện ích",
+                colorTools: "Công cụ màu sắc",
+                quickLinks: "Liên kết nhanh",
+                homeLink: "Trang chủ",
+                allTools: "Tất cả công cụ",
+                faq: "Câu hỏi thường gặp",
+                contactLink: "Liên hệ",
+                privacyPolicy: "Chính sách bảo mật",
+                disclaimer: "Tuyên bố miễn trừ trách nhiệm",
+                terms: "Điều khoản dịch vụ",
+                footerDescription: "Công cụ trực tuyến miễn phí cho PDF, hình ảnh, văn bản và hơn thế nữa. Đơn giản hóa các tác vụ kỹ thuật số của bạn với các tiện ích dễ sử dụng của chúng tôi.",
+                copyright: "© 2025 LollyPoPDF. Đã đăng ký bản quyền."
+            },
+            is: {
+                home: "Heim",
+                about: "Um okkur",
+                tools: "Verkfæri",
+                contact: "Hafðu samband",
+                heroTitle: "Word í PDF breytir",
+                heroDescription: "Breyttu Word skjölunum þínum í PDF snið á meðan þú varðveitir nákvæma skipulag, snið, leturgerðir og uppbyggingu upprunalega skjalsins.",
+                howToTitle: "Hvernig á að breyta Word í PDF",
+                step1Title: "Hladdu upp Word skjalinu þínu",
+                step1Desc: "Smelltu á upphleðslusvæðið eða dragðu og slepptu Word skránni þinni. Við styðjum DOC og DOCX snið.",
+                step2Title: "Forskoðun skjals",
+                step2Desc: "Skoðaðu forsýningu á Word skjalinu þínu með nákvæmu sniði og efni.",
+                step3Title: "Breyta í PDF",
+                step3Desc: "Smelltu á \"Breyta í PDF\" hnappinn til að hefja umbreytingarferlið.",
+                step4Title: "Sækja PDF skjal",
+                step4Desc: "Sæktu breytta PDF skjalið þitt með fullkomnu sniði.",
+                toolTitle: "Word í PDF breytir",
+                uploadText: "Dragðu og slepptu Word skjalinu þínu hér eða smelltu til að skoða",
+                browseBtn: "Skoða Word skrár",
+                originalLabel: "Upprunalegt Word skjal",
+                convertedLabel: "Umbreytt PDF skjal",
+                compressionLabel: "Umbreytingargæði:",
+                exactQuality: "Nákvæm",
+                exactQualityDesc: "(Fullkomið snið)",
+                highQuality: "Há",
+                highQualityDesc: "(Mjög gott)",
+                mediumQuality: "Miðlungs",
+                mediumQualityDesc: "(Gott)",
+                convertBtn: "Breyta í PDF",
+                downloadBtn: "Sækja PDF",
+                resetBtn: "Endurstilla",
+                followUs: "FYLGDU OKKUR",
+                popularCategories: "Vinsælir flokkar",
+                pdfTools: "PDF verkfæri",
+                imageTools: "Myndverkfæri",
+                textTools: "Textaverkfæri",
+                audioVideoTools: "Hljóð-/myndbandaverkfæri",
+                webDeveloperTools: "Vefþróunartæki",
+                calculatorTools: "Reiknivélartæki",
+                utilityTools: "Gagnleg tæki",
+                colorTools: "Litatæki",
+                quickLinks: "Flýtileiðir",
+                homeLink: "Heim",
+                allTools: "Öll tæki",
+                faq: "Algengar spurningar",
+                contactLink: "Hafðu samband",
+                privacyPolicy: "Friðhelgisstefna",
+                disclaimer: "Ábyrgðarafsal",
+                terms: "Þjónustuskilmálar",
+                footerDescription: "Ókeypis nettæki fyrir PDF, myndir, texta og meira. Einfaldaðu stafrænar verkefni þín með auðveldum tækjum okkar.",
+                copyright: "© 2025 LollyPoPDF. Öll réttindi áskilin."
+            },
+            no: {
+                home: "Hjem",
+                about: "Om oss",
+                tools: "Verktøy",
+                contact: "Kontakt",
+                heroTitle: "Word til PDF Konverter",
+                heroDescription: "Konverter Word-dokumentene dine til PDF-format mens du bevarer den eksakte layouten, formateringen, fonter og strukturen til originaldokumentet.",
+                howToTitle: "Hvordan konvertere Word til PDF",
+                step1Title: "Last opp Word-dokumentet ditt",
+                step1Desc: "Klikk på opplastingsområdet eller dra og slipp Word-filen din. Vi støtter DOC og DOCX formater.",
+                step2Title: "Dokumentforhåndsvisning",
+                step2Desc: "Se en forhåndsvisning av Word-dokumentet ditt med eksakt formatering og innhold.",
+                step3Title: "Konverter til PDF",
+                step3Desc: "Klikk på \"Konverter til PDF\"-knappen for å starte konverteringsprosessen.",
+                step4Title: "Last ned PDF-dokument",
+                step4Desc: "Last ned det konverterte PDF-dokumentet ditt med perfekt formatering.",
+                toolTitle: "Word til PDF Konverter",
+                uploadText: "Dra og slipp Word-dokumentet ditt her eller klikk for å bla",
+                browseBtn: "Bla gjennom Word-filer",
+                originalLabel: "Originalt Word-dokument",
+                convertedLabel: "Konvertert PDF-dokument",
+                compressionLabel: "Konverteringskvalitet:",
+                exactQuality: "Eksakt",
+                exactQualityDesc: "(Perfekt formatering)",
+                highQuality: "Høy",
+                highQualityDesc: "(Veldig bra)",
+                mediumQuality: "Middels",
+                mediumQualityDesc: "(Bra)",
+                convertBtn: "Konverter til PDF",
+                downloadBtn: "Last ned PDF",
+                resetBtn: "Nullstill",
+                followUs: "FØLG OSS",
+                popularCategories: "Populære kategorier",
+                pdfTools: "PDF-verktøy",
+                imageTools: "Bildeverktøy",
+                textTools: "Tekstverktøy",
+                audioVideoTools: "Lyd/videoverktøy",
+                webDeveloperTools: "Nettutviklerverktøy",
+                calculatorTools: "Kalkulatorverktøy",
+                utilityTools: "Nyttige verktøy",
+                colorTools: "Fargeverktøy",
+                quickLinks: "Hurtiglenker",
+                homeLink: "Hjem",
+                allTools: "Alle verktøy",
+                faq: "FAQ",
+                contactLink: "Kontakt",
+                privacyPolicy: "Personvernregler",
+                disclaimer: "Ansvarsfraskrivelse",
+                terms: "Tjenestevilkår",
+                footerDescription: "Gratis online verktøy for PDF, bilder, tekst og mer. Forenkle dine digitale oppgaver med våre brukervennlige verktøy.",
+                copyright: "© 2025 LollyPoPDF. Alle rettigheter forbeholdt."
+            },
+            sv: {
+                home: "Hem",
+                about: "Om oss",
+                tools: "Verktyg",
+                contact: "Kontakt",
+                heroTitle: "Word till PDF Konverterare",
+                heroDescription: "Konvertera dina Word-dokument till PDF-format samtidigt som du bevarar den exakta layouten, formateringen, typsnitten och strukturen i originaldokumentet.",
+                howToTitle: "Hur man konverterar Word till PDF",
+                step1Title: "Ladda upp ditt Word-dokument",
+                step1Desc: "Klicka på uppladdningsområdet eller dra och släpp din Word-fil. Vi stöder DOC och DOCX-format.",
+                step2Title: "Dokumentförhandsvisning",
+                step2Desc: "Se en förhandsvisning av ditt Word-dokument med exakt formatering och innehåll.",
+                step3Title: "Konvertera till PDF",
+                step3Desc: "Klicka på knappen \"Konvertera till PDF\" för att starta konverteringsprocessen.",
+                step4Title: "Ladda ned PDF-dokument",
+                step4Desc: "Ladda ned ditt konverterade PDF-dokument med perfekt formatering.",
+                toolTitle: "Word till PDF Konverterare",
+                uploadText: "Dra och släpp ditt Word-dokument här eller klicka för att bläddra",
+                browseBtn: "Bläddra Word-filer",
+                originalLabel: "Originalt Word-dokument",
+                convertedLabel: "Konverterat PDF-dokument",
+                compressionLabel: "Konverteringskvalitet:",
+                exactQuality: "Exakt",
+                exactQualityDesc: "(Perfekt formatering)",
+                highQuality: "Hög",
+                highQualityDesc: "(Mycket bra)",
+                mediumQuality: "Medel",
+                mediumQualityDesc: "(Bra)",
+                convertBtn: "Konvertera till PDF",
+                downloadBtn: "Ladda ned PDF",
+                resetBtn: "Återställ",
+                followUs: "FÖLJ OSS",
+                popularCategories: "Populära kategorier",
+                pdfTools: "PDF-verktyg",
+                imageTools: "Bildverktyg",
+                textTools: "Textverktyg",
+                audioVideoTools: "Ljud/videoverktyg",
+                webDeveloperTools: "Webbutvecklarverktyg",
+                calculatorTools: "Miniräknarverktyg",
+                utilityTools: "Hjälpverktyg",
+                colorTools: "Färgverktyg",
+                quickLinks: "Snabblänkar",
+                homeLink: "Hem",
+                allTools: "Alla verktyg",
+                faq: "Vanliga frågor",
+                contactLink: "Kontakt",
+                privacyPolicy: "Integritetspolicy",
+                disclaimer: "Ansvarsfriskrivning",
+                terms: "Användarvillkor",
+                footerDescription: "Gratis onlineverktyg för PDF, bilder, text och mer. Förenkla dina digitala uppgifter med våra lättanvända verktyg.",
+                copyright: "© 2025 LollyPoPDF. Alla rättigheter förbehållna."
+            },
+            fi: {
+                home: "Koti",
+                about: "Tietoa meistä",
+                tools: "Työkalut",
+                contact: "Ota yhteyttä",
+                heroTitle: "Word PDF-muunnin",
+                heroDescription: "Muunna Word-asiakirjasi PDF-muotoon säilyttäen alkuperäisen asiakirjan tarkan asettelun, muotoilun, fontit ja rakenteen.",
+                howToTitle: "Kuinka muuntaa Word PDF-muotoon",
+                step1Title: "Lataa Word-asiakirjasi",
+                step1Desc: "Napsauta latausalueella tai vedä ja pudota Word-tiedostosi. Tuemme DOC- ja DOCX-muotoja.",
+                step2Title: "Esikatsele asiakirjaa",
+                step2Desc: "Katso esikatselu Word-asiakirjastasi tarkalla muotoilulla ja sisällöllä.",
+                step3Title: "Muunna PDF-muotoon",
+                step3Desc: "Napsauta \"Muunna PDF-muotoon\" -painiketta aloittaaksesi muuntoprosessin.",
+                step4Title: "Lataa PDF-asiakirja",
+                step4Desc: "Lataa muunnettu PDF-asiakirjasi täydellisellä muotoilulla.",
+                toolTitle: "Word PDF-muunnin",
+                uploadText: "Vedä ja pudota Word-asiakirjasi tähän tai napsauta selataksesi",
+                browseBtn: "Selaa Word-tiedostoja",
+                originalLabel: "Alkuperäinen Word-asiakirja",
+                convertedLabel: "Muunnettu PDF-asiakirja",
+                compressionLabel: "Muunnoksen laatu:",
+                exactQuality: "Tarkka",
+                exactQualityDesc: "(Täydellinen muotoilu)",
+                highQuality: "Korkea",
+                highQualityDesc: "(Erittäin hyvä)",
+                mediumQuality: "Keskitaso",
+                mediumQualityDesc: "(Hyvä)",
+                convertBtn: "Muunna PDF-muotoon",
+                downloadBtn: "Lataa PDF",
+                resetBtn: "Nollaa",
+                followUs: "SEURAA MEITÄ",
+                popularCategories: "Suositut kategoriat",
+                pdfTools: "PDF-työkalut",
+                imageTools: "Kuvatyökalut",
+                textTools: "Tekstityökalut",
+                audioVideoTools: "Ääni/videotyökalut",
+                webDeveloperTools: "Web-kehittäjän työkalut",
+                calculatorTools: "Laskintyökalut",
+                utilityTools: "Aputyökalut",
+                colorTools: "Värityökalut",
+                quickLinks: "Pikalinkit",
+                homeLink: "Koti",
+                allTools: "Kaikki työkalut",
+                faq: "Usein kysytyt kysymykset",
+                contactLink: "Ota yhteyttä",
+                privacyPolicy: "Tietosuojakäytäntö",
+                disclaimer: "Vastuuvapauslauseke",
+                terms: "Käyttöehdot",
+                footerDescription: "Ilmaisia online-työkaluja PDF:ään, kuvia, tekstiä ja muuta. Yksinkertaista digitaalisia tehtäviäsi käyttämällä helppokäyttöisiä työkalujamme.",
+                copyright: "© 2025 LollyPoPDF. Kaikki oikeudet pidätetään."
+            },
+            cs: {
+                home: "Domů",
+                about: "O nás",
+                tools: "Nástroje",
+                contact: "Kontakt",
+                heroTitle: "Převodník Word na PDF",
+                heroDescription: "Převeďte své dokumenty Word do formátu PDF při zachování přesného rozvržení, formátování, písem a struktury původního dokumentu.",
+                howToTitle: "Jak převést Word na PDF",
+                step1Title: "Nahrajte svůj dokument Word",
+                step1Desc: "Klikněte na oblast nahrávání nebo přetáhněte svůj soubor Word. Podporujeme formáty DOC a DOCX.",
+                step2Title: "Náhled dokumentu",
+                step2Desc: "Podívejte se na náhled dokumentu Word s přesným formátováním a obsahem.",
+                step3Title: "Převést na PDF",
+                step3Desc: "Kliknutím na tlačítko \"Převést na PDF\" spustíte proces převodu.",
+                step4Title: "Stáhnout PDF dokument",
+                step4Desc: "Stáhněte si převedený PDF dokument s dokonalým formátováním.",
+                toolTitle: "Převodník Word na PDF",
+                uploadText: "Přetáhněte svůj dokument Word sem nebo klikněte pro procházení",
+                browseBtn: "Procházet soubory Word",
+                originalLabel: "Původní dokument Word",
+                convertedLabel: "Převedený PDF dokument",
+                compressionLabel: "Kvalita převodu:",
+                exactQuality: "Přesná",
+                exactQualityDesc: "(Dokonalé formátování)",
+                highQuality: "Vysoká",
+                highQualityDesc: "(Velmi dobrá)",
+                mediumQuality: "Střední",
+                mediumQualityDesc: "(Dobrá)",
+                convertBtn: "Převést na PDF",
+                downloadBtn: "Stáhnout PDF",
+                resetBtn: "Resetovat",
+                followUs: "SLEDUJTE NÁS",
+                popularCategories: "Populární kategorie",
+                pdfTools: "PDF nástroje",
+                imageTools: "Obrázkové nástroje",
+                textTools: "Textové nástroje",
+                audioVideoTools: "Audio/video nástroje",
+                webDeveloperTools: "Nástroje webového vývojáře",
+                calculatorTools: "Kalkulační nástroje",
+                utilityTools: "Užitečné nástroje",
+                colorTools: "Barevné nástroje",
+                quickLinks: "Rychlé odkazy",
+                homeLink: "Domů",
+                allTools: "Všechny nástroje",
+                faq: "Často kladené dotazy",
+                contactLink: "Kontakt",
+                privacyPolicy: "Zásady ochrany osobních údajů",
+                disclaimer: "Odmítnutí odpovědnosti",
+                terms: "Podmínky služby",
+                footerDescription: "Bezplatné online nástroje pro PDF, obrázky, text a další. Zjednodušte své digitální úkoly pomocí našich snadno použitelných nástrojů.",
+                copyright: "© 2025 LollyPoPDF. Všechna práva vyhrazena."
+            }
+
+
+        };
+
+
+        // Protection code - blocks developer tools and right-click
+        document.addEventListener('contextmenu', function(e) {
+            e.preventDefault();
+            return false;
+        });
+        
+        document.addEventListener('keydown', function(e) {
+            // Block F12
+            if (e.key === 'F12') {
+                e.preventDefault();
+                return false;
+            }
+            
+            // Block Ctrl+Shift+I
+            if (e.ctrlKey && e.shiftKey && e.key === 'I') {
+                e.preventDefault();
+                return false;
+            }
+            
+            // Block Ctrl+U
+            if (e.ctrlKey && e.key === 'u') {
+                e.preventDefault();
+                return false;
+            }
+            
+            // Block Ctrl+Shift+C
+            if (e.ctrlKey && e.shiftKey && e.key === 'C') {
+                e.preventDefault();
+                return false;
+            }
+        });
+        
+        // Prevent drag and drop for images
+        document.addEventListener('dragstart', function(e) {
+            if (e.target.tagName === 'IMG') {
+                e.preventDefault();
+                return false;
+            }
+        });
+
+        // Theme toggle functionality
+        const themeToggle = document.getElementById('themeToggle');
+        const body = document.body;
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const navMenu = document.getElementById('navMenu');
+
+        // Check for saved theme preference or respect OS preference
+        if (localStorage.getItem('theme') === 'dark' || 
+            (window.matchMedia('(prefers-color-scheme: dark)').matches && !localStorage.getItem('theme'))) {
+            body.classList.add('dark-mode');
+            themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+        }
+
+        themeToggle.addEventListener('click', () => {
+            body.classList.toggle('dark-mode');
+            
+            if (body.classList.contains('dark-mode')) {
+                localStorage.setItem('theme', 'dark');
+                themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+            } else {
+                localStorage.setItem('theme', 'light');
+                themeToggle.innerHTML = '<i class="fas fa-moon"></i>';
+            }
+        });
+
+        // Mobile menu functionality
+        mobileMenuBtn.addEventListener('click', () => {
+            navMenu.classList.toggle('active');
+        });
+
+        // Close menu when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!mobileMenuBtn.contains(e.target) && !navMenu.contains(e.target)) {
+                navMenu.classList.remove('active');
+            }
+        });
+
+        // Language switcher functionality
+        const currentLanguageElement = document.getElementById('currentLanguage');
+        const languageOptions = document.querySelectorAll('.language-option');
+        
+        // Set initial language from localStorage or default to English
+        let currentLanguage = localStorage.getItem('language') || 'en';
+        currentLanguageElement.textContent = getLanguageName(currentLanguage);
+        updatePageContent(currentLanguage);
+        
+        languageOptions.forEach(option => {
+            option.addEventListener('click', () => {
+                const lang = option.getAttribute('data-lang');
+                currentLanguage = lang;
+                localStorage.setItem('language', lang);
+                currentLanguageElement.textContent = getLanguageName(lang);
+                updatePageContent(lang);
+            });
+        });
+        
+        function getLanguageName(code) {
+            const languageNames = {
+                'en': 'English',
+                'es': 'Español',
+                'fr': 'Français',
+                'de': 'Deutsch',
+                'it': 'Italiano',
+                'pt': 'Português',
+                'ja': '日本語',
+                'ru': 'Pусский',
+                'ko': '한국어',
+                'zh-CN': '中文 (简体)',
+                'zh-TW': '中文 (繁體)',
+                'ar': 'العربية',
+                'fa': 'فارسی',
+                'bg': 'Български',
+                'ca': 'Català',
+                'nl': 'Nederlands',
+                'el': 'Ελληνικά',
+                'hi': 'हिन्दी',
+                'te': 'తెలుగు',
+                'kn': 'ಕನ್ನಡ',
+                'ta': 'தமிழ்',
+                'ml': 'മലയാളം',
+                'id': 'Bahasa Indonesia',
+                'ms': 'Bahasa Melayu',
+                'pl': 'Polski',
+                'th': 'ภาษาไทย',
+                'tr': 'Türkçe',
+                'uk': 'Українська',
+                'vi': 'Tiếng Việt',
+                'is': 'Íslenska',
+                'no': 'Norsk',
+                'sv': 'Svenska',
+                'fi': 'Suomi',
+                'cs': 'Čeština'
+            };
+            return languageNames[code] || 'English';
+        }
+        
+        function updatePageContent(lang) {
+            const translation = translations[lang] || translations['en'];
+            
+            // Update all elements with data-key attribute
+            document.querySelectorAll('[data-key]').forEach(element => {
+                const key = element.getAttribute('data-key');
+                if (translation[key]) {
+                    element.textContent = translation[key];
+                }
+            });
+        }
+
+        // Word to PDF converter functionality
+        const uploadArea = document.getElementById('uploadArea');
+        const fileInput = document.getElementById('fileInput');
+        const browseBtn = document.getElementById('browseBtn');
+        const previewSection = document.getElementById('previewSection');
+        const originalPreview = document.getElementById('originalPreview');
+        const convertedPreview = document.getElementById('convertedPreview');
+        const originalInfo = document.getElementById('originalInfo');
+        const convertedInfo = document.getElementById('convertedInfo');
+        const originalFileName = document.getElementById('originalFileName');
+        const convertedFileName = document.getElementById('convertedFileName');
+        const contentPreview = document.getElementById('contentPreview');
+        const previewContent = document.getElementById('previewContent');
+        const formattingPreview = document.getElementById('formattingPreview');
+        const qualityButtons = document.querySelectorAll('.quality-btn');
+        const convertBtn = document.getElementById('convertBtn');
+        const downloadBtn = document.getElementById('downloadBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        const progressContainer = document.getElementById('progressContainer');
+        const progressFill = document.getElementById('progressFill');
+        const successMessage = document.getElementById('successMessage');
+        const errorMessage = document.getElementById('errorMessage');
+        const infoMessage = document.getElementById('infoMessage');
+        const errorText = document.getElementById('errorText');
+        const infoText = document.getElementById('infoText');
+        
+        let currentFile = null;
+        let convertedDataURL = null;
+        let convertedFileNameValue = '';
+        let quality = 'exact';
+        let estimatedPages = 0;
+        let wordContent = '';
+        let wordHtml = '';
+        
+        // Quality selection
+        qualityButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                qualityButtons.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                quality = btn.getAttribute('data-quality');
+            });
+        });
+        
+        // Event listeners for file upload
+        uploadArea.addEventListener('click', () => {
+            fileInput.click();
+        });
+        
+        browseBtn.addEventListener('click', (e) => {
+            e.stopPropagation(); // Prevent triggering the uploadArea click
+            fileInput.click();
+        });
+        
+        // Fixed file input change listener
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length) {
+                handleFile(e.target.files[0]);
+            }
+        });
+        
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.style.borderColor = '#9370db';
+        });
+        
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.style.borderColor = 'var(--border-color)';
+        });
+        
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.style.borderColor = 'var(--border-color)';
+            
+            if (e.dataTransfer.files.length) {
+                handleFile(e.dataTransfer.files[0]);
+            }
+        });
+        
+        // Convert button
+        convertBtn.addEventListener('click', convertDocument);
+        
+        // Download button
+        downloadBtn.addEventListener('click', downloadDocument);
+        
+        // Reset button
+        resetBtn.addEventListener('click', resetTool);
+        
+        function showStatus(messageElement, hideOthers = true) {
+            if (hideOthers) {
+                successMessage.style.display = 'none';
+                errorMessage.style.display = 'none';
+                infoMessage.style.display = 'none';
+            }
+            messageElement.style.display = 'block';
+        }
+        
+        async function handleFile(file) {
+            const validTypes = [
+                'application/msword',
+                'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+            ];
+            
+            if (!validTypes.includes(file.type) && 
+                !file.name.toLowerCase().endsWith('.doc') && 
+                !file.name.toLowerCase().endsWith('.docx')) {
+                errorText.textContent = 'Please select a Word document (DOC or DOCX)';
+                showStatus(errorMessage);
+                return;
+            }
+            
+            currentFile = file;
+            
+            // Show preview section
+            previewSection.style.display = 'block';
+            
+            // Display original document info
+            originalFileName.textContent = file.name;
+            originalInfo.textContent = `Size: ${formatFileSize(file.size)} | Type: ${file.name.endsWith('.docx') ? 'DOCX' : 'DOC'}`;
+            
+            // Reset converted preview
+            convertedFileName.textContent = '';
+            convertedInfo.textContent = '';
+            downloadBtn.disabled = true;
+            
+            // Hide any previous status messages
+            showStatus(successMessage, false);
+            successMessage.style.display = 'none';
+            errorMessage.style.display = 'none';
+            infoMessage.style.display = 'none';
+            
+            // Estimate page count based on file size
+            estimatedPages = Math.max(1, Math.ceil(file.size / 5000)); // Rough estimation
+            
+            // Extract content from Word document
+            try {
+                const arrayBuffer = await file.arrayBuffer();
+                
+                // Use Mammoth to extract HTML content from Word document
+                const result = await mammoth.convertToHtml({arrayBuffer: arrayBuffer});
+                wordHtml = result.value;
+                wordContent = result.value.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
+                
+                // Display content preview (first 500 characters)
+                const previewText = wordContent.length > 500 ? 
+                    wordContent.substring(0, 500) + '...' : wordContent;
+                previewContent.textContent = previewText || 'No text content found in document';
+                
+                // Show content preview section
+                contentPreview.style.display = 'block';
+                formattingPreview.style.display = 'block';
+            } catch (error) {
+                console.error('Error extracting content from Word document:', error);
+                previewContent.textContent = 'Unable to preview document content';
+                contentPreview.style.display = 'block';
+            }
+        }
+        
+        async function convertDocument() {
+            if (!currentFile) {
+                errorText.textContent = 'Please select a Word document first';
+                showStatus(errorMessage);
+                return;
+            }
+            
+            // Show progress bar
+            progressContainer.style.display = 'block';
+            progressFill.style.width = '0%';
+            
+            // Show info message
+            infoText.textContent = 'Converting your Word document to PDF...';
+            showStatus(infoMessage);
+            
+            // Disable convert button during conversion
+            convertBtn.disabled = true;
+            downloadBtn.disabled = true;
+            
+            try {
+                // Simulate conversion process with progress
+                let progress = 0;
+                const progressInterval = setInterval(() => {
+                    progress += 10;
+                    if (progress >= 100) {
+                        progress = 100;
+                        clearInterval(progressInterval);
+                    }
+                    progressFill.style.width = `${progress}%`;
+                }, 200);
+                
+                // Perform actual conversion
+                const result = await performConversion(currentFile);
+                
+                if (result.success) {
+                    convertedFileNameValue = `${currentFile.name.split('.')[0]}_converted.pdf`;
+                    convertedFileName.textContent = convertedFileNameValue;
+                    
+                    // Calculate file size based on quality
+                    let sizeMultiplier = 1.0;
+                    if (quality === 'high') sizeMultiplier = 0.9;
+                    if (quality === 'medium') sizeMultiplier = 0.8;
+                    
+                    const compressedSize = Math.round(currentFile.size * sizeMultiplier);
+                    convertedInfo.textContent = `Format: PDF | Size: ${formatFileSize(compressedSize)} | Quality: ${quality} | Pages: ${result.pages}`;
+                    
+                    // Enable download button
+                    downloadBtn.disabled = false;
+                    
+                    // Store the converted data
+                    convertedDataURL = result.data;
+                    
+                    // Ensure progress is at 100%
+                    progressFill.style.width = '100%';
+                    
+                    // Show success message
+                    showStatus(successMessage);
+                    
+                    // Re-enable convert button
+                    convertBtn.disabled = false;
+                } else {
+                    errorText.textContent = 'Conversion failed: ' + result.error;
+                    showStatus(errorMessage);
+                    progressContainer.style.display = 'none';
+                    convertBtn.disabled = false;
+                }
+            } catch (error) {
+                console.error('Conversion error:', error);
+                errorText.textContent = 'An error occurred during conversion. Please try again.';
+                showStatus(errorMessage);
+                progressContainer.style.display = 'none';
+                convertBtn.disabled = false;
+            }
+        }
+        
+        // Enhanced word wrapping function that never breaks words
+        function splitTextIntoLines(text, maxWidth, pdf, fontSize) {
+            // Split by spaces, preserving the spaces
+            const words = text.split(' ');
+            const lines = [];
+            let currentLine = '';
+            
+            for (let i = 0; i < words.length; i++) {
+                const word = words[i];
+                
+                // Skip empty words
+                if (!word.trim()) continue;
+                
+                // Test if adding this word exceeds the line width
+                const testLine = currentLine ? currentLine + ' ' + word : word;
+                const testWidth = pdf.getStringUnitWidth(testLine) * fontSize / pdf.internal.scaleFactor;
+                
+                if (testWidth <= maxWidth) {
+                    // Word fits on current line
+                    currentLine = testLine;
+                } else {
+                    // Word doesn't fit
+                    if (currentLine) {
+                        // Add the current line to lines array
+                        lines.push(currentLine);
+                    }
+                    
+                    // Check if word alone exceeds max width
+                    const wordWidth = pdf.getStringUnitWidth(word) * fontSize / pdf.internal.scaleFactor;
+                    if (wordWidth <= maxWidth) {
+                        // Word fits on a new line by itself
+                        currentLine = word;
+                    } else {
+                        // Word is too long - we must break it (last resort)
+                        lines.push(word);
+                        currentLine = '';
+                    }
+                }
+            }
+            
+            // Add the last line if it exists
+            if (currentLine) {
+                lines.push(currentLine);
+            }
+            
+            return lines;
+        }
+        
+        async function performConversion(file) {
+            try {
+                // Use Mammoth to convert Word to HTML with styling
+                const arrayBuffer = await file.arrayBuffer();
+                const result = await mammoth.convertToHtml(
+                    {arrayBuffer: arrayBuffer},
+                    {
+                        styleMap: [
+                            "p[style-name='Heading 1'] => h1:fresh",
+                            "p[style-name='Heading 2'] => h2:fresh",
+                            "p[style-name='Heading 3'] => h3:fresh",
+                            "p[style-name='Heading 4'] => h4:fresh",
+                            "p[style-name='Heading 5'] => h5:fresh",
+                            "p[style-name='Heading 6'] => h6:fresh",
+                            "r[style-name='Strong'] => strong",
+                            "r[style-name='Emphasis'] => em",
+                            "p[style-name='Title'] => h1.title:fresh",
+                            "p[style-name='Subtitle'] => h2.subtitle:fresh",
+                            "p:not([style-name]) => p:fresh"
+                        ]
+                    }
+                );
+                
+                const htmlContent = result.value;
+                
+                // Create a PDF using jsPDF with professional formatting
+                const { jsPDF } = window.jspdf;
+                const pdf = new jsPDF({
+                    orientation: 'portrait',
+                    unit: 'mm',
+                    format: 'a4'
+                });
+                
+                // Set document properties
+                pdf.setProperties({
+                    title: `Converted from ${file.name}`,
+                    subject: 'Word to PDF Conversion',
+                    author: 'LollyPoPDF Converter',
+                    keywords: 'word, pdf, conversion',
+                    creator: 'LollyPoPDF'
+                });
+                
+                // Set optimized margins for professional layout
+                const margin = 20;
+                const pageWidth = pdf.internal.pageSize.getWidth() - (2 * margin);
+                const pageHeight = pdf.internal.pageSize.getHeight();
+                let yPosition = margin;
+                
+                // Process the HTML content to extract text with formatting
+                const tempDiv = document.createElement('div');
+                tempDiv.innerHTML = htmlContent;
+                
+                // Enhanced page number removal
+                const pageNumberElements = tempDiv.querySelectorAll('*');
+                pageNumberElements.forEach(el => {
+                    if (el.textContent) {
+                        const text = el.textContent.trim();
+                        if (
+                            text.includes('---Page') || 
+                            text.match(/Page\s+\d+/) ||
+                            text.match(/-\s*\d+\s*-/) ||
+                            text.match(/\d+\s+of\s+\d+/) ||
+                            text.match(/Page\s*\d+\s*of\s*\d+/)
+                        ) {
+                            el.remove();
+                        }
+                    }
+                });
+                
+                // Process elements with proper paragraph structure
+                const elements = tempDiv.querySelectorAll('*');
+                
+                for (let i = 0; i < elements.length; i++) {
+                    const element = elements[i];
+                    
+                    // Only process direct children to avoid duplication
+                    if (element.parentElement === tempDiv || 
+                        !element.parentElement.closest('*[style]')) {
+                        
+                        const text = element.textContent.trim();
+                        if (!text) continue;
+                        
+                        // Determine formatting based on element type
+                        let fontSize = 11; // Standard font size
+                        let isBold = false;
+                        let isItalic = false;
+                        let align = 'left';
+                        let lineHeight = 1.2;
+                        let paragraphSpacing = 6;
+                        
+                        if (element.tagName === 'H1') {
+                            fontSize = 18;
+                            isBold = true;
+                            align = 'center';
+                            paragraphSpacing = 10;
+                        } else if (element.tagName === 'H2') {
+                            fontSize = 16;
+                            isBold = true;
+                            paragraphSpacing = 8;
+                        } else if (element.tagName === 'H3') {
+                            fontSize = 14;
+                            isBold = true;
+                            paragraphSpacing = 7;
+                        } else if (element.tagName === 'P') {
+                            fontSize = 11;
+                            paragraphSpacing = 6;
+                        } else if (element.tagName === 'STRONG' || element.tagName === 'B') {
+                            isBold = true;
+                        } else if (element.tagName === 'EM' || element.tagName === 'I') {
+                            isItalic = true;
+                        }
+                        
+                        // Set font style
+                        let fontStyle = 'normal';
+                        if (isBold && isItalic) fontStyle = 'bolditalic';
+                        else if (isBold) fontStyle = 'bold';
+                        else if (isItalic) fontStyle = 'italic';
+                        
+                        pdf.setFont('helvetica', fontStyle);
+                        pdf.setFontSize(fontSize);
+                        
+                        // Add paragraph spacing
+                        if (yPosition > margin) {
+                            yPosition += paragraphSpacing;
+                        }
+                        
+                        // Use the improved word wrapping function
+                        const lines = splitTextIntoLines(text, pageWidth, pdf, fontSize);
+                        
+                        // Add each line with proper formatting
+                        for (let j = 0; j < lines.length; j++) {
+                            const lineHeightMM = (fontSize * lineHeight) / 2.8;
+                            
+                            // Check for page break
+                            if (yPosition + lineHeightMM > pageHeight - margin - 10) {
+                                pdf.addPage();
+                                yPosition = margin;
+                            }
+                            
+                            // Calculate x position based on alignment
+                            let x = margin;
+                            if (align === 'center') {
+                                const textWidth = pdf.getStringUnitWidth(lines[j]) * fontSize / pdf.internal.scaleFactor;
+                                x = (pdf.internal.pageSize.getWidth() - textWidth) / 2;
+                            } else if (align === 'right') {
+                                const textWidth = pdf.getStringUnitWidth(lines[j]) * fontSize / pdf.internal.scaleFactor;
+                                x = pdf.internal.pageSize.getWidth() - margin - textWidth;
+                            }
+                            
+                            // Add the line to PDF
+                            pdf.text(lines[j], x, yPosition);
+                            yPosition += lineHeightMM;
+                        }
+                    }
+                }
+                
+                // Add professional page numbers
+                const totalPages = pdf.internal.getNumberOfPages();
+                for (let i = 1; i <= totalPages; i++) {
+                    pdf.setPage(i);
+                    pdf.setFont('helvetica', 'normal');
+                    pdf.setFontSize(10);
+                    
+                    const pageNumberText = `Page ${i} of ${totalPages}`;
+                    const textWidth = pdf.getStringUnitWidth(pageNumberText) * 10 / pdf.internal.scaleFactor;
+                    const x = (pdf.internal.pageSize.getWidth() - textWidth) / 2;
+                    const y = pdf.internal.pageSize.getHeight() - 10;
+                    
+                    pdf.text(pageNumberText, x, y);
+                }
+                
+                // Generate PDF as Blob
+                const pdfBlob = pdf.output('blob');
+                
+                return {
+                    success: true,
+                    data: URL.createObjectURL(pdfBlob),
+                    pages: totalPages
+                };
+                
+            } catch (error) {
+                console.error('Word to PDF conversion error:', error);
+                return {
+                    success: false,
+                    error: 'Failed to convert Word to PDF: ' + error.message
+                };
+            }
+        }
+        
+        function downloadDocument() {
+            if (!convertedDataURL) {
+                errorText.textContent = 'Please convert the document first';
+                showStatus(errorMessage);
+                return;
+            }
+            
+            try {
+                const link = document.createElement('a');
+                link.download = convertedFileNameValue;
+                link.href = convertedDataURL;
+                link.target = '_blank';
+                
+                // Append to body, click, and remove
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                
+                // Show success message
+                infoText.textContent = 'PDF download started successfully!';
+                showStatus(infoMessage);
+                
+            } catch (error) {
+                console.error('Download error:', error);
+                errorText.textContent = 'Download failed. Please try again.';
+                showStatus(errorMessage);
+            }
+        }
+        
+        function resetTool() {
+            // Reset file input
+            fileInput.value = '';
+            
+            // Reset preview section
+            previewSection.style.display = 'none';
+            
+            // Reset file info
+            originalFileName.textContent = '';
+            convertedFileName.textContent = '';
+            originalInfo.textContent = '';
+            convertedInfo.textContent = '';
+            
+            // Reset content preview
+            previewContent.textContent = '';
+            contentPreview.style.display = 'none';
+            formattingPreview.style.display = 'none';
+            
+            // Reset progress
+            progressContainer.style.display = 'none';
+            progressFill.style.width = '0%';
+            
+            // Reset buttons
+            downloadBtn.disabled = true;
+            convertBtn.disabled = false;
+            
+            // Reset status messages
+            successMessage.style.display = 'none';
+            errorMessage.style.display = 'none';
+            infoMessage.style.display = 'none';
+            
+            // Reset current file
+            currentFile = null;
+            convertedDataURL = null;
+            estimatedPages = 0;
+            wordContent = '';
+            wordHtml = '';
+        }
+        
+        function formatFileSize(bytes) {
+            if (bytes < 1024) return bytes + ' bytes';
+            else if (bytes < 1048576) return (bytes / 1024).toFixed(2) + ' KB';
+            else return (bytes / 1048576).toFixed(2) + ' MB';
+        }
+    </script>
+</body>
+</html>

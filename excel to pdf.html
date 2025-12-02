@@ -1,0 +1,3598 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Excel to PDF Converter | LollyPoPDF</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <style>
+        :root {
+            --primary-color: #9370db;
+            --secondary-color: #8a2be2;
+            --bg-color: #ffffff;
+            --card-bg: #ffffff;
+            --text-color: #333333;
+            --border-color: #e0e0e0;
+            --shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            --light-lavender: #f5f0ff;
+            --dark-lavender: #e6d9ff;
+            --white: #ffffff;
+            --header-text: #6b7280;
+            --accent-color: #9370db;
+            --transition: all 0.3s ease;
+        }
+
+        .dark-mode {
+            --primary-color: #9370db;
+            --secondary-color: #8a2be2;
+            --bg-color: #1a1a1a;
+            --card-bg: #2d2d2d;
+            --text-color: #f0f0f0;
+            --border-color: #444444;
+            --shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+            --light-lavender: #2a1a4a;
+            --dark-lavender: #3d2a6d;
+            --white: #1a1a1a;
+            --header-text: #d1d5db;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            transition: var(--transition);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header Styles */
+        header {
+            background-color: var(--white);
+            color: var(--header-text);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+        }
+
+        .logo-icon {
+            position: relative;
+            width: 40px;
+            height: 40px;
+        }
+
+        .logo-circle {
+            width: 40px;
+            height: 40px;
+            border-radius: 40%;
+            background: linear-gradient(to bottom right, #9370db, #8a2be2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .logo-stem {
+            position: absolute;
+            bottom: -17px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 6px;
+            height: 17px;
+            background-color: #8a2be2;
+            border-radius: 0 0 3px 3px;
+        }
+
+        .logo-text {
+            font-size: 24px;
+            font-weight: bold;
+            color: #9370db;
+        }
+
+        nav ul {
+            display: flex;
+            gap: 30px;
+            list-style: none;
+        }
+
+        nav a {
+            font-weight: 500;
+            position: relative;
+            color: var(--header-text);
+            padding: 8px 0;
+            border-radius: 0;
+            transition: var(--transition);
+            text-decoration: none;
+        }
+
+        nav a:hover {
+            color: var(--accent-color);
+        }
+
+        nav a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: var(--accent-color);
+            transition: width 0.3s ease;
+        }
+
+        nav a:hover::after {
+            width: 100%;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .email {
+            font-size: 14px;
+            color: var(--header-text);
+        }
+
+        .theme-toggle {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 20px;
+            color: var(--header-text);
+            padding: 8px;
+            border-radius: 50%;
+            transition: var(--transition);
+        }
+
+        .theme-toggle:hover {
+            background-color: #f0ebff;
+            color: var(--accent-color);
+        }
+
+        .dark-mode .theme-toggle:hover {
+            background-color: #2d3748;
+            color: var(--accent-color);
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--header-text);
+        }
+
+        /* Hero Section */
+        .hero {
+            background: var(--light-lavender);
+            padding: 60px 20px;
+            text-align: center;
+        }
+
+        .hero h1 {
+            font-size: 2.5rem;
+            color: #000;
+            margin-bottom: 15px;
+            line-height: 1.2;
+        }
+
+        .dark-mode .hero h1 {
+            color: #fff;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            color: var(--text-color);
+            max-width: 700px;
+            margin: 0 auto 30px;
+            line-height: 1.6;
+        }
+
+        /* How to Convert Section */
+        .how-to {
+            background-color: var(--white);
+            padding: 80px 20px;
+        }
+
+        .dark-mode .how-to {
+            background-color: #1a1a1a;
+        }
+
+        .how-to h2 {
+            font-size: 2rem;
+            color: var(--text-color);
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .steps-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 40px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .step-box {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            padding: 30px;
+            min-height: 200px;
+            position: relative;
+        }
+
+        .step-number {
+            width: 40px;
+            height: 40px;
+            background-color: var(--primary-color);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        .step-box h3 {
+            font-size: 18px;
+            color: var(--text-color);
+            margin-bottom: 15px;
+        }
+
+        .step-box p {
+            font-size: 14px;
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        /* Converter Tool */
+        .converter {
+            background: var(--light-lavender);
+            padding: 60px 20px;
+        }
+
+        .converter h2 {
+            font-size: 2rem;
+            color: var(--primary-color);
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .converter-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            padding: 30px;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .upload-area {
+            border: 2px dashed var(--border-color);
+            border-radius: 8px;
+            padding: 40px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: border-color 0.3s;
+        }
+
+        .upload-area:hover {
+            border-color: var(--primary-color);
+        }
+
+        .upload-icon {
+            font-size: 48px;
+            color: var(--primary-color);
+            margin-bottom: 15px;
+        }
+
+        .upload-text {
+            margin-bottom: 15px;
+            font-size: 16px;
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        .upload-btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+
+        .upload-btn:hover {
+            background-color: var(--secondary-color);
+        }
+
+        .preview-section {
+            margin-top: 30px;
+            display: none;
+        }
+
+        .preview-container {
+            display: flex;
+            gap: 30px;
+            flex-wrap: wrap;
+        }
+
+        .preview-box {
+            flex: 1;
+            min-width: 300px;
+        }
+
+        .preview-image {
+            width: 100%;
+            max-height: 300px;
+            object-fit: contain;
+            border-radius: 8px;
+            background-color: var(--bg-color);
+            border: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .file-info {
+            font-size: 14px;
+            color: var(--text-color);
+            margin-top: 10px;
+        }
+
+        .conversion-options {
+            margin: 20px 0;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .quality-selection label {
+            font-weight: 500;
+            font-size: 16px;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .quality-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .quality-btn {
+            flex: 1;
+            padding: 12px;
+            background: none;
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .quality-btn.active {
+            background-color: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        .quality-title {
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .quality-desc {
+            font-size: 12px;
+            opacity: 0.8;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+            flex: 1;
+            font-weight: 500;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--secondary-color);
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            color: var(--primary-color);
+            border: 2px solid var(--primary-color);
+        }
+
+        .btn-outline:hover {
+            background-color: rgba(147, 112, 219, 0.1);
+        }
+
+        .btn-secondary {
+            background-color: #6b7280;
+            color: white;
+            border: none;
+        }
+
+        .btn-secondary:hover {
+            background-color: #4b5563;
+        }
+
+        .progress-container {
+            margin-top: 20px;
+            display: none;
+        }
+
+        .progress-bar {
+            height: 8px;
+            background-color: var(--border-color);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background-color: var(--primary-color);
+            width: 0%;
+            transition: width 0.3s;
+        }
+
+        /* Table Preview */
+        .table-preview {
+            margin-top: 20px;
+            overflow-x: auto;
+        }
+
+        .table-preview h4 {
+            margin-bottom: 10px;
+            color: var(--primary-color);
+            font-size: 16px;
+        }
+
+        .table-preview table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12px;
+        }
+
+        .table-preview th, .table-preview td {
+            border: 1px solid var(--border-color);
+            padding: 6px 8px;
+            text-align: left;
+        }
+
+        .table-preview th {
+            background-color: var(--primary-color);
+            color: white;
+            font-weight: 600;
+        }
+
+        .table-preview tr:nth-child(even) {
+            background-color: rgba(147, 112, 219, 0.1);
+        }
+
+        /* Formatting Preview */
+        .formatting-preview {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: var(--card-bg);
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+        }
+
+        .formatting-preview h4 {
+            margin-bottom: 10px;
+            color: var(--primary-color);
+            font-size: 16px;
+        }
+
+        .formatting-features {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .formatting-feature {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+        }
+
+        .formatting-feature i {
+            color: var(--primary-color);
+        }
+
+        /* Status Messages */
+        .status-message {
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 5px;
+            text-align: center;
+            font-weight: 500;
+            display: none;
+        }
+
+        .status-success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .status-error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .status-info {
+            background-color: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+
+        /* Footer Styles */
+        footer {
+            width: 100%;
+            background-color: #000000;
+            color: white;
+            padding: 60px 5% 80px;
+            position: relative;
+        }
+
+        .footer-content {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 40px;
+            justify-content: space-between;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .footer-logo {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            margin-bottom: 20px;
+        }
+
+        .footer-logo-icon {
+            position: relative;
+            width: 40px;
+            height: 40px;
+            margin-right: 10px;
+        }
+
+        .footer-logo-circle {
+            width: 40px;
+            height: 40px;
+            border-radius: 40%;
+            background: linear-gradient(to bottom right, #9370db, #8a2be2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .footer-logo-stem {
+            position: absolute;
+            bottom: -17px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 6px;
+            height: 17px;
+            background-color: #8a2be2;
+            border-radius: 0 0 3px 3px;
+        }
+
+        .footer-logo-text {
+            color: #9370db;
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .footer-section {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .footer-section h3 {
+            color: #ffffff;
+            font-size: 18px;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        .footer-section h3.category-header {
+            color: #a391f2;
+        }
+
+        .social-icons {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .social-icon {
+            width: 40px;
+            height: 40px;
+            background-color: #9370db;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+
+        .social-icon:hover {
+            background-color: #8a2be2;
+            transform: translateY(-3px);
+        }
+
+        .footer-links {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 10px;
+        }
+
+        .footer-links a {
+            color: white;
+            text-decoration: none;
+            transition: color 0.3s;
+            font-size: 14px;
+        }
+
+        .footer-links a:hover {
+            color: #9370db;
+        }
+
+        .footer-line {
+            position: absolute;
+            bottom: 50px;
+            left: 0;
+            width: 100%;
+            height: 1px;
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .copyright {
+            position: absolute;
+            bottom: 20px;
+            left: 10px;
+            color: #f9f7ff;
+            font-size: 12px;
+        }
+
+        /* Language Switcher */
+        .language-switcher {
+            position: fixed;
+            bottom: 10px;
+            right: 20px;
+            z-index: 1000;
+        }
+
+        .language-btn {
+            background-color: #9370db;
+            color: white;
+            border: none;
+            border-radius: 20px;
+            padding: 5px 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            transition: background-color 0.3s;
+        }
+
+        .language-btn:hover {
+            background-color: #8a2be2;
+        }
+
+        .language-dropdown {
+            position: absolute;
+            bottom: 50px;
+            right: 0;
+            width: 300px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            display: none;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .language-switcher:hover .language-dropdown {
+            display: grid;
+        }
+
+        .language-option {
+            padding: 8px 5px;
+            text-align: center;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+            font-size: 12px;
+        }
+
+        .language-option:hover {
+            background-color: #f5f0ff;
+            color: #333;
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 768px) {
+            .steps-container {
+                grid-template-columns: 1fr;
+            }
+            
+            nav ul {
+                display: none;
+                flex-direction: column;
+                position: absolute;
+                top: 70px;
+                left: 0;
+                width: 100%;
+                background-color: var(--bg-color);
+                box-shadow: var(--shadow);
+                padding: 20px;
+                gap: 15px;
+            }
+            
+            nav ul.active {
+                display: flex;
+            }
+            
+            .mobile-menu-btn {
+                display: block;
+            }
+            
+            .preview-container {
+                flex-direction: column;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+            
+            .footer-content {
+                flex-direction: column;
+            }
+            
+            .language-dropdown {
+                width: 250px;
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .header-right .email {
+                display: none;
+            }
+
+            .quality-buttons {
+                flex-direction: column;
+            }
+
+            .formatting-features {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hero h1 {
+                font-size: 2rem;
+            }
+            
+            .hero p {
+                font-size: 1rem;
+            }
+            
+            .language-dropdown {
+                width: 200px;
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <div class="header-container">
+                <a href="https://lollypopdf.com" class="logo">
+                    <div class="logo-icon">
+                        <div class="logo-circle">LPdf</div>
+                        <div class="logo-stem"></div>
+                    </div>
+                    <div class="logo-text">LollyPoPdf</div>
+                </a>                
+                
+                <nav>
+                    <ul id="navMenu">
+                        <li><a href=" https://lollypopdf.github.io/LollyPoPdf#home" class="nav-link" data-key="home">Home</a></li>
+                        <li><a href="https://lollypopdf.github.io/LollyPoPdf#about" class="nav-link" data-key="about">About Us</a></li>
+                        <li><a href=" https://lollypopdf.github.io/LollyPoPdf#tools" class="nav-link" data-key="tools">Tools</a></li>
+                        <li><a href="contact.html" class="nav-link" data-key="contact">Contact</a></li>
+                    </ul>
+                </nav>
+                
+                <div class="header-right">
+                    <span class="email">lollypoppdf@gmail.com</span>
+                    <button class="theme-toggle" id="themeToggle">
+                        <i class="fas fa-moon"></i>
+                    </button>
+                    <button class="mobile-menu-btn" id="mobileMenuBtn">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <h1 class="hero-title" data-key="heroTitle">Excel to PDF Converter</h1>
+            <p class="hero-description" data-key="heroDescription">Convert your Excel spreadsheets to PDF format while preserving the exact layout, formatting, tables, and structure of the original document.</p>
+        </div>
+    </section>
+
+    <!-- How to Convert Section -->
+    <section class="how-to">
+        <div class="container">
+            <h2 class="section-title" data-key="howToTitle">How to Convert Excel to PDF</h2>
+            <div class="steps-container">
+                <div class="step-box">
+                    <div class="step-number">1</div>
+                    <h3 class="step-title" data-key="step1Title">Upload Your Excel Document</h3>
+                    <p class="step-description" data-key="step1Desc">Click the upload area or drag and drop your Excel file. We support XLS and XLSX formats.</p>
+                </div>
+                <div class="step-box">
+                    <div class="step-number">2</div>
+                    <h3 class="step-title" data-key="step2Title">Preview Spreadsheet</h3>
+                    <p class="step-description" data-key="step2Desc">See a preview of your Excel spreadsheet with exact formatting and data.</p>
+                </div>
+                <div class="step-box">
+                    <div class="step-number">3</div>
+                    <h3 class="step-title" data-key="step3Title">Convert to PDF</h3>
+                    <p class="step-description" data-key="step3Desc">Click the "Convert to PDF" button to start the conversion process.</p>
+                </div>
+                <div class="step-box">
+                    <div class="step-number">4</div>
+                    <h3 class="step-title" data-key="step4Title">Download PDF Document</h3>
+                    <p class="step-description" data-key="step4Desc">Download your converted PDF document with perfect formatting.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Converter Tool -->
+    <section class="converter">
+        <div class="container">
+            <h2 class="section-title" data-key="toolTitle">Excel to PDF Converter</h2>
+            <div class="converter-card">
+                <div class="upload-area" id="uploadArea">
+                    <i class="fas fa-file-upload upload-icon"></i>
+                    <p class="upload-text" data-key="uploadText">Drag & drop your Excel spreadsheet here or click to browse</p>
+                    <input type="file" id="fileInput" class="file-input" accept=".xls,.xlsx,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet">
+                    <button class="upload-btn" id="browseBtn" data-key="browseBtn">Browse Excel Files</button>
+                </div>
+                
+                <div class="preview-section" id="previewSection">
+                    <div class="preview-container">
+                        <div class="preview-box">
+                            <h3 data-key="originalLabel">Original Excel Document</h3>
+                            <div id="originalPreview" class="preview-image">
+                                <i class="fas fa-file-excel" style="font-size: 48px; color: var(--primary-color); margin: 20px;"></i>
+                                <p id="originalFileName"></p>
+                            </div>
+                            <div class="file-info" id="originalInfo"></div>
+                            
+                            <!-- Table Preview Section -->
+                            <div class="table-preview" id="tablePreview">
+                                <h4>Spreadsheet Data Preview</h4>
+                                <div id="previewTable"></div>
+                            </div>
+                        </div>
+                        <div class="preview-box">
+                            <h3 data-key="convertedLabel">Converted PDF Document</h3>
+                            <div id="convertedPreview" class="preview-image">
+                                <i class="fas fa-file-pdf" style="font-size: 48px; color: var(--primary-color); margin: 20px;"></i>
+                                <p id="convertedFileName"></p>
+                            </div>
+                            <div class="file-info" id="convertedInfo"></div>
+                            
+                            <!-- Formatting Preview Section -->
+                            <div class="formatting-preview" id="formattingPreview">
+                                <h4>Format Preservation</h4>
+                                <div class="formatting-features">
+                                    <div class="formatting-feature">
+                                        <i class="fas fa-check-circle"></i>
+                                        <span>Perfect Table Layout</span>
+                                    </div>
+                                    <div class="formatting-feature">
+                                        <i class="fas fa-check-circle"></i>
+                                        <span>Cell Formatting</span>
+                                    </div>
+                                    <div class="formatting-feature">
+                                        <i class="fas fa-check-circle"></i>
+                                        <span>Exact Data Values</span>
+                                    </div>
+                                    <div class="formatting-feature">
+                                        <i class="fas fa-check-circle"></i>
+                                        <span>Original Structure</span>
+                                    </div>
+                                    <div class="formatting-feature">
+                                        <i class="fas fa-check-circle"></i>
+                                        <span>Proper Alignment</span>
+                                    </div>
+                                    <div class="formatting-feature">
+                                        <i class="fas fa-check-circle"></i>
+                                        <span>Multi-Sheet Support</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="conversion-options">
+                        <div class="quality-selection">
+                            <label data-key="compressionLabel">Conversion Quality:</label>
+                            <div class="quality-buttons">
+                                <button class="quality-btn active" data-quality="exact">
+                                    <span class="quality-title" data-key="exactQuality">Exact</span>
+                                    <span class="quality-desc" data-key="exactQualityDesc">(Perfect Formatting)</span>
+                                </button>
+                                <button class="quality-btn" data-quality="high">
+                                    <span class="quality-title" data-key="highQuality">High</span>
+                                    <span class="quality-desc" data-key="highQualityDesc">(Very Good)</span>
+                                </button>
+                                <button class="quality-btn" data-quality="medium">
+                                    <span class="quality-title" data-key="mediumQuality">Medium</span>
+                                    <span class="quality-desc" data-key="mediumQualityDesc">(Good)</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="action-buttons">
+                        <button class="btn btn-primary" id="convertBtn" data-key="convertBtn">Convert to PDF</button>
+                        <button class="btn btn-outline" id="downloadBtn" data-key="downloadBtn">Download PDF</button>
+                        <button class="btn btn-secondary" id="resetBtn" data-key="resetBtn">Reset</button>
+                    </div>
+                    
+                    <div class="progress-container" id="progressContainer">
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="progressFill"></div>
+                        </div>
+                    </div>
+
+                    <!-- Status Messages -->
+                    <div class="status-message status-success" id="successMessage">
+                        <i class="fas fa-check-circle"></i> PDF successfully converted and ready for download!
+                    </div>
+                    <div class="status-message status-error" id="errorMessage">
+                        <i class="fas fa-exclamation-circle"></i> <span id="errorText">Conversion failed. Please try again.</span>
+                    </div>
+                    <div class="status-message status-info" id="infoMessage">
+                        <i class="fas fa-info-circle"></i> <span id="infoText">Processing your document...</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <a href="https://lollypopdf.com" class="footer-logo">
+                        <div class="footer-logo-icon">
+                            <div class="footer-logo-circle">LPdf</div>
+                            <div class="footer-logo-stem"></div>
+                        </div>
+                        <div class="footer-logo-text">LollyPoPdf</div>
+                    </a>                  
+                    
+                    <h3>FOLLOW US</h3>
+                    <div class="social-icons">
+                        <a href="https://facebook.com/lollypopdf" class="social-icon"><i class="fab fa-facebook-f"></i></a>
+                        <a href="https://linkedin.com/company/lollypopdf" class="social-icon"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="https://twitter.com/lollypopdf" class="social-icon"><i class="fab fa-twitter"></i></a>
+                        <a href="https://instagram.com/lollypopdf" class="social-icon"><i class="fab fa-instagram"></i></a>
+                        <a href="https://pinterest.com/lollypopdf" class="social-icon"><i class="fab fa-pinterest-p"></i></a>
+                        <a href="https://youtube.com/@lollypopdf" class="social-icon"><i class="fab fa-youtube"></i></a>
+                        <a href="https://www.trustpilot.com/review/lollypopdf.com" class="social-icon"><i class="fas fa-star"></i></a>
+                    </div>
+                </div>
+                
+                <div class="footer-section">
+                    <h3 class="category-header">Popular Categories</h3>
+                    <ul class="footer-links">
+                        <li><a href=" https://lollypopdf.github.io/LollyPoPdf#pdf-tools" data-key="pdfTools">PDF Tools</a></li>
+                        <li><a href=" https://lollypopdf.github.io/LollyPoPdf#image-tools" data-key="imageTools">Image Tools</a></li>
+                        <li><a href="https://lollypopdf.com#text-tools" data-key="textTools">Text Tools</a></li>
+                        <li><a href="https://lollypopdf.com#audio-video-tools" data-key="audioVideoTools">Audio/Video Tools</a></li>
+                        <li><a href="https://lollypopdf.github.io/LollyPoPdf#web developer-tools" data-key="web DeveloperTools">Web Developer Tools</a></li>
+                        <li><a href="https://lollypopdf.com#calculator-tools" data-key="calculatorTools">Calculator Tools</a></li>
+                        <li><a href="https://lollypopdf.com#utility-tools" data-key="utilityTools">Utility Tools</a></li>
+                        <li><a href="https://lollypopdf.com#color-tools" data-key="colorTools">Color Tools</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h3 class="category-header">Quick Links</h3>
+                    <ul class="footer-links">
+                        <li><a href="https://lollypopdf.com#home" data-key="homeLink">Home</a></li>
+                        <li><a href="tools.html" data-key="allTools">All Tools</a></li>
+                        <li><a href="faq.html" data-key="faq">FAQ</a></li>
+                        <li><a href="contact.html" data-key="contactLink">Contact</a></li>
+                        <li><a href="privacy-policy.html" data-key="privacyPolicy">Privacy Policy</a></li>
+                        <li><a href="disclaimer.html" data-key="disclaimer">Disclaimer</a></li>
+                        <li><a href="terms.html" data-key="terms">Terms of Service</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="footer-line"></div>
+            <div class="copyright" data-key="copyright">© 2025 LollyPoPDF. All rights reserved.</div>
+        </div>
+    </footer>
+
+    <!-- Language Switcher -->
+    <div class="language-switcher">
+        <button class="language-btn">
+            <i class="fas fa-globe"></i>
+            <span id="currentLanguage">English</span>
+        </button>
+        <div class="language-dropdown">
+            <div class="language-option" data-lang="en">English</div>
+            <div class="language-option" data-lang="es">Español</div>
+            <div class="language-option" data-lang="fr">Français</div>
+            <div class="language-option" data-lang="de">Deutsch</div>
+            <div class="language-option" data-lang="it">Italiano</div>
+            <div class="language-option" data-lang="pt">Português</div>
+            <div class="language-option" data-lang="ja">日本語</div>
+            <div class="language-option" data-lang="ru">Pусский</div>
+            <div class="language-option" data-lang="ko">한국어</div>
+            <div class="language-option" data-lang="zh-CN">中文 (简体)</div>
+            <div class="language-option" data-lang="zh-TW">中文 (繁體)</div>
+            <div class="language-option" data-lang="ar">العربية</div>
+            <div class="language-option" data-lang="fa">فارسی</div>
+            <div class="language-option" data-lang="bg">Български</div>
+            <div class="language-option" data-lang="ca">Català</div>
+            <div class="language-option" data-lang="nl">Nederlands</div>
+            <div class="language-option" data-lang="el">Ελληνικά</div>
+            <div class="language-option" data-lang="hi">हिन्दी</div>
+            <div class="language-option" data-lang="te">తెలుగు</div>
+            <div class="language-option" data-lang="kn">ಕನ್ನಡ</div>
+            <div class="language-option" data-lang="ta">தமிழ்</div>
+            <div class="language-option" data-lang="ml">മലയാളം</div>
+            <div class="language-option" data-lang="id">Bahasa Indonesia</div>
+            <div class="language-option" data-lang="ms">Bahasa Melayu</div>
+            <div class="language-option" data-lang="pl">Polski</div>
+            <div class="language-option" data-lang="th">ภาษาไทย</div>
+            <div class="language-option" data-lang="tr">Türkçe</div>
+            <div class="language-option" data-lang="uk">Українська</div>
+            <div class="language-option" data-lang="vi">Tiếng Việt</div>
+            <div class="language-option" data-lang="is">Íslenska</div>
+            <div class="language-option" data-lang="no">Norsk</div>
+            <div class="language-option" data-lang="sv">Svenska</div>
+            <div class="language-option" data-lang="fi">Suomi</div>
+            <div class="language-option" data-lang="cs">Čeština</div>
+        </div>
+    </div>
+
+    <script>
+        // Language translations
+        const translations = {
+            en: {
+                home: "Home",
+                about: "About Us",
+                tools: "Tools",
+                contact: "Contact",
+                heroTitle: "Excel to PDF Converter",
+                heroDescription: "Convert your Excel spreadsheets to PDF format while preserving the exact layout, formatting, tables, and structure of the original document.",
+                howToTitle: "How to Convert Excel to PDF",
+                step1Title: "Upload Your Excel Document",
+                step1Desc: "Click the upload area or drag and drop your Excel file. We support XLS and XLSX formats.",
+                step2Title: "Preview Spreadsheet",
+                step2Desc: "See a preview of your Excel spreadsheet with exact formatting and data.",
+                step3Title: "Convert to PDF",
+                step3Desc: "Click the \"Convert to PDF\" button to start the conversion process.",
+                step4Title: "Download PDF Document",
+                step4Desc: "Download your converted PDF document with perfect formatting.",
+                toolTitle: "Excel to PDF Converter",
+                uploadText: "Drag & drop your Excel spreadsheet here or click to browse",
+                browseBtn: "Browse Excel Files",
+                originalLabel: "Original Excel Document",
+                convertedLabel: "Converted PDF Document",
+                compressionLabel: "Conversion Quality:",
+                exactQuality: "Exact",
+                exactQualityDesc: "(Perfect Formatting)",
+                highQuality: "High",
+                highQualityDesc: "(Very Good)",
+                mediumQuality: "Medium",
+                mediumQualityDesc: "(Good)",
+                convertBtn: "Convert to PDF",
+                downloadBtn: "Download PDF",
+                resetBtn: "Reset",
+                followUs: "FOLLOW US",
+                popularCategories: "Popular Categories",
+                pdfTools: "PDF Tools",
+                imageTools: "Image Tools",
+                textTools: "Text Tools",
+                audioVideoTools: "Audio/Video Tools",
+                webDeveloperTools: "Web Developer Tools",
+                calculatorTools: "Calculator Tools",
+                utilityTools: "Utility Tools",
+                colorTools: "Color Tools",
+                quickLinks: "Quick Links",
+                homeLink: "Home",
+                allTools: "All Tools",
+                faq: "FAQ",
+                contactLink: "Contact",
+                privacyPolicy: "Privacy Policy",
+                disclaimer: "Disclaimer",
+                terms: "Terms of Service",
+                footerDescription: "Free online tools for PDF, images, text, and more. Simplify your digital tasks with our easy-to-use utilities.",
+                copyright: "© 2025 LollyPoPDF. All rights reserved."
+            },
+            es: {
+                home: "Inicio",
+                about: "Nosotros",
+                tools: "Herramientas",
+                contact: "Contacto",
+                heroTitle: "Convertidor de Excel a PDF",
+                heroDescription: "Convierte tus hojas de cálculo Excel a formato PDF preservando el diseño, formato, tablas y estructura exactos del documento original.",
+                howToTitle: "Cómo Convertir Excel a PDF",
+                step1Title: "Sube Tu Documento Excel",
+                step1Desc: "Haz clic en el área de carga o arrastra y suelta tu archivo Excel. Admitimos formatos XLS y XLSX.",
+                step2Title: "Vista Previa de la Hoja de Cálculo",
+                step2Desc: "Ve una vista previa de tu hoja de cálculo Excel con formato y datos exactos.",
+                step3Title: "Convertir a PDF",
+                step3Desc: "Haz clic en el botón \"Convertir a PDF\" para iniciar el proceso de conversión.",
+                step4Title: "Descargar Documento PDF",
+                step4Desc: "Descarga tu documento PDF convertido con formato perfecto.",
+                toolTitle: "Convertidor de Excel a PDF",
+                uploadText: "Arrastra y suelta tu hoja de cálculo Excel aquí o haz clic para buscar",
+                browseBtn: "Buscar Archivos Excel",
+                originalLabel: "Documento Excel Original",
+                convertedLabel: "Documento PDF Convertido",
+                compressionLabel: "Calidad de Conversión:",
+                exactQuality: "Exacto",
+                exactQualityDesc: "(Formato Perfecto)",
+                highQuality: "Alta",
+                highQualityDesc: "(Muy Buena)",
+                mediumQuality: "Media",
+                mediumQualityDesc: "(Buena)",
+                convertBtn: "Convertir a PDF",
+                downloadBtn: "Descargar PDF",
+                resetBtn: "Restablecer",
+                followUs: "SÍGUENOS",
+                popularCategories: "Categorías Populares",
+                pdfTools: "Herramientas PDF",
+                imageTools: "Herramientas de Imagen",
+                textTools: "Herramientas de Texto",
+                audioVideoTools: "Herramientas de Audio/Video",
+                webDeveloperTools: "Herramientas Web Desarrollador",
+                calculatorTools: "Herramientas de Calculadora",
+                utilityTools: "Herramientas de Utilidad",
+                colorTools: "Herramientas de Color",
+                quickLinks: "Enlaces Rápidos",
+                homeLink: "Inicio",
+                allTools: "Todas las Herramientas",
+                faq: "Preguntas Frecuentes",
+                contactLink: "Contacto",
+                privacyPolicy: "Política de Privacidad",
+                disclaimer: "Descargo de Responsabilidad",
+                terms: "Términos de Servicio",
+                footerDescription: "Herramientas en línea gratuitas para PDF, imágenes, texto y más. Simplifica tus tareas digitales con nuestras utilidades fáciles de usar.",
+                copyright: "© 2025 LollyPoPDF. Todos los derechos reservados."
+            },
+            fr: {
+                home: "Accueil",
+                about: "À propos",
+                tools: "Outils",
+                contact: "Contact",
+                heroTitle: "Convertisseur Excel vers PDF",
+                heroDescription: "Convertissez vos feuilles de calcul Excel au format PDF en préservant la mise en page, le formatage, les tableaux et la structure exacts du document original.",
+                howToTitle: "Comment convertir Excel en PDF",
+                step1Title: "Téléchargez votre document Excel",
+                step1Desc: "Cliquez sur la zone de téléchargement ou glissez-déposez votre fichier Excel. Nous prenons en charge les formats XLS et XLSX.",
+                step2Title: "Aperçu de la feuille de calcul",
+                step2Desc: "Visualisez un aperçu de votre feuille de calcul Excel avec le formatage et les données exacts.",
+                step3Title: "Convertir en PDF",
+                step3Desc: "Cliquez sur le bouton \"Convertir en PDF\" pour démarrer le processus de conversion.",
+                step4Title: "Télécharger le document PDF",
+                step4Desc: "Téléchargez votre document PDF converti avec un formatage parfait.",
+                toolTitle: "Convertisseur Excel vers PDF",
+                uploadText: "Glissez-déposez votre feuille de calcul Excel ici ou cliquez pour parcourir",
+                browseBtn: "Parcourir les fichiers Excel",
+                originalLabel: "Document Excel original",
+                convertedLabel: "Document PDF converti",
+                compressionLabel: "Qualité de conversion :",
+                exactQuality: "Exact",
+                exactQualityDesc: "(Formatage parfait)",
+                highQuality: "Élevée",
+                highQualityDesc: "(Très bonne)",
+                mediumQuality: "Moyenne",
+                mediumQualityDesc: "(Bonne)",
+                convertBtn: "Convertir en PDF",
+                downloadBtn: "Télécharger PDF",
+                resetBtn: "Réinitialiser",
+                followUs: "SUIVEZ-NOUS",
+                popularCategories: "Catégories populaires",
+                pdfTools: "Outils PDF",
+                imageTools: "Outils d'image",
+                textTools: "Outils de texte",
+                audioVideoTools: "Outils Audio/Video",
+                webDeveloperTools: "Outils développeur web",
+                calculatorTools: "Outils de calculatrice",
+                utilityTools: "Outils utilitaires",
+                colorTools: "Outils de couleur",
+                quickLinks: "Liens rapides",
+                homeLink: "Accueil",
+                allTools: "Tous les outils",
+                faq: "FAQ",
+                contactLink: "Contact",
+                privacyPolicy: "Politique de confidentialité",
+                disclaimer: "Avertissement",
+                terms: "Conditions d'utilisation",
+                footerDescription: "Outils en ligne gratuits pour PDF, images, texte et plus. Simplifiez vos tâches numériques avec nos utilitaires faciles à utiliser.",
+                copyright: "© 2025 LollyPoPDF. Tous droits réservés."
+            },
+            de: {
+                home: "Startseite",
+                about: "Über uns",
+                tools: "Werkzeuge",
+                contact: "Kontakt",
+                heroTitle: "Excel zu PDF Konverter",
+                heroDescription: "Konvertieren Sie Ihre Excel-Tabellen in das PDF-Format, wobei das exakte Layout, die Formatierung, Tabellen und Struktur des Originaldokuments erhalten bleiben.",
+                howToTitle: "So konvertieren Sie Excel zu PDF",
+                step1Title: "Laden Sie Ihr Excel-Dokument hoch",
+                step1Desc: "Klicken Sie auf den Upload-Bereich oder ziehen Sie Ihre Excel-Datei per Drag & Drop. Wir unterstützen XLS und XLSX Formate.",
+                step2Title: "Tabellenvorschau",
+                step2Desc: "Sehen Sie eine Vorschau Ihrer Excel-Tabelle mit exakter Formatierung und Daten.",
+                step3Title: "In PDF konvertieren",
+                step3Desc: "Klicken Sie auf den \"In PDF konvertieren\" Button, um den Konvertierungsprozess zu starten.",
+                step4Title: "PDF-Dokument herunterladen",
+                step4Desc: "Laden Sie Ihr konvertiertes PDF-Dokument mit perfekter Formatierung herunter.",
+                toolTitle: "Excel zu PDF Konverter",
+                uploadText: "Ziehen Sie Ihre Excel-Tabelle hierher oder klicken Sie zum Durchsuchen",
+                browseBtn: "Excel-Dateien durchsuchen",
+                originalLabel: "Originales Excel-Dokument",
+                convertedLabel: "Konvertiertes PDF-Dokument",
+                compressionLabel: "Konvertierungsqualität:",
+                exactQuality: "Exakt",
+                exactQualityDesc: "(Perfekte Formatierung)",
+                highQuality: "Hoch",
+                highQualityDesc: "(Sehr gut)",
+                mediumQuality: "Mittel",
+                mediumQualityDesc: "(Gut)",
+                convertBtn: "In PDF konvertieren",
+                downloadBtn: "PDF herunterladen",
+                resetBtn: "Zurücksetzen",
+                followUs: "FOLGEN SIE UNS",
+                popularCategories: "Beliebte Kategorien",
+                pdfTools: "PDF Werkzeuge",
+                imageTools: "Bildwerkzeuge",
+                textTools: "Textwerkzeuge",
+                audioVideoTools: "Audio/Video Werkzeuge",
+                webDeveloperTools: "Webentwickler-Werkzeuge",
+                calculatorTools: "Rechnerwerkzeuge",
+                utilityTools: "Hilfsprogramme",
+                colorTools: "Farbwerkzeuge",
+                quickLinks: "Schnelllinks",
+                homeLink: "Startseite",
+                allTools: "Alle Werkzeuge",
+                faq: "FAQ",
+                contactLink: "Kontakt",
+                privacyPolicy: "Datenschutzrichtlinie",
+                disclaimer: "Haftungsausschluss",
+                terms: "Nutzungsbedingungen",
+                footerDescription: "Kostenlose Online-Tools für PDF, Bilder, Text und mehr. Vereinfachen Sie Ihre digitalen Aufgaben mit unseren benutzerfreundlichen Hilfsprogrammen.",
+                copyright: "© 2025 LollyPoPDF. Alle Rechte vorbehalten."
+            },
+            it: {
+                home: "Home",
+                about: "Chi siamo",
+                tools: "Strumenti",
+                contact: "Contatto",
+                heroTitle: "Convertitore da Excel a PDF",
+                heroDescription: "Converti i tuoi fogli di calcolo Excel in formato PDF preservando l'esatto layout, formattazione, tabelle e struttura del documento originale.",
+                howToTitle: "Come convertire Excel in PDF",
+                step1Title: "Carica il tuo documento Excel",
+                step1Desc: "Clicca sull'area di upload o trascina e rilascia il tuo file Excel. Supportiamo i formati XLS e XLSX.",
+                step2Title: "Anteprima del foglio di calcolo",
+                step2Desc: "Visualizza un'anteprima del tuo foglio di calcolo Excel con formattazione e dati esatti.",
+                step3Title: "Converti in PDF",
+                step3Desc: "Clicca il pulsante \"Converti in PDF\" per avviare il processo di conversione.",
+                step4Title: "Scarica il documento PDF",
+                step4Desc: "Scarica il tuo documento PDF convertito con formattazione perfetta.",
+                toolTitle: "Convertitore da Excel a PDF",
+                uploadText: "Trascina e rilascia il tuo foglio di calcolo Excel qui o clicca per sfogliare",
+                browseBtn: "Sfoglia file Excel",
+                originalLabel: "Documento Excel originale",
+                convertedLabel: "Documento PDF convertito",
+                compressionLabel: "Qualità di conversione:",
+                exactQuality: "Esatta",
+                exactQualityDesc: "(Formattazione perfetta)",
+                highQuality: "Alta",
+                highQualityDesc: "(Molto buona)",
+                mediumQuality: "Media",
+                mediumQualityDesc: "(Buona)",
+                convertBtn: "Converti in PDF",
+                downloadBtn: "Scarica PDF",
+                resetBtn: "Ripristina",
+                followUs: "SEGUICI",
+                popularCategories: "Categorie popolari",
+                pdfTools: "Strumenti PDF",
+                imageTools: "Strumenti immagine",
+                textTools: "Strumenti testo",
+                audioVideoTools: "Strumenti Audio/Video",
+                webDeveloperTools: "Strumenti sviluppatore web",
+                calculatorTools: "Strumenti calcolatrice",
+                utilityTools: "Strumenti utilità",
+                colorTools: "Strumenti colore",
+                quickLinks: "Link rapidi",
+                homeLink: "Home",
+                allTools: "Tutti gli strumenti",
+                faq: "FAQ",
+                contactLink: "Contatto",
+                privacyPolicy: "Informativa sulla privacy",
+                disclaimer: "Disclaimer",
+                terms: "Termini di servizio",
+                footerDescription: "Strumenti online gratuiti per PDF, immagini, testo e altro. Semplifica le tue attività digitali con le nostre utilità facili da usare.",
+                copyright: "© 2025 LollyPoPDF. Tutti i diritti riservati."
+            },
+            pt: {
+                home: "Início",
+                about: "Sobre nós",
+                tools: "Ferramentas",
+                contact: "Contato",
+                heroTitle: "Conversor de Excel para PDF",
+                heroDescription: "Converta suas planilhas do Excel para formato PDF preservando o layout exato, formatação, tabelas e estrutura do documento original.",
+                howToTitle: "Como converter Excel para PDF",
+                step1Title: "Carregue seu documento Excel",
+                step1Desc: "Clique na área de upload ou arraste e solte seu arquivo Excel. Suportamos formatos XLS e XLSX.",
+                step2Title: "Visualizar planilha",
+                step2Desc: "Veja uma visualização da sua planilha Excel com formatação e dados exatos.",
+                step3Title: "Converter para PDF",
+                step3Desc: "Clique no botão \"Converter para PDF\" para iniciar o processo de conversão.",
+                step4Title: "Baixar documento PDF",
+                step4Desc: "Baixe seu documento PDF convertido com formatação perfeita.",
+                toolTitle: "Conversor de Excel para PDF",
+                uploadText: "Arraste e solte sua planilha Excel aqui ou clique para procurar",
+                browseBtn: "Procurar arquivos Excel",
+                originalLabel: "Documento Excel original",
+                convertedLabel: "Documento PDF convertido",
+                compressionLabel: "Qualidade de conversão:",
+                exactQuality: "Exata",
+                exactQualityDesc: "(Formatação perfeita)",
+                highQuality: "Alta",
+                highQualityDesc: "(Muito boa)",
+                mediumQuality: "Média",
+                mediumQualityDesc: "(Boa)",
+                convertBtn: "Converter para PDF",
+                downloadBtn: "Baixar PDF",
+                resetBtn: "Redefinir",
+                followUs: "SIGA-NOS",
+                popularCategories: "Categorias populares",
+                pdfTools: "Ferramentas PDF",
+                imageTools: "Ferramentas de imagem",
+                textTools: "Ferramentas de texto",
+                audioVideoTools: "Ferramentas Áudio/Video",
+                webDeveloperTools: "Ferramentas desenvolvedor web",
+                calculatorTools: "Ferramentas calculadora",
+                utilityTools: "Ferramentas utilitárias",
+                colorTools: "Ferramentas de cor",
+                quickLinks: "Links rápidos",
+                homeLink: "Início",
+                allTools: "Todas as ferramentas",
+                faq: "FAQ",
+                contactLink: "Contato",
+                privacyPolicy: "Política de privacidade",
+                disclaimer: "Aviso legal",
+                terms: "Termos de serviço",
+                footerDescription: "Ferramentas online gratuitas para PDF, imagens, texto e mais. Simplifique suas tarefas digitais com nossas utilidades fáceis de usar.",
+                copyright: "© 2025 LollyPoPDF. Todos os direitos reservados."
+            },
+            ja: {
+                home: "ホーム",
+                about: "会社概要",
+                tools: "ツール",
+                contact: "お問い合わせ",
+                heroTitle: "ExcelからPDFへの変換ツール",
+                heroDescription: "ExcelスプレッドシートをPDF形式に変換し、元の文書の正確なレイアウト、書式設定、テーブル、構造を維持します。",
+                howToTitle: "ExcelからPDFへの変換方法",
+                step1Title: "Excel文書をアップロード",
+                step1Desc: "アップロードエリアをクリックするか、Excelファイルをドラッグ＆ドロップしてください。XLSおよびXLSX形式をサポートしています。",
+                step2Title: "スプレッドシートのプレビュー",
+                step2Desc: "正確な書式設定とデータを含むExcelスプレッドシートのプレビューを表示します。",
+                step3Title: "PDFに変換",
+                step3Desc: "「PDFに変換」ボタンをクリックして変換プロセスを開始します。",
+                step4Title: "PDF文書をダウンロード",
+                step4Desc: "完璧な書式設定で変換されたPDF文書をダウンロードします。",
+                toolTitle: "ExcelからPDFへの変換ツール",
+                uploadText: "Excelスプレッドシートをここにドラッグ＆ドロップするか、クリックして参照します",
+                browseBtn: "Excelファイルを参照",
+                originalLabel: "元のExcel文書",
+                convertedLabel: "変換されたPDF文書",
+                compressionLabel: "変換品質:",
+                exactQuality: "正確",
+                exactQualityDesc: "(完璧な書式設定)",
+                highQuality: "高品質",
+                highQualityDesc: "(非常に良い)",
+                mediumQuality: "中品質",
+                mediumQualityDesc: "(良い)",
+                convertBtn: "PDFに変換",
+                downloadBtn: "PDFをダウンロード",
+                resetBtn: "リセット",
+                followUs: "フォローする",
+                popularCategories: "人気カテゴリ",
+                pdfTools: "PDFツール",
+                imageTools: "画像ツール",
+                textTools: "テキストツール",
+                audioVideoTools: "オーディオ/ビデオツール",
+                webDeveloperTools: "Web開発者ツール",
+                calculatorTools: "計算機ツール",
+                utilityTools: "ユーティリティツール",
+                colorTools: "カラーツール",
+                quickLinks: "クイックリンク",
+                homeLink: "ホーム",
+                allTools: "すべてのツール",
+                faq: "よくある質問",
+                contactLink: "お問い合わせ",
+                privacyPolicy: "プライバシーポリシー",
+                disclaimer: "免責事項",
+                terms: "利用規約",
+                footerDescription: "PDF、画像、テキストなどのための無料オンラインツール。使いやすいユーティリティでデジタルタスクを簡素化します。",
+                copyright: "© 2025 LollyPoPDF. 全著作権所有."
+            },
+            ru: {
+                home: "Главная",
+                about: "О нас",
+                tools: "Инструменты",
+                contact: "Контакты",
+                heroTitle: "Конвертер Excel в PDF",
+                heroDescription: "Конвертируйте ваши таблицы Excel в формат PDF, сохраняя точную разметку, форматирование, таблицы и структуру исходного документа.",
+                howToTitle: "Как конвертировать Excel в PDF",
+                step1Title: "Загрузите ваш документ Excel",
+                step1Desc: "Нажмите на область загрузки или перетащите ваш файл Excel. Мы поддерживаем форматы XLS и XLSX.",
+                step2Title: "Предварительный просмотр таблицы",
+                step2Desc: "Посмотрите предварительный просмотр вашей таблицы Excel с точным форматированием и данными.",
+                step3Title: "Конвертировать в PDF",
+                step3Desc: "Нажмите кнопку \"Конвертировать в PDF\", чтобы начать процесс конвертации.",
+                step4Title: "Скачать PDF документ",
+                step4Desc: "Скачайте ваш конвертированный PDF документ с идеальным форматированием.",
+                toolTitle: "Конвертер Excel в PDF",
+                uploadText: "Перетащите вашу таблицу Excel сюда или нажмите для просмотра",
+                browseBtn: "Просмотреть файлы Excel",
+                originalLabel: "Исходный документ Excel",
+                convertedLabel: "Конвертированный PDF документ",
+                compressionLabel: "Качество конвертации:",
+                exactQuality: "Точное",
+                exactQualityDesc: "(Идеальное форматирование)",
+                highQuality: "Высокое",
+                highQualityDesc: "(Очень хорошее)",
+                mediumQuality: "Среднее",
+                mediumQualityDesc: "(Хорошее)",
+                convertBtn: "Конвертировать в PDF",
+                downloadBtn: "Скачать PDF",
+                resetBtn: "Сбросить",
+                followUs: "СЛЕДУЙТЕ ЗА НАМИ",
+                popularCategories: "Популярные категории",
+                pdfTools: "PDF инструменты",
+                imageTools: "Инструменты изображений",
+                textTools: "Текстовые инструменты",
+                audioVideoTools: "Аудио/Видео инструменты",
+                webDeveloperTools: "Инструменты веб-разработчика",
+                calculatorTools: "Инструменты калькулятора",
+                utilityTools: "Утилиты",
+                colorTools: "Цветовые инструменты",
+                quickLinks: "Быстрые ссылки",
+                homeLink: "Главная",
+                allTools: "Все инструменты",
+                faq: "ЧаВо",
+                contactLink: "Контакты",
+                privacyPolicy: "Политика конфиденциальности",
+                disclaimer: "Отказ от ответственности",
+                terms: "Условия использования",
+                footerDescription: "Бесплатные онлайн-инструменты для PDF, изображений, текста и много другого. Упростите свои цифровые задачи с помощью наших удобных утилит.",
+                copyright: "© 2025 LollyPoPDF. Все права защищены."
+            },
+            ko: {
+                home: "홈",
+                about: "회사소개",
+                tools: "도구",
+                contact: "연락처",
+                heroTitle: "Excel to PDF 변환기",
+                heroDescription: "원본 문서의 정확한 레이아웃, 서식, 테이블 및 구조를 유지하면서 Excel 스프레드시트를 PDF 형식으로 변환합니다.",
+                howToTitle: "Excel을 PDF로 변환하는 방법",
+                step1Title: "Excel 문서 업로드",
+                step1Desc: "업로드 영역을 클릭하거나 Excel 파일을 드래그 앤 드롭하세요. XLS 및 XLSX 형식을 지원합니다.",
+                step2Title: "스프레드시트 미리보기",
+                step2Desc: "정확한 서식과 데이터를 포함한 Excel 스프레드시트 미리보기를 확인하세요.",
+                step3Title: "PDF로 변환",
+                step3Desc: "변환 프로세스를 시작하려면 \"PDF로 변환\" 버튼을 클릭하세요.",
+                step4Title: "PDF 문서 다운로드",
+                step4Desc: "완벽한 서식으로 변환된 PDF 문서를 다운로드하세요.",
+                toolTitle: "Excel to PDF 변환기",
+                uploadText: "Excel 스프레드시트를 여기에 드래그 앤 드롭하거나 클릭하여 찾아보세요",
+                browseBtn: "Excel 파일 찾아보기",
+                originalLabel: "원본 Excel 문서",
+                convertedLabel: "변환된 PDF 문서",
+                compressionLabel: "변환 품질:",
+                exactQuality: "정확",
+                exactQualityDesc: "(완벽한 서식)",
+                highQuality: "고품질",
+                highQualityDesc: "(매우 좋음)",
+                mediumQuality: "중간 품질",
+                mediumQualityDesc: "(좋음)",
+                convertBtn: "PDF로 변환",
+                downloadBtn: "PDF 다운로드",
+                resetBtn: "초기화",
+                followUs: "팔로우하기",
+                popularCategories: "인기 카테고리",
+                pdfTools: "PDF 도구",
+                imageTools: "이미지 도구",
+                textTools: "텍스트 도구",
+                audioVideoTools: "오디오/비디오 도구",
+                webDeveloperTools: "웹 개발자 도구",
+                calculatorTools: "계산기 도구",
+                utilityTools: "유틸리티 도구",
+                colorTools: "색상 도구",
+                quickLinks: "빠른 링크",
+                homeLink: "홈",
+                allTools: "모든 도구",
+                faq: "자주 묻는 질문",
+                contactLink: "연락처",
+                privacyPolicy: "개인정보 보호정책",
+                disclaimer: "면책조항",
+                terms: "서비스 약관",
+                footerDescription: "PDF, 이미지, 텍스트 등을 위한 무료 온라인 도구. 사용하기 쉬운 유틸리티로 디지털 작업을 간소화하세요.",
+                copyright: "© 2025 LollyPoPDF. 판권 소유."
+            },
+            'zh-CN': {
+                home: "首页",
+                about: "关于我们",
+                tools: "工具",
+                contact: "联系我们",
+                heroTitle: "Excel转PDF转换器",
+                heroDescription: "将您的Excel电子表格转换为PDF格式，同时保留原始文档的精确布局、格式、表格和结构。",
+                howToTitle: "如何将Excel转换为PDF",
+                step1Title: "上传您的Excel文档",
+                step1Desc: "点击上传区域或拖放您的Excel文件。我们支持XLS和XLSX格式。",
+                step2Title: "预览电子表格",
+                step2Desc: "查看具有精确格式和数据的Excel电子表格预览。",
+                step3Title: "转换为PDF",
+                step3Desc: "点击“转换为PDF”按钮开始转换过程。",
+                step4Title: "下载PDF文档",
+                step4Desc: "下载具有完美格式的转换后的PDF文档。",
+                toolTitle: "Excel转PDF转换器",
+                uploadText: "将您的Excel电子表格拖放到此处或点击浏览",
+                browseBtn: "浏览Excel文件",
+                originalLabel: "原始Excel文档",
+                convertedLabel: "转换后的PDF文档",
+                compressionLabel: "转换质量：",
+                exactQuality: "精确",
+                exactQualityDesc: "(完美格式)",
+                highQuality: "高质量",
+                highQualityDesc: "(非常好)",
+                mediumQuality: "中等质量",
+                mediumQualityDesc: "(良好)",
+                convertBtn: "转换为PDF",
+                downloadBtn: "下载PDF",
+                resetBtn: "重置",
+                followUs: "关注我们",
+                popularCategories: "热门类别",
+                pdfTools: "PDF工具",
+                imageTools: "图片工具",
+                textTools: "文本工具",
+                audioVideoTools: "音频/视频工具",
+                webDeveloperTools: "Web开发工具",
+                calculatorTools: "计算器工具",
+                utilityTools: "实用工具",
+                colorTools: "颜色工具",
+                quickLinks: "快速链接",
+                homeLink: "首页",
+                allTools: "所有工具",
+                faq: "常见问题",
+                contactLink: "联系我们",
+                privacyPolicy: "隐私政策",
+                disclaimer: "免责声明",
+                terms: "服务条款",
+                footerDescription: "用于PDF、图片、文本等的免费在线工具。使用我们易于使用的实用程序简化您的数字任务。",
+                copyright: "© 2025 LollyPoPDF. 版权所有。"
+            },
+            'zh-TW': {
+                home: "首頁",
+                about: "關於我們",
+                tools: "工具",
+                contact: "聯絡我們",
+                heroTitle: "Excel轉PDF轉換器",
+                heroDescription: "將您的Excel電子表格轉換為PDF格式，同時保留原始文件的精確佈局、格式、表格和結構。",
+                howToTitle: "如何將Excel轉換為PDF",
+                step1Title: "上傳您的Excel文件",
+                step1Desc: "點擊上傳區域或拖放您的Excel檔案。我們支援XLS和XLSX格式。",
+                step2Title: "預覽電子表格",
+                step2Desc: "查看具有精確格式和數據的Excel電子表格預覽。",
+                step3Title: "轉換為PDF",
+                step3Desc: "點擊「轉換為PDF」按鈕開始轉換過程。",
+                step4Title: "下載PDF文件",
+                step4Desc: "下載具有完美格式的轉換後PDF文件。",
+                toolTitle: "Excel轉PDF轉換器",
+                uploadText: "將您的Excel電子表格拖放到此處或點擊瀏覽",
+                browseBtn: "瀏覽Excel檔案",
+                originalLabel: "原始Excel文件",
+                convertedLabel: "轉換後的PDF文件",
+                compressionLabel: "轉換品質：",
+                exactQuality: "精確",
+                exactQualityDesc: "(完美格式)",
+                highQuality: "高品質",
+                highQualityDesc: "(非常好)",
+                mediumQuality: "中等品質",
+                mediumQualityDesc: "(良好)",
+                convertBtn: "轉換為PDF",
+                downloadBtn: "下載PDF",
+                resetBtn: "重置",
+                followUs: "關注我們",
+                popularCategories: "熱門類別",
+                pdfTools: "PDF工具",
+                imageTools: "圖片工具",
+                textTools: "文字工具",
+                audioVideoTools: "音訊/視訊工具",
+                webDeveloperTools: "網頁開發工具",
+                calculatorTools: "計算機工具",
+                utilityTools: "實用工具",
+                colorTools: "顏色工具",
+                quickLinks: "快速連結",
+                homeLink: "首頁",
+                allTools: "所有工具",
+                faq: "常見問題",
+                contactLink: "聯絡我們",
+                privacyPolicy: "隱私政策",
+                disclaimer: "免責聲明",
+                terms: "服務條款",
+                footerDescription: "用於PDF、圖片、文字等的免費線上工具。使用我們易於使用的實用程式簡化您的數位任務。",
+                copyright: "© 2025 LollyPoPDF. 版權所有。"
+            },
+            ar: {
+                home: "الصفحة الرئيسية",
+                about: "من نحن",
+                tools: "الأدوات",
+                contact: "اتصل بنا",
+                heroTitle: "محول Excel إلى PDF",
+                heroDescription: "قم بتحويل جداول بيانات Excel الخاصة بك إلى تنسيق PDF مع الحفاظ على التخطيط الدقيق والتنسيق والجداول وهيكل المستند الأصلي.",
+                howToTitle: "كيفية تحويل Excel إلى PDF",
+                step1Title: "قم بتحميل مستند Excel الخاص بك",
+                step1Desc: "انقر فوق منطقة التحميل أو اسحب وأفلت ملف Excel الخاص بك. نحن ندعم تنسيقات XLS و XLSX.",
+                step2Title: "معاينة جدول البيانات",
+                step2Desc: "اطلع على معاينة جدول بيانات Excel الخاص بك بتنسيق ودقة بيانات دقيقة.",
+                step3Title: "تحويل إلى PDF",
+                step3Desc: "انقر فوق زر \"تحويل إلى PDF\" لبدء عملية التحويل.",
+                step4Title: "تنزيل مستند PDF",
+                step4Desc: "قم بتنزيل مستند PDF المحول بتنسيق مثالي.",
+                toolTitle: "محول Excel إلى PDF",
+                uploadText: "اسحب وأفلت جدول بيانات Excel هنا أو انقر للتصفح",
+                browseBtn: "تصفح ملفات Excel",
+                originalLabel: "مستند Excel الأصلي",
+                convertedLabel: "مستند PDF المحول",
+                compressionLabel: "جودة التحويل:",
+                exactQuality: "دقيق",
+                exactQualityDesc: "(تنسيق مثالي)",
+                highQuality: "عالية",
+                highQualityDesc: "(جيد جدًا)",
+                mediumQuality: "متوسطة",
+                mediumQualityDesc: "(جيد)",
+                convertBtn: "تحويل إلى PDF",
+                downloadBtn: "تنزيل PDF",
+                resetBtn: "إعادة تعيين",
+                followUs: "تابعنا",
+                popularCategories: "الفئات الشائعة",
+                pdfTools: "أدوات PDF",
+                imageTools: "أدوات الصور",
+                textTools: "أدوات النص",
+                audioVideoTools: "أدوات الصوت/الفيديو",
+                webDeveloperTools: "أدوات مطور الويب",
+                calculatorTools: "أدوات الآلة الحاسبة",
+                utilityTools: "أدوات مساعدة",
+                colorTools: "أدوات الألوان",
+                quickLinks: "روابط سريعة",
+                homeLink: "الصفحة الرئيسية",
+                allTools: "جميع الأدوات",
+                faq: "الأسئلة الشائعة",
+                contactLink: "اتصل بنا",
+                privacyPolicy: "سياسة الخصوصية",
+                disclaimer: "إخلاء المسؤولية",
+                terms: "شروط الخدمة",
+                footerDescription: "أدوات مجانية عبر الإنترنت لـ PDF والصور والنص والمزيد. قم بتبسيط مهامك الرقمية باستخدام أدواتنا سهلة الاستخدام.",
+                copyright: "© 2025 LollyPoPDF. جميع الحقوق محفوظة."
+            },
+            fa: {
+                home: "خانه",
+                about: "درباره ما",
+                tools: "ابزارها",
+                contact: "تماس با ما",
+                heroTitle: "مبدل اکسل به پی‌دی‌اف",
+                heroDescription: "صفحات گسترده اکسل خود را به فرمت پی‌دی‌اف تبدیل کنید در حالی که طرح‌بندی دقیق، قالب‌بندی، جداول و ساختار سند اصلی حفظ می‌شود.",
+                howToTitle: "نحوه تبدیل اکسل به پی‌دی‌اف",
+                step1Title: "سند اکسل خود را آپلود کنید",
+                step1Desc: "روی ناحیه آپلود کلیک کنید یا فایل اکسل خود را بکشید و رها کنید. ما فرمت‌های XLS و XLSX را پشتیبانی می‌کنیم.",
+                step2Title: "پیش‌نمایش صفحه گسترده",
+                step2Desc: "پیش‌نمایش صفحه گسترده اکسل خود را با قالب‌بندی و داده‌های دقیق مشاهده کنید.",
+                step3Title: "تبدیل به پی‌دی‌اف",
+                step3Desc: "دکمه \"تبدیل به پی‌دی‌اف\" را کلیک کنید تا فرآیند تبدیل آغاز شود.",
+                step4Title: "دانلود سند پی‌دی‌اف",
+                step4Desc: "سند پی‌دی‌اف تبدیل شده خود را با قالب‌بندی کامل دانلود کنید.",
+                toolTitle: "مبدل اکسل به پی‌دی‌اف",
+                uploadText: "صفحه گسترده اکسل خود را اینجا بکشید و رها کنید یا برای مرور کلیک کنید",
+                browseBtn: "مرور فایل‌های اکسل",
+                originalLabel: "سند اکسل اصلی",
+                convertedLabel: "سند پی‌دی‌اف تبدیل شده",
+                compressionLabel: "کیفیت تبدیل:",
+                exactQuality: "دقیق",
+                exactQualityDesc: "(قالب‌بندی کامل)",
+                highQuality: "بالا",
+                highQualityDesc: "(خیلی خوب)",
+                mediumQuality: "متوسط",
+                mediumQualityDesc: "(خوب)",
+                convertBtn: "تبدیل به پی‌دی‌اف",
+                downloadBtn: "دانلود پی‌دی‌اف",
+                resetBtn: "بازنشانی",
+                followUs: "ما را دنبال کنید",
+                popularCategories: "دسته‌بندی‌های محبوب",
+                pdfTools: "ابزارهای پی‌دی‌اف",
+                imageTools: "ابزارهای تصویر",
+                textTools: "ابزارهای متن",
+                audioVideoTools: "ابزارهای صدا/ویدئو",
+                webDeveloperTools: "ابزارهای توسعه‌دهنده وب",
+                calculatorTools: "ابزارهای ماشین حساب",
+                utilityTools: "ابزارهای کمکی",
+                colorTools: "ابزارهای رنگ",
+                quickLinks: "پیوندهای سریع",
+                homeLink: "خانه",
+                allTools: "همه ابزارها",
+                faq: "سوالات متداول",
+                contactLink: "تماس با ما",
+                privacyPolicy: "سیاست حفظ حریم خصوصی",
+                disclaimer: "سلب مسئولیت",
+                terms: "شرایط خدمات",
+                footerDescription: "ابزارهای آنلاین رایگان برای پی‌دی‌اف، تصاویر، متن و بیشتر. با ابزارهای کاربرپسند ما، کارهای دیجیتالی خود را ساده کنید.",
+                copyright: "© 2025 LollyPoPDF. تمامی حقوق محفوظ است."
+            },
+            bg: {
+                home: "Начало",
+                about: "За нас",
+                tools: "Инструменти",
+                contact: "Контакт",
+                heroTitle: "Конвертор от Excel към PDF",
+                heroDescription: "Конвертирайте вашите Excel електронни таблици във формат PDF, като запазвате точния оформление, форматиране, таблици и структура на оригиналния документ.",
+                howToTitle: "Как да конвертирате Excel в PDF",
+                step1Title: "Качете вашия Excel документ",
+                step1Desc: "Кликнете върху зоната за качване или плъзнете и пуснете вашия Excel файл. Поддържаме формати XLS и XLSX.",
+                step2Title: "Преглед на електронната таблица",
+                step2Desc: "Вижте преглед на вашата Excel електронна таблица с точно форматиране и данни.",
+                step3Title: "Конвертиране в PDF",
+                step3Desc: "Кликнете върху бутона \"Конвертиране в PDF\", за да започнете процеса на конвертиране.",
+                step4Title: "Изтегляне на PDF документ",
+                step4Desc: "Изтеглете вашия конвертиран PDF документ с перфектно форматиране.",
+                toolTitle: "Конвертор от Excel към PDF",
+                uploadText: "Плъзнете и пуснете вашата Excel електронна таблица тук или кликнете за разглеждане",
+                browseBtn: "Разглеждане на Excel файлове",
+                originalLabel: "Оригинален Excel документ",
+                convertedLabel: "Конвертиран PDF документ",
+                compressionLabel: "Качество на конвертиране:",
+                exactQuality: "Точно",
+                exactQualityDesc: "(Перфектно форматиране)",
+                highQuality: "Високо",
+                highQualityDesc: "(Много добро)",
+                mediumQuality: "Средно",
+                mediumQualityDesc: "(Добро)",
+                convertBtn: "Конвертиране в PDF",
+                downloadBtn: "Изтегляне на PDF",
+                resetBtn: "Нулиране",
+                followUs: "СЛЕДВАЙТЕ НИ",
+                popularCategories: "Популярни категории",
+                pdfTools: "PDF инструменти",
+                imageTools: "Инструменти за изображения",
+                textTools: "Текстови инструменти",
+                audioVideoTools: "Аудио/Видео инструменти",
+                webDeveloperTools: "Инструменти за уеб разработчик",
+                calculatorTools: "Инструменти за калкулатор",
+                utilityTools: "Помощни инструменти",
+                colorTools: "Цветови инструменти",
+                quickLinks: "Бързи връзки",
+                homeLink: "Начало",
+                allTools: "Всички инструменти",
+                faq: "ЧЗВ",
+                contactLink: "Контакт",
+                privacyPolicy: "Политика за поверителност",
+                disclaimer: "Отказ от отговорност",
+                terms: "Условия за ползване",
+                footerDescription: "Безплатни онлайн инструменти за PDF, изображения, текст и още. Опростете вашите цифрови задачи с нашите лесни за използване помощни програми.",
+                copyright: "© 2025 LollyPoPDF. Всички права запазени."
+            },
+            ca: {
+                home: "Inici",
+                about: "Sobre nosaltres",
+                tools: "Eines",
+                contact: "Contacte",
+                heroTitle: "Convertidor d'Excel a PDF",
+                heroDescription: "Converteix els vostres fulls de càlcul d'Excel a format PDF preservant la disposició exacta, el format, les taules i l'estructura del document original.",
+                howToTitle: "Com convertir Excel a PDF",
+                step1Title: "Carregueu el vostre document d'Excel",
+                step1Desc: "Feu clic a l'àrea de càrrega o arrossegueu i deixeu anar el vostre fitxer d'Excel. Admetem els formats XLS i XLSX.",
+                step2Title: "Vista prèvia del full de càlcul",
+                step2Desc: "Vegeu una vista prèvia del vostre full de càlcul d'Excel amb format i dades exactes.",
+                step3Title: "Convertir a PDF",
+                step3Desc: "Feu clic al botó \"Convertir a PDF\" per iniciar el procés de conversió.",
+                step4Title: "Baixeu el document PDF",
+                step4Desc: "Baixeu el vostre document PDF convertit amb format perfecte.",
+                toolTitle: "Convertidor d'Excel a PDF",
+                uploadText: "Arrossegueu i deixeu anar el vostre full de càlcul d'Excel aquí o feu clic per navegar",
+                browseBtn: "Navegar pels fitxers d'Excel",
+                originalLabel: "Document d'Excel original",
+                convertedLabel: "Document PDF convertit",
+                compressionLabel: "Qualitat de conversió:",
+                exactQuality: "Exacte",
+                exactQualityDesc: "(Format perfecte)",
+                highQuality: "Alta",
+                highQualityDesc: "(Molt bona)",
+                mediumQuality: "Mitjana",
+                mediumQualityDesc: "(Bona)",
+                convertBtn: "Convertir a PDF",
+                downloadBtn: "Baixar PDF",
+                resetBtn: "Restablir",
+                followUs: "SEGUEIX-NOS",
+                popularCategories: "Categories populars",
+                pdfTools: "Eines PDF",
+                imageTools: "Eines d'imatge",
+                textTools: "Eines de text",
+                audioVideoTools: "Eines d'Àudio/Video",
+                webDeveloperTools: "Eines de desenvolupador web",
+                calculatorTools: "Eines de calculadora",
+                utilityTools: "Eines d'utilitat",
+                colorTools: "Eines de color",
+                quickLinks: "Enllaços ràpids",
+                homeLink: "Inici",
+                allTools: "Totes les eines",
+                faq: "Preguntes freqüents",
+                contactLink: "Contacte",
+                privacyPolicy: "Política de privadesa",
+                disclaimer: "Avís legal",
+                terms: "Condicions del servei",
+                footerDescription: "Eines en línia gratuïtes per a PDF, imatges, text i més. Simplifiqueu les vostres tasques digitals amb les nostres utilitats fàcils d'usar.",
+                copyright: "© 2025 LollyPoPDF. Tots els drets reservats."
+            },
+            nl: {
+                home: "Home",
+                about: "Over ons",
+                tools: "Tools",
+                contact: "Contact",
+                heroTitle: "Excel naar PDF Converter",
+                heroDescription: "Converteer uw Excel-spreadsheets naar PDF-formaat terwijl de exacte lay-out, opmaak, tabellen en structuur van het originele document behouden blijven.",
+                howToTitle: "Hoe Excel naar PDF te converteren",
+                step1Title: "Upload uw Excel-document",
+                step1Desc: "Klik op het uploadgebied of sleep en zet uw Excel-bestand neer. We ondersteunen XLS en XLSX formaten.",
+                step2Title: "Voorbeeld spreadsheet",
+                step2Desc: "Zie een voorbeeld van uw Excel-spreadsheet met exacte opmaak en gegevens.",
+                step3Title: "Converteren naar PDF",
+                step3Desc: "Klik op de knop \"Converteren naar PDF\" om het conversieproces te starten.",
+                step4Title: "Download PDF-document",
+                step4Desc: "Download uw geconverteerde PDF-document met perfecte opmaak.",
+                toolTitle: "Excel naar PDF Converter",
+                uploadText: "Sleep en zet uw Excel-spreadsheet hier neer of klik om te bladeren",
+                browseBtn: "Blader door Excel-bestanden",
+                originalLabel: "Origineel Excel-document",
+                convertedLabel: "Geconverteerd PDF-document",
+                compressionLabel: "Conversiekwaliteit:",
+                exactQuality: "Exact",
+                exactQualityDesc: "(Perfecte opmaak)",
+                highQuality: "Hoog",
+                highQualityDesc: "(Zeer goed)",
+                mediumQuality: "Gemiddeld",
+                mediumQualityDesc: "(Goed)",
+                convertBtn: "Converteren naar PDF",
+                downloadBtn: "PDF downloaden",
+                resetBtn: "Resetten",
+                followUs: "VOLG ONS",
+                popularCategories: "Populaire categorieën",
+                pdfTools: "PDF Tools",
+                imageTools: "Afbeeldingstools",
+                textTools: "Teksttools",
+                audioVideoTools: "Audio/Video Tools",
+                webDeveloperTools: "Webontwikkelaar Tools",
+                calculatorTools: "Rekenmachine Tools",
+                utilityTools: "Hulpprogramma's",
+                colorTools: "Kleurentools",
+                quickLinks: "Snelle links",
+                homeLink: "Home",
+                allTools: "Alle tools",
+                faq: "FAQ",
+                contactLink: "Contact",
+                privacyPolicy: "Privacybeleid",
+                disclaimer: "Disclaimer",
+                terms: "Servicevoorwaarden",
+                footerDescription: "Gratis online tools voor PDF, afbeeldingen, tekst en meer. Vereenvoudig uw digitale taken met onze gebruiksvriendelijke hulpprogramma's.",
+                copyright: "© 2025 LollyPoPDF. Alle rechten voorbehouden."
+            },
+            el: {
+                home: "Αρχική",
+                about: "Σχετικά με εμάς",
+                tools: "Εργαλεία",
+                contact: "Επικοινωνία",
+                heroTitle: "Μετατροπέας Excel σε PDF",
+                heroDescription: "Μετατρέψτε τα υπολογιστικά φύλλα Excel σας σε μορφή PDF διατηρώντας την ακριβή διάταξη, μορφοποίηση, πίνακες και δομή του αρχικού εγγράφου.",
+                howToTitle: "Πώς να μετατρέψετε Excel σε PDF",
+                step1Title: "Ανεβάστε το έγγραφο Excel σας",
+                step1Desc: "Κάντε κλικ στην περιοχή μεταφόρτωσης ή σύρετε και αποθέστε το αρχείο Excel σας. Υποστηρίζουμε τις μορφές XLS και XLSX.",
+                step2Title: "Προεπισκόπηση υπολογιστικού φύλλου",
+                step2Desc: "Δείτε μια προεπισκόπηση του υπολογιστικού φύλλου Excel σας με ακριβή μορφοποίηση και δεδομένα.",
+                step3Title: "Μετατροπή σε PDF",
+                step3Desc: "Κάντε κλικ στο κουμπί \"Μετατροπή σε PDF\" για να ξεκινήσετε τη διαδικασία μετατροπής.",
+                step4Title: "Λήψη εγγράφου PDF",
+                step4Desc: "Κατεβάστε το μετατρεπόμενο έγγραφο PDF σας με τέλεια μορφοποίηση.",
+                toolTitle: "Μετατροπέας Excel σε PDF",
+                uploadText: "Σύρετε και αποθέστε το υπολογιστικό φύλλο Excel σας εδώ ή κάντε κλικ για περιήγηση",
+                browseBtn: "Περιήγηση αρχείων Excel",
+                originalLabel: "Αρχικό έγγραφο Excel",
+                convertedLabel: "Μετατρεπόμενο έγγραφο PDF",
+                compressionLabel: "Ποιότητα μετατροπής:",
+                exactQuality: "Ακριβής",
+                exactQualityDesc: "(Τέλεια μορφοποίηση)",
+                highQuality: "Υψηλή",
+                highQualityDesc: "(Πολύ καλή)",
+                mediumQuality: "Μεσαία",
+                mediumQualityDesc: "(Καλή)",
+                convertBtn: "Μετατροπή σε PDF",
+                downloadBtn: "Λήψη PDF",
+                resetBtn: "Επαναφορά",
+                followUs: "ΑΚΟΛΟΥΘΗΣΤΕ ΜΑΣ",
+                popularCategories: "Δημοφιλείς κατηγορίες",
+                pdfTools: "Εργαλεία PDF",
+                imageTools: "Εργαλεία εικόνας",
+                textTools: "Εργαλεία κειμένου",
+                audioVideoTools: "Εργαλεία Ήχου/Βίντεο",
+                webDeveloperTools: "Εργαλεία προγραμματιστή ιστού",
+                calculatorTools: "Εργαλεία αριθμομηχανής",
+                utilityTools: "Βοηθητικά εργαλεία",
+                colorTools: "Εργαλεία χρωμάτων",
+                quickLinks: "Γρήγορες συνδέσεις",
+                homeLink: "Αρχική",
+                allTools: "Όλα τα εργαλεία",
+                faq: "Συχνές ερωτήσεις",
+                contactLink: "Επικοινωνία",
+                privacyPolicy: "Πολιτική απορρήτου",
+                disclaimer: "Αποποίηση ευθυνών",
+                terms: "Όροι χρήσης",
+                footerDescription: "Δωρεάν διαδικτυακά εργαλεία για PDF, εικόνες, κείμενο και άλλα. Απλοποιήστε τις ψηφιακές σας εργασίες με τα εύχρηστα βοηθητικά μας προγράμματα.",
+                copyright: "© 2025 LollyPoPDF. Με επιφύλαξη παντός δικαιώματος."
+            },
+            hi: {
+                home: "होम",
+                about: "हमारे बारे में",
+                tools: "टूल्स",
+                contact: "संपर्क करें",
+                heroTitle: "Excel से PDF कन्वर्टर",
+                heroDescription: "अपने एक्सेल स्प्रेडशीट को PDF फॉर्मेट में कन्वर्ट करें जबकि मूल दस्तावेज़ की सटीक लेआउट, फॉर्मेटिंग, टेबल और संरचना संरक्षित रखें।",
+                howToTitle: "Excel को PDF में कैसे बदलें",
+                step1Title: "अपना Excel दस्तावेज़ अपलोड करें",
+                step1Desc: "अपलोड क्षेत्र पर क्लिक करें या अपनी Excel फ़ाइल को ड्रैग और ड्रॉप करें। हम XLS और XLSX प्रारूपों का समर्थन करते हैं।",
+                step2Title: "स्प्रेडशीट का पूर्वावलोकन",
+                step2Desc: "सटीक फॉर्मेटिंग और डेटा के साथ अपनी Excel स्प्रेडशीट का पूर्वावलोकन देखें।",
+                step3Title: "PDF में कन्वर्ट करें",
+                step3Desc: "कन्वर्ट प्रक्रिया शुरू करने के लिए \"PDF में कन्वर्ट करें\" बटन पर क्लिक करें।",
+                step4Title: "PDF दस्तावेज़ डाउनलोड करें",
+                step4Desc: "परफेक्ट फॉर्मेटिंग के साथ अपना कन्वर्टेड PDF दस्तावेज़ डाउनलोड करें।",
+                toolTitle: "Excel से PDF कन्वर्टर",
+                uploadText: "अपनी Excel स्प्रेडशीट को यहां ड्रैग और ड्रॉप करें या ब्राउज़ करने के लिए क्लिक करें",
+                browseBtn: "Excel फ़ाइलें ब्राउज़ करें",
+                originalLabel: "मूल Excel दस्तावेज़",
+                convertedLabel: "कन्वर्टेड PDF दस्तावेज़",
+                compressionLabel: "कन्वर्जन गुणवत्ता:",
+                exactQuality: "सटीक",
+                exactQualityDesc: "(परफेक्ट फॉर्मेटिंग)",
+                highQuality: "उच्च",
+                highQualityDesc: "(बहुत अच्छा)",
+                mediumQuality: "मध्यम",
+                mediumQualityDesc: "(अच्छा)",
+                convertBtn: "PDF में कन्वर्ट करें",
+                downloadBtn: "PDF डाउनलोड करें",
+                resetBtn: "रीसेट करें",
+                followUs: "हमें फॉलो करें",
+                popularCategories: "लोकप्रिय श्रेणियां",
+                pdfTools: "PDF टूल्स",
+                imageTools: "इमेज टूल्स",
+                textTools: "टेक्स्ट टूल्स",
+                audioVideoTools: "ऑडियो/वीडियो टूल्स",
+                webDeveloperTools: "वेब डेवलपर टूल्स",
+                calculatorTools: "कैलकुलेटर टूल्स",
+                utilityTools: "यूटिलिटी टूल्स",
+                colorTools: "कलर टूल्स",
+                quickLinks: "क्विक लिंक्स",
+                homeLink: "होम",
+                allTools: "सभी टूल्स",
+                faq: "सामान्य प्रश्न",
+                contactLink: "संपर्क करें",
+                privacyPolicy: "गोपनीयता नीति",
+                disclaimer: "अस्वीकरण",
+                terms: "सेवा की शर्तें",
+                footerDescription: "PDF, छवियों, पाठ और अधिक के लिए मुफ्त ऑनलाइन टूल्स। हमारे उपयोग में आसान यूटिलिटीज के साथ अपने डिजिटल कार्यों को सरल बनाएं।",
+                copyright: "© 2025 LollyPoPDF. सर्वाधिकार सुरक्षित।"
+            },
+            te: {
+                home: "హోమ్",
+                about: "మా గురించి",
+                tools: "సాధనాలు",
+                contact: "సంప్రదించండి",
+                heroTitle: "Excel నుండి PDF కన్వర్టర్",
+                heroDescription: "మీ Excel స్ప్రెడ్షీట్లను PDF ఫార్మాట్కు మార్చండి, అయితే అసలు పత్రం యొక్క ఖచ్చితమైన లేఅవుట్, ఫార్మాటింగ్, పట్టికలు మరియు నిర్మాణాన్ని సంరక్షించండి.",
+                howToTitle: "Excelని PDFగా ఎలా మార్చాలి",
+                step1Title: "మీ Excel పత్రాన్ని అప్లోడ్ చేయండి",
+                step1Desc: "అప్లోడ్ ప్రాంతంపై క్లిక్ చేయండి లేదా మీ Excel ఫైల్ను డ్రాగ్ మరియు డ్రాప్ చేయండి. మేము XLS మరియు XLSX ఫార్మాట్లకు మద్దతు ఇస్తాము.",
+                step2Title: "స్ప్రెడ్షీట్ మునుజూపు",
+                step2Desc: "ఖచ్చితమైన ఫార్మాటింగ్ మరియు డేటాతో మీ Excel స్ప్రెడ్షీట్ యొక్క మునుజూపును చూడండి.",
+                step3Title: "PDFగా మార్చండి",
+                step3Desc: "మార్పిడి ప్రక్రియను ప్రారంభించడానికి \"PDFగా మార్చండి\" బటన్పై క్లిక్ చేయండి.",
+                step4Title: "PDF పత్రాన్ని డౌన్లోడ్ చేయండి",
+                step4Desc: "పరిపూర్ణ ఫార్మాటింగ్తో మీ మార్పిడి చేసిన PDF పత్రాన్ని డౌన్లోడ్ చేయండి.",
+                toolTitle: "Excel నుండి PDF కన్వర్టర్",
+                uploadText: "మీ Excel స్ప్రెడ్షీట్ను ఇక్కడ డ్రాగ్ మరియు డ్రాప్ చేయండి లేదా బ్రౌజ్ చేయడానికి క్లిక్ చేయండి",
+                browseBtn: "Excel ఫైళ్ళను బ్రౌజ్ చేయండి",
+                originalLabel: "అసలు Excel పత్రం",
+                convertedLabel: "మార్పిడి చేసిన PDF పత్రం",
+                compressionLabel: "మార్పిడి నాణ్యత:",
+                exactQuality: "ఖచ్చితమైన",
+                exactQualityDesc: "(పరిపూర్ణ ఫార్మాటింగ్)",
+                highQuality: "అధిక",
+                highQualityDesc: "(చాలా మంచి)",
+                mediumQuality: "మధ్యస్థ",
+                mediumQualityDesc: "(మంచి)",
+                convertBtn: "PDFగా మార్చండి",
+                downloadBtn: "PDF డౌన్లోడ్ చేయండి",
+                resetBtn: "రీసెట్ చేయండి",
+                followUs: "మమ్మల్ని అనుసరించండి",
+                popularCategories: "జనాదరణ పొందిన వర్గాలు",
+                pdfTools: "PDF సాధనాలు",
+                imageTools: "చిత్ర సాధనాలు",
+                textTools: "టెక్స్ట్ సాధనాలు",
+                audioVideoTools: "ఆడియో/వీడియో సాధనాలు",
+                webDeveloperTools: "వెబ్ డెవలపర్ సాధనాలు",
+                calculatorTools: "కాలిక్యులేటర్ సాధనాలు",
+                utilityTools: "యుటిలిటీ సాధనాలు",
+                colorTools: "రంగు సాధనాలు",
+                quickLinks: "త్వరిత లింకులు",
+                homeLink: "హోమ్",
+                allTools: "అన్ని సాధనాలు",
+                faq: "సాధారణ ప్రశ్నలు",
+                contactLink: "సంప్రదించండి",
+                privacyPolicy: "గోప్యతా విధానం",
+                disclaimer: "డిస్క్లైమర్",
+                terms: "సేవా నిబంధనలు",
+                footerDescription: "PDF, చిత్రాలు, టెక్స్ట్ మరియు మరిన్నింటి కోసం ఉచిత ఆన్లైన్ సాధనాలు. మా ఉపయోగించడానికి సులభమైన యుటిలిటీలతో మీ డిజిటల్ పనులను సులభతరం చేయండి.",
+                copyright: "© 2025 LollyPoPDF. అన్ని హక్కులూ ప్రత్యేకించబడ్డాయి."
+            },
+            kn: {
+                home: "ಮುಖಪುಟ",
+                about: "ನಮ್ಮ ಬಗ್ಗೆ",
+                tools: "ಉಪಕರಣಗಳು",
+                contact: "ಸಂಪರ್ಕಿಸಿ",
+                heroTitle: "Excel ನಿಂದ PDF ಪರಿವರ್ತಕ",
+                heroDescription: "ಮೂಲ ದಾಖಲೆಯ ನಿಖರವಾದ ಲೇಅವುಟ್, ಫಾರ್ಮ್ಯಾಟಿಂಗ್, ಟೇಬಲ್ಗಳು ಮತ್ತು ರಚನೆಯನ್ನು ಸಂರಕ್ಷಿಸುವಾಗ ನಿಮ್ಮ Excel ಸ್ಪ್ರೆಡ್ಶೀಟ್ಗಳನ್ನು PDF ಸ್ವರೂಪಕ್ಕೆ ಪರಿವರ್ತಿಸಿ.",
+                howToTitle: "Excel ಅನ್ನು PDF ಗೆ ಹೇಗೆ ಪರಿವರ್ತಿಸುವುದು",
+                step1Title: "ನಿಮ್ಮ Excel ದಾಖಲೆಯನ್ನು ಅಪ್ಲೋಡ್ ಮಾಡಿ",
+                step1Desc: "ಅಪ್ಲೋಡ್ ಪ್ರದೇಶದ ಮೇಲೆ ಕ್ಲಿಕ್ ಮಾಡಿ ಅಥವಾ ನಿಮ್ಮ Excel ಫೈಲ್ ಅನ್ನು ಎಳೆಯಿರಿ ಮತ್ತು ಬಿಡಿ. ನಾವು XLS ಮತ್ತು XLSX ಸ್ವರೂಪಗಳನ್ನು ಬೆಂಬಲಿಸುತ್ತೇವೆ.",
+                step2Title: "ಸ್ಪ್ರೆಡ್ಶೀಟ್ ಪೂರ್ವವೀಕ್ಷಣೆ",
+                step2Desc: "ನಿಖರವಾದ ಫಾರ್ಮ್ಯಾಟಿಂಗ್ ಮತ್ತು ಡೇಟಾವನ್ನು ಹೊಂದಿರುವ ನಿಮ್ಮ Excel ಸ್ಪ್ರೆಡ್ಶೀಟ್‌ನ ಪೂರ್ವವೀಕ್ಷಣೆಯನ್ನು ನೋಡಿ.",
+                step3Title: "PDF ಗೆ ಪರಿವರ್ತಿಸಿ",
+                step3Desc: "ಪರಿವರ್ತನೆ ಪ್ರಕ್ರಿಯೆಯನ್ನು ಪ್ರಾರಂಭಿಸಲು \"PDF ಗೆ ಪರಿವರ್ತಿಸಿ\" ಬಟನ್ ಕ್ಲಿಕ್ ಮಾಡಿ.",
+                step4Title: "PDF ದಾಖಲೆಯನ್ನು ಡೌನ್‌ಲೋಡ್ ಮಾಡಿ",
+                step4Desc: "ಪರಿಪೂರ್ಣ ಫಾರ್ಮ್ಯಾಟಿಂಗ್‌ನೊಂದಿಗೆ ನಿಮ್ಮ ಪರಿವರ್ತಿತ PDF ದಾಖಲೆಯನ್ನು ಡೌನ್‌ಲೋಡ್ ಮಾಡಿ.",
+                toolTitle: "Excel ನಿಂದ PDF ಪರಿವರ್ತಕ",
+                uploadText: "ನಿಮ್ಮ Excel ಸ್ಪ್ರೆಡ್ಶೀಟ್ ಅನ್ನು ಇಲ್ಲಿ ಎಳೆಯಿರಿ ಮತ್ತು ಬಿಡಿ ಅಥವಾ ಬ್ರೌಸ್ ಮಾಡಲು ಕ್ಲಿಕ್ ಮಾಡಿ",
+                browseBtn: "Excel ಫೈಲ್‌ಗಳನ್ನು ಬ್ರೌಸ್ ಮಾಡಿ",
+                originalLabel: "ಮೂಲ Excel ದಾಖಲೆ",
+                convertedLabel: "ಪರಿವರ್ತಿತ PDF ದಾಖಲೆ",
+                compressionLabel: "ಪರಿವರ್ತನೆ ಗುಣಮಟ್ಟ:",
+                exactQuality: "ನಿಖರ",
+                exactQualityDesc: "(ಪರಿಪೂರ್ಣ ಫಾರ್ಮ್ಯಾಟಿಂಗ್)",
+                highQuality: "ಹೆಚ್ಚಿನ",
+                highQualityDesc: "(ಬಹಳ ಉತ್ತಮ)",
+                mediumQuality: "ಮಧ್ಯಮ",
+                mediumQualityDesc: "(ಉತ್ತಮ)",
+                convertBtn: "PDF ಗೆ ಪರಿವರ್ತಿಸಿ",
+                downloadBtn: "PDF ಡೌನ್‌ಲೋಡ್ ಮಾಡಿ",
+                resetBtn: "ಮರುಹೊಂದಿಸಿ",
+                followUs: "ನಮ್ಮನ್ನು ಅನುಸರಿಸಿ",
+                popularCategories: "ಜನಪ್ರಿಯ ವರ್ಗಗಳು",
+                pdfTools: "PDF ಉಪಕರಣಗಳು",
+                imageTools: "ಚಿತ್ರ ಉಪಕರಣಗಳು",
+                textTools: "ಪಠ್ಯ ಉಪಕರಣಗಳು",
+                audioVideoTools: "ಆಡಿಯೋ/ವೀಡಿಯೊ ಉಪಕರಣಗಳು",
+                webDeveloperTools: "ವೆಬ್ ಡೆವಲಪರ್ ಉಪಕರಣಗಳು",
+                calculatorTools: "ಕ್ಯಾಲ್ಕುಲೇಟರ್ ಉಪಕರಣಗಳು",
+                utilityTools: "ಯುಟಿಲಿಟಿ ಉಪಕರಣಗಳು",
+                colorTools: "ಬಣ್ಣದ ಉಪಕರಣಗಳು",
+                quickLinks: "ತ್ವರಿತ ಲಿಂಕ್‌ಗಳು",
+                homeLink: "ಮುಖಪುಟ",
+                allTools: "ಎಲ್ಲಾ ಉಪಕರಣಗಳು",
+                faq: "ಸಾಮಾನ್ಯ ಪ್ರಶ್ನೆಗಳು",
+                contactLink: "ಸಂಪರ್ಕಿಸಿ",
+                privacyPolicy: "ಗೌಪ್ಯತಾ ನೀತಿ",
+                disclaimer: "ಮುನ್ನೆಚ್ಚರಿಕೆ",
+                terms: "ಸೇವಾ ನಿಬಂಧನೆಗಳು",
+                footerDescription: "PDF, ಚಿತ್ರಗಳು, ಪಠ್ಯ ಮತ್ತು ಹೆಚ್ಚಿನದಕ್ಕಾಗಿ ಉಚಿತ ಆನ್‌ಲೈನ್ ಉಪಕರಣಗಳು. ನಮ್ಮ ಬಳಸಲು ಸುಲಭವಾದ ಉಪಯುಕ್ತತೆಗಳೊಂದಿಗೆ ನಿಮ್ಮ ಡಿಜಿಟಲ್ ಕಾರ್ಯಗಳನ್ನು ಸರಳಗೊಳಿಸಿ.",
+                copyright: "© 2025 LollyPoPDF. ಎಲ್ಲಾ ಹಕ್ಕುಗಳನ್ನು ಕಾಯ್ದಿರಿಸಲಾಗಿದೆ."
+            },
+            ta: {
+                home: "முகப்பு",
+                about: "எங்களை பற்றி",
+                tools: "கருவிகள்",
+                contact: "தொடர்பு கொள்ள",
+                heroTitle: "Excel முதல் PDF மாற்றி",
+                heroDescription: "உங்கள் Excel விரிதாள்களை PDF வடிவத்திற்கு மாற்றவும், அசல் ஆவணத்தின் சரியான அமைப்பு, வடிவமைப்பு, அட்டவணைகள் மற்றும் கட்டமைப்பைப் பாதுகாக்கவும்.",
+                howToTitle: "Excel ஐ PDF ஆக மாற்றுவது எப்படி",
+                step1Title: "உங்கள் Excel ஆவணத்தை பதிவேற்றவும்",
+                step1Desc: "பதிவேற்ற பகுதியை கிளிக் செய்யவும் அல்லது உங்கள் Excel கோப்பை இழுத்து விடவும். நாங்கள் XLS மற்றும் XLSX வடிவங்களை ஆதரிக்கிறோம்.",
+                step2Title: "விரிதாள் முன்னோட்டம்",
+                step2Desc: "சரியான வடிவமைப்பு மற்றும் தரவுகளுடன் உங்கள் Excel விரிதாளின் முன்னோட்டத்தைக் காண்க.",
+                step3Title: "PDF ஆக மாற்றவும்",
+                step3Desc: "மாற்று செயல்முறையைத் தொடங்க \"PDF ஆக மாற்றவும்\" பொத்தானைக் கிளிக் செய்யவும்.",
+                step4Title: "PDF ஆவணத்தை பதிவிறக்கவும்",
+                step4Desc: "சரியான வடிவமைப்புடன் உங்கள் மாற்றப்பட்ட PDF ஆவணத்தைப் பதிவிறக்கவும்.",
+                toolTitle: "Excel முதல் PDF மாற்றி",
+                uploadText: "உங்கள் Excel விரிதாளை இங்கே இழுத்து விடவும் அல்லது உலாவ கிளிக் செய்யவும்",
+                browseBtn: "Excel கோப்புகளை உலாவு",
+                originalLabel: "அசல் Excel ஆவணம்",
+                convertedLabel: "மாற்றப்பட்ட PDF ஆவணம்",
+                compressionLabel: "மாற்று தரம்:",
+                exactQuality: "சரியான",
+                exactQualityDesc: "(சரியான வடிவமைப்பு)",
+                highQuality: "உயர்",
+                highQualityDesc: "(மிகவும் நல்லது)",
+                mediumQuality: "நடுத்தர",
+                mediumQualityDesc: "(நல்லது)",
+                convertBtn: "PDF ஆக மாற்றவும்",
+                downloadBtn: "PDF பதிவிறக்கவும்",
+                resetBtn: "மீட்டமைக்க",
+                followUs: "எங்களை பின்தொடரவும்",
+                popularCategories: "பிரபலமான வகைகள்",
+                pdfTools: "PDF கருவிகள்",
+                imageTools: "பட கருவிகள்",
+                textTools: "உரை கருவிகள்",
+                audioVideoTools: "ஒலி/வீடியோ கருவிகள்",
+                webDeveloperTools: "வலை மேம்பாட்டு கருவிகள்",
+                calculatorTools: "கால்குலேட்டர் கருவிகள்",
+                utilityTools: "பயன்பாட்டு கருவிகள்",
+                colorTools: "வண்ண கருவிகள்",
+                quickLinks: "விரைவு இணைப்புகள்",
+                homeLink: "முகப்பு",
+                allTools: "அனைத்து கருவிகள்",
+                faq: "அடிக்கடி கேட்கப்படும் கேள்விகள்",
+                contactLink: "தொடர்பு கொள்ள",
+                privacyPolicy: "தனியுரிமை கொள்கை",
+                disclaimer: "மறுப்பு",
+                terms: "சேவை விதிமுறைகள்",
+                footerDescription: "PDF, படங்கள், உரை மற்றும் பிறவற்றுக்கான இலவச ஆன்லைன் கருவிகள். எங்கள் பயன்படுத்த எளிதான பயன்பாடுகளுடன் உங்கள் டிஜிட்டல் பணிகளை எளிதாக்குங்கள்.",
+                copyright: "© 2025 LollyPoPDF. அனைத்து உரிமைகளும் பாதுகாக்கப்பட்டவை."
+            },
+            ml: {
+                home: "ഹോം",
+                about: "ഞങ്ങളെക്കുറിച്ച്",
+                tools: "ഉപകരണങ്ങൾ",
+                contact: "ബന്ധപ്പെടുക",
+                heroTitle: "Excel മുതൽ PDF വരെ കൺവെർട്ടർ",
+                heroDescription: "യഥാർത്ഥ പ്രമാണത്തിന്റെ കൃത്യമായ ലേഔട്ട്, ഫോർമാറ്റിംഗ്, പട്ടികകൾ, ഘടന എന്നിവ സംരക്ഷിച്ചുകൊണ്ട് നിങ്ങളുടെ Excel സ്പ്രെഡ്ഷീറ്റുകൾ PDF ഫോർമാറ്റിലേക്ക് പരിവർത്തനം ചെയ്യുക.",
+                howToTitle: "Excel എങ്ങനെ PDF ആക്കി മാറ്റാം",
+                step1Title: "നിങ്ങളുടെ Excel പ്രമാണം അപ്‌ലോഡ് ചെയ്യുക",
+                step1Desc: "അപ്‌ലോഡ് ഏരിയയിൽ ക്ലിക്ക് ചെയ്യുക അല്ലെങ്കിൽ നിങ്ങളുടെ Excel ഫയൽ വലിച്ചിടുക. ഞങ്ങൾ XLS, XLSX ഫോർമാറ്റുകൾ പിന്തുണയ്‌ക്കുന്നു.",
+                step2Title: "സ്പ്രെഡ്ഷീറ്റ് പ്രിവ്യൂ",
+                step2Desc: "കൃത്യമായ ഫോർമാറ്റിംഗും ഡാറ്റയുമുള്ള നിങ്ങളുടെ Excel സ്പ്രെഡ്ഷീറ്റിന്റെ പ്രിവ്യൂ കാണുക.",
+                step3Title: "PDF ആക്കി മാറ്റുക",
+                step3Desc: "പരിവർത്തന പ്രക്രിയ ആരംഭിക്കാൻ \"PDF ആക്കി മാറ്റുക\" ബട്ടൺ ക്ലിക്ക് ചെയ്യുക.",
+                step4Title: "PDF പ്രമാണം ഡൗൺലോഡ് ചെയ്യുക",
+                step4Desc: "തികഞ്ഞ ഫോർമാറ്റിംഗ് ഉള്ള നിങ്ങളുടെ പരിവർത്തനം ചെയ്ത PDF പ്രമാണം ഡൗൺലോഡ് ചെയ്യുക.",
+                toolTitle: "Excel മുതൽ PDF വരെ കൺവെർട്ടർ",
+                uploadText: "നിങ്ങളുടെ Excel സ്പ്രെഡ്ഷീറ്റ് ഇവിടെ വലിച്ചിടുക അല്ലെങ്കിൽ ബ്രൗസ് ചെയ്യാൻ ക്ലിക്ക് ചെയ്യുക",
+                browseBtn: "Excel ഫയലുകൾ ബ്രൗസ് ചെയ്യുക",
+                originalLabel: "യഥാർത്ഥ Excel പ്രമാണം",
+                convertedLabel: "പരിവർത്തനം ചെയ്ത PDF പ്രമാണം",
+                compressionLabel: "പരിവർത്തന ഗുണനിലവാരം:",
+                exactQuality: "കൃത്യം",
+                exactQualityDesc: "(തികഞ്ഞ ഫോർമാറ്റിംഗ്)",
+                highQuality: "ഉയർന്ന",
+                highQualityDesc: "(വളരെ നല്ലത്)",
+                mediumQuality: "ഇടത്തരം",
+                mediumQualityDesc: "(നല്ലത്)",
+                convertBtn: "PDF ആക്കി മാറ്റുക",
+                downloadBtn: "PDF ഡൗൺലോഡ് ചെയ്യുക",
+                resetBtn: "റീസെറ്റ് ചെയ്യുക",
+                followUs: "ഞങ്ങളെ പിന്തുടരുക",
+                popularCategories: "ജനപ്രിയ വിഭാഗങ്ങൾ",
+                pdfTools: "PDF ഉപകരണങ്ങൾ",
+                imageTools: "ഇമേജ് ഉപകരണങ്ങൾ",
+                textTools: "ടെക്സ്റ്റ് ഉപകരണങ്ങൾ",
+                audioVideoTools: "ഓഡിയോ/വീഡിയോ ഉപകരണങ്ങൾ",
+                webDeveloperTools: "വെബ് ഡവലപ്പർ ഉപകരണങ്ങൾ",
+                calculatorTools: "കാൽക്കുലേറ്റർ ഉപകരണങ്ങൾ",
+                utilityTools: "യൂട്ടിലിറ്റി ഉപകരണങ്ങൾ",
+                colorTools: "കളർ ഉപകരണങ്ങൾ",
+                quickLinks: "ദ്രുത ലിങ്കുകൾ",
+                homeLink: "ഹോം",
+                allTools: "എല്ലാ ഉപകരണങ്ങളും",
+                faq: "പതിവ് ചോദ്യങ്ങൾ",
+                contactLink: "ബന്ധപ്പെടുക",
+                privacyPolicy: "സ്വകാര്യതാ നയം",
+                disclaimer: "അസ്വീകാര്യത",
+                terms: "സേവന വ്യവസ്ഥകൾ",
+                footerDescription: "PDF, ചിത്രങ്ങൾ, ടെക്സ്റ്റ് എന്നിവയ്ക്കുള്ള സൗജന്യ ഓൺലൈൻ ഉപകരണങ്ങൾ. ഞങ്ങളുടെ എളുപ്പത്തിൽ ഉപയോഗിക്കാവുന്ന യൂട്ടിലിറ്റികൾ ഉപയോഗിച്ച് നിങ്ങളുടെ ഡിജിറ്റൽ ജോലികൾ ലളിതമാക്കുക.",
+                copyright: "© 2025 LollyPoPDF. എല്ലാ അവകാശങ്ങളും നിക്ഷിപ്തം."
+            },
+            id: {
+                home: "Beranda",
+                about: "Tentang Kami",
+                tools: "Alat",
+                contact: "Kontak",
+                heroTitle: "Konverter Excel ke PDF",
+                heroDescription: "Konversi spreadsheet Excel Anda ke format PDF sambil mempertahankan tata letak, pemformatan, tabel, dan struktur yang tepat dari dokumen asli.",
+                howToTitle: "Cara Mengonversi Excel ke PDF",
+                step1Title: "Unggah Dokumen Excel Anda",
+                step1Desc: "Klik area unggah atau seret dan lepas file Excel Anda. Kami mendukung format XLS dan XLSX.",
+                step2Title: "Pratinjau Spreadsheet",
+                step2Desc: "Lihat pratinjau spreadsheet Excel Anda dengan pemformatan dan data yang tepat.",
+                step3Title: "Konversi ke PDF",
+                step3Desc: "Klik tombol \"Konversi ke PDF\" untuk memulai proses konversi.",
+                step4Title: "Unduh Dokumen PDF",
+                step4Desc: "Unduh dokumen PDF yang telah dikonversi dengan pemformatan sempurna.",
+                toolTitle: "Konverter Excel ke PDF",
+                uploadText: "Seret dan lepas spreadsheet Excel Anda di sini atau klik untuk menjelajah",
+                browseBtn: "Jelajahi File Excel",
+                originalLabel: "Dokumen Excel Asli",
+                convertedLabel: "Dokumen PDF Terkonversi",
+                compressionLabel: "Kualitas Konversi:",
+                exactQuality: "Tepat",
+                exactQualityDesc: "(Pemformatan Sempurna)",
+                highQuality: "Tinggi",
+                highQualityDesc: "(Sangat Baik)",
+                mediumQuality: "Sedang",
+                mediumQualityDesc: "(Baik)",
+                convertBtn: "Konversi ke PDF",
+                downloadBtn: "Unduh PDF",
+                resetBtn: "Atur Ulang",
+                followUs: "IKUTI KAMI",
+                popularCategories: "Kategori Populer",
+                pdfTools: "Alat PDF",
+                imageTools: "Alat Gambar",
+                textTools: "Alat Teks",
+                audioVideoTools: "Alat Audio/Video",
+                webDeveloperTools: "Alat Pengembang Web",
+                calculatorTools: "Alat Kalkulator",
+                utilityTools: "Alat Utilitas",
+                colorTools: "Alat Warna",
+                quickLinks: "Tautan Cepat",
+                homeLink: "Beranda",
+                allTools: "Semua Alat",
+                faq: "FAQ",
+                contactLink: "Kontak",
+                privacyPolicy: "Kebijakan Privasi",
+                disclaimer: "Penafian",
+                terms: "Ketentuan Layanan",
+                footerDescription: "Alat online gratis untuk PDF, gambar, teks, dan banyak lagi. Sederhanakan tugas digital Anda dengan utilitas kami yang mudah digunakan.",
+                copyright: "© 2025 LollyPoPDF. Hak Cipta Dilindungi."
+            },
+            ms: {
+                home: "Laman Utama",
+                about: "Tentang Kami",
+                tools: "Alat",
+                contact: "Hubungi",
+                heroTitle: "Penukar Excel ke PDF",
+                heroDescription: "Tukar hamparan Excel anda ke format PDF sambil mengekalkan susun atur, pemformatan, jadual dan struktur yang tepat daripada dokumen asal.",
+                howToTitle: "Cara Menukar Excel ke PDF",
+                step1Title: "Muat Naik Dokumen Excel Anda",
+                step1Desc: "Klik kawasan muat naik atau seret dan lepas fail Excel anda. Kami menyokong format XLS dan XLSX.",
+                step2Title: "Pratonton Hamparan",
+                step2Desc: "Lihat pratonton hamparan Excel anda dengan pemformatan dan data yang tepat.",
+                step3Title: "Tukar ke PDF",
+                step3Desc: "Klik butang \"Tukar ke PDF\" untuk memulakan proses penukaran.",
+                step4Title: "Muat Turun Dokumen PDF",
+                step4Desc: "Muat turun dokumen PDF yang telah ditukar dengan pemformatan yang sempurna.",
+                toolTitle: "Penukar Excel ke PDF",
+                uploadText: "Seret dan lepas hamparan Excel anda di sini atau klik untuk melayari",
+                browseBtn: "Layari Fail Excel",
+                originalLabel: "Dokumen Excel Asal",
+                convertedLabel: "Dokumen PDF Ditukar",
+                compressionLabel: "Kualiti Penukaran:",
+                exactQuality: "Tepat",
+                exactQualityDesc: "(Pemformatan Sempurna)",
+                highQuality: "Tinggi",
+                highQualityDesc: "(Sangat Baik)",
+                mediumQuality: "Sederhana",
+                mediumQualityDesc: "(Baik)",
+                convertBtn: "Tukar ke PDF",
+                downloadBtn: "Muat Turun PDF",
+                resetBtn: "Tetapkan Semula",
+                followUs: "IKUTI KAMI",
+                popularCategories: "Kategori Popular",
+                pdfTools: "Alat PDF",
+                imageTools: "Alat Imej",
+                textTools: "Alat Teks",
+                audioVideoTools: "Alat Audio/Video",
+                webDeveloperTools: "Alat Pembangun Web",
+                calculatorTools: "Alat Kalkulator",
+                utilityTools: "Alat Utiliti",
+                colorTools: "Alat Warna",
+                quickLinks: "Pautan Pantas",
+                homeLink: "Laman Utama",
+                allTools: "Semua Alat",
+                faq: "Soalan Lazim",
+                contactLink: "Hubungi",
+                privacyPolicy: "Dasar Privasi",
+                disclaimer: "Penafian",
+                terms: "Terma Perkhidmatan",
+                footerDescription: "Alat dalam talian percuma untuk PDF, imej, teks dan banyak lagi. Permudahkan tugas digital anda dengan utiliti kami yang mudah digunakan.",
+                copyright: "© 2025 LollyPoPDF. Hak Cipta Terpelihara."
+            },
+            pl: {
+                home: "Strona główna",
+                about: "O nas",
+                tools: "Narzędzia",
+                contact: "Kontakt",
+                heroTitle: "Konwerter Excel na PDF",
+                heroDescription: "Konwertuj swoje arkusze Excela do formatu PDF, zachowując dokładny układ, formatowanie, tabele i strukturę oryginalnego dokumentu.",
+                howToTitle: "Jak przekonwertować Excel na PDF",
+                step1Title: "Prześlij swój dokument Excel",
+                step1Desc: "Kliknij obszar przesyłania lub przeciągnij i upuść swój plik Excel. Obsługujemy formaty XLS i XLSX.",
+                step2Title: "Podgląd arkusza",
+                step2Desc: "Zobacz podgląd swojego arkusza Excela z dokładnym formatowaniem i danymi.",
+                step3Title: "Konwertuj na PDF",
+                step3Desc: "Kliknij przycisk \"Konwertuj na PDF\", aby rozpocząć proces konwersji.",
+                step4Title: "Pobierz dokument PDF",
+                step4Desc: "Pobierz swój przekonwertowany dokument PDF z doskonałym formatowaniem.",
+                toolTitle: "Konwerter Excel na PDF",
+                uploadText: "Przeciągnij i upuść swój arkusz Excela tutaj lub kliknij, aby przeglądać",
+                browseBtn: "Przeglądaj pliki Excel",
+                originalLabel: "Oryginalny dokument Excel",
+                convertedLabel: "Przekonwertowany dokument PDF",
+                compressionLabel: "Jakość konwersji:",
+                exactQuality: "Dokładna",
+                exactQualityDesc: "(Idealne formatowanie)",
+                highQuality: "Wysoka",
+                highQualityDesc: "(Bardzo dobra)",
+                mediumQuality: "Średnia",
+                mediumQualityDesc: "(Dobra)",
+                convertBtn: "Konwertuj na PDF",
+                downloadBtn: "Pobierz PDF",
+                resetBtn: "Resetuj",
+                followUs: "OBSERWUJ NAS",
+                popularCategories: "Popularne kategorie",
+                pdfTools: "Narzędzia PDF",
+                imageTools: "Narzędzia obrazów",
+                textTools: "Narzędzia tekstowe",
+                audioVideoTools: "Narzędzia Audio/Video",
+                webDeveloperTools: "Narzędzia Web Developera",
+                calculatorTools: "Narzędzia kalkulatora",
+                utilityTools: "Narzędzia użytkowe",
+                colorTools: "Narzędzia kolorów",
+                quickLinks: "Szybkie linki",
+                homeLink: "Strona główna",
+                allTools: "Wszystkie narzędzia",
+                faq: "FAQ",
+                contactLink: "Kontakt",
+                privacyPolicy: "Polityka prywatności",
+                disclaimer: "Zastrzeżenie",
+                terms: "Warunki usługi",
+                footerDescription: "Darmowe narzędzia online dla PDF, obrazów, tekstu i nie tylko. Uprość swoje zadania cyfrowe dzięki naszym łatwym w użyciu narzędziom.",
+                copyright: "© 2025 LollyPoPDF. Wszelkie prawa zastrzeżone."
+            },
+            th: {
+                home: "หน้าแรก",
+                about: "เกี่ยวกับเรา",
+                tools: "เครื่องมือ",
+                contact: "ติดต่อ",
+                heroTitle: "เครื่องมือแปลง Excel เป็น PDF",
+                heroDescription: "แปลงสเปรดชีต Excel ของคุณเป็นรูปแบบ PDF โดยคงเค้าโครง การจัดรูปแบบ ตาราง และโครงสร้างของเอกสารเดิมไว้อย่างแม่นยำ",
+                howToTitle: "วิธีแปลง Excel เป็น PDF",
+                step1Title: "อัปโหลดเอกสาร Excel ของคุณ",
+                step1Desc: "คลิกพื้นที่อัปโหลดหรือลากและวางไฟล์ Excel ของคุณ เรารองรับรูปแบบ XLS และ XLSX",
+                step2Title: "แสดงตัวอย่างสเปรดชีต",
+                step2Desc: "ดูตัวอย่างสเปรดชีต Excel ของคุณด้วยการจัดรูปแบบและข้อมูลที่แม่นยำ",
+                step3Title: "แปลงเป็น PDF",
+                step3Desc: "คลิกปุ่ม \"แปลงเป็น PDF\" เพื่อเริ่มกระบวนการแปลง",
+                step4Title: "ดาวน์โหลดเอกสาร PDF",
+                step4Desc: "ดาวน์โหลดเอกสาร PDF ที่แปลงแล้วด้วยการจัดรูปแบบที่สมบูรณ์แบบ",
+                toolTitle: "เครื่องมือแปลง Excel เป็น PDF",
+                uploadText: "ลากและวางสเปรดชีต Excel ของคุณที่นี่หรือคลิกเพื่อเรียกดู",
+                browseBtn: "เรียกดูไฟล์ Excel",
+                originalLabel: "เอกสาร Excel ดั้งเดิม",
+                convertedLabel: "เอกสาร PDF ที่แปลงแล้ว",
+                compressionLabel: "คุณภาพการแปลง:",
+                exactQuality: "แม่นยำ",
+                exactQualityDesc: "(การจัดรูปแบบสมบูรณ์แบบ)",
+                highQuality: "สูง",
+                highQualityDesc: "(ดีมาก)",
+                mediumQuality: "ปานกลาง",
+                mediumQualityDesc: "(ดี)",
+                convertBtn: "แปลงเป็น PDF",
+                downloadBtn: "ดาวน์โหลด PDF",
+                resetBtn: "รีเซ็ต",
+                followUs: "ติดตามเรา",
+                popularCategories: "หมวดหมู่ยอดนิยม",
+                pdfTools: "เครื่องมือ PDF",
+                imageTools: "เครื่องมือรูปภาพ",
+                textTools: "เครื่องมือข้อความ",
+                audioVideoTools: "เครื่องมือเสียง/วิดีโอ",
+                webDeveloperTools: "เครื่องมือนักพัฒนาเว็บ",
+                calculatorTools: "เครื่องมือเครื่องคิดเลข",
+                utilityTools: "เครื่องมืออรรถประโยชน์",
+                colorTools: "เครื่องมือสี",
+                quickLinks: "ลิงก์ด่วน",
+                homeLink: "หน้าแรก",
+                allTools: "เครื่องมือทั้งหมด",
+                faq: "คำถามที่พบบ่อย",
+                contactLink: "ติดต่อ",
+                privacyPolicy: "นโยบายความเป็นส่วนตัว",
+                disclaimer: "ข้อจำกัดความรับผิดชอบ",
+                terms: "เงื่อนไขการให้บริการ",
+                footerDescription: "เครื่องมือออนไลน์ฟรีสำหรับ PDF รูปภาพ ข้อความ และอื่นๆ ลดความซับซ้อนของงานดิจิทัลของคุณด้วยเครื่องมือที่ใช้งานง่ายของเรา",
+                copyright: "© 2025 LollyPoPDF. สงวนลิขสิทธิ์"
+            },
+            tr: {
+                home: "Ana Sayfa",
+                about: "Hakkımızda",
+                tools: "Araçlar",
+                contact: "İletişim",
+                heroTitle: "Excel'den PDF'e Dönüştürücü",
+                heroDescription: "Excel elektronik tablolarınızı, orijinal belgenin tam düzenini, biçimlendirmesini, tablolarını ve yapısını koruyarak PDF formatına dönüştürün.",
+                howToTitle: "Excel'i PDF'e Nasıl Dönüştürürsünüz",
+                step1Title: "Excel Belgenizi Yükleyin",
+                step1Desc: "Yükleme alanına tıklayın veya Excel dosyanızı sürükleyip bırakın. XLS ve XLSX formatlarını destekliyoruz.",
+                step2Title: "Elektronik Tablo Önizlemesi",
+                step2Desc: "Excel elektronik tablonuzun tam biçimlendirme ve verilerle önizlemesini görün.",
+                step3Title: "PDF'e Dönüştür",
+                step3Desc: "Dönüştürme işlemini başlatmak için \"PDF'e Dönüştür\" düğmesine tıklayın.",
+                step4Title: "PDF Belgesini İndir",
+                step4Desc: "Mükemmel biçimlendirmeli dönüştürülmüş PDF belgenizi indirin.",
+                toolTitle: "Excel'den PDF'e Dönüştürücü",
+                uploadText: "Excel elektronik tablonuzu buraya sürükleyip bırakın veya göz atmak için tıklayın",
+                browseBtn: "Excel Dosyalarını Gözat",
+                originalLabel: "Orijinal Excel Belgesi",
+                convertedLabel: "Dönüştürülmüş PDF Belgesi",
+                compressionLabel: "Dönüştürme Kalitesi:",
+                exactQuality: "Tam",
+                exactQualityDesc: "(Mükemmel Biçimlendirme)",
+                highQuality: "Yüksek",
+                highQualityDesc: "(Çok İyi)",
+                mediumQuality: "Orta",
+                mediumQualityDesc: "(İyi)",
+                convertBtn: "PDF'e Dönüştür",
+                downloadBtn: "PDF İndir",
+                resetBtn: "Sıfırla",
+                followUs: "BİZİ TAKİP EDİN",
+                popularCategories: "Popüler Kategoriler",
+                pdfTools: "PDF Araçları",
+                imageTools: "Resim Araçları",
+                textTools: "Metin Araçları",
+                audioVideoTools: "Ses/Video Araçları",
+                webDeveloperTools: "Web Geliştirici Araçları",
+                calculatorTools: "Hesap Makinesi Araçları",
+                utilityTools: "Yardımcı Araçlar",
+                colorTools: "Renk Araçları",
+                quickLinks: "Hızlı Bağlantılar",
+                homeLink: "Ana Sayfa",
+                allTools: "Tüm Araçlar",
+                faq: "SSS",
+                contactLink: "İletişim",
+                privacyPolicy: "Gizlilik Politikası",
+                disclaimer: "Feragatname",
+                terms: "Hizmet Şartları",
+                footerDescription: "PDF, resimler, metin ve daha fazlası için ücretsiz çevrimiçi araçlar. Kullanımı kolay yardımcı programlarımızla dijital görevlerinizi basitleştirin.",
+                copyright: "© 2025 LollyPoPDF. Tüm hakları saklıdır."
+            },
+            uk: {
+                home: "Головна",
+                about: "Про нас",
+                tools: "Інструменти",
+                contact: "Контакт",
+                heroTitle: "Конвертер Excel у PDF",
+                heroDescription: "Конвертуйте ваші електронні таблиці Excel у формат PDF, зберігаючи точне макети, форматування, таблиці та структуру оригінального документа.",
+                howToTitle: "Як конвертувати Excel у PDF",
+                step1Title: "Завантажте свій документ Excel",
+                step1Desc: "Клацніть на область завантаження або перетягніть файл Excel. Ми підтримуємо формати XLS та XLSX.",
+                step2Title: "Попередній перегляд таблиці",
+                step2Desc: "Подивіться попередній перегляд вашої електронної таблиці Excel з точним форматуванням та даними.",
+                step3Title: "Конвертувати у PDF",
+                step3Desc: "Натисніть кнопку \"Конвертувати у PDF\", щоб розпочати процес конвертації.",
+                step4Title: "Завантажити PDF документ",
+                step4Desc: "Завантажте ваш конвертований PDF документ з ідеальним форматуванням.",
+                toolTitle: "Конвертер Excel у PDF",
+                uploadText: "Перетягніть вашу електронну таблицю Excel сюди або клацніть для перегляду",
+                browseBtn: "Переглянути файли Excel",
+                originalLabel: "Оригінальний документ Excel",
+                convertedLabel: "Конвертований PDF документ",
+                compressionLabel: "Якість конвертації:",
+                exactQuality: "Точна",
+                exactQualityDesc: "(Ідеальне форматування)",
+                highQuality: "Висока",
+                highQualityDesc: "(Дуже добре)",
+                mediumQuality: "Середня",
+                mediumQualityDesc: "(Добре)",
+                convertBtn: "Конвертувати у PDF",
+                downloadBtn: "Завантажити PDF",
+                resetBtn: "Скинути",
+                followUs: "СЛІДКУЙТЕ ЗА НАМИ",
+                popularCategories: "Популярні категорії",
+                pdfTools: "PDF Інструменти",
+                imageTools: "Інструменти зображень",
+                textTools: "Текстовий інструмент",
+                audioVideoTools: "Аудіо/Відео Інструменти",
+                webDeveloperTools: "Інструменти веб-розробника",
+                calculatorTools: "Інструменти калькулятора",
+                utilityTools: "Утиліти",
+                colorTools: "Інструменти кольору",
+                quickLinks: "Швидкі посилання",
+                homeLink: "Головна",
+                allTools: "Всі інструменти",
+                faq: "Поширені запитання",
+                contactLink: "Контакт",
+                privacyPolicy: "Політика конфіденційності",
+                disclaimer: "Відмова від відповідальності",
+                terms: "Умови використання",
+                footerDescription: "Безкоштовні онлайн-інструменти для PDF, зображень, тексту та іншого. Спрощуйте свої цифрові завдання за допомогою наших зручних утиліт.",
+                copyright: "© 2025 LollyPoPDF. Усі права захищені."
+            },
+            vi: {
+                home: "Trang chủ",
+                about: "Về chúng tôi",
+                tools: "Công cụ",
+                contact: "Liên hệ",
+                heroTitle: "Công cụ chuyển đổi Excel sang PDF",
+                heroDescription: "Chuyển đổi bảng tính Excel của bạn sang định dạng PDF trong khi vẫn giữ nguyên bố cục, định dạng, bảng và cấu trúc chính xác của tài liệu gốc.",
+                howToTitle: "Cách chuyển đổi Excel sang PDF",
+                step1Title: "Tải lên tài liệu Excel của bạn",
+                step1Desc: "Nhấp vào khu vực tải lên hoặc kéo và thả tệp Excel của bạn. Chúng tôi hỗ trợ định dạng XLS và XLSX.",
+                step2Title: "Xem trước bảng tính",
+                step2Desc: "Xem trước bảng tính Excel của bạn với định dạng và dữ liệu chính xác.",
+                step3Title: "Chuyển đổi sang PDF",
+                step3Desc: "Nhấp vào nút \"Chuyển đổi sang PDF\" để bắt đầu quá trình chuyển đổi.",
+                step4Title: "Tải xuống tài liệu PDF",
+                step4Desc: "Tải xuống tài liệu PDF đã chuyển đổi của bạn với định dạng hoàn hảo.",
+                toolTitle: "Công cụ chuyển đổi Excel sang PDF",
+                uploadText: "Kéo và thả bảng tính Excel của bạn vào đây hoặc nhấp để duyệt",
+                browseBtn: "Duyệt tệp Excel",
+                originalLabel: "Tài liệu Excel gốc",
+                convertedLabel: "Tài liệu PDF đã chuyển đổi",
+                compressionLabel: "Chất lượng chuyển đổi:",
+                exactQuality: "Chính xác",
+                exactQualityDesc: "(Định dạng hoàn hảo)",
+                highQuality: "Cao",
+                highQualityDesc: "(Rất tốt)",
+                mediumQuality: "Trung bình",
+                mediumQualityDesc: "(Tốt)",
+                convertBtn: "Chuyển đổi sang PDF",
+                downloadBtn: "Tải xuống PDF",
+                resetBtn: "Đặt lại",
+                followUs: "THEO DÕI CHÚNG TÔI",
+                popularCategories: "Danh mục phổ biến",
+                pdfTools: "Công cụ PDF",
+                imageTools: "Công cụ hình ảnh",
+                textTools: "Công cụ văn bản",
+                audioVideoTools: "Công cụ Âm thanh/Video",
+                webDeveloperTools: "Công cụ Nhà phát triển Web",
+                calculatorTools: "Công cụ máy tính",
+                utilityTools: "Công cụ tiện ích",
+                colorTools: "Công cụ màu sắc",
+                quickLinks: "Liên kết nhanh",
+                homeLink: "Trang chủ",
+                allTools: "Tất cả công cụ",
+                faq: "Câu hỏi thường gặp",
+                contactLink: "Liên hệ",
+                privacyPolicy: "Chính sách bảo mật",
+                disclaimer: "Tuyên bố miễn trừ trách nhiệm",
+                terms: "Điều khoản dịch vụ",
+                footerDescription: "Công cụ trực tuyến miễn phí cho PDF, hình ảnh, văn bản và hơn thế nữa. Đơn giản hóa các tác vụ kỹ thuật số của bạn với các tiện ích dễ sử dụng của chúng tôi.",
+                copyright: "© 2025 LollyPoPDF. Tất cả các quyền được bảo lưu."
+            },
+            is: {
+                home: "Heim",
+                about: "Um okkur",
+                tools: "Verkfæri",
+                contact: "Hafa samband",
+                heroTitle: "Excel í PDF umbreytir",
+                heroDescription: "Umbreyttu Excel töflureiknunum þínum í PDF snið meðan þú varðveitir nákvæma skipulag, snið, töflur og uppbyggingu upprunalega skjalsins.",
+                howToTitle: "Hvernig á að umbreyta Excel í PDF",
+                step1Title: "Hladdu upp Excel skjalinu þínu",
+                step1Desc: "Smelltu á upphleðslusvæðið eða dragðu og slepptu Excel skránni þinni. Við styðjum XLS og XLSX snið.",
+                step2Title: "Forskoðun töflureiknis",
+                step2Desc: "Skoðaðu forsýn á Excel töflureikni þínum með nákvæmum sniðum og gögnum.",
+                step3Title: "Umbreyta í PDF",
+                step3Desc: "Smelltu á \"Umbreyta í PDF\" hnappinn til að hefja umbreytingarferlið.",
+                step4Title: "Hala niður PDF skjali",
+                step4Desc: "Halaðu niður umbreyttu PDF skjalinu þínu með fullkomnu sniði.",
+                toolTitle: "Excel í PDF umbreytir",
+                uploadText: "Dragðu og slepptu Excel töflureikni þínum hingað eða smelltu til að skoða",
+                browseBtn: "Skoða Excel skrár",
+                originalLabel: "Upprunalegt Excel skjal",
+                convertedLabel: "Umbreytt PDF skjal",
+                compressionLabel: "Umbreytingargæði:",
+                exactQuality: "Nákvæm",
+                exactQualityDesc: "(Fullkomið snið)",
+                highQuality: "Há",
+                highQualityDesc: "(Mjög gott)",
+                mediumQuality: "Miðlungs",
+                mediumQualityDesc: "(Gott)",
+                convertBtn: "Umbreyta í PDF",
+                downloadBtn: "Hala niður PDF",
+                resetBtn: "Endurstilla",
+                followUs: "FYLGDU OKKUR",
+                popularCategories: "Vinsælar flokkar",
+                pdfTools: "PDF verkfæri",
+                imageTools: "Myndverkfæri",
+                textTools: "Textaverkfæri",
+                audioVideoTools: "Hljóð-/myndbandaverkfæri",
+                webDeveloperTools: "Vefhönnuðarverkfæri",
+                calculatorTools: "Reiknivélarverkfæri",
+                utilityTools: "Notagildisverkfæri",
+                colorTools: "Litverkfæri",
+                quickLinks: "Flýtilankar",
+                homeLink: "Heim",
+                allTools: "Öll verkfæri",
+                faq: "Algengar spurningar",
+                contactLink: "Hafa samband",
+                privacyPolicy: "Persónuverndarstefna",
+                disclaimer: "Ábyrgðarafsal",
+                terms: "Þjónustuskilmálar",
+                footerDescription: "Ókeypis netverkfæri fyrir PDF, myndir, texta og fleira. Einfaldaðu stafrænar verkefni þín með auðveldum notagildum okkar.",
+                copyright: "© 2025 LollyPoPDF. Öll réttindi áskilin."
+            },
+            no: {
+                home: "Hjem",
+                about: "Om oss",
+                tools: "Verktøy",
+                contact: "Kontakt",
+                heroTitle: "Excel til PDF konverterer",
+                heroDescription: "Konverter Excel-regnearkene dine til PDF-format mens du bevarer den nøyaktige layouten, formateringen, tabellene og strukturen til det originale dokumentet.",
+                howToTitle: "Hvordan konvertere Excel til PDF",
+                step1Title: "Last opp Excel-dokumentet ditt",
+                step1Desc: "Klikk på opplastingsområdet eller dra og slipp Excel-filen din. Vi støtter XLS og XLSX-formater.",
+                step2Title: "Forhåndsvis regneark",
+                step2Desc: "Se en forhåndsvisning av Excel-regnearket ditt med nøyaktig formatering og data.",
+                step3Title: "Konverter til PDF",
+                step3Desc: "Klikk på \"Konverter til PDF\"-knappen for å starte konverteringsprosessen.",
+                step4Title: "Last ned PDF-dokument",
+                step4Desc: "Last ned det konverterte PDF-dokumentet ditt med perfekt formatering.",
+                toolTitle: "Excel til PDF konverterer",
+                uploadText: "Dra og slipp Excel-regnearket ditt her eller klikk for å bla gjennom",
+                browseBtn: "Bla gjennom Excel-filer",
+                originalLabel: "Originalt Excel-dokument",
+                convertedLabel: "Konvertert PDF-dokument",
+                compressionLabel: "Konverteringskvalitet:",
+                exactQuality: "Eksakt",
+                exactQualityDesc: "(Perfekt formatering)",
+                highQuality: "Høy",
+                highQualityDesc: "(Veldig god)",
+                mediumQuality: "Middels",
+                mediumQualityDesc: "(God)",
+                convertBtn: "Konverter til PDF",
+                downloadBtn: "Last ned PDF",
+                resetBtn: "Tilbakestill",
+                followUs: "FØLG OSS",
+                popularCategories: "Populære kategorier",
+                pdfTools: "PDF-verktøy",
+                imageTools: "Bildeverktøy",
+                textTools: "Tekstverktøy",
+                audioVideoTools: "Lyd-/videoverktøy",
+                webDeveloperTools: "Nettutviklerverktøy",
+                calculatorTools: "Kalkulatorverktøy",
+                utilityTools: "Nyttige verktøy",
+                colorTools: "Fargeverktøy",
+                quickLinks: "Hurtiglenker",
+                homeLink: "Hjem",
+                allTools: "Alle verktøy",
+                faq: "FAQ",
+                contactLink: "Kontakt",
+                privacyPolicy: "Personvernregler",
+                disclaimer: "Ansvarsfraskrivelse",
+                terms: "Tjenestevilkår",
+                footerDescription: "Gratis nettverktøy for PDF, bilder, tekst og mer. Forenkle dine digitale oppgaver med våre brukervennlige verktøy.",
+                copyright: "© 2025 LollyPoPDF. Alle rettigheter forbeholdt."
+            },
+            sv: {
+                home: "Hem",
+                about: "Om oss",
+                tools: "Verktyg",
+                contact: "Kontakt",
+                heroTitle: "Excel till PDF-konverterare",
+                heroDescription: "Konvertera dina Excel-kalkylblad till PDF-format samtidigt som du bevarar den exakta layouten, formateringen, tabellerna och strukturen i originaldokumentet.",
+                howToTitle: "Hur man konverterar Excel till PDF",
+                step1Title: "Ladda upp ditt Excel-dokument",
+                step1Desc: "Klicka på uppladdningsområdet eller dra och släpp din Excel-fil. Vi stöder XLS och XLSX-format.",
+                step2Title: "Förhandsgranska kalkylblad",
+                step2Desc: "Se en förhandsvisning av ditt Excel-kalkylblad med exakt formatering och data.",
+                step3Title: "Konvertera till PDF",
+                step3Desc: "Klicka på knappen \"Konvertera till PDF\" för att starta konverteringsprocessen.",
+                step4Title: "Ladda ned PDF-dokument",
+                step4Desc: "Ladda ned ditt konverterade PDF-dokument med perfekt formatering.",
+                toolTitle: "Excel till PDF-konverterare",
+                uploadText: "Dra och släpp ditt Excel-kalkylblad här eller klicka för att bläddra",
+                browseBtn: "Bläddra bland Excel-filer",
+                originalLabel: "Originalt Excel-dokument",
+                convertedLabel: "Konverterat PDF-dokument",
+                compressionLabel: "Konverteringskvalitet:",
+                exactQuality: "Exakt",
+                exactQualityDesc: "(Perfekt formatering)",
+                highQuality: "Hög",
+                highQualityDesc: "(Mycket bra)",
+                mediumQuality: "Medel",
+                mediumQualityDesc: "(Bra)",
+                convertBtn: "Konvertera till PDF",
+                downloadBtn: "Ladda ned PDF",
+                resetBtn: "Återställ",
+                followUs: "FÖLJ OSS",
+                popularCategories: "Populära kategorier",
+                pdfTools: "PDF-verktyg",
+                imageTools: "Bildverktyg",
+                textTools: "Textverktyg",
+                audioVideoTools: "Ljud-/videoverktyg",
+                webDeveloperTools: "Webbutvecklingsverktyg",
+                calculatorTools: "Miniräknarverktyg",
+                utilityTools: "Hjälpverktyg",
+                colorTools: "Färgverktyg",
+                quickLinks: "Snabblänkar",
+                homeLink: "Hem",
+                allTools: "Alla verktyg",
+                faq: "Vanliga frågor",
+                contactLink: "Kontakt",
+                privacyPolicy: "Integritetspolicy",
+                disclaimer: "Ansvarsfriskrivning",
+                terms: "Användarvillkor",
+                footerDescription: "Gratis onlineverktyg för PDF, bilder, text och mer. Förenkla dina digitala uppgifter med våra lättanvända verktyg.",
+                copyright: "© 2025 LollyPoPDF. Alla rättigheter förbehållna."
+            },
+            fi: {
+                home: "Koti",
+                about: "Meistä",
+                tools: "Työkalut",
+                contact: "Yhteystiedot",
+                heroTitle: "Excel PDF-muuntaja",
+                heroDescription: "Muunna Excel-laskentataulukot PDF-muotoon säilyttäen alkuperäisen asiakirjan tarkan asettelun, muotoilun, taulukot ja rakenteen.",
+                howToTitle: "Kuinka muuntaa Excel PDF:ksi",
+                step1Title: "Lataa Excel-asiakirjasi",
+                step1Desc: "Napsauta latausalueelta tai vedä ja pudota Excel-tiedostosi. Tukemme XLS- ja XLSX-muotoja.",
+                step2Title: "Esikatsele laskentataulukkoa",
+                step2Desc: "Katso esikatselu Excel-laskentataulukostasi tarkalla muotoilulla ja tiedoilla.",
+                step3Title: "Muunna PDF:ksi",
+                step3Desc: "Napsauta \"Muunna PDF:ksi\"-painiketta aloittaaksesi muunnosprosessin.",
+                step4Title: "Lataa PDF-asiakirja",
+                step4Desc: "Lataa muunnettu PDF-asiakirjasi täydellisellä muotoilulla.",
+                toolTitle: "Excel PDF-muuntaja",
+                uploadText: "Vedä ja pudota Excel-laskentataulukko tähän tai napsauta selataksesi",
+                browseBtn: "Selaa Excel-tiedostoja",
+                originalLabel: "Alkuperäinen Excel-asiakirja",
+                convertedLabel: "Muunnettu PDF-asiakirja",
+                compressionLabel: "Muunnoksen laatu:",
+                exactQuality: "Tarkka",
+                exactQualityDesc: "(Täydellinen muotoilu)",
+                highQuality: "Korkea",
+                highQualityDesc: "(Erittäin hyvä)",
+                mediumQuality: "Keskitaso",
+                mediumQualityDesc: "(Hyvä)",
+                convertBtn: "Muunna PDF:ksi",
+                downloadBtn: "Lataa PDF",
+                resetBtn: "Nollaa",
+                followUs: "SEURAA MEITÄ",
+                popularCategories: "Suositut luokat",
+                pdfTools: "PDF-työkalut",
+                imageTools: "Kuvatyökalut",
+                textTools: "Tekstityökalut",
+                audioVideoTools: "Ääni-/videotyökalut",
+                webDeveloperTools: "Web-kehitystyökalut",
+                calculatorTools: "Laskurityökalut",
+                utilityTools: "Apuvälineet",
+                colorTools: "Värityökalut",
+                quickLinks: "Pikalinkit",
+                homeLink: "Koti",
+                allTools: "Kaikki työkalut",
+                faq: "UKK",
+                contactLink: "Yhteystiedot",
+                privacyPolicy: "Tietosuojakäytäntö",
+                disclaimer: "Vastuuvapauslauseke",
+                terms: "Käyttöehdot",
+                footerDescription: "Ilmaisia online-työkaluja PDF:lle, kuville, tekstille ja muille. Yksinkertaista digitaalisia tehtäviäsi käyttäjäystävällisillä apuvälineillämme.",
+                copyright: "© 2025 LollyPoPDF. Kaikki oikeudet pidätetään."
+            },
+            cs: {
+                home: "Domů",
+                about: "O nás",
+                tools: "Nástroje",
+                contact: "Kontakt",
+                heroTitle: "Převodník Excel do PDF",
+                heroDescription: "Převeďte své Excel tabulky do formátu PDF při zachování přesného rozvržení, formátování, tabulek a struktury původního dokumentu.",
+                howToTitle: "Jak převést Excel do PDF",
+                step1Title: "Nahrajte svůj Excel dokument",
+                step1Desc: "Klikněte na oblast pro nahrání nebo přetáhněte svůj soubor Excel. Podporujeme formáty XLS a XLSX.",
+                step2Title: "Náhled tabulky",
+                step2Desc: "Prohlédněte si náhled své Excel tabulky s přesným formátováním a daty.",
+                step3Title: "Převést do PDF",
+                step3Desc: "Klikněte na tlačítko \"Převést do PDF\" pro zahájení procesu převodu.",
+                step4Title: "Stáhnout PDF dokument",
+                step4Desc: "Stáhněte si převedený PDF dokument s dokonalým formátováním.",
+                toolTitle: "Převodník Excel do PDF",
+                uploadText: "Přetáhněte svou Excel tabulku sem nebo klikněte pro procházení",
+                browseBtn: "Procházet soubory Excel",
+                originalLabel: "Původní Excel dokument",
+                convertedLabel: "Převedený PDF dokument",
+                compressionLabel: "Kvalita převodu:",
+                exactQuality: "Přesná",
+                exactQualityDesc: "(Dokonalé formátování)",
+                highQuality: "Vysoká",
+                highQualityDesc: "(Velmi dobrá)",
+                mediumQuality: "Střední",
+                mediumQualityDesc: "(Dobrá)",
+                convertBtn: "Převést do PDF",
+                downloadBtn: "Stáhnout PDF",
+                resetBtn: "Resetovat",
+                followUs: "SLEDUJTE NÁS",
+                popularCategories: "Populární kategorie",
+                pdfTools: "PDF nástroje",
+                imageTools: "Obrázkové nástroje",
+                textTools: "Textové nástroje",
+                audioVideoTools: "Audio/video nástroje",
+                webDeveloperTools: "Nástroje pro webové vývojáře",
+                calculatorTools: "Kalkulační nástroje",
+                utilityTools: "Užitečné nástroje",
+                colorTools: "Barevné nástroje",
+                quickLinks: "Rychlé odkazy",
+                homeLink: "Domů",
+                allTools: "Všechny nástroje",
+                faq: "Časté otázky",
+                contactLink: "Kontakt",
+                privacyPolicy: "Zásady ochrany osobních údajů",
+                disclaimer: "Odmítnutí odpovědnosti",
+                terms: "Podmínky služby",
+                footerDescription: "Bezplatné online nástroje pro PDF, obrázky, text a další. Zjednodušte si digitální úkoly pomocí našich uživatelsky přívětivých nástrojů.",
+                copyright: "© 2025 LollyPoPDF. Všechna práva vyhrazena."
+            }
+ 
+
+        };
+
+        // Protection code - blocks developer tools and right-click
+        document.addEventListener('contextmenu', function(e) {
+            e.preventDefault();
+            return false;
+        });
+        
+        document.addEventListener('keydown', function(e) {
+            // Block F12
+            if (e.key === 'F12') {
+                e.preventDefault();
+                return false;
+            }
+            
+            // Block Ctrl+Shift+I
+            if (e.ctrlKey && e.shiftKey && e.key === 'I') {
+                e.preventDefault();
+                return false;
+            }
+            
+            // Block Ctrl+U
+            if (e.ctrlKey && e.key === 'u') {
+                e.preventDefault();
+                return false;
+            }
+            
+            // Block Ctrl+Shift+C
+            if (e.ctrlKey && e.shiftKey && e.key === 'C') {
+                e.preventDefault();
+                return false;
+            }
+        });
+        
+        // Prevent drag and drop for images
+        document.addEventListener('dragstart', function(e) {
+            if (e.target.tagName === 'IMG') {
+                e.preventDefault();
+                return false;
+            }
+        });
+
+        // Theme toggle functionality
+        const themeToggle = document.getElementById('themeToggle');
+        const body = document.body;
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const navMenu = document.getElementById('navMenu');
+
+        // Check for saved theme preference or respect OS preference
+        if (localStorage.getItem('theme') === 'dark' || 
+            (window.matchMedia('(prefers-color-scheme: dark)').matches && !localStorage.getItem('theme'))) {
+            body.classList.add('dark-mode');
+            themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+        }
+
+        themeToggle.addEventListener('click', () => {
+            body.classList.toggle('dark-mode');
+            
+            if (body.classList.contains('dark-mode')) {
+                localStorage.setItem('theme', 'dark');
+                themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+            } else {
+                localStorage.setItem('theme', 'light');
+                themeToggle.innerHTML = '<i class="fas fa-moon"></i>';
+            }
+        });
+
+        // Mobile menu functionality
+        mobileMenuBtn.addEventListener('click', () => {
+            navMenu.classList.toggle('active');
+        });
+
+        // Close menu when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!mobileMenuBtn.contains(e.target) && !navMenu.contains(e.target)) {
+                navMenu.classList.remove('active');
+            }
+        });
+
+        // Language switcher functionality
+        const currentLanguageElement = document.getElementById('currentLanguage');
+        const languageOptions = document.querySelectorAll('.language-option');
+        
+        // Set initial language from localStorage or default to English
+        let currentLanguage = localStorage.getItem('language') || 'en';
+        currentLanguageElement.textContent = getLanguageName(currentLanguage);
+        updatePageContent(currentLanguage);
+        
+        languageOptions.forEach(option => {
+            option.addEventListener('click', () => {
+                const lang = option.getAttribute('data-lang');
+                currentLanguage = lang;
+                localStorage.setItem('language', lang);
+                currentLanguageElement.textContent = getLanguageName(lang);
+                updatePageContent(lang);
+            });
+        });
+        
+        function getLanguageName(code) {
+            const languageNames = {
+                'en': 'English',
+                'es': 'Español',
+                'fr': 'Français',
+                'de': 'Deutsch',
+                'it': 'Italiano',
+                'pt': 'Português',
+                'ja': '日本語',
+                'ru': 'Pусский',
+                'ko': '한국어',
+                'zh-CN': '中文 (简体)',
+                'zh-TW': '中文 (繁體)',
+                'ar': 'العربية',
+                'fa': 'فارسی',
+                'bg': 'Български',
+                'ca': 'Català',
+                'nl': 'Nederlands',
+                'el': 'Ελληνικά',
+                'hi': 'हिन्दी',
+                'te': 'తెలుగు',
+                'kn': 'ಕನ್ನಡ',
+                'ta': 'தமிழ்',
+                'ml': 'മലയാളം',
+                'id': 'Bahasa Indonesia',
+                'ms': 'Bahasa Melayu',
+                'pl': 'Polski',
+                'th': 'ภาษาไทย',
+                'tr': 'Türkçe',
+                'uk': 'Українська',
+                'vi': 'Tiếng Việt',
+                'is': 'Íslenska',
+                'no': 'Norsk',
+                'sv': 'Svenska',
+                'fi': 'Suomi',
+                'cs': 'Čeština'
+            };
+            return languageNames[code] || 'English';
+        }
+        
+        function updatePageContent(lang) {
+            const translation = translations[lang] || translations['en'];
+            
+            // Update all elements with data-key attribute
+            document.querySelectorAll('[data-key]').forEach(element => {
+                const key = element.getAttribute('data-key');
+                if (translation[key]) {
+                    element.textContent = translation[key];
+                }
+            });
+        }
+
+        // Excel to PDF converter functionality
+        const uploadArea = document.getElementById('uploadArea');
+        const fileInput = document.getElementById('fileInput');
+        const browseBtn = document.getElementById('browseBtn');
+        const previewSection = document.getElementById('previewSection');
+        const originalPreview = document.getElementById('originalPreview');
+        const convertedPreview = document.getElementById('convertedPreview');
+        const originalInfo = document.getElementById('originalInfo');
+        const convertedInfo = document.getElementById('convertedInfo');
+        const originalFileName = document.getElementById('originalFileName');
+        const convertedFileName = document.getElementById('convertedFileName');
+        const tablePreview = document.getElementById('tablePreview');
+        const previewTable = document.getElementById('previewTable');
+        const formattingPreview = document.getElementById('formattingPreview');
+        const qualityButtons = document.querySelectorAll('.quality-btn');
+        const convertBtn = document.getElementById('convertBtn');
+        const downloadBtn = document.getElementById('downloadBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        const progressContainer = document.getElementById('progressContainer');
+        const progressFill = document.getElementById('progressFill');
+        const successMessage = document.getElementById('successMessage');
+        const errorMessage = document.getElementById('errorMessage');
+        const infoMessage = document.getElementById('infoMessage');
+        const errorText = document.getElementById('errorText');
+        const infoText = document.getElementById('infoText');
+        
+        let currentFile = null;
+        let convertedDataURL = null;
+        let convertedFileNameValue = '';
+        let quality = 'exact';
+        let estimatedPages = 0;
+        let excelData = null;
+        let sheetNames = [];
+        
+        // Quality selection
+        qualityButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                qualityButtons.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                quality = btn.getAttribute('data-quality');
+            });
+        });
+        
+        // Event listeners for file upload
+        uploadArea.addEventListener('click', () => {
+            fileInput.click();
+        });
+        
+        browseBtn.addEventListener('click', (e) => {
+            e.stopPropagation(); // Prevent triggering the uploadArea click
+            fileInput.click();
+        });
+        
+        // Fixed file input change listener
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length) {
+                handleFile(e.target.files[0]);
+            }
+        });
+        
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.style.borderColor = '#9370db';
+        });
+        
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.style.borderColor = 'var(--border-color)';
+        });
+        
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.style.borderColor = 'var(--border-color)';
+            
+            if (e.dataTransfer.files.length) {
+                handleFile(e.dataTransfer.files[0]);
+            }
+        });
+        
+        // Convert button
+        convertBtn.addEventListener('click', convertDocument);
+        
+        // Download button
+        downloadBtn.addEventListener('click', downloadDocument);
+        
+        // Reset button
+        resetBtn.addEventListener('click', resetTool);
+        
+        function showStatus(messageElement, hideOthers = true) {
+            if (hideOthers) {
+                successMessage.style.display = 'none';
+                errorMessage.style.display = 'none';
+                infoMessage.style.display = 'none';
+            }
+            messageElement.style.display = 'block';
+        }
+        
+        async function handleFile(file) {
+            const validTypes = [
+                'application/vnd.ms-excel',
+                'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+            ];
+            
+            if (!validTypes.includes(file.type) && 
+                !file.name.toLowerCase().endsWith('.xls') && 
+                !file.name.toLowerCase().endsWith('.xlsx')) {
+                errorText.textContent = 'Please select an Excel spreadsheet (XLS or XLSX)';
+                showStatus(errorMessage);
+                return;
+            }
+            
+            currentFile = file;
+            
+            // Show preview section
+            previewSection.style.display = 'block';
+            
+            // Display original document info
+            originalFileName.textContent = file.name;
+            originalInfo.textContent = `Size: ${formatFileSize(file.size)} | Type: ${file.name.endsWith('.xlsx') ? 'XLSX' : 'XLS'}`;
+            
+            // Reset converted preview
+            convertedFileName.textContent = '';
+            convertedInfo.textContent = '';
+            downloadBtn.disabled = true;
+            
+            // Hide any previous status messages
+            showStatus(successMessage, false);
+            successMessage.style.display = 'none';
+            errorMessage.style.display = 'none';
+            infoMessage.style.display = 'none';
+            
+            // Estimate page count based on file size
+            estimatedPages = Math.max(1, Math.ceil(file.size / 5000)); // Rough estimation
+            
+            // Extract data from Excel document
+            try {
+                const arrayBuffer = await file.arrayBuffer();
+                
+                // Use SheetJS to parse Excel data
+                const workbook = XLSX.read(arrayBuffer, { type: 'array' });
+                excelData = workbook;
+                sheetNames = workbook.SheetNames;
+                
+                // Display first sheet data preview
+                displaySheetPreview(workbook.Sheets[sheetNames[0]], sheetNames[0]);
+                
+                // Show table preview section
+                tablePreview.style.display = 'block';
+                formattingPreview.style.display = 'block';
+            } catch (error) {
+                console.error('Error extracting data from Excel document:', error);
+                previewTable.innerHTML = '<p>Unable to preview spreadsheet data</p>';
+                tablePreview.style.display = 'block';
+            }
+        }
+        
+        function displaySheetPreview(worksheet, sheetName) {
+            // Convert worksheet to JSON
+            const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+            
+            if (jsonData.length === 0) {
+                previewTable.innerHTML = '<p>No data found in this sheet</p>';
+                return;
+            }
+            
+            // Create table HTML
+            let tableHTML = `<h5>Sheet: ${sheetName}</h5>`;
+            tableHTML += '<table>';
+            
+            // Add header row
+            tableHTML += '<thead><tr>';
+            if (jsonData.length > 0) {
+                for (let i = 0; i < jsonData[0].length; i++) {
+                    tableHTML += `<th>${String.fromCharCode(65 + i)}</th>`;
+                }
+            }
+            tableHTML += '</tr></thead>';
+            
+            // Add data rows (limit to first 10 rows for preview)
+            tableHTML += '<tbody>';
+            const maxRows = Math.min(10, jsonData.length);
+            for (let i = 0; i < maxRows; i++) {
+                tableHTML += '<tr>';
+                for (let j = 0; j < jsonData[i].length; j++) {
+                    const cellValue = jsonData[i][j] !== undefined ? jsonData[i][j] : '';
+                    tableHTML += `<td>${cellValue}</td>`;
+                }
+                // Fill remaining cells if needed
+                if (jsonData.length > 0 && jsonData[i].length < jsonData[0].length) {
+                    for (let j = jsonData[i].length; j < jsonData[0].length; j++) {
+                        tableHTML += '<td></td>';
+                    }
+                }
+                tableHTML += '</tr>';
+            }
+            tableHTML += '</tbody>';
+            
+            tableHTML += '</table>';
+            
+            if (jsonData.length > 10) {
+                tableHTML += `<p>... and ${jsonData.length - 10} more rows</p>`;
+            }
+            
+            previewTable.innerHTML = tableHTML;
+        }
+        
+        async function convertDocument() {
+            if (!currentFile) {
+                errorText.textContent = 'Please select an Excel document first';
+                showStatus(errorMessage);
+                return;
+            }
+            
+            // Show progress bar
+            progressContainer.style.display = 'block';
+            progressFill.style.width = '0%';
+            
+            // Show info message
+            infoText.textContent = 'Converting your Excel document to PDF...';
+            showStatus(infoMessage);
+            
+            // Disable convert button during conversion
+            convertBtn.disabled = true;
+            downloadBtn.disabled = true;
+            
+            try {
+                // Simulate conversion process with progress
+                let progress = 0;
+                const progressInterval = setInterval(() => {
+                    progress += 10;
+                    if (progress >= 100) {
+                        progress = 100;
+                        clearInterval(progressInterval);
+                    }
+                    progressFill.style.width = `${progress}%`;
+                }, 200);
+                
+                // Perform actual conversion
+                const result = await performConversion(currentFile);
+                
+                if (result.success) {
+                    convertedFileNameValue = `${currentFile.name.split('.')[0]}_converted.pdf`;
+                    convertedFileName.textContent = convertedFileNameValue;
+                    
+                    // Calculate file size based on quality
+                    let sizeMultiplier = 1.0;
+                    if (quality === 'high') sizeMultiplier = 0.9;
+                    if (quality === 'medium') sizeMultiplier = 0.8;
+                    
+                    const compressedSize = Math.round(currentFile.size * sizeMultiplier);
+                    convertedInfo.textContent = `Format: PDF | Size: ${formatFileSize(compressedSize)} | Quality: ${quality} | Pages: ${result.pages}`;
+                    
+                    // Enable download button
+                    downloadBtn.disabled = false;
+                    
+                    // Store the converted data
+                    convertedDataURL = result.data;
+                    
+                    // Ensure progress is at 100%
+                    progressFill.style.width = '100%';
+                    
+                    // Show success message
+                    showStatus(successMessage);
+                    
+                    // Re-enable convert button
+                    convertBtn.disabled = false;
+                } else {
+                    errorText.textContent = 'Conversion failed: ' + result.error;
+                    showStatus(errorMessage);
+                    progressContainer.style.display = 'none';
+                    convertBtn.disabled = false;
+                }
+            } catch (error) {
+                console.error('Conversion error:', error);
+                errorText.textContent = 'An error occurred during conversion. Please try again.';
+                showStatus(errorMessage);
+                progressContainer.style.display = 'none';
+                convertBtn.disabled = false;
+            }
+        }
+        
+        async function performConversion(file) {
+            try {
+                // Parse Excel file
+                const arrayBuffer = await file.arrayBuffer();
+                const workbook = XLSX.read(arrayBuffer, { type: 'array' });
+                const sheetNames = workbook.SheetNames;
+                
+                // Create PDF
+                const { jsPDF } = window.jspdf;
+                const pdf = new jsPDF({
+                    orientation: 'portrait',
+                    unit: 'mm',
+                    format: 'a4'
+                });
+                
+                // Set document properties
+                pdf.setProperties({
+                    title: `Converted from ${file.name}`,
+                    subject: 'Excel to PDF Conversion',
+                    author: 'LollyPoPDF Converter',
+                    keywords: 'excel, pdf, conversion',
+                    creator: 'LollyPoPDF'
+                });
+                
+                // Process each sheet
+                let totalPages = 0;
+                for (let sheetIndex = 0; sheetIndex < sheetNames.length; sheetIndex++) {
+                    const sheetName = sheetNames[sheetIndex];
+                    const worksheet = workbook.Sheets[sheetName];
+                    
+                    // Convert worksheet to JSON
+                    const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+                    
+                    if (jsonData.length === 0) continue;
+                    
+                    // Add new page for each sheet (except first)
+                    if (sheetIndex > 0) {
+                        pdf.addPage();
+                    }
+                    
+                    // Add sheet title
+                    pdf.setFont('helvetica', 'bold');
+                    pdf.setFontSize(16);
+                    pdf.text(`Sheet: ${sheetName}`, 20, 20);
+                    
+                    // Set up table parameters
+                    const margin = 20;
+                    const pageWidth = pdf.internal.pageSize.getWidth() - (2 * margin);
+                    const startY = 30;
+                    let currentY = startY;
+                    
+                    const cellPadding = 2;
+                    const headerHeight = 8;
+                    const rowHeight = 7;
+                    const fontSize = 10; // Increased font size for better readability
+                    
+                    // Calculate column widths
+                    const colCount = Math.max(...jsonData.map(row => row.length));
+                    const colWidth = pageWidth / colCount;
+                    
+                    // Add table header
+                    pdf.setFillColor(147, 112, 219); // Primary color
+                    pdf.setTextColor(255, 255, 255);
+                    pdf.setFont('helvetica', 'bold');
+                    pdf.setFontSize(fontSize);
+                    
+                    for (let col = 0; col < colCount; col++) {
+                        const x = margin + (col * colWidth);
+                        pdf.rect(x, currentY, colWidth, headerHeight, 'F');
+                        const colLabel = String.fromCharCode(65 + col);
+                        pdf.text(colLabel, x + cellPadding, currentY + cellPadding + 5);
+                    }
+                    
+                    currentY += headerHeight;
+                    
+                    // Add table rows
+                    pdf.setTextColor(0, 0, 0);
+                    pdf.setFont('helvetica', 'normal');
+                    
+                    for (let row = 0; row < jsonData.length; row++) {
+                        // Check if we need a new page
+                        if (currentY + rowHeight > pdf.internal.pageSize.getHeight() - margin) {
+                            pdf.addPage();
+                            currentY = margin;
+                            
+                            // Add header again on new page
+                            pdf.setFillColor(147, 112, 219);
+                            pdf.setTextColor(255, 255, 255);
+                            pdf.setFont('helvetica', 'bold');
+                            
+                            for (let col = 0; col < colCount; col++) {
+                                const x = margin + (col * colWidth);
+                                pdf.rect(x, currentY, colWidth, headerHeight, 'F');
+                                const colLabel = String.fromCharCode(65 + col);
+                                pdf.text(colLabel, x + cellPadding, currentY + cellPadding + 5);
+                            }
+                            
+                            currentY += headerHeight;
+                            pdf.setTextColor(0, 0, 0);
+                            pdf.setFont('helvetica', 'normal');
+                        }
+                        
+                        // Alternate row colors
+                        if (row % 2 === 0) {
+                            pdf.setFillColor(245, 240, 255); // Light lavender
+                            for (let col = 0; col < colCount; col++) {
+                                const x = margin + (col * colWidth);
+                                pdf.rect(x, currentY, colWidth, rowHeight, 'F');
+                            }
+                        }
+                        
+                        // Add cell values with proper text wrapping
+                        for (let col = 0; col < jsonData[row].length; col++) {
+                            const x = margin + (col * colWidth);
+                            const cellValue = jsonData[row][col] !== undefined ? 
+                                String(jsonData[row][col]) : '';
+                            
+                            // Split text to fit in cell
+                            const textLines = pdf.splitTextToSize(cellValue, colWidth - (2 * cellPadding));
+                            
+                            // Add each line of text
+                            for (let line = 0; line < textLines.length; line++) {
+                                const yPos = currentY + cellPadding + 5 + (line * (fontSize * 0.35));
+                                pdf.text(textLines[line], x + cellPadding, yPos);
+                            }
+                        }
+                        
+                        currentY += rowHeight;
+                    }
+                    
+                    totalPages = pdf.internal.getNumberOfPages();
+                }
+                
+                // Add page numbers to all pages
+                for (let i = 1; i <= totalPages; i++) {
+                    pdf.setPage(i);
+                    pdf.setFont('helvetica', 'normal');
+                    pdf.setFontSize(8);
+                    
+                    // Add page number in format --Page X--
+                    const pageNumberText = `--Page ${i}--`;
+                    const textWidth = pdf.getStringUnitWidth(pageNumberText) * 8 / pdf.internal.scaleFactor;
+                    const x = (pdf.internal.pageSize.getWidth() - textWidth) / 2;
+                    const y = pdf.internal.pageSize.getHeight() - 8; // 8mm from bottom
+                    
+                    pdf.text(pageNumberText, x, y);
+                }
+                
+                // Generate PDF as Blob
+                const pdfBlob = pdf.output('blob');
+                
+                return {
+                    success: true,
+                    data: URL.createObjectURL(pdfBlob),
+                    pages: totalPages
+                };
+                
+            } catch (error) {
+                console.error('Excel to PDF conversion error:', error);
+                return {
+                    success: false,
+                    error: 'Failed to convert Excel to PDF: ' + error.message
+                };
+            }
+        }
+        
+        function downloadDocument() {
+            if (!convertedDataURL) {
+                errorText.textContent = 'Please convert the document first';
+                showStatus(errorMessage);
+                return;
+            }
+            
+            try {
+                const link = document.createElement('a');
+                link.download = convertedFileNameValue;
+                link.href = convertedDataURL;
+                link.target = '_blank';
+                
+                // Append to body, click, and remove
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                
+                // Show success message
+                infoText.textContent = 'PDF download started successfully!';
+                showStatus(infoMessage);
+                
+            } catch (error) {
+                console.error('Download error:', error);
+                errorText.textContent = 'Download failed. Please try again.';
+                showStatus(errorMessage);
+            }
+        }
+        
+        function resetTool() {
+            // Reset file input
+            fileInput.value = '';
+            
+            // Reset preview section
+            previewSection.style.display = 'none';
+            
+            // Reset file info
+            originalFileName.textContent = '';
+            convertedFileName.textContent = '';
+            originalInfo.textContent = '';
+            convertedInfo.textContent = '';
+            
+            // Reset table preview
+            previewTable.innerHTML = '';
+            tablePreview.style.display = 'none';
+            formattingPreview.style.display = 'none';
+            
+            // Reset progress
+            progressContainer.style.display = 'none';
+            progressFill.style.width = '0%';
+            
+            // Reset buttons
+            downloadBtn.disabled = true;
+            convertBtn.disabled = false;
+            
+            // Reset status messages
+            successMessage.style.display = 'none';
+            errorMessage.style.display = 'none';
+            infoMessage.style.display = 'none';
+            
+            // Reset current file
+            currentFile = null;
+            convertedDataURL = null;
+            estimatedPages = 0;
+            excelData = null;
+            sheetNames = [];
+        }
+        
+        function formatFileSize(bytes) {
+            if (bytes < 1024) return bytes + ' bytes';
+            else if (bytes < 1048576) return (bytes / 1024).toFixed(2) + ' KB';
+            else return (bytes / 1048576).toFixed(2) + ' MB';
+        }
+    </script>
+</body>
+</html>

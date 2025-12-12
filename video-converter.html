@@ -1198,7 +1198,6 @@
     </div>
 
     <script>
-                
         // Theme Toggle
         const themeToggle = document.getElementById('themeToggle');
         const body = document.body;
@@ -1225,7 +1224,7 @@
             }
         });
 
-        // Protection code - blocks developer tools and right-click
+         // Protection code - blocks developer tools and right-click
         document.addEventListener('contextmenu', function(e) {
             e.preventDefault();
             return false;
@@ -1264,6 +1263,7 @@
                 return false;
             }
         });
+
 
         // Mobile Menu Toggle
         const mobileMenuBtn = document.getElementById('mobileMenuBtn');
@@ -1321,6 +1321,10 @@
         let convertedFileUrl = null;
         let mediaRecorder = null;
         let recordedChunks = [];
+        let isProcessing = false;
+        let audioContext = null;
+        let audioDestination = null;
+        let audioSource = null;
         
         // File upload handler
         fileInput.addEventListener('change', handleFileSelect);
@@ -1363,6 +1367,9 @@
             const objectUrl = URL.createObjectURL(file);
             originalVideo.src = objectUrl;
             
+            // Enable volume for original video
+            originalVideo.volume = 1.0;
+            
             // Enable convert button
             convertBtn.disabled = false;
             
@@ -1393,7 +1400,9 @@
         
         // Convert video using MediaRecorder API
         convertBtn.addEventListener('click', async () => {
-            if (!currentFile) return;
+            if (!currentFile || isProcessing) return;
+            
+            isProcessing = true;
             
             // Show progress
             progressContainer.style.display = 'block';
@@ -1423,37 +1432,48 @@
                     const aspectRatio = originalWidth / originalHeight;
                     targetHeight = targetHeightValue;
                     targetWidth = Math.round(targetHeight * aspectRatio);
+                    
+                    // Ensure width is even for H.264 encoding
+                    if (targetWidth % 2 !== 0) {
+                        targetWidth = Math.round(targetWidth / 2) * 2;
+                    }
                 }
                 
                 canvas.width = targetWidth;
                 canvas.height = targetHeight;
                 
-                // Create audio context for audio processing
-                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-                const audioDestination = audioContext.createMediaStreamDestination();
+                // Create canvas stream
+                const canvasStream = canvas.captureStream();
                 
-                // Set up MediaRecorder with both video and audio tracks
-                const videoStream = canvas.captureStream();
+                // Check if we should include audio
+                const includeAudio = audioCodec.value !== 'none';
                 
-                // Add audio track if needed
-                if (audioCodec.value !== 'none') {
-                    const audioSource = audioContext.createMediaElementSource(originalVideo);
+                let combinedStream;
+                
+                if (includeAudio) {
+                    // Create audio context and setup audio processing
+                    audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                    audioDestination = audioContext.createMediaStreamDestination();
+                    
+                    // Create audio source from video element
+                    audioSource = audioContext.createMediaElementSource(originalVideo);
+                    
+                    // Connect audio source to destination
                     audioSource.connect(audioDestination);
                     
-                    // Combine video and audio streams
-                    const combinedStream = new MediaStream([
-                        ...videoStream.getVideoTracks(),
+                    // Combine canvas video stream with audio stream
+                    combinedStream = new MediaStream([
+                        ...canvasStream.getVideoTracks(),
                         ...audioDestination.stream.getAudioTracks()
                     ]);
-                    
-                    // Configure MediaRecorder options
-                    const options = getMediaRecorderOptions();
-                    mediaRecorder = new MediaRecorder(combinedStream, options);
                 } else {
-                    // Configure MediaRecorder options without audio
-                    const options = getMediaRecorderOptions();
-                    mediaRecorder = new MediaRecorder(videoStream, options);
+                    // Use only video stream
+                    combinedStream = canvasStream;
                 }
+                
+                // Configure MediaRecorder options
+                const options = getMediaRecorderOptions();
+                mediaRecorder = new MediaRecorder(combinedStream, options);
                 
                 recordedChunks = [];
                 
@@ -1467,6 +1487,7 @@
                     const blob = new Blob(recordedChunks, { type: mediaRecorder.mimeType });
                     convertedFileUrl = URL.createObjectURL(blob);
                     convertedVideo.src = convertedFileUrl;
+                    convertedVideo.volume = 1.0; // Enable volume for converted video
                     
                     // Show download button
                     downloadBtn.style.display = 'flex';
@@ -1482,6 +1503,22 @@
                     // Re-enable convert button
                     convertBtn.disabled = false;
                     convertBtn.innerHTML = '<i class="fas fa-sync-alt"></i> Convert Video';
+                    isProcessing = false;
+                    
+                    // Clean up audio resources
+                    if (audioContext && audioContext.state !== 'closed') {
+                        audioSource.disconnect();
+                        audioContext.close();
+                        audioContext = null;
+                        audioDestination = null;
+                        audioSource = null;
+                    }
+                    
+                    // Clean up streams
+                    canvasStream.getTracks().forEach(track => track.stop());
+                    if (includeAudio) {
+                        audioDestination.stream.getTracks().forEach(track => track.stop());
+                    }
                 };
                 
                 // Start recording
@@ -1492,16 +1529,28 @@
                 
                 // Stop recording when done
                 setTimeout(() => {
-                    mediaRecorder.stop();
+                    if (mediaRecorder && mediaRecorder.state === 'recording') {
+                        mediaRecorder.stop();
+                    }
                 }, 100);
                 
             } catch (error) {
                 console.error('Conversion error:', error);
                 alert('Error converting video. Please try again with a different file or settings.');
                 
+                // Clean up on error
+                if (audioContext && audioContext.state !== 'closed') {
+                    audioSource.disconnect();
+                    audioContext.close();
+                    audioContext = null;
+                    audioDestination = null;
+                    audioSource = null;
+                }
+                
                 // Re-enable convert button
                 convertBtn.disabled = false;
                 convertBtn.innerHTML = '<i class="fas fa-sync-alt"></i> Convert Video';
+                isProcessing = false;
                 
                 // Hide progress bar
                 progressContainer.style.display = 'none';
@@ -1510,35 +1559,84 @@
         
         // Process video frames for conversion
         async function processVideoFrames(canvas, ctx, video, width, height) {
-            return new Promise((resolve) => {
-                let frameCount = 0;
-                const totalFrames = Math.floor(video.duration * 10); // Reduced frame count for speed
+            return new Promise((resolve, reject) => {
+                let animationFrameId;
+                let lastTime = 0;
+                const frameDelay = 1000 / 30; // Target 30 FPS for processing
                 
-                function drawFrame() {
-                    if (video.paused || video.ended || frameCount >= totalFrames) {
-                        resolve();
+                // Set video properties - KEEP AUDIO ENABLED
+                video.currentTime = 0;
+                video.volume = 1.0; // Keep volume enabled for audio capture
+                
+                // Handle video errors
+                video.onerror = () => {
+                    cancelAnimationFrame(animationFrameId);
+                    reject(new Error('Video error during processing'));
+                };
+                
+                // Handle video end
+                video.onended = () => {
+                    cancelAnimationFrame(animationFrameId);
+                    resolve();
+                };
+                
+                // Start video playback
+                video.play().catch(error => {
+                    console.error('Video play error:', error);
+                    reject(error);
+                });
+                
+                // Process frames
+                function processFrame(timestamp) {
+                    if (!isProcessing) {
+                        cancelAnimationFrame(animationFrameId);
                         return;
                     }
                     
-                    // Draw video frame to canvas
-                    ctx.drawImage(video, 0, 0, width, height);
+                    // Throttle frame processing to avoid overloading
+                    if (timestamp - lastTime >= frameDelay) {
+                        lastTime = timestamp;
+                        
+                        try {
+                            // Draw current video frame to canvas
+                            ctx.drawImage(video, 0, 0, width, height);
+                            
+                            // Update progress based on current time
+                            const progress = Math.min((video.currentTime / video.duration) * 100, 100);
+                            progressFill.style.width = `${progress}%`;
+                            progressText.textContent = `${Math.round(progress)}%`;
+                            
+                            // Check if video has ended
+                            if (video.ended || video.currentTime >= video.duration) {
+                                cancelAnimationFrame(animationFrameId);
+                                resolve();
+                                return;
+                            }
+                        } catch (error) {
+                            console.error('Frame processing error:', error);
+                            cancelAnimationFrame(animationFrameId);
+                            reject(error);
+                            return;
+                        }
+                    }
                     
-                    // Update progress
-                    frameCount++;
-                    const progress = Math.min((frameCount / totalFrames) * 100, 100);
-                    progressFill.style.width = `${progress}%`;
-                    progressText.textContent = `${Math.round(progress)}%`;
-                    
-                    // Continue processing with optimized timing
-                    setTimeout(() => {
-                        requestAnimationFrame(drawFrame);
-                    }, 30); // Reduced delay for faster processing
+                    // Continue processing
+                    animationFrameId = requestAnimationFrame(processFrame);
                 }
                 
                 // Start processing
-                video.currentTime = 0;
-                video.play();
-                drawFrame();
+                animationFrameId = requestAnimationFrame(processFrame);
+                
+                // Safety timeout for very long videos
+                const safetyTimeout = setTimeout(() => {
+                    if (animationFrameId) {
+                        cancelAnimationFrame(animationFrameId);
+                    }
+                    resolve();
+                }, 3600000); // 1 hour max processing time
+                
+                // Clean up timeout when done
+                Promise.resolve().then(() => clearTimeout(safetyTimeout));
             });
         }
         
@@ -1546,6 +1644,7 @@
         function getMediaRecorderOptions() {
             const format = outputFormat.value;
             const quality = videoQuality.value;
+            const includeAudio = audioCodec.value !== 'none';
             
             let mimeType, videoBitsPerSecond;
             
@@ -1553,15 +1652,29 @@
             const supportedFormats = ['mp4', 'webm'];
             const actualFormat = supportedFormats.includes(format) ? format : 'mp4';
             
-            switch (actualFormat) {
-                case 'mp4':
-                    mimeType = 'video/mp4; codecs="avc1.42E01E, mp4a.40.2"';
-                    break;
-                case 'webm':
-                    mimeType = 'video/webm; codecs="vp8, opus"';
-                    break;
-                default:
-                    mimeType = 'video/mp4; codecs="avc1.42E01E, mp4a.40.2"';
+            if (includeAudio) {
+                switch (actualFormat) {
+                    case 'mp4':
+                        mimeType = 'video/mp4; codecs="avc1.42E01E, mp4a.40.2"';
+                        break;
+                    case 'webm':
+                        mimeType = 'video/webm; codecs="vp8, opus"';
+                        break;
+                    default:
+                        mimeType = 'video/mp4; codecs="avc1.42E01E, mp4a.40.2"';
+                }
+            } else {
+                // No audio
+                switch (actualFormat) {
+                    case 'mp4':
+                        mimeType = 'video/mp4; codecs="avc1.42E01E"';
+                        break;
+                    case 'webm':
+                        mimeType = 'video/webm; codecs="vp8"';
+                        break;
+                    default:
+                        mimeType = 'video/mp4; codecs="avc1.42E01E"';
+                }
             }
             
             // Set video quality
@@ -1581,7 +1694,8 @@
             
             return {
                 mimeType: mimeType,
-                videoBitsPerSecond: videoBitsPerSecond
+                videoBitsPerSecond: videoBitsPerSecond,
+                audioBitsPerSecond: includeAudio ? 128000 : 0 // 128 kbps for audio
             };
         }
         
@@ -1599,6 +1713,22 @@
         
         // Clear all
         clearBtn.addEventListener('click', () => {
+            // Stop any ongoing processing
+            isProcessing = false;
+            
+            if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+                mediaRecorder.stop();
+            }
+            
+            // Clean up audio resources
+            if (audioContext && audioContext.state !== 'closed') {
+                if (audioSource) audioSource.disconnect();
+                audioContext.close();
+                audioContext = null;
+                audioDestination = null;
+                audioSource = null;
+            }
+            
             // Reset file input
             fileInput.value = '';
             fileName.textContent = '';
@@ -1627,6 +1757,14 @@
                 URL.revokeObjectURL(convertedFileUrl);
                 convertedFileUrl = null;
             }
+            
+            // Reset progress
+            progressContainer.style.display = 'none';
+            progressFill.style.width = '0%';
+            progressText.textContent = '0%';
+            
+            // Reset convert button text
+            convertBtn.innerHTML = '<i class="fas fa-sync-alt"></i> Convert Video';
         });
         
         // Language Switcher
@@ -1770,7 +1908,7 @@
                 "footer.links.terms": "Términos de Servicio",
                 "footer.copyright": "© 2025 LollyPoPDF. Todos los derechos reservados."
             },
-            fr: {
+             fr: {
                 "nav.home": "Accueil",
                 "nav.about": "À propos de nous",
                 "nav.tools": "Outils",
@@ -3561,9 +3699,7 @@
                 "footer.links.disclaimer": "Odmítnutí odpovědnosti",
                 "footer.links.terms": "Podmínky služby",
                 "footer.copyright": "© 2025 LollyPoPDF. Všechna práva vyhrazena."
-            }
-            
-                        
+            }                
                                               
         };
 
